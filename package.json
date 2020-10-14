@@ -13,6 +13,7 @@
     "dayjs": "^1.8.36",
     "howler": "^2.2.0",
     "nprogress": "^0.2.0",
+    "plyr": "^3.6.2",
     "register-service-worker": "^1.7.1",
     "svg-sprite-loader": "^5.0.0",
     "vue": "^2.6.11",

@@ -8,7 +8,10 @@
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </main>
     <transition name="slide-up">
-      <BottomBar v-if="this.$store.state.player.enable" ref="player"
+      <BottomBar
+        v-if="this.$store.state.player.enable"
+        ref="player"
+        v-show="this.$route.name !== 'mv'"
     /></transition>
     <GlobalEvents
       :filter="(event, handler, eventName) => event.target.tagName !== 'INPUT'"

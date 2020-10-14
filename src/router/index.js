@@ -33,6 +33,11 @@ const routes = [
     component: () => import("@/views/artist"),
   },
   {
+    path: "/mv/:id",
+    name: "mv",
+    component: () => import("@/views/mv"),
+  },
+  {
     path: "/next",
     name: "next",
     component: () => import("@/views/next"),
@@ -67,7 +72,6 @@ const routes = [
       keepAlive: true,
     },
   },
-
   {
     path: "/library/liked-songs",
     name: "likedSongs",

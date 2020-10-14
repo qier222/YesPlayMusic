@@ -75,6 +75,10 @@
         :showPlayButton="true"
       />
     </div>
+    <div class="mvs" v-if="mvs.length !== 0">
+      <div class="section-title">MVs</div>
+      <MvRow :mvs="mvs" subtitle="publishTime" />
+    </div>
     <div class="eps">
       <div class="section-title">EPs & Singles</div>
       <CoverRow
@@ -89,7 +93,7 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
-import { getArtist, getArtistAlbum } from "@/api/artist";
+import { getArtist, getArtistAlbum, artistMv } from "@/api/artist";
 import { mapTrackPlayableStatus } from "@/utils/common";
 import { playAList } from "@/utils/play";
 import NProgress from "nprogress";
@@ -98,10 +102,11 @@ import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
 import CoverRow from "@/components/CoverRow.vue";
 import Cover from "@/components/Cover.vue";
+import MvRow from "@/components/MvRow.vue";
 
 export default {
   name: "Artist",
-  components: { Cover, ButtonTwoTone, TrackList, CoverRow },
+  components: { Cover, ButtonTwoTone, TrackList, CoverRow, MvRow },
   data() {
     return {
       artist: {
@@ -120,6 +125,7 @@ export default {
       },
       showMorePopTracks: false,
       show: false,
+      mvs: [],
     };
   },
   created() {
@@ -155,6 +161,9 @@ export default {
       getArtistAlbum({ id: id, limit: 200 }).then((data) => {
         this.albumsData = data.hotAlbums;
         this.latestRelease = data.hotAlbums[0];
+      });
+      artistMv(id).then((data) => {
+        this.mvs = data.mvs;
       });
     },
     goToAlbum(id) {
@@ -272,39 +281,6 @@ export default {
       &:hover {
         background: #f5f5f7;
         color: rgba(0, 0, 0, 0.96);
-      }
-    }
-  }
-}
-
-.cover-row {
-  &:first-child {
-    margin-top: 0;
-  }
-}
-.covers {
-  display: flex;
-  flex-wrap: wrap;
-  margin: {
-    right: -12px;
-    left: -12px;
-  }
-  .cover {
-    margin: 12px 12px 24px 12px;
-    .text {
-      width: 208px;
-      margin-top: 8px;
-      .name {
-        font-size: 16px;
-        font-weight: 600;
-        color: rgba(0, 0, 0, 0.88);
-        line-height: 20px;
-      }
-      .info {
-        font-size: 12px;
-        color: rgba(0, 0, 0, 0.68);
-        line-height: 18px;
-        // margin-top: 4px;
       }
     }
   }

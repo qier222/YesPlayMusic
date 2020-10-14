@@ -73,6 +73,11 @@
         <TrackList :tracks="tracks" :type="'tracklist'" />
       </div>
 
+      <div class="mvs" v-if="mvs.length > 0">
+        <div class="section-title">MVs</div>
+        <MvRow class="mv-row" :mvs="mvs.slice(0, 5)" />
+      </div>
+
       <div class="playlists" v-if="result.hasOwnProperty('playList')">
         <div class="section-title">Playlists</div>
         <div class="albums-list">
@@ -119,16 +124,19 @@ import { search } from "@/api/others";
 
 import Cover from "@/components/Cover.vue";
 import TrackList from "@/components/TrackList.vue";
+import MvRow from "@/components/MvRow.vue";
 
 export default {
   name: "Search",
   components: {
     Cover,
     TrackList,
+    MvRow,
   },
   data() {
     return {
       result: {},
+      mvs: [],
       type: 1,
       limit: 30,
       offset: 0,
@@ -152,31 +160,28 @@ export default {
       let track = this.tracks.find((t) => t.id === id);
       appendTrackToPlayerList(track, true);
     },
-  },
-  created() {
-    search({ keywords: this.$route.query.keywords, type: 1018 }).then(
-      (data) => {
+    getData(keywords) {
+      search({ keywords: keywords, type: 1018 }).then((data) => {
         this.result = data.result;
         NProgress.done();
-      }
-    );
+      });
+      search({ keywords: keywords, type: 1004 }).then((data) => {
+        this.mvs = data.result.mvs;
+      });
+    },
+  },
+  created() {
+    this.getData(this.$route.query.keywords);
   },
   beforeRouteUpdate(to, from, next) {
+    next();
     NProgress.start();
-    search({ keywords: to.query.keywords, type: 1018 }).then((data) => {
-      this.result = data.result;
-      next();
-      NProgress.done();
-    });
+    this.getData(to.query.keywords);
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.search {
-  width: 78vw;
-}
-
 h1 {
   margin-top: -10px;
   margin-bottom: 0;
@@ -255,5 +260,12 @@ h1 {
 .no-results {
   margin-top: 24px;
   font-size: 24px;
+}
+
+.mvs {
+  .mv-row {
+    margin-top: -12px;
+    margin-bottom: -24px;
+  }
 }
 </style>

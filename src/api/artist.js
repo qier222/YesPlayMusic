@@ -34,3 +34,13 @@ export function toplistOfArtists(type = null) {
     },
   });
 }
+
+export function artistMv(id) {
+  return request({
+    url: "/artist/mv",
+    method: "get",
+    params: {
+      id,
+    },
+  });
+}
