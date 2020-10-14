@@ -5,9 +5,6 @@ export default {
   updatePlayerState(state, { key, value }) {
     state.player[key] = value;
   },
-  updatePlayingStatus(state, status) {
-    state.player.playing = status;
-  },
   updateCurrentTrack(state, track) {
     state.player.currentTrack = track;
   },

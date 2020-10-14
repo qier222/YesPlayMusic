@@ -51,7 +51,11 @@ export default {
   },
   methods: {
     goToMv(id) {
-      this.$router.push({ path: "/mv/" + id });
+      let query = {};
+      if (this.$parent.player !== undefined) {
+        query = { autoplay: this.$parent.player.playing };
+      }
+      this.$router.push({ path: "/mv/" + id, query });
     },
     getUrl(mv) {
       if (mv.cover !== undefined) return mv.cover;

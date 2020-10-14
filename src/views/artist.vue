@@ -109,6 +109,7 @@ export default {
   components: { Cover, ButtonTwoTone, TrackList, CoverRow, MvRow },
   data() {
     return {
+      show: false,
       artist: {
         img1v1Url:
           "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg",
@@ -124,12 +125,8 @@ export default {
         size: "",
       },
       showMorePopTracks: false,
-      show: false,
       mvs: [],
     };
-  },
-  created() {
-    this.loadData(this.$route.params.id);
   },
   computed: {
     ...mapState(["player"]),
@@ -153,8 +150,8 @@ export default {
       getArtist(id).then((data) => {
         this.artist = data.artist;
         this.popularTracks = data.hotSongs;
-        if (next !== undefined) next();
         this.popularTracks = mapTrackPlayableStatus(this.popularTracks);
+        if (next !== undefined) next();
         NProgress.done();
         this.show = true;
       });
@@ -175,6 +172,18 @@ export default {
     playPopularSongs(trackID = "first") {
       playAList(this.popularTracks, this.artist.id, "artist", trackID);
     },
+  },
+  created() {
+    this.loadData(this.$route.params.id);
+  },
+  activated() {
+    if (this.show) {
+      if (this.artist.id.toString() !== this.$route.params.id) {
+        this.show = false;
+        NProgress.start();
+        this.loadData(this.$route.params.id);
+      }
+    }
   },
   beforeRouteUpdate(to, from, next) {
     NProgress.start();

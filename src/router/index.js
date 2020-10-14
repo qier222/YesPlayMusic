@@ -31,6 +31,9 @@ const routes = [
     path: "/artist/:id",
     name: "artist",
     component: () => import("@/views/artist"),
+    meta: {
+      keepAlive: true,
+    },
   },
   {
     path: "/mv/:id",

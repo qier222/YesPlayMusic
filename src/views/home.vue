@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" v-show="show">
     <div class="index-row">
       <div class="title">
         by Apple Music
@@ -57,6 +57,7 @@ import { toplists, recommendPlaylist } from "@/api/playlist";
 import { toplistOfArtists } from "@/api/artist";
 import { byAppleMusic } from "@/utils/staticPlaylist";
 import { newAlbums } from "@/api/album";
+import NProgress from "nprogress";
 
 import CoverRow from "@/components/CoverRow.vue";
 
@@ -65,6 +66,7 @@ export default {
   components: { CoverRow },
   data() {
     return {
+      show: false,
       recommendPlaylist: { name: "推荐歌单", items: [] },
       newReleasesAlbum: { name: "新专速递", items: [] },
       topList: {
@@ -86,10 +88,13 @@ export default {
   },
   methods: {
     loadData() {
+      if (!this.show) NProgress.start();
       recommendPlaylist({
         limit: 10,
       }).then((data) => {
         this.recommendPlaylist.items = data.result;
+        NProgress.done();
+        this.show = true;
       });
       newAlbums({
         area: "EA",

@@ -1,7 +1,6 @@
 import { Howler } from "howler";
 
 const initState = {
-  loading: true,
   Howler: Howler,
   howler: null,
   contextMenu: {

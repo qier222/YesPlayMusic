@@ -126,7 +126,7 @@ export default {
       });
   },
   computed: {
-    ...mapState(["player", "loading"]),
+    ...mapState(["player"]),
     albumTime() {
       let time = 0;
       this.tracks.map((t) => (time = time + t.dt));

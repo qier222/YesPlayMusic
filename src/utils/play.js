@@ -3,7 +3,7 @@ import { getAlbum } from "@/api/album";
 import { getPlaylistDetail } from "@/api/playlist";
 import { getTrackDetail } from "@/api/track";
 import { getArtist } from "@/api/artist";
-import { trackFee } from "@/utils/common";
+import { isTrackPlayable } from "@/utils/common";
 
 export function playAList(list, id, type, trackID = "first") {
   let filteredList = list.map((track, index) => {
@@ -14,7 +14,7 @@ export function playAList(list, id, type, trackID = "first") {
       artists: track.ar,
       album: track.al,
       time: track.dt,
-      playable: trackFee(track).playable,
+      playable: isTrackPlayable(track).playable,
     };
   });
 

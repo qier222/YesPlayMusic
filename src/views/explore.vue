@@ -64,6 +64,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       playlists: [],
       activeCategory: "全部",
       loadingMore: false,
@@ -81,6 +82,7 @@ export default {
   },
   methods: {
     loadData() {
+      if (!this.show) NProgress.start();
       this.activeCategory =
         this.$route.query.category === undefined
           ? "全部"
@@ -95,6 +97,7 @@ export default {
       this.loadingMore = false;
       this.showLoadMoreButton = true;
       NProgress.done();
+      this.show = true;
     },
     getPlaylist() {
       this.loadingMore = true;

@@ -94,6 +94,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       playlist: {
         coverImgUrl: "",
         creator: {
@@ -105,29 +106,10 @@ export default {
       tracks: [],
       loadingMore: false,
       lastLoadedTrackIndex: 9,
-      show: false,
     };
   },
   created() {
-    this.id = this.$route.params.id;
-    getPlaylistDetail(this.id)
-      .then((data) => {
-        this.playlist = data.playlist;
-        this.tracks = data.playlist.tracks;
-        this.tracks = mapTrackPlayableStatus(this.tracks);
-        NProgress.done();
-        this.show = true;
-        if (this.playlist.trackCount > this.tracks.length) {
-          window.addEventListener("scroll", this.handleScroll, true);
-        }
-        return data;
-      })
-      .then(() => {
-        if (this.playlist.trackCount > this.tracks.length) {
-          this.loadingMore = true;
-          this.loadMore();
-        }
-      });
+    this.loadData(this.$route.params.id);
   },
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll, true);
@@ -148,6 +130,29 @@ export default {
     shufflePlay() {
       this.playPlaylistByID();
       this.shuffleTheList();
+    },
+    loadData(id, next = undefined) {
+      console.log("loadData");
+      this.id = id;
+      getPlaylistDetail(this.id)
+        .then((data) => {
+          this.playlist = data.playlist;
+          this.tracks = data.playlist.tracks;
+          this.tracks = mapTrackPlayableStatus(this.tracks);
+          NProgress.done();
+          if (next !== undefined) next();
+          this.show = true;
+          if (this.playlist.trackCount > this.tracks.length) {
+            window.addEventListener("scroll", this.handleScroll, true);
+          }
+          return data;
+        })
+        .then(() => {
+          if (this.playlist.trackCount > this.tracks.length) {
+            this.loadingMore = true;
+            this.loadMore();
+          }
+        });
     },
     loadMore() {
       let trackIDs = this.playlist.trackIds.filter((t, index) => {

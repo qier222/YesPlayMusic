@@ -8,38 +8,36 @@
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </main>
     <transition name="slide-up">
-      <BottomBar
+      <Player
         v-if="this.$store.state.player.enable"
         ref="player"
         v-show="this.$route.name !== 'mv'"
     /></transition>
-    <GlobalEvents
-      :filter="(event, handler, eventName) => event.target.tagName !== 'INPUT'"
-      @keydown.space="play"
-    />
+    <GlobalEvents :filter="globalEventFilter" @keydown.space="play" />
   </div>
 </template>
 
 <script>
 import Navbar from "./components/Navbar.vue";
-import BottomBar from "./components/BottomBar.vue";
+import Player from "./components/Player.vue";
 import GlobalEvents from "vue-global-events";
-import { mapState } from "vuex";
 
 export default {
   name: "App",
   components: {
     Navbar,
-    BottomBar,
+    Player,
     GlobalEvents,
-  },
-  computed: {
-    ...mapState(["loading"]),
   },
   methods: {
     play(e) {
       e.preventDefault();
       this.$refs.player.play();
+    },
+    globalEventFilter(event) {
+      if (event.target.tagName === "INPUT") return false;
+      if (this.$route.name === "mv") return false;
+      return true;
     },
   },
 };

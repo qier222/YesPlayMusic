@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" v-show="show">
     <h1><span>Search for</span> "{{ keywords }}"</h1>
     <div class="result" v-if="result !== undefined">
       <div class="row">
@@ -135,6 +135,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       result: {},
       mvs: [],
       type: 1,
@@ -164,6 +165,7 @@ export default {
       search({ keywords: keywords, type: 1018 }).then((data) => {
         this.result = data.result;
         NProgress.done();
+        this.show = true;
       });
       search({ keywords: keywords, type: 1004 }).then((data) => {
         this.mvs = data.result.mvs;
@@ -174,6 +176,7 @@ export default {
     this.getData(this.$route.query.keywords);
   },
   beforeRouteUpdate(to, from, next) {
+    this.show = false;
     next();
     NProgress.start();
     this.getData(to.query.keywords);

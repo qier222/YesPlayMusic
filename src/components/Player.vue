@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { mapState, mapMutations, mapActions } from "vuex";
 import "@/assets/css/slider.css";
 
@@ -152,14 +153,18 @@ export default {
   },
   methods: {
     ...mapMutations([
-      "updatePlayingStatus",
       "updateShuffleStatus",
       "updatePlayerList",
       "shuffleTheList",
       "updatePlayerState",
       "updateRepeatStatus",
     ]),
-    ...mapActions(["nextTrack", "previousTrack", "playTrackOnListByID"]),
+    ...mapActions([
+      "nextTrack",
+      "previousTrack",
+      "playTrackOnListByID",
+      "addNextTrackEvent",
+    ]),
     play() {
       if (this.playing) {
         this.howler.pause();
@@ -168,6 +173,10 @@ export default {
           this.playTrackOnListByID(this.player.currentTrack.id);
         }
         this.howler.play();
+        if (this.howler._onend.length === 0) {
+          this.addNextTrackEvent();
+          updateMediaSessionMetaData(this.player.currentTrack);
+        }
       }
     },
     next() {

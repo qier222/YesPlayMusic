@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="show">
     <h1>
       <img class="head" :src="user.profile.avatarUrl | resizeImage" />{{
         user.profile.nickname
@@ -59,6 +59,7 @@ import { userDetail, userPlaylist } from "@/api/user";
 import { mapTrackPlayableStatus, randomNum } from "@/utils/common";
 import { getPlaylistDetail } from "@/api/playlist";
 import { playPlaylistByID } from "@/utils/play";
+import NProgress from "nprogress";
 
 import TrackList from "@/components/TrackList.vue";
 import CoverRow from "@/components/CoverRow.vue";
@@ -69,6 +70,7 @@ export default {
   components: { SvgIcon, CoverRow, TrackList },
   data() {
     return {
+      show: false,
       user: {
         profile: {
           avatarUrl: "",
@@ -82,6 +84,7 @@ export default {
     };
   },
   created() {
+    NProgress.start();
     userDetail(this.settings.user.userId).then((data) => {
       this.user = data;
     });
@@ -135,6 +138,7 @@ export default {
         let oldTracks = this.likedSongs.tracks;
         this.likedSongs = data.playlist;
         this.likedSongs.tracks = oldTracks;
+
         this.getMoreLikedSongs();
         this.getRandomLyric();
       });
@@ -144,6 +148,8 @@ export default {
       getTrackDetail(TrackIDs.join(",")).then((data) => {
         this.likedSongs.tracks = data.songs;
         this.likedSongs.tracks = mapTrackPlayableStatus(this.likedSongs.tracks);
+        NProgress.done();
+        this.show = true;
       });
     },
     getRandomLyric() {

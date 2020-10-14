@@ -4,7 +4,6 @@ import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 export default {
   switchTrack({ state, dispatch, commit }, track) {
     commit("updateCurrentTrack", track);
-    commit("updatePlayingStatus", true);
 
     if (track.playable === false) {
       dispatch("nextTrack");
@@ -30,23 +29,21 @@ export default {
     if (track.playable === false) return;
     context.dispatch("switchTrack", track);
   },
-  nextTrack({ state, dispatch, commit }, realNext = false) {
+  nextTrack({ state, dispatch }, realNext = false) {
     let nextTrack = state.player.list.find(
       (track) => track.sort === state.player.currentTrack.sort + 1
     );
-
-    if (state.player.repeat === "on" && nextTrack === undefined) {
-      nextTrack = state.player.list.find((t) => t.sort === 0);
-    }
 
     if (state.player.repeat === "one" && realNext === false) {
       nextTrack = state.player.currentTrack;
     }
 
-    if (state.player.repeat === "off" && nextTrack === undefined) {
-      commit("updatePlayingStatus", false);
-      state.howler.stop();
-      return;
+    if (nextTrack === undefined) {
+      if (state.player.repeat !== "off") {
+        nextTrack = state.player.list.find((t) => t.sort === 0);
+      } else {
+        return;
+      }
     }
 
     dispatch("switchTrack", nextTrack);
@@ -55,11 +52,18 @@ export default {
     let previousTrack = state.player.list.find(
       (track) => track.sort === state.player.currentTrack.sort - 1
     );
-
-    previousTrack =
-      previousTrack === null || previousTrack === undefined
-        ? state.player.list[-1]
-        : previousTrack;
+    if (previousTrack == undefined) {
+      if (state.player.repeat !== "off") {
+        previousTrack = state.player.list.reduce((x, y) => (x > y ? x : y));
+      } else {
+        previousTrack = state.player.list.find((t) => t.sort === 0);
+      }
+    }
     dispatch("switchTrack", previousTrack);
+  },
+  addNextTrackEvent({ state, dispatch }) {
+    state.howler.once("end", () => {
+      dispatch("nextTrack");
+    });
   },
 };

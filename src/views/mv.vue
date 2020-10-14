@@ -62,17 +62,16 @@ export default {
         Promise.all(requests).then((results) => {
           let sources = results.map((result) => {
             return {
-              src: result.data.url,
+              src: result.data.url.replace(/^http:/, "https:"),
               type: "video/mp4",
               size: result.data.r,
             };
           });
-          console.table(sources);
           this.player.source = {
             type: "video",
             title: this.mv.data.name,
             sources: sources,
-            poster: this.mv.data.cover,
+            poster: this.mv.data.cover.replace(/^http:/, "https:"),
           };
           NProgress.done();
         });
@@ -81,10 +80,6 @@ export default {
         this.simiMvs = data.mvs;
       });
     },
-  },
-  created() {
-    if (this.$route.query.autoplay === "true")
-      this.videoOptions.autoplay = true;
   },
   mounted() {
     let videoOptions = {
@@ -95,8 +90,12 @@ export default {
         options: [1080, 720, 480, 240],
       },
     };
+    if (this.$route.query.autoplay === "true") videoOptions.autoplay = true;
     this.player = new Plyr(this.$refs.videoPlayer, videoOptions);
     this.player.volume = this.$store.state.player.volume;
+    this.player.on("playing", () => {
+      this.$store.state.howler.pause();
+    });
     this.getData(this.$route.params.id);
     console.log("网易云你这mv音频码率也太糊了吧🙄");
   },
@@ -149,7 +148,6 @@ export default {
   .section-title {
     font-size: 18px;
     font-weight: 600;
-    margin-bottom: 16px;
     color: rgba(0, 0, 0, 0.88);
   }
 }
