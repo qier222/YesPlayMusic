@@ -61,6 +61,14 @@ Vue.filter("formatPlayCount", (count) => {
     return `${~~(count / 10000)}万`;
   }
   return count;
+
+  // if (count > 1000000) {
+  //   return `${Math.floor((count / 1000000) * 100) / 100}M`;
+  // }
+  // if (count > 1000) {
+  //   return `${~~(count / 1000)}K`;
+  // }
+  // return count;
 });
 
 Vue.filter("toHttps", (url) => {

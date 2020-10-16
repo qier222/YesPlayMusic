@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import { mapTrackPlayableStatus } from "@/utils/common";
 
 export function getMP3(id) {
   return request({
@@ -17,6 +18,9 @@ export function getTrackDetail(id) {
     params: {
       ids: id,
     },
+  }).then((data) => {
+    data.songs = mapTrackPlayableStatus(data.songs);
+    return data;
   });
 }
 
@@ -43,5 +47,27 @@ export function topSong(type) {
     params: {
       type,
     },
+  });
+}
+
+export function likeATrack(params) {
+  // 必选参数: id: 歌曲 id
+  // 可选参数 : like: 布尔值 , 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+  params.timestamp = new Date().getTime();
+  return request({
+    url: "/like",
+    method: "get",
+    params,
+  });
+}
+
+export function scrobble(params) {
+  // 必选参数 : id: 歌曲 id, sourceid: 歌单或专辑 id
+  // 可选参数 : time: 歌曲播放时间,单位为秒
+  params.timestamp = new Date().getTime();
+  return request({
+    url: "/scrobble",
+    method: "get",
+    params,
   });
 }

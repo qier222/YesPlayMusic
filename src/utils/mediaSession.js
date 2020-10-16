@@ -22,14 +22,14 @@ export function initMediaSession() {
 
 export function updateMediaSessionMetaData(track) {
   if ("mediaSession" in navigator) {
-    let artists = track.artists.map((a) => a.name);
+    let artists = track.ar.map((a) => a.name);
     navigator.mediaSession.metadata = new window.MediaMetadata({
       title: track.name,
       artist: artists.join(","),
-      album: track.album.name,
+      album: track.al.name,
       artwork: [
         {
-          src: track.album.picUrl + "?param=512y512",
+          src: track.al.picUrl + "?param=512y512",
           type: "image/jpg",
           sizes: "512x512",
         },

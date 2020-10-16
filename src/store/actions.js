@@ -1,24 +1,39 @@
 // import { getMP3 } from "@/api/track";
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
+import { getTrackDetail, scrobble } from "@/api/track";
 
 export default {
-  switchTrack({ state, dispatch, commit }, track) {
-    commit("updateCurrentTrack", track);
+  switchTrack({ state, dispatch, commit }, basicTrack) {
+    getTrackDetail(basicTrack.id).then((data) => {
+      let track = data.songs[0];
+      track.sort = basicTrack.sort;
+      console.log(track);
 
-    if (track.playable === false) {
-      dispatch("nextTrack");
-      return;
-    }
+      if (track.playable === false) {
+        dispatch("nextTrack");
+        return;
+      }
 
-    updateMediaSessionMetaData(track);
-    document.title = `${track.name} · ${track.artists[0].name} - YesPlayMusic`;
+      let time = state.howler.seek();
+      scrobble({
+        id: state.player.currentTrack.id,
+        sourceid: state.player.listInfo.id,
+        time: time === 0 ? 180 : time,
+      }).then((data) => {
+        console.log("scrobble", data);
+      });
 
-    commit(
-      "replaceMP3",
-      `https://music.163.com/song/media/outer/url?id=${track.id}`
-    );
-    state.howler.once("end", () => {
-      dispatch("nextTrack");
+      commit("updateCurrentTrack", track);
+      updateMediaSessionMetaData(track);
+      document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
+
+      commit(
+        "replaceMP3",
+        `https://music.163.com/song/media/outer/url?id=${track.id}`
+      );
+      state.howler.once("end", () => {
+        dispatch("nextTrack");
+      });
     });
   },
   playFirstTrackOnList({ state, dispatch }) {
@@ -26,7 +41,6 @@ export default {
   },
   playTrackOnListByID(context, trackID) {
     let track = context.state.player.list.find((t) => t.id === trackID);
-    if (track.playable === false) return;
     context.dispatch("switchTrack", track);
   },
   nextTrack({ state, dispatch }, realNext = false) {

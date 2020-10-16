@@ -1,7 +1,22 @@
 <template>
-  <div class="track" :class="trackClass" :style="trackStyle">
+  <div
+    class="track"
+    :class="trackClass"
+    :style="trackStyle"
+    @mouseover="focus = true"
+    @mouseleave="focus = false"
+  >
     <img :src="imgUrl | resizeImage" v-if="!isAlbum" @click="goToAlbum" />
-    <div class="no" v-if="isAlbum">{{ track.no }}</div>
+    <div class="no" v-if="isAlbum">
+      <button
+        class="play-button"
+        v-show="focus && track.playable"
+        @click="playTrack"
+      >
+        <svg-icon icon-class="play"></svg-icon>
+      </button>
+      <span v-show="!focus">{{ track.no }}</span>
+    </div>
     <div class="title-and-artist">
       <div class="container">
         <div class="title">
@@ -18,7 +33,7 @@
           <span
             v-if="track.mark === 1318912"
             class="explicit-symbol before-artist"
-            ><ExplicitSymbol
+            ><ExplicitSymbol :size="15"
           /></span>
           <ArtistsInLine :artists="artists" />
         </div>
@@ -26,12 +41,22 @@
       <div></div>
     </div>
     <div class="album" v-if="!isTracklist && !isAlbum">
-      <div class="container">
-        <router-link :to="`/album/${track.al.id}`">{{
-          track.al.name
-        }}</router-link>
-      </div>
+      <router-link :to="`/album/${track.al.id}`">{{
+        track.al.name
+      }}</router-link>
       <div></div>
+    </div>
+    <div class="actions" v-if="!isTracklist">
+      <button v-if="isLoggedIn" @click="likeThisSong">
+        <svg-icon
+          icon-class="heart"
+          :style="{
+            visibility:
+              focus && !isLiked && track.playable ? 'visible' : 'hidden',
+          }"
+        ></svg-icon>
+        <svg-icon icon-class="heart-solid" v-show="isLiked"></svg-icon>
+      </button>
     </div>
     <div class="time" v-if="!isTracklist">
       {{ track.dt | formatTime }}
@@ -40,6 +65,9 @@
 </template>
 
 <script>
+import { isLoggedIn } from "@/utils/auth";
+import { likeATrack } from "@/api/track";
+
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 
@@ -50,16 +78,7 @@ export default {
     track: Object,
   },
   data() {
-    return {
-      trackClass: [],
-      trackStyle: {},
-    };
-  },
-  created() {
-    this.trackClass.push(this.type);
-    if (!this.track.playable) this.trackClass.push("disable");
-    if (this.$parent.itemWidth !== -1)
-      this.trackStyle = { width: this.$parent.itemWidth + "px" };
+    return { focus: false, trackStyle: {} };
   },
   computed: {
     imgUrl() {
@@ -84,16 +103,82 @@ export default {
     isPlaylist() {
       return this.type === "playlist";
     },
+    isLiked() {
+      return this.$parent.liked.songs.includes(this.track.id);
+    },
+    isPlaying() {
+      return this.$store.state.player.currentTrack.id === this.track.id;
+    },
+    trackClass() {
+      let trackClass = [this.type];
+      if (!this.track.playable) trackClass.push("disable");
+      if (this.isPlaying) trackClass.push("playing");
+      return trackClass;
+    },
+    isLoggedIn() {
+      return isLoggedIn();
+    },
   },
   methods: {
     goToAlbum() {
       this.$router.push({ path: "/album/" + this.track.al.id });
     },
+    playTrack() {
+      this.$parent.playThisList(this.track.id);
+    },
+    likeThisSong() {
+      let id = this.track.id;
+      let like = true;
+      let likedSongs = this.$parent.liked.songs;
+      if (likedSongs.includes(id)) like = false;
+      likeATrack({ id, like }).then(() => {
+        if (like === false) {
+          this.$store.commit(
+            "updateLikedSongs",
+            likedSongs.filter((d) => d !== id)
+          );
+        } else {
+          likedSongs.push(id);
+          this.$store.commit("updateLikedSongs", likedSongs);
+        }
+      });
+    },
+  },
+  created() {
+    if (this.$parent.itemWidth !== -1)
+      this.trackStyle = { width: this.$parent.itemWidth + "px" };
   },
 };
 </script>
 
 <style lang="scss" scoped>
+button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: transparent;
+  border-radius: 25%;
+  transition: transform 0.2s;
+  .svg-icon {
+    height: 16px;
+    width: 16px;
+    color: #335eea;
+  }
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+button.play-button {
+  opacity: 1;
+  .svg-icon {
+    height: 14px;
+    width: 14px;
+    color: #335eea;
+  }
+}
+
 .track {
   display: flex;
   align-items: center;
@@ -182,20 +267,12 @@ export default {
   .album {
     flex: 1;
     display: flex;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.88);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    .container {
-      display: flex;
-      flex-direction: column;
-      &:hover {
-        text-decoration: underline;
-        cursor: pointer;
-      }
-    }
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.88);
   }
   .time {
     font-size: 16px;
@@ -246,5 +323,33 @@ export default {
 
 .track.album {
   height: 32px;
+}
+
+.actions {
+  width: 80px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.track.playing {
+  background: #eaeffd;
+  color: #335eea;
+  .title,
+  .album {
+    color: #335eea;
+  }
+  .title .featured,
+  .artist {
+    color: #335eea;
+    opacity: 0.88;
+  }
+  .no span {
+    color: #335eea;
+    opacity: 0.78;
+  }
+  .explicit-symbol {
+    color: #335eea;
+    opacity: 0.88;
+  }
 }
 </style>

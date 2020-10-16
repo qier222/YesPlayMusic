@@ -1,5 +1,5 @@
 <template>
-  <button :style="{ padding: `8px ${horizontalPadding}px` }" :class="color">
+  <button :style="buttonStyle" :class="color">
     <svg-icon
       v-if="iconClass !== null"
       :iconClass="iconClass"
@@ -29,6 +29,20 @@ export default {
       type: String,
       default: "blue",
     },
+    shape: {
+      type: String,
+      default: "square",
+    },
+  },
+  computed: {
+    buttonStyle() {
+      return {
+        borderRadius: this.shape === "round" ? "50%" : "8px",
+        padding: `8px ${this.horizontalPadding}px`,
+        height: "38px",
+        width: this.shape === "round" ? "38px" : "auto",
+      };
+    },
   },
 };
 </script>
@@ -37,11 +51,11 @@ export default {
 button {
   display: flex;
   align-items: center;
+  justify-content: center;
   font-size: 18px;
   font-weight: 600;
   background-color: rgba(51, 94, 234, 0.1);
   color: #335eea;
-  border-radius: 8px;
   margin-right: 12px;
   transition: 0.2s;
   .svg-icon {
@@ -58,5 +72,8 @@ button {
 button.grey {
   background-color: #f5f5f7;
   color: rgba(0, 0, 0, 0.5);
+}
+button.transparent {
+  background-color: transparent;
 }
 </style>

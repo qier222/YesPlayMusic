@@ -38,6 +38,9 @@ export function userLikedSongsIDs(uid) {
   return request({
     url: "/likelist",
     method: "get",
-    uid,
+    params: {
+      uid,
+      timestamp: new Date().getTime(),
+    },
   });
 }

@@ -1,23 +1,12 @@
 import store from "@/store";
 import { getAlbum } from "@/api/album";
 import { getPlaylistDetail } from "@/api/playlist";
-import { getTrackDetail } from "@/api/track";
 import { getArtist } from "@/api/artist";
-import { isTrackPlayable } from "@/utils/common";
 
 export function playAList(list, id, type, trackID = "first") {
-  let filteredList = list.map((track, index) => {
-    return {
-      sort: index,
-      name: track.name,
-      id: track.id,
-      artists: track.ar,
-      album: track.al,
-      time: track.dt,
-      playable: isTrackPlayable(track).playable,
-    };
+  let filteredList = list.map((id, index) => {
+    return { sort: index, id };
   });
-
   store.commit("updatePlayerList", filteredList);
 
   if (trackID === "first") store.dispatch("playFirstTrackOnList");
@@ -28,16 +17,15 @@ export function playAList(list, id, type, trackID = "first") {
 
 export function playAlbumByID(id, trackID = "first") {
   getAlbum(id).then((data) => {
-    playAList(data.songs, id, "album", trackID);
+    let trackIDs = data.songs.map((t) => t.id);
+    playAList(trackIDs, id, "album", trackID);
   });
 }
 
-export function playPlaylistByID(id, trackID = "first") {
-  getPlaylistDetail(id).then((data) => {
+export function playPlaylistByID(id, trackID = "first", noCache = false) {
+  getPlaylistDetail(id, noCache).then((data) => {
     let trackIDs = data.playlist.trackIds.map((t) => t.id);
-    getTrackDetail(trackIDs.join(",")).then((data) => {
-      playAList(data.songs, id, "playlist", trackID);
-    });
+    playAList(trackIDs, id, "playlist", trackID);
   });
 }
 
@@ -47,15 +35,10 @@ export function playArtistByID(id, trackID = "first") {
   });
 }
 
-export function appendTrackToPlayerList(track, playNext = false) {
+export function appendTrackToPlayerList(trackID, playNext = false) {
   let filteredTrack = {
     sort: 0,
-    name: track.name,
-    id: track.id,
-    artists: track.ar,
-    album: track.al,
-    time: track.dt,
-    playable: track.playable,
+    id: trackID,
   };
 
   store.commit("appendTrackToPlayerList", {

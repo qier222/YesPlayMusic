@@ -3,6 +3,9 @@ import { Howler } from "howler";
 const initState = {
   Howler: Howler,
   howler: null,
+  liked: {
+    songs: [],
+  },
   contextMenu: {
     clickObjectID: 0,
     showMenu: false,
@@ -82,7 +85,7 @@ const initState = {
       },
     ],
     user: {
-      id: 1,
+      id: 0,
     },
   },
 };

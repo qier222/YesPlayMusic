@@ -73,7 +73,7 @@
         <TrackList :tracks="tracks" :type="'tracklist'" />
       </div>
 
-      <div class="mvs" v-if="mvs.length > 0">
+      <div class="mvs" v-if="mvs !== null && mvs.length > 0">
         <div class="section-title">MVs</div>
         <MvRow class="mv-row" :mvs="mvs.slice(0, 5)" />
       </div>
@@ -119,7 +119,6 @@
 import { mapState } from "vuex";
 import NProgress from "nprogress";
 import { appendTrackToPlayerList } from "@/utils/play";
-import { mapTrackPlayableStatus } from "@/utils/common";
 import { search } from "@/api/others";
 
 import Cover from "@/components/Cover.vue";
@@ -149,7 +148,7 @@ export default {
       return this.$route.query.keywords;
     },
     tracks() {
-      let tracks = mapTrackPlayableStatus(this.result.song.songs.slice(0, 12));
+      let tracks = this.result.song.songs.slice(0, 12);
       return tracks;
     },
   },

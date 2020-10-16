@@ -20,7 +20,9 @@
         <div class="bottom">
           <div class="titles">
             <div class="title">Liked Songs</div>
-            <div class="sub-title">{{ likedSongs.trackCount }} songs</div>
+            <div class="sub-title">
+              {{ likedSongsPlaylist.trackCount }} songs
+            </div>
           </div>
           <button @click.stop="playLikedSongs">
             <svg-icon icon-class="play" />
@@ -29,10 +31,10 @@
       </div>
       <div class="songs">
         <TrackList
-          :tracks="likedSongs.tracks"
+          :tracks="likedSongs"
           :type="'tracklist'"
           :itemWidth="220"
-          :id="likedSongs.id"
+          :id="likedSongsPlaylist.id"
           dbclickTrackFunc="playPlaylistByID"
         />
       </div>
@@ -79,7 +81,12 @@ export default {
       },
       playlists: [],
       hasMorePlaylists: true,
+      likedSongsPlaylist: {
+        id: 0,
+        trackCount: 0,
+      },
       likedSongs: [],
+      likedSongIDs: [],
       lyric: undefined,
     };
   },
@@ -94,6 +101,9 @@ export default {
   },
   computed: {
     ...mapState(["settings"]),
+    likedSongsInState() {
+      return this.$store.state.liked.songs;
+    },
     pickedLyric() {
       if (this.lyric === undefined) return "";
       let lyric = this.lyric.split("\n");
@@ -116,7 +126,7 @@ export default {
   },
   methods: {
     playLikedSongs() {
-      playPlaylistByID(this.likedSongs.id);
+      playPlaylistByID(this.playlists[0].id, "first", true);
     },
     goToLikedSongsList() {
       this.$router.push({ path: "/library/liked-songs" });
@@ -126,40 +136,41 @@ export default {
         userPlaylist({
           uid: this.settings.user.userId,
           offset: this.playlists.length,
+          timestamp: new Date().getTime(),
         }).then((data) => {
           this.playlists.push(...data.playlist);
           this.hasMorePlaylists = data.more;
+          this.likedSongsPlaylist = data.playlist[0];
         });
       }
       this.getLikedSongs();
     },
-    getLikedSongs() {
-      getPlaylistDetail(this.settings.user.likedSongPlaylistID).then((data) => {
-        let oldTracks = this.likedSongs.tracks;
-        this.likedSongs = data.playlist;
-        this.likedSongs.tracks = oldTracks;
-
-        this.getMoreLikedSongs();
-        this.getRandomLyric();
-      });
-    },
-    getMoreLikedSongs() {
-      let TrackIDs = this.likedSongs.trackIds.slice(0, 20).map((t) => t.id);
-      getTrackDetail(TrackIDs.join(",")).then((data) => {
-        this.likedSongs.tracks = data.songs;
-        this.likedSongs.tracks = mapTrackPlayableStatus(this.likedSongs.tracks);
-        NProgress.done();
-        this.show = true;
-      });
+    getLikedSongs(getLyric = true) {
+      getPlaylistDetail(this.settings.user.likedSongPlaylistID, true).then(
+        (data) => {
+          let TrackIDs = data.playlist.trackIds.slice(0, 20).map((t) => t.id);
+          this.likedSongIDs = TrackIDs;
+          getTrackDetail(this.likedSongIDs.join(",")).then((data) => {
+            this.likedSongs = data.songs;
+            this.likedSongs = mapTrackPlayableStatus(this.likedSongs);
+            NProgress.done();
+            this.show = true;
+          });
+          if (getLyric) this.getRandomLyric();
+        }
+      );
     },
     getRandomLyric() {
       getLyric(
-        this.likedSongs.trackIds[
-          randomNum(0, this.likedSongs.trackIds.length - 1)
-        ].id
+        this.likedSongIDs[randomNum(0, this.likedSongIDs.length - 1)]
       ).then((data) => {
         if (data.lrc !== undefined) this.lyric = data.lrc.lyric;
       });
+    },
+  },
+  watch: {
+    likedSongsInState() {
+      this.getLikedSongs(false);
     },
   },
 };

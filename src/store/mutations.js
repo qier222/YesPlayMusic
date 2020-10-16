@@ -86,4 +86,7 @@ export default {
   updateUserInfo(sate, { key, value }) {
     state.settings.user[key] = value;
   },
+  updateLikedSongs(state, trackIDs) {
+    state.liked.songs = trackIDs;
+  },
 };

@@ -76,7 +76,6 @@ import { mapMutations, mapActions, mapState } from "vuex";
 import NProgress from "nprogress";
 import { getTrackDetail } from "@/api/track";
 import { playAlbumByID } from "@/utils/play";
-import { mapTrackPlayableStatus } from "@/utils/common";
 import { getAlbum } from "@/api/album";
 
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
@@ -111,17 +110,15 @@ export default {
       .then((data) => {
         this.album = data.album;
         this.tracks = data.songs;
-        this.tracks = mapTrackPlayableStatus(this.tracks);
         NProgress.done();
         this.show = true;
         return this.tracks;
       })
       .then((tracks) => {
+        // to get explicit mark
         let trackIDs = tracks.map((t) => t.id);
         getTrackDetail(trackIDs.join(",")).then((data) => {
           this.tracks = data.songs;
-
-          this.tracks = mapTrackPlayableStatus(this.tracks);
         });
       });
   },

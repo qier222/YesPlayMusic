@@ -27,18 +27,10 @@ button {
     margin-left: 0;
   }
   &:hover {
-    // background: #eaeffd;
-    // .svg-icon {
-    //   color: #335eea;
-    // }
     background: #f5f5f7;
   }
   &:active {
     transform: scale(0.92);
-    // background: #eaeffd;
-    // .svg-icon {
-    //   color: #335eea;
-    // }
   }
 }
 </style>

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import {
   playPlaylistByID,
   playAlbumByID,
@@ -42,7 +42,7 @@ export default {
     },
     dbclickTrackFunc: {
       type: String,
-      default: "none",
+      default: "default",
     },
   },
   data() {
@@ -55,8 +55,11 @@ export default {
     if (this.type === "tracklist")
       this.listStyles = { display: "flex", flexWrap: "wrap" };
   },
+  computed: {
+    ...mapState(["liked"]),
+  },
   methods: {
-    ...mapActions(["nextTrack"]),
+    ...mapActions(["nextTrack", "playTrackOnListByID"]),
     openMenu(e, track) {
       if (!track.playable) {
         return;
@@ -65,24 +68,31 @@ export default {
       this.$refs.menu.openMenu(e);
     },
     playThisList(trackID) {
+      if (this.dbclickTrackFunc === "default") {
+        this.playThisListDefault(trackID);
+      } else if (this.dbclickTrackFunc === "none") {
+        // do nothing
+      } else if (this.dbclickTrackFunc === "playTrackOnListByID") {
+        this.playTrackOnListByID(trackID);
+      } else if (this.dbclickTrackFunc === "playPlaylistByID") {
+        playPlaylistByID(this.id, trackID);
+      }
+    },
+    playThisListDefault(trackID) {
       if (this.type === "playlist") {
         playPlaylistByID(this.id, trackID);
       } else if (this.type === "album") {
         playAlbumByID(this.id, trackID);
       } else if (this.type === "tracklist") {
-        if (this.dbclickTrackFunc === "none") {
-          playAList(this.tracks, this.tracks[0].ar[0].id, "artist", trackID);
-        } else {
-          if (this.dbclickTrackFunc === "playPlaylistByID")
-            playPlaylistByID(this.id, trackID);
-        }
+        let trackIDs = this.tracks.map((t) => t.id);
+        playAList(trackIDs, this.tracks[0].ar[0].id, "artist", trackID);
       }
     },
     play() {
-      appendTrackToPlayerList(this.clickTrack, true);
+      appendTrackToPlayerList(this.clickTrack.id, true);
     },
     playNext() {
-      appendTrackToPlayerList(this.clickTrack);
+      appendTrackToPlayerList(this.clickTrack.id);
     },
   },
 };

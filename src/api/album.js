@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import { mapTrackPlayableStatus } from "@/utils/common";
 
 export function getAlbum(id) {
   return request({
@@ -7,6 +8,9 @@ export function getAlbum(id) {
     params: {
       id,
     },
+  }).then((data) => {
+    data.songs = mapTrackPlayableStatus(data.songs);
+    return data;
   });
 }
 

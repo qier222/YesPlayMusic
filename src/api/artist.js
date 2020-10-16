@@ -9,6 +9,7 @@ export function getArtist(id) {
     },
   });
 }
+
 export function getArtistAlbum(params) {
   // 必选参数 : id: 歌手 id
   // 可选参数 : limit: 取出数量 , 默认为 50

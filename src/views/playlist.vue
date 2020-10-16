@@ -46,10 +46,14 @@
             PLAY
           </ButtonTwoTone>
           <ButtonTwoTone
-            @click.native="shufflePlay"
-            :iconClass="`shuffle`"
+            v-if="
+              isLoggedIn && playlist.creator.userId !== settings.user.userId
+            "
+            shape="round"
+            :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
             :iconButton="true"
-            :horizontalPadding="11"
+            :horizontalPadding="0"
+            @click.native="likePlaylist"
           >
           </ButtonTwoTone>
         </div>
@@ -76,10 +80,11 @@
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
 import NProgress from "nprogress";
-import { getPlaylistDetail } from "@/api/playlist";
-import { playPlaylistByID } from "@/utils/play";
+import { getPlaylistDetail, subscribePlaylist } from "@/api/playlist";
+import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
 import { mapTrackPlayableStatus } from "@/utils/common";
+import { isLoggedIn } from "@/utils/auth";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
@@ -115,7 +120,10 @@ export default {
     window.removeEventListener("scroll", this.handleScroll, true);
   },
   computed: {
-    ...mapState(["player"]),
+    ...mapState(["player", "settings"]),
+    isLoggedIn() {
+      return isLoggedIn();
+    },
   },
   methods: {
     ...mapMutations([
@@ -125,16 +133,24 @@ export default {
     ]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     playPlaylistByID(trackID = "first") {
-      playPlaylistByID(this.playlist.id, trackID);
+      let trackIDs = this.playlist.trackIds.map((t) => t.id);
+      playAList(trackIDs, this.playlist.id, "playlist", trackID);
     },
-    shufflePlay() {
-      this.playPlaylistByID();
-      this.shuffleTheList();
+    likePlaylist() {
+      subscribePlaylist({
+        id: this.playlist.id,
+        t: this.playlist.subscribed ? 2 : 1,
+      }).then((data) => {
+        if (data.code === 200)
+          this.playlist.subscribed = !this.playlist.subscribed;
+        getPlaylistDetail(this.id, true).then((data) => {
+          this.playlist = data.playlist;
+        });
+      });
     },
     loadData(id, next = undefined) {
-      console.log("loadData");
       this.id = id;
-      getPlaylistDetail(this.id)
+      getPlaylistDetail(this.id, true)
         .then((data) => {
           this.playlist = data.playlist;
           this.tracks = data.playlist.tracks;
@@ -142,6 +158,7 @@ export default {
           NProgress.done();
           if (next !== undefined) next();
           this.show = true;
+          this.lastLoadedTrackIndex = data.playlist.tracks.length - 1;
           if (this.playlist.trackCount > this.tracks.length) {
             window.addEventListener("scroll", this.handleScroll, true);
           }
@@ -233,26 +250,7 @@ export default {
       margin-top: 32px;
       display: flex;
       button {
-        display: flex;
-        align-items: center;
-        font-size: 18px;
-        font-weight: 600;
-        background-color: rgba(51, 94, 234, 0.1);
-        color: #335eea;
-        padding: 8px 16px;
-        border-radius: 8px;
-        margin-right: 12px;
-        .svg-icon {
-          width: 16px;
-          height: 16px;
-          margin-right: 8px;
-        }
-      }
-      .shuffle {
-        padding: 8px 11px;
-        .svg-icon {
-          margin: 0;
-        }
+        margin-right: 16px;
       }
     }
   }

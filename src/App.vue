@@ -11,7 +11,11 @@
       <Player
         v-if="this.$store.state.player.enable"
         ref="player"
-        v-show="this.$route.name !== 'mv'"
+        v-show="
+          ['mv', 'loginUsername', 'login', 'loginAccount'].includes(
+            this.$route.name
+          ) === false
+        "
     /></transition>
     <GlobalEvents :filter="globalEventFilter" @keydown.space="play" />
   </div>
@@ -50,13 +54,9 @@ export default {
   font-family: "Barlow", -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
     WenQuanYi Micro Hei, sans-serif;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  // margin-top: 60px;
-
   width: 100%;
 }
+
 html {
   overflow-y: overlay;
   min-width: 1000px;
@@ -78,7 +78,6 @@ button {
 }
 input,
 button {
-  font-family: "Barlow", sans-serif;
   &:focus {
     outline: none;
   }

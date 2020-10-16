@@ -17,27 +17,34 @@
     </div>
     <div class="controls">
       <div class="playing">
-        <router-link :to="`/album/${player.currentTrack.album.id}`"
-          ><img :src="player.currentTrack.album.picUrl | resizeImage" />
+        <router-link :to="`/album/${currentTrack.al.id}`"
+          ><img :src="currentTrack.al.picUrl | resizeImage" />
         </router-link>
         <div class="track-info">
           <div class="name">
             <router-link
               :to="'/' + player.listInfo.type + '/' + player.listInfo.id"
-              >{{ player.currentTrack.name }}</router-link
+              >{{ currentTrack.name }}</router-link
             >
           </div>
           <div class="artist">
-            <span
-              v-for="(ar, index) in player.currentTrack.artists"
-              :key="ar.id"
-            >
+            <span v-for="(ar, index) in currentTrack.ar" :key="ar.id">
               <router-link :to="`/artist/${ar.id}`">{{ ar.name }}</router-link>
-              <span v-if="index !== player.currentTrack.artists.length - 1"
-                >,
-              </span>
+              <span v-if="index !== currentTrack.ar.length - 1">, </span>
             </span>
           </div>
+        </div>
+        <div class="like-button" v-show="isLoggedIn">
+          <button-icon @click.native="likeCurrentSong">
+            <svg-icon
+              icon-class="heart"
+              v-show="!liked.songs.includes(currentTrack.id)"
+            ></svg-icon>
+            <svg-icon
+              icon-class="heart-solid"
+              v-show="liked.songs.includes(currentTrack.id)"
+            ></svg-icon>
+          </button-icon>
         </div>
       </div>
       <div class="middle-control-buttons">
@@ -106,6 +113,9 @@
 <script>
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { mapState, mapMutations, mapActions } from "vuex";
+import { isLoggedIn } from "@/utils/auth";
+import { userLikedSongsIDs } from "@/api/user";
+import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
 
 import ButtonIcon from "@/components/ButtonIcon.vue";
@@ -128,9 +138,17 @@ export default {
     setInterval(() => {
       this.progress = ~~this.howler.seek();
     }, 1000);
+    if (this.isLoggedIn) {
+      userLikedSongsIDs(this.settings.user.userId).then((data) => {
+        this.updateLikedSongs(data.ids);
+      });
+    }
   },
   computed: {
-    ...mapState(["player", "howler", "Howler"]),
+    ...mapState(["player", "howler", "Howler", "settings", "liked"]),
+    currentTrack() {
+      return this.player.currentTrack;
+    },
     volume: {
       get() {
         return this.player.volume;
@@ -147,8 +165,11 @@ export default {
       return this.howler.playing();
     },
     progressMax() {
-      let max = ~~(this.player.currentTrack.time / 1000);
+      let max = ~~(this.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
+    },
+    isLoggedIn() {
+      return isLoggedIn();
     },
   },
   methods: {
@@ -158,6 +179,7 @@ export default {
       "shuffleTheList",
       "updatePlayerState",
       "updateRepeatStatus",
+      "updateLikedSongs",
     ]),
     ...mapActions([
       "nextTrack",
@@ -170,22 +192,22 @@ export default {
         this.howler.pause();
       } else {
         if (this.howler.state() === "unloaded") {
-          this.playTrackOnListByID(this.player.currentTrack.id);
+          this.playTrackOnListByID(this.currentTrack.id);
         }
         this.howler.play();
         if (this.howler._onend.length === 0) {
           this.addNextTrackEvent();
-          updateMediaSessionMetaData(this.player.currentTrack);
+          updateMediaSessionMetaData(this.currentTrack);
         }
       }
     },
     next() {
-      this.nextTrack(true);
       this.progress = 0;
+      this.nextTrack(true);
     },
     previous() {
-      this.previousTrack();
       this.progress = 0;
+      this.previousTrack();
     },
     shuffle() {
       if (this.player.shuffle === true) {
@@ -227,6 +249,20 @@ export default {
       let min = ~~((value / 60) % 60);
       let sec = (~~(value % 60)).toString().padStart(2, "0");
       return `${min}:${sec}`;
+    },
+    likeCurrentSong() {
+      let id = this.currentTrack.id;
+      let like = true;
+      if (this.liked.songs.includes(id)) like = false;
+      likeATrack({ id, like }).then(() => {
+        if (like === false) {
+          this.updateLikedSongs(this.liked.songs.filter((d) => d !== id));
+        } else {
+          let newLikeSongs = this.liked.songs;
+          newLikeSongs.push(id);
+          this.updateLikedSongs(newLikeSongs);
+        }
+      });
     },
   },
 };
@@ -289,6 +325,7 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
+      word-break: break-all;
       &:hover {
         text-decoration: underline;
       }
@@ -300,6 +337,7 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
+      word-break: break-all;
       a {
         cursor: pointer;
         &:hover {
@@ -319,11 +357,11 @@ export default {
     margin: 0 8px;
   }
   .play {
-    height: 48px;
-    width: 48px;
+    height: 42px;
+    width: 42px;
     .svg-icon {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
     }
   }
 }
@@ -350,5 +388,9 @@ export default {
       width: 84px;
     }
   }
+}
+
+.like-button {
+  margin-left: 16px;
 }
 </style>

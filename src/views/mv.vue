@@ -13,7 +13,8 @@
           {{ mv.data.name }}
         </div>
         <div class="info">
-          {{ mv.data.playCount }} Views · {{ mv.data.publishTime }}
+          {{ mv.data.playCount | formatPlayCount }} Views ·
+          {{ mv.data.publishTime }}
         </div>
       </div>
     </div>

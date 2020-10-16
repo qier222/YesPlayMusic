@@ -17,13 +17,13 @@ export function dailyRecommendPlaylist(params) {
   });
 }
 
-export function getPlaylistDetail(id) {
+export function getPlaylistDetail(id, noCache = false) {
+  let params = { id };
+  if (noCache) params.timestamp = new Date().getTime();
   return request({
     url: "/playlist/detail",
     method: "get",
-    params: {
-      id,
-    },
+    params,
   });
 }
 
@@ -61,5 +61,15 @@ export function toplists() {
   return request({
     url: "/toplist",
     method: "get",
+  });
+}
+
+export function subscribePlaylist(params) {
+  // 必选参数 :
+  // t : 类型,1:收藏,2:取消收藏 id : 歌单 id
+  return request({
+    url: "/playlist/subscribe",
+    method: "get",
+    params,
   });
 }

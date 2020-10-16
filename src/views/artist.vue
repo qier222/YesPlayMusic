@@ -170,7 +170,8 @@ export default {
       });
     },
     playPopularSongs(trackID = "first") {
-      playAList(this.popularTracks, this.artist.id, "artist", trackID);
+      let trackIDs = this.popularTracks.map((t) => t.id);
+      playAList(trackIDs, this.artist.id, "artist", trackID);
     },
   },
   created() {

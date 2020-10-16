@@ -1,94 +1,43 @@
 <template>
   <div class="next-tracks">
     <h1>Now Playing</h1>
-    <div class="track-list">
-      <div class="track playing">
-        <img :src="currentTrack.album.picUrl | resizeImage" />
-        <div class="title-and-artist">
-          <div class="container">
-            <div class="title">
-              {{ currentTrack.name }}
-            </div>
-            <div class="artist">
-              <span v-for="(ar, index) in currentTrack.artists" :key="ar.id">
-                <router-link :to="`/artist/${ar.id}`">{{ ar.name }}</router-link
-                ><span v-if="index !== currentTrack.artists.length - 1"
-                  >,
-                </span>
-              </span>
-            </div>
-          </div>
-          <div></div>
-        </div>
-        <div class="album">
-          <div class="container">
-            <router-link :to="`/album/${currentTrack.album.id}`">{{
-              currentTrack.album.name
-            }}</router-link>
-          </div>
-          <div></div>
-        </div>
-        <div class="time">
-          {{ currentTrack.time | formatTime }}
-        </div>
-      </div>
-    </div>
+    <TrackList
+      :tracks="[currentTrack]"
+      :type="'playlist'"
+      dbclickTrackFunc="none"
+    />
     <h1>Next Up</h1>
-    <div class="track-list">
-      <div
-        class="track"
-        v-for="track in tracks"
-        :class="{ disable: !track.playable }"
-        :title="!track.playable ? track.reason : ''"
-        :key="`${track.id}-${track.sort}`"
-        @dblclick="playTrackOnListByID(track.id)"
-      >
-        <img :src="track.album.picUrl | resizeImage" />
-        <div class="title-and-artist">
-          <div class="container">
-            <div class="title">
-              {{ track.name }}
-            </div>
-            <div class="artist">
-              <span v-for="(ar, index) in track.artists" :key="ar.id">
-                <router-link :to="`/artist/${ar.id}`">{{ ar.name }}</router-link
-                ><span v-if="index !== track.artists.length - 1">, </span>
-              </span>
-            </div>
-          </div>
-          <div></div>
-        </div>
-        <div class="album">
-          <div class="container">
-            <router-link :to="`/album/${track.album.id}`">{{
-              track.album.name
-            }}</router-link>
-          </div>
-          <div></div>
-        </div>
-        <div class="time">
-          {{ parseInt((track.time % (1000 * 60 * 60)) / (1000 * 60)) }}:{{
-            parseInt((track.time % (1000 * 60)) / 1000)
-              .toString()
-              .padStart(2, "0")
-          }}
-        </div>
-      </div>
-    </div>
+
+    <TrackList
+      :tracks="sortedTracks"
+      :type="'playlist'"
+      dbclickTrackFunc="playTrackOnListByID"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
+import { getTrackDetail } from "@/api/track";
+import TrackList from "@/components/TrackList.vue";
 
 export default {
   name: "Next",
+  components: {
+    TrackList,
+  },
+  data() {
+    return {
+      tracks: [],
+      showTracks: [],
+    };
+  },
   computed: {
     ...mapState(["player"]),
     currentTrack() {
       return this.player.currentTrack;
     },
-    tracks() {
+    sortedTracks() {
       function compare(property) {
         return function(obj1, obj2) {
           var value1 = obj1[property];
@@ -96,15 +45,45 @@ export default {
           return value1 - value2;
         };
       }
-      return this.player.list
-        .filter(
-          (t) => t.sort > this.player.currentTrack.sort // && t.playable === true
-        )
+      let tracks = this.tracks
+        .filter((t) => t.sort > this.player.currentTrack.sort)
         .sort(compare("sort"));
+      return tracks;
+    },
+  },
+  watch: {
+    currentTrack() {
+      this.loadTracks();
     },
   },
   methods: {
     ...mapActions(["playTrackOnListByID"]),
+    loadTracks() {
+      console.time("loadTracks");
+      let loadedTrackIDs = this.tracks.map((t) => t.id);
+      let basicTracks = this.player.list
+        .filter(
+          (t) =>
+            t.sort > this.player.currentTrack.sort &&
+            t.sort <= this.player.currentTrack.sort + 100
+        )
+        .filter((t) => loadedTrackIDs.includes(t.id) === false);
+
+      let trackIDs = basicTracks.map((t) => t.id);
+      if (trackIDs.length > 0) {
+        getTrackDetail(trackIDs.join(",")).then((data) => {
+          let newTracks = data.songs.map((t) => {
+            t.sort = this.player.list.find((t2) => t2.id == t.id).sort;
+            return t;
+          });
+          this.tracks.push(...newTracks);
+        });
+      }
+      console.timeEnd("loadTracks");
+    },
+  },
+  activated() {
+    this.loadTracks();
   },
 };
 </script>
