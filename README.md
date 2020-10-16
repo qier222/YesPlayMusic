@@ -6,7 +6,7 @@
   <h2 align="center" style="font-weight: 600">YesPlayMusic</h2>
 
   <p align="center">
-    可能是最好看的第三方网易云播放器
+    高颜值的第三方网易云播放器
     <br />
     <a href="https://music.bluepill.one" target="blank"><strong>⏩️ 访问 DEMO ⏪</strong></a>
     <br />
@@ -20,10 +20,12 @@
 
 - ✅ 使用 Vue.js 全家桶开发
 - ⭐ 简洁美观的 UI
+- 🔴 网易云账号登录
 - ⏭️ 支持 MediaSession API，可以使用系统快捷键操作上一首下一首
 - 😾 不能播放的歌曲会显示为灰色
 - 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
 - 🙉 支持显示歌曲和专辑的 Explicit 标志
+- 📺 MV 播放
 - 🚫🤝 无任何社交功能
 - 🛠 更多特性开发中
 
@@ -59,9 +61,7 @@ npm build
 ## ☑️ Todo
 
 - 中文支持
-- MV 播放
 - Dark Mode
-- 网易云账号登录（真·登录）
 - 私人 FM
 - 播放记录
 - 无限播放模式（播放完列表后自动播放相似歌曲）
