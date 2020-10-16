@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import store from "@/store";
 import NProgress from "nprogress";
 import "@/assets/css/nprogress.css";
+import Cookies from "js-cookie";
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
 
@@ -16,7 +17,21 @@ const routes = [
       keepAlive: true,
     },
   },
-  { path: "/login", name: "login", component: () => import("@/views/login") },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/login"),
+  },
+  {
+    path: "/login/username",
+    name: "loginUsername",
+    component: () => import("@/views/loginUsername"),
+  },
+  {
+    path: "/login/account",
+    name: "loginAccount",
+    component: () => import("@/views/loginAccount"),
+  },
   {
     path: "/playlist/:id",
     name: "playlist",
@@ -88,11 +103,6 @@ const router = new VueRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      // return new Promise((resolve) => {
-      //   setTimeout(() => {
-      //     resolve(savedPosition);
-      //   }, 100);
-      // });
       return savedPosition;
     } else {
       return { x: 0, y: 0 };
@@ -103,6 +113,12 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requireLogin) {
     if (store.state.settings.user.nickname === undefined) {
+      next({ path: "/login" });
+    }
+    if (
+      Cookies.get("MUSIC_U") === undefined &&
+      Cookies.get("loginMode") === "account"
+    ) {
       next({ path: "/login" });
     } else {
       next();

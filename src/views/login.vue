@@ -1,95 +1,64 @@
 <template>
   <div class="login">
-    <div>
-      <div class="title">Login</div>
-      <div class="step">
-        <div class="search-box">
-          <div class="container">
-            <svg-icon icon-class="search" />
-            <div class="input">
-              <input
-                placeholder="请输入你的用户名"
-                v-model="keyword"
-                @keydown.enter="search"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="name" v-show="activeUser.nickname === undefined">
-          按Enter搜索
-        </div>
-        <div class="name" v-show="activeUser.nickname !== undefined">
-          在列表中选中你的账号
-        </div>
-        <div class="user-list">
-          <div
-            class="user"
-            v-for="user in result"
-            :key="user.id"
-            :class="{ active: user.nickname === activeUser.nickname }"
-            @click="activeUser = user"
-          >
-            <img class="head" :src="user.avatarUrl | resizeImage" />
-            <div class="nickname">
-              {{ user.nickname }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <ButtonTwoTone
-        @click.native="confirm"
-        v-show="activeUser.nickname !== undefined"
-        >确定</ButtonTwoTone
+    <div class="section-1">
+      <img src="/img/logos/yesplaymusic.png" />
+      <svg-icon icon-class="x"></svg-icon>
+      <img src="/img/logos/netease-music.png" />
+    </div>
+    <div class="section-2">
+      <div
+        class="card"
+        @mouseover="activeCard = 1"
+        @mouseleave="activeCard = 0"
+        @click="goTo('account')"
       >
+        <div class="container" :class="{ active: activeCard === 1 }">
+          <div class="title-info">
+            <div class="title">登录网易云账号</div>
+            <div class="info">可访问全部数据</div>
+          </div>
+          <svg-icon icon-class="arrow-right"></svg-icon>
+        </div>
+      </div>
+      <div
+        class="card"
+        @mouseover="activeCard = 2"
+        @mouseleave="activeCard = 0"
+        @click="goTo('username')"
+      >
+        <div class="container" :class="{ active: activeCard === 2 }">
+          <div class="title-info">
+            <div class="title">搜索网易云账号</div>
+            <div class="info">只能读取账号公开数据</div>
+          </div>
+          <svg-icon icon-class="arrow-right"></svg-icon>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
 import NProgress from "nprogress";
-import { search } from "@/api/others";
-import { userPlaylist } from "@/api/user";
 
-import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
+import SvgIcon from "@/components/SvgIcon.vue";
 
 export default {
   name: "Login",
   components: {
-    ButtonTwoTone,
+    SvgIcon,
   },
   data() {
     return {
-      keyword: "",
-      result: [],
-      activeUser: {},
+      activeCard: 0,
     };
   },
   created() {
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateUser"]),
-    search() {
-      search({ keywords: this.keyword, limit: 9, type: 1002 }).then((data) => {
-        this.result = data.result.userprofiles;
-        this.activeUser = this.result[0];
-      });
-    },
-    confirm() {
-      this.updateUser(this.activeUser);
-      userPlaylist({
-        uid: this.activeUser.userId,
-        limit: 1,
-      }).then((data) => {
-        this.$store.commit("updateUserInfo", {
-          key: "likedSongPlaylistID",
-          value: data.playlist[0].id,
-        });
-        this.$router.push({ path: "/library" });
-      });
+    goTo(path) {
+      this.$router.push({ path: "/login/" + path });
     },
   },
 };
@@ -98,95 +67,83 @@ export default {
 <style lang="scss" scoped>
 .login {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 192px);
 }
 
-.title {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 48px;
-}
-
-.step {
-  margin-top: 18px;
-  .name {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: rgba(0, 0, 0, 0.78);
-  }
-}
-
-.search-box {
-  .container {
-    display: flex;
-    align-items: center;
-    height: 48px;
-    border-radius: 11px;
-    width: 326px;
-    background: #eaeffd;
-  }
-
-  .svg-icon {
-    height: 22px;
-    width: 22px;
-    color: #335eea;
-    margin: {
-      left: 12px;
-      right: 8px;
-    }
-  }
-
-  input {
-    flex: 1;
-    font-size: 22px;
-    border: none;
-    background: transparent;
-    width: 100%;
-    font-weight: 600;
-    margin-top: -1px;
-    color: #335eea;
-    &::placeholder {
-      color: #335eeac4;
-    }
-  }
-}
-
-.user-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 24px;
-  margin-bottom: 24px;
-}
-
-.user {
-  margin-right: 16px;
+.section-1 {
   margin-bottom: 16px;
   display: flex;
   align-items: center;
-  padding: 12px 12px 12px 16px;
-  border-radius: 8px;
-  width: 256px;
-  transition: 0.2s;
-  user-select: none;
-  .head {
-    border-radius: 50%;
-    height: 44px;
-    width: 44px;
+  img {
+    height: 64px;
+    margin: 20px;
   }
-  .nickname {
-    font-size: 18px;
-    margin-left: 12px;
-  }
-  &:hover {
-    background: #f5f5f7;
+  .svg-icon {
+    height: 24px;
+    width: 24px;
+    color: rgba(82, 82, 82, 0.28);
   }
 }
 
-.user.active {
-  transition: 0.2s;
+.section-2 {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.card {
+  cursor: pointer;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #eaeffd;
-  .name {
+  border-radius: 8px;
+  height: 128px;
+  width: 300px;
+  transition: all 0.3s;
+
+  .active {
+    .title-info {
+      transform: translateX(-8px);
+    }
+    .svg-icon {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(8px);
+    }
+  }
+
+  .container {
+    display: flex;
+    // justify-content: space-around;
+    align-items: center;
+
     color: #335eea;
+  }
+
+  .title-info {
+    transition: all 0.3s;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .info {
+    margin-top: 2px;
+    font-size: 14px;
+    color: rgba(51, 94, 234, 0.78);
+  }
+  .svg-icon {
+    opacity: 0;
+    height: 24px;
+    width: 24px;
+    margin-left: 16px;
+    transition: all 0.3s;
   }
 }
 </style>
