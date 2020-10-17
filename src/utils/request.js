@@ -1,7 +1,8 @@
 import axios from "axios";
+import { baseURL } from "@/config/request";
 
 const service = axios.create({
-  baseURL: "/api",
+  baseURL: baseURL,
   withCredentials: true,
   timeout: 15000,
 });
