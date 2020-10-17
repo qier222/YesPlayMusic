@@ -25,9 +25,6 @@ export default {
   updateListInfo(state, info) {
     state.player.listInfo = info;
   },
-  updateShuffleStatus(state, status) {
-    state.player.shuffle = status;
-  },
   updateRepeatStatus(state, status) {
     state.player.repeat = status;
   },
@@ -66,13 +63,24 @@ export default {
       return track;
     });
   },
+  turnOffShuffleMode(state) {
+    state.player.shuffle = false;
+    state.player.list = JSON.parse(
+      JSON.stringify(state.player.notShuffledList)
+    );
+    state.player.currentTrack.sort = state.player.list.find(
+      (t) => t.id === state.player.currentTrack.id
+    ).sort;
+  },
   shuffleTheListBeforePlay(state) {
+    state.player.notShuffledList = JSON.parse(
+      JSON.stringify(state.player.list)
+    );
     let newSorts = shuffleAList(state.player.list);
     state.player.list = state.player.list.map((track) => {
       track.sort = newSorts[track.id];
       return track;
     });
-    console.table(state.player.list);
   },
   updateUser(state, user) {
     state.settings.user = user;

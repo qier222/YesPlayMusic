@@ -174,9 +174,9 @@ export default {
   },
   methods: {
     ...mapMutations([
-      "updateShuffleStatus",
       "updatePlayerList",
       "turnOnShuffleMode",
+      "turnOffShuffleMode",
       "updatePlayerState",
       "updateRepeatStatus",
       "updateLikedSongs",
@@ -211,8 +211,7 @@ export default {
     },
     shuffle() {
       if (this.player.shuffle === true) {
-        this.updateShuffleStatus(false);
-        this.updatePlayerList(this.player.notShuffledList);
+        this.turnOffShuffleMode();
       } else {
         this.turnOnShuffleMode();
       }

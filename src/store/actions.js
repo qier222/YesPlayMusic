@@ -7,12 +7,6 @@ export default {
     getTrackDetail(basicTrack.id).then((data) => {
       let track = data.songs[0];
       track.sort = basicTrack.sort;
-      console.log(track);
-
-      if (track.playable === false) {
-        dispatch("nextTrack");
-        return;
-      }
 
       let time = state.howler.seek();
       scrobble({
@@ -26,6 +20,11 @@ export default {
       commit("updateCurrentTrack", track);
       updateMediaSessionMetaData(track);
       document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
+
+      if (track.playable === false) {
+        dispatch("nextTrack");
+        return;
+      }
 
       commit(
         "replaceMP3",

@@ -140,11 +140,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations([
-      "updatePlayerList",
-      "appendTrackToPlayerList",
-      "shuffleTheList",
-    ]),
+    ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     loadData(id, next = undefined) {
       getArtist(id).then((data) => {

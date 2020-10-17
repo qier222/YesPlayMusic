@@ -131,11 +131,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations([
-      "updatePlayerList",
-      "appendTrackToPlayerList",
-      "shuffleTheList",
-    ]),
+    ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     playAlbumByID(id, trackID = "first") {
       if (this.tracks.find((t) => t.playable !== false) === undefined) {
