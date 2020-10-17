@@ -15,9 +15,9 @@ service.interceptors.response.use(
       } else if (res.code === 502) {
         alert(res.msg);
       } else if (res.code === 301) {
-        alert("required login");
+        alert("login required");
       } else {
-        alert("unknow error");
+        alert("unknown error");
       }
     } else {
       return res;

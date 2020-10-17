@@ -137,8 +137,8 @@ export default {
           return;
         }
         loginWithPhone({
-          countrycode: this.countryCode.replace("+", "").replaceAll(" ", ""),
-          phone: this.phoneNumber.replaceAll(" ", ""),
+          countrycode: this.countryCode.replace("+", "").replace(/\s/g, ''),
+          phone: this.phoneNumber.replace(/\s/g, ''),
           password: "fakePassword",
           md5_password: md5(this.password).toString(),
         })
@@ -156,7 +156,7 @@ export default {
           return;
         }
         loginWithEmail({
-          email: this.email.replaceAll(" ", ""),
+          email: this.email.replace(/\s/g, ''),
           password: "fakePassword",
           md5_password: md5(this.password).toString(),
         })

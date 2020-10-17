@@ -1,5 +1,4 @@
 import { Howl, Howler } from "howler";
-import state from "./state";
 import { shuffleAList } from "@/utils/common";
 
 export default {
@@ -85,7 +84,7 @@ export default {
   updateUser(state, user) {
     state.settings.user = user;
   },
-  updateUserInfo(sate, { key, value }) {
+  updateUserInfo(state, { key, value }) {
     state.settings.user[key] = value;
   },
   updateLikedSongs(state, trackIDs) {

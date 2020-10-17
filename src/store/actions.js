@@ -1,4 +1,3 @@
-// import { getMP3 } from "@/api/track";
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { getTrackDetail, scrobble } from "@/api/track";
 
