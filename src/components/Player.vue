@@ -117,6 +117,7 @@ import { isLoggedIn } from "@/utils/auth";
 import { userLikedSongsIDs } from "@/api/user";
 import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
+import { Howler } from "howler";
 
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import VueSlider from "vue-slider-component";
@@ -145,7 +146,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["player", "howler", "Howler", "settings", "liked"]),
+    ...mapState(["player", "howler", "settings", "liked"]),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -155,7 +156,7 @@ export default {
       },
       set(value) {
         this.updatePlayerState({ key: "volume", value });
-        this.Howler.volume(value);
+        Howler.volume(value);
       },
     },
     playing() {

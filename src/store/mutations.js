@@ -1,4 +1,4 @@
-import { Howl } from "howler";
+import { Howl, Howler } from "howler";
 import state from "./state";
 import { shuffleAList } from "@/utils/common";
 
@@ -10,7 +10,7 @@ export default {
     state.player.currentTrack = track;
   },
   replaceMP3(state, mp3) {
-    state.Howler.unload();
+    Howler.unload();
     state.howler = new Howl({
       src: [mp3],
       autoplay: true,

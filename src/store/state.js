@@ -1,7 +1,4 @@
-import { Howler } from "howler";
-
 export default {
-  Howler: Howler,
   howler: null,
   liked: {
     songs: [],

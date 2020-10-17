@@ -4,7 +4,7 @@ import state from "./state";
 import mutations from "./mutations";
 import actions from "./actions";
 import initState from "./initState";
-import { Howl } from "howler";
+import { Howl, Howler } from "howler";
 
 if (localStorage.getItem("appVersion") === null) {
   localStorage.setItem("player", JSON.stringify(initState.player));
@@ -36,5 +36,6 @@ store.state.howler = new Howl({
   html5: true,
   format: ["mp3"],
 });
+Howler.volume(store.state.player.volume);
 
 export default store;

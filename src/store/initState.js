@@ -1,7 +1,4 @@
-import { Howler } from "howler";
-
 const initState = {
-  Howler: Howler,
   howler: null,
   liked: {
     songs: [],
