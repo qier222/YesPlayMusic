@@ -1,5 +1,6 @@
 import { Howl } from "howler";
 import state from "./state";
+import { shuffleAList } from "@/utils/common";
 
 export default {
   updatePlayerState(state, { key, value }) {
@@ -50,35 +51,28 @@ export default {
     track.sort = state.player.currentTrack.sort + 1;
     state.player.list.push(track);
   },
-  shuffleTheList(state) {
-    let getOneRandomly = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  turnOnShuffleMode(state) {
     state.player.notShuffledList = JSON.parse(
       JSON.stringify(state.player.list)
     );
+    state.player.shuffle = true;
 
-    let sorts = Array.from(new Array(state.player.list.length).keys());
-    sorts = sorts.filter((no) => no != 0);
-    let shuffledList = state.player.list.map((track) => {
-      if (track.id === state.player.currentTrack.id) {
-        // 确保正在播放的歌的sort是第一个
-        track.sort = 0;
-        return track;
-      }
-      let sortNo = getOneRandomly(sorts);
-      sorts = sorts.filter((no) => no != sortNo);
-      track.sort = sortNo;
+    let newSorts = shuffleAList(
+      state.player.list.filter((t) => t.sort > state.player.currentTrack.sort)
+    );
+
+    state.player.list = state.player.list.map((track) => {
+      if (newSorts[track.id] !== undefined) track.sort = newSorts[track.id];
       return track;
     });
-
-    state.player.list = shuffledList;
-
-    // 更新当前播放歌曲的sort
-    let currentTrack = state.player.list.find(
-      (t) => t.id === state.player.currentTrack.id
-    );
-    state.player.currentTrack.sort = currentTrack.sort;
-
-    state.player.shuffle = true;
+  },
+  shuffleTheListBeforePlay(state) {
+    let newSorts = shuffleAList(state.player.list);
+    state.player.list = state.player.list.map((track) => {
+      track.sort = newSorts[track.id];
+      return track;
+    });
+    console.table(state.player.list);
   },
   updateUser(state, user) {
     state.settings.user = user;
@@ -88,5 +82,15 @@ export default {
   },
   updateLikedSongs(state, trackIDs) {
     state.liked.songs = trackIDs;
+  },
+  switchSortBetweenTwoTracks(state, { trackID1, trackID2 }) {
+    let t1 = state.player.list.find((t) => t.id === trackID1);
+    let t2 = state.player.list.find((t) => t.id === trackID2);
+    let sorts = [t1.sort, t2.sort];
+    state.player.list = state.player.list.map((t) => {
+      if (t.id === t1.id) t.sort = sorts[1];
+      if (t.id === t2.id) t.sort = sorts[0];
+      return t;
+    });
   },
 };

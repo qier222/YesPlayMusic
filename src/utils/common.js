@@ -38,3 +38,16 @@ export function randomNum(minNum, maxNum) {
       return 0;
   }
 }
+
+export function shuffleAList(list) {
+  let sortsList = list.map((t) => t.sort);
+  for (let i = 1; i < sortsList.length; i++) {
+    const random = Math.floor(Math.random() * (i + 1));
+    [sortsList[i], sortsList[random]] = [sortsList[random], sortsList[i]];
+  }
+  let newSorts = {};
+  list.map((track) => {
+    newSorts[track.id] = sortsList.pop();
+  });
+  return newSorts;
+}

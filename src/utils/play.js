@@ -8,6 +8,7 @@ export function playAList(list, id, type, trackID = "first") {
     return { sort: index, id };
   });
   store.commit("updatePlayerList", filteredList);
+  if (store.state.player.shuffle) store.commit("shuffleTheListBeforePlay");
 
   if (trackID === "first") store.dispatch("playFirstTrackOnList");
   else store.dispatch("playTrackOnListByID", trackID);

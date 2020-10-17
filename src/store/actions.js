@@ -37,11 +37,22 @@ export default {
     });
   },
   playFirstTrackOnList({ state, dispatch }) {
-    dispatch("switchTrack", state.player.list[0]);
+    dispatch(
+      "switchTrack",
+      state.player.list.find((t) => t.sort === 0)
+    );
   },
-  playTrackOnListByID(context, trackID) {
-    let track = context.state.player.list.find((t) => t.id === trackID);
-    context.dispatch("switchTrack", track);
+  playTrackOnListByID({ state, commit, dispatch }, trackID) {
+    let track = state.player.list.find((t) => t.id === trackID);
+    dispatch("switchTrack", track);
+    if (state.player.shuffle) {
+      // 当随机模式开启时，双击列表的一首歌进行播放，此时要把这首歌的sort调到第一(0)，这样用户就能随机播放完整的歌单
+      let otherTrack = state.player.list.find((t) => t.sort === 0);
+      commit("switchSortBetweenTwoTracks", {
+        trackID1: track.id,
+        trackID2: otherTrack.id,
+      });
+    }
   },
   nextTrack({ state, dispatch }, realNext = false) {
     let nextTrack = state.player.list.find(
