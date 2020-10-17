@@ -44,7 +44,7 @@ git clone https://github.com/qier222/YesPlayMusic.git
 npm install
 ```
 
-4. 替换 `/src/utils/request.js` 里面 `baseURL` 的值为网易云 API 地址
+4. 替换 `/src/config/request.js` 里面 `baseURL` 的值为网易云 API 地址
 
 ```JS
 baseURL: "http://example.com",
