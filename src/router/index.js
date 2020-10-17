@@ -93,7 +93,7 @@ const routes = [
   {
     path: "/library/liked-songs",
     name: "likedSongs",
-    component: () => import("@/views/likedSongs"),
+    component: () => import("@/views/playlist"),
     meta: {
       requireLogin: true,
     },

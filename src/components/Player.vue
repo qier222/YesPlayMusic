@@ -17,19 +17,18 @@
     </div>
     <div class="controls">
       <div class="playing">
-        <router-link :to="`/album/${currentTrack.al.id}`"
-          ><img :src="currentTrack.al.picUrl | resizeImage" />
-        </router-link>
+        <img :src="currentTrack.al.picUrl | resizeImage" @click="goToAlbum" />
         <div class="track-info">
-          <div class="name">
-            <router-link
-              :to="'/' + player.listInfo.type + '/' + player.listInfo.id"
-              >{{ currentTrack.name }}</router-link
-            >
+          <div class="name" @click="goToList">
+            {{ currentTrack.name }}
           </div>
           <div class="artist">
-            <span v-for="(ar, index) in currentTrack.ar" :key="ar.id">
-              <router-link :to="`/artist/${ar.id}`">{{ ar.name }}</router-link>
+            <span
+              v-for="(ar, index) in currentTrack.ar"
+              :key="ar.id"
+              @click="goToArtist(ar.id)"
+            >
+              {{ ar.name }}
               <span v-if="index !== currentTrack.ar.length - 1">, </span>
             </span>
           </div>
@@ -175,7 +174,6 @@ export default {
   },
   methods: {
     ...mapMutations([
-      "updatePlayerList",
       "turnOnShuffleMode",
       "turnOffShuffleMode",
       "updatePlayerState",
@@ -263,6 +261,20 @@ export default {
         }
       });
     },
+    goToList() {
+      if (this.player.listInfo.id === this.settings.user.likedSongPlaylistID)
+        this.$router.push({ path: "/library/liked-songs" });
+      else
+        this.$router.push({
+          path: "/" + this.player.listInfo.type + "/" + this.player.listInfo.id,
+        });
+    },
+    goToAlbum() {
+      this.$router.push({ path: "/album/" + this.currentTrack.al.id });
+    },
+    goToArtist(id) {
+      this.$router.push({ path: "/artist/" + id });
+    },
   },
 };
 </script>
@@ -307,6 +319,7 @@ export default {
     height: 46px;
     border-radius: 5px;
     box-shadow: 0 6px 8px -2px rgba(0, 0, 0, 0.16);
+    cursor: pointer;
   }
   .track-info {
     height: 46px;
@@ -337,7 +350,7 @@ export default {
       -webkit-line-clamp: 1;
       overflow: hidden;
       word-break: break-all;
-      a {
+      span {
         cursor: pointer;
         &:hover {
           text-decoration: underline;

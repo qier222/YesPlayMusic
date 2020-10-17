@@ -1,6 +1,6 @@
 <template>
   <div v-show="show">
-    <div class="playlist-info">
+    <div class="playlist-info" v-if="!isLikeSongsPage">
       <Cover
         :url="playlist.coverImgUrl | resizeImage(1024)"
         :showPlayButton="true"
@@ -60,6 +60,14 @@
       </div>
     </div>
 
+    <div class="user-info" v-else>
+      <h1>
+        <img class="avatar" :src="settings.user.avatarUrl | resizeImage" />{{
+          settings.user.nickname
+        }}'s Liked Songs
+      </h1>
+    </div>
+
     <TrackList :tracks="tracks" :type="'playlist'" :id="playlist.id" />
 
     <transition name="fade">
@@ -114,7 +122,11 @@ export default {
     };
   },
   created() {
-    this.loadData(this.$route.params.id);
+    if (this.$route.name === "likedSongs") {
+      this.loadData(this.settings.user.likedSongPlaylistID);
+    } else {
+      this.loadData(this.$route.params.id);
+    }
   },
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll, true);
@@ -124,13 +136,12 @@ export default {
     isLoggedIn() {
       return isLoggedIn();
     },
+    isLikeSongsPage() {
+      return this.$route.name === "likedSongs";
+    },
   },
   methods: {
-    ...mapMutations([
-      "updatePlayerList",
-      "appendTrackToPlayerList",
-      "shuffleTheList",
-    ]),
+    ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     playPlaylistByID(trackID = "first") {
       let trackIDs = this.playlist.trackIds.map((t) => t.id);
@@ -287,6 +298,19 @@ export default {
       margin-top: 20px;
       color: #335eea;
       cursor: pointer;
+    }
+  }
+}
+
+.user-info {
+  h1 {
+    font-size: 42px;
+    .avatar {
+      height: 44px;
+      margin-right: 12px;
+      vertical-align: -7px;
+      border-radius: 50%;
+      border: rgba(0, 0, 0, 0.2);
     }
   }
 }
