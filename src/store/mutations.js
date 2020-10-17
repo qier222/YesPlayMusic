@@ -1,5 +1,4 @@
 import { Howl } from "howler";
-import state from "./state";
 
 export default {
   updatePlayerState(state, { key, value }) {
@@ -83,7 +82,7 @@ export default {
   updateUser(state, user) {
     state.settings.user = user;
   },
-  updateUserInfo(sate, { key, value }) {
+  updateUserInfo(state, { key, value }) {
     state.settings.user[key] = value;
   },
   updateLikedSongs(state, trackIDs) {
