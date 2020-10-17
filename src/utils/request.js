@@ -7,26 +7,34 @@ const service = axios.create({
   timeout: 15000,
 });
 
+const errors = new Map([
+  [401, 'The token you are using has expired.'],
+  [502, null],
+  [301, 'You must login to use this feature.'],
+  [-1, 'An unexpected error has occurred: '],
+]);
+
 service.interceptors.response.use(
   (response) => {
     const res = response.data;
+
     if (res.code !== 200) {
-      if (res.code === 401) {
-        alert("token expired");
-      } else if (res.code === 502) {
-        alert(res.msg);
-      } else if (res.code === 301) {
-        alert("required login");
-      } else {
-        alert("unknow error");
-      }
+      alert(
+        errors.has(res.code)
+          ? errors.get(res.code)
+            // null = `The server returned ${res.msg}`
+            || `The server returned ${res.msg}`
+          // -1 = default expection message
+          : errors.get(-1) + res.code
+      );
     } else {
       return res;
     }
   },
   (error) => {
-    console.log("err" + error);
-    alert("err " + error);
+    const errMsg = `error: ${error}`;
+    console.log(errMsg);
+
     return Promise.reject(error);
   }
 );
