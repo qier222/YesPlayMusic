@@ -10,17 +10,17 @@
     </div>
     <div class="navigation-links">
       <router-link to="/" :class="{ active: this.$route.name === 'home' }"
-        >Home</router-link
+        >{{ $t('message.home') }}</router-link
       >
       <router-link
         to="/explore"
         :class="{ active: this.$route.name === 'explore' }"
-        >Explore</router-link
+        >{{ $t('message.explore') }}</router-link
       >
       <router-link
         to="/library"
         :class="{ active: this.$route.name === 'library' }"
-        >Library</router-link
+        >{{ $t('message.library') }}</router-link
       >
     </div>
     <div class="right-part">
@@ -32,7 +32,7 @@
           <svg-icon icon-class="search" />
           <div class="input">
             <input
-              :placeholder="inputFocus ? '' : 'Search'"
+              :placeholder="inputFocus ? '' : $t('message.search')"
               v-model="keywords"
               @keydown.enter="goToSearchPage"
               @focus="inputFocus = true"
@@ -40,6 +40,10 @@
             />
           </div>
         </div>
+      </div>
+      <div class="locale-changer" @click="changeLang">
+        <svg-icon icon-class="translation" class="translation"
+      />
       </div>
     </div>
   </nav>
@@ -57,6 +61,7 @@ export default {
     return {
       inputFocus: false,
       keywords: "",
+      langs: ['zh-CN', 'en']
     };
   },
   methods: {
@@ -70,6 +75,12 @@ export default {
         query: { keywords: this.keywords },
       });
     },
+    changeLang() {
+      if (this.$i18n.locale === "zh-CN") {
+        return this.$i18n.locale = "en";
+      }
+      this.$i18n.locale = "zh-CN";
+    }
   },
 };
 </script>
@@ -133,6 +144,7 @@ nav {
     color: #335eea;
   }
 }
+
 .search {
   .svg-icon {
     height: 18px;
@@ -193,4 +205,15 @@ nav {
     width: 24px;
   }
 }
+
+.locale-changer {
+  position: relative;
+  .translation {
+    margin-left: 16px;
+    height: 48px;
+    width: 48px;
+  }
+}
+
+
 </style>

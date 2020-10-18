@@ -3,6 +3,7 @@ import VueAnalytics from "vue-analytics";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import i18n from '@/locale';
 import "@/assets/icons";
 import "@/utils/filters";
 import { initMediaSession } from "@/utils/mediaSession";
@@ -18,6 +19,7 @@ Vue.config.productionTip = false;
 initMediaSession();
 
 new Vue({
+  i18n,
   store,
   router,
   render: (h) => h(App),
