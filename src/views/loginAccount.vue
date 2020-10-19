@@ -3,7 +3,7 @@
     <div class="section-1">
       <img src="/img/logos/netease-music.png" />
     </div>
-    <div class="title">登录网易云账号</div>
+    <div class="title">{{ $t("login.loginText") }}</div>
     <div class="section-2">
       <div class="input-box" v-show="mode === 'phone'">
         <div class="container" :class="{ active: inputFocus === 'phone' }">
@@ -11,14 +11,14 @@
           <div class="inputs">
             <input
               id="countryCode"
-              :placeholder="inputFocus === 'phone' ? '' : '国际区号'"
+              :placeholder="inputFocus === 'phone' ? '' : $t('login.countrycode')"
               v-model="countryCode"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
             />
             <input
               id="phoneNumber"
-              :placeholder="inputFocus === 'phone' ? '' : '手机号'"
+              :placeholder="inputFocus === 'phone' ? '' : $t('login.phone')"
               v-model="phoneNumber"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
@@ -33,7 +33,7 @@
             <input
               type="email"
               id="email"
-              :placeholder="inputFocus === 'email' ? '' : '邮箱'"
+              :placeholder="inputFocus === 'email' ? '' : $t('login.email')"
               v-model="email"
               @focus="inputFocus = 'email'"
               @blur="inputFocus = ''"
@@ -48,7 +48,7 @@
             <input
               type="password"
               id="password"
-              :placeholder="inputFocus === 'password' ? '' : '密码'"
+              :placeholder="inputFocus === 'password' ? '' : $t('login.password')"
               v-model="password"
               @focus="inputFocus = 'password'"
               @blur="inputFocus = ''"
@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="confirm">
-      <button @click="login" v-show="!processing">登录</button>
+      <button @click="login" v-show="!processing">{{ $t('login.login') }}</button>
       <button v-show="processing" class="loading" disabled>
         <span></span>
         <span></span>
@@ -66,8 +66,8 @@
       </button>
     </div>
     <div class="other-login">
-      <a v-show="mode === 'phone'" @click="mode = 'email'">使用邮箱登录</a>
-      <a v-show="mode === 'email'" @click="mode = 'phone'">使用手机号登录</a>
+      <a v-show="mode === 'phone'" @click="mode = 'email'">{{ $t('login.usingEmail') }}</a>
+      <a v-show="mode === 'email'" @click="mode = 'phone'">{{ $t('login.usingPhone') }}</a>
     </div>
     <div class="notice">
       YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
@@ -112,7 +112,7 @@ export default {
   methods: {
     ...mapMutations(["updateUser", "updateUserInfo"]),
     afterLogin() {
-      Cookies.set("MUSIC_U", true, { expires: 3650 });
+      // Cookies.set("MUSIC_U", true, { expires: 3650 });
       Cookies.set("loginMode", "account", { expires: 3650 });
       userPlaylist({
         uid: this.$store.state.settings.user.userId,

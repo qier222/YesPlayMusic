@@ -10,17 +10,17 @@
     </div>
     <div class="navigation-links">
       <router-link to="/" :class="{ active: this.$route.name === 'home' }"
-        >Home</router-link
+        >{{ $t('nav.home') }}</router-link
       >
       <router-link
         to="/explore"
         :class="{ active: this.$route.name === 'explore' }"
-        >Explore</router-link
+        >{{ $t('nav.explore') }}</router-link
       >
       <router-link
         to="/library"
         :class="{ active: this.$route.name === 'library' }"
-        >Library</router-link
+        >{{ $t('nav.library') }}</router-link
       >
     </div>
     <div class="right-part">
@@ -32,7 +32,7 @@
           <svg-icon icon-class="search" />
           <div class="input">
             <input
-              :placeholder="inputFocus ? '' : 'Search'"
+              :placeholder="inputFocus ? '' : $t('nav.search')"
               v-model="keywords"
               @keydown.enter="goToSearchPage"
               @focus="inputFocus = true"
@@ -40,6 +40,10 @@
             />
           </div>
         </div>
+      </div>
+      <div class="locale-changer" @click="changeLang">
+        <svg-icon icon-class="translation" class="translation"
+      />
       </div>
     </div>
   </nav>
@@ -57,6 +61,7 @@ export default {
     return {
       inputFocus: false,
       keywords: "",
+      langs: ['zh-CN', 'en']
     };
   },
   methods: {
@@ -70,6 +75,12 @@ export default {
         query: { keywords: this.keywords },
       });
     },
+    changeLang() {
+      if (this.$i18n.locale === "zh-CN") {
+        return this.$i18n.locale = "en";
+      }
+      this.$i18n.locale = "zh-CN";
+    }
   },
 };
 </script>
@@ -91,7 +102,6 @@ nav {
   backdrop-filter: saturate(180%) blur(30px);
   background-color: rgba(255, 255, 255, 0.86);
   z-index: 100;
-  // border-bottom: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .navigation-buttons {
@@ -133,6 +143,7 @@ nav {
     color: #335eea;
   }
 }
+
 .search {
   .svg-icon {
     height: 18px;
@@ -193,4 +204,15 @@ nav {
     width: 24px;
   }
 }
+
+.locale-changer {
+  position: relative;
+  .translation {
+    margin-left: 16px;
+    height: 48px;
+    width: 48px;
+  }
+}
+
+
 </style>

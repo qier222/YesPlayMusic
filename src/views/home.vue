@@ -11,11 +11,10 @@
         :imageSize="1024"
       />
     </div>
-
     <div class="index-row">
       <div class="title">
-        {{ recommendPlaylist.name }}
-        <router-link to="/explore?category=推荐歌单">SEE MORE</router-link>
+        {{ $t("home.recommendPlaylist") }}
+        <router-link to="/explore?category=推荐歌单">{{ $t("home.seeMore") }}</router-link>
       </div>
       <CoverRow
         :type="'playlist'"
@@ -23,24 +22,21 @@
         :subText="'copywriter'"
       />
     </div>
-
     <div class="index-row">
-      <div class="title">{{ recommendArtists.name }}</div>
+      <div class="title">{{ $t("home.recommendArtist") }}</div>
       <CoverRow type="artist" :items="recommendArtists.items" />
     </div>
-
     <div class="index-row">
       <div class="title">
-        {{ newReleasesAlbum.name }}
-        <router-link to="/new-album">SEE MORE</router-link>
+        {{ $t("home.newAlbum") }}
+        <router-link to="/new-album">{{ $t("home.seeMore") }}</router-link>
       </div>
       <CoverRow type="album" :items="newReleasesAlbum.items" subText="artist" />
     </div>
-
     <div class="index-row">
       <div class="title">
-        {{ topList.name }}
-        <router-link to="/explore?category=排行榜">SEE MORE</router-link>
+        {{ $t("home.leaderboard") }}
+        <router-link to="/explore?category=排行榜">{{ $t("home.seeMore") }}</router-link>
       </div>
       <CoverRow
         :type="'chart'"
@@ -58,7 +54,6 @@ import { toplistOfArtists } from "@/api/artist";
 import { byAppleMusic } from "@/utils/staticPlaylist";
 import { newAlbums } from "@/api/album";
 import NProgress from "nprogress";
-
 import CoverRow from "@/components/CoverRow.vue";
 
 export default {
@@ -67,15 +62,13 @@ export default {
   data() {
     return {
       show: false,
-      recommendPlaylist: { name: "推荐歌单", items: [] },
-      newReleasesAlbum: { name: "新专速递", items: [] },
+      recommendPlaylist: { items: [] },
+      newReleasesAlbum: { items: [] },
       topList: {
-        name: "排行榜",
         items: [],
         ids: [19723756, 180106, 60198, 3812895, 60131],
       },
       recommendArtists: {
-        name: "推荐歌手",
         items: [],
         indexs: [],
       },

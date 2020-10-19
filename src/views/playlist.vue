@@ -35,7 +35,7 @@
           >
         </div>
         <div class="date-and-count">
-          Updated at {{ playlist.updateTime | formatDate }} ·
+          {{ $t("updatedAt") }} {{ playlist.updateTime | formatDate }} ·
           {{ playlist.trackCount }} Songs
         </div>
         <div class="description" @click="showFullDescription = true">
@@ -43,7 +43,7 @@
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPlaylistByID()" :iconClass="`play`">
-            PLAY
+            {{ $t("play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="
@@ -64,7 +64,7 @@
       <h1>
         <img class="avatar" :src="settings.user.avatarUrl | resizeImage" />{{
           settings.user.nickname
-        }}'s Liked Songs
+        }}{{ $t("is") }} {{ $t("likedSong") }}
       </h1>
     </div>
 

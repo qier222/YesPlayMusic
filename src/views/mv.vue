@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="more-video">
-      <div class="section-title">More Videos</div>
+      <div class="section-title">{{ $t("mv.moreVideo") }}</div>
       <MvRow :mvs="simiMvs" />
     </div>
   </div>

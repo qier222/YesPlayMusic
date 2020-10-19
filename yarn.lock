@@ -8535,6 +8535,11 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.npm.taobao.org/vue-hot-reload-api/download/vue-hot-reload-api-2.3.4.tgz?cache=0&sync_timestamp=1589682714858&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-hot-reload-api%2Fdownload%2Fvue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha1-UylVzB6yCKPZkLOp+acFdGV+CPI=
 
+vue-i18n@^8.22.0:
+  version "8.22.0"
+  resolved "https://registry.npm.taobao.org/vue-i18n/download/vue-i18n-8.22.0.tgz?cache=0&sync_timestamp=1602001179053&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-i18n%2Fdownload%2Fvue-i18n-8.22.0.tgz#6403381a6eab1d229e515a62addb29b2ff3abfed"
+  integrity sha1-ZAM4Gm6rHSKeUVpirdspsv86v+0=
+
 "vue-loader-v16@npm:vue-loader@^16.0.0-beta.7":
   version "16.0.0-beta.7"
   resolved "https://registry.npm.taobao.org/vue-loader/download/vue-loader-16.0.0-beta.7.tgz?cache=0&sync_timestamp=1599639283575&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvue-loader%2Fdownload%2Fvue-loader-16.0.0-beta.7.tgz#6f2726fa0e2b1fbae67895c47593bbf69f2b9ab8"
