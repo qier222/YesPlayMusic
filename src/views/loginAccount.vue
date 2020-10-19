@@ -112,6 +112,7 @@ export default {
   methods: {
     ...mapMutations(["updateUser", "updateUserInfo"]),
     afterLogin() {
+      Cookies.set("MUSIC_U", true, { expires: 3650 });
       Cookies.set("loginMode", "account", { expires: 3650 });
       userPlaylist({
         uid: this.$store.state.settings.user.userId,
@@ -128,7 +129,7 @@ export default {
       this.processing = true;
       if (this.mode === "phone") {
         if (
-          this.countrycode === "" ||
+          this.countryCode === "" ||
           this.phone === "" ||
           this.password === ""
         ) {

@@ -6,7 +6,7 @@
     @mouseover="focus = true"
     @mouseleave="focus = false"
   >
-    <img :src="imgUrl | resizeImage" v-if="!isAlbum" @click="goToAlbum" />
+    <img :src="imgUrl | resizeImage(224)" v-if="!isAlbum" @click="goToAlbum" />
     <div class="no" v-if="isAlbum">
       <button
         class="play-button"
@@ -52,7 +52,7 @@
           icon-class="heart"
           :style="{
             visibility:
-              focus && !isLiked && track.playable ? 'visible' : 'hidden',
+              focus && !isLiked && track.playable ? 'visible' : 'hidden'
           }"
         ></svg-icon>
         <svg-icon icon-class="heart-solid" v-show="isLiked"></svg-icon>
@@ -75,7 +75,7 @@ export default {
   name: "TrackListItem",
   components: { ArtistsInLine, ExplicitSymbol },
   props: {
-    track: Object,
+    track: Object
   },
   data() {
     return { focus: false, trackStyle: {} };
@@ -117,7 +117,7 @@ export default {
     },
     isLoggedIn() {
       return isLoggedIn();
-    },
+    }
   },
   methods: {
     goToAlbum() {
@@ -135,19 +135,19 @@ export default {
         if (like === false) {
           this.$store.commit(
             "updateLikedSongs",
-            likedSongs.filter((d) => d !== id)
+            likedSongs.filter(d => d !== id)
           );
         } else {
           likedSongs.push(id);
           this.$store.commit("updateLikedSongs", likedSongs);
         }
       });
-    },
+    }
   },
   created() {
     if (this.$parent.itemWidth !== -1)
       this.trackStyle = { width: this.$parent.itemWidth + "px" };
-  },
+  }
 };
 </script>
 
