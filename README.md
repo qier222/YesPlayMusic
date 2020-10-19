@@ -53,7 +53,7 @@ baseURL: "http://example.com",
 5. 编译打包
 
 ```sh
-npm build
+npm run build
 ```
 
 6. 将 `/dist` 目录下的文件上传到你的 Web 服务器
