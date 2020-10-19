@@ -10,17 +10,17 @@
     </div>
     <div class="navigation-links">
       <router-link to="/" :class="{ active: this.$route.name === 'home' }"
-        >{{ $t('message.home') }}</router-link
+        >{{ $t('nav.home') }}</router-link
       >
       <router-link
         to="/explore"
         :class="{ active: this.$route.name === 'explore' }"
-        >{{ $t('message.explore') }}</router-link
+        >{{ $t('nav.explore') }}</router-link
       >
       <router-link
         to="/library"
         :class="{ active: this.$route.name === 'library' }"
-        >{{ $t('message.library') }}</router-link
+        >{{ $t('nav.library') }}</router-link
       >
     </div>
     <div class="right-part">
@@ -32,7 +32,7 @@
           <svg-icon icon-class="search" />
           <div class="input">
             <input
-              :placeholder="inputFocus ? '' : $t('message.search')"
+              :placeholder="inputFocus ? '' : $t('nav.search')"
               v-model="keywords"
               @keydown.enter="goToSearchPage"
               @focus="inputFocus = true"
@@ -102,7 +102,6 @@ nav {
   backdrop-filter: saturate(180%) blur(30px);
   background-color: rgba(255, 255, 255, 0.86);
   z-index: 100;
-  // border-bottom: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .navigation-buttons {

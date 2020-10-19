@@ -3,7 +3,7 @@
     <h1>
       <img class="head" :src="user.profile.avatarUrl | resizeImage" />{{
         user.profile.nickname
-      }}'s Library
+      }}{{ $t("is") }} {{ $t("library") }}
     </h1>
     <div class="section-one">
       <div class="liked-songs" @click="goToLikedSongsList">
@@ -19,7 +19,7 @@
         </div>
         <div class="bottom">
           <div class="titles">
-            <div class="title">Liked Songs</div>
+            <div class="title">{{ $t("likedSong") }}</div>
             <div class="sub-title">
               {{ likedSongsPlaylist.trackCount }} songs
             </div>
@@ -41,7 +41,7 @@
     </div>
 
     <div class="playlists" v-if="playlists.length > 1">
-      <div class="title">Playlists</div>
+      <div class="title">{{ $t("playlist") }}</div>
       <div>
         <CoverRow
           :items="playlists.slice(1)"

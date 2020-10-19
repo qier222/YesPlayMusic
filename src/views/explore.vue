@@ -1,6 +1,6 @@
 <template>
   <div class="explore">
-    <h1>Explore</h1>
+    <h1>{{ $t('explore.explore') }}</h1>
     <div class="buttons">
       <div
         class="button"
@@ -35,7 +35,7 @@
         @click.native="getPlaylist"
         color="grey"
         :loading="loadingMore"
-        >Load More</ButtonTwoTone
+        >{{ $t('explore.loadMore') }}</ButtonTwoTone
       >
     </div>
   </div>

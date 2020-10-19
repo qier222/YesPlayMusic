@@ -1,14 +1,14 @@
 <template>
   <div class="login">
     <div>
-      <div class="title">用户名登录</div>
+      <div class="title">{{ $t('login.usernameLogin') }}</div>
       <div class="sestion">
         <div class="search-box">
           <div class="container">
             <svg-icon icon-class="search" />
             <div class="input">
               <input
-                placeholder="请输入你的网易云用户名"
+                :placeholder="$t('login.searchHolder')"
                 v-model="keyword"
                 @keydown.enter="search"
               />
@@ -18,10 +18,10 @@
       </div>
       <div class="sestion">
         <div class="name" v-show="activeUser.nickname === undefined">
-          按Enter搜索
+          {{ $t("login.enterTip") }}
         </div>
         <div class="name" v-show="activeUser.nickname !== undefined">
-          在列表中选中你的账号
+          {{ $t("login.choose") }}
         </div>
         <div class="user-list">
           <div
@@ -41,7 +41,7 @@
       <ButtonTwoTone
         @click.native="confirm"
         v-show="activeUser.nickname !== undefined"
-        >确定</ButtonTwoTone
+        >{{ $t("login.confirm") }}</ButtonTwoTone
       >
     </div>
   </div>

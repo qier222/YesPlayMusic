@@ -1,6 +1,6 @@
 <template>
   <div class="newAlbum">
-    <h1>新专速递</h1>
+    <h1>{{ $t("home.newAlbum")}}</h1>
 
     <div class="playlist-row">
       <div class="playlists">

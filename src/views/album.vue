@@ -38,24 +38,21 @@
             @click.native="playAlbumByID(album.id)"
             :iconClass="`play`"
           >
-            PLAY
+            {{ $t('play') }}
           </ButtonTwoTone>
         </div>
       </div>
     </div>
-
     <TrackList :tracks="tracks" :type="'album'" :id="album.id" />
-
     <div class="extra-info">
       <div class="album-time"></div>
       <div class="release-date">
-        Released {{ album.publishTime | formatDate("MMMM D, YYYY") }}
+        {{ $t("album.released") }} {{ album.publishTime | formatDate("MMMM D, YYYY") }}
       </div>
       <div class="copyright" v-if="album.company !== null">
         © {{ album.company }}
       </div>
     </div>
-
     <transition name="fade">
       <div
         class="shade"

@@ -1,12 +1,12 @@
 <template>
   <div class="next-tracks">
-    <h1>Now Playing</h1>
+    <h1>{{ $t("next.nowPlaying") }}</h1>
     <TrackList
       :tracks="[currentTrack]"
       :type="'playlist'"
       dbclickTrackFunc="none"
     />
-    <h1>Next Up</h1>
+    <h1>{{ $t("next.nextUp") }}</h1>
 
     <TrackList
       :tracks="sortedTracks"

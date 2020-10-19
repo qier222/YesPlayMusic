@@ -1,7 +1,7 @@
 <template>
   <footer>
     <ButtonTwoTone :iconClass="'settings'" :color="'grey'">
-      Settings
+      {{ $t("footer.settings") }}
     </ButtonTwoTone>
   </footer>
 </template>

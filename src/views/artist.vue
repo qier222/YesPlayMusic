@@ -13,13 +13,13 @@
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPopularSongs()" :iconClass="`play`">
-            PLAY
+            {{ $t('play') }}
           </ButtonTwoTone>
         </div>
       </div>
     </div>
     <div class="latest-release">
-      <div class="section-title">Latest Release</div>
+      <div class="section-title">{{ $t('artist.latestRelease') }}</div>
       <div class="release">
         <div class="container">
           <Cover
@@ -53,7 +53,7 @@
       </div>
     </div>
     <div class="popular-tracks">
-      <div class="section-title">Popular Songs</div>
+      <div class="section-title">{{ $t('artist.popularSongs') }}</div>
       <TrackList
         :tracks="popularTracks.slice(0, showMorePopTracks ? 24 : 12)"
         :type="'tracklist'"
@@ -61,13 +61,13 @@
 
       <div class="show-more">
         <button @click="showMorePopTracks = !showMorePopTracks">
-          <span v-show="!showMorePopTracks">SHOW MORE</span>
-          <span v-show="showMorePopTracks">SHOW LESS</span>
+          <span v-show="!showMorePopTracks">{{ $t('artist.showMore') }}</span>
+          <span v-show="showMorePopTracks">{{ $t('artist.showLess') }}</span>
         </button>
       </div>
     </div>
     <div class="albums" v-if="albums.length !== 0">
-      <div class="section-title">Albums</div>
+      <div class="section-title">{{ $t('artist.album') }}</div>
       <CoverRow
         :type="'album'"
         :items="albums"
@@ -80,7 +80,7 @@
       <MvRow :mvs="mvs" subtitle="publishTime" />
     </div>
     <div class="eps">
-      <div class="section-title">EPs & Singles</div>
+      <div class="section-title">{{ $t('artist.EPSingle') }}</div>
       <CoverRow
         :type="'album'"
         :items="eps"

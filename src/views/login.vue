@@ -14,8 +14,8 @@
       >
         <div class="container" :class="{ active: activeCard === 1 }">
           <div class="title-info">
-            <div class="title">登录网易云账号</div>
-            <div class="info">可访问全部数据</div>
+            <div class="title">{{ $t('login.loginText') }}</div>
+            <div class="info">{{ $t('login.accessToAll') }}</div>
           </div>
           <svg-icon icon-class="arrow-right"></svg-icon>
         </div>
@@ -28,8 +28,8 @@
       >
         <div class="container" :class="{ active: activeCard === 2 }">
           <div class="title-info">
-            <div class="title">搜索网易云账号</div>
-            <div class="info">只能读取账号公开数据</div>
+            <div class="title">{{ $t('login.search') }}</div>
+            <div class="info">{{ $t('login.readonly') }}</div>
           </div>
           <svg-icon icon-class="arrow-right"></svg-icon>
         </div>
@@ -105,6 +105,8 @@ export default {
   height: 128px;
   width: 300px;
   transition: all 0.3s;
+  padding-left: 22px;
+  box-sizing: border-box;
 
   .active {
     .title-info {

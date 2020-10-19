@@ -79,7 +79,7 @@
       </div>
 
       <div class="playlists" v-if="result.hasOwnProperty('playList')">
-        <div class="section-title">Playlists</div>
+        <div class="section-title">{{ $t("playlist") }}</div>
         <div class="albums-list">
           <div
             class="album"
