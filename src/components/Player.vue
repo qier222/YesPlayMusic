@@ -37,7 +37,7 @@
           </div>
         </div>
         <div class="like-button" v-show="isLoggedIn">
-          <button-icon @click.native="likeCurrentSong">
+          <button-icon @click.native="likeCurrentSong" :title="$t('player.like')">
             <svg-icon
               icon-class="heart"
               v-show="!liked.songs.includes(currentTrack.id)"
@@ -50,29 +50,29 @@
         </div>
       </div>
       <div class="middle-control-buttons">
-        <button-icon @click.native="previous" title="Previous Song"
+        <button-icon @click.native="previous" :title="$t('player.previous')"
           ><svg-icon icon-class="previous"
         /></button-icon>
         <button-icon
           class="play"
           @click.native="play"
-          :title="playing ? 'Pause' : 'Play'"
+          :title="playing ? $t('player.pause') : $t('player.play')"
         >
           <svg-icon :iconClass="playing ? 'pause' : 'play'"
         /></button-icon>
-        <button-icon @click.native="next" title="Next Song"
+        <button-icon @click.native="next" :title="$t('player.next')"
           ><svg-icon icon-class="next"
         /></button-icon>
       </div>
       <div class="right-control-buttons">
         <button-icon
           @click.native="goToNextTracksPage"
-          title="Next Up"
+          :title="$t('player.nextUp')"
           :class="{ active: this.$route.name === 'next' }"
           ><svg-icon icon-class="list"
         /></button-icon>
         <button-icon
-          title="Repeat"
+          :title="$t('player.repeat')"
           @click.native="repeat"
           :class="{ active: player.repeat !== 'off' }"
         >
@@ -82,11 +82,11 @@
         <button-icon
           @click.native="shuffle"
           :class="{ active: player.shuffle }"
-          title="Shuffle"
+          :title="$t('player.shuffle')"
           ><svg-icon icon-class="shuffle"
         /></button-icon>
         <div class="volume-control">
-          <button-icon title="Mute" @click.native="mute">
+          <button-icon :title="$t('player.mute')" @click.native="mute">
             <svg-icon icon-class="volume" v-show="volume > 0.5" />
             <svg-icon icon-class="volume-mute" v-show="volume === 0" />
             <svg-icon

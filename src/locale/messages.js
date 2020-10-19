@@ -61,6 +61,17 @@ export default {
       nowPlaying: 'Now Playing',
       nextUp: 'Next Up'
     },
+    player: {
+      like: 'Like',
+      previous: 'Previous Song',
+      next: 'Next Song',
+      repeat: 'Repeat',
+      shuffle: 'Shuffle',
+      play: 'Play',
+      pause: 'Pause',
+      mute: 'Mute',
+      nextUp: 'Next Up'
+    },
     playlist: "Playlists",
     play: "PLAY",
     likedSong: "Liked Songs",
@@ -133,6 +144,17 @@ export default {
     next: {
       nowPlaying: '正在播放',
       nextUp: '即将播放'
+    },
+    player: {
+      like: '喜欢',
+      previous: '上一首',
+      next: '下一首',
+      repeat: '单曲循环',
+      shuffle: '随机播放',
+      play: '播放',
+      pause: '暂停',
+      mute: '静音',
+      nextUp: '播放列表'
     },
     playlist: "播放列表",
     play: "播放",
