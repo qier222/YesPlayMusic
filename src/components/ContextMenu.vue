@@ -25,7 +25,7 @@ export default {
     };
   },
   methods: {
-    setMenu: function(top, left) {
+    setMenu(top, left) {
       let largestHeight =
         window.innerHeight - this.$refs.menu.offsetHeight - 25;
       let largestWidth = window.innerWidth - this.$refs.menu.offsetWidth - 25;
@@ -35,11 +35,11 @@ export default {
       this.left = left + "px";
     },
 
-    closeMenu: function() {
+    closeMenu() {
       this.showMenu = false;
     },
 
-    openMenu: function(e) {
+    openMenu(e) {
       this.showMenu = true;
       this.$nextTick(
         function() {
