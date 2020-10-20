@@ -14,7 +14,9 @@
     <div class="index-row">
       <div class="title">
         {{ $t("home.recommendPlaylist") }}
-        <router-link to="/explore?category=推荐歌单">{{ $t("home.seeMore") }}</router-link>
+        <router-link to="/explore?category=推荐歌单">{{
+          $t("home.seeMore")
+        }}</router-link>
       </div>
       <CoverRow
         :type="'playlist'"
@@ -35,8 +37,10 @@
     </div>
     <div class="index-row">
       <div class="title">
-        {{ $t("home.leaderboard") }}
-        <router-link to="/explore?category=排行榜">{{ $t("home.seeMore") }}</router-link>
+        {{ $t("home.charts") }}
+        <router-link to="/explore?category=排行榜">{{
+          $t("home.seeMore")
+        }}</router-link>
       </div>
       <CoverRow
         :type="'chart'"
@@ -66,36 +70,36 @@ export default {
       newReleasesAlbum: { items: [] },
       topList: {
         items: [],
-        ids: [19723756, 180106, 60198, 3812895, 60131],
+        ids: [19723756, 180106, 60198, 3812895, 60131]
       },
       recommendArtists: {
         items: [],
-        indexs: [],
-      },
+        indexs: []
+      }
     };
   },
   computed: {
     byAppleMusic() {
       return byAppleMusic;
-    },
+    }
   },
   methods: {
     loadData() {
       if (!this.show) NProgress.start();
       recommendPlaylist({
-        limit: 10,
-      }).then((data) => {
+        limit: 10
+      }).then(data => {
         this.recommendPlaylist.items = data.result;
         NProgress.done();
         this.show = true;
       });
       newAlbums({
         area: "EA",
-        limit: 10,
-      }).then((data) => {
+        limit: 10
+      }).then(data => {
         this.newReleasesAlbum.items = data.albums;
       });
-      toplistOfArtists(2).then((data) => {
+      toplistOfArtists(2).then(data => {
         let indexs = [];
         while (indexs.length < 5) {
           let tmp = ~~(Math.random() * 100);
@@ -106,16 +110,16 @@ export default {
           indexs.includes(index)
         );
       });
-      toplists().then((data) => {
-        this.topList.items = data.list.filter((l) =>
+      toplists().then(data => {
+        this.topList.items = data.list.filter(l =>
           this.topList.ids.includes(l.id)
         );
       });
-    },
+    }
   },
   activated() {
     this.loadData();
-  },
+  }
 };
 </script>
 

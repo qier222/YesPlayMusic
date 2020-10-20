@@ -37,7 +37,10 @@
           </div>
         </div>
         <div class="like-button" v-show="isLoggedIn">
-          <button-icon @click.native="likeCurrentSong" :title="$t('player.like')">
+          <button-icon
+            @click.native="likeCurrentSong"
+            :title="$t('player.like')"
+          >
             <svg-icon
               icon-class="heart"
               v-show="!liked.songs.includes(currentTrack.id)"
@@ -56,7 +59,7 @@
         <button-icon
           class="play"
           @click.native="play"
-          :title="playing ? $t('player.pause') : $t('player.play')"
+          :title="$t(playing ? 'player.pause' : 'player.play')"
         >
           <svg-icon :iconClass="playing ? 'pause' : 'play'"
         /></button-icon>

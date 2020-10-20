@@ -38,7 +38,7 @@
             @click.native="playAlbumByID(album.id)"
             :iconClass="`play`"
           >
-            {{ $t('play') }}
+            {{ $t("play") }}
           </ButtonTwoTone>
         </div>
       </div>
@@ -47,7 +47,8 @@
     <div class="extra-info">
       <div class="album-time"></div>
       <div class="release-date">
-        {{ $t("album.released") }} {{ album.publishTime | formatDate("MMMM D, YYYY") }}
+        {{ $t("album.released") }}
+        {{ album.publishTime | formatDate("MMMM D, YYYY") }}
       </div>
       <div class="copyright" v-if="album.company !== null">
         © {{ album.company }}
@@ -86,7 +87,7 @@ export default {
     Cover,
     ButtonTwoTone,
     TrackList,
-    ExplicitSymbol,
+    ExplicitSymbol
   },
   data() {
     return {
@@ -94,27 +95,27 @@ export default {
         id: 0,
         picUrl: "",
         artist: {
-          id: 0,
-        },
+          id: 0
+        }
       },
       tracks: [],
       showFullDescription: false,
-      show: false,
+      show: false
     };
   },
   created() {
     getAlbum(this.$route.params.id)
-      .then((data) => {
+      .then(data => {
         this.album = data.album;
         this.tracks = data.songs;
         NProgress.done();
         this.show = true;
         return this.tracks;
       })
-      .then((tracks) => {
+      .then(tracks => {
         // to get explicit mark
-        let trackIDs = tracks.map((t) => t.id);
-        getTrackDetail(trackIDs.join(",")).then((data) => {
+        let trackIDs = tracks.map(t => t.id);
+        getTrackDetail(trackIDs.join(",")).then(data => {
           this.tracks = data.songs;
         });
       });
@@ -123,20 +124,20 @@ export default {
     ...mapState(["player"]),
     albumTime() {
       let time = 0;
-      this.tracks.map((t) => (time = time + t.dt));
+      this.tracks.map(t => (time = time + t.dt));
       return time;
-    },
+    }
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     playAlbumByID(id, trackID = "first") {
-      if (this.tracks.find((t) => t.playable !== false) === undefined) {
+      if (this.tracks.find(t => t.playable !== false) === undefined) {
         return;
       }
       playAlbumByID(id, trackID);
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -20,7 +20,7 @@
                 5277965913,
                 5277969451,
                 5277778542,
-                5278068783,
+                5278068783
               ].includes(playlist.id)
             "
             >Apple Music</span
@@ -35,7 +35,8 @@
           >
         </div>
         <div class="date-and-count">
-          {{ $t("updatedAt") }} {{ playlist.updateTime | formatDate }} ·
+          {{ $t("playlist.updatedAt") }}
+          {{ playlist.updateTime | formatDate }} ·
           {{ playlist.trackCount }} Songs
         </div>
         <div class="description" @click="showFullDescription = true">
@@ -64,7 +65,7 @@
       <h1>
         <img class="avatar" :src="settings.user.avatarUrl | resizeImage" />{{
           settings.user.nickname
-        }}{{ $t("is") }} {{ $t("likedSong") }}
+        }}{{ $t("library.sLikedSongs") }}
       </h1>
     </div>
 
@@ -103,7 +104,7 @@ export default {
   components: {
     Cover,
     ButtonTwoTone,
-    TrackList,
+    TrackList
   },
   data() {
     return {
@@ -111,14 +112,14 @@ export default {
       playlist: {
         coverImgUrl: "",
         creator: {
-          userId: "",
+          userId: ""
         },
-        trackIds: [],
+        trackIds: []
       },
       showFullDescription: false,
       tracks: [],
       loadingMore: false,
-      lastLoadedTrackIndex: 9,
+      lastLoadedTrackIndex: 9
     };
   },
   created() {
@@ -138,23 +139,23 @@ export default {
     },
     isLikeSongsPage() {
       return this.$route.name === "likedSongs";
-    },
+    }
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     playPlaylistByID(trackID = "first") {
-      let trackIDs = this.playlist.trackIds.map((t) => t.id);
+      let trackIDs = this.playlist.trackIds.map(t => t.id);
       playAList(trackIDs, this.playlist.id, "playlist", trackID);
     },
     likePlaylist() {
       subscribePlaylist({
         id: this.playlist.id,
-        t: this.playlist.subscribed ? 2 : 1,
-      }).then((data) => {
+        t: this.playlist.subscribed ? 2 : 1
+      }).then(data => {
         if (data.code === 200)
           this.playlist.subscribed = !this.playlist.subscribed;
-        getPlaylistDetail(this.id, true).then((data) => {
+        getPlaylistDetail(this.id, true).then(data => {
           this.playlist = data.playlist;
         });
       });
@@ -162,7 +163,7 @@ export default {
     loadData(id, next = undefined) {
       this.id = id;
       getPlaylistDetail(this.id, true)
-        .then((data) => {
+        .then(data => {
           this.playlist = data.playlist;
           this.tracks = data.playlist.tracks;
           this.tracks = mapTrackPlayableStatus(this.tracks);
@@ -190,8 +191,8 @@ export default {
         )
           return t;
       });
-      trackIDs = trackIDs.map((t) => t.id);
-      getTrackDetail(trackIDs.join(",")).then((data) => {
+      trackIDs = trackIDs.map(t => t.id);
+      getTrackDetail(trackIDs.join(",")).then(data => {
         this.tracks.push(...data.songs);
         this.tracks = mapTrackPlayableStatus(this.tracks);
         this.lastLoadedTrackIndex += trackIDs.length;
@@ -213,8 +214,8 @@ export default {
         this.loadingMore = true;
         this.loadMore();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

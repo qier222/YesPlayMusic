@@ -44,16 +44,16 @@ git clone https://github.com/qier222/YesPlayMusic.git
 npm install
 ```
 
-4. 替换 `/src/config/request.js` 里面 `baseURL` 的值为网易云 API 地址
+4. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:3000`，YesPlayMusic 地址为 `http://localhost:8080`
 
-```JS
-baseURL: "http://example.com",
+```
+VUE_APP_NETEASE_API_URL=http://localhost:3000
 ```
 
 5. 编译打包
 
 ```sh
-npm build
+npm run build
 ```
 
 6. 将 `/dist` 目录下的文件上传到你的 Web 服务器
@@ -62,6 +62,7 @@ npm build
 
 - 中文支持
 - Dark Mode
+- 歌词
 - 私人 FM
 - 播放记录
 - 无限播放模式（播放完列表后自动播放相似歌曲）

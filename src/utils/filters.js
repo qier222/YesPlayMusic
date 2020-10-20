@@ -2,6 +2,7 @@ import Vue from "vue";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
+import locale from "@/locale";
 
 Vue.filter("formatTime", (Milliseconds, format = "HH:MM:SS") => {
   if (!Milliseconds) return "";
@@ -27,6 +28,7 @@ Vue.filter("formatTime", (Milliseconds, format = "HH:MM:SS") => {
 
 Vue.filter("formatDate", (timestamp, format = "MMM D, YYYY") => {
   if (!timestamp) return "";
+  if (locale.locale === "zh-CN") format = "YYYY年MM月DD日";
   return dayjs(timestamp).format(format);
 });
 
@@ -52,26 +54,34 @@ Vue.filter("resizeImage", (imgUrl, size = 512) => {
   return `${httpsImgUrl}?param=${size}y${size}`;
 });
 
-Vue.filter("formatPlayCount", (count) => {
+Vue.filter("formatPlayCount", count => {
   if (!count) return "";
-  if (count > 100000000) {
-    return `${~~(count / 100000000)}亿`;
+  if (locale.locale === "zh-CN") {
+    if (count > 100000000) {
+      return `${Math.floor((count / 100000000) * 100) / 100}亿`; // 2.32 亿
+    }
+    if (count > 100000) {
+      return `${Math.floor((count / 10000) * 10) / 10}万`; // 232.1 万
+    }
+    if (count > 10000) {
+      return `${Math.floor((count / 10000) * 100) / 100}万`; // 2.3 万
+    }
+    return count;
+  } else {
+    if (count > 10000000) {
+      return `${Math.floor((count / 1000000) * 10) / 10}M`; // 233.2M
+    }
+    if (count > 1000000) {
+      return `${Math.floor((count / 1000000) * 100) / 100}M`; // 2.3M
+    }
+    if (count > 1000) {
+      return `${Math.floor((count / 1000) * 100) / 100}K`; // 233.23K
+    }
+    return count;
   }
-  if (count > 10000) {
-    return `${~~(count / 10000)}万`;
-  }
-  return count;
-
-  // if (count > 1000000) {
-  //   return `${Math.floor((count / 1000000) * 100) / 100}M`;
-  // }
-  // if (count > 1000) {
-  //   return `${~~(count / 1000)}K`;
-  // }
-  // return count;
 });
 
-Vue.filter("toHttps", (url) => {
+Vue.filter("toHttps", url => {
   if (!url) return "";
   return url.replace(/^http:/, "https:");
 });

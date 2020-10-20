@@ -79,7 +79,7 @@
       </div>
 
       <div class="playlists" v-if="result.hasOwnProperty('playList')">
-        <div class="section-title">{{ $t("playlist") }}</div>
+        <div class="section-title">{{ $t("playlist.playlist") }}</div>
         <div class="albums-list">
           <div
             class="album"
@@ -130,7 +130,7 @@ export default {
   components: {
     Cover,
     TrackList,
-    MvRow,
+    MvRow
   },
   data() {
     return {
@@ -139,7 +139,7 @@ export default {
       mvs: [],
       type: 1,
       limit: 30,
-      offset: 0,
+      offset: 0
     };
   },
   computed: {
@@ -150,26 +150,26 @@ export default {
     tracks() {
       let tracks = this.result.song.songs.slice(0, 12);
       return tracks;
-    },
+    }
   },
   methods: {
     goToAlbum(id) {
       this.$router.push({ name: "album", params: { id } });
     },
     playTrackInSearchResult(id) {
-      let track = this.tracks.find((t) => t.id === id);
+      let track = this.tracks.find(t => t.id === id);
       appendTrackToPlayerList(track, true);
     },
     getData(keywords) {
-      search({ keywords: keywords, type: 1018 }).then((data) => {
+      search({ keywords: keywords, type: 1018 }).then(data => {
         this.result = data.result;
         NProgress.done();
         this.show = true;
       });
-      search({ keywords: keywords, type: 1004 }).then((data) => {
+      search({ keywords: keywords, type: 1004 }).then(data => {
         this.mvs = data.result.mvs;
       });
-    },
+    }
   },
   created() {
     this.getData(this.$route.query.keywords);
@@ -179,7 +179,7 @@ export default {
     next();
     NProgress.start();
     this.getData(to.query.keywords);
-  },
+  }
 };
 </script>
 
