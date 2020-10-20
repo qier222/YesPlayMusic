@@ -11,7 +11,9 @@
           <div class="inputs">
             <input
               id="countryCode"
-              :placeholder="inputFocus === 'phone' ? '' : $t('login.countrycode')"
+              :placeholder="
+                inputFocus === 'phone' ? '' : $t('login.countrycode')
+              "
               v-model="countryCode"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
@@ -48,7 +50,9 @@
             <input
               type="password"
               id="password"
-              :placeholder="inputFocus === 'password' ? '' : $t('login.password')"
+              :placeholder="
+                inputFocus === 'password' ? '' : $t('login.password')
+              "
               v-model="password"
               @focus="inputFocus = 'password'"
               @blur="inputFocus = ''"
@@ -58,7 +62,9 @@
       </div>
     </div>
     <div class="confirm">
-      <button @click="login" v-show="!processing">{{ $t('login.login') }}</button>
+      <button @click="login" v-show="!processing">
+        {{ $t("login.login") }}
+      </button>
       <button v-show="processing" class="loading" disabled>
         <span></span>
         <span></span>
@@ -66,18 +72,14 @@
       </button>
     </div>
     <div class="other-login">
-      <a v-show="mode === 'phone'" @click="mode = 'email'">{{ $t('login.usingEmail') }}</a>
-      <a v-show="mode === 'email'" @click="mode = 'phone'">{{ $t('login.usingPhone') }}</a>
+      <a v-show="mode === 'phone'" @click="mode = 'email'">{{
+        $t("login.loginWithEmail")
+      }}</a>
+      <a v-show="mode === 'email'" @click="mode = 'phone'">{{
+        $t("login.loginWithPhone")
+      }}</a>
     </div>
-    <div class="notice">
-      YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
-      你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
-      YesPlayMusic 并非网易云官方网站，输入账号信息前请慎重考虑。 你也可以前往
-      <a href="https://github.com/qier222/YesPlayMusic"
-        >YesPlayMusic 的 GitHub 源代码仓库</a
-      >
-      自行构建并使用自托管的网易云 API。
-    </div>
+    <div class="notice" v-html="$t('login.notice')"></div>
   </div>
 </template>
 
@@ -100,7 +102,7 @@ export default {
       email: "",
       password: "",
       smsCode: "",
-      inputFocus: "",
+      inputFocus: ""
     };
   },
   created() {
@@ -116,11 +118,11 @@ export default {
       Cookies.set("loginMode", "account", { expires: 3650 });
       userPlaylist({
         uid: this.$store.state.settings.user.userId,
-        limit: 1,
-      }).then((data) => {
+        limit: 1
+      }).then(data => {
         this.updateUserInfo({
           key: "likedSongPlaylistID",
-          value: data.playlist[0].id,
+          value: data.playlist[0].id
         });
         this.$router.push({ path: "/library" });
       });
@@ -133,44 +135,55 @@ export default {
           this.phone === "" ||
           this.password === ""
         ) {
-          alert("请输入完整的信息");
+          alert("国家区号、手机或密码不正确");
           this.processing = false;
           return;
         }
         loginWithPhone({
-          countrycode: this.countryCode.replace("+", "").replace(/\s/g, ''),
-          phone: this.phoneNumber.replace(/\s/g, ''),
+          countrycode: this.countryCode.replace("+", "").replace(/\s/g, ""),
+          phone: this.phoneNumber.replace(/\s/g, ""),
           password: "fakePassword",
-          md5_password: md5(this.password).toString(),
+          md5_password: md5(this.password).toString()
         })
-          .then((data) => {
-            this.updateUser(data.profile);
-            this.afterLogin();
+          .then(data => {
+            if (data.code !== 502) {
+              this.updateUser(data.profile);
+              this.afterLogin();
+            }
           })
-          .catch(() => {
+          .catch(error => {
             this.processing = false;
+            alert(error);
           });
       } else {
-        if (this.email === "" || this.password === "") {
-          alert("请输入完整的信息");
+        let emailReg = /^[A-Za-z0-9]+([_][A-Za-z0-9]+)*@([A-Za-z0-9]+\.)+[A-Za-z]{2,6}$/;
+        if (
+          this.email === "" ||
+          this.password === "" ||
+          !emailReg.test(this.email)
+        ) {
+          alert("邮箱或密码不正确");
           this.processing = false;
           return;
         }
         loginWithEmail({
-          email: this.email.replace(/\s/g, ''),
+          email: this.email.replace(/\s/g, ""),
           password: "fakePassword",
-          md5_password: md5(this.password).toString(),
+          md5_password: md5(this.password).toString()
         })
-          .then((data) => {
-            this.updateUser(data.profile);
-            this.afterLogin();
+          .then(data => {
+            if (data.code !== 502) {
+              this.updateUser(data.profile);
+              this.afterLogin();
+            }
           })
-          .catch(() => {
+          .catch(error => {
             this.processing = false;
+            alert(error);
           });
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -235,13 +248,14 @@ export default {
 
   .inputs {
     display: flex;
+    width: 85%;
   }
 
   input {
     font-size: 20px;
     border: none;
     background: transparent;
-    width: 96%;
+    width: 100%;
     font-weight: 600;
     margin-top: -1px;
     color: rgba(0, 0, 0, 0.88);
@@ -251,7 +265,7 @@ export default {
     flex: 2;
   }
   input#phoneNumber {
-    flex: 14;
+    flex: 12;
   }
 
   .active {

@@ -182,9 +182,9 @@ button.play-button {
 .track {
   display: flex;
   align-items: center;
-
   padding: 8px;
   border-radius: 12px;
+  user-select: none;
 
   .no {
     display: flex;

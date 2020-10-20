@@ -30,7 +30,7 @@ export default {
     popularSongs: "Popular Songs",
     showMore: "SHOW MORE",
     showLess: "SHOW LESS",
-    EPSingle: "EPs & Singles",
+    EPsSingles: "EPs & Singles",
     albums: "Albums"
   },
   album: {
@@ -42,7 +42,7 @@ export default {
   },
   login: {
     accessToAll: "Access to all data",
-    loginText: "Login in Netease",
+    loginText: "Login to Netease",
     search: "Search account",
     readonly: "Only access to public data",
     usernameLogin: "Username Login",
@@ -58,8 +58,8 @@ export default {
     loginWithEmail: "Login with Email",
     loginWithPhone: "Login with Phone",
     // TODO
-    agreement: `YesPlayMusic promises not to save any of your account information to the cloud.
-      Your password will be MD5 encrypted locally and then transmitted to NetEase Cloud API.
+    notice: `YesPlayMusic promises not to save any of your account information to the cloud.<br />
+      Your password will be MD5 encrypted locally and then transmitted to NetEase Cloud API.<br />
       YesPlayMusic is not the official website of NetEase Cloud Music, please consider carefully before entering account information. You can also go to <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic's GitHub repository</a> to build and use the self-hosted NetEase Cloud Music API.`
   },
   mv: {

@@ -30,7 +30,7 @@ export default {
     popularSongs: "热门歌曲",
     showMore: "显示更多",
     showLess: "收起",
-    EPSingle: "EP和单曲",
+    EPsSingles: "EP和单曲",
     albums: "专辑"
   },
   album: {
@@ -55,10 +55,11 @@ export default {
     email: "邮箱",
     password: "密码",
     login: "登录",
-    usingEmail: "使用邮箱登录",
-    usingPhone: "使用手机号登录",
+    loginWithEmail: "使用邮箱登录",
+    loginWithPhone: "使用手机号登录",
     // TODO
-    agreement: `YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
+    notice: `
+      YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
       你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
       YesPlayMusic 并非网易云官方网站，输入账号信息前请慎重考虑。 你也可以前往
       <a href="https://github.com/qier222/YesPlayMusic"
