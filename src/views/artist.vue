@@ -13,13 +13,13 @@
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPopularSongs()" :iconClass="`play`">
-            {{ $t('play') }}
+            {{ $t("play") }}
           </ButtonTwoTone>
         </div>
       </div>
     </div>
     <div class="latest-release">
-      <div class="section-title">{{ $t('artist.latestRelease') }}</div>
+      <div class="section-title">{{ $t("artist.latestRelease") }}</div>
       <div class="release">
         <div class="container">
           <Cover
@@ -53,7 +53,7 @@
       </div>
     </div>
     <div class="popular-tracks">
-      <div class="section-title">{{ $t('artist.popularSongs') }}</div>
+      <div class="section-title">{{ $t("artist.popularSongs") }}</div>
       <TrackList
         :tracks="popularTracks.slice(0, showMorePopTracks ? 24 : 12)"
         :type="'tracklist'"
@@ -61,13 +61,13 @@
 
       <div class="show-more">
         <button @click="showMorePopTracks = !showMorePopTracks">
-          <span v-show="!showMorePopTracks">{{ $t('artist.showMore') }}</span>
-          <span v-show="showMorePopTracks">{{ $t('artist.showLess') }}</span>
+          <span v-show="!showMorePopTracks">{{ $t("artist.showMore") }}</span>
+          <span v-show="showMorePopTracks">{{ $t("artist.showLess") }}</span>
         </button>
       </div>
     </div>
     <div class="albums" v-if="albums.length !== 0">
-      <div class="section-title">{{ $t('artist.album') }}</div>
+      <div class="section-title">{{ $t("artist.albums") }}</div>
       <CoverRow
         :type="'album'"
         :items="albums"
@@ -80,7 +80,7 @@
       <MvRow :mvs="mvs" subtitle="publishTime" />
     </div>
     <div class="eps">
-      <div class="section-title">{{ $t('artist.EPSingle') }}</div>
+      <div class="section-title">{{ $t("artist.EPsSingles") }}</div>
       <CoverRow
         :type="'album'"
         :items="eps"
@@ -112,7 +112,7 @@ export default {
       show: false,
       artist: {
         img1v1Url:
-          "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg",
+          "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg"
       },
       popularTracks: [],
       albumsData: [],
@@ -122,28 +122,28 @@ export default {
         id: 0,
         name: "",
         type: "",
-        size: "",
+        size: ""
       },
       showMorePopTracks: false,
-      mvs: [],
+      mvs: []
     };
   },
   computed: {
     ...mapState(["player"]),
     albums() {
-      return this.albumsData.filter((a) => a.type === "专辑");
+      return this.albumsData.filter(a => a.type === "专辑");
     },
     eps() {
-      return this.albumsData.filter((a) =>
+      return this.albumsData.filter(a =>
         ["EP/Single", "EP", "Single"].includes(a.type)
       );
-    },
+    }
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     loadData(id, next = undefined) {
-      getArtist(id).then((data) => {
+      getArtist(id).then(data => {
         this.artist = data.artist;
         this.popularTracks = data.hotSongs;
         this.popularTracks = mapTrackPlayableStatus(this.popularTracks);
@@ -151,24 +151,24 @@ export default {
         NProgress.done();
         this.show = true;
       });
-      getArtistAlbum({ id: id, limit: 200 }).then((data) => {
+      getArtistAlbum({ id: id, limit: 200 }).then(data => {
         this.albumsData = data.hotAlbums;
         this.latestRelease = data.hotAlbums[0];
       });
-      artistMv(id).then((data) => {
+      artistMv(id).then(data => {
         this.mvs = data.mvs;
       });
     },
     goToAlbum(id) {
       this.$router.push({
         name: "album",
-        params: { id },
+        params: { id }
       });
     },
     playPopularSongs(trackID = "first") {
-      let trackIDs = this.popularTracks.map((t) => t.id);
+      let trackIDs = this.popularTracks.map(t => t.id);
       playAList(trackIDs, this.artist.id, "artist", trackID);
-    },
+    }
   },
   created() {
     this.loadData(this.$route.params.id);
@@ -187,7 +187,7 @@ export default {
     this.artist.img1v1Url =
       "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg";
     this.loadData(to.params.id, next);
-  },
+  }
 };
 </script>
 

@@ -31,8 +31,8 @@
               :key="ar.id"
               @click="goToArtist(ar.id)"
             >
-              {{ ar.name }}
-              <span v-if="index !== currentTrack.ar.length - 1">, </span>
+              <span class="ar">{{ ar.name }}</span
+              ><span v-if="index !== currentTrack.ar.length - 1">, </span>
             </span>
           </div>
         </div>
@@ -356,7 +356,7 @@ export default {
       -webkit-line-clamp: 1;
       overflow: hidden;
       word-break: break-all;
-      span {
+      span.ar {
         cursor: pointer;
         &:hover {
           text-decoration: underline;

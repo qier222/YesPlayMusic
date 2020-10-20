@@ -35,7 +35,7 @@
           /></span>
           <span
             class="lock-icon"
-            v-if="type === 'playlist' && item.privacy !== 0"
+            v-if="type === 'playlist' && item.privacy === 10"
           >
             <svg-icon icon-class="lock"
           /></span>

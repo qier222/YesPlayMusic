@@ -24,11 +24,11 @@ import TrackList from "@/components/TrackList.vue";
 export default {
   name: "Next",
   components: {
-    TrackList,
+    TrackList
   },
   data() {
     return {
-      tracks: [],
+      tracks: []
     };
   },
   computed: {
@@ -48,50 +48,51 @@ export default {
         };
       }
       return this.tracks
-        .filter((t) => t.sort > this.player.currentTrack.sort)
+        .filter(t => this.player.list.find(t2 => t2.id === t.id) !== undefined)
+        .filter(t => t.sort > this.player.currentTrack.sort)
         .sort(compare("sort"));
-    },
+    }
   },
   watch: {
     currentTrack() {
       this.loadTracks();
     },
     playerShuffle() {
-      this.tracks = this.tracks.map((t) => {
-        t.sort = this.player.list.find((t2) => t.id === t2.id).sort;
+      this.tracks = this.tracks.map(t => {
+        t.sort = this.player.list.find(t2 => t.id === t2.id).sort;
         return t;
       });
-    },
+    }
   },
   methods: {
     ...mapActions(["playTrackOnListByID"]),
     loadTracks() {
       console.time("loadTracks");
-      let loadedTrackIDs = this.tracks.map((t) => t.id);
+      let loadedTrackIDs = this.tracks.map(t => t.id);
       let basicTracks = this.player.list
         .filter(
-          (t) =>
+          t =>
             t.sort > this.player.currentTrack.sort &&
             t.sort <= this.player.currentTrack.sort + 100
         )
-        .filter((t) => loadedTrackIDs.includes(t.id) === false);
+        .filter(t => loadedTrackIDs.includes(t.id) === false);
 
-      let trackIDs = basicTracks.map((t) => t.id);
+      let trackIDs = basicTracks.map(t => t.id);
       if (trackIDs.length > 0) {
-        getTrackDetail(trackIDs.join(",")).then((data) => {
-          let newTracks = data.songs.map((t) => {
-            t.sort = this.player.list.find((t2) => t2.id == t.id).sort;
+        getTrackDetail(trackIDs.join(",")).then(data => {
+          let newTracks = data.songs.map(t => {
+            t.sort = this.player.list.find(t2 => t2.id == t.id).sort;
             return t;
           });
           this.tracks.push(...newTracks);
         });
       }
       console.timeEnd("loadTracks");
-    },
+    }
   },
   activated() {
     this.loadTracks();
-  },
+  }
 };
 </script>
 
