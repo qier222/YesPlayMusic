@@ -3,7 +3,7 @@
     <h1>
       <img class="head" :src="user.profile.avatarUrl | resizeImage" />{{
         user.profile.nickname
-      }}{{ $t("is") }} {{ $t("library") }}
+      }}{{ $t("library.sLibrary") }}
     </h1>
     <div class="section-one">
       <div class="liked-songs" @click="goToLikedSongsList">
@@ -19,7 +19,7 @@
         </div>
         <div class="bottom">
           <div class="titles">
-            <div class="title">{{ $t("likedSong") }}</div>
+            <div class="title">{{ $t("library.likedSongs") }}</div>
             <div class="sub-title">
               {{ likedSongsPlaylist.trackCount }} songs
             </div>
@@ -41,7 +41,7 @@
     </div>
 
     <div class="playlists" v-if="playlists.length > 1">
-      <div class="title">{{ $t("playlist") }}</div>
+      <div class="title">{{ $t("playlist.playlist") }}</div>
       <div>
         <CoverRow
           :items="playlists.slice(1)"
@@ -76,23 +76,23 @@ export default {
       user: {
         profile: {
           avatarUrl: "",
-          nickname: "",
-        },
+          nickname: ""
+        }
       },
       playlists: [],
       hasMorePlaylists: true,
       likedSongsPlaylist: {
         id: 0,
-        trackCount: 0,
+        trackCount: 0
       },
       likedSongs: [],
       likedSongIDs: [],
-      lyric: undefined,
+      lyric: undefined
     };
   },
   created() {
     NProgress.start();
-    userDetail(this.settings.user.userId).then((data) => {
+    userDetail(this.settings.user.userId).then(data => {
       this.user = data;
     });
   },
@@ -107,7 +107,7 @@ export default {
     pickedLyric() {
       if (this.lyric === undefined) return "";
       let lyric = this.lyric.split("\n");
-      lyric = lyric.filter((l) => {
+      lyric = lyric.filter(l => {
         if (l.includes("作词") || l.includes("作曲")) {
           return false;
         }
@@ -120,9 +120,9 @@ export default {
       return [
         lyric[lineIndex].split("]")[1],
         lyric[lineIndex + 1].split("]")[1],
-        lyric[lineIndex + 2].split("]")[1],
+        lyric[lineIndex + 2].split("]")[1]
       ];
-    },
+    }
   },
   methods: {
     playLikedSongs() {
@@ -133,24 +133,31 @@ export default {
     },
     loadData() {
       if (this.hasMorePlaylists) {
-        userPlaylist({
-          uid: this.settings.user.userId,
-          offset: this.playlists.length,
-          timestamp: new Date().getTime(),
-        }).then((data) => {
-          this.playlists.push(...data.playlist);
-          this.hasMorePlaylists = data.more;
-          this.likedSongsPlaylist = data.playlist[0];
-        });
+        this.getUserPlaylists();
       }
       this.getLikedSongs();
     },
+    getUserPlaylists(replace = false) {
+      userPlaylist({
+        uid: this.settings.user.userId,
+        offset: this.playlists.length === 0 ? 0 : this.playlists.length - 1,
+        timestamp: new Date().getTime()
+      }).then(data => {
+        if (replace) {
+          this.playlists = data.playlist;
+        } else {
+          this.playlists.push(...data.playlist);
+        }
+        this.hasMorePlaylists = data.more;
+        this.likedSongsPlaylist = data.playlist[0];
+      });
+    },
     getLikedSongs(getLyric = true) {
       getPlaylistDetail(this.settings.user.likedSongPlaylistID, true).then(
-        (data) => {
-          let TrackIDs = data.playlist.trackIds.slice(0, 20).map((t) => t.id);
+        data => {
+          let TrackIDs = data.playlist.trackIds.slice(0, 20).map(t => t.id);
           this.likedSongIDs = TrackIDs;
-          getTrackDetail(this.likedSongIDs.join(",")).then((data) => {
+          getTrackDetail(this.likedSongIDs.join(",")).then(data => {
             this.likedSongs = data.songs;
             this.likedSongs = mapTrackPlayableStatus(this.likedSongs);
             NProgress.done();
@@ -163,16 +170,16 @@ export default {
     getRandomLyric() {
       getLyric(
         this.likedSongIDs[randomNum(0, this.likedSongIDs.length - 1)]
-      ).then((data) => {
+      ).then(data => {
         if (data.lrc !== undefined) this.lyric = data.lrc.lyric;
       });
-    },
+    }
   },
   watch: {
     likedSongsInState() {
       this.getLikedSongs(false);
-    },
-  },
+    }
+  }
 };
 </script>
 
