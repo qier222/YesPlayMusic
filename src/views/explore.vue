@@ -102,33 +102,48 @@ export default {
     getPlaylist() {
       this.loadingMore = true;
       if (this.activeCategory === "推荐歌单") {
-        recommendPlaylist({ limit: 100 }).then((data) => {
-          this.updatePlaylist(data.result);
-        });
-      } else if (this.activeCategory === "精品歌单") {
-        let playlists = this.playlists;
-        let before =
-          playlists.length !== 0
-            ? playlists[playlists.length - 1].updateTime
-            : 0;
-        highQualityPlaylist({ limit: 50, before }).then((data) => {
-          this.updatePlaylist(data.playlists);
-          this.hasMore = data.more;
-        });
-      } else if (this.activeCategory === "排行榜") {
-        toplists().then((data) => {
-          this.updatePlaylist(data.list);
-        });
-      } else {
-        topPlaylist({
-          cat: this.activeCategory,
-          offset: this.playlists.length,
-        }).then((data) => {
-          this.updatePlaylist(data.playlists);
-          this.hasMore = data.more;
-        });
+        return this.getRecommendPlayList()
       }
+      if (this.activeCategory === "精品歌单") {
+        return this.getHighQualityPlaylist()
+      }
+      if (this.activeCategory === "排行榜") {
+        return this.getTopLists()
+      }
+      return this.getTopPlayList()
     },
+    getRecommendPlayList() {
+      recommendPlaylist({ limit: 100 }).then(data => {
+        this.playlists = []
+        this.updatePlaylist(data.result);
+      });
+    },
+    getHighQualityPlaylist() {
+      let playlists = this.playlists;
+      let before =
+        playlists.length !== 0
+          ? playlists[playlists.length - 1].updateTime
+          : 0;
+      highQualityPlaylist({ limit: 50, before }).then((data) => {
+        this.updatePlaylist(data.playlists);
+        this.hasMore = data.more;
+      });
+    },
+    getTopLists() {
+      toplists().then((data) => {
+        this.playlists = []
+        this.updatePlaylist(data.list);
+      });
+    },
+    getTopPlayList() {
+      topPlaylist({
+        cat: this.activeCategory,
+        offset: this.playlists.length,
+      }).then(data => {
+        this.updatePlaylist(data.playlists);
+        this.hasMore = data.more;
+      });
+    }
   },
   activated() {
     this.loadData();
