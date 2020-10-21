@@ -92,7 +92,6 @@ import NProgress from "nprogress";
 import { getPlaylistDetail, subscribePlaylist } from "@/api/playlist";
 import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
-import { mapTrackPlayableStatus } from "@/utils/common";
 import { isLoggedIn } from "@/utils/auth";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
@@ -166,7 +165,6 @@ export default {
         .then(data => {
           this.playlist = data.playlist;
           this.tracks = data.playlist.tracks;
-          this.tracks = mapTrackPlayableStatus(this.tracks);
           NProgress.done();
           if (next !== undefined) next();
           this.show = true;
@@ -194,7 +192,6 @@ export default {
       trackIDs = trackIDs.map(t => t.id);
       getTrackDetail(trackIDs.join(",")).then(data => {
         this.tracks.push(...data.songs);
-        this.tracks = mapTrackPlayableStatus(this.tracks);
         this.lastLoadedTrackIndex += trackIDs.length;
         this.loadingMore = false;
       });

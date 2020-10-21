@@ -1,11 +1,12 @@
 import request from "@/utils/request";
+import { mapTrackPlayableStatus } from "@/utils/common";
 
 export function recommendPlaylist(params) {
   // limit: 取出数量 , 默认为 30
   return request({
     url: "/personalized",
     method: "get",
-    params,
+    params
   });
 }
 export function dailyRecommendPlaylist(params) {
@@ -13,7 +14,7 @@ export function dailyRecommendPlaylist(params) {
   return request({
     url: "/recommend/resource",
     method: "get",
-    params,
+    params
   });
 }
 
@@ -23,7 +24,10 @@ export function getPlaylistDetail(id, noCache = false) {
   return request({
     url: "/playlist/detail",
     method: "get",
-    params,
+    params
+  }).then(data => {
+    data.playlist.tracks = mapTrackPlayableStatus(data.playlist.tracks);
+    return data;
   });
 }
 
@@ -34,7 +38,7 @@ export function highQualityPlaylist(params) {
   return request({
     url: "/top/playlist/highquality",
     method: "get",
-    params,
+    params
   });
 }
 
@@ -46,21 +50,21 @@ export function topPlaylist(params) {
   return request({
     url: "/top/playlist",
     method: "get",
-    params,
+    params
   });
 }
 
 export function playlistCatlist() {
   return request({
     url: "/playlist/catlist",
-    method: "get",
+    method: "get"
   });
 }
 
 export function toplists() {
   return request({
     url: "/toplist",
-    method: "get",
+    method: "get"
   });
 }
 
@@ -70,6 +74,6 @@ export function subscribePlaylist(params) {
   return request({
     url: "/playlist/subscribe",
     method: "get",
-    params,
+    params
   });
 }
