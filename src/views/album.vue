@@ -62,7 +62,9 @@
       >
         <div class="description-full" @click.stop>
           <span>{{ album.description }}</span>
-          <span class="close" @click="showFullDescription = false">Close</span>
+          <span class="close" @click="showFullDescription = false">
+            {{ $t('modal.close') }}
+          </span>
         </div>
       </div>
     </transition>
