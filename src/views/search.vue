@@ -1,7 +1,7 @@
 <template>
   <div class="search" v-show="show">
     <h1><span>Search for</span> "{{ keywords }}"</h1>
-    <div class="result" v-if="result !== undefined">
+    <div class="result" v-if="isExistResult">
       <div class="row">
         <div class="artists" v-if="result.hasOwnProperty('artist')">
           <div class="section-title">{{ $t("search.artist") }}</div>
@@ -150,7 +150,10 @@ export default {
     tracks() {
       let tracks = this.result.song.songs.slice(0, 12);
       return tracks;
-    }
+    },
+    isExistResult() {
+      return Object.keys(this.result).length;
+    } 
   },
   methods: {
     goToAlbum(id) {
