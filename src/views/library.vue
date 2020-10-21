@@ -149,7 +149,7 @@ export default {
           this.playlists.push(...data.playlist);
         }
         this.hasMorePlaylists = data.more;
-        this.likedSongsPlaylist = data.playlist[0];
+        this.likedSongsPlaylist = this.playlists[0];
       });
     },
     getLikedSongs(getLyric = true) {
