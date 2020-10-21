@@ -94,7 +94,6 @@
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
 import { getArtist, getArtistAlbum, artistMv } from "@/api/artist";
-import { mapTrackPlayableStatus } from "@/utils/common";
 import { playAList } from "@/utils/play";
 import NProgress from "nprogress";
 
@@ -146,7 +145,6 @@ export default {
       getArtist(id).then(data => {
         this.artist = data.artist;
         this.popularTracks = data.hotSongs;
-        this.popularTracks = mapTrackPlayableStatus(this.popularTracks);
         if (next !== undefined) next();
         NProgress.done();
         this.show = true;

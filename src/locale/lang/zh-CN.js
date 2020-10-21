@@ -83,5 +83,16 @@ export default {
     pause: "暂停",
     mute: "静音",
     nextUp: "播放列表"
+  },
+  modal: {
+    close: "关闭"
+  },
+  search: {
+    artist: "歌手",
+    album: "专辑",
+    song: "歌曲",
+    mv: "视频",
+    playlist: "歌单",
+    noResult: "暂无结果"
   }
 };

@@ -58,7 +58,7 @@
 import { mapState } from "vuex";
 import { getTrackDetail, getLyric } from "@/api/track";
 import { userDetail, userPlaylist } from "@/api/user";
-import { mapTrackPlayableStatus, randomNum } from "@/utils/common";
+import { randomNum } from "@/utils/common";
 import { getPlaylistDetail } from "@/api/playlist";
 import { playPlaylistByID } from "@/utils/play";
 import NProgress from "nprogress";
@@ -149,17 +149,16 @@ export default {
           this.playlists.push(...data.playlist);
         }
         this.hasMorePlaylists = data.more;
-        this.likedSongsPlaylist = this.playlists[0];
       });
     },
     getLikedSongs(getLyric = true) {
       getPlaylistDetail(this.settings.user.likedSongPlaylistID, true).then(
         data => {
+          this.likedSongsPlaylist = data.playlist;
           let TrackIDs = data.playlist.trackIds.slice(0, 20).map(t => t.id);
           this.likedSongIDs = TrackIDs;
           getTrackDetail(this.likedSongIDs.join(",")).then(data => {
             this.likedSongs = data.songs;
-            this.likedSongs = mapTrackPlayableStatus(this.likedSongs);
             NProgress.done();
             this.show = true;
           });
