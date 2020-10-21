@@ -1,5 +1,5 @@
 {
-  "name": "music-app",
+  "name": "YesPlayMusic",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@sentry/browser": "^5.27.0",
+    "@sentry/integrations": "^5.27.0",
+    "@sentry/tracing": "^5.27.0",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
