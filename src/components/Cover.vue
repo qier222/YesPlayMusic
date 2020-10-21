@@ -144,7 +144,7 @@ export default {
 .hover-play-button {
   &:hover {
     .play-button {
-      visibility: visible;
+      opacity: 1;
       transform: unset;
     }
   }
@@ -165,7 +165,7 @@ export default {
   height: 208px;
 }
 .play-button {
-  visibility: hidden;
+  opacity: 0;
   display: flex;
   justify-content: center;
   align-items: center;
