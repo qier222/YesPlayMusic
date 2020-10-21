@@ -3,6 +3,7 @@
     class="track"
     :class="trackClass"
     :style="trackStyle"
+    :title="track.reason"
     @mouseover="focus = true"
     @mouseleave="focus = false"
   >
@@ -15,7 +16,7 @@
       >
         <svg-icon icon-class="play"></svg-icon>
       </button>
-      <span v-show="!focus">{{ track.no }}</span>
+      <span v-show="!focus || !track.playable">{{ track.no }}</span>
     </div>
     <div class="title-and-artist">
       <div class="container">
@@ -66,7 +67,6 @@
 
 <script>
 import { isLoggedIn } from "@/utils/auth";
-import { likeATrack } from "@/api/track";
 
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
@@ -127,21 +127,7 @@ export default {
       this.$parent.playThisList(this.track.id);
     },
     likeThisSong() {
-      let id = this.track.id;
-      let like = true;
-      let likedSongs = this.$parent.liked.songs;
-      if (likedSongs.includes(id)) like = false;
-      likeATrack({ id, like }).then(() => {
-        if (like === false) {
-          this.$store.commit(
-            "updateLikedSongs",
-            likedSongs.filter(d => d !== id)
-          );
-        } else {
-          likedSongs.push(id);
-          this.$store.commit("updateLikedSongs", likedSongs);
-        }
-      });
+      this.$parent.likeASong(this.track.id);
     }
   },
   created() {
