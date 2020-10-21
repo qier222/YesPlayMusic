@@ -57,7 +57,6 @@ export default {
     login: "登录",
     loginWithEmail: "使用邮箱登录",
     loginWithPhone: "使用手机号登录",
-    // TODO
     notice: `
       YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
       你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
