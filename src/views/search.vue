@@ -4,7 +4,7 @@
     <div class="result" v-if="result !== undefined">
       <div class="row">
         <div class="artists" v-if="result.hasOwnProperty('artist')">
-          <div class="section-title">Artists</div>
+          <div class="section-title">{{ $t("search.artist") }}</div>
           <div class="artists-list">
             <div
               class="artist"
@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="albums" v-if="result.hasOwnProperty('album')">
-          <div class="section-title">Albums</div>
+          <div class="section-title">{{ $t("search.album") }}</div>
           <div class="albums-list">
             <div
               class="album"
@@ -69,17 +69,17 @@
       </div>
 
       <div class="tracks" v-if="result.hasOwnProperty('song')">
-        <div class="section-title">Songs</div>
+        <div class="section-title">{{ $t("search.song") }}</div>
         <TrackList :tracks="tracks" :type="'tracklist'" />
       </div>
 
       <div class="mvs" v-if="mvs !== null && mvs.length > 0">
-        <div class="section-title">MVs</div>
+        <div class="section-title">{{ $t("search.mv") }}</div>
         <MvRow class="mv-row" :mvs="mvs.slice(0, 5)" />
       </div>
 
       <div class="playlists" v-if="result.hasOwnProperty('playList')">
-        <div class="section-title">{{ $t("playlist.playlist") }}</div>
+        <div class="section-title">{{ $t("search.playlist") }}</div>
         <div class="albums-list">
           <div
             class="album"
@@ -110,7 +110,7 @@
       </div>
     </div>
     <div class="no-results" v-else>
-      No Results
+      {{ $t("search.noResult") }}
     </div>
   </div>
 </template>

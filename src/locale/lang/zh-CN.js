@@ -87,5 +87,13 @@ export default {
   },
   modal: {
     close: "关闭"
+  },
+  search: {
+    artist: "歌手",
+    album: "专辑",
+    song: "歌曲",
+    mv: "视频",
+    playlist: "歌单",
+    noResult: "暂无结果"
   }
 };

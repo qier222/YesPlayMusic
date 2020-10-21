@@ -82,5 +82,13 @@ export default {
   },
   modal: {
     close: "Close"
+  },
+  search: {
+    artist: "Artists",
+    album: "Albums",
+    song: "Songs",
+    mv: "MVs",
+    playlist: "Playlists",
+    noResult: "No Results"
   }
 };
