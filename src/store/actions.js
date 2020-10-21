@@ -33,7 +33,7 @@ export default {
 
       if (isLoggedIn) {
         getMP3(track.id).then(data => {
-          commitMP3(data.data[0].url);
+          commitMP3(data.data[0].url.replace(/^http:/, "https:"));
         });
       } else {
         commitMP3(`https://music.163.com/song/media/outer/url?id=${track.id}`);
