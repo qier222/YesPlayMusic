@@ -79,5 +79,8 @@ export default {
     pause: "Pause",
     mute: "Mute",
     nextUp: "Next Up"
+  },
+  modal: {
+    close: "Close"
   }
 };
