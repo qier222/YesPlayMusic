@@ -70,7 +70,8 @@ export default {
       else this.$router.go(1);
     },
     goToSearchPage() {
-      if(!this.keywords) return;
+      if (!this.keywords) return;
+      if (this.$route.name === 'search' && this.$route.query.keywords === this.keywords) return;
       this.$router.push({
         name: "search",
         query: { keywords: this.keywords },
