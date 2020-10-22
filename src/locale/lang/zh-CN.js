@@ -34,7 +34,7 @@ export default {
     albums: "专辑",
     withAlbums: "张专辑",
     artist: "歌手",
-    videos: "个视频"
+    videos: "个视频",
   },
   album: {
     released: "发行于",
@@ -97,9 +97,9 @@ export default {
     mv: "视频",
     playlist: "歌单",
     noResult: "暂无结果",
-    searchFor: "搜索"
+    searchFor: "搜索",
   },
   common: {
     songs: "首歌",
-  }
+  },
 };
