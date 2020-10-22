@@ -7,16 +7,26 @@
     @mouseover="focus = true"
     @mouseleave="focus = false"
   >
-    <img :src="imgUrl | resizeImage(224)" v-if="!isAlbum" @click="goToAlbum" />
+    <img
+      :src="imgUrl | resizeImage(224)"
+      v-if="!isAlbum"
+      @click="goToAlbum"
+      :class="{ hover: focus }"
+    />
     <div class="no" v-if="isAlbum">
       <button
         class="play-button"
-        v-show="focus && track.playable"
+        v-show="focus && track.playable && !isPlaying"
         @click="playTrack"
       >
         <svg-icon icon-class="play"></svg-icon>
       </button>
-      <span v-show="!focus || !track.playable">{{ track.no }}</span>
+      <span v-show="(!focus || !track.playable) && !isPlaying">{{
+        track.no
+      }}</span>
+      <button v-show="isPlaying">
+        <svg-icon icon-class="volume" style="height:16px;width:16px"></svg-icon>
+      </button>
     </div>
     <div class="title-and-artist">
       <div class="container">
@@ -156,15 +166,6 @@ button {
   }
 }
 
-button.play-button {
-  opacity: 1;
-  .svg-icon {
-    height: 14px;
-    width: 14px;
-    color: #335eea;
-  }
-}
-
 .track {
   display: flex;
   align-items: center;
@@ -205,6 +206,11 @@ button.play-button {
     border: 1px solid rgba(0, 0, 0, 0.04);
     cursor: pointer;
   }
+
+  img.hover {
+    filter: drop-shadow(100 200 0 black);
+  }
+
   .title-and-artist {
     flex: 1;
     display: flex;
@@ -282,6 +288,7 @@ button.play-button {
   .artist,
   .album,
   .time,
+  .no,
   .featured {
     color: rgba(0, 0, 0, 0.28) !important;
   }
