@@ -7,14 +7,24 @@ export default {
     getTrackDetail(basicTrack.id).then(data => {
       let track = data.songs[0];
       track.sort = basicTrack.sort;
-
+      // 获取当前的播放时间。初始化为 loading 状态时返回 howler 的实例而不是浮点数时间，比如 1.332
       let time = state.howler.seek();
+      let currentTime = 0
+      if (time === 0) {
+        // state.howler._duration 可以获得当前实例的播放时长
+        currentTime = 180
+      }
+      if (time.toString() === '[object Object]') {
+        currentTime = 0
+      }
+      if (time > 0) {
+        currentTime = time
+      }
       scrobble({
         id: state.player.currentTrack.id,
         sourceid: state.player.listInfo.id,
-        time: time === 0 ? 180 : time
-      });
-
+        time: currentTime
+      })
       commit("updateCurrentTrack", track);
       updateMediaSessionMetaData(track);
       document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
