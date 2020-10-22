@@ -13,8 +13,7 @@ if (localStorage.getItem("appVersion") === null) {
   window.location.reload();
 }
 
-Vue.use(Vuex);
-const saveToLocalStorage = (store) => {
+const saveToLocalStorage = store => {
   store.subscribe((mutation, state) => {
     // console.log(mutation);
     localStorage.setItem("player", JSON.stringify(state.player));
@@ -22,20 +21,28 @@ const saveToLocalStorage = (store) => {
   });
 };
 
+Vue.use(Vuex);
 const store = new Vuex.Store({
   state: state,
   mutations,
   actions,
-  plugins: [saveToLocalStorage],
+  plugins: [saveToLocalStorage]
 });
 
 store.state.howler = new Howl({
   src: [
-    `https://music.163.com/song/media/outer/url?id=${store.state.player.currentTrack.id}`,
+    `https://music.163.com/song/media/outer/url?id=${store.state.player.currentTrack.id}`
   ],
   html5: true,
-  format: ["mp3"],
+  format: ["mp3"]
 });
 Howler.volume(store.state.player.volume);
+
+if ([undefined, null].includes(store.state.settings.lang)) {
+  let lang = "en";
+  if (navigator.language.slice(0, 2) === "zh") lang = "zh-CN";
+  store.state.settings.lang = lang;
+  localStorage.setItem("settings", JSON.stringify(store.state.settings));
+}
 
 export default store;

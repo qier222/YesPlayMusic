@@ -13,7 +13,7 @@ export default {
     state.howler = new Howl({
       src: [mp3],
       autoplay: true,
-      html5: true,
+      html5: true
     });
     state.howler.play();
   },
@@ -28,7 +28,7 @@ export default {
     state.player.repeat = status;
   },
   appendTrackToPlayerList(state, { track, playNext = false }) {
-    let existTrack = state.player.list.find((t) => t.id === track.id);
+    let existTrack = state.player.list.find(t => t.id === track.id);
     if (
       (existTrack === null || existTrack === undefined) &&
       playNext === false
@@ -38,7 +38,7 @@ export default {
     }
 
     // 把track加入到正在播放歌曲的下一首位置
-    state.player.list = state.player.list.map((t) => {
+    state.player.list = state.player.list.map(t => {
       if (t.sort > state.player.currentTrack.sort) {
         t.sort = t.sort + 1;
       }
@@ -54,10 +54,10 @@ export default {
     state.player.shuffle = true;
 
     let newSorts = shuffleAList(
-      state.player.list.filter((t) => t.sort > state.player.currentTrack.sort)
+      state.player.list.filter(t => t.sort > state.player.currentTrack.sort)
     );
 
-    state.player.list = state.player.list.map((track) => {
+    state.player.list = state.player.list.map(track => {
       if (newSorts[track.id] !== undefined) track.sort = newSorts[track.id];
       return track;
     });
@@ -68,7 +68,7 @@ export default {
       JSON.stringify(state.player.notShuffledList)
     );
     state.player.currentTrack.sort = state.player.list.find(
-      (t) => t.id === state.player.currentTrack.id
+      t => t.id === state.player.currentTrack.id
     ).sort;
   },
   shuffleTheListBeforePlay(state) {
@@ -76,7 +76,7 @@ export default {
       JSON.stringify(state.player.list)
     );
     let newSorts = shuffleAList(state.player.list);
-    state.player.list = state.player.list.map((track) => {
+    state.player.list = state.player.list.map(track => {
       track.sort = newSorts[track.id];
       return track;
     });
@@ -91,13 +91,16 @@ export default {
     state.liked.songs = trackIDs;
   },
   switchSortBetweenTwoTracks(state, { trackID1, trackID2 }) {
-    let t1 = state.player.list.find((t) => t.id === trackID1);
-    let t2 = state.player.list.find((t) => t.id === trackID2);
+    let t1 = state.player.list.find(t => t.id === trackID1);
+    let t2 = state.player.list.find(t => t.id === trackID2);
     let sorts = [t1.sort, t2.sort];
-    state.player.list = state.player.list.map((t) => {
+    state.player.list = state.player.list.map(t => {
       if (t.id === t1.id) t.sort = sorts[1];
       if (t.id === t2.id) t.sort = sorts[0];
       return t;
     });
   },
+  changeLang(state, lang) {
+    state.settings.lang = lang;
+  }
 };

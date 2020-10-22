@@ -1,11 +1,11 @@
 const initState = {
   howler: null,
   liked: {
-    songs: [],
+    songs: []
   },
   contextMenu: {
     clickObjectID: 0,
-    showMenu: false,
+    showMenu: false
   },
   player: {
     enable: false,
@@ -26,51 +26,51 @@ const initState = {
           "https://p1.music.126.net/kHNNN-VxufjlBtyNPIP3kg==/109951165306614548.jpg",
         tns: [],
         pic_str: "109951165306614548",
-        pic: 109951165306614540,
+        pic: 109951165306614540
       },
       time: 196022,
-      playable: true,
+      playable: true
     },
     notShuffledList: [],
     list: [],
     listInfo: {
       type: "",
-      id: "",
-    },
+      id: ""
+    }
   },
   settings: {
     playlistCategories: [
       {
         name: "全部",
-        enable: true,
+        enable: true
       },
       {
         name: "推荐歌单",
-        enable: true,
+        enable: true
       },
       {
         name: "精品歌单",
-        enable: true,
+        enable: true
       },
       {
         name: "官方",
-        enable: true,
+        enable: true
       },
       {
         name: "流行",
-        enable: true,
+        enable: true
       },
       {
         name: "电子",
-        enable: true,
+        enable: true
       },
       {
         name: "摇滚",
-        enable: true,
+        enable: true
       },
       {
         name: "ACG",
-        enable: true,
+        enable: true
       },
       // {
       //   name: "最新专辑",
@@ -78,13 +78,14 @@ const initState = {
       // },
       {
         name: "排行榜",
-        enable: true,
-      },
+        enable: true
+      }
     ],
     user: {
-      id: 0,
+      id: 0
     },
-  },
+    lang: null
+  }
 };
 
 export default initState;
