@@ -14,12 +14,8 @@
       :class="{ hover: focus }"
     />
     <div class="no" v-if="isAlbum">
-      <button
-        class="play-button"
-        v-show="focus && track.playable && !isPlaying"
-        @click="playTrack"
-      >
-        <svg-icon icon-class="play"></svg-icon>
+      <button v-show="focus && track.playable && !isPlaying" @click="playTrack">
+        <svg-icon icon-class="play" style="height:14px;width:14px"></svg-icon>
       </button>
       <span v-show="(!focus || !track.playable) && !isPlaying">{{
         track.no
