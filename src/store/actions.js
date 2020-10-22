@@ -1,6 +1,7 @@
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
 import { isLoggedIn } from "@/utils/auth";
+import { updateHttps } from "@/utils/common";
 
 export default {
   switchTrack({ state, dispatch, commit }, basicTrack) {
@@ -43,7 +44,11 @@ export default {
 
       if (isLoggedIn) {
         getMP3(track.id).then((data) => {
-          commitMP3(data.data[0].url.replace(/^http:/, "https:"));
+          // 未知情况下会没有返回数据导致报错，增加防范逻辑
+          if (data.data[0]) {
+            const url = updateHttps(data.data[0].url);
+            commitMP3(url);
+          }
         });
       } else {
         commitMP3(`https://music.163.com/song/media/outer/url?id=${track.id}`);
