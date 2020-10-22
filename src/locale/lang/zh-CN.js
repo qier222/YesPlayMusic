@@ -19,7 +19,8 @@ export default {
   library: {
     sLibrary: "的资料库",
     likedSongs: "我喜欢的歌",
-    sLikedSongs: "喜欢的歌"
+    sLikedSongs: "喜欢的歌",
+    songs: "首歌"
   },
   explore: {
     explore: "发现",
@@ -31,14 +32,20 @@ export default {
     showMore: "显示更多",
     showLess: "收起",
     EPsSingles: "EP和单曲",
-    albums: "专辑"
+    albums: "专辑",
+    withAlbums: "张专辑",
+    artist: "歌手",
+    songs: "首歌",
+    videos: "个视频"
   },
   album: {
-    released: "发行于"
+    released: "发行于",
+    songs: "首歌"
   },
   playlist: {
     playlist: "歌单",
-    updatedAt: "最后更新于"
+    updatedAt: "最后更新于",
+    songs: "首歌"
   },
   login: {
     accessToAll: "可访问全部数据",
@@ -93,6 +100,7 @@ export default {
     song: "歌曲",
     mv: "视频",
     playlist: "歌单",
-    noResult: "暂无结果"
+    noResult: "暂无结果",
+    searchFor: "搜索"
   }
 };

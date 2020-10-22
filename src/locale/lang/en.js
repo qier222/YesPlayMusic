@@ -19,7 +19,8 @@ export default {
   library: {
     sLibrary: "'s Library",
     likedSongs: "Liked Songs",
-    sLikedSongs: "'s LikedSongs"
+    sLikedSongs: "'s LikedSongs",
+    songs: "Songs",
   },
   explore: {
     explore: "Explore",
@@ -31,14 +32,20 @@ export default {
     showMore: "SHOW MORE",
     showLess: "SHOW LESS",
     EPsSingles: "EPs & Singles",
-    albums: "Albums"
+    albums: "Albums",
+    withAlbums: "Albums",
+    artist: "Artist",
+    songs: "Songs",
+    videos: "Music Videos"
   },
   album: {
-    released: "Released"
+    released: "Released",
+    songs: "Songs"
   },
   playlist: {
     playlist: "Playlists",
-    updatedAt: "Updated at"
+    updatedAt: "Updated at",
+    songs: "Songs"
   },
   login: {
     accessToAll: "Access to all data",
@@ -88,6 +95,7 @@ export default {
     song: "Songs",
     mv: "MVs",
     playlist: "Playlists",
-    noResult: "No Results"
+    noResult: "No Results",
+    searchFor: "Search for"
   }
 };
