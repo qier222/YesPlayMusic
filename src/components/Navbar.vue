@@ -81,10 +81,14 @@ export default {
       });
     },
     changeLang() {
+      let lang = "";
       if (this.$i18n.locale === "zh-CN") {
-        return (this.$i18n.locale = "en");
+        lang = "en";
+      } else {
+        lang = "zh-CN";
       }
-      this.$i18n.locale = "zh-CN";
+      this.$i18n.locale = lang;
+      this.$store.commit("changeLang", lang);
     },
   },
 };

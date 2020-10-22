@@ -27,7 +27,8 @@
           <span :title="album.publishTime | formatDate">{{
             new Date(album.publishTime).getFullYear()
           }}</span>
-          <span> · {{ album.size }} songs</span>,
+          <span> · {{ album.size }} {{ $t("common.songs") }}</span
+          >,
           {{ albumTime | formatTime("Human") }}
         </div>
         <div class="description" @click="showFullDescription = true">

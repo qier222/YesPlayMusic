@@ -100,4 +100,7 @@ export default {
       return t;
     });
   },
+  changeLang(state, lang) {
+    state.settings.lang = lang;
+  },
 };

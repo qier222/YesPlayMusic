@@ -84,6 +84,7 @@ const initState = {
     user: {
       id: 0,
     },
+    lang: null,
   },
 };
 

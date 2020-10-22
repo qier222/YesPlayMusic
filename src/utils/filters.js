@@ -19,7 +19,11 @@ Vue.filter("formatTime", (Milliseconds, format = "HH:MM:SS") => {
       ? `${hours}:${mins.padStart(2, "0")}:${seconds}`
       : `${mins}:${seconds}`;
   } else if (format === "Human") {
-    return hours !== "0" ? `${hours} hr ${mins} min` : `${mins} min`;
+    const hoursUnit = locale.locale === "zh-CN" ? "小时" : "hr";
+    const minitesUnit = locale.locale === "zh-CN" ? "分钟" : "min";
+    return hours !== "0"
+      ? `${hours} ${hoursUnit} ${mins} ${minitesUnit}`
+      : `${mins} ${minitesUnit}`;
   }
 });
 

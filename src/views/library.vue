@@ -21,7 +21,7 @@
           <div class="titles">
             <div class="title">{{ $t("library.likedSongs") }}</div>
             <div class="sub-title">
-              {{ likedSongsPlaylist.trackCount }} songs
+              {{ likedSongsPlaylist.trackCount }} {{ $t("common.songs") }}
             </div>
           </div>
           <button @click.stop="playLikedSongs">

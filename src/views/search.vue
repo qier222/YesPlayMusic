@@ -1,6 +1,8 @@
 <template>
   <div class="search" v-show="show">
-    <h1><span>Search for</span> "{{ keywords }}"</h1>
+    <h1>
+      <span>{{ $t("search.searchFor") }}</span> "{{ keywords }}"
+    </h1>
     <div class="result" v-if="isExistResult">
       <div class="row">
         <div class="artists" v-if="result.hasOwnProperty('artist')">
