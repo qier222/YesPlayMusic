@@ -72,6 +72,6 @@ export function throttle(fn, time) {
 }
 
 export function updateHttps(url) {
-  if (!url) return ''
+  if (!url) return "";
   return url.replace(/^http:/, "https:");
 }

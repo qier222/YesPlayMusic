@@ -1,7 +1,7 @@
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
 import { isLoggedIn } from "@/utils/auth";
-import { updateHttps } from "@/utils/common"
+import { updateHttps } from "@/utils/common";
 
 export default {
   switchTrack({ state, dispatch, commit }, basicTrack) {
