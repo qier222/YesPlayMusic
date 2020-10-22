@@ -98,6 +98,11 @@ const routes = [
       requireLogin: true,
     },
   },
+  {
+    path: "/settings",
+    name: "settings",
+    component: () => import("@/views/settings"),
+  },
 ];
 const router = new VueRouter({
   routes,
@@ -129,7 +134,10 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-  if (to.matched.some((record) => !record.meta.keepAlive)) {
+  if (
+    to.matched.some((record) => !record.meta.keepAlive) &&
+    !["settings"].includes(to.name)
+  ) {
     NProgress.start();
   }
 });

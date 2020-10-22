@@ -71,8 +71,12 @@ main {
   }
 }
 
+select,
 button {
   font-family: inherit;
+}
+
+button {
   background: none;
   border: none;
   cursor: pointer;

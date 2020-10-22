@@ -41,9 +41,6 @@
           </div>
         </div>
       </div>
-      <div class="locale-changer" @click="changeLang">
-        <svg-icon icon-class="translation" class="translation" />
-      </div>
     </div>
   </nav>
 </template>
@@ -79,16 +76,6 @@ export default {
         name: "search",
         query: { keywords: this.keywords },
       });
-    },
-    changeLang() {
-      let lang = "";
-      if (this.$i18n.locale === "zh-CN") {
-        lang = "en";
-      } else {
-        lang = "zh-CN";
-      }
-      this.$i18n.locale = lang;
-      this.$store.commit("changeLang", lang);
     },
   },
 };
@@ -211,15 +198,6 @@ nav {
     margin-right: 16px;
     height: 24px;
     width: 24px;
-  }
-}
-
-.locale-changer {
-  position: relative;
-  .translation {
-    margin-left: 16px;
-    height: 48px;
-    width: 48px;
   }
 }
 </style>
