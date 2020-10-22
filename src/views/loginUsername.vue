@@ -10,7 +10,7 @@
               <input
                 :placeholder="$t('login.searchHolder')"
                 v-model="keyword"
-                @keydown.enter="search"
+                @keydown.enter="throttleSearch"
               />
             </div>
           </div>
@@ -53,6 +53,7 @@ import NProgress from "nprogress";
 import { search } from "@/api/others";
 import Cookies from "js-cookie";
 import { userPlaylist } from "@/api/user";
+import { throttle } from '@/utils/common';
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 
@@ -74,6 +75,7 @@ export default {
   methods: {
     ...mapMutations(["updateUser", "updateUserInfo"]),
     search() {
+      if (!this.keyword) return;
       search({ keywords: this.keyword, limit: 9, type: 1002 }).then((data) => {
         this.result = data.result.userprofiles;
         this.activeUser = this.result[0];
@@ -93,6 +95,9 @@ export default {
         this.$router.push({ path: "/library" });
       });
     },
+    throttleSearch: throttle(function () {
+      this.search();
+    }, 500)
   },
 };
 </script>
