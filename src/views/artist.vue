@@ -6,10 +6,11 @@
       </div>
       <div>
         <div class="name">{{ artist.name }}</div>
-        <div class="artist">Artist</div>
+        <div class="artist">{{ $t("artist.artist") }}</div>
         <div class="statistics">
-          {{ artist.musicSize }} Songs · {{ artist.albumSize }} Albums ·
-          {{ artist.mvSize }} Music Videos
+          {{ artist.musicSize }} {{ $t("common.songs") }} · 
+          {{ artist.albumSize }} {{ $t("artist.withAlbums") }} ·
+          {{ artist.mvSize }} {{ $t("artist.videos") }}
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPopularSongs()" :iconClass="`play`">
@@ -45,7 +46,7 @@
             </div>
             <div class="type">
               {{ latestRelease.type | formatAlbumType(latestRelease) }} ·
-              {{ latestRelease.size }} Songs
+              {{ latestRelease.size }} {{ $t("common.songs") }}
             </div>
           </div>
         </div>

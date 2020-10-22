@@ -31,7 +31,10 @@ export default {
     showMore: "SHOW MORE",
     showLess: "SHOW LESS",
     EPsSingles: "EPs & Singles",
-    albums: "Albums"
+    albums: "Albums",
+    withAlbums: "Albums",
+    artist: "Artist",
+    videos: "Music Videos"
   },
   album: {
     released: "Released"
@@ -88,6 +91,10 @@ export default {
     song: "Songs",
     mv: "MVs",
     playlist: "Playlists",
-    noResult: "No Results"
+    noResult: "No Results",
+    searchFor: "Search for"
+  },
+  common: {
+    songs: "Songs",
   }
 };
