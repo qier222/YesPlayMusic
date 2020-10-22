@@ -1,12 +1,18 @@
 import request from "@/utils/request";
 import { mapTrackPlayableStatus } from "@/utils/common";
+import store from "@/store";
 
 export function getMP3(id) {
+  let br =
+    store.state.settings?.musicQuality !== undefined
+      ? store.state.settings.musicQuality
+      : 128000;
   return request({
     url: "/song/url",
     method: "get",
     params: {
       id,
+      br,
     },
   });
 }
