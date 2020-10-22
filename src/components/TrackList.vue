@@ -27,7 +27,7 @@ import {
   playPlaylistByID,
   playAlbumByID,
   playAList,
-  appendTrackToPlayerList
+  appendTrackToPlayerList,
 } from "@/utils/play";
 
 import TrackListItem from "@/components/TrackListItem.vue";
@@ -37,7 +37,7 @@ export default {
   name: "TrackList",
   components: {
     TrackListItem,
-    ContextMenu
+    ContextMenu,
   },
   props: {
     tracks: Array,
@@ -45,17 +45,17 @@ export default {
     id: Number,
     itemWidth: {
       type: Number,
-      default: -1
+      default: -1,
     },
     dbclickTrackFunc: {
       type: String,
-      default: "default"
-    }
+      default: "default",
+    },
   },
   data() {
     return {
       rightClickedTrack: null,
-      listStyles: {}
+      listStyles: {},
     };
   },
   created() {
@@ -66,7 +66,7 @@ export default {
     ...mapState(["liked"]),
     isRightClickedTrackLiked() {
       return this.liked.songs.includes(this.rightClickedTrack?.id);
-    }
+    },
   },
   methods: {
     ...mapMutations(["updateLikedSongs"]),
@@ -95,7 +95,7 @@ export default {
       } else if (this.type === "album") {
         playAlbumByID(this.id, trackID);
       } else if (this.type === "tracklist") {
-        let trackIDs = this.tracks.map(t => t.id);
+        let trackIDs = this.tracks.map((t) => t.id);
         playAList(trackIDs, this.tracks[0].ar[0].id, "artist", trackID);
       }
     },
@@ -112,17 +112,17 @@ export default {
       let like = true;
       let likedSongs = this.liked.songs;
       if (likedSongs.includes(id)) like = false;
-      likeATrack({ id, like }).then(data => {
+      likeATrack({ id, like }).then((data) => {
         if (data.code !== 200) return;
         if (like === false) {
-          this.updateLikedSongs(likedSongs.filter(d => d !== id));
+          this.updateLikedSongs(likedSongs.filter((d) => d !== id));
         } else {
           likedSongs.push(id);
           this.updateLikedSongs(likedSongs);
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

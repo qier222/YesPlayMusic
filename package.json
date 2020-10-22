@@ -5,7 +5,13 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "prettier": "npx prettier --write ./src"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier"
+    }
   },
   "dependencies": {
     "@sentry/browser": "^5.27.0",
@@ -19,6 +25,7 @@
     "js-cookie": "^2.2.1",
     "nprogress": "^0.2.0",
     "plyr": "^3.6.2",
+    "prettier": "2.1.2",
     "register-service-worker": "^1.7.1",
     "svg-sprite-loader": "^5.0.0",
     "vue": "^2.6.11",
@@ -38,6 +45,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "husky": "^4.3.0",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
     "vue-template-compiler": "^2.6.11"

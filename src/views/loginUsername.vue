@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div>
-      <div class="title">{{ $t('login.usernameLogin') }}</div>
+      <div class="title">{{ $t("login.usernameLogin") }}</div>
       <div class="sestion">
         <div class="search-box">
           <div class="container">
@@ -53,7 +53,7 @@ import NProgress from "nprogress";
 import { search } from "@/api/others";
 import Cookies from "js-cookie";
 import { userPlaylist } from "@/api/user";
-import { throttle } from '@/utils/common';
+import { throttle } from "@/utils/common";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 
@@ -97,7 +97,7 @@ export default {
     },
     throttleSearch: throttle(function () {
       this.search();
-    }, 500)
+    }, 500),
   },
 };
 </script>

@@ -4,26 +4,26 @@ export default {
     home: "首页",
     explore: "发现",
     library: "资料库",
-    search: "搜索"
+    search: "搜索",
   },
   footer: {
-    settings: "设置"
+    settings: "设置",
   },
   home: {
     recommendPlaylist: "推荐歌单",
     recommendArtist: "推荐歌手",
     newAlbum: "新专速递",
     seeMore: "更多",
-    charts: "排行榜"
+    charts: "排行榜",
   },
   library: {
     sLibrary: "的资料库",
     likedSongs: "我喜欢的歌",
-    sLikedSongs: "喜欢的歌"
+    sLikedSongs: "喜欢的歌",
   },
   explore: {
     explore: "发现",
-    loadMore: "加载更多"
+    loadMore: "加载更多",
   },
   artist: {
     latestRelease: "最新发布",
@@ -34,14 +34,14 @@ export default {
     albums: "专辑",
     withAlbums: "张专辑",
     artist: "歌手",
-    videos: "个视频"
+    videos: "个视频",
   },
   album: {
-    released: "发行于"
+    released: "发行于",
   },
   playlist: {
     playlist: "歌单",
-    updatedAt: "最后更新于"
+    updatedAt: "最后更新于",
   },
   login: {
     accessToAll: "可访问全部数据",
@@ -67,14 +67,14 @@ export default {
       <a href="https://github.com/qier222/YesPlayMusic"
         >YesPlayMusic 的 GitHub 源代码仓库</a
       >
-      自行构建并使用自托管的网易云 API。`
+      自行构建并使用自托管的网易云 API。`,
   },
   mv: {
-    moreVideo: "更多视频"
+    moreVideo: "更多视频",
   },
   next: {
     nowPlaying: "正在播放",
-    nextUp: "即将播放"
+    nextUp: "即将播放",
   },
   player: {
     like: "喜欢",
@@ -85,10 +85,10 @@ export default {
     play: "播放",
     pause: "暂停",
     mute: "静音",
-    nextUp: "播放列表"
+    nextUp: "播放列表",
   },
   modal: {
-    close: "关闭"
+    close: "关闭",
   },
   search: {
     artist: "歌手",
@@ -97,9 +97,9 @@ export default {
     mv: "视频",
     playlist: "歌单",
     noResult: "暂无结果",
-    searchFor: "搜索"
+    searchFor: "搜索",
   },
   common: {
     songs: "首歌",
-  }
+  },
 };

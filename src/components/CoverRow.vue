@@ -60,27 +60,27 @@ export default {
   name: "CoverRow",
   components: {
     Cover,
-    ExplicitSymbol
+    ExplicitSymbol,
   },
   props: {
     items: Array,
     type: String,
     subText: {
       type: String,
-      default: "none"
+      default: "none",
     },
     imageSize: {
       type: Number,
-      default: 512
+      default: 512,
     },
     showPlayButton: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showPlayCount: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   methods: {
     getUrl(item) {
@@ -102,8 +102,8 @@ export default {
           item.publishTime
         ).getFullYear()}`;
       if (this.subText === "appleMusic") return "by Apple Music";
-    }
-  }
+    },
+  },
 };
 </script>
 

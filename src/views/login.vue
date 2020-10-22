@@ -14,8 +14,8 @@
       >
         <div class="container" :class="{ active: activeCard === 1 }">
           <div class="title-info">
-            <div class="title">{{ $t('login.loginText') }}</div>
-            <div class="info">{{ $t('login.accessToAll') }}</div>
+            <div class="title">{{ $t("login.loginText") }}</div>
+            <div class="info">{{ $t("login.accessToAll") }}</div>
           </div>
           <svg-icon icon-class="arrow-right"></svg-icon>
         </div>
@@ -28,8 +28,8 @@
       >
         <div class="container" :class="{ active: activeCard === 2 }">
           <div class="title-info">
-            <div class="title">{{ $t('login.search') }}</div>
-            <div class="info">{{ $t('login.readonly') }}</div>
+            <div class="title">{{ $t("login.search") }}</div>
+            <div class="info">{{ $t("login.readonly") }}</div>
           </div>
           <svg-icon icon-class="arrow-right"></svg-icon>
         </div>

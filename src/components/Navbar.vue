@@ -54,13 +54,13 @@ import ButtonIcon from "@/components/ButtonIcon.vue";
 export default {
   name: "Navbar",
   components: {
-    ButtonIcon
+    ButtonIcon,
   },
   data() {
     return {
       inputFocus: false,
       keywords: "",
-      langs: ["zh-CN", "en"]
+      langs: ["zh-CN", "en"],
     };
   },
   methods: {
@@ -77,7 +77,7 @@ export default {
         return;
       this.$router.push({
         name: "search",
-        query: { keywords: this.keywords }
+        query: { keywords: this.keywords },
       });
     },
     changeLang() {
@@ -89,8 +89,8 @@ export default {
       }
       this.$i18n.locale = lang;
       this.$store.commit("changeLang", lang);
-    }
-  }
+    },
+  },
 };
 </script>
 

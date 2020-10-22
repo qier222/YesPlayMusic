@@ -3,18 +3,18 @@ import axios from "axios";
 const service = axios.create({
   baseURL: process.env.VUE_APP_NETEASE_API_URL,
   withCredentials: true,
-  timeout: 15000
+  timeout: 15000,
 });
 
 const errors = new Map([
   [401, "The token you are using has expired."],
   [502, null],
   [301, "You must login to use this feature."],
-  [-1, "An unexpected error has occurred: "]
+  [-1, "An unexpected error has occurred: "],
 ]);
 
 service.interceptors.response.use(
-  response => {
+  (response) => {
     const res = response.data;
 
     if (res.code !== 200) {
@@ -30,7 +30,7 @@ service.interceptors.response.use(
       return res;
     }
   },
-  error => {
+  (error) => {
     const errMsg = `error: ${error}`;
     console.log(errMsg);
 

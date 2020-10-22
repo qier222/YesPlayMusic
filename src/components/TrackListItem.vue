@@ -21,7 +21,10 @@
         track.no
       }}</span>
       <button v-show="isPlaying">
-        <svg-icon icon-class="volume" style="height:16px;width:16px"></svg-icon>
+        <svg-icon
+          icon-class="volume"
+          style="height: 16px; width: 16px"
+        ></svg-icon>
       </button>
     </div>
     <div class="title-and-artist">
@@ -59,7 +62,7 @@
           icon-class="heart"
           :style="{
             visibility:
-              focus && !isLiked && track.playable ? 'visible' : 'hidden'
+              focus && !isLiked && track.playable ? 'visible' : 'hidden',
           }"
         ></svg-icon>
         <svg-icon icon-class="heart-solid" v-show="isLiked"></svg-icon>
@@ -81,7 +84,7 @@ export default {
   name: "TrackListItem",
   components: { ArtistsInLine, ExplicitSymbol },
   props: {
-    track: Object
+    track: Object,
   },
   data() {
     return { focus: false, trackStyle: {} };
@@ -123,7 +126,7 @@ export default {
     },
     isLoggedIn() {
       return isLoggedIn();
-    }
+    },
   },
   methods: {
     goToAlbum() {
@@ -134,12 +137,12 @@ export default {
     },
     likeThisSong() {
       this.$parent.likeASong(this.track.id);
-    }
+    },
   },
   created() {
     if (this.$parent.itemWidth !== -1)
       this.trackStyle = { width: this.$parent.itemWidth + "px" };
-  }
+  },
 };
 </script>
 

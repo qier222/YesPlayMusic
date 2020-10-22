@@ -13,7 +13,7 @@ if (localStorage.getItem("appVersion") === null) {
   window.location.reload();
 }
 
-const saveToLocalStorage = store => {
+const saveToLocalStorage = (store) => {
   store.subscribe((mutation, state) => {
     // console.log(mutation);
     localStorage.setItem("player", JSON.stringify(state.player));
@@ -26,15 +26,15 @@ const store = new Vuex.Store({
   state: state,
   mutations,
   actions,
-  plugins: [saveToLocalStorage]
+  plugins: [saveToLocalStorage],
 });
 
 store.state.howler = new Howl({
   src: [
-    `https://music.163.com/song/media/outer/url?id=${store.state.player.currentTrack.id}`
+    `https://music.163.com/song/media/outer/url?id=${store.state.player.currentTrack.id}`,
   ],
   html5: true,
-  format: ["mp3"]
+  format: ["mp3"],
 });
 Howler.volume(store.state.player.volume);
 

@@ -102,7 +102,7 @@ export default {
       email: "",
       password: "",
       smsCode: "",
-      inputFocus: ""
+      inputFocus: "",
     };
   },
   created() {
@@ -118,11 +118,11 @@ export default {
       Cookies.set("loginMode", "account", { expires: 3650 });
       userPlaylist({
         uid: this.$store.state.settings.user.userId,
-        limit: 1
-      }).then(data => {
+        limit: 1,
+      }).then((data) => {
         this.updateUserInfo({
           key: "likedSongPlaylistID",
-          value: data.playlist[0].id
+          value: data.playlist[0].id,
         });
         this.$router.push({ path: "/library" });
       });
@@ -143,15 +143,15 @@ export default {
           countrycode: this.countryCode.replace("+", "").replace(/\s/g, ""),
           phone: this.phoneNumber.replace(/\s/g, ""),
           password: "fakePassword",
-          md5_password: md5(this.password).toString()
+          md5_password: md5(this.password).toString(),
         })
-          .then(data => {
+          .then((data) => {
             if (data.code !== 502) {
               this.updateUser(data.profile);
               this.afterLogin();
             }
           })
-          .catch(error => {
+          .catch((error) => {
             this.processing = false;
             alert(error);
           });
@@ -169,21 +169,21 @@ export default {
         loginWithEmail({
           email: this.email.replace(/\s/g, ""),
           password: "fakePassword",
-          md5_password: md5(this.password).toString()
+          md5_password: md5(this.password).toString(),
         })
-          .then(data => {
+          .then((data) => {
             if (data.code !== 502) {
               this.updateUser(data.profile);
               this.afterLogin();
             }
           })
-          .catch(error => {
+          .catch((error) => {
             this.processing = false;
             alert(error);
           });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

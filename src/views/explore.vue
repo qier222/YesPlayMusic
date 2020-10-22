@@ -1,6 +1,6 @@
 <template>
   <div class="explore">
-    <h1>{{ $t('explore.explore') }}</h1>
+    <h1>{{ $t("explore.explore") }}</h1>
     <div class="buttons">
       <div
         class="button"
@@ -35,7 +35,7 @@
         @click.native="getPlaylist"
         color="grey"
         :loading="loadingMore"
-        >{{ $t('explore.loadMore') }}</ButtonTwoTone
+        >{{ $t("explore.loadMore") }}</ButtonTwoTone
       >
     </div>
   </div>
@@ -102,28 +102,26 @@ export default {
     getPlaylist() {
       this.loadingMore = true;
       if (this.activeCategory === "推荐歌单") {
-        return this.getRecommendPlayList()
+        return this.getRecommendPlayList();
       }
       if (this.activeCategory === "精品歌单") {
-        return this.getHighQualityPlaylist()
+        return this.getHighQualityPlaylist();
       }
       if (this.activeCategory === "排行榜") {
-        return this.getTopLists()
+        return this.getTopLists();
       }
-      return this.getTopPlayList()
+      return this.getTopPlayList();
     },
     getRecommendPlayList() {
-      recommendPlaylist({ limit: 100 }).then(data => {
-        this.playlists = []
+      recommendPlaylist({ limit: 100 }).then((data) => {
+        this.playlists = [];
         this.updatePlaylist(data.result);
       });
     },
     getHighQualityPlaylist() {
       let playlists = this.playlists;
       let before =
-        playlists.length !== 0
-          ? playlists[playlists.length - 1].updateTime
-          : 0;
+        playlists.length !== 0 ? playlists[playlists.length - 1].updateTime : 0;
       highQualityPlaylist({ limit: 50, before }).then((data) => {
         this.updatePlaylist(data.playlists);
         this.hasMore = data.more;
@@ -131,7 +129,7 @@ export default {
     },
     getTopLists() {
       toplists().then((data) => {
-        this.playlists = []
+        this.playlists = [];
         this.updatePlaylist(data.list);
       });
     },
@@ -139,11 +137,11 @@ export default {
       topPlaylist({
         cat: this.activeCategory,
         offset: this.playlists.length,
-      }).then(data => {
+      }).then((data) => {
         this.updatePlaylist(data.playlists);
         this.hasMore = data.more;
       });
-    }
+    },
   },
   activated() {
     this.loadData();

@@ -11,8 +11,8 @@ const i18n = new VueI18n({
   locale: store.state.settings.lang,
   messages: {
     en,
-    "zh-CN": zhCN
-  }
+    "zh-CN": zhCN,
+  },
 });
 
 export default i18n;

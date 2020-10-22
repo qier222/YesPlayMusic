@@ -31,7 +31,7 @@ export default {
   components: {
     Navbar,
     Player,
-    GlobalEvents
+    GlobalEvents,
   },
   methods: {
     play(e) {
@@ -42,8 +42,8 @@ export default {
       if (event.target.tagName === "INPUT") return false;
       if (this.$route.name === "mv") return false;
       return true;
-    }
-  }
+    },
+  },
 };
 </script>
 
