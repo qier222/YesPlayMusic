@@ -70,3 +70,8 @@ export function throttle(fn, time) {
     }, time);
   };
 }
+
+export function updateHttps(url) {
+  if (!url) return ''
+  return url.replace(/^http:/, "https:");
+}

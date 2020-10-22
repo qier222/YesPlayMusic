@@ -12,7 +12,7 @@
             <input
               id="countryCode"
               :placeholder="
-                inputFocus === 'phone' ? '' : $t('login.countrycode')
+                inputFocus === 'phone' ? '' : $t('login.countryCode')
               "
               v-model="countryCode"
               @focus="inputFocus = 'phone'"
@@ -262,7 +262,7 @@ export default {
   }
 
   input#countryCode {
-    flex: 2;
+    flex: 3;
   }
   input#phoneNumber {
     flex: 12;
