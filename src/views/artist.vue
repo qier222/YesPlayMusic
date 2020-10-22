@@ -8,7 +8,7 @@
         <div class="name">{{ artist.name }}</div>
         <div class="artist">{{ $t("artist.artist") }}</div>
         <div class="statistics">
-          {{ artist.musicSize }} {{ $t("artist.songs") }} · 
+          {{ artist.musicSize }} {{ $t("common.songs") }} · 
           {{ artist.albumSize }} {{ $t("artist.withAlbums") }} ·
           {{ artist.mvSize }} {{ $t("artist.videos") }}
         </div>
@@ -46,7 +46,7 @@
             </div>
             <div class="type">
               {{ latestRelease.type | formatAlbumType(latestRelease) }} ·
-              {{ latestRelease.size }} {{ $t("artist.songs") }}
+              {{ latestRelease.size }} {{ $t("common.songs") }}
             </div>
           </div>
         </div>

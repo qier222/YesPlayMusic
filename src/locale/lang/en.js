@@ -19,8 +19,7 @@ export default {
   library: {
     sLibrary: "'s Library",
     likedSongs: "Liked Songs",
-    sLikedSongs: "'s LikedSongs",
-    songs: "Songs",
+    sLikedSongs: "'s LikedSongs"
   },
   explore: {
     explore: "Explore",
@@ -35,17 +34,14 @@ export default {
     albums: "Albums",
     withAlbums: "Albums",
     artist: "Artist",
-    songs: "Songs",
     videos: "Music Videos"
   },
   album: {
-    released: "Released",
-    songs: "Songs"
+    released: "Released"
   },
   playlist: {
     playlist: "Playlists",
-    updatedAt: "Updated at",
-    songs: "Songs"
+    updatedAt: "Updated at"
   },
   login: {
     accessToAll: "Access to all data",
@@ -97,5 +93,8 @@ export default {
     playlist: "Playlists",
     noResult: "No Results",
     searchFor: "Search for"
+  },
+  common: {
+    songs: "Songs",
   }
 };

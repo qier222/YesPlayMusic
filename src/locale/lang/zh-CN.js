@@ -19,8 +19,7 @@ export default {
   library: {
     sLibrary: "的资料库",
     likedSongs: "我喜欢的歌",
-    sLikedSongs: "喜欢的歌",
-    songs: "首歌"
+    sLikedSongs: "喜欢的歌"
   },
   explore: {
     explore: "发现",
@@ -35,17 +34,14 @@ export default {
     albums: "专辑",
     withAlbums: "张专辑",
     artist: "歌手",
-    songs: "首歌",
     videos: "个视频"
   },
   album: {
-    released: "发行于",
-    songs: "首歌"
+    released: "发行于"
   },
   playlist: {
     playlist: "歌单",
-    updatedAt: "最后更新于",
-    songs: "首歌"
+    updatedAt: "最后更新于"
   },
   login: {
     accessToAll: "可访问全部数据",
@@ -102,5 +98,8 @@ export default {
     playlist: "歌单",
     noResult: "暂无结果",
     searchFor: "搜索"
+  },
+  common: {
+    songs: "首歌",
   }
 };
