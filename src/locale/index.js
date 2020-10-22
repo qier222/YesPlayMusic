@@ -10,8 +10,8 @@ const i18n = new VueI18n({
   locale: "en",
   messages: {
     en,
-    "zh-CN": zhCN
-  }
+    "zh-CN": zhCN,
+  },
 });
 
 export default i18n;

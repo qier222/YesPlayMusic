@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div>
-      <div class="title">{{ $t('login.usernameLogin') }}</div>
+      <div class="title">{{ $t("login.usernameLogin") }}</div>
       <div class="sestion">
         <div class="search-box">
           <div class="container">

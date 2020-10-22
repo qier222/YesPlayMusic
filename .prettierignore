@@ -1,0 +1,5 @@
+build
+coverage
+# 忽略了 markdown 文件
+# *.md
+

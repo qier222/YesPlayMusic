@@ -12,10 +12,7 @@ Vue.filter("formatTime", (Milliseconds, format = "HH:MM:SS") => {
   let time = dayjs.duration(Milliseconds);
   let hours = time.hours().toString();
   let mins = time.minutes().toString();
-  let seconds = time
-    .seconds()
-    .toString()
-    .padStart(2, "0");
+  let seconds = time.seconds().toString().padStart(2, "0");
 
   if (format === "HH:MM:SS") {
     return hours !== "0"
@@ -54,7 +51,7 @@ Vue.filter("resizeImage", (imgUrl, size = 512) => {
   return `${httpsImgUrl}?param=${size}y${size}`;
 });
 
-Vue.filter("formatPlayCount", count => {
+Vue.filter("formatPlayCount", (count) => {
   if (!count) return "";
   if (locale.locale === "zh-CN") {
     if (count > 100000000) {
@@ -81,7 +78,7 @@ Vue.filter("formatPlayCount", count => {
   }
 });
 
-Vue.filter("toHttps", url => {
+Vue.filter("toHttps", (url) => {
   if (!url) return "";
   return url.replace(/^http:/, "https:");
 });

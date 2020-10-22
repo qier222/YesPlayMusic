@@ -33,7 +33,7 @@
         <div class="description" @click="showFullDescription = true">
           {{ album.description }}
         </div>
-        <div class="buttons" style="margin-top:32px">
+        <div class="buttons" style="margin-top: 32px">
           <ButtonTwoTone
             @click.native="playAlbumByID(album.id)"
             :iconClass="`play`"
@@ -63,7 +63,7 @@
         <div class="description-full" @click.stop>
           <span>{{ album.description }}</span>
           <span class="close" @click="showFullDescription = false">
-            {{ $t('modal.close') }}
+            {{ $t("modal.close") }}
           </span>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default {
     Cover,
     ButtonTwoTone,
     TrackList,
-    ExplicitSymbol
+    ExplicitSymbol,
   },
   data() {
     return {
@@ -97,27 +97,27 @@ export default {
         id: 0,
         picUrl: "",
         artist: {
-          id: 0
-        }
+          id: 0,
+        },
       },
       tracks: [],
       showFullDescription: false,
-      show: false
+      show: false,
     };
   },
   created() {
     getAlbum(this.$route.params.id)
-      .then(data => {
+      .then((data) => {
         this.album = data.album;
         this.tracks = data.songs;
         NProgress.done();
         this.show = true;
         return this.tracks;
       })
-      .then(tracks => {
+      .then((tracks) => {
         // to get explicit mark
-        let trackIDs = tracks.map(t => t.id);
-        getTrackDetail(trackIDs.join(",")).then(data => {
+        let trackIDs = tracks.map((t) => t.id);
+        getTrackDetail(trackIDs.join(",")).then((data) => {
           this.tracks = data.songs;
         });
       });
@@ -126,20 +126,20 @@ export default {
     ...mapState(["player"]),
     albumTime() {
       let time = 0;
-      this.tracks.map(t => (time = time + t.dt));
+      this.tracks.map((t) => (time = time + t.dt));
       return time;
-    }
+    },
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     playAlbumByID(id, trackID = "first") {
-      if (this.tracks.find(t => t.playable !== false) === undefined) {
+      if (this.tracks.find((t) => t.playable !== false) === undefined) {
         return;
       }
       playAlbumByID(id, trackID);
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -42,7 +42,7 @@ export default {
     openMenu(e) {
       this.showMenu = true;
       this.$nextTick(
-        function() {
+        function () {
           this.$refs.menu.focus();
           this.setMenu(e.y, e.x);
         }.bind(this)

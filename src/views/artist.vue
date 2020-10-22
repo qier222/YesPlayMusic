@@ -111,7 +111,7 @@ export default {
       show: false,
       artist: {
         img1v1Url:
-          "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg"
+          "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg",
       },
       popularTracks: [],
       albumsData: [],
@@ -121,52 +121,52 @@ export default {
         id: 0,
         name: "",
         type: "",
-        size: ""
+        size: "",
       },
       showMorePopTracks: false,
-      mvs: []
+      mvs: [],
     };
   },
   computed: {
     ...mapState(["player"]),
     albums() {
-      return this.albumsData.filter(a => a.type === "专辑");
+      return this.albumsData.filter((a) => a.type === "专辑");
     },
     eps() {
-      return this.albumsData.filter(a =>
+      return this.albumsData.filter((a) =>
         ["EP/Single", "EP", "Single"].includes(a.type)
       );
-    }
+    },
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
     loadData(id, next = undefined) {
-      getArtist(id).then(data => {
+      getArtist(id).then((data) => {
         this.artist = data.artist;
         this.popularTracks = data.hotSongs;
         if (next !== undefined) next();
         NProgress.done();
         this.show = true;
       });
-      getArtistAlbum({ id: id, limit: 200 }).then(data => {
+      getArtistAlbum({ id: id, limit: 200 }).then((data) => {
         this.albumsData = data.hotAlbums;
         this.latestRelease = data.hotAlbums[0];
       });
-      artistMv(id).then(data => {
+      artistMv(id).then((data) => {
         this.mvs = data.mvs;
       });
     },
     goToAlbum(id) {
       this.$router.push({
         name: "album",
-        params: { id }
+        params: { id },
       });
     },
     playPopularSongs(trackID = "first") {
-      let trackIDs = this.popularTracks.map(t => t.id);
+      let trackIDs = this.popularTracks.map((t) => t.id);
       playAList(trackIDs, this.artist.id, "artist", trackID);
-    }
+    },
   },
   created() {
     this.loadData(this.$route.params.id);
@@ -185,7 +185,7 @@ export default {
     this.artist.img1v1Url =
       "https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg";
     this.loadData(to.params.id, next);
-  }
+  },
 };
 </script>
 

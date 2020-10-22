@@ -131,13 +131,13 @@ export default {
   name: "Player",
   components: {
     ButtonIcon,
-    VueSlider
+    VueSlider,
   },
   data() {
     return {
       interval: null,
       progress: 0,
-      oldVolume: 0.5
+      oldVolume: 0.5,
     };
   },
   created() {
@@ -145,7 +145,7 @@ export default {
       this.progress = ~~this.howler.seek();
     }, 1000);
     if (this.isLoggedIn) {
-      userLikedSongsIDs(this.settings.user.userId).then(data => {
+      userLikedSongsIDs(this.settings.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);
       });
     }
@@ -162,7 +162,7 @@ export default {
       set(value) {
         this.updatePlayerState({ key: "volume", value });
         Howler.volume(value);
-      }
+      },
     },
     playing() {
       if (this.howler.state() === "loading") {
@@ -176,7 +176,7 @@ export default {
     },
     isLoggedIn() {
       return isLoggedIn();
-    }
+    },
   },
   methods: {
     ...mapMutations([
@@ -184,13 +184,13 @@ export default {
       "turnOffShuffleMode",
       "updatePlayerState",
       "updateRepeatStatus",
-      "updateLikedSongs"
+      "updateLikedSongs",
     ]),
     ...mapActions([
       "nextTrack",
       "previousTrack",
       "playTrackOnListByID",
-      "addNextTrackEvent"
+      "addNextTrackEvent",
     ]),
     play() {
       if (this.playing) {
@@ -259,7 +259,7 @@ export default {
       if (this.liked.songs.includes(id)) like = false;
       likeATrack({ id, like }).then(() => {
         if (like === false) {
-          this.updateLikedSongs(this.liked.songs.filter(d => d !== id));
+          this.updateLikedSongs(this.liked.songs.filter((d) => d !== id));
         } else {
           let newLikeSongs = this.liked.songs;
           newLikeSongs.push(id);
@@ -272,7 +272,7 @@ export default {
         this.$router.push({ path: "/library/liked-songs" });
       else
         this.$router.push({
-          path: "/" + this.player.listInfo.type + "/" + this.player.listInfo.id
+          path: "/" + this.player.listInfo.type + "/" + this.player.listInfo.id,
         });
     },
     goToAlbum() {
@@ -280,8 +280,8 @@ export default {
     },
     goToArtist(id) {
       this.$router.push({ path: "/artist/" + id });
-    }
-  }
+    },
+  },
 };
 </script>
 

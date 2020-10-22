@@ -9,18 +9,18 @@
       /></button-icon>
     </div>
     <div class="navigation-links">
-      <router-link to="/" :class="{ active: this.$route.name === 'home' }"
-        >{{ $t('nav.home') }}</router-link
-      >
+      <router-link to="/" :class="{ active: this.$route.name === 'home' }">{{
+        $t("nav.home")
+      }}</router-link>
       <router-link
         to="/explore"
         :class="{ active: this.$route.name === 'explore' }"
-        >{{ $t('nav.explore') }}</router-link
+        >{{ $t("nav.explore") }}</router-link
       >
       <router-link
         to="/library"
         :class="{ active: this.$route.name === 'library' }"
-        >{{ $t('nav.library') }}</router-link
+        >{{ $t("nav.library") }}</router-link
       >
     </div>
     <div class="right-part">
@@ -42,8 +42,7 @@
         </div>
       </div>
       <div class="locale-changer" @click="changeLang">
-        <svg-icon icon-class="translation" class="translation"
-      />
+        <svg-icon icon-class="translation" class="translation" />
       </div>
     </div>
   </nav>
@@ -61,7 +60,7 @@ export default {
     return {
       inputFocus: false,
       keywords: "",
-      langs: ['zh-CN', 'en']
+      langs: ["zh-CN", "en"],
     };
   },
   methods: {
@@ -71,7 +70,11 @@ export default {
     },
     goToSearchPage() {
       if (!this.keywords) return;
-      if (this.$route.name === 'search' && this.$route.query.keywords === this.keywords) return;
+      if (
+        this.$route.name === "search" &&
+        this.$route.query.keywords === this.keywords
+      )
+        return;
       this.$router.push({
         name: "search",
         query: { keywords: this.keywords },
@@ -79,10 +82,10 @@ export default {
     },
     changeLang() {
       if (this.$i18n.locale === "zh-CN") {
-        return this.$i18n.locale = "en";
+        return (this.$i18n.locale = "en");
       }
       this.$i18n.locale = "zh-CN";
-    }
+    },
   },
 };
 </script>
@@ -215,6 +218,4 @@ nav {
     width: 48px;
   }
 }
-
-
 </style>

@@ -2,16 +2,16 @@ import store from "@/store";
 
 export function initMediaSession() {
   if ("mediaSession" in navigator) {
-    navigator.mediaSession.setActionHandler("play", function() {
+    navigator.mediaSession.setActionHandler("play", function () {
       store.state.howler.play();
     });
-    navigator.mediaSession.setActionHandler("pause", function() {
+    navigator.mediaSession.setActionHandler("pause", function () {
       store.state.howler.pause();
     });
-    navigator.mediaSession.setActionHandler("previoustrack", function() {
+    navigator.mediaSession.setActionHandler("previoustrack", function () {
       store.dispatch("previousTrack");
     });
-    navigator.mediaSession.setActionHandler("nexttrack", function() {
+    navigator.mediaSession.setActionHandler("nexttrack", function () {
       store.dispatch("nextTrack");
     });
     navigator.mediaSession.setActionHandler("stop", () => {

@@ -6,9 +6,9 @@ export function getArtist(id) {
     url: "/artists",
     method: "get",
     params: {
-      id
-    }
-  }).then(data => {
+      id,
+    },
+  }).then((data) => {
     data.hotSongs = mapTrackPlayableStatus(data.hotSongs);
     return data;
   });
@@ -21,7 +21,7 @@ export function getArtistAlbum(params) {
   return request({
     url: "/artist/album",
     method: "get",
-    params
+    params,
   });
 }
 
@@ -35,8 +35,8 @@ export function toplistOfArtists(type = null) {
     url: "/toplist/artist",
     method: "get",
     params: {
-      type
-    }
+      type,
+    },
   });
 }
 
@@ -45,7 +45,7 @@ export function artistMv(id) {
     url: "/artist/mv",
     method: "get",
     params: {
-      id
-    }
+      id,
+    },
   });
 }

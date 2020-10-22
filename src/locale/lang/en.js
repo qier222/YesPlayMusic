@@ -4,26 +4,26 @@ export default {
     home: "Home",
     explore: "Explore",
     library: "Library",
-    search: "Search"
+    search: "Search",
   },
   footer: {
-    settings: "Settings"
+    settings: "Settings",
   },
   home: {
     recommendPlaylist: "Recommended Playlists",
     recommendArtist: "Recommended Artists",
     newAlbum: "Latest Albums",
     seeMore: "SEE MORE",
-    charts: "Charts"
+    charts: "Charts",
   },
   library: {
     sLibrary: "'s Library",
     likedSongs: "Liked Songs",
-    sLikedSongs: "'s LikedSongs"
+    sLikedSongs: "'s LikedSongs",
   },
   explore: {
     explore: "Explore",
-    loadMore: "Load More"
+    loadMore: "Load More",
   },
   artist: {
     latestRelease: "Latest Releases",
@@ -31,14 +31,14 @@ export default {
     showMore: "SHOW MORE",
     showLess: "SHOW LESS",
     EPsSingles: "EPs & Singles",
-    albums: "Albums"
+    albums: "Albums",
   },
   album: {
-    released: "Released"
+    released: "Released",
   },
   playlist: {
     playlist: "Playlists",
-    updatedAt: "Updated at"
+    updatedAt: "Updated at",
   },
   login: {
     accessToAll: "Access to all data",
@@ -59,14 +59,14 @@ export default {
     loginWithPhone: "Login with Phone",
     notice: `YesPlayMusic promises not to save any of your account information to the cloud.<br />
       Your password will be MD5 encrypted locally and then transmitted to NetEase Cloud API.<br />
-      YesPlayMusic is not the official website of NetEase Cloud Music, please consider carefully before entering account information. You can also go to <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic's GitHub repository</a> to build and use the self-hosted NetEase Cloud Music API.`
+      YesPlayMusic is not the official website of NetEase Cloud Music, please consider carefully before entering account information. You can also go to <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic's GitHub repository</a> to build and use the self-hosted NetEase Cloud Music API.`,
   },
   mv: {
-    moreVideo: "More Videos"
+    moreVideo: "More Videos",
   },
   next: {
     nowPlaying: "Now Playing",
-    nextUp: "Next Up"
+    nextUp: "Next Up",
   },
   player: {
     like: "Like",
@@ -77,10 +77,10 @@ export default {
     play: "Play",
     pause: "Pause",
     mute: "Mute",
-    nextUp: "Next Up"
+    nextUp: "Next Up",
   },
   modal: {
-    close: "Close"
+    close: "Close",
   },
   search: {
     artist: "Artists",
@@ -88,6 +88,6 @@ export default {
     song: "Songs",
     mv: "MVs",
     playlist: "Playlists",
-    noResult: "No Results"
-  }
+    noResult: "No Results",
+  },
 };

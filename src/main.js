@@ -15,7 +15,7 @@ import { Integrations } from "@sentry/tracing";
 
 Vue.use(VueAnalytics, {
   id: "UA-180189423-1",
-  router
+  router,
 });
 
 Vue.config.productionTip = false;
@@ -30,14 +30,14 @@ if (process.env.VUE_APP_ENABLE_SENTRY === "true") {
     integrations: [
       new VueIntegration({
         Vue,
-        tracing: true
+        tracing: true,
       }),
-      new Integrations.BrowserTracing()
+      new Integrations.BrowserTracing(),
     ],
 
     // We recommend adjusting this value in production, or using tracesSampler
     // for finer control
-    tracesSampleRate: 1.0
+    tracesSampleRate: 1.0,
   });
 }
 
@@ -45,5 +45,5 @@ new Vue({
   i18n,
   store,
   router,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");
