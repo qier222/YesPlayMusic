@@ -97,4 +97,16 @@ export default {
   common: {
     songs: "Songs",
   },
+  settings: {
+    settings: "Settings",
+    logout: "LOGOUT",
+    language: "Languages",
+    musicQuality: {
+      text: "Music Quality",
+      low: "Low",
+      medium: "Medium",
+      high: "High",
+      lossless: "Lossless",
+    },
+  },
 };

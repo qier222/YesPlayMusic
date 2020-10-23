@@ -18,18 +18,16 @@
           </div>
         </div>
         <div class="right">
-          <button @click="logout"
-            ><svg-icon icon-class="logout" />LOGOUT</button
-          >
+          <button @click="logout">
+            <svg-icon icon-class="logout" />
+            {{ $t("settings.logout") }}
+          </button>
         </div>
       </div>
-
-      <h2>Settings</h2>
+      <h2>{{ $t("settings.settings") }}</h2>
       <div class="item">
         <div class="left">
-          <div class="title">
-            Languages
-          </div>
+          <div class="title"> {{ $t("settings.language") }} </div>
         </div>
         <div class="right">
           <select v-model="lang">
@@ -40,16 +38,22 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title">
-            Music Quality
-          </div>
+          <div class="title"> {{ $t("settings.musicQuality.text") }} </div>
         </div>
         <div class="right">
           <select v-model="musicQuality">
-            <option value="128000">Low - 128Kbps</option>
-            <option value="192000">Medium - 192Kbps</option>
-            <option value="320000">Hight - 320Kbps</option>
-            <option value="999000">Lossless - FLAC</option>
+            <option value="128000">
+              {{ $t("settings.musicQuality.low") }} - 128Kbps
+            </option>
+            <option value="192000">
+              {{ $t("settings.musicQuality.medium") }} - 192Kbps
+            </option>
+            <option value="320000">
+              {{ $t("settings.musicQuality.high") }} - 320Kbps
+            </option>
+            <option value="999000">
+              {{ $t("settings.musicQuality.lossless") }} - FLAC
+            </option>
           </select>
         </div>
       </div>
