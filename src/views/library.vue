@@ -192,6 +192,7 @@ h1 {
     border-radius: 50%;
     border: var(--color-border-1);
   }
+  color: var(--color-text-0);
 }
 
 .section-one {
@@ -219,7 +220,7 @@ h1 {
   transition: all 0.4s;
   box-sizing: border-box;
 
-  background: #eaeffd;
+  background: var(--color-primary-light);
   // background: linear-gradient(-30deg, #60a6f7, #4364f7, #0052d4);
   // color: white;
   // background: linear-gradient(149.46deg, #450af5, #8e8ee5 99.16%);
@@ -232,12 +233,12 @@ h1 {
     .title {
       font-size: 24px;
       font-weight: 700;
-      color: #335eea;
+      color: var(--color-primary);
     }
     .sub-title {
       font-size: 15px;
       margin-top: 2px;
-      color: #335eea;
+      color: var(--color-primary);
     }
 
     button {
@@ -248,22 +249,22 @@ h1 {
       height: 44px;
       width: 44px;
       // background: rgba(255, 255, 255, 1);
-      background: #335eea;
+      background: var(--color-primary);
       border-radius: 50%;
       transition: 0.2s;
-      box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 12px -4px var(--color-shadow-0);
       cursor: default;
 
       .svg-icon {
         // color: #3f63f5;
-        color: #eaeffd;
+        color: var(--color-white);
         margin-left: 4px;
         height: 16px;
         width: 16px;
       }
       &:hover {
         transform: scale(1.06);
-        box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 6px 12px -4px var(--color-shadow);
       }
       &:active {
         transform: scale(0.94);
@@ -276,7 +277,7 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     font-size: 14px;
-    color: rgba(51, 94, 234, 0.88);
+    color: var(--color-primary-alpha);
     p {
       margin-top: 2px;
     }
@@ -286,7 +287,7 @@ h1 {
 .playlists {
   margin-top: 54px;
   .title {
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-1);
     margin-bottom: 8px;
     font-size: 24px;
     font-weight: 600;

@@ -230,6 +230,7 @@ export default {
     .title {
       font-size: 36px;
       font-weight: 700;
+      color: var(--color-text-0);
     }
     .artist {
       font-size: 18px;
