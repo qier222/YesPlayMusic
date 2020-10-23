@@ -6,6 +6,7 @@ function resolve(dir) {
 module.exports = {
   devServer: {
     disableHostCheck: true,
+    port: process.env.DEV_SERVER_PORT || 8080
   },
   pwa: {
     name: "YesPlayMusic",
