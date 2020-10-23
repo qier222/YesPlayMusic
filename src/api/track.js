@@ -40,7 +40,7 @@ export function getTrackDetail(ids) {
 /**
  * 获取歌词
  * 说明 : 调用此接口 , 传入音乐 id 可获得对应音乐的歌词 ( 不需要登录 )
- * @param {number} id 音乐 id
+ * @param {number} id - 音乐 id
  */
 
 export function getLyric(id) {
@@ -55,7 +55,7 @@ export function getLyric(id) {
 /**
  * 新歌速递
  * 说明 : 调用此接口 , 可获取新歌速递
- * @param {number} type: 地区类型 id, 对应以下: 全部:0 华语:7 欧美:96 日本:8 韩国:16
+ * @param {number} type - 地区类型 id, 对应以下: 全部:0 华语:7 欧美:96 日本:8 韩国:16
  */
 export function topSong(type) {
   return request({
@@ -70,7 +70,7 @@ export function topSong(type) {
  * 喜欢音乐
  * 说明 : 调用此接口 , 传入音乐 id, 可喜欢该音乐
  * @param {Object} params
- * @param {number} params.id: 歌曲 id,
+ * @param {number} params.id - 歌曲 id,
  * @param {boolean=} [params.like] - 默认为 true 即喜欢 , 若传 false, 则取消喜欢
  */
 export function likeATrack(params) {
@@ -86,9 +86,9 @@ export function likeATrack(params) {
  * 听歌打卡
  * 说明 : 调用此接口 , 传入音乐 id, 来源 id，歌曲时间 time，更新听歌排行数据
  * @param {Object} params
- * @param {number} params.id: 歌曲 id,
- * @param {number} params.sourceid: 歌单或专辑 id
- * @param {number=} [params.time] 歌曲播放时间,单位为秒
+ * @param {number} params.id - 歌曲 id.
+ * @param {number} params.sourceid - 歌单或专辑 id
+ * @param {number=} [params.time] - 歌曲播放时间,单位为秒
  */
 export function scrobble(params) {
   params.timestamp = new Date().getTime();
