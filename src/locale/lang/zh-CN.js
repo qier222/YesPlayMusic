@@ -102,4 +102,16 @@ export default {
   common: {
     songs: "首歌",
   },
+  settings: {
+    settings: "选项",
+    logout: "登出",
+    language: "语言",
+    musicQuality: {
+      text: "音质选择",
+      low: "普通",
+      medium: "较高",
+      high: "极高",
+      lossless: "无损",
+    },
+  },
 };
