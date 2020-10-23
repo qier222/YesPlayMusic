@@ -137,7 +137,7 @@ export default {
 .hover-float {
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 12px 16px -8px var(--color-shadow-2);
   }
 }
 
@@ -174,7 +174,7 @@ export default {
   border: none;
   backdrop-filter: blur(12px) brightness(96%);
   background: transparent;
-  color: white;
+  color: var(--color-white);
   border-radius: 50%;
   cursor: default;
   transition: 0.2s;

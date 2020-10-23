@@ -193,14 +193,14 @@ h1 {
   margin-top: -10px;
   margin-bottom: 0;
   span {
-    color: rgba(0, 0, 0, 0.58);
+    color: var(--color-text-3);
   }
 }
 
 .section-title {
   font-weight: 600;
   font-size: 22px;
-  color: rgba(0, 0, 0, 0.88);
+  color: var(--color-text-1);
   margin-bottom: 16px;
   margin-top: 46px;
 }
@@ -230,6 +230,7 @@ h1 {
     }
     .name {
       margin-top: 8px;
+      color: var(--color-text-1);
     }
   }
 }
@@ -249,7 +250,7 @@ h1 {
     .name {
       margin-top: 6px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text-1);
       font-size: 14px;
       width: 128px;
       display: -webkit-box;
@@ -259,7 +260,7 @@ h1 {
     }
     .artist {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-1);
     }
   }
 }

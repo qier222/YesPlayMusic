@@ -25,6 +25,7 @@
 import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
 import GlobalEvents from "vue-global-events";
+import "@/assets/css/theme.css";
 
 export default {
   name: "App",
@@ -60,6 +61,10 @@ export default {
 html {
   overflow-y: overlay;
   min-width: 1000px;
+}
+
+body {
+  background: var(--color-bg-0);
 }
 
 main {

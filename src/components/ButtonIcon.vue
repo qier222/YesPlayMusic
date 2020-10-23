@@ -19,7 +19,7 @@ button {
   border-radius: 25%;
   transition: 0.2s;
   .svg-icon {
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-0);
     height: 16px;
     width: 16px;
   }
@@ -27,7 +27,7 @@ button {
     margin-left: 0;
   }
   &:hover {
-    background: #f5f5f7;
+    background: var(--color-bg-3);
   }
   &:active {
     transform: scale(0.92);

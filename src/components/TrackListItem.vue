@@ -161,10 +161,19 @@ button {
   .svg-icon {
     height: 16px;
     width: 16px;
-    color: #335eea;
+    color: var(--color-primary);
   }
   &:active {
     transform: scale(0.92);
+  }
+}
+
+button.play-button {
+  opacity: 1;
+  .svg-icon {
+    height: 14px;
+    width: 14px;
+    color: var(--color-primary);
   }
 }
 
@@ -182,12 +191,12 @@ button {
     border-radius: 8px;
     margin: 0 20px 0 10px;
     width: 12px;
-    color: rgba(0, 0, 0, 0.58);
+    color: var(--color-text-3);
     cursor: default;
   }
 
   .explicit-symbol {
-    color: rgba(0, 0, 0, 0.28);
+    color: var(--color-text-5);
     .svg-icon {
       margin-bottom: -3px;
     }
@@ -205,7 +214,7 @@ button {
     height: 56px;
     width: 56px;
     margin-right: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--color-border);
     cursor: pointer;
   }
 
@@ -223,7 +232,7 @@ button {
     .title {
       font-size: 18px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text-1);
       cursor: default;
       padding-right: 16px;
       display: -webkit-box;
@@ -235,13 +244,13 @@ button {
         margin-right: 2px;
         font-weight: 500;
         font-size: 14px;
-        color: rgba(0, 0, 0, 0.72);
+        color: var(--color-text-2);
       }
     }
     .artist {
       margin-top: 2px;
       font-size: 13px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
@@ -249,7 +258,7 @@ button {
       a {
         span {
           margin-right: 3px;
-          color: rgba(0, 0, 0, 0.8);
+          color: var(--color-text-1);
         }
         &:hover {
           text-decoration: underline;
@@ -262,7 +271,7 @@ button {
     flex: 1;
     display: flex;
     font-size: 16px;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-1);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -276,10 +285,11 @@ button {
     justify-content: flex-end;
     margin-right: 10px;
     font-variant-numeric: tabular-nums;
+    color: var(--color-text-1);
   }
   &:hover {
     transition: all 0.3s;
-    background: #f5f5f7;
+    background: var(--color-primary-light);
   }
 }
 .track.disable {
@@ -292,7 +302,7 @@ button {
   .time,
   .no,
   .featured {
-    color: rgba(0, 0, 0, 0.28) !important;
+    color: var(--color-text-5) !important;
   }
   &:hover {
     background: none;
@@ -327,23 +337,23 @@ button {
 }
 
 .track.playing {
-  background: #eaeffd;
-  color: #335eea;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   .title,
   .album {
-    color: #335eea;
+    color: var(--color-primary);
   }
   .title .featured,
   .artist {
-    color: #335eea;
+    color: var(--color-primary);
     opacity: 0.88;
   }
   .no span {
-    color: #335eea;
+    color: var(--color-primary);
     opacity: 0.78;
   }
   .explicit-symbol {
-    color: #335eea;
+    color: var(--color-primary);
     opacity: 0.88;
   }
 }

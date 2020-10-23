@@ -133,13 +133,13 @@ export default {
   }
   .artist {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-1);
     margin-top: 2px;
     font-weight: 600;
   }
   .info {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.68);
+    color: var(--color-text-2);
     margin-top: 12px;
   }
 }
@@ -149,7 +149,7 @@ export default {
   .section-title {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-1);
   }
 }
 </style>

@@ -119,7 +119,7 @@ export default {
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 8px;
-    color: rgba(0, 0, 0, 0.78);
+    color: var(--color-text-1);
   }
 }
 
@@ -130,13 +130,13 @@ export default {
     height: 48px;
     border-radius: 11px;
     width: 326px;
-    background: #eaeffd;
+    background: var(--color-primary-light);
   }
 
   .svg-icon {
     height: 22px;
     width: 22px;
-    color: #335eea;
+    color: var(--color-primary);
     margin: {
       left: 12px;
       right: 8px;
@@ -151,9 +151,9 @@ export default {
     width: 115%;
     font-weight: 600;
     margin-top: -1px;
-    color: #335eea;
+    color: var(--color-primary);
     &::placeholder {
-      color: #335eeac4;
+      color: var(--color-primary);
     }
   }
 }
@@ -185,15 +185,15 @@ export default {
     margin-left: 12px;
   }
   &:hover {
-    background: #f5f5f7;
+    background: var(--color-bg-3);
   }
 }
 
 .user.active {
   transition: 0.2s;
-  background: #eaeffd;
+  background: var(--color-primary-light);
   .name {
-    color: #335eea;
+    color: var(--color-primary);
   }
 }
 </style>

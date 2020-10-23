@@ -25,8 +25,8 @@
     </div>
     <div class="right-part">
       <a href="https://github.com/qier222/YesPlayMusic" target="blank"
-        ><svg-icon icon-class="github" class="github"
-      /></a>
+        ><svg-icon icon-class="github" class="right-part__icon github" />
+      </a>
       <div class="search-box">
         <div class="container" :class="{ active: inputFocus }">
           <svg-icon icon-class="search" />
@@ -41,17 +41,39 @@
           </div>
         </div>
       </div>
+      <div @click="changeDarkTheme">
+        <svg-icon
+          :icon-class="this.settings.theme === 'default' ? 'moon' : 'sun'"
+          class="right-part__icon darkmode"
+        />
+      </div>
+      <div class="locale-changer" @click="changeLang">
+        <svg-icon
+          icon-class="translation"
+          class="translation right-part__icon"
+        />
+      </div>
     </div>
   </nav>
 </template>
 
 <script>
 import ButtonIcon from "@/components/ButtonIcon.vue";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "Navbar",
   components: {
     ButtonIcon,
+  },
+  computed: {
+    ...mapState(["settings"]),
+  },
+  mounted() {
+    console.log(this.settings.theme);
+    if (this.settings.theme === "dark") {
+      document.body.setAttribute("data-theme", "dark");
+    }
   },
   data() {
     return {
@@ -61,6 +83,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["toggleDarkTheme"]),
     go(where) {
       if (where === "back") this.$router.go(-1);
       else this.$router.go(1);
@@ -76,6 +99,21 @@ export default {
         name: "search",
         query: { keywords: this.keywords },
       });
+    },
+    changeLang() {
+      if (this.$i18n.locale === "zh-CN") {
+        return (this.$i18n.locale = "en");
+      }
+      this.$i18n.locale = "zh-CN";
+    },
+    changeDarkTheme() {
+      console.info("change dark theme", this.settings.theme);
+      if (this.settings.theme === "default") {
+        document.body.setAttribute("data-theme", "dark");
+      } else {
+        document.body.removeAttribute("data-theme");
+      }
+      this.toggleDarkTheme();
     },
   },
 };
@@ -96,7 +134,7 @@ nav {
     left: 10vw;
   }
   backdrop-filter: saturate(180%) blur(30px);
-  background-color: rgba(255, 255, 255, 0.86);
+  background-color: var(--color-bg-1);
   z-index: 100;
 }
 
@@ -120,15 +158,15 @@ nav {
     text-decoration: none;
     border-radius: 6px;
     padding: 6px 10px;
-    color: black;
+    color: var(--color-text-0);
     transition: 0.2s;
     margin: {
       right: 12px;
       left: 12px;
     }
     &:hover {
-      background: #eaeffd;
-      color: #335eea;
+      background: var(--color-primary-light);
+      color: var(--color-primary);
     }
     &:active {
       transform: scale(0.92);
@@ -136,7 +174,7 @@ nav {
     }
   }
   a.active {
-    color: #335eea;
+    color: var(--color-primary);
   }
 }
 
@@ -156,7 +194,7 @@ nav {
     display: flex;
     align-items: center;
     height: 32px;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--color-bg-3);
     border-radius: 8px;
     width: 200px;
   }
@@ -164,7 +202,7 @@ nav {
   .svg-icon {
     height: 15px;
     width: 15px;
-    color: #aaaaaa;
+    color: var(--color-text-5);
     margin: {
       left: 8px;
       right: 4px;
@@ -178,13 +216,14 @@ nav {
     width: 96%;
     font-weight: 600;
     margin-top: -1px;
+    color: var(--color-text-4);
   }
 
   .active {
-    background: #eaeffd;
+    background: var(--color-primary-light);
     input,
     .svg-icon {
-      color: #335eea;
+      color: var(--color-primary);
     }
   }
 }
@@ -194,10 +233,24 @@ nav {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  .github {
+  &__icon {
+    cursor: pointer;
     margin-right: 16px;
     height: 24px;
     width: 24px;
+    color: var(--color-text-0);
+
+    &.darkmode {
+      margin-left: 16px;
+    }
+  }
+}
+
+.locale-changer {
+  position: relative;
+  .translation {
+    height: 48px;
+    width: 48px;
   }
 }
 </style>

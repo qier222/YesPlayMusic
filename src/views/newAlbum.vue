@@ -53,7 +53,7 @@ export default {
 <style lang="scss" scoped>
 h1 {
   span {
-    color: rgba(0, 0, 0, 0.58);
+    color: var(--color-text-3);
   }
 }
 
@@ -83,7 +83,7 @@ h1 {
     .name {
       font-size: 16px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text-1);
       line-height: 20px;
 
       display: -webkit-box;
@@ -93,7 +93,7 @@ h1 {
     }
     .info {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       line-height: 18px;
       display: -webkit-box;
       -webkit-box-orient: vertical;

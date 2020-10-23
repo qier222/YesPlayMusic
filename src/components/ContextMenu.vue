@@ -63,9 +63,9 @@ export default {
   position: fixed;
   min-width: 136px;
   list-style: none;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: var(--color-bg-1);
+  box-shadow: 0 6px 12px -4px var(--color-shadow-1);
+  border: 1px solid var(--color-border);
   backdrop-filter: blur(12px);
   border-radius: 8px;
   box-sizing: border-box;
@@ -84,8 +84,8 @@ export default {
   border-radius: 7px;
   cursor: default;
   &:hover {
-    background: #eaeffd;
-    color: #335eea;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
   }
 }
 </style>

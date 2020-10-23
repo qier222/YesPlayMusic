@@ -190,7 +190,7 @@ h1 {
     margin-right: 12px;
     vertical-align: -7px;
     border-radius: 50%;
-    border: rgba(0, 0, 0, 0.2);
+    border: var(--color-border-1);
   }
 }
 

@@ -84,7 +84,7 @@ export default {
   .svg-icon {
     height: 24px;
     width: 24px;
-    color: rgba(82, 82, 82, 0.28);
+    color: var(--color-text-5);
   }
 }
 
@@ -100,7 +100,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #eaeffd;
+  background: var(--color-primary-light);
   border-radius: 8px;
   height: 128px;
   width: 300px;
@@ -124,7 +124,7 @@ export default {
     // justify-content: space-around;
     align-items: center;
 
-    color: #335eea;
+    color: var(--color-primary);
   }
 
   .title-info {
@@ -138,7 +138,7 @@ export default {
   .info {
     margin-top: 2px;
     font-size: 14px;
-    color: rgba(51, 94, 234, 0.78);
+    color: var(--color-primary-alpha);
   }
   .svg-icon {
     opacity: 0;

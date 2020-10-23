@@ -160,10 +160,11 @@ export default {
       font-weight: 700;
       display: inline-flex;
       align-items: center;
+      color: var(--color-text-0);
     }
     .artist {
       font-size: 18px;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text-1);
       margin-top: 24px;
       a {
         font-weight: 600;
@@ -171,13 +172,13 @@ export default {
     }
     .date-and-count {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       margin-top: 2px;
     }
     .description {
       user-select: none;
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -186,14 +187,14 @@ export default {
       cursor: pointer;
       &:hover {
         transition: color 0.3s;
-        color: rgba(0, 0, 0, 0.88);
+        color: var(--color-text-1);
       }
     }
   }
 }
 
 .shade {
-  background: rgba(255, 255, 255, 0.38);
+  background: var(--color-bg-2);
   position: fixed;
   top: 0;
   bottom: 0;
@@ -203,9 +204,9 @@ export default {
   justify-content: center;
   align-items: center;
   .description-full {
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--color-bg-1);
+    box-shadow: 0 12px 16px -8px var(--color-shadow-1);
+    border: 1px solid var(--color-border);
     backdrop-filter: blur(12px);
     padding: 32px;
     border-radius: 12px;
@@ -215,13 +216,14 @@ export default {
     z-index: 100;
     display: flex;
     flex-direction: column;
+    color: var(--color-text-2);
 
     .close {
       display: flex;
       justify-content: flex-end;
       font-size: 16px;
       margin-top: 20px;
-      color: #335eea;
+      color: var(--color-primary);
       cursor: pointer;
     }
   }
@@ -236,7 +238,7 @@ export default {
 }
 
 .explicit-symbol {
-  color: rgba(0, 0, 0, 0.28);
+  color: var(--color-text-5);
   margin-right: 4px;
   .svg-icon {
     margin-bottom: -3px;
@@ -246,12 +248,12 @@ export default {
 .extra-info {
   margin-top: 36px;
   font-size: 14px;
-  color: rgba(0, 0, 0, 0.48);
+  color: var(--color-text-4);
   div {
     margin-bottom: 8px;
   }
   .album-time {
-    color: rgba(0, 0, 0, 0.68);
+    color: var(--color-text-2);
   }
 }
 </style>

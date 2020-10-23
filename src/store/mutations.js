@@ -100,6 +100,10 @@ export default {
       return t;
     });
   },
+  toggleDarkTheme(state) {
+    state.settings.theme =
+      state.settings.theme === "default" ? "dark" : "default";
+  },
   changeLang(state, lang) {
     state.settings.lang = lang;
   },

@@ -128,7 +128,7 @@ export default {
     .name {
       font-size: 16px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text-1);
       line-height: 20px;
 
       display: -webkit-box;
@@ -138,7 +138,7 @@ export default {
     }
     .info {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       line-height: 18px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -163,7 +163,7 @@ export default {
 }
 
 .explicit-symbol {
-  color: rgba(0, 0, 0, 0.28);
+  color: var(--color-text-5);
   float: right;
   .svg-icon {
     margin-bottom: -3px;
@@ -182,7 +182,7 @@ export default {
 
 .play-count {
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.58);
+  color: var(--color-text-3);
   font-size: 12px;
   .svg-icon {
     margin-right: 3px;

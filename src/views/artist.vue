@@ -200,22 +200,23 @@ export default {
     width: 192px;
     border-radius: 50%;
     margin-right: 56px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 16px -8px;
+    box-shadow: 0px 12px 16px -8px var(--color-shadow-0);
   }
   .name {
     font-size: 56px;
     font-weight: 700;
+    color: var(--color-text-0);
   }
 
   .artist {
     font-size: 18px;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-1);
     margin-top: 24px;
   }
 
   .statistics {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.68);
+    color: var(--color-text-2);
     margin-top: 2px;
   }
 
@@ -234,7 +235,7 @@ export default {
 .section-title {
   font-weight: 600;
   font-size: 22px;
-  color: rgba(0, 0, 0, 0.88);
+  color: var(--color-text-1);
   margin-bottom: 16px;
   margin-top: 46px;
 }
@@ -258,17 +259,17 @@ export default {
   .name {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text-1);
     margin-bottom: 8px;
   }
   .date {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.78);
+    color: var(--color-text-1);
   }
   .type {
     margin-top: 2px;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.68);
+    color: var(--color-text-2);
   }
 }
 
@@ -281,11 +282,11 @@ export default {
       margin-top: 8px;
       border-radius: 6px;
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.78);
+      color: var(--color-text-2);
       font-weight: 600;
       &:hover {
-        background: #f5f5f7;
-        color: rgba(0, 0, 0, 0.96);
+        background: var(--color-bg-2);
+        color: var(--color-text-0);
       }
     }
   }

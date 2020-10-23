@@ -162,6 +162,7 @@ export default {
 <style lang="scss" scoped>
 h1 {
   font-size: 56px;
+  color: var(--color-text-0);
 }
 .buttons {
   display: flex;
@@ -178,19 +179,18 @@ h1 {
   font-weight: 600;
   font-size: 18px;
   border-radius: 10px;
-  color: rgb(0, 0, 0);
-  background-color: #f5f5f7;
-  color: rgba(0, 0, 0, 0.68);
+  background-color: var(--color-bg-2);
+  color: var(--color-text-2);
   transition: 0.2s;
 
   &:hover {
-    background-color: rgba(51, 94, 234, 0.1);
-    color: #335eea;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
   }
 }
 .button.active {
-  background-color: rgba(51, 94, 234, 0.1);
-  color: #335eea;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .playlists {

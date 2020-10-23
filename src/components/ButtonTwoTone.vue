@@ -54,8 +54,8 @@ button {
   justify-content: center;
   font-size: 18px;
   font-weight: 600;
-  background-color: rgba(51, 94, 234, 0.1);
-  color: #335eea;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
   margin-right: 12px;
   transition: 0.2s;
   .svg-icon {
@@ -70,8 +70,8 @@ button {
   }
 }
 button.grey {
-  background-color: #f5f5f7;
-  color: rgba(0, 0, 0, 0.5);
+  background-color: var(--color-bg-2);
+  color: var(--color-text-4);
 }
 button.transparent {
   background-color: transparent;

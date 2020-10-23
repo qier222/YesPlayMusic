@@ -233,17 +233,17 @@ export default {
     }
     .artist {
       font-size: 18px;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text-1);
       margin-top: 24px;
     }
     .date-and-count {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       margin-top: 2px;
     }
     .description {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--color-text-2);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -252,7 +252,7 @@ export default {
       cursor: pointer;
       &:hover {
         transition: color 0.3s;
-        color: rgba(0, 0, 0, 0.88);
+        color: var(--color-text-1);
       }
     }
     .buttons {
@@ -266,7 +266,7 @@ export default {
 }
 
 .shade {
-  background: rgba(255, 255, 255, 0.38);
+  background: var(--color-bg-2);
   position: fixed;
   top: 0;
   bottom: 0;
@@ -276,9 +276,9 @@ export default {
   justify-content: center;
   align-items: center;
   .description-full {
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: var(--color-bg-1);
+    box-shadow: 0 12px 16px -8px var(--color-shadow-1);
+    border: 1px solid var(--color-border);
     backdrop-filter: blur(12px);
     padding: 32px;
     border-radius: 12px;
@@ -288,13 +288,14 @@ export default {
     z-index: 100;
     display: flex;
     flex-direction: column;
+    color: var(--color-text-2);
 
     .close {
       display: flex;
       justify-content: flex-end;
       font-size: 16px;
       margin-top: 20px;
-      color: #335eea;
+      color: var(--color-primary);
       cursor: pointer;
     }
   }
@@ -308,7 +309,7 @@ export default {
       margin-right: 12px;
       vertical-align: -7px;
       border-radius: 50%;
-      border: rgba(0, 0, 0, 0.2);
+      border: var(--color-border-2);
     }
   }
 }
