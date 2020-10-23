@@ -202,7 +202,10 @@ h1 {
     margin-top: 8px;
     margin-left: 36px;
     height: 216px;
-    overflow: hidden;
+    overflow: auto;
+  }
+  .songs::-webkit-scrollbar {
+    width: 0 !important;
   }
 }
 
