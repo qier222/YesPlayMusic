@@ -24,3 +24,6 @@ pnpm-debug.log*
 *.sw?
 
 .vercel
+
+#Electron-builder output
+/dist_electron

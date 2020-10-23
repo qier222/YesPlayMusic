@@ -1,18 +1,18 @@
 {
-  "name": "YesPlayMusic",
+  "name": "yes-play-music",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
     "prettier": "npx prettier --write ./src"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettier"
-    }
-  },
+  "main": "background.js",
   "dependencies": {
     "@sentry/browser": "^5.27.0",
     "@sentry/integrations": "^5.27.0",
@@ -21,6 +21,9 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "dayjs": "^1.8.36",
+    "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.2.4",
+    "electron-updater": "^4.3.5",
     "howler": "^2.2.0",
     "js-cookie": "^2.2.1",
     "nprogress": "^0.2.0",
@@ -30,11 +33,13 @@
     "svg-sprite-loader": "^5.0.0",
     "vue": "^2.6.11",
     "vue-analytics": "^5.22.1",
+    "vue-electron": "^1.0.6",
     "vue-global-events": "^1.2.1",
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.4.3",
     "vue-slider-component": "^3.2.5",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "vuex-electron": "^1.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -43,11 +48,15 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "electron": "^10.1.4",
+    "electron-debug": "^3.1.0",
+    "electron-devtools-installer": "^3.1.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "husky": "^4.3.0",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
@@ -68,5 +77,10 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier"
+    }
+  }
 }
