@@ -48,7 +48,7 @@ export function getLyric(id) {
     url: "/lyric",
     method: "get",
     params: {
-      id: id,
+      id,
     },
   });
 }
@@ -69,8 +69,9 @@ export function topSong(type) {
 /**
  * 喜欢音乐
  * 说明 : 调用此接口 , 传入音乐 id, 可喜欢该音乐
- * @param {number} id: 歌曲 id,
- * @param {boolean} like: 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+ * @param {Object} params
+ * @param {number} params.id: 歌曲 id,
+ * @param {boolean=} [params.like] - 默认为 true 即喜欢 , 若传 false, 则取消喜欢
  */
 export function likeATrack(params) {
   params.timestamp = new Date().getTime();
@@ -84,9 +85,10 @@ export function likeATrack(params) {
 /**
  * 听歌打卡
  * 说明 : 调用此接口 , 传入音乐 id, 来源 id，歌曲时间 time，更新听歌排行数据
- * @param {number} id: 歌曲 id,
- * @param {number} sourceid: 歌单或专辑 id
- * @param {number} [time] 歌曲播放时间,单位为秒
+ * @param {Object} params
+ * @param {number} params.id: 歌曲 id,
+ * @param {number} params.sourceid: 歌单或专辑 id
+ * @param {number=} [params.time] 歌曲播放时间,单位为秒
  */
 export function scrobble(params) {
   params.timestamp = new Date().getTime();
