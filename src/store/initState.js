@@ -85,6 +85,7 @@ const initState = {
       id: 0,
     },
     lang: null,
+    musicQuality: 320000,
   },
 };
 

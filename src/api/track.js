@@ -6,7 +6,7 @@ export function getMP3(id) {
   let br =
     store.state.settings?.musicQuality !== undefined
       ? store.state.settings.musicQuality
-      : 128000;
+      : 320000;
   return request({
     url: "/song/url",
     method: "get",
