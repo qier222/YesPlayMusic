@@ -111,6 +111,7 @@ export default {
   font-size: 42px;
   font-weight: 700;
   margin-bottom: 48px;
+  color: var(--color-text-0);
 }
 
 .sestion {
@@ -183,6 +184,7 @@ export default {
   .nickname {
     font-size: 18px;
     margin-left: 12px;
+    color: var(--color-text-2);
   }
   &:hover {
     background: var(--color-bg-3);
