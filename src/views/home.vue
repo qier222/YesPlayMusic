@@ -47,6 +47,16 @@
         :imageSize="1024"
       />
     </div>
+
+    <footer>
+      <ButtonTwoTone
+        :iconClass="'settings'"
+        :color="'grey'"
+        @click.native="goTo('/settings')"
+      >
+        {{ $t("footer.settings") }}
+      </ButtonTwoTone>
+    </footer>
   </div>
 </template>
 
@@ -57,10 +67,11 @@ import { byAppleMusic } from "@/utils/staticPlaylist";
 import { newAlbums } from "@/api/album";
 import NProgress from "nprogress";
 import CoverRow from "@/components/CoverRow.vue";
+import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 
 export default {
   name: "Home",
-  components: { CoverRow },
+  components: { CoverRow, ButtonTwoTone },
   data() {
     return {
       show: false,
@@ -113,6 +124,9 @@ export default {
           this.topList.ids.includes(l.id)
         );
       });
+    },
+    goTo(path) {
+      this.$router.push({ path });
     },
   },
   activated() {
@@ -179,5 +193,11 @@ export default {
       // margin-top: 4px;
     }
   }
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
 }
 </style>
