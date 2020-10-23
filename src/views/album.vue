@@ -56,7 +56,12 @@
       </div>
     </div>
     <div class="more-by" v-if="filteredMoreAlbums.length !== 0">
-      <div class="section-title"> More by {{ album.artist.name }} </div>
+      <div class="section-title">
+        More by
+        <router-link :to="`/artist/${album.artist.id}`"
+          >{{ album.artist.name }}
+        </router-link></div
+      >
       <div>
         <CoverRow
           type="album"
@@ -134,8 +139,15 @@ export default {
     filteredMoreAlbums() {
       let moreAlbums = this.moreAlbums.filter((a) => a.id !== this.album.id);
       let realAlbums = moreAlbums.filter((a) => a.type === "专辑");
-      let restItems = moreAlbums.filter((a) => a.type !== "专辑");
-      return [...realAlbums, ...restItems].slice(0, 5);
+      let eps = moreAlbums.filter(
+        (a) => a.type === "EP" || (a.type === "EP/Single" && a.size > 1)
+      );
+      let restItems = moreAlbums.filter(
+        (a) =>
+          realAlbums.find((a1) => a1.id === a.id) === undefined &&
+          eps.find((a1) => a1.id === a.id) === undefined
+      );
+      return [...realAlbums, ...eps, ...restItems].slice(0, 5);
     },
   },
   methods: {
@@ -161,7 +173,7 @@ export default {
         });
 
         // get more album by this artist
-        getArtistAlbum({ id: this.album.artist.id, limit: 200 }).then(
+        getArtistAlbum({ id: this.album.artist.id, limit: 100 }).then(
           (data) => {
             this.moreAlbums = data.hotAlbums;
           }
