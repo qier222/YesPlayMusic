@@ -1,7 +1,11 @@
+import store from "@/store";
 import request from "@/utils/request";
 import { mapTrackPlayableStatus } from "@/utils/common";
-import store from "@/store";
-
+/**
+ * 获取音乐 url
+ * 说明 : 使用歌单详情接口后 , 能得到的音乐的 id, 但不能得到的音乐 url, 调用此接口, 传入的音乐 id( 可多个 , 用逗号隔开 ), 可以获取对应的音乐的 url,未登录状态返回试听片段(返回字段包含被截取的正常歌曲的开始时间和结束时间)
+ * @param {string} id - 音乐的 id，例如 id=405998841,33894312
+ */
 export function getMP3(id) {
   let br =
     store.state.settings?.musicQuality !== undefined
@@ -16,19 +20,28 @@ export function getMP3(id) {
     },
   });
 }
-
-export function getTrackDetail(id) {
+/**
+ * 获取歌曲详情
+ * 说明 : 调用此接口 , 传入音乐 id(支持多个 id, 用 , 隔开), 可获得歌曲详情(注意:歌曲封面现在需要通过专辑内容接口获取)
+ * @param {string} ids - 音乐 id, 例如 ids=405998841,33894312
+ */
+export function getTrackDetail(ids) {
   return request({
     url: "/song/detail",
     method: "get",
     params: {
-      ids: id,
+      ids,
     },
   }).then((data) => {
     data.songs = mapTrackPlayableStatus(data.songs);
     return data;
   });
 }
+/**
+ * 获取歌词
+ * 说明 : 调用此接口 , 传入音乐 id 可获得对应音乐的歌词 ( 不需要登录 )
+ * @param {number} id 音乐 id
+ */
 
 export function getLyric(id) {
   return request({
@@ -39,14 +52,12 @@ export function getLyric(id) {
     },
   });
 }
-
+/**
+ * 新歌速递
+ * 说明 : 调用此接口 , 可获取新歌速递
+ * @param {number} type: 地区类型 id, 对应以下: 全部:0 华语:7 欧美:96 日本:8 韩国:16
+ */
 export function topSong(type) {
-  //   type: 地区类型 id,对应以下:
-  // 全部:0
-  // 华语:7
-  // 欧美:96
-  // 日本:8
-  // 韩国:16
   return request({
     url: "/top/song",
     method: "get",
@@ -55,10 +66,13 @@ export function topSong(type) {
     },
   });
 }
-
+/**
+ * 喜欢音乐
+ * 说明 : 调用此接口 , 传入音乐 id, 可喜欢该音乐
+ * @param {number} id: 歌曲 id,
+ * @param {boolean} like: 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+ */
 export function likeATrack(params) {
-  // 必选参数: id: 歌曲 id
-  // 可选参数 : like: 布尔值 , 默认为 true 即喜欢 , 若传 false, 则取消喜欢
   params.timestamp = new Date().getTime();
   return request({
     url: "/like",
@@ -67,9 +81,14 @@ export function likeATrack(params) {
   });
 }
 
+/**
+ * 听歌打卡
+ * 说明 : 调用此接口 , 传入音乐 id, 来源 id，歌曲时间 time，更新听歌排行数据
+ * @param {number} id: 歌曲 id,
+ * @param {number} sourceid: 歌单或专辑 id
+ * @param {number} [time] 歌曲播放时间,单位为秒
+ */
 export function scrobble(params) {
-  // 必选参数 : id: 歌曲 id, sourceid: 歌单或专辑 id
-  // 可选参数 : time: 歌曲播放时间,单位为秒
   params.timestamp = new Date().getTime();
   return request({
     url: "/scrobble",
