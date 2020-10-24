@@ -41,18 +41,6 @@
           </div>
         </div>
       </div>
-      <div @click="changeDarkTheme">
-        <svg-icon
-          :icon-class="this.settings.theme === 'default' ? 'moon' : 'sun'"
-          class="right-part__icon darkmode"
-        />
-      </div>
-      <div class="locale-changer" @click="changeLang">
-        <svg-icon
-          icon-class="translation"
-          class="translation right-part__icon"
-        />
-      </div>
     </div>
   </nav>
 </template>
@@ -70,7 +58,6 @@ export default {
     ...mapState(["settings"]),
   },
   mounted() {
-    console.log(this.settings.theme);
     if (this.settings.theme === "dark") {
       document.body.setAttribute("data-theme", "dark");
     }
@@ -99,21 +86,6 @@ export default {
         name: "search",
         query: { keywords: this.keywords },
       });
-    },
-    changeLang() {
-      if (this.$i18n.locale === "zh-CN") {
-        return (this.$i18n.locale = "en");
-      }
-      this.$i18n.locale = "zh-CN";
-    },
-    changeDarkTheme() {
-      console.info("change dark theme", this.settings.theme);
-      if (this.settings.theme === "default") {
-        document.body.setAttribute("data-theme", "dark");
-      } else {
-        document.body.removeAttribute("data-theme");
-      }
-      this.toggleDarkTheme();
     },
   },
 };

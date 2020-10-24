@@ -113,5 +113,10 @@ export default {
       high: "极高",
       lossless: "无损",
     },
+    theme: {
+      text: "主题",
+      default: "默认",
+      darkmode: "夜间模式",
+    },
   },
 };

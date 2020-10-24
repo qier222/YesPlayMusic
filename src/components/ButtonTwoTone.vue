@@ -51,7 +51,7 @@ export default {
 button {
   --button-bg: var(--color-primary-light);
   --button-color: var(--color-primary);
-  --button-grey-bg: var(--color-bg-2);
+  --button-grey-bg: var(--color-bg-3);
   --button-grey-color: var(--color-text-4);
 }
 button {

@@ -108,5 +108,10 @@ export default {
       high: "High",
       lossless: "Lossless",
     },
+    theme: {
+      text: "Theme",
+      default: "Default",
+      darkmode: "Dark Mode",
+    },
   },
 };

@@ -17,7 +17,7 @@
   --color-bg-0: rgba(var(--white), 1);
   --color-bg-1: rgba(var(--white), 0.86);
   --color-bg-2: rgba(var(--white), 0.38);
-  --color-bg-3: rgba(var(--black), 0.06);
+  --color-bg-3: rgba(var(--grey-0), 1);
 
   --color-border-0: rgba(var(--black), 0.02);
   --color-border-1: rgba(var(--black), 0.04);

@@ -38,6 +38,19 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"> {{ $t("settings.theme.text") }} </div>
+        </div>
+        <div class="right">
+          <select v-model="theme">
+            <option value="default"
+              >🌞 {{ $t("settings.theme.default") }}</option
+            >
+            <option value="dark">🌚 {{ $t("settings.theme.darkmode") }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title"> {{ $t("settings.musicQuality.text") }} </div>
         </div>
         <div class="right">
@@ -77,6 +90,19 @@ export default {
         this.$store.commit("changeLang", lang);
       },
     },
+    theme: {
+      get() {
+        return this.settings.theme;
+      },
+      set(theme) {
+        if (theme === "dark") {
+          document.body.setAttribute("data-theme", "dark");
+        } else {
+          document.body.removeAttribute("data-theme");
+        }
+        this.$store.commit("toggleDarkTheme", theme);
+      },
+    },
     musicQuality: {
       get() {
         return this.settings.musicQuality;
@@ -97,7 +123,7 @@ export default {
 
 <style lang="scss" scoped>
 .settings {
-  --settings-user-bg: var(--color-bg-1);
+  --settings-user-bg: var(--color-bg-3);
   --settings-title: var(--color-text-1);
   --settings-info: var(--color-text-2);
   --settings-btn: var(--color-text-2);
@@ -209,8 +235,8 @@ h2 {
     appearance: none;
     &:focus {
       outline: none;
-      color: var(--settings-primary);
-      background: var(---settings-primary-light);
+      color: var(--color-primary);
+      background: var(--color-primary-light);
     }
   }
 }
