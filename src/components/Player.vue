@@ -119,7 +119,7 @@
 <script>
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { mapState, mapMutations, mapActions } from "vuex";
-import { isLooseLoggedIn } from "@/utils/auth";
+import { isAccountLoggedIn } from "@/utils/auth";
 import { userLikedSongsIDs } from "@/api/user";
 import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
@@ -145,7 +145,7 @@ export default {
     setInterval(() => {
       this.progress = ~~this.howler.seek();
     }, 1000);
-    if (isLooseLoggedIn()) {
+    if (isAccountLoggedIn()) {
       userLikedSongsIDs(this.settings.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);
       });
