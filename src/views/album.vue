@@ -55,6 +55,22 @@
         © {{ album.company }}
       </div>
     </div>
+    <div class="more-by" v-if="filteredMoreAlbums.length !== 0">
+      <div class="section-title">
+        More by
+        <router-link :to="`/artist/${album.artist.id}`"
+          >{{ album.artist.name }}
+        </router-link></div
+      >
+      <div>
+        <CoverRow
+          type="album"
+          :items="filteredMoreAlbums"
+          subText="albumType+releaseYear"
+          :showPlayButton="true"
+        />
+      </div>
+    </div>
     <transition name="fade">
       <div
         class="shade"
@@ -74,14 +90,16 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
-import NProgress from "nprogress";
+import { getArtistAlbum } from "@/api/artist";
 import { getTrackDetail } from "@/api/track";
 import { playAlbumByID } from "@/utils/play";
 import { getAlbum } from "@/api/album";
+import NProgress from "nprogress";
 
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
+import CoverRow from "@/components/CoverRow.vue";
 import Cover from "@/components/Cover.vue";
 
 export default {
@@ -91,6 +109,7 @@ export default {
     ButtonTwoTone,
     TrackList,
     ExplicitSymbol,
+    CoverRow,
   },
   data() {
     return {
@@ -104,24 +123,11 @@ export default {
       tracks: [],
       showFullDescription: false,
       show: false,
+      moreAlbums: [],
     };
   },
   created() {
-    getAlbum(this.$route.params.id)
-      .then((data) => {
-        this.album = data.album;
-        this.tracks = data.songs;
-        NProgress.done();
-        this.show = true;
-        return this.tracks;
-      })
-      .then((tracks) => {
-        // to get explicit mark
-        let trackIDs = tracks.map((t) => t.id);
-        getTrackDetail(trackIDs.join(",")).then((data) => {
-          this.tracks = data.songs;
-        });
-      });
+    this.loadData(this.$route.params.id);
   },
   computed: {
     ...mapState(["player"]),
@@ -129,6 +135,19 @@ export default {
       let time = 0;
       this.tracks.map((t) => (time = time + t.dt));
       return time;
+    },
+    filteredMoreAlbums() {
+      let moreAlbums = this.moreAlbums.filter((a) => a.id !== this.album.id);
+      let realAlbums = moreAlbums.filter((a) => a.type === "专辑");
+      let eps = moreAlbums.filter(
+        (a) => a.type === "EP" || (a.type === "EP/Single" && a.size > 1)
+      );
+      let restItems = moreAlbums.filter(
+        (a) =>
+          realAlbums.find((a1) => a1.id === a.id) === undefined &&
+          eps.find((a1) => a1.id === a.id) === undefined
+      );
+      return [...realAlbums, ...eps, ...restItems].slice(0, 5);
     },
   },
   methods: {
@@ -140,6 +159,32 @@ export default {
       }
       playAlbumByID(id, trackID);
     },
+    loadData(id) {
+      getAlbum(id).then((data) => {
+        this.album = data.album;
+        this.tracks = data.songs;
+        NProgress.done();
+        this.show = true;
+
+        // to get explicit mark
+        let trackIDs = this.tracks.map((t) => t.id);
+        getTrackDetail(trackIDs.join(",")).then((data) => {
+          this.tracks = data.songs;
+        });
+
+        // get more album by this artist
+        getArtistAlbum({ id: this.album.artist.id, limit: 100 }).then(
+          (data) => {
+            this.moreAlbums = data.hotAlbums;
+          }
+        );
+      });
+    },
+  },
+  beforeRouteUpdate(to, from, next) {
+    NProgress.start();
+    this.loadData(to.params.id);
+    next();
   },
 };
 </script>
@@ -147,6 +192,7 @@ export default {
 <style lang="scss" scoped>
 .album {
   --album-title-color: var(--color-text-0);
+  --album-section-title-color: var(--color-text-1);
   --album-artist-color: var(--color-text-1);
   --album-date-color: var(--color-text-2);
   --album-description-color: var(--color-text-2);
@@ -263,13 +309,25 @@ export default {
 
 .extra-info {
   margin-top: 36px;
-  font-size: 14px;
+  margin-bottom: 36px;
+  font-size: 12px;
   color: var(--album-extra-info);
   div {
     margin-bottom: 8px;
   }
   .album-time {
     color: var(--album-time);
+  }
+}
+
+.more-by {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 22px;
+  .section-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--album-section-title-color);
+    margin-bottom: 8px;
   }
 }
 </style>

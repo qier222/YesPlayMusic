@@ -39,7 +39,7 @@ export default {
       return {
         borderRadius: this.shape === "round" ? "50%" : "8px",
         padding: `8px ${this.horizontalPadding}px`,
-        height: "38px",
+        // height: "38px",
         width: this.shape === "round" ? "38px" : "auto",
       };
     },

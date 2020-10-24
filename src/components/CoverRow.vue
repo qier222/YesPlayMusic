@@ -97,10 +97,17 @@ export default {
         return new Date(item.publishTime).getFullYear();
       if (this.subText === "artist")
         return `<a href="/#/artist/${item.artist.id}">${item.artist.name}</a>`;
-      if (this.subText === "albumType+releaseYear")
-        return `${item.size === 1 ? "Single" : "EP"} · ${new Date(
-          item.publishTime
-        ).getFullYear()}`;
+      if (this.subText === "albumType+releaseYear") {
+        let albumType = item.type;
+        if (item.type === "EP/Single") {
+          albumType = item.size === 1 ? "Single" : "EP";
+        } else if (item.type === "Single") {
+          albumType = "Single";
+        } else if (item.type === "专辑") {
+          albumType = "Album";
+        }
+        return `${albumType} · ${new Date(item.publishTime).getFullYear()}`;
+      }
       if (this.subText === "appleMusic") return "by Apple Music";
     },
   },
