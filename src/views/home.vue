@@ -1,6 +1,6 @@
 <template>
   <div class="home" v-show="show">
-    <div class="index-row">
+    <div class="index-row" v-if="settings.showPlaylistsByAppleMusic !== false">
       <div class="title"> by Apple Music </div>
       <CoverRow
         :type="'playlist'"
@@ -66,6 +66,8 @@ import { toplistOfArtists } from "@/api/artist";
 import { byAppleMusic } from "@/utils/staticPlaylist";
 import { newAlbums } from "@/api/album";
 import NProgress from "nprogress";
+import { mapState } from "vuex";
+
 import CoverRow from "@/components/CoverRow.vue";
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 
@@ -88,6 +90,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["settings"]),
     byAppleMusic() {
       return byAppleMusic;
     },
