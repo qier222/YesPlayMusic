@@ -106,4 +106,7 @@ export default {
   changeMusicQuality(state, value) {
     state.settings.musicQuality = value;
   },
+  updateSettings(state, { key, value }) {
+    state.settings[key] = value;
+  },
 };
