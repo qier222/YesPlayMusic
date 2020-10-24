@@ -1,38 +1,43 @@
+@import "./palette.css";
+
 :root {
-  --color-black: rgba(0, 0, 0, 1);
-  --color-white: rgba(255, 255, 255, 1);
-  --color-primary: #335eea;
-  --color-primary-alpha: rgba(51, 94, 234, 0.78);
-  --color-primary-light: #eaeffd;
-  --color-text-0: rgba(0, 0, 0, 1);
-  --color-text-1: rgba(0, 0, 0, 0.88);
-  --color-text-2: rgba(0, 0, 0, 0.68);
-  --color-text-3: rgba(0, 0, 0, 0.58);
-  --color-text-4: rgba(0, 0, 0, 0.5);
-  --color-text-5: rgba(0, 0, 0, 0.28);
-  --color-text-6: rgba(82, 82, 82, 0.28);
-  --color-bg-0: var(--color-white);
-  --color-bg-1: rgba(255, 255, 255, 0.86);
-  --color-bg-2: rgba(255, 255, 255, 0.38);
-  --color-bg-3: rgba(0, 0, 0, 0.06);
+  --color-black: rgba(var(--black), 1);
+  --color-white: rgba(var(--white), 1);
+  --color-primary: rgba(var(--blue), 1);
+  --color-primary-light: rgba(var(--blue-0), 1);
+  --color-secondary: rgba(var(--blue), 0.78);
 
-  --color-border: rgba(0, 0, 0, 0.04);
-  --color-border-1: rgba(0, 0, 0, 0.02);
-  --color-border-2: rgba(0, 0, 0, 0.18);
+  --color-text-0: rgba(var(--black), 1);
+  --color-text-1: rgba(var(--black), 0.88);
+  --color-text-2: rgba(var(--black), 0.68);
+  --color-text-3: rgba(var(--black), 0.58);
+  --color-text-4: rgba(var(--black), 0.5);
+  --color-text-5: rgba(var(--black), 0.28);
+  --color-text-6: rgba(var(--black), 0.28);
+  --color-bg-0: rgba(var(--white), 1);
+  --color-bg-1: rgba(var(--white), 0.86);
+  --color-bg-2: rgba(var(--white), 0.38);
+  --color-bg-3: rgba(var(--black), 0.06);
 
-  --color-shadow: rgba(0, 0, 0, 0.4);
+  --color-border-0: rgba(var(--black), 0.02);
+  --color-border-1: rgba(var(--black), 0.04);
+  --color-border-2: rgba(var(--black), 0.18);
 
-  --color-shadow-0: rgba(0, 0, 0, 0.2);
-  --color-shadow-1: rgba(0, 0, 0, 0.1);
-  --color-shadow-2: rgba(0, 0, 0, 0.05);
+  --color-shadow: rgba(var(--black), 0.4);
+  --color-shadow-0: rgba(var(--black), 0.2);
+  --color-shadow-1: rgba(var(--black), 0.1);
+  --color-shadow-2: rgba(var(--black), 0.05);
+
+  --color-active: var(--color-primary);
 }
 
 [data-theme="dark"] {
-  --color-black: rgba(0, 0, 0, 1);
-  --color-white: rgba(255, 255, 255, 1);
-  --color-primary: #335eea;
-  --color-primary-alpha: rgba(51, 94, 234, 0.78);
-  --color-primary-light: rgba(67, 84, 133, 0.1);
+  --color-black: rgba(var(--white), 1);
+  --color-white: rgba(var(--black), 1);
+  --color-primary: rgba(var(--blue), 1);
+  --color-secondary: rgba(var(--blue), 0.78);
+  --color-primary-light: rgba(var(--blue-0), 1);
+
   --color-text-0: #ffffff;
   --color-text-1: #eeeeee;
   --color-text-2: #dddddd;
@@ -40,16 +45,20 @@
   --color-text-4: #bbbbbb;
   --color-text-5: #aaaaaa;
   --color-text-6: #999999;
-  --color-bg-0: rgba(32, 33, 36);
-  --color-bg-1: rgba(32, 33, 36, 0.86);
-  --color-bg-2: rgba(0, 0, 0, 0.38);
-  --color-bg-3: rgba(87, 87, 87, 0.28);
 
-  --color-border: rgba(0, 0, 0, 0.04);
-  --color-border-1: rgba(0, 0, 0, 0.02);
-  --color-border-2: rgba(236, 236, 236, 0.82);
+  --color-bg-0: rgba(var(--grey), 1);
+  --color-bg-1: rgba(var(--grey), 0.86);
+  --color-bg-2: rgba(var(--grey), 0.38);
+  --color-bg-3: rgba(var(--black), 0.2);
 
-  --color-shadow-0: rgba(0, 0, 0, 0.2);
-  --color-shadow-1: rgba(0, 0, 0, 0.1);
-  --color-shadow-2: rgba(0, 0, 0, 0.05);
+  --color-border-0: rgba(var(--black), 0.02);
+  --color-border-1: rgba(var(--black), 0.04);
+  --color-border-2: rgba(var(--white), 0.68);
+
+  --color-shadow: rgba(var(--black), 0.4);
+  --color-shadow-0: rgba(var(--black), 0.2);
+  --color-shadow-1: rgba(var(--black), 0.1);
+  --color-shadow-2: rgba(var(--black), 0.05);
+
+  --color-active: var(--color-primary-light);
 }

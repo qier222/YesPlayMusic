@@ -49,13 +49,19 @@ export default {
 
 <style lang="scss" scoped>
 button {
+  --button-bg: var(--color-primary-light);
+  --button-color: var(--color-primary);
+  --button-grey-bg: var(--color-bg-2);
+  --button-grey-color: var(--color-text-4);
+}
+button {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   font-weight: 600;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--button-bg);
+  color: var(--button-color);
   margin-right: 12px;
   transition: 0.2s;
   .svg-icon {
@@ -70,8 +76,8 @@ button {
   }
 }
 button.grey {
-  background-color: var(--color-bg-2);
-  color: var(--color-text-4);
+  background-color: var(--button-grey-bg);
+  color: var(--button-grey-color);
 }
 button.transparent {
   background-color: transparent;

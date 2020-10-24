@@ -191,6 +191,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.artist {
+  --artist-img-shadow: var(--color-shadow-0);
+  --artist-name: var(--color-text-0);
+  --artist-artist: var(--color-text-1);
+  --artist-statistics: var(--color-text-2);
+  --artist-title: var(--color-text-1);
+  --artist-type: var(--color-text-2);
+  --artist-track: var(--color-text-2);
+  --artist-track-hover: var(--color-text-0);
+  --artist-track-bg-hover: var(--color-bg-2);
+}
+
 .artist-info {
   display: flex;
   align-items: center;
@@ -200,23 +212,23 @@ export default {
     width: 192px;
     border-radius: 50%;
     margin-right: 56px;
-    box-shadow: 0px 12px 16px -8px var(--color-shadow-0);
+    box-shadow: 0px 12px 16px -8px var(--artist-img-shadow);
   }
   .name {
     font-size: 56px;
     font-weight: 700;
-    color: var(--color-text-0);
+    color: var(--artist-name);
   }
 
   .artist {
     font-size: 18px;
-    color: var(--color-text-1);
+    color: var(--artist-artist);
     margin-top: 24px;
   }
 
   .statistics {
     font-size: 14px;
-    color: var(--color-text-2);
+    color: var(--artist-statistics);
     margin-top: 2px;
   }
 
@@ -235,7 +247,7 @@ export default {
 .section-title {
   font-weight: 600;
   font-size: 22px;
-  color: var(--color-text-1);
+  color: var(--artist-title);
   margin-bottom: 16px;
   margin-top: 46px;
 }
@@ -259,17 +271,17 @@ export default {
   .name {
     font-size: 18px;
     font-weight: 600;
-    color: var(--color-text-1);
+    color: var(--artist-title);
     margin-bottom: 8px;
   }
   .date {
     font-size: 14px;
-    color: var(--color-text-1);
+    color: var(--artist-title);
   }
   .type {
     margin-top: 2px;
     font-size: 12px;
-    color: var(--color-text-2);
+    color: var(--artist-type);
   }
 }
 
@@ -282,11 +294,11 @@ export default {
       margin-top: 8px;
       border-radius: 6px;
       font-size: 12px;
-      color: var(--color-text-2);
+      color: var(--artist-track);
       font-weight: 600;
       &:hover {
-        background: var(--color-bg-2);
-        color: var(--color-text-0);
+        background: var(--artist-track-bg-hover);
+        color: var(--artist-track-hover);
       }
     }
   }

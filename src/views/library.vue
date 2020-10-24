@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show">
+  <div v-show="show" class="library">
     <h1>
       <img class="head" :src="user.profile.avatarUrl | resizeImage" />{{
         user.profile.nickname
@@ -183,6 +183,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.library {
+  --library-head: var(--color-text-0);
+  --library-border: var(--color-border-0);
+  --library-primary-light: var(--color-primary-light);
+  --library-primary: var(--color-primary);
+  --library-btn-shadow: var(--color-shadow-0);
+  --library-btn-shadow-hover: var(--color-shadow);
+  --library-btn-icon: var(--color-primary-light);
+  --library-top: var(--color-secondary);
+  --library-playlist-title: var(--color-text-1);
+}
 h1 {
   font-size: 42px;
   .head {
@@ -190,9 +201,9 @@ h1 {
     margin-right: 12px;
     vertical-align: -7px;
     border-radius: 50%;
-    border: var(--color-border-1);
+    border: var(--library-border);
   }
-  color: var(--color-text-0);
+  color: var(--library-head);
 }
 
 .section-one {
@@ -220,7 +231,7 @@ h1 {
   transition: all 0.4s;
   box-sizing: border-box;
 
-  background: var(--color-primary-light);
+  background: var(--library-primary-light);
   // background: linear-gradient(-30deg, #60a6f7, #4364f7, #0052d4);
   // color: white;
   // background: linear-gradient(149.46deg, #450af5, #8e8ee5 99.16%);
@@ -233,12 +244,12 @@ h1 {
     .title {
       font-size: 24px;
       font-weight: 700;
-      color: var(--color-primary);
+      color: var(--library-primary);
     }
     .sub-title {
       font-size: 15px;
       margin-top: 2px;
-      color: var(--color-primary);
+      color: var(--library-primary);
     }
 
     button {
@@ -249,22 +260,22 @@ h1 {
       height: 44px;
       width: 44px;
       // background: rgba(255, 255, 255, 1);
-      background: var(--color-primary);
+      background: var(--library-primary);
       border-radius: 50%;
       transition: 0.2s;
-      box-shadow: 0 6px 12px -4px var(--color-shadow-0);
+      box-shadow: 0 6px 12px -4px var(--library-btn-shadow);
       cursor: default;
 
       .svg-icon {
         // color: #3f63f5;
-        color: var(--color-white);
+        color: var(--library-btn-icon);
         margin-left: 4px;
         height: 16px;
         width: 16px;
       }
       &:hover {
         transform: scale(1.06);
-        box-shadow: 0 6px 12px -4px var(--color-shadow);
+        box-shadow: 0 6px 12px -4px var(--library-btn-shadow-hover);
       }
       &:active {
         transform: scale(0.94);
@@ -277,7 +288,7 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     font-size: 14px;
-    color: var(--color-primary-alpha);
+    color: var(--library-top);
     p {
       margin-top: 2px;
     }
@@ -287,7 +298,7 @@ h1 {
 .playlists {
   margin-top: 54px;
   .title {
-    color: var(--color-text-1);
+    color: var(--library-playlist-title);
     margin-bottom: 8px;
     font-size: 24px;
     font-weight: 600;

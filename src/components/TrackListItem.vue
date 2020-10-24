@@ -150,6 +150,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.track {
+  --track-item-button-color: var(--color-primary);
+  --track-item-play-button-color: var(--color-primary);
+  --track-no-color: var(--color-text-3);
+  --track-explicit-symbol-icon-color: var(--color-text-5);
+  --track-img-border: var(--color-border-1);
+  --track-img-shadow-hover: drop-shadow(100 200 0 var(--black));
+  --track-title-color: var(--color-text-1);
+  --track-title-featured-color: var(--color-text-2);
+  --track-artist-color: var(--color-text-2);
+  --track-artist-link-color: var(--color-text-1);
+  --track-album-color: var(--color-text-1);
+  --track-time-color: var(--color-text-1);
+  --track-hover-bg: var(--color-primary-light);
+  --track-disable-color: var(--color-text-5) !important;
+  --track-playing-color: var(--color-primary);
+  --track-playing-bg: var(--color-primary-light);
+}
 button {
   display: flex;
   justify-content: center;
@@ -161,7 +179,7 @@ button {
   .svg-icon {
     height: 16px;
     width: 16px;
-    color: var(--color-primary);
+    color: var(--track-item-button-color);
   }
   &:active {
     transform: scale(0.92);
@@ -173,7 +191,7 @@ button.play-button {
   .svg-icon {
     height: 14px;
     width: 14px;
-    color: var(--color-primary);
+    color: var(--track-item-play-button-color);
   }
 }
 
@@ -196,7 +214,7 @@ button.play-button {
   }
 
   .explicit-symbol {
-    color: var(--color-text-5);
+    color: var(--track-explicit-symbol-icon-color);
     .svg-icon {
       margin-bottom: -3px;
     }
@@ -214,7 +232,7 @@ button.play-button {
     height: 56px;
     width: 56px;
     margin-right: 20px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--track-img-border);
     cursor: pointer;
   }
 
@@ -232,7 +250,7 @@ button.play-button {
     .title {
       font-size: 18px;
       font-weight: 600;
-      color: var(--color-text-1);
+      color: var(--track-title-color);
       cursor: default;
       padding-right: 16px;
       display: -webkit-box;
@@ -244,13 +262,13 @@ button.play-button {
         margin-right: 2px;
         font-weight: 500;
         font-size: 14px;
-        color: var(--color-text-2);
+        color: var(--track-title-featured-color);
       }
     }
     .artist {
       margin-top: 2px;
       font-size: 13px;
-      color: var(--color-text-2);
+      color: var(--track-artist-color);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
@@ -258,7 +276,7 @@ button.play-button {
       a {
         span {
           margin-right: 3px;
-          color: var(--color-text-1);
+          color: var(--track-artist-link-color);
         }
         &:hover {
           text-decoration: underline;
@@ -271,7 +289,7 @@ button.play-button {
     flex: 1;
     display: flex;
     font-size: 16px;
-    color: var(--color-text-1);
+    color: var(--track-album-color);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -285,11 +303,11 @@ button.play-button {
     justify-content: flex-end;
     margin-right: 10px;
     font-variant-numeric: tabular-nums;
-    color: var(--color-text-1);
+    color: var(--track-time-color);
   }
   &:hover {
     transition: all 0.3s;
-    background: var(--color-primary-light);
+    background: var(--track-hover-bg);
   }
 }
 .track.disable {
@@ -337,23 +355,23 @@ button.play-button {
 }
 
 .track.playing {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
+  background: var(--track-playing-bg);
+  color: var(--track-playing-color);
   .title,
   .album {
-    color: var(--color-primary);
+    color: var(--track-playing-color);
   }
   .title .featured,
   .artist {
-    color: var(--color-primary);
+    color: var(--track-playing-color);
     opacity: 0.88;
   }
   .no span {
-    color: var(--color-primary);
+    color: var(--track-playing-color);
     opacity: 0.78;
   }
   .explicit-symbol {
-    color: var(--color-primary);
+    color: var(--track-playing-color);
     opacity: 0.88;
   }
 }

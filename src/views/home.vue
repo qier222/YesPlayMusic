@@ -136,6 +136,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.home {
+  --home-title: var(--color-text-0);
+}
 .index-row {
   margin-top: 54px;
 }
@@ -158,7 +161,7 @@ export default {
   margin-bottom: 20px;
   font-size: 28px;
   font-weight: 700;
-  color: var(--color-text-0);
+  color: var(--home-title);
 }
 
 footer {

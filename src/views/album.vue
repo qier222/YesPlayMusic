@@ -145,6 +145,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.album {
+  --album-title-color: var(--color-text-0);
+  --album-artist-color: var(--color-text-1);
+  --album-date-color: var(--color-text-2);
+  --album-description-color: var(--color-text-2);
+  --album-description-color-hover: var(--color-text-1);
+  --album-shade-bg: var(--color-bg-2);
+  --album-description-full-bg: var(--color-bg-1);
+  --album-description-full-shadow: var(--color-shadow-1);
+  --album-description-full-border: (--color-border-1);
+  --album-description-full-color: var(--color-text-2);
+  --album-description-full-close: var(--color-primary);
+  --album-explicit-symbol: var(--color-text-5);
+  --album-extra-info: var(--color-text-4);
+  --album-time: var(--color-text-2);
+}
 .playlist-info {
   display: flex;
   width: 78vw;
@@ -160,11 +176,11 @@ export default {
       font-weight: 700;
       display: inline-flex;
       align-items: center;
-      color: var(--color-text-0);
+      color: var(--album-title-color);
     }
     .artist {
       font-size: 18px;
-      color: var(--color-text-1);
+      color: var(--album-artist-color);
       margin-top: 24px;
       a {
         font-weight: 600;
@@ -172,13 +188,13 @@ export default {
     }
     .date-and-count {
       font-size: 14px;
-      color: var(--color-text-2);
+      color: var(--album-date-color);
       margin-top: 2px;
     }
     .description {
       user-select: none;
       font-size: 14px;
-      color: var(--color-text-2);
+      color: var(--album-description-color);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -187,14 +203,14 @@ export default {
       cursor: pointer;
       &:hover {
         transition: color 0.3s;
-        color: var(--color-text-1);
+        color: var(--album-description-color-hover);
       }
     }
   }
 }
 
 .shade {
-  background: var(--color-bg-2);
+  background: var(--album-shade-bg);
   position: fixed;
   top: 0;
   bottom: 0;
@@ -204,9 +220,9 @@ export default {
   justify-content: center;
   align-items: center;
   .description-full {
-    background: var(--color-bg-1);
-    box-shadow: 0 12px 16px -8px var(--color-shadow-1);
-    border: 1px solid var(--color-border);
+    background: var(--album-description-full-bg);
+    box-shadow: 0 12px 16px -8px var(--album-description-full-shadow);
+    border: 1px solid var(--album-description-full-border);
     backdrop-filter: blur(12px);
     padding: 32px;
     border-radius: 12px;
@@ -216,14 +232,14 @@ export default {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    color: var(--color-text-2);
+    color: var(--album-description-full-color);
 
     .close {
       display: flex;
       justify-content: flex-end;
       font-size: 16px;
       margin-top: 20px;
-      color: var(--color-primary);
+      color: var(--album-description-full-close);
       cursor: pointer;
     }
   }
@@ -238,7 +254,7 @@ export default {
 }
 
 .explicit-symbol {
-  color: var(--color-text-5);
+  color: var(--album-explicit-symbol);
   margin-right: 4px;
   .svg-icon {
     margin-bottom: -3px;
@@ -248,12 +264,12 @@ export default {
 .extra-info {
   margin-top: 36px;
   font-size: 14px;
-  color: var(--color-text-4);
+  color: var(--album-extra-info);
   div {
     margin-bottom: 8px;
   }
   .album-time {
-    color: var(--color-text-2);
+    color: var(--album-time);
   }
 }
 </style>

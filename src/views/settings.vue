@@ -97,6 +97,14 @@ export default {
 
 <style lang="scss" scoped>
 .settings {
+  --settings-user-bg: var(--color-bg-1);
+  --settings-title: var(--color-text-1);
+  --settings-info: var(--color-text-2);
+  --settings-btn: var(--color-text-2);
+  --settings-primary: var(--color-primary);
+  --settings-primary-light: var(--color-primary-light);
+}
+.settings {
   display: flex;
   justify-content: center;
 }
@@ -107,13 +115,14 @@ export default {
 h2 {
   margin-top: 48px;
   font-size: 36px;
+  color: var(--settings-title);
 }
 
 .user {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f5f5f7;
+  background: var(--settings-user-bg);
   padding: 16px 20px;
   border-radius: 16px;
   img.avatar {
@@ -134,12 +143,12 @@ h2 {
     .nickname {
       font-size: 20px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--settings-title);
       margin-bottom: 2px;
     }
     .extra-info {
       font-size: 13px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--settings-info);
       .vip {
         display: flex;
         align-items: center;
@@ -160,15 +169,15 @@ h2 {
       text-decoration: none;
       border-radius: 10px;
       padding: 8px 12px;
-      color: rgba(0, 0, 0, 0.68);
+      color: var(--settings-btn);
       transition: 0.2s;
       margin: {
         right: 12px;
         left: 12px;
       }
       &:hover {
-        background: #eaeffd;
-        color: #335eea;
+        background: var(--settings-primary-light);
+        color: var(--settings-primary);
       }
       &:active {
         transform: scale(0.92);
@@ -186,7 +195,7 @@ h2 {
   .title {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--settings-title);
   }
 
   select {
@@ -195,13 +204,13 @@ h2 {
     border: none;
     padding: 8px 12px 8px 12px;
     border-radius: 8px;
-    color: rgba(0, 0, 0, 0.88);
-    background: #f5f5f7;
+    color: var(--settings-title);
+    background: var(--settings-user-bg);
     appearance: none;
     &:focus {
       outline: none;
-      color: #335eea;
-      background: #eaeffd;
+      color: var(--settings-primary);
+      background: var(---settings-primary-light);
     }
   }
 }

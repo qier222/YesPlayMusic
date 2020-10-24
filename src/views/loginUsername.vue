@@ -104,6 +104,14 @@ export default {
 
 <style lang="scss" scoped>
 .login {
+  --username-login-title: var(--color-text-0);
+  --username-login-section: var(--color-text-1);
+  --username-login: var(--color-primary);
+  --username-login-bg: var(--color-primary-light);
+  --username-login-nickname: var(--color-text-2);
+  --usernname-login-bg-hover: var(--color-bg-3);
+}
+.login {
   display: flex;
 }
 
@@ -111,7 +119,7 @@ export default {
   font-size: 42px;
   font-weight: 700;
   margin-bottom: 48px;
-  color: var(--color-text-0);
+  color: var(--username-login-title);
 }
 
 .sestion {
@@ -120,7 +128,7 @@ export default {
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 8px;
-    color: var(--color-text-1);
+    color: var(--username-login-section);
   }
 }
 
@@ -131,13 +139,13 @@ export default {
     height: 48px;
     border-radius: 11px;
     width: 326px;
-    background: var(--color-primary-light);
+    background: var(--username-login-bg);
   }
 
   .svg-icon {
     height: 22px;
     width: 22px;
-    color: var(--color-primary);
+    color: var(--username-login);
     margin: {
       left: 12px;
       right: 8px;
@@ -152,9 +160,9 @@ export default {
     width: 115%;
     font-weight: 600;
     margin-top: -1px;
-    color: var(--color-primary);
+    color: var(--username-login);
     &::placeholder {
-      color: var(--color-primary);
+      color: var(--username-login);
     }
   }
 }
@@ -184,18 +192,18 @@ export default {
   .nickname {
     font-size: 18px;
     margin-left: 12px;
-    color: var(--color-text-2);
+    color: var(--username-login-nickname);
   }
   &:hover {
-    background: var(--color-bg-3);
+    background: var(--usernname-login-bg-hover);
   }
 }
 
 .user.active {
   transition: 0.2s;
-  background: var(--color-primary-light);
+  background: var(--username-login-bg);
   .name {
-    color: var(--color-primary);
+    color: var(--username-login);
   }
 }
 </style>

@@ -55,6 +55,14 @@ export default {
 
 <style lang="scss" scoped>
 .context-menu {
+  --menu-bg: var(--color-bg-1);
+  --menu-shadow: var(--color-shadow-1);
+  --menu-border: var(--color-border-1);
+  --menu-item-hover: var(--color-primary);
+  --menu-item-bg-hover: var(--color-primary-light);
+}
+
+.context-menu {
   width: 100%;
   height: 100%;
 }
@@ -63,9 +71,9 @@ export default {
   position: fixed;
   min-width: 136px;
   list-style: none;
-  background: var(--color-bg-1);
-  box-shadow: 0 6px 12px -4px var(--color-shadow-1);
-  border: 1px solid var(--color-border);
+  background: var(--menu-bg);
+  box-shadow: 0 6px 12px -4px var(--menu-shadow);
+  border: 1px solid var(--menu-border);
   backdrop-filter: blur(12px);
   border-radius: 8px;
   box-sizing: border-box;
@@ -84,8 +92,8 @@ export default {
   border-radius: 7px;
   cursor: default;
   &:hover {
-    background: var(--color-primary-light);
-    color: var(--color-primary);
+    background: var(--menu-item-bg-hover);
+    color: var(--menu-item-hover);
   }
 }
 </style>

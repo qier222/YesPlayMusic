@@ -109,6 +109,13 @@ export default {
 
 <style lang="scss" scoped>
 .cover-row {
+  --cover-name-color: var(--color-text-1);
+  --cover-info-color: var(--color-text-2);
+  --explicit-symbol-color: var(--color-text-5);
+  --lock-icon-color: var(--color-text-6);
+  --play-count-color: var(--color-text-3);
+}
+.cover-row {
   display: flex;
   flex-wrap: wrap;
   margin: {
@@ -128,7 +135,7 @@ export default {
     .name {
       font-size: 16px;
       font-weight: 600;
-      color: var(--color-text-1);
+      color: var(--cover-name-color);
       line-height: 20px;
 
       display: -webkit-box;
@@ -138,7 +145,7 @@ export default {
     }
     .info {
       font-size: 12px;
-      color: var(--color-text-2);
+      color: var(--cover-info-color);
       line-height: 18px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -171,7 +178,7 @@ export default {
 }
 
 .lock-icon {
-  color: rgba(0, 0, 0, 0.28);
+  color: var(--lock-icon-color);
   margin-right: 4px;
   // float: right;
   .svg-icon {
@@ -182,7 +189,7 @@ export default {
 
 .play-count {
   font-weight: 600;
-  color: var(--color-text-3);
+  color: var(--play-count-color);
   font-size: 12px;
   .svg-icon {
     margin-right: 3px;

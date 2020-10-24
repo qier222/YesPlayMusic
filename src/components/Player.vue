@@ -287,6 +287,14 @@ export default {
 
 <style lang="scss" scoped>
 .player {
+  --player-bg: var(--color-bg-1);
+  --player-img-shadow: var(--color-shadow-0);
+  --player-track-color: var(--color-text-1);
+  --player-artist-color: var(--color-text-3);
+  --player-icon-color-active: var(--color-active);
+}
+
+.player {
   position: fixed;
   bottom: 0;
   right: 0;
@@ -296,7 +304,7 @@ export default {
   justify-content: space-around;
   height: 64px;
   backdrop-filter: saturate(180%) blur(30px);
-  background-color: var(--color-bg-1);
+  background-color: var(--player-bg);
   z-index: 100;
 }
 
@@ -324,7 +332,7 @@ export default {
   img {
     height: 46px;
     border-radius: 5px;
-    box-shadow: 0 6px 8px -2px var(--color-shadow-0);
+    box-shadow: 0 6px 8px -2px var(--player-img-shadow);
     cursor: pointer;
   }
   .track-info {
@@ -336,7 +344,7 @@ export default {
     .name {
       font-weight: 600;
       font-size: 16px;
-      color: var(--color-text-1);
+      color: var(--player-track-color);
       margin-bottom: 4px;
       cursor: pointer;
       display: -webkit-box;
@@ -350,7 +358,7 @@ export default {
     }
     .artist {
       font-size: 12px;
-      color: var(--color-text-3);
+      color: var(--player-artist-color);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
@@ -396,7 +404,7 @@ export default {
     }
   }
   .active .svg-icon {
-    color: var(--color-primary);
+    color: var(--player-icon-color-active);
   }
   .volume-control {
     margin-left: 4px;

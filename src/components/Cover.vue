@@ -124,6 +124,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.root {
+  --cover-shadow-hover: var(--color-shadow-2);
+  --play-btn-color: var(--color-white);
+}
 .cover {
   position: relative;
   padding: 0;
@@ -137,7 +141,7 @@ export default {
 .hover-float {
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 12px 16px -8px var(--color-shadow-2);
+    box-shadow: 0 12px 16px -8px var(--cover-shadow-hover);
   }
 }
 
@@ -174,7 +178,7 @@ export default {
   border: none;
   backdrop-filter: blur(12px) brightness(96%);
   background: transparent;
-  color: var(--color-white);
+  color: var(--play-btn-color);
   border-radius: 50%;
   cursor: default;
   transition: 0.2s;

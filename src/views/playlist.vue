@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show">
+  <div v-show="show" class="playlist">
     <div class="playlist-info" v-if="!isLikeSongsPage">
       <Cover
         :url="playlist.coverImgUrl | resizeImage(1024)"
@@ -217,6 +217,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.playlist {
+  --playlist-info-title: var(--color-text-0);
+  --playlist-info-name: var(--color-text-1);
+  --playlist-info-desc: var(--color-text-2);
+  --playlist-info-shade-bg: var(--color-bg-2);
+  --playlist-info-close: var(--color-primary);
+}
 .playlist-info {
   display: flex;
   width: 78vw;
@@ -230,21 +237,21 @@ export default {
     .title {
       font-size: 36px;
       font-weight: 700;
-      color: var(--color-text-0);
+      color: var(--playlist-info-title);
     }
     .artist {
       font-size: 18px;
-      color: var(--color-text-1);
+      color: var(--playlist-info-name);
       margin-top: 24px;
     }
     .date-and-count {
       font-size: 14px;
-      color: var(--color-text-2);
+      color: var(--playlist-info-desc);
       margin-top: 2px;
     }
     .description {
       font-size: 14px;
-      color: var(--color-text-2);
+      color: var(--playlist-info-desc);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -253,7 +260,7 @@ export default {
       cursor: pointer;
       &:hover {
         transition: color 0.3s;
-        color: var(--color-text-1);
+        color: var(--playlist-info-name);
       }
     }
     .buttons {
@@ -267,7 +274,7 @@ export default {
 }
 
 .shade {
-  background: var(--color-bg-2);
+  background: var(--playlist-info-shade-bg);
   position: fixed;
   top: 0;
   bottom: 0;
@@ -279,7 +286,7 @@ export default {
   .description-full {
     background: var(--color-bg-1);
     box-shadow: 0 12px 16px -8px var(--color-shadow-1);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-1);
     backdrop-filter: blur(12px);
     padding: 32px;
     border-radius: 12px;
@@ -289,14 +296,14 @@ export default {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    color: var(--color-text-2);
+    color: var(--playlist-info-desc);
 
     .close {
       display: flex;
       justify-content: flex-end;
       font-size: 16px;
       margin-top: 20px;
-      color: var(--color-primary);
+      color: var(--playlist-info-close);
       cursor: pointer;
     }
   }

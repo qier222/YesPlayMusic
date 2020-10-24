@@ -100,6 +100,15 @@ a {
   }
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-text-0);
+}
+
 /* Let's get this party started */
 ::-webkit-scrollbar {
   width: 8px;

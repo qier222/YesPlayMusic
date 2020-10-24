@@ -66,6 +66,12 @@ export default {
 
 <style lang="scss" scoped>
 .login {
+  --login-icon: var(--color-text-5);
+  --login-card-bg: var(--color-primary-light);
+  --login-card: var(--color-primary);
+  --login-card-info: var(--color-secondary);
+}
+.login {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -84,7 +90,7 @@ export default {
   .svg-icon {
     height: 24px;
     width: 24px;
-    color: var(--color-text-5);
+    color: var(--login-icon);
   }
 }
 
@@ -100,7 +106,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--color-primary-light);
+  background: var(--login-card-bg);
   border-radius: 8px;
   height: 128px;
   width: 300px;
@@ -124,7 +130,7 @@ export default {
     // justify-content: space-around;
     align-items: center;
 
-    color: var(--color-primary);
+    color: var(--login-card);
   }
 
   .title-info {
@@ -138,7 +144,7 @@ export default {
   .info {
     margin-top: 2px;
     font-size: 14px;
-    color: var(--color-primary-alpha);
+    color: var(--login-card-info);
   }
   .svg-icon {
     opacity: 0;

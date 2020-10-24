@@ -160,9 +160,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.explore {
+  --explore-head: var(--color-text-0);
+  --explore-btn-bg: var(--color-bg-2);
+  --explore-btn: var(--color-text-2);
+  --explore-primary: var(--color-primary);
+  --explore-primary-bg: var(--color-primary-light);
+}
 h1 {
   font-size: 56px;
-  color: var(--color-text-0);
+  color: var(--explore-head);
 }
 .buttons {
   display: flex;
@@ -179,18 +186,18 @@ h1 {
   font-weight: 600;
   font-size: 18px;
   border-radius: 10px;
-  background-color: var(--color-bg-2);
-  color: var(--color-text-2);
+  background-color: var(--explore-btn-bg);
+  color: var(--explore-btn);
   transition: 0.2s;
 
   &:hover {
-    background-color: var(--color-primary-light);
-    color: var(--color-primary);
+    background-color: var(--explore-primary-bg);
+    color: var(--explore-primary);
   }
 }
 .button.active {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--explore-primary-bg);
+  color: var(--explore-primary);
 }
 
 .playlists {

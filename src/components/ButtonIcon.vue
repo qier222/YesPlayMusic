@@ -10,6 +10,11 @@ export default {
 
 <style lang="scss" scoped>
 button {
+  --button-icon: var(--color-text-0);
+  --button-icon-hover: var(--color-bg-3);
+}
+
+button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,7 +24,7 @@ button {
   border-radius: 25%;
   transition: 0.2s;
   .svg-icon {
-    color: var(--color-text-0);
+    color: var(--button-icon);
     height: 16px;
     width: 16px;
   }
@@ -27,7 +32,7 @@ button {
     margin-left: 0;
   }
   &:hover {
-    background: var(--color-bg-3);
+    background: var(--button-icon-hover);
   }
   &:active {
     transform: scale(0.92);

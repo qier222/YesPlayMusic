@@ -68,6 +68,11 @@ export default {
 
 <style lang="scss" scoped>
 .mv-row {
+  --mv-title-color: var(--color-text-1);
+  --mv-artist-color: var(--color-text-2);
+  --mv-cover-shadow-hover: var(--color-shadow-2);
+}
+.mv-row {
   display: flex;
   flex-wrap: wrap;
   margin-left: -12px;
@@ -80,7 +85,7 @@ export default {
   .title {
     font-size: 16px;
     font-weight: 600;
-    color: var(--color-text-1);
+    color: var(--mv-title-color);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -88,7 +93,7 @@ export default {
   }
   .artist {
     font-size: 12px;
-    color: var(--color-text-2);
+    color: var(--mv-artist-color);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -108,7 +113,7 @@ export default {
     cursor: pointer;
     &:hover {
       transform: scale(1.02);
-      box-shadow: 0 12px 16px -8px var(--color-shadow-2);
+      box-shadow: 0 12px 16px -8px var(--mv-cover-shadow-hover);
     }
   }
 

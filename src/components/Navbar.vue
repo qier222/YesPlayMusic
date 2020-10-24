@@ -121,6 +121,19 @@ export default {
 
 <style lang="scss" scoped>
 nav {
+  --nav-bg: var(--color-bg-1);
+  --nav-link: var(--color-text-0);
+  --nav-link-bg-hover: var(--color-primary-light);
+  --nav-link-color-hover: var(--color-primary);
+  --nav-link-color-active: var(--color-active);
+  --search-box-bg: var(--color-bg-3);
+  --search-box-icon: var(--color-text-5);
+  --search-box-icon-active: var(--color-primary);
+  --search-input: var(--color-text-4);
+  --search-input-bg-active: var(--color-primary-light);
+  --nav-icon: var(--color-text-0);
+}
+nav {
   position: fixed;
   top: 0;
   right: 0;
@@ -134,7 +147,7 @@ nav {
     left: 10vw;
   }
   backdrop-filter: saturate(180%) blur(30px);
-  background-color: var(--color-bg-1);
+  background-color: var(--nav-bg);
   z-index: 100;
 }
 
@@ -158,23 +171,27 @@ nav {
     text-decoration: none;
     border-radius: 6px;
     padding: 6px 10px;
-    color: var(--color-text-0);
+    color: var(--nav-link);
     transition: 0.2s;
     margin: {
       right: 12px;
       left: 12px;
     }
-    &:hover {
-      background: var(--color-primary-light);
-      color: var(--color-primary);
-    }
     &:active {
       transform: scale(0.92);
       transition: 0.2s;
     }
+    &:hover {
+      background: var(--nav-link-bg-hover);
+      color: var(--nav-link-color-hover);
+    }
   }
   a.active {
-    color: var(--color-primary);
+    color: var(--nav-link-color-active);
+  }
+  a:hover {
+    background: var(--nav-link-bg-hover);
+    color: var(--nav-link-color-hover);
   }
 }
 
@@ -194,7 +211,7 @@ nav {
     display: flex;
     align-items: center;
     height: 32px;
-    background: var(--color-bg-3);
+    background: var(--search-box-bg);
     border-radius: 8px;
     width: 200px;
   }
@@ -202,7 +219,7 @@ nav {
   .svg-icon {
     height: 15px;
     width: 15px;
-    color: var(--color-text-5);
+    color: var(--search-box-icon);
     margin: {
       left: 8px;
       right: 4px;
@@ -216,14 +233,14 @@ nav {
     width: 96%;
     font-weight: 600;
     margin-top: -1px;
-    color: var(--color-text-4);
+    color: var(--search-input);
   }
 
   .active {
-    background: var(--color-primary-light);
+    background: var(--search-input-bg-active);
     input,
     .svg-icon {
-      color: var(--color-primary);
+      color: var(--search-box-icon-active);
     }
   }
 }
@@ -238,7 +255,7 @@ nav {
     margin-right: 16px;
     height: 24px;
     width: 24px;
-    color: var(--color-text-0);
+    color: var(--nav-icon);
 
     &.darkmode {
       margin-left: 16px;

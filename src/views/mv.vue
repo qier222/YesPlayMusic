@@ -107,8 +107,12 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.mv {
+  --mv-title: var(--color-text-1);
+  --mv-info: var(--color-text-2);
+}
 .video {
-  --plyr-color-main: #335eea;
+  --plyr-color-main: var(--color-primary);
   --plyr-control-radius: 8px;
 }
 
@@ -130,16 +134,17 @@ export default {
   .title {
     font-size: 24px;
     font-weight: 600;
+    color: var(--mv-title);
   }
   .artist {
     font-size: 14px;
-    color: var(--color-text-1);
+    color: var(--mv-title);
     margin-top: 2px;
     font-weight: 600;
   }
   .info {
     font-size: 12px;
-    color: var(--color-text-2);
+    color: var(--mv-info);
     margin-top: 12px;
   }
 }
@@ -149,7 +154,7 @@ export default {
   .section-title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--color-text-1);
+    color: var(--mv-title);
   }
 }
 </style>

@@ -51,10 +51,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.newAlbum {
+  --new-album-title: var(--color-text-1);
+  --new-album-info: var(--color-text-2);
+}
+
 h1 {
-  span {
-    color: var(--color-text-3);
-  }
+  color: var(--new-album-title);
 }
 
 .playlist-row {
@@ -83,9 +86,8 @@ h1 {
     .name {
       font-size: 16px;
       font-weight: 600;
-      color: var(--color-text-1);
+      color: var(--new-album-title);
       line-height: 20px;
-
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
@@ -93,7 +95,7 @@ h1 {
     }
     .info {
       font-size: 12px;
-      color: var(--color-text-2);
+      color: var(--new-album-info);
       line-height: 18px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
