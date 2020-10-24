@@ -36,7 +36,8 @@
             </span>
           </div>
         </div>
-        <div class="like-button" v-show="isLoggedIn">
+        <!-- 使用 user 的状态来判断图标是否显示 -->
+        <div class="like-button" v-show="settings.user.userId">
           <button-icon
             @click.native="likeCurrentSong"
             :title="$t('player.like')"
