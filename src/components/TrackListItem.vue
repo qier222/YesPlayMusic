@@ -60,7 +60,7 @@
       <div></div>
     </div>
     <div class="actions" v-if="!isTracklist">
-      <button v-if="isLoggedIn" @click="likeThisSong">
+      <button v-if="accountLogin" @click="likeThisSong">
         <svg-icon
           icon-class="heart"
           :style="{
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { isLoggedIn } from "@/utils/auth";
+import { mapState } from "vuex";
 
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
@@ -93,6 +93,7 @@ export default {
     return { focus: false, trackStyle: {} };
   },
   computed: {
+    ...mapState(["accountLogin"]),
     imgUrl() {
       if (this.track.al !== undefined) return this.track.al.picUrl;
       if (this.track.album !== undefined) return this.track.album.picUrl;
@@ -126,10 +127,7 @@ export default {
       if (!this.track.playable) trackClass.push("disable");
       if (this.isPlaying) trackClass.push("playing");
       return trackClass;
-    },
-    isLoggedIn() {
-      return isLoggedIn();
-    },
+    }
   },
   methods: {
     goToAlbum() {

@@ -36,8 +36,8 @@
             </span>
           </div>
         </div>
-        <!-- 使用 user 的状态来判断图标是否显示 -->
-        <div class="like-button" v-show="settings.user.userId">
+        <!-- 账号登录才会显示 like 图标 -->
+        <div class="like-button" v-show="accountLogin">
           <button-icon
             @click.native="likeCurrentSong"
             :title="$t('player.like')"
@@ -119,7 +119,7 @@
 <script>
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { mapState, mapMutations, mapActions } from "vuex";
-import { isLoggedIn } from "@/utils/auth";
+import { isLooseLoggedIn } from "@/utils/auth";
 import { userLikedSongsIDs } from "@/api/user";
 import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
@@ -145,14 +145,14 @@ export default {
     setInterval(() => {
       this.progress = ~~this.howler.seek();
     }, 1000);
-    if (this.isLoggedIn) {
+    if (isLooseLoggedIn()) {
       userLikedSongsIDs(this.settings.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);
       });
     }
   },
   computed: {
-    ...mapState(["player", "howler", "settings", "liked"]),
+    ...mapState(["player", "howler", "settings", "liked", "accountLogin"]),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -174,10 +174,7 @@ export default {
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
-    },
-    isLoggedIn() {
-      return isLoggedIn();
-    },
+    }
   },
   methods: {
     ...mapMutations([

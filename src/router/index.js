@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import store from "@/store";
 import NProgress from "nprogress";
 import "@/assets/css/nprogress.css";
-import Cookies from "js-cookie";
+import { isLooseLoggedIn } from "@/utils/auth";
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
 
@@ -116,17 +116,15 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  // 需要登录的逻辑
   if (to.meta.requireLogin) {
     if (store.state.settings.user.nickname === undefined) {
       next({ path: "/login" });
     }
-    if (
-      Cookies.get("MUSIC_U") === undefined &&
-      Cookies.get("loginMode") === "account"
-    ) {
-      next({ path: "/login" });
-    } else {
+    if (isLooseLoggedIn()) {
       next();
+    } else {
+      next({ path: "/login" });
     }
   } else {
     next();
