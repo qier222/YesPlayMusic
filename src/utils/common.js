@@ -1,4 +1,4 @@
-import { isLoggedIn } from "./auth";
+import { isAccountLoggedIn } from "./auth";
 import store from "@/store";
 
 export function isTrackPlayable(track) {
@@ -7,7 +7,7 @@ export function isTrackPlayable(track) {
     reason: "",
   };
   if (track.fee === 1 || track.privilege?.fee === 1) {
-    if (isLoggedIn && store.state.settings.user.vipType === 11) {
+    if (isAccountLoggedIn() && store.state.settings.user.vipType === 11) {
       result.playable = true;
     } else {
       result.playable = false;

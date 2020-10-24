@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import store from "@/store";
 import NProgress from "nprogress";
 import "@/assets/css/nprogress.css";
-import Cookies from "js-cookie";
+import { isLooseLoggedIn } from "@/utils/auth";
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
 
@@ -12,7 +12,7 @@ const routes = [
   {
     path: "/",
     name: "home",
-    component: () => import("@/views/home"),
+    component: () => import("@/views/home.vue"),
     meta: {
       keepAlive: true,
     },
@@ -20,32 +20,32 @@ const routes = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/login"),
+    component: () => import("@/views/login.vue"),
   },
   {
     path: "/login/username",
     name: "loginUsername",
-    component: () => import("@/views/loginUsername"),
+    component: () => import("@/views/loginUsername.vue"),
   },
   {
     path: "/login/account",
     name: "loginAccount",
-    component: () => import("@/views/loginAccount"),
+    component: () => import("@/views/loginAccount.vue"),
   },
   {
     path: "/playlist/:id",
     name: "playlist",
-    component: () => import("@/views/playlist"),
+    component: () => import("@/views/playlist.vue"),
   },
   {
     path: "/album/:id",
     name: "album",
-    component: () => import("@/views/album"),
+    component: () => import("@/views/album.vue"),
   },
   {
     path: "/artist/:id",
     name: "artist",
-    component: () => import("@/views/artist"),
+    component: () => import("@/views/artist.vue"),
     meta: {
       keepAlive: true,
     },
@@ -53,12 +53,12 @@ const routes = [
   {
     path: "/mv/:id",
     name: "mv",
-    component: () => import("@/views/mv"),
+    component: () => import("@/views/mv.vue"),
   },
   {
     path: "/next",
     name: "next",
-    component: () => import("@/views/next"),
+    component: () => import("@/views/next.vue"),
     meta: {
       keepAlive: true,
     },
@@ -66,17 +66,17 @@ const routes = [
   {
     path: "/search",
     name: "search",
-    component: () => import("@/views/search"),
+    component: () => import("@/views/search.vue"),
   },
   {
     path: "/new-album",
     name: "newAlbum",
-    component: () => import("@/views/newAlbum"),
+    component: () => import("@/views/newAlbum.vue"),
   },
   {
     path: "/explore",
     name: "explore",
-    component: () => import("@/views/explore"),
+    component: () => import("@/views/explore.vue"),
     meta: {
       keepAlive: true,
     },
@@ -84,7 +84,7 @@ const routes = [
   {
     path: "/library",
     name: "library",
-    component: () => import("@/views/library"),
+    component: () => import("@/views/library.vue"),
     meta: {
       requireLogin: true,
       keepAlive: true,
@@ -93,7 +93,7 @@ const routes = [
   {
     path: "/library/liked-songs",
     name: "likedSongs",
-    component: () => import("@/views/playlist"),
+    component: () => import("@/views/playlist.vue"),
     meta: {
       requireLogin: true,
     },
@@ -101,7 +101,7 @@ const routes = [
   {
     path: "/settings",
     name: "settings",
-    component: () => import("@/views/settings"),
+    component: () => import("@/views/settings.vue"),
   },
 ];
 const router = new VueRouter({
@@ -116,17 +116,15 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  // 需要登录的逻辑
   if (to.meta.requireLogin) {
     if (store.state.settings.user.nickname === undefined) {
       next({ path: "/login" });
     }
-    if (
-      Cookies.get("MUSIC_U") === undefined &&
-      Cookies.get("loginMode") === "account"
-    ) {
-      next({ path: "/login" });
-    } else {
+    if (isLooseLoggedIn()) {
       next();
+    } else {
+      next({ path: "/login" });
     }
   } else {
     next();

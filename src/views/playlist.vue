@@ -46,7 +46,7 @@
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="
-              isLoggedIn && playlist.creator.userId !== settings.user.userId
+              accountLogin && playlist.creator.userId !== settings.user.userId
             "
             shape="round"
             :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
@@ -92,7 +92,6 @@ import NProgress from "nprogress";
 import { getPlaylistDetail, subscribePlaylist } from "@/api/playlist";
 import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
-import { isLoggedIn } from "@/utils/auth";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
@@ -132,10 +131,7 @@ export default {
     window.removeEventListener("scroll", this.handleScroll, true);
   },
   computed: {
-    ...mapState(["player", "settings"]),
-    isLoggedIn() {
-      return isLoggedIn();
-    },
+    ...mapState(["player", "settings", "accountLogin"]),
     isLikeSongsPage() {
       return this.$route.name === "likedSongs";
     },

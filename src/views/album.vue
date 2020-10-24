@@ -60,8 +60,8 @@
         More by
         <router-link :to="`/artist/${album.artist.id}`"
           >{{ album.artist.name }}
-        </router-link></div
-      >
+        </router-link>
+      </div>
       <div>
         <CoverRow
           type="album"

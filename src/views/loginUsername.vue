@@ -41,8 +41,9 @@
       <ButtonTwoTone
         @click.native="confirm"
         v-show="activeUser.nickname !== undefined"
-        >{{ $t("login.confirm") }}</ButtonTwoTone
       >
+        {{ $t("login.confirm") }}
+      </ButtonTwoTone>
     </div>
   </div>
 </template>
@@ -73,7 +74,7 @@ export default {
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateUser", "updateUserInfo"]),
+    ...mapMutations(["updateUser", "updateUserInfo", "updateUsernameLogin"]),
     search() {
       if (!this.keyword) return;
       search({ keywords: this.keyword, limit: 9, type: 1002 }).then((data) => {
@@ -83,6 +84,7 @@ export default {
     },
     confirm() {
       this.updateUser(this.activeUser);
+      this.updateUsernameLogin(true);
       Cookies.set("loginMode", "username", { expires: 3650 });
       userPlaylist({
         uid: this.activeUser.userId,
