@@ -127,7 +127,7 @@ export default {
       if (!this.track.playable) trackClass.push("disable");
       if (this.isPlaying) trackClass.push("playing");
       return trackClass;
-    }
+    },
   },
   methods: {
     goToAlbum() {

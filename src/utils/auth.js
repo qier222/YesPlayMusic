@@ -37,9 +37,5 @@ export function isUsernameLoggedIn() {
 
 // 账户登录或者用户名搜索都判断为登录，宽松检查
 export function isLooseLoggedIn() {
-  console.log(
-    "isAccountLoggedIn() || isUsernameLoggedIn()",
-    isAccountLoggedIn(), "||", isUsernameLoggedIn()
-  );
   return isAccountLoggedIn() || isUsernameLoggedIn();
 }

@@ -46,8 +46,7 @@
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="
-              accountLogin &&
-              playlist.creator.userId !== settings.user.userId
+              accountLogin && playlist.creator.userId !== settings.user.userId
             "
             shape="round"
             :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"

@@ -174,7 +174,7 @@ export default {
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
-    }
+    },
   },
   methods: {
     ...mapMutations([
