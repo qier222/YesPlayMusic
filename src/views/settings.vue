@@ -73,6 +73,22 @@
           </div>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"> Show Playlists by Apple Music</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-playlists-by-apple-music"
+              id="show-playlists-by-apple-music"
+              v-model="showPlaylistsByAppleMusic"
+            />
+            <label for="show-playlists-by-apple-music"></label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -109,6 +125,18 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showGithubIcon",
+          value,
+        });
+      },
+    },
+    showPlaylistsByAppleMusic: {
+      get() {
+        if (this.settings.showPlaylistsByAppleMusic === undefined) return true;
+        return this.settings.showPlaylistsByAppleMusic;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showPlaylistsByAppleMusic",
           value,
         });
       },
