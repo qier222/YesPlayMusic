@@ -60,5 +60,5 @@
   --color-shadow-1: rgba(var(--black), 0.1);
   --color-shadow-2: rgba(var(--black), 0.05);
 
-  --color-active: var(--color-primary-light);
+  --color-active: rgba(var(--blue-1));
 }
