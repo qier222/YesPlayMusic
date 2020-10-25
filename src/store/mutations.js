@@ -81,6 +81,16 @@ export default {
       return track;
     });
   },
+  updateAccountLogin(state, status) {
+    state.accountLogin = status;
+  },
+  updateUsernameLogin(state, status) {
+    state.usernameLogin = status;
+  },
+  updateLogout() {
+    this.commit("updateAccountLogin", false);
+    this.commit("updateUsernameLogin", false);
+  },
   updateUser(state, user) {
     state.settings.user = user;
   },
@@ -109,5 +119,8 @@ export default {
   },
   changeMusicQuality(state, value) {
     state.settings.musicQuality = value;
+  },
+  updateSettings(state, { key, value }) {
+    state.settings[key] = value;
   },
 };

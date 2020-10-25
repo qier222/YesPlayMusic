@@ -9,4 +9,6 @@ export default {
   },
   player: JSON.parse(localStorage.getItem("player")),
   settings: JSON.parse(localStorage.getItem("settings")),
+  accountLogin: false,
+  usernameLogin: false,
 };

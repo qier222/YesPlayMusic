@@ -112,9 +112,9 @@ export default {
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateUser", "updateUserInfo"]),
+    ...mapMutations(["updateUser", "updateUserInfo", "updateAccountLogin"]),
     afterLogin() {
-      // Cookies.set("MUSIC_U", true, { expires: 3650 });
+      this.updateAccountLogin(true);
       Cookies.set("loginMode", "account", { expires: 3650 });
       userPlaylist({
         uid: this.$store.state.settings.user.userId,
@@ -127,18 +127,34 @@ export default {
         this.$router.push({ path: "/library" });
       });
     },
+    validatePhone() {
+      if (
+        this.countryCode === "" ||
+        this.phone === "" ||
+        this.password === ""
+      ) {
+        alert("国家区号、手机或密码不正确");
+        this.processing = false;
+        return false;
+      }
+      return true;
+    },
+    validateEmail() {
+      const emailReg = /^[A-Za-z0-9]+([_][A-Za-z0-9]+)*@([A-Za-z0-9]+\.)+[A-Za-z]{2,6}$/;
+      if (
+        this.email === "" ||
+        this.password === "" ||
+        !emailReg.test(this.email)
+      ) {
+        alert("邮箱或密码不正确");
+        return false;
+      }
+      return true;
+    },
     login() {
       this.processing = true;
       if (this.mode === "phone") {
-        if (
-          this.countryCode === "" ||
-          this.phone === "" ||
-          this.password === ""
-        ) {
-          alert("国家区号、手机或密码不正确");
-          this.processing = false;
-          return;
-        }
+        this.processing = this.validatePhone();
         loginWithPhone({
           countrycode: this.countryCode.replace("+", "").replace(/\s/g, ""),
           phone: this.phoneNumber.replace(/\s/g, ""),
@@ -156,16 +172,7 @@ export default {
             alert(error);
           });
       } else {
-        let emailReg = /^[A-Za-z0-9]+([_][A-Za-z0-9]+)*@([A-Za-z0-9]+\.)+[A-Za-z]{2,6}$/;
-        if (
-          this.email === "" ||
-          this.password === "" ||
-          !emailReg.test(this.email)
-        ) {
-          alert("邮箱或密码不正确");
-          this.processing = false;
-          return;
-        }
+        this.processing = this.validateEmail();
         loginWithEmail({
           email: this.email.replace(/\s/g, ""),
           password: "fakePassword",

@@ -24,9 +24,12 @@
       >
     </div>
     <div class="right-part">
-      <a href="https://github.com/qier222/YesPlayMusic" target="blank"
-        ><svg-icon icon-class="github" class="right-part__icon github" />
-      </a>
+      <a
+        href="https://github.com/qier222/YesPlayMusic"
+        target="blank"
+        v-if="settings.showGithubIcon"
+        ><svg-icon icon-class="github" class="right-part__icon github"
+      /></a>
       <div class="search-box">
         <div class="container" :class="{ active: inputFocus }">
           <svg-icon icon-class="search" />
@@ -54,9 +57,6 @@ export default {
   components: {
     ButtonIcon,
   },
-  computed: {
-    ...mapState(["settings"]),
-  },
   mounted() {
     if (this.settings.theme === "dark") {
       document.body.setAttribute("data-theme", "dark");
@@ -68,6 +68,9 @@ export default {
       keywords: "",
       langs: ["zh-CN", "en"],
     };
+  },
+  computed: {
+    ...mapState(["settings"]),
   },
   methods: {
     ...mapMutations(["toggleDarkTheme"]),
