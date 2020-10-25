@@ -195,6 +195,7 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 72px;
+  color: var(--color-text);
   img {
     height: 192px;
     width: 192px;
@@ -209,13 +210,13 @@ export default {
 
   .artist {
     font-size: 18px;
-    color: rgba(0, 0, 0, 0.88);
+    opacity: 0.88;
     margin-top: 24px;
   }
 
   .statistics {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.68);
+    opacity: 0.68;
     margin-top: 2px;
   }
 
@@ -234,12 +235,14 @@ export default {
 .section-title {
   font-weight: 600;
   font-size: 22px;
-  color: rgba(0, 0, 0, 0.88);
+  opacity: 0.88;
+  color: var(--color-text);
   margin-bottom: 16px;
   margin-top: 46px;
 }
 
 .latest-release {
+  color: var(--color-text);
   .release {
     display: flex;
   }
@@ -258,17 +261,16 @@ export default {
   .name {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
     margin-bottom: 8px;
   }
   .date {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.78);
+    opacity: 0.78;
   }
   .type {
     margin-top: 2px;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.68);
+    opacity: 0.68;
   }
 }
 
@@ -281,11 +283,12 @@ export default {
       margin-top: 8px;
       border-radius: 6px;
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.78);
+      opacity: 0.78;
+      color: var(--color-secondary);
       font-weight: 600;
       &:hover {
-        background: #f5f5f7;
-        color: rgba(0, 0, 0, 0.96);
+        opacity: 1;
+        // background: var(--color-primary-bg);
       }
     }
   }

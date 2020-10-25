@@ -206,6 +206,7 @@ export default {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 48px;
+  color: var(--color-text);
 }
 
 .section-1 {
@@ -215,11 +216,6 @@ export default {
   img {
     height: 64px;
     margin: 20px;
-  }
-  .svg-icon {
-    height: 24px;
-    width: 24px;
-    color: rgba(82, 82, 82, 0.28);
   }
 }
 
@@ -233,12 +229,13 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
+  color: var(--color-text);
 
   .container {
     display: flex;
     align-items: center;
     height: 46px;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--color-secondary-bg);
     border-radius: 8px;
     width: 300px;
   }
@@ -265,7 +262,12 @@ export default {
     width: 100%;
     font-weight: 600;
     margin-top: -1px;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text);
+  }
+
+  input::placeholder {
+    color: var(--color-text);
+    opacity: 0.38;
   }
 
   input#countryCode {
@@ -276,10 +278,10 @@ export default {
   }
 
   .active {
-    background: #eaeffd;
+    background: var(--color-primary-bg);
     input,
     .svg-icon {
-      color: #335eea;
+      color: var(--color-primary);
     }
   }
 }
@@ -290,8 +292,8 @@ export default {
   justify-content: center;
   font-size: 20px;
   font-weight: 600;
-  background-color: rgba(51, 94, 234, 0.1);
-  color: #335eea;
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary);
   border-radius: 8px;
   margin-top: 24px;
   transition: 0.2s;
@@ -311,17 +313,19 @@ export default {
   a {
     cursor: pointer;
     font-size: 13px;
-    color: rgba(0, 0, 0, 0.68);
+    color: var(--color-text);
+    opacity: 0.68;
   }
 }
 
 .notice {
   width: 300px;
-  border-top: 1px solid rgba(0, 0, 0, 0.18);
+  border-top: 1px solid rgba(128, 128, 128);
   margin-top: 48px;
   padding-top: 12px;
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.48);
+  color: var(--color-text);
+  opacity: 0.48;
 }
 
 @keyframes loading {
@@ -346,7 +350,7 @@ button.loading {
 .loading span {
   width: 6px;
   height: 6px;
-  background-color: #335eea;
+  background-color: var(--color-primary);
   border-radius: 50%;
   margin: 0 2px;
   animation: loading 1.4s infinite both;
