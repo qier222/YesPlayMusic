@@ -5,10 +5,12 @@ import request from "@/utils/request";
  * - phone: 手机号码
  * - password: 密码
  * - countrycode: 国家码，用于国外手机号登录，例如美国传入：1
+ * - md5_password: md5加密后的密码,传入后 password 将失效
  * @param {Object} params
  * @param {string} params.phone
  * @param {string} params.password
  * @param {string=} params.countrycode
+ * @param {string=} params.md5_password
  */
 export function loginWithPhone(params) {
   return request({
