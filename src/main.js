@@ -8,6 +8,7 @@ import "@/assets/icons";
 import "@/utils/filters";
 import { initMediaSession } from "@/utils/mediaSession";
 import "./registerServiceWorker";
+import { dailyTask } from "@/utils/common";
 
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
@@ -40,6 +41,8 @@ if (process.env.VUE_APP_ENABLE_SENTRY === "true") {
     tracesSampleRate: 1.0,
   });
 }
+
+dailyTask();
 
 new Vue({
   i18n,

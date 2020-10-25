@@ -58,7 +58,7 @@
 import { mapState } from "vuex";
 import { getTrackDetail, getLyric } from "@/api/track";
 import { userDetail, userPlaylist } from "@/api/user";
-import { randomNum } from "@/utils/common";
+import { randomNum, dailyTask } from "@/utils/common";
 import { getPlaylistDetail } from "@/api/playlist";
 import { playPlaylistByID } from "@/utils/play";
 import NProgress from "nprogress";
@@ -98,6 +98,7 @@ export default {
   },
   activated() {
     this.loadData();
+    dailyTask();
   },
   computed: {
     ...mapState(["settings"]),

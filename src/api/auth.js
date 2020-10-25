@@ -27,7 +27,7 @@ export function loginWithEmail(params) {
   });
 }
 
-export function loginRefresh() {
+export function refreshCookie() {
   return request({
     url: "/login/refresh",
     method: "post",
