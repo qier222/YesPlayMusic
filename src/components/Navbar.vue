@@ -94,16 +94,10 @@ export default {
 <style lang="scss" scoped>
 nav {
   --nav-bg: var(--color-bg-1);
-  --nav-link: var(--color-text-0);
-  --nav-link-bg-hover: var(--color-primary-light);
-  --nav-link-color-hover: var(--color-primary);
   --nav-link-color-active: var(--color-active);
   --search-box-bg: var(--color-bg-3);
   --search-box-icon: var(--color-text-5);
-  --search-box-icon-active: var(--color-primary);
   --search-input: var(--color-text-4);
-  --search-input-bg-active: var(--color-primary-light);
-  --nav-icon: var(--color-text-0);
 }
 nav {
   position: fixed;
@@ -143,7 +137,7 @@ nav {
     text-decoration: none;
     border-radius: 6px;
     padding: 6px 10px;
-    color: var(--nav-link);
+    color: var(--color-text-0);
     transition: 0.2s;
     margin: {
       right: 12px;
@@ -154,16 +148,16 @@ nav {
       transition: 0.2s;
     }
     &:hover {
-      background: var(--nav-link-bg-hover);
-      color: var(--nav-link-color-hover);
+      background: var(--color-primary-light);
+      color: var(--color-primary);
     }
   }
   a.active {
     color: var(--nav-link-color-active);
   }
   a:hover {
-    background: var(--nav-link-bg-hover);
-    color: var(--nav-link-color-hover);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
   }
 }
 
@@ -209,10 +203,10 @@ nav {
   }
 
   .active {
-    background: var(--search-input-bg-active);
+    background: var(--color-primary-light);
     input,
     .svg-icon {
-      color: var(--search-box-icon-active);
+      color: var(--color-primary);
     }
   }
 }
@@ -227,7 +221,7 @@ nav {
     margin-right: 16px;
     height: 24px;
     width: 24px;
-    color: var(--nav-icon);
+    color: var(--color-text-0);
 
     &.darkmode {
       margin-left: 16px;

@@ -191,21 +191,10 @@ export default {
 
 <style lang="scss" scoped>
 .album {
-  --album-title-color: var(--color-text-0);
-  --album-section-title-color: var(--color-text-1);
-  --album-artist-color: var(--color-text-1);
-  --album-date-color: var(--color-text-2);
-  --album-description-color: var(--color-text-2);
-  --album-description-color-hover: var(--color-text-1);
   --album-shade-bg: var(--color-bg-2);
   --album-description-full-bg: var(--color-bg-1);
   --album-description-full-shadow: var(--color-shadow-1);
   --album-description-full-border: (--color-border-1);
-  --album-description-full-color: var(--color-text-2);
-  --album-description-full-close: var(--color-primary);
-  --album-explicit-symbol: var(--color-text-5);
-  --album-extra-info: var(--color-text-4);
-  --album-time: var(--color-text-2);
 }
 .playlist-info {
   display: flex;
@@ -222,11 +211,11 @@ export default {
       font-weight: 700;
       display: inline-flex;
       align-items: center;
-      color: var(--album-title-color);
+      color: var(--color-text-0);
     }
     .artist {
       font-size: 18px;
-      color: var(--album-artist-color);
+      color: var(--color-text-1);
       margin-top: 24px;
       a {
         font-weight: 600;
@@ -234,13 +223,13 @@ export default {
     }
     .date-and-count {
       font-size: 14px;
-      color: var(--album-date-color);
+      color: var(--color-text-2);
       margin-top: 2px;
     }
     .description {
       user-select: none;
       font-size: 14px;
-      color: var(--album-description-color);
+      color: var(--color-text-2);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -249,7 +238,7 @@ export default {
       cursor: pointer;
       &:hover {
         transition: color 0.3s;
-        color: var(--album-description-color-hover);
+        color: var(--color-text-1);
       }
     }
   }
@@ -278,14 +267,14 @@ export default {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    color: var(--album-description-full-color);
+    color: var(--color-text-2);
 
     .close {
       display: flex;
       justify-content: flex-end;
       font-size: 16px;
       margin-top: 20px;
-      color: var(--album-description-full-close);
+      color: var(--color-primary);
       cursor: pointer;
     }
   }
@@ -300,7 +289,7 @@ export default {
 }
 
 .explicit-symbol {
-  color: var(--album-explicit-symbol);
+  color: var(--color-text-5);
   margin-right: 4px;
   .svg-icon {
     margin-bottom: -3px;
@@ -311,12 +300,12 @@ export default {
   margin-top: 36px;
   margin-bottom: 36px;
   font-size: 12px;
-  color: var(--album-extra-info);
+  color: var(--color-text-4);
   div {
     margin-bottom: 8px;
   }
   .album-time {
-    color: var(--album-time);
+    color: var(--color-text-2);
   }
 }
 
@@ -326,7 +315,7 @@ export default {
   .section-title {
     font-size: 22px;
     font-weight: 600;
-    color: var(--album-section-title-color);
+    color: var(--color-text-1);
     margin-bottom: 8px;
   }
 }

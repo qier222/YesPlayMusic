@@ -186,13 +186,9 @@ export default {
 .library {
   --library-head: var(--color-text-0);
   --library-border: var(--color-border-0);
-  --library-primary-light: var(--color-primary-light);
-  --library-primary: var(--color-primary);
   --library-btn-shadow: var(--color-shadow-0);
   --library-btn-shadow-hover: var(--color-shadow);
-  --library-btn-icon: var(--color-primary-light);
   --library-top: var(--color-secondary);
-  --library-playlist-title: var(--color-text-1);
 }
 h1 {
   font-size: 42px;
@@ -231,7 +227,7 @@ h1 {
   transition: all 0.4s;
   box-sizing: border-box;
 
-  background: var(--library-primary-light);
+  background: var(--color-primary-light);
   // background: linear-gradient(-30deg, #60a6f7, #4364f7, #0052d4);
   // color: white;
   // background: linear-gradient(149.46deg, #450af5, #8e8ee5 99.16%);
@@ -244,12 +240,12 @@ h1 {
     .title {
       font-size: 24px;
       font-weight: 700;
-      color: var(--library-primary);
+      color: var(--color-primary);
     }
     .sub-title {
       font-size: 15px;
       margin-top: 2px;
-      color: var(--library-primary);
+      color: var(--color-primary);
     }
 
     button {
@@ -260,7 +256,7 @@ h1 {
       height: 44px;
       width: 44px;
       // background: rgba(255, 255, 255, 1);
-      background: var(--library-primary);
+      background: var(--color-primary);
       border-radius: 50%;
       transition: 0.2s;
       box-shadow: 0 6px 12px -4px var(--library-btn-shadow);
@@ -268,7 +264,7 @@ h1 {
 
       .svg-icon {
         // color: #3f63f5;
-        color: var(--library-btn-icon);
+        color: var(--color-primary-light);
         margin-left: 4px;
         height: 16px;
         width: 16px;
@@ -298,7 +294,7 @@ h1 {
 .playlists {
   margin-top: 54px;
   .title {
-    color: var(--library-playlist-title);
+    color: var(--color-text-1);
     margin-bottom: 8px;
     font-size: 24px;
     font-weight: 600;

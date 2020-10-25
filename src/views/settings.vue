@@ -124,9 +124,6 @@ export default {
 <style lang="scss" scoped>
 .settings {
   --settings-user-bg: var(--color-bg-3);
-  --settings-title: var(--color-text-1);
-  --settings-info: var(--color-text-2);
-  --settings-btn: var(--color-text-2);
   --settings-primary: var(--color-primary);
   --settings-primary-light: var(--color-primary-light);
 }
@@ -141,7 +138,7 @@ export default {
 h2 {
   margin-top: 48px;
   font-size: 36px;
-  color: var(--settings-title);
+  color: var(--color-text-1);
 }
 
 .user {
@@ -169,12 +166,12 @@ h2 {
     .nickname {
       font-size: 20px;
       font-weight: 600;
-      color: var(--settings-title);
+      color: var(--color-text-1);
       margin-bottom: 2px;
     }
     .extra-info {
       font-size: 13px;
-      color: var(--settings-info);
+      color: var(--color-text-2);
       .vip {
         display: flex;
         align-items: center;
@@ -195,7 +192,7 @@ h2 {
       text-decoration: none;
       border-radius: 10px;
       padding: 8px 12px;
-      color: var(--settings-btn);
+      color: var(--color-text-2);
       transition: 0.2s;
       margin: {
         right: 12px;
@@ -221,7 +218,7 @@ h2 {
   .title {
     font-size: 18px;
     font-weight: 600;
-    color: var(--settings-title);
+    color: var(--color-text-1);
   }
 
   select {
@@ -230,7 +227,7 @@ h2 {
     border: none;
     padding: 8px 12px 8px 12px;
     border-radius: 8px;
-    color: var(--settings-title);
+    color: var(--color-text-1);
     background: var(--settings-user-bg);
     appearance: none;
     &:focus {

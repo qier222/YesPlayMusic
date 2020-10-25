@@ -189,16 +189,8 @@ export default {
 
 <style lang="scss" scoped>
 .login {
-  --account-login-title: var(--color-text-1);
-  --account-login-icon: var(--color-text-6);
   --account-login-container-bg: var(--color-bg-3);
-  --account-login-container-icon: var(--color-text-5);
-  --account-login-input: var(--color-text-1);
-  --account-login-active: var(--color-primary-light);
-  --account-login-color: var(--color-primary);
-  --account-login-other-link: var(--color-text-2);
   --account-login-notice-border: var(--color-border-2);
-  --account-login-notice: var(--color-text-4);
 }
 
 .login {
@@ -212,7 +204,7 @@ export default {
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 48px;
-  color: var(--account-login-title);
+  color: var(--color-text-1);
 }
 
 .section-1 {
@@ -226,7 +218,7 @@ export default {
   .svg-icon {
     height: 24px;
     width: 24px;
-    color: var(--account-login-icon);
+    color: var(--color-text-6);
   }
 }
 
@@ -253,7 +245,7 @@ export default {
   .svg-icon {
     height: 18px;
     width: 18px;
-    color: var(--account-login-container-icon);
+    color: var(--color-text-5);
     margin: {
       left: 12px;
       right: 6px;
@@ -272,7 +264,7 @@ export default {
     width: 100%;
     font-weight: 600;
     margin-top: -1px;
-    color: var(--account-login-input);
+    color: var(--color-text-1);
   }
 
   input#countryCode {
@@ -283,10 +275,10 @@ export default {
   }
 
   .active {
-    background: var(--account-login-active);
+    background: var(--color-primary-light);
     input,
     .svg-icon {
-      color: var(--account-login-color);
+      color: var(--color-primary);
     }
   }
 }
@@ -297,8 +289,8 @@ export default {
   justify-content: center;
   font-size: 20px;
   font-weight: 600;
-  background-color: var(--account-login-active);
-  color: var(--account-login-color);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
   border-radius: 8px;
   margin-top: 24px;
   transition: 0.2s;
@@ -318,7 +310,7 @@ export default {
   a {
     cursor: pointer;
     font-size: 13px;
-    color: var(--account-login-other-link);
+    color: var(--color-text-2);
   }
 }
 
@@ -328,7 +320,7 @@ export default {
   margin-top: 48px;
   padding-top: 12px;
   font-size: 12px;
-  color: var(--account-login-notice);
+  color: var(--color-text-4);
 }
 
 @keyframes loading {
@@ -353,7 +345,7 @@ button.loading {
 .loading span {
   width: 6px;
   height: 6px;
-  background-color: var(--account-login-color);
+  background-color: var(--color-primary);
   border-radius: 50%;
   margin: 0 2px;
   animation: loading 1.4s infinite both;

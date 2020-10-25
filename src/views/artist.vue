@@ -193,13 +193,6 @@ export default {
 <style lang="scss" scoped>
 .artist {
   --artist-img-shadow: var(--color-shadow-0);
-  --artist-name: var(--color-text-0);
-  --artist-artist: var(--color-text-1);
-  --artist-statistics: var(--color-text-2);
-  --artist-title: var(--color-text-1);
-  --artist-type: var(--color-text-2);
-  --artist-track: var(--color-text-2);
-  --artist-track-hover: var(--color-text-0);
   --artist-track-bg-hover: var(--color-bg-2);
 }
 
@@ -217,18 +210,18 @@ export default {
   .name {
     font-size: 56px;
     font-weight: 700;
-    color: var(--artist-name);
+    color: var(--color-text-0);
   }
 
   .artist {
     font-size: 18px;
-    color: var(--artist-artist);
+    color: var(--color-text-1);
     margin-top: 24px;
   }
 
   .statistics {
     font-size: 14px;
-    color: var(--artist-statistics);
+    color: var(--color-text-2);
     margin-top: 2px;
   }
 
@@ -247,7 +240,7 @@ export default {
 .section-title {
   font-weight: 600;
   font-size: 22px;
-  color: var(--artist-title);
+  color: var(--color-text-1);
   margin-bottom: 16px;
   margin-top: 46px;
 }
@@ -271,17 +264,17 @@ export default {
   .name {
     font-size: 18px;
     font-weight: 600;
-    color: var(--artist-title);
+    color: var(--color-text-1);
     margin-bottom: 8px;
   }
   .date {
     font-size: 14px;
-    color: var(--artist-title);
+    color: var(--color-text-1);
   }
   .type {
     margin-top: 2px;
     font-size: 12px;
-    color: var(--artist-type);
+    color: var(--color-text-2);
   }
 }
 
@@ -294,11 +287,11 @@ export default {
       margin-top: 8px;
       border-radius: 6px;
       font-size: 12px;
-      color: var(--artist-track);
+      color: var(--color-text-2);
       font-weight: 600;
       &:hover {
         background: var(--artist-track-bg-hover);
-        color: var(--artist-track-hover);
+        color: var(--color-text-0);
       }
     }
   }
