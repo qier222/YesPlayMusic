@@ -1,5 +1,6 @@
 import { isAccountLoggedIn } from "./auth";
 import { refreshCookie } from "@/api/auth";
+import { dailySignin } from "@/api/user";
 import dayjs from "dayjs";
 import store from "@/store";
 
@@ -79,9 +80,10 @@ export function updateHttps(url) {
 }
 
 export function dailyTask() {
+  let lastDate = store.state.settings.lastRefreshCookieDate;
   if (
-    store.state.settings.lastRefreshCookieDate === undefined ||
-    store.state.settings.lastRefreshCookieDate !== dayjs().date()
+    isAccountLoggedIn() &&
+    (lastDate === undefined || lastDate !== dayjs().date())
   ) {
     console.log("execute dailyTask");
     store.commit("updateSettings", {
@@ -89,5 +91,7 @@ export function dailyTask() {
       value: dayjs().date(),
     });
     refreshCookie();
+    dailySignin(0);
+    dailySignin(1);
   }
 }
