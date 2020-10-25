@@ -42,7 +42,7 @@ export function loginWithEmail(params) {
  * 说明 : 调用此接口 , 可刷新登录状态
  * - 调用例子 : /login/refresh
  */
-export function loginRefresh() {
+export function refreshCookie() {
   return request({
     url: "/login/refresh",
     method: "post",
