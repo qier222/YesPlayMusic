@@ -1,19 +1,11 @@
 import request from "@/utils/request";
 
-export function login(params) {
-  //     必选参数 :
-  // phone: 手机号码
-  // password: 密码
-  // 可选参数 :
-  // countrycode: 国家码，用于国外手机号登陆，例如美国传入：1
-  // md5_password: md5加密后的密码,传入后 password 将失效
-  return request({
-    url: "/login/cellphone",
-    method: "get",
-    params,
-  });
-}
-
+/**
+ * 获取用户详情
+ * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户详情
+ * - uid : 用户 id
+ * @param {number} uid
+ */
 export function userDetail(uid) {
   return request({
     url: "/user/detail",
@@ -24,9 +16,18 @@ export function userDetail(uid) {
   });
 }
 
+/**
+ * 获取用户歌单
+ * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户歌单
+ * - uid : 用户 id
+ * - limit : 返回数量 , 默认为 30
+ * - offset : 偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ * @param {Object} params
+ * @param {number} params.uid
+ * @param {number} params.limit
+ * @param {number=} params.offset
+ */
 export function userPlaylist(params) {
-  // limit : 返回数量 , 默认为 30
-  // offset : 偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
   return request({
     url: "/user/playlist",
     method: "get",
@@ -34,6 +35,12 @@ export function userPlaylist(params) {
   });
 }
 
+/**
+ * 喜欢音乐列表
+ * 说明 : 调用此接口 , 传入用户 id, 可获取已喜欢音乐id列表(id数组)
+ * - uid: 用户 id
+ * @param {number} uid
+ */
 export function userLikedSongsIDs(uid) {
   return request({
     url: "/likelist",
