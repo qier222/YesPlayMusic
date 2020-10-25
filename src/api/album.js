@@ -18,6 +18,7 @@ export function getAlbum(id) {
     return data;
   });
 }
+
 /**
  * 全部新碟
  * 说明 : 登录后调用此接口 ,可获取全部新碟

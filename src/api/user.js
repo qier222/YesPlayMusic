@@ -1,5 +1,11 @@
 import request from "@/utils/request";
 
+/**
+ * 获取用户详情
+ * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户详情
+ * - uid : 用户 id
+ * @param {number} uid
+ */
 export function userDetail(uid) {
   return request({
     url: "/user/detail",
@@ -10,9 +16,18 @@ export function userDetail(uid) {
   });
 }
 
+/**
+ * 获取用户歌单
+ * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户歌单
+ * - uid : 用户 id
+ * - limit : 返回数量 , 默认为 30
+ * - offset : 偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ * @param {Object} params
+ * @param {number} params.uid
+ * @param {number} params.limit
+ * @param {number=} params.offset
+ */
 export function userPlaylist(params) {
-  // limit : 返回数量 , 默认为 30
-  // offset : 偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
   return request({
     url: "/user/playlist",
     method: "get",
@@ -20,6 +35,12 @@ export function userPlaylist(params) {
   });
 }
 
+/**
+ * 喜欢音乐列表
+ * 说明 : 调用此接口 , 传入用户 id, 可获取已喜欢音乐id列表(id数组)
+ * - uid: 用户 id
+ * @param {number} uid
+ */
 export function userLikedSongsIDs(uid) {
   return request({
     url: "/likelist",

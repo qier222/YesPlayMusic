@@ -64,7 +64,7 @@ export function shuffleAList(list) {
 
 export function throttle(fn, time) {
   let isRun = false;
-  return function() {
+  return function () {
     if (isRun) return;
     isRun = true;
     fn.apply(this, arguments);
