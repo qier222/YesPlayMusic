@@ -305,8 +305,7 @@ export default {
 }
 
 .more-by {
-  // border-top: 1px solid rgba(0, 0, 0, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(128, 128, 128, 0.18);
 
   padding-top: 22px;
   .section-title {

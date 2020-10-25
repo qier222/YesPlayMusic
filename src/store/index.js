@@ -45,4 +45,21 @@ if ([undefined, null].includes(store.state.settings.lang)) {
   localStorage.setItem("settings", JSON.stringify(store.state.settings));
 }
 
+if (store.state.settings.appearance !== "auto") {
+  document.body.setAttribute("data-theme", store.state.settings.appearance);
+} else {
+  document.body.setAttribute(
+    "data-theme",
+    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+  );
+}
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", (e) => {
+    if (store.state.settings.appearance === "auto") {
+      store.commit("updateTmpAppearance", e.matches ? "dark" : "light");
+      document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
+    }
+  });
+
 export default store;

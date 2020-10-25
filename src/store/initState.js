@@ -1,5 +1,7 @@
 const initState = {
   howler: null,
+  accountLogin: false,
+  usernameLogin: false,
   liked: {
     songs: [],
   },
@@ -85,6 +87,7 @@ const initState = {
       id: 0,
     },
     lang: null,
+    appearance: "auto",
     musicQuality: 320000,
     showGithubIcon: true,
     showPlaylistsByAppleMusic: true,

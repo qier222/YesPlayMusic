@@ -106,7 +106,7 @@ nav {
 
   // background: var(--color-body-bg);
   // background-color: rgba(255, 255, 255, 0.86);
-  background-color: #222222db;
+  background-color: var(--color-navbar-bg);
   z-index: 100;
 }
 
@@ -174,7 +174,8 @@ nav {
   .svg-icon {
     height: 15px;
     width: 15px;
-    color: #fff;
+    color: var(--color-text);
+    opacity: 0.28;
     margin: {
       left: 8px;
       right: 4px;
@@ -188,12 +189,14 @@ nav {
     width: 96%;
     font-weight: 600;
     margin-top: -1px;
+    color: var(--color-text);
   }
 
   .active {
     background: var(--color-primary-bg);
     input,
     .svg-icon {
+      opacity: 1;
       color: var(--color-primary);
     }
   }
