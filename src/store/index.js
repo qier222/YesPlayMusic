@@ -5,6 +5,7 @@ import mutations from "./mutations";
 import actions from "./actions";
 import initState from "./initState";
 import { Howl, Howler } from "howler";
+import { changeAppearance } from "@/utils/common";
 
 if (localStorage.getItem("appVersion") === null) {
   localStorage.setItem("player", JSON.stringify(initState.player));
@@ -45,23 +46,12 @@ if ([undefined, null].includes(store.state.settings.lang)) {
   localStorage.setItem("settings", JSON.stringify(store.state.settings));
 }
 
-if (
-  store.state.settings.appearance !== "auto" &&
-  store.state.settings.appearance !== undefined
-) {
-  document.body.setAttribute("data-theme", store.state.settings.appearance);
-} else {
-  document.body.setAttribute(
-    "data-theme",
-    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-  );
-}
+changeAppearance(store.state.settings.appearance);
 window
   .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", (e) => {
+  .addEventListener("change", () => {
     if (store.state.settings.appearance === "auto") {
-      store.commit("updateTmpAppearance", e.matches ? "dark" : "light");
-      document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
+      changeAppearance(store.state.settings.appearance);
     }
   });
 

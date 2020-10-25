@@ -113,6 +113,8 @@
 <script>
 import { mapState } from "vuex";
 import { doLogout } from "@/utils/auth";
+import { changeAppearance } from "@/utils/common";
+
 export default {
   name: "settings",
   computed: {
@@ -136,16 +138,7 @@ export default {
           key: "appearance",
           value,
         });
-        if (value === "auto") {
-          document.body.setAttribute(
-            "data-theme",
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light"
-          );
-        } else {
-          document.body.setAttribute("data-theme", value);
-        }
+        changeAppearance(value);
       },
     },
     musicQuality: {
