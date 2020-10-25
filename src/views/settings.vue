@@ -70,6 +70,38 @@
           </select>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"> Show Github Icon </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-github-icon"
+              id="show-github-icon"
+              v-model="showGithubIcon"
+            />
+            <label for="show-github-icon"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"> Show Playlists by Apple Music</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-playlists-by-apple-music"
+              id="show-playlists-by-apple-music"
+              v-model="showPlaylistsByAppleMusic"
+            />
+            <label for="show-playlists-by-apple-music"></label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -109,6 +141,30 @@ export default {
       },
       set(value) {
         this.$store.commit("changeMusicQuality", value);
+      },
+    },
+    showGithubIcon: {
+      get() {
+        if (this.settings.showGithubIcon === undefined) return true;
+        return this.settings.showGithubIcon;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showGithubIcon",
+          value,
+        });
+      },
+    },
+    showPlaylistsByAppleMusic: {
+      get() {
+        if (this.settings.showPlaylistsByAppleMusic === undefined) return true;
+        return this.settings.showPlaylistsByAppleMusic;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showPlaylistsByAppleMusic",
+          value,
+        });
       },
     },
   },
@@ -213,6 +269,7 @@ h2 {
 .item {
   margin: 24px 0;
   display: flex;
+  align-items: center;
   justify-content: space-between;
 
   .title {
@@ -236,5 +293,72 @@ h2 {
       background: var(--color-primary-light);
     }
   }
+}
+
+.beforeAnimation {
+  -webkit-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
+  transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
+}
+.afterAnimation {
+  box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.1), 0 4px 0px 0 hsla(0, 0%, 0%, 0.04),
+    0 4px 9px hsla(0, 0%, 0%, 0.13), 0 3px 3px hsla(0, 0%, 0%, 0.05);
+  -webkit-transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
+  transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
+}
+.toggle {
+  margin: auto;
+}
+.toggle input {
+  opacity: 0;
+  position: absolute;
+}
+.toggle input + label {
+  position: relative;
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: 0.4s ease;
+  transition: 0.4s ease;
+  height: 32px;
+  width: 68px;
+  background: var(--color-bg-3);
+  border-radius: 8px;
+}
+.toggle input + label:before {
+  content: "";
+  position: absolute;
+  display: block;
+  -webkit-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
+  transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
+  height: 32px;
+  width: 68px;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+}
+.toggle input + label:after {
+  content: "";
+  position: absolute;
+  display: block;
+  box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.02), 0 4px 0px 0 hsla(0, 0%, 0%, 0.01),
+    0 4px 9px hsla(0, 0%, 0%, 0.08), 0 3px 3px hsla(0, 0%, 0%, 0.03);
+  -webkit-transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
+  transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
+  background: #fff;
+  height: 20px;
+  width: 28px;
+  top: 6px;
+  left: 6px;
+  border-radius: 6px;
+}
+.toggle input:checked + label:before {
+  background: #335eea;
+  -webkit-transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
+  transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
+}
+.toggle input:checked + label:after {
+  left: 34px;
 }
 </style>
