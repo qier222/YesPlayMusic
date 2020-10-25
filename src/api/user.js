@@ -1,19 +1,5 @@
 import request from "@/utils/request";
 
-export function login(params) {
-  //     必选参数 :
-  // phone: 手机号码
-  // password: 密码
-  // 可选参数 :
-  // countrycode: 国家码，用于国外手机号登陆，例如美国传入：1
-  // md5_password: md5加密后的密码,传入后 password 将失效
-  return request({
-    url: "/login/cellphone",
-    method: "get",
-    params,
-  });
-}
-
 export function userDetail(uid) {
   return request({
     url: "/user/detail",
@@ -41,6 +27,17 @@ export function userLikedSongsIDs(uid) {
     params: {
       uid,
       timestamp: new Date().getTime(),
+    },
+  });
+}
+
+export function dailySignin(type = 0) {
+  //可选参数 : type: 签到类型 , 默认 0, 其中 0 为安卓端签到 ,1 为 web/PC 签到
+  return request({
+    url: "/daily_signin",
+    method: "post",
+    params: {
+      type,
     },
   });
 }
