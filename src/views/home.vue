@@ -161,40 +161,11 @@ export default {
   margin-bottom: 20px;
   font-size: 28px;
   font-weight: 700;
-
+  color: var(--color-text);
   a {
     font-size: 13px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.68);
-  }
-}
-
-.item {
-  margin: 12px 12px 24px 12px;
-  .text {
-    width: 208px;
-    margin-top: 8px;
-    .name {
-      font-size: 16px;
-      font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
-      line-height: 20px;
-
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-    }
-    .info {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
-      line-height: 18px;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-      // margin-top: 4px;
-    }
+    opacity: 0.68;
   }
 }
 

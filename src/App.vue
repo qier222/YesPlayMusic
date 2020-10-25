@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" data-theme="dark">
     <Navbar />
     <main>
       <keep-alive>
@@ -50,6 +50,24 @@ export default {
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&display=swap");
 
+:root {
+  --color-body-bg: #ffffff;
+  --color-text: #000000;
+  --color-primary: #335eea;
+  --color-primary-bg: #eaeffd;
+  --color-secondary: #7a7a7b;
+  --color-secondary-bg: #f5f5f7;
+}
+
+[data-theme="dark"] {
+  --color-body-bg: #222222;
+  --color-text: #ffffff;
+  --color-primary: #335eea;
+  --color-primary-bg: #eaeffd;
+  --color-secondary: #7a7a7b;
+  --color-secondary-bg: #323232;
+}
+
 #app {
   font-family: "Barlow", -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
@@ -60,6 +78,7 @@ export default {
 html {
   overflow-y: overlay;
   min-width: 1000px;
+  background: #222222;
 }
 
 main {

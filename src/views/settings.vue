@@ -163,13 +163,15 @@ export default {
 h2 {
   margin-top: 48px;
   font-size: 36px;
+  color: var(--color-text);
 }
 
 .user {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f5f5f7;
+  background: var(--color-secondary-bg);
+  color: var(--color-text);
   padding: 16px 20px;
   border-radius: 16px;
   img.avatar {
@@ -190,15 +192,17 @@ h2 {
     .nickname {
       font-size: 20px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
       margin-bottom: 2px;
     }
     .extra-info {
       font-size: 13px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
       .vip {
         display: flex;
         align-items: center;
+        .cvip {
+          opacity: 1;
+        }
       }
     }
   }
@@ -216,17 +220,20 @@ h2 {
       text-decoration: none;
       border-radius: 10px;
       padding: 8px 12px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
+      color: var(--color-text);
       transition: 0.2s;
       margin: {
         right: 12px;
         left: 12px;
       }
       &:hover {
+        opacity: 1;
         background: #eaeffd;
         color: #335eea;
       }
       &:active {
+        opacity: 1;
         transform: scale(0.92);
         transition: 0.2s;
       }
@@ -239,11 +246,12 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--color-text);
 
   .title {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    opacity: 0.88;
   }
 
   select {
@@ -252,13 +260,13 @@ h2 {
     border: none;
     padding: 8px 12px 8px 12px;
     border-radius: 8px;
-    color: rgba(0, 0, 0, 0.88);
-    background: #f5f5f7;
+    color: var(--color-text);
+    background: var(--color-secondary-bg);
     appearance: none;
     &:focus {
       outline: none;
-      color: #335eea;
-      background: #eaeffd;
+      color: var(--color-primary);
+      background: var(--color-primary-bg);
     }
   }
 }
@@ -275,7 +283,6 @@ h2 {
 }
 .toggle {
   margin: auto;
-  background: white;
 }
 .toggle input {
   opacity: 0;
@@ -292,7 +299,7 @@ h2 {
   transition: 0.4s ease;
   height: 32px;
   width: 68px;
-  background: #f5f5f7;
+  background: var(--color-secondary-bg);
   border-radius: 8px;
 }
 .toggle input + label:before {
@@ -323,7 +330,7 @@ h2 {
   border-radius: 6px;
 }
 .toggle input:checked + label:before {
-  background: #335eea;
+  background: var(--color-primary);
   -webkit-transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
   transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
 }

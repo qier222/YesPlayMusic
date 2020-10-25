@@ -27,7 +27,9 @@
           >
           <a
             v-else
-            :href="`https://music.163.com/#/user/home?id=${playlist.creator.userId}`"
+            :href="
+              `https://music.163.com/#/user/home?id=${playlist.creator.userId}`
+            "
             target="blank"
             >{{ playlist.creator.nickname }}</a
           >
@@ -226,20 +228,24 @@ export default {
     .title {
       font-size: 36px;
       font-weight: 700;
+      color: var(--color-text);
     }
     .artist {
       font-size: 18px;
-      color: rgba(0, 0, 0, 0.88);
+      opacity: 0.88;
+      color: var(--color-text);
       margin-top: 24px;
     }
     .date-and-count {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
+      color: var(--color-text);
       margin-top: 2px;
     }
     .description {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
+      color: var(--color-text);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -247,8 +253,8 @@ export default {
       overflow: hidden;
       cursor: pointer;
       &:hover {
-        transition: color 0.3s;
-        color: rgba(0, 0, 0, 0.88);
+        transition: opacity 0.3s;
+        opacity: 0.88;
       }
     }
     .buttons {
@@ -299,6 +305,7 @@ export default {
 .user-info {
   h1 {
     font-size: 42px;
+    color: var(--color-text);
     .avatar {
       height: 44px;
       margin-right: 12px;
