@@ -108,5 +108,11 @@ export default {
       high: "High",
       lossless: "Lossless",
     },
+    appearance: {
+      text: "Appearance",
+      auto: "Auto",
+      light: "Light",
+      dark: "Dark",
+    },
   },
 };

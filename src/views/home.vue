@@ -54,7 +54,7 @@
         :color="'grey'"
         @click.native="goTo('/settings')"
       >
-        {{ $t("footer.settings") }}
+        {{ $t("settings.settings") }}
       </ButtonTwoTone>
     </footer>
   </div>

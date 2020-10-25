@@ -180,9 +180,11 @@ button {
     border-radius: 8px;
     margin: 0 20px 0 10px;
     width: 12px;
-    opacity: 0.58;
     color: var(--color-text);
     cursor: default;
+    span {
+      opacity: 0.58;
+    }
   }
 
   .explicit-symbol {

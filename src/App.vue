@@ -1,5 +1,5 @@
 <template>
-  <div id="app" data-theme="dark">
+  <div id="app">
     <Navbar />
     <main>
       <keep-alive>
@@ -52,20 +52,23 @@ export default {
 
 :root {
   --color-body-bg: #ffffff;
-  --color-text: #000000;
+  --color-text: #000;
   --color-primary: #335eea;
   --color-primary-bg: #eaeffd;
   --color-secondary: #7a7a7b;
   --color-secondary-bg: #f5f5f7;
+  --color-navbar-bg: rgba(255, 255, 255, 0.86);
 }
 
 [data-theme="dark"] {
   --color-body-bg: #222222;
   --color-text: #ffffff;
   --color-primary: #335eea;
-  --color-primary-bg: #eaeffd;
+  --color-primary-bg: #bbcdff;
   --color-secondary: #7a7a7b;
   --color-secondary-bg: #323232;
+  --color-navbar-bg: #335eea;
+  --color-navbar-bg: rgba(34, 34, 34, 0.86);
 }
 
 #app {
@@ -73,12 +76,15 @@ export default {
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
     WenQuanYi Micro Hei, sans-serif;
   width: 100%;
+  transition: all 0.4s;
+}
+body {
+  background-color: var(--color-body-bg);
 }
 
 html {
   overflow-y: overlay;
   min-width: 1000px;
-  background: #222222;
 }
 
 main {
@@ -121,12 +127,13 @@ a {
 
 ::-webkit-scrollbar-track {
   background: transparent;
+  border-left: 1px solid rgba(128, 128, 128, 0.18);
 }
 
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  background: rgb(216, 216, 216);
+  background: var(--color-secondary-bg);
 }
 
 .slide-up-enter-active,

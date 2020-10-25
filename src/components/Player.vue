@@ -295,7 +295,7 @@ export default {
   height: 64px;
   backdrop-filter: saturate(180%) blur(30px);
   // background-color: rgba(255, 255, 255, 0.86);
-  background-color: #222222db;
+  background-color: var(--color-navbar-bg);
   z-index: 100;
 }
 
