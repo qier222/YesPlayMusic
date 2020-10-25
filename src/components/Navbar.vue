@@ -27,7 +27,7 @@
       <a
         href="https://github.com/qier222/YesPlayMusic"
         target="blank"
-        v-if="settings.showGithubIcon"
+        v-if="settings.showGithubIcon !== false"
         ><svg-icon icon-class="github" class="right-part__icon github"
       /></a>
       <div class="search-box">

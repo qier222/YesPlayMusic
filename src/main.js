@@ -8,6 +8,7 @@ import "@/assets/icons";
 import "@/utils/filters";
 import { initMediaSession } from "@/utils/mediaSession";
 import "./registerServiceWorker";
+import { dailyTask } from "@/utils/common";
 
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
@@ -23,7 +24,6 @@ Vue.config.productionTip = false;
 initMediaSession();
 
 if (process.env.VUE_APP_ENABLE_SENTRY === "true") {
-  console.log("VUE_APP_ENABLE_SENTRY");
   Sentry.init({
     dsn:
       "https://30aaa25152974f48971912a394ab6bc3@o436528.ingest.sentry.io/5477409",
@@ -40,6 +40,8 @@ if (process.env.VUE_APP_ENABLE_SENTRY === "true") {
     tracesSampleRate: 1.0,
   });
 }
+
+dailyTask();
 
 new Vue({
   i18n,

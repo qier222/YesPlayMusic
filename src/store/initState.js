@@ -87,6 +87,9 @@ const initState = {
     theme: "default",
     lang: null,
     musicQuality: 320000,
+    showGithubIcon: true,
+    showPlaylistsByAppleMusic: true,
+    lastRefreshCookieDate: 0,
   },
 };
 

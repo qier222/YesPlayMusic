@@ -1,4 +1,7 @@
 import { isAccountLoggedIn } from "./auth";
+import { refreshCookie } from "@/api/auth";
+import { dailySignin } from "@/api/user";
+import dayjs from "dayjs";
 import store from "@/store";
 
 export function isTrackPlayable(track) {
@@ -74,4 +77,21 @@ export function throttle(fn, time) {
 export function updateHttps(url) {
   if (!url) return "";
   return url.replace(/^http:/, "https:");
+}
+
+export function dailyTask() {
+  let lastDate = store.state.settings.lastRefreshCookieDate;
+  if (
+    isAccountLoggedIn() &&
+    (lastDate === undefined || lastDate !== dayjs().date())
+  ) {
+    console.log("execute dailyTask");
+    store.commit("updateSettings", {
+      key: "lastRefreshCookieDate",
+      value: dayjs().date(),
+    });
+    refreshCookie();
+    dailySignin(0);
+    dailySignin(1);
+  }
 }

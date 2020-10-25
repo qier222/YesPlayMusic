@@ -94,7 +94,7 @@ export function likeATrack(params) {
  * @param {Object} params
  * @param {number} params.id
  * @param {number} params.sourceid
- * @param {number=} [params.time]
+ * @param {number=} params.time
  */
 export function scrobble(params) {
   params.timestamp = new Date().getTime();
