@@ -1,4 +1,5 @@
 const path = require("path");
+const CopywebpackPlugin = require('copy-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -75,19 +76,22 @@ module.exports = {
         nsis: {
           oneClick: false,
           allowToChangeInstallationDirectory: true
-        }
+        },
+        // 集成 nodejs, https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration
+        // nodeIntegration: true
       },
-      // chainWebpackMainProcess: config => {
-        // config.module
-        //   .rule('babel')
-        //   .test(/\*.js$/)
-        //   .use('babel')
-        //   .loader('babel-loader')
-        //   .options({
-        //     presets: [['@babel/preset-env', '@vue/cli-plugin-babel/preset', { modules: false }]],
-        //     plugins: ['@babel/plugin-proposal-class-properties']
-        //   })
-      // },
+      chainWebpackMainProcess: config => {
+        // console.log(config)
+        let outputDir = 'dist_electron/bundled'
+        config.plugin('copy').use(CopywebpackPlugin, [
+          [
+            {
+              from: path.resolve(__dirname, './NeteaseCloudMusicApi-master'),
+              to: path.join(__dirname, outputDir, 'NeteaseCloudMusicApi-master')
+            }
+          ]
+        ])
+      }
       // 渲染线程的配置文件
       // chainWebpackRendererProcess: config => {
       //   // 渲染线程的一些其他配置

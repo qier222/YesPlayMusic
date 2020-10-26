@@ -1,9 +1,12 @@
 "use strict";
-
+const { exec } = require("child_process");
+// const fs = require('fs')
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
+// maybe use for modify app menu
+// const contextMenu = require('electron-context-menu');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -15,14 +18,35 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createWindow() {
+  console.log("Node Version: ", process.version);
+  const napi = exec("npm run napi:run");
+  let scriptOutput = "";
+  napi.stdout.setEncoding('utf8');
+  napi.stdout.on('data', (data) => {
+    console.log('napi: ' + data);
+    data = data.toString();
+    scriptOutput += data + '\n';
+    // TODO write file with stream
+    // const log = fs.createWriteStream(__dirname, '/tmp/' + +new Date + '.log')
+    // log.write(scriptOutput)
+  });
+  // napi.stdout.on('error', (err) => {
+  //   console.log('napi error: ' + err);
+  //   data = err.toString();
+  //   scriptOutput += data + '\n';
+  //   const log = fs.createWriteStream(__dirname, '/tmp/' + +new Date + 'error.log')
+  //   log.write(scriptOutput)
+  // });
+
   // Create the browser window.
   win = new BrowserWindow({
     width: 1920,
     height: 768,
     webPreferences: {
+      webSecurity: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegration: true,
     },
   });
 
@@ -34,6 +58,7 @@ function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
+    win.webContents.openDevTools();
   }
 
   win.on("closed", () => {
