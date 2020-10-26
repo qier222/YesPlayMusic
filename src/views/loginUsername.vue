@@ -97,7 +97,7 @@ export default {
         this.$router.push({ path: "/library" });
       });
     },
-    throttleSearch: throttle(function() {
+    throttleSearch: throttle(function () {
       this.search();
     }, 500),
   },
