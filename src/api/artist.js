@@ -12,6 +12,7 @@ export function getArtist(id) {
     method: "get",
     params: {
       id,
+      timestamp: new Date().getTime(),
     },
   }).then((data) => {
     data.hotSongs = mapTrackPlayableStatus(data.hotSongs);
@@ -69,5 +70,22 @@ export function artistMv(id) {
     params: {
       id,
     },
+  });
+}
+
+/**
+ * 收藏歌手
+ * 说明 : 调用此接口 , 传入歌手 id, 可收藏歌手
+ * - id: 歌手 id
+ * - t: 操作,1 为收藏,其他为取消收藏
+ * @param {Object} params
+ * @param {number} params.id
+ * @param {number} params.t
+ */
+export function followAArtist(params) {
+  return request({
+    url: "/artist/sub",
+    method: "post",
+    params,
   });
 }

@@ -10,7 +10,7 @@ export function isTrackPlayable(track) {
     reason: "",
   };
   if (track.fee === 1 || track.privilege?.fee === 1) {
-    if (isAccountLoggedIn() && store.state.settings.user.vipType === 11) {
+    if (isAccountLoggedIn() && store.state.data.user.vipType === 11) {
       result.playable = true;
     } else {
       result.playable = false;
@@ -80,13 +80,13 @@ export function updateHttps(url) {
 }
 
 export function dailyTask() {
-  let lastDate = store.state.settings.lastRefreshCookieDate;
+  let lastDate = store.state.data.lastRefreshCookieDate;
   if (
     isAccountLoggedIn() &&
     (lastDate === undefined || lastDate !== dayjs().date())
   ) {
     console.log("execute dailyTask");
-    store.commit("updateSettings", {
+    store.commit("updateData", {
       key: "lastRefreshCookieDate",
       value: dayjs().date(),
     });

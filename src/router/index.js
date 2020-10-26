@@ -118,7 +118,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // 需要登录的逻辑
   if (to.meta.requireLogin) {
-    if (store.state.settings.user.nickname === undefined) {
+    if (store.state.data.user.nickname === undefined) {
       next({ path: "/login" });
     }
     if (isLooseLoggedIn()) {
