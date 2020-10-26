@@ -1,14 +1,4 @@
-const initState = {
-  howler: null,
-  accountLogin: false,
-  usernameLogin: false,
-  liked: {
-    songs: [],
-  },
-  contextMenu: {
-    clickObjectID: 0,
-    showMenu: false,
-  },
+export default {
   player: {
     enable: false,
     show: true,
@@ -83,16 +73,16 @@ const initState = {
         enable: true,
       },
     ],
-    user: {
-      id: 0,
-    },
     lang: null,
     appearance: "auto",
     musicQuality: 320000,
     showGithubIcon: true,
     showPlaylistsByAppleMusic: true,
+  },
+  data: {
+    user: {},
+    likedSongPlaylistID: 0,
     lastRefreshCookieDate: 0,
+    loginMode: null,
   },
 };
-
-export default initState;

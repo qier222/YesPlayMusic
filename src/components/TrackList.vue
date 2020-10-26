@@ -3,10 +3,18 @@
     <ContextMenu ref="menu">
       <div class="item" @click="play">Play</div>
       <div class="item" @click="playNext">Play Next</div>
-      <div class="item" @click="like" v-show="!isRightClickedTrackLiked">
+      <div
+        class="item"
+        @click="like"
+        v-show="!isRightClickedTrackLiked && accountLogin"
+      >
         Save to my Liked Songs
       </div>
-      <div class="item" @click="like" v-show="isRightClickedTrackLiked">
+      <div
+        class="item"
+        @click="like"
+        v-show="isRightClickedTrackLiked && accountLogin"
+      >
         Remove from my Liked Songs
       </div>
     </ContextMenu>
@@ -29,6 +37,7 @@ import {
   playAList,
   appendTrackToPlayerList,
 } from "@/utils/play";
+import { isAccountLoggedIn } from "@/utils/auth";
 
 import TrackListItem from "@/components/TrackListItem.vue";
 import ContextMenu from "@/components/ContextMenu.vue";
@@ -66,6 +75,9 @@ export default {
     ...mapState(["liked"]),
     isRightClickedTrackLiked() {
       return this.liked.songs.includes(this.rightClickedTrack?.id);
+    },
+    accountLogin() {
+      return isAccountLoggedIn();
     },
   },
   methods: {

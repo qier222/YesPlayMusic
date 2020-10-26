@@ -41,6 +41,15 @@
           >
             {{ $t("play") }}
           </ButtonTwoTone>
+          <ButtonTwoTone
+            v-if="accountLogin"
+            shape="round"
+            :iconClass="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
+            :iconButton="true"
+            :horizontalPadding="0"
+            @click.native="likeAlbum"
+          >
+          </ButtonTwoTone>
         </div>
       </div>
     </div>
@@ -93,8 +102,9 @@ import { mapMutations, mapActions, mapState } from "vuex";
 import { getArtistAlbum } from "@/api/artist";
 import { getTrackDetail } from "@/api/track";
 import { playAlbumByID } from "@/utils/play";
-import { getAlbum } from "@/api/album";
+import { getAlbum, albumDynamicDetail, likeAAlbum } from "@/api/album";
 import NProgress from "nprogress";
+import { isAccountLoggedIn } from "@/utils/auth";
 
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
@@ -124,17 +134,21 @@ export default {
       showFullDescription: false,
       show: false,
       moreAlbums: [],
+      dynamicDetail: {},
     };
   },
   created() {
     this.loadData(this.$route.params.id);
   },
   computed: {
-    ...mapState(["player"]),
+    ...mapState(["player", "data"]),
     albumTime() {
       let time = 0;
       this.tracks.map((t) => (time = time + t.dt));
       return time;
+    },
+    accountLogin() {
+      return isAccountLoggedIn();
     },
     filteredMoreAlbums() {
       let moreAlbums = this.moreAlbums.filter((a) => a.id !== this.album.id);
@@ -159,6 +173,15 @@ export default {
       }
       playAlbumByID(id, trackID);
     },
+    likeAlbum() {
+      likeAAlbum({
+        id: this.album.id,
+        t: this.dynamicDetail.isSub ? 0 : 1,
+      }).then((data) => {
+        if (data.code === 200)
+          this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
+      });
+    },
     loadData(id) {
       getAlbum(id).then((data) => {
         this.album = data.album;
@@ -178,6 +201,9 @@ export default {
             this.moreAlbums = data.hotAlbums;
           }
         );
+      });
+      albumDynamicDetail(id).then((data) => {
+        this.dynamicDetail = data;
       });
     },
   },
@@ -233,6 +259,13 @@ export default {
       &:hover {
         transition: opacity 0.3s;
         opacity: 0.88;
+      }
+    }
+    .buttons {
+      margin-top: 32px;
+      display: flex;
+      button {
+        margin-right: 16px;
       }
     }
   }

@@ -137,8 +137,7 @@ nav {
       left: 12px;
     }
     &:hover {
-      background: var(--color-primary-bg);
-      color: var(--color-primary);
+      background: var(--color-secondary-bg);
     }
     &:active {
       transform: scale(0.92);

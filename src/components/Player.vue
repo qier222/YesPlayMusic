@@ -146,13 +146,13 @@ export default {
       this.progress = ~~this.howler.seek();
     }, 1000);
     if (isAccountLoggedIn()) {
-      userLikedSongsIDs(this.settings.user.userId).then((data) => {
+      userLikedSongsIDs(this.data.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);
       });
     }
   },
   computed: {
-    ...mapState(["player", "howler", "settings", "liked", "accountLogin"]),
+    ...mapState(["player", "howler", "settings", "liked", "data"]),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -174,6 +174,9 @@ export default {
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
+    },
+    accountLogin() {
+      return isAccountLoggedIn();
     },
   },
   methods: {
@@ -266,7 +269,7 @@ export default {
       });
     },
     goToList() {
-      if (this.player.listInfo.id === this.settings.user.likedSongPlaylistID)
+      if (this.player.listInfo.id === this.data.likedSongPlaylistID)
         this.$router.push({ path: "/library/liked-songs" });
       else
         this.$router.push({

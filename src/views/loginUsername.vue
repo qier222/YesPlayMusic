@@ -52,7 +52,6 @@
 import { mapMutations } from "vuex";
 import NProgress from "nprogress";
 import { search } from "@/api/others";
-import Cookies from "js-cookie";
 import { userPlaylist } from "@/api/user";
 import { throttle } from "@/utils/common";
 
@@ -74,7 +73,7 @@ export default {
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateUser", "updateUserInfo", "updateUsernameLogin"]),
+    ...mapMutations(["updateData"]),
     search() {
       if (!this.keyword) return;
       search({ keywords: this.keyword, limit: 9, type: 1002 }).then((data) => {
@@ -83,14 +82,13 @@ export default {
       });
     },
     confirm() {
-      this.updateUser(this.activeUser);
-      this.updateUsernameLogin(true);
-      Cookies.set("loginMode", "username", { expires: 3650 });
+      this.updateData({ key: "user", value: this.activeUser });
+      this.updateData({ key: "loginMode", value: "username" });
       userPlaylist({
         uid: this.activeUser.userId,
         limit: 1,
       }).then((data) => {
-        this.updateUserInfo({
+        this.updateData({
           key: "likedSongPlaylistID",
           value: data.playlist[0].id,
         });

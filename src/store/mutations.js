@@ -81,22 +81,6 @@ export default {
       return track;
     });
   },
-  updateAccountLogin(state, status) {
-    state.accountLogin = status;
-  },
-  updateUsernameLogin(state, status) {
-    state.usernameLogin = status;
-  },
-  updateLogout() {
-    this.commit("updateAccountLogin", false);
-    this.commit("updateUsernameLogin", false);
-  },
-  updateUser(state, user) {
-    state.settings.user = user;
-  },
-  updateUserInfo(state, { key, value }) {
-    state.settings.user[key] = value;
-  },
   updateLikedSongs(state, trackIDs) {
     state.liked.songs = trackIDs;
   },
@@ -118,5 +102,8 @@ export default {
   },
   updateSettings(state, { key, value }) {
     state.settings[key] = value;
+  },
+  updateData(state, { key, value }) {
+    state.data[key] = value;
   },
 };
