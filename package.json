@@ -6,7 +6,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "prettier": "npx prettier --write ./src"
+    "prettier": "npx prettier --write ./src",
+    "napi_run": "cd ./NeteaseCloudMusicApi-master && npm run start",
+    "napi_pull": "node script/setup.js v3.45.1",
+    "napi_install": "cd ./NeteaseCloudMusicApi-master && npm install",
+    "setup": "npm run napi_pull && npm run napi_install"
   },
   "husky": {
     "hooks": {
@@ -21,6 +25,7 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "dayjs": "^1.8.36",
+    "extract-zip": "^2.0.1",
     "howler": "^2.2.0",
     "js-cookie": "^2.2.1",
     "nprogress": "^0.2.0",
