@@ -89,7 +89,6 @@ import { loginWithPhone, loginWithEmail } from "@/api/auth";
 import md5 from "crypto-js/md5";
 import { mapMutations } from "vuex";
 import { userPlaylist } from "@/api/user";
-import Cookies from "js-cookie";
 
 export default {
   name: "Login",
@@ -112,15 +111,14 @@ export default {
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateUser", "updateUserInfo", "updateAccountLogin"]),
+    ...mapMutations(["updateData"]),
     afterLogin() {
-      this.updateAccountLogin(true);
-      Cookies.set("loginMode", "account", { expires: 3650 });
+      this.updateData({ key: "loginMode", value: "account" });
       userPlaylist({
-        uid: this.$store.state.settings.user.userId,
+        uid: this.$store.state.data.user.userId,
         limit: 1,
       }).then((data) => {
-        this.updateUserInfo({
+        this.updateData({
           key: "likedSongPlaylistID",
           value: data.playlist[0].id,
         });
@@ -163,7 +161,7 @@ export default {
         })
           .then((data) => {
             if (data.code !== 502) {
-              this.updateUser(data.profile);
+              this.updateData({ key: "user", value: data.profile });
               this.afterLogin();
             }
           })
@@ -180,7 +178,7 @@ export default {
         })
           .then((data) => {
             if (data.code !== 502) {
-              this.updateUser(data.profile);
+              this.updateData({ key: "user", value: data.profile });
               this.afterLogin();
             }
           })

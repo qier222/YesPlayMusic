@@ -16,6 +16,10 @@
           <ButtonTwoTone @click.native="playPopularSongs()" :iconClass="`play`">
             {{ $t("play") }}
           </ButtonTwoTone>
+          <ButtonTwoTone @click.native="followArtist" color="grey">
+            <span v-if="artist.followed">Following</span>
+            <span v-else>Follow</span>
+          </ButtonTwoTone>
         </div>
       </div>
     </div>
@@ -94,7 +98,12 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
-import { getArtist, getArtistAlbum, artistMv } from "@/api/artist";
+import {
+  getArtist,
+  getArtistAlbum,
+  artistMv,
+  followAArtist,
+} from "@/api/artist";
 import { playAList } from "@/utils/play";
 import NProgress from "nprogress";
 
@@ -167,6 +176,14 @@ export default {
     playPopularSongs(trackID = "first") {
       let trackIDs = this.popularTracks.map((t) => t.id);
       playAList(trackIDs, this.artist.id, "artist", trackID);
+    },
+    followArtist() {
+      followAArtist({
+        id: this.artist.id,
+        t: this.artist.followed ? 0 : 1,
+      }).then((data) => {
+        if (data.code === 200) this.artist.followed = !this.artist.followed;
+      });
     },
   },
   created() {

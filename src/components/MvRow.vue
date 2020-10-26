@@ -1,34 +1,27 @@
 <template>
   <div class="mv-row">
-    <div class="mv" v-for="mv in mvs" :key="mv.id">
+    <div class="mv" v-for="mv in mvs" :key="getID(mv)">
       <div class="cover-container">
         <img
           class="cover"
           :src="getUrl(mv)"
-          @mouseover="hoverVideoID = mv.id"
+          @mouseover="hoverVideoID = getID(mv)"
           @mouseleave="hoverVideoID = 0"
-          @click="goToMv(mv.id)"
+          @click="goToMv(getID(mv))"
         />
         <transition name="fade">
           <img
             class="shadow"
-            v-show="hoverVideoID === mv.id"
+            v-show="hoverVideoID === getID(mv)"
             :src="getUrl(mv)"
           />
         </transition>
       </div>
       <div class="info">
         <div class="title">
-          <router-link :to="'/mv/' + mv.id">{{ mv.name }}</router-link>
+          <router-link :to="'/mv/' + getID(mv)">{{ getTitle(mv) }}</router-link>
         </div>
-        <div class="artist">
-          <router-link
-            v-if="subtitle === 'artist'"
-            :to="'/artist/' + mv.artistId"
-            >{{ mv.artistName }}</router-link
-          >
-          <span v-if="subtitle === 'publishTime'">{{ mv.publishTime }}</span>
-        </div>
+        <div class="artist" v-html="getSubtitle(mv)"></div>
       </div>
     </div>
   </div>
@@ -61,6 +54,30 @@ export default {
       if (mv.cover !== undefined) return mv.cover;
       if (mv.imgurl16v9 !== undefined) return mv.imgurl16v9;
       if (mv.coverUrl !== undefined) return mv.coverUrl;
+    },
+    getID(mv) {
+      if (mv.id !== undefined) return mv.id;
+      if (mv.vid !== undefined) return mv.vid;
+    },
+    getTitle(mv) {
+      if (mv.name !== undefined) return mv.name;
+      if (mv.title !== undefined) return mv.title;
+    },
+    getSubtitle(mv) {
+      if (this.subtitle === "artist") {
+        let artistName = "null";
+        let artistID = 0;
+        if (mv.artistName !== undefined) {
+          artistName = mv.artistName;
+          artistID = mv.artistId;
+        } else if (mv.creator !== undefined) {
+          artistName = mv.creator[0].userName;
+          artistID = mv.creator[0].userId;
+        }
+        return `<a href="/artist/${artistID}">${artistName}</a>`;
+      } else if (this.subtitle === "publishTime") {
+        return mv.publishTime;
+      }
     },
   },
 };

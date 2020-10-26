@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { isAccountLoggedIn } from "@/utils/auth";
 
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
@@ -93,7 +93,6 @@ export default {
     return { focus: false, trackStyle: {} };
   },
   computed: {
-    ...mapState(["accountLogin"]),
     imgUrl() {
       if (this.track.al !== undefined) return this.track.al.picUrl;
       if (this.track.album !== undefined) return this.track.album.picUrl;
@@ -127,6 +126,9 @@ export default {
       if (!this.track.playable) trackClass.push("disable");
       if (this.isPlaying) trackClass.push("playing");
       return trackClass;
+    },
+    accountLogin() {
+      return isAccountLoggedIn();
     },
   },
   methods: {

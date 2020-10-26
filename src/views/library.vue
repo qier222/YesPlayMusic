@@ -40,15 +40,64 @@
       </div>
     </div>
 
-    <div class="playlists" v-if="playlists.length > 1">
-      <div class="title">{{ $t("playlist.playlist") }}</div>
-      <div>
+    <div class="section-two" id="liked">
+      <div class="tabs">
+        <div
+          class="tab"
+          :class="{ active: currentTab === 'playlists' }"
+          @click="updateCurrentTab('playlists')"
+        >
+          Playlists
+        </div>
+        <div
+          class="tab"
+          :class="{ active: currentTab === 'albums' }"
+          @click="updateCurrentTab('albums')"
+        >
+          Albums
+        </div>
+        <div
+          class="tab"
+          :class="{ active: currentTab === 'artists' }"
+          @click="updateCurrentTab('artists')"
+        >
+          Artists
+        </div>
+        <div
+          class="tab"
+          :class="{ active: currentTab === 'mvs' }"
+          @click="updateCurrentTab('mvs')"
+        >
+          MVs
+        </div>
+      </div>
+
+      <div v-show="currentTab === 'playlists'">
+        <div v-if="playlists.length > 1">
+          <CoverRow
+            :items="playlists.slice(1)"
+            type="playlist"
+            subText="creator"
+            :showPlayButton="true"
+          />
+        </div>
+      </div>
+
+      <div v-show="currentTab === 'albums'">
         <CoverRow
-          :items="playlists.slice(1)"
-          type="playlist"
-          subText="creator"
+          :items="albums"
+          type="album"
+          subText="artist"
           :showPlayButton="true"
         />
+      </div>
+
+      <div v-show="currentTab === 'artists'">
+        <CoverRow :items="artists" type="artist" :showPlayButton="true" />
+      </div>
+
+      <div v-show="currentTab === 'mvs'">
+        <MvRow :mvs="mvs" />
       </div>
     </div>
   </div>
@@ -57,7 +106,13 @@
 <script>
 import { mapState } from "vuex";
 import { getTrackDetail, getLyric } from "@/api/track";
-import { userDetail, userPlaylist } from "@/api/user";
+import {
+  userDetail,
+  userPlaylist,
+  likedAlbums,
+  likedArtists,
+  likedMVs,
+} from "@/api/user";
 import { randomNum, dailyTask } from "@/utils/common";
 import { getPlaylistDetail } from "@/api/playlist";
 import { playPlaylistByID } from "@/utils/play";
@@ -65,11 +120,12 @@ import NProgress from "nprogress";
 
 import TrackList from "@/components/TrackList.vue";
 import CoverRow from "@/components/CoverRow.vue";
+import MvRow from "@/components/MvRow.vue";
 import SvgIcon from "@/components/SvgIcon.vue";
 
 export default {
   name: "Library",
-  components: { SvgIcon, CoverRow, TrackList },
+  components: { SvgIcon, CoverRow, TrackList, MvRow },
   data() {
     return {
       show: false,
@@ -88,11 +144,15 @@ export default {
       likedSongs: [],
       likedSongIDs: [],
       lyric: undefined,
+      currentTab: "playlists",
+      albums: [],
+      artists: [],
+      mvs: [],
     };
   },
   created() {
     NProgress.start();
-    userDetail(this.settings.user.userId).then((data) => {
+    userDetail(this.data.user.userId).then((data) => {
       this.user = data;
     });
   },
@@ -101,7 +161,7 @@ export default {
     dailyTask();
   },
   computed: {
-    ...mapState(["settings"]),
+    ...mapState(["data"]),
     likedSongsInState() {
       return this.$store.state.liked.songs;
     },
@@ -129,18 +189,38 @@ export default {
     playLikedSongs() {
       playPlaylistByID(this.playlists[0].id, "first", true);
     },
+    updateCurrentTab(tab) {
+      this.currentTab = tab;
+      document
+        .getElementById("liked")
+        .scrollIntoView({ block: "start", behavior: "smooth" });
+      if (tab === "albums") {
+        if (this.albums.length === 0) this.loadLikedAlbums();
+      } else if (tab === "artists") {
+        if (this.artists.length === 0) this.loadLikedArtists();
+      } else if (tab === "mvs") {
+        if (this.mvs.length === 0) this.loadLikedMVs();
+      }
+    },
     goToLikedSongsList() {
       this.$router.push({ path: "/library/liked-songs" });
     },
     loadData() {
-      if (this.hasMorePlaylists) {
+      if (this.hasMorePlaylists && this.currentTab === "playlists") {
         this.getUserPlaylists();
+      }
+      if (this.currentTab === "albums") {
+        this.loadLikedAlbums();
+      } else if (this.currentTab === "artists") {
+        this.loadLikedArtists();
+      } else if (this.currentTab === "mvs") {
+        this.loadLikedMVs();
       }
       this.getLikedSongs();
     },
     getUserPlaylists(replace = false) {
       userPlaylist({
-        uid: this.settings.user.userId,
+        uid: this.data.user.userId,
         offset: this.playlists.length === 0 ? 0 : this.playlists.length - 1,
         timestamp: new Date().getTime(),
       }).then((data) => {
@@ -153,25 +233,38 @@ export default {
       });
     },
     getLikedSongs(getLyric = true) {
-      getPlaylistDetail(this.settings.user.likedSongPlaylistID, true).then(
-        (data) => {
-          this.likedSongsPlaylist = data.playlist;
-          let TrackIDs = data.playlist.trackIds.slice(0, 20).map((t) => t.id);
-          this.likedSongIDs = TrackIDs;
-          getTrackDetail(this.likedSongIDs.join(",")).then((data) => {
-            this.likedSongs = data.songs;
-            NProgress.done();
-            this.show = true;
-          });
-          if (getLyric) this.getRandomLyric();
-        }
-      );
+      getPlaylistDetail(this.data.likedSongPlaylistID, true).then((data) => {
+        this.likedSongsPlaylist = data.playlist;
+        let TrackIDs = data.playlist.trackIds.slice(0, 20).map((t) => t.id);
+        this.likedSongIDs = TrackIDs;
+        getTrackDetail(this.likedSongIDs.join(",")).then((data) => {
+          this.likedSongs = data.songs;
+          NProgress.done();
+          this.show = true;
+        });
+        if (getLyric) this.getRandomLyric();
+      });
     },
     getRandomLyric() {
       getLyric(
         this.likedSongIDs[randomNum(0, this.likedSongIDs.length - 1)]
       ).then((data) => {
         if (data.lrc !== undefined) this.lyric = data.lrc.lyric;
+      });
+    },
+    loadLikedAlbums() {
+      likedAlbums().then((data) => {
+        this.albums = data.data;
+      });
+    },
+    loadLikedArtists() {
+      likedArtists().then((data) => {
+        this.artists = data.data;
+      });
+    },
+    loadLikedMVs() {
+      likedMVs().then((data) => {
+        this.mvs = data.data;
       });
     },
   },
@@ -280,14 +373,37 @@ h1 {
   }
 }
 
-.playlists {
+.section-two {
+  // margin-top: 42px;
+  // padding-top: 14px;
+  // border-top: 1px solid rgba(128, 128, 128, 0.18);
   margin-top: 54px;
-  .title {
-    color: var(--color-text);
-    opacity: 0.88;
-    margin-bottom: 8px;
-    font-size: 24px;
+  min-height: calc(100vh - 182px);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 18px;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  .tab {
     font-weight: 600;
+    padding: 8px 14px;
+    margin: 10px 14px 6px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.2s;
+    opacity: 0.68;
+    &:hover {
+      opacity: 0.88;
+      background-color: var(--color-secondary-bg);
+    }
+  }
+  .tab.active {
+    opacity: 0.88;
+    background-color: var(--color-secondary-bg);
   }
 }
 </style>
