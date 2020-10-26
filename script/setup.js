@@ -34,10 +34,6 @@ async function download(options, fileName, callback) {
     const file = fs.createWriteStream(destPath);
     const request = https.get(options, (res) => {
       let len = res.headers && parseInt(res.headers["content-length"], 10);
-      console.log();
-      if (len) {
-        console.log();
-      }
       let cur = 0;
       // 1048576 - bytes in 1Megabyte
       const MEGA = 1048576;
