@@ -49,7 +49,11 @@ async function download(options, fileName, callback) {
       res.on("data", (chunk) => {
         if (len) {
           cur += chunk.length;
-          console.log(`Downloading ${fix2((100.0 * cur) / len)}% ${fix2(cur / MEGA)}/${fix2(total)}mb`);
+          console.log(
+            `Downloading ${fix2((100.0 * cur) / len)}% ${fix2(
+              cur / MEGA
+            )}/${fix2(total)}mb`
+          );
         }
       });
       res.on("end", () => {
@@ -93,7 +97,7 @@ async function unzip(source, target) {
 download(options, fileName, (text) => {
   console.log(text);
 }).then((path) => {
-  console.log(path)
+  console.log(path);
   // Unzip process
   return unzip(path, dest);
 });
