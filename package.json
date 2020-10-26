@@ -6,11 +6,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "prettier": "npx prettier --write ./src",
-    "napi_run": "cd ./NeteaseCloudMusicApi-master && npm run start",
-    "napi_pull": "node script/setup.js v3.45.1",
-    "napi_install": "cd ./NeteaseCloudMusicApi-master && npm install",
-    "setup": "npm run napi_pull && npm run napi_install"
+    "prettier": "npx prettier --write ./src ./script",
+    "napi:run": "cd ./NeteaseCloudMusicApi-master && npm run start",
+    "napi:pull": "node script/pull.js",
+    "napi:install": "cd ./NeteaseCloudMusicApi-master && npm install",
+    "napi:setup": "npm run napi:pull && npm run napi:install"
   },
   "husky": {
     "hooks": {
