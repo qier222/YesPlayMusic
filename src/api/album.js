@@ -37,3 +37,34 @@ export function newAlbums(params) {
     params,
   });
 }
+
+/**
+ * 专辑动态信息
+ * 说明 : 调用此接口 , 传入专辑 id, 可获得专辑动态信息,如是否收藏,收藏数,评论数,分享数
+ * - id - 专辑id
+ * @param {number} id
+ */
+export function albumDynamicDetail(id) {
+  return request({
+    url: "/album/detail/dynamic",
+    method: "get",
+    params: { id, timestamp: new Date().getTime() },
+  });
+}
+
+/**
+ * 收藏/取消收藏专辑
+ * 说明 : 调用此接口,可收藏/取消收藏专辑
+ * - id - 返专辑 id
+ * - t - 1 为收藏,其他为取消收藏
+ * @param {Object} params
+ * @param {number} params.id
+ * @param {number} params.t
+ */
+export function likeAAlbum(params) {
+  return request({
+    url: "/album/sub",
+    method: "post",
+    params,
+  });
+}

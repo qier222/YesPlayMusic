@@ -49,10 +49,13 @@ export default {
 
 <style lang="scss" scoped>
 button {
+  height: 40px;
+  min-width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
+  line-height: 18px;
   font-weight: 600;
   background-color: var(--color-primary-bg);
   color: var(--color-primary);

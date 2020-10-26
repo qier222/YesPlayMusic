@@ -76,8 +76,9 @@ export default {
   created() {
     this.shadowStyle = {
       height: `${this.size}px`,
-      width: `${this.size}px`,
+      width: `${~~(this.size * 0.96)}px`,
       top: `${this.shadowMargin}px`,
+      right: `${~~(this.size * 0.02)}px`,
       borderRadius: `${this.radius}px`,
     };
     this.playButtonStyle = {
@@ -165,6 +166,13 @@ export default {
   height: 208px;
   transform: scale(0.98);
 }
+[data-theme="dark"] {
+  .shadow {
+    filter: blur(16px) brightness(68%);
+    transform: scale(0.96);
+  }
+}
+
 .play-button {
   opacity: 0;
   display: flex;

@@ -3,22 +3,28 @@ import Vuex from "vuex";
 import state from "./state";
 import mutations from "./mutations";
 import actions from "./actions";
-import initState from "./initState";
+import initLocalStorage from "./initLocalStorage";
 import { Howl, Howler } from "howler";
 import { changeAppearance } from "@/utils/common";
+import updateApp from "@/utils/updateApp";
+import pack from "../../package.json";
 
 if (localStorage.getItem("appVersion") === null) {
-  localStorage.setItem("player", JSON.stringify(initState.player));
-  localStorage.setItem("settings", JSON.stringify(initState.settings));
-  localStorage.setItem("appVersion", "0.1");
+  localStorage.setItem("player", JSON.stringify(initLocalStorage.player));
+  localStorage.setItem("settings", JSON.stringify(initLocalStorage.settings));
+  localStorage.setItem("data", JSON.stringify(initLocalStorage.data));
+  localStorage.setItem("appVersion", pack.version);
   window.location.reload();
 }
+
+updateApp();
 
 const saveToLocalStorage = (store) => {
   store.subscribe((mutation, state) => {
     // console.log(mutation);
     localStorage.setItem("player", JSON.stringify(state.player));
     localStorage.setItem("settings", JSON.stringify(state.settings));
+    localStorage.setItem("data", JSON.stringify(state.data));
   });
 };
 

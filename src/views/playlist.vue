@@ -27,9 +27,7 @@
           >
           <a
             v-else
-            :href="
-              `https://music.163.com/#/user/home?id=${playlist.creator.userId}`
-            "
+            :href="`https://music.163.com/#/user/home?id=${playlist.creator.userId}`"
             target="blank"
             >{{ playlist.creator.nickname }}</a
           >
@@ -47,9 +45,7 @@
             {{ $t("play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
-            v-if="
-              accountLogin && playlist.creator.userId !== settings.user.userId
-            "
+            v-if="accountLogin && playlist.creator.userId !== data.user.userId"
             shape="round"
             :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
             :iconButton="true"
@@ -63,8 +59,8 @@
 
     <div class="user-info" v-else>
       <h1>
-        <img class="avatar" :src="settings.user.avatarUrl | resizeImage" />{{
-          settings.user.nickname
+        <img class="avatar" :src="data.user.avatarUrl | resizeImage" />{{
+          data.user.nickname
         }}{{ $t("library.sLikedSongs") }}
       </h1>
     </div>
@@ -94,6 +90,7 @@ import NProgress from "nprogress";
 import { getPlaylistDetail, subscribePlaylist } from "@/api/playlist";
 import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
+import { isAccountLoggedIn } from "@/utils/auth";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
@@ -124,7 +121,7 @@ export default {
   },
   created() {
     if (this.$route.name === "likedSongs") {
-      this.loadData(this.settings.user.likedSongPlaylistID);
+      this.loadData(this.data.user.likedSongPlaylistID);
     } else {
       this.loadData(this.$route.params.id);
     }
@@ -133,9 +130,12 @@ export default {
     window.removeEventListener("scroll", this.handleScroll, true);
   },
   computed: {
-    ...mapState(["player", "settings", "accountLogin"]),
+    ...mapState(["player", "data"]),
     isLikeSongsPage() {
       return this.$route.name === "likedSongs";
+    },
+    accountLogin() {
+      return isAccountLoggedIn();
     },
   },
   methods: {
