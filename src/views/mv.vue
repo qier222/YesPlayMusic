@@ -127,19 +127,20 @@ export default {
 
 .video-info {
   margin-top: 12px;
+  color: var(--color-text);
   .title {
     font-size: 24px;
     font-weight: 600;
   }
   .artist {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.88);
+    opacity: 0.88;
     margin-top: 2px;
     font-weight: 600;
   }
   .info {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.68);
+    opacity: 0.68;
     margin-top: 12px;
   }
 }
@@ -149,7 +150,8 @@ export default {
   .section-title {
     font-size: 18px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text);
+    opacity: 0.88;
   }
 }
 </style>

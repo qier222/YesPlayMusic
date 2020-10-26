@@ -200,6 +200,7 @@ export default {
     justify-content: center;
     flex: 1;
     margin-left: 56px;
+    color: var(--color-text);
     .title {
       font-size: 56px;
       font-weight: 700;
@@ -208,7 +209,7 @@ export default {
     }
     .artist {
       font-size: 18px;
-      color: rgba(0, 0, 0, 0.88);
+      opacity: 0.88;
       margin-top: 24px;
       a {
         font-weight: 600;
@@ -216,13 +217,13 @@ export default {
     }
     .date-and-count {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
       margin-top: 2px;
     }
     .description {
       user-select: none;
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -230,8 +231,8 @@ export default {
       overflow: hidden;
       cursor: pointer;
       &:hover {
-        transition: color 0.3s;
-        color: rgba(0, 0, 0, 0.88);
+        transition: opacity 0.3s;
+        opacity: 0.88;
       }
     }
   }
@@ -281,7 +282,8 @@ export default {
 }
 
 .explicit-symbol {
-  color: rgba(0, 0, 0, 0.28);
+  opacity: 0.28;
+  color: var(--color-text);
   margin-right: 4px;
   .svg-icon {
     margin-bottom: -3px;
@@ -292,22 +294,25 @@ export default {
   margin-top: 36px;
   margin-bottom: 36px;
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.48);
+  opacity: 0.48;
+  color: var(--color-text);
   div {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
   .album-time {
-    color: rgba(0, 0, 0, 0.68);
+    opacity: 0.68;
   }
 }
 
 .more-by {
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid rgba(128, 128, 128, 0.18);
+
   padding-top: 22px;
   .section-title {
     font-size: 22px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    opacity: 0.88;
+    color: var(--color-text);
     margin-bottom: 8px;
   }
 }

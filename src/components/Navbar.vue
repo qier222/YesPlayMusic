@@ -27,7 +27,7 @@
       <a
         href="https://github.com/qier222/YesPlayMusic"
         target="blank"
-        v-if="settings.showGithubIcon"
+        v-if="settings.showGithubIcon !== false"
         ><svg-icon icon-class="github" class="github"
       /></a>
       <div class="search-box">
@@ -103,7 +103,10 @@ nav {
     left: 10vw;
   }
   backdrop-filter: saturate(180%) blur(30px);
-  background-color: rgba(255, 255, 255, 0.86);
+
+  // background: var(--color-body-bg);
+  // background-color: rgba(255, 255, 255, 0.86);
+  background-color: var(--color-navbar-bg);
   z-index: 100;
 }
 
@@ -127,15 +130,15 @@ nav {
     text-decoration: none;
     border-radius: 6px;
     padding: 6px 10px;
-    color: black;
+    color: var(--color-text);
     transition: 0.2s;
     margin: {
       right: 12px;
       left: 12px;
     }
     &:hover {
-      background: #eaeffd;
-      color: #335eea;
+      background: var(--color-primary-bg);
+      color: var(--color-primary);
     }
     &:active {
       transform: scale(0.92);
@@ -143,7 +146,7 @@ nav {
     }
   }
   a.active {
-    color: #335eea;
+    color: var(--color-primary);
   }
 }
 
@@ -163,7 +166,7 @@ nav {
     display: flex;
     align-items: center;
     height: 32px;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--color-secondary-bg);
     border-radius: 8px;
     width: 200px;
   }
@@ -171,7 +174,8 @@ nav {
   .svg-icon {
     height: 15px;
     width: 15px;
-    color: #aaaaaa;
+    color: var(--color-text);
+    opacity: 0.28;
     margin: {
       left: 8px;
       right: 4px;
@@ -185,13 +189,15 @@ nav {
     width: 96%;
     font-weight: 600;
     margin-top: -1px;
+    color: var(--color-text);
   }
 
   .active {
-    background: #eaeffd;
+    background: var(--color-primary-bg);
     input,
     .svg-icon {
-      color: #335eea;
+      opacity: 1;
+      color: var(--color-primary);
     }
   }
 }
@@ -205,6 +211,7 @@ nav {
     margin-right: 16px;
     height: 24px;
     width: 24px;
+    color: var(--color-text);
   }
 }
 </style>

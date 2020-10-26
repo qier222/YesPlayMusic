@@ -26,6 +26,8 @@
 - 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
 - 🙉 支持显示歌曲和专辑的 Explicit 标志
 - 📺 MV 播放
+- ✔️ 每日自动签到（手机端和电脑端同时签到）
+- 🌚 Light/Dark Mode 自动切换
 - 🚫🤝 无任何社交功能
 - 🛠 更多特性开发中
 
@@ -60,14 +62,9 @@ npm run build
 
 ## ☑️ Todo
 
-- 中文支持
-- Dark Mode
-- 歌词
-- 私人 FM
-- 播放记录
-- 无限播放模式（播放完列表后自动播放相似歌曲）
+查看 Todo 请访问本项目的 [Projects](https://github.com/qier222/YesPlayMusic/projects/1)
 
-欢迎提 issue 和 pull request。
+欢迎提 Issue 和 Pull request。
 
 ## 📜 开源许可
 

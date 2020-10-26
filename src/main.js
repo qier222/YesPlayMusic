@@ -24,7 +24,6 @@ Vue.config.productionTip = false;
 initMediaSession();
 
 if (process.env.VUE_APP_ENABLE_SENTRY === "true") {
-  console.log("VUE_APP_ENABLE_SENTRY");
   Sentry.init({
     dsn:
       "https://30aaa25152974f48971912a394ab6bc3@o436528.ingest.sentry.io/5477409",

@@ -51,3 +51,14 @@ export function userLikedSongsIDs(uid) {
     },
   });
 }
+
+export function dailySignin(type = 0) {
+  //可选参数 : type: 签到类型 , 默认 0, 其中 0 为安卓端签到 ,1 为 web/PC 签到
+  return request({
+    url: "/daily_signin",
+    method: "post",
+    params: {
+      type,
+    },
+  });
+}

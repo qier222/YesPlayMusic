@@ -294,7 +294,8 @@ export default {
   justify-content: space-around;
   height: 64px;
   backdrop-filter: saturate(180%) blur(30px);
-  background-color: rgba(255, 255, 255, 0.86);
+  // background-color: rgba(255, 255, 255, 0.86);
+  background-color: var(--color-navbar-bg);
   z-index: 100;
 }
 
@@ -334,7 +335,8 @@ export default {
     .name {
       font-weight: 600;
       font-size: 16px;
-      color: rgba(0, 0, 0, 0.88);
+      opacity: 0.88;
+      color: var(--color-text);
       margin-bottom: 4px;
       cursor: pointer;
       display: -webkit-box;
@@ -348,7 +350,8 @@ export default {
     }
     .artist {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.58);
+      opacity: 0.58;
+      color: var(--color-text);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
@@ -394,7 +397,7 @@ export default {
     }
   }
   .active .svg-icon {
-    color: #335eea;
+    color: var(--color-primary);
   }
   .volume-control {
     margin-left: 4px;

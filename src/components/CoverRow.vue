@@ -129,13 +129,13 @@ export default {
 
 .item {
   margin: 12px 12px 24px 12px;
+  color: var(--color-text);
   .text {
     width: 208px;
     margin-top: 8px;
     .name {
       font-size: 16px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
       line-height: 20px;
 
       display: -webkit-box;
@@ -145,7 +145,7 @@ export default {
     }
     .info {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
       line-height: 18px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -170,7 +170,8 @@ export default {
 }
 
 .explicit-symbol {
-  color: rgba(0, 0, 0, 0.28);
+  opacity: 0.28;
+  color: var(--color-text);
   float: right;
   .svg-icon {
     margin-bottom: -3px;
@@ -178,7 +179,8 @@ export default {
 }
 
 .lock-icon {
-  color: rgba(0, 0, 0, 0.28);
+  opacity: 0.28;
+  color: var(--color-text);
   margin-right: 4px;
   // float: right;
   .svg-icon {
@@ -189,7 +191,8 @@ export default {
 
 .play-count {
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.58);
+  opacity: 0.58;
+  color: var(--color-text);
   font-size: 12px;
   .svg-icon {
     margin-right: 3px;

@@ -163,6 +163,7 @@ export default {
   filter: blur(16px) opacity(0.6);
   z-index: -1;
   height: 208px;
+  transform: scale(0.98);
 }
 .play-button {
   opacity: 0;

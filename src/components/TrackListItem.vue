@@ -159,7 +159,7 @@ button {
   .svg-icon {
     height: 16px;
     width: 16px;
-    color: #335eea;
+    color: var(--color-primary);
   }
   &:active {
     transform: scale(0.92);
@@ -180,12 +180,16 @@ button {
     border-radius: 8px;
     margin: 0 20px 0 10px;
     width: 12px;
-    color: rgba(0, 0, 0, 0.58);
+    color: var(--color-text);
     cursor: default;
+    span {
+      opacity: 0.58;
+    }
   }
 
   .explicit-symbol {
-    color: rgba(0, 0, 0, 0.28);
+    opacity: 0.28;
+    color: var(--color-text);
     .svg-icon {
       margin-bottom: -3px;
     }
@@ -221,7 +225,7 @@ button {
     .title {
       font-size: 18px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
+      color: var(--color-text);
       cursor: default;
       padding-right: 16px;
       display: -webkit-box;
@@ -233,13 +237,14 @@ button {
         margin-right: 2px;
         font-weight: 500;
         font-size: 14px;
-        color: rgba(0, 0, 0, 0.72);
+        opacity: 0.72;
       }
     }
     .artist {
       margin-top: 2px;
       font-size: 13px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
+      color: var(--color-text);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
@@ -247,7 +252,7 @@ button {
       a {
         span {
           margin-right: 3px;
-          color: rgba(0, 0, 0, 0.8);
+          opacity: 0.8;
         }
         &:hover {
           text-decoration: underline;
@@ -260,7 +265,8 @@ button {
     flex: 1;
     display: flex;
     font-size: 16px;
-    color: rgba(0, 0, 0, 0.88);
+    opacity: 0.88;
+    color: var(--color-text);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -274,10 +280,12 @@ button {
     justify-content: flex-end;
     margin-right: 10px;
     font-variant-numeric: tabular-nums;
+    opacity: 0.88;
+    color: var(--color-text);
   }
   &:hover {
     transition: all 0.3s;
-    background: #f5f5f7;
+    background: var(--color-secondary-bg);
   }
 }
 .track.disable {
@@ -290,7 +298,7 @@ button {
   .time,
   .no,
   .featured {
-    color: rgba(0, 0, 0, 0.28) !important;
+    opacity: 0.28 !important;
   }
   &:hover {
     background: none;
@@ -325,24 +333,22 @@ button {
 }
 
 .track.playing {
-  background: #eaeffd;
-  color: #335eea;
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
   .title,
-  .album {
-    color: #335eea;
+  .album,
+  .time {
+    color: var(--color-primary);
   }
   .title .featured,
-  .artist {
-    color: #335eea;
+  .artist,
+  .explicit-symbol {
+    color: var(--color-primary);
     opacity: 0.88;
   }
   .no span {
-    color: #335eea;
+    color: var(--color-primary);
     opacity: 0.78;
-  }
-  .explicit-symbol {
-    color: #335eea;
-    opacity: 0.88;
   }
 }
 </style>
