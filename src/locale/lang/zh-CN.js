@@ -6,9 +6,6 @@ export default {
     library: "资料库",
     search: "搜索",
   },
-  footer: {
-    settings: "设置",
-  },
   home: {
     recommendPlaylist: "推荐歌单",
     recommendArtist: "推荐歌手",
@@ -34,7 +31,7 @@ export default {
     albums: "专辑",
     withAlbums: "张专辑",
     artist: "歌手",
-    videos: "个视频",
+    videos: "个MV",
   },
   album: {
     released: "发行于",
@@ -103,7 +100,7 @@ export default {
     songs: "首歌",
   },
   settings: {
-    settings: "选项",
+    settings: "设置",
     logout: "登出",
     language: "语言",
     musicQuality: {
@@ -112,6 +109,12 @@ export default {
       medium: "较高",
       high: "极高",
       lossless: "无损",
+    },
+    appearance: {
+      text: "外观",
+      auto: "自动",
+      light: "浅色",
+      dark: "深色",
     },
   },
 };

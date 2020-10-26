@@ -192,15 +192,17 @@ export default {
 h1 {
   margin-top: -10px;
   margin-bottom: 0;
+  color: var(--color-text);
   span {
-    color: rgba(0, 0, 0, 0.58);
+    opacity: 0.58;
   }
 }
 
 .section-title {
   font-weight: 600;
   font-size: 22px;
-  color: rgba(0, 0, 0, 0.88);
+  opacity: 0.88;
+  color: var(--color-text);
   margin-bottom: 16px;
   margin-top: 46px;
 }
@@ -219,6 +221,7 @@ h1 {
   padding-right: 48px;
   font-size: 16px;
   font-weight: 600;
+  color: var(--color-text);
   .artist {
     display: flex;
     align-items: center;
@@ -236,6 +239,7 @@ h1 {
 
 .albums-list {
   display: flex;
+  color: var(--color-text);
   .album {
     img {
       height: 128px;
@@ -249,7 +253,6 @@ h1 {
     .name {
       margin-top: 6px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
       font-size: 14px;
       width: 128px;
       display: -webkit-box;
@@ -259,7 +262,7 @@ h1 {
     }
     .artist {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
     }
   }
 }

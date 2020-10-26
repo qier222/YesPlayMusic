@@ -106,5 +106,6 @@ h1 {
   margin-top: 36px;
   margin-bottom: 18px;
   cursor: default;
+  color: var(--color-text);
 }
 </style>

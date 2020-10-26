@@ -1,6 +1,11 @@
 import request from "@/utils/request";
 import { mapTrackPlayableStatus } from "@/utils/common";
 
+/**
+ * 获取歌手单曲
+ * 说明 : 调用此接口 , 传入歌手 id, 可获得歌手部分信息和热门歌曲
+ * @param {number} id - 歌手 id, 可由搜索接口获得
+ */
 export function getArtist(id) {
   return request({
     url: "/artists",
@@ -14,10 +19,18 @@ export function getArtist(id) {
   });
 }
 
+/**
+ * 获取歌手专辑
+ * 说明 : 调用此接口 , 传入歌手 id, 可获得歌手专辑内容
+ * - id: 歌手 id
+ * - limit: 取出数量 , 默认为 50
+ * - offset: 偏移数量 , 用于分页 , 如 :( 页数 -1)*50, 其中 50 为 limit 的值 , 默认为 0
+ * @param {Object} params
+ * @param {number} params.id
+ * @param {number=} params.limit
+ * @param {number=} params.offset
+ */
 export function getArtistAlbum(params) {
-  // 必选参数 : id: 歌手 id
-  // 可选参数 : limit: 取出数量 , 默认为 50
-  // offset: 偏移数量 , 用于分页 , 如 :( 页数 -1)*50, 其中 50 为 limit 的值 , 默认 为 0
   return request({
     url: "/artist/album",
     method: "get",
@@ -25,12 +38,17 @@ export function getArtistAlbum(params) {
   });
 }
 
+/**
+ * 歌手榜
+ * 说明 : 调用此接口 , 可获取排行榜中的歌手榜
+ * - type : 地区
+ * 1: 华语
+ * 2: 欧美
+ * 3: 韩国
+ * 4: 日本
+ * @param {number=} type
+ */
 export function toplistOfArtists(type = null) {
-  // type : 地区
-  // 1: 华语
-  // 2: 欧美
-  // 3: 韩国
-  // 4: 日本
   return request({
     url: "/toplist/artist",
     method: "get",
@@ -39,7 +57,11 @@ export function toplistOfArtists(type = null) {
     },
   });
 }
-
+/**
+ * 获取歌手 mv
+ * 说明 : 调用此接口 , 传入歌手 id, 可获得歌手 mv 信息 , 具体 mv 播放地址可调 用/mv传入此接口获得的 mvid 来拿到 , 如 : /artist/mv?id=6452,/mv?mvid=5461064
+ * @param {number} id 歌手 id, 可由搜索接口获得
+ */
 export function artistMv(id) {
   return request({
     url: "/artist/mv",

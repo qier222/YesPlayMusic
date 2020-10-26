@@ -1,4 +1,7 @@
-import { isLoggedIn } from "./auth";
+import { isAccountLoggedIn } from "./auth";
+import { refreshCookie } from "@/api/auth";
+import { dailySignin } from "@/api/user";
+import dayjs from "dayjs";
 import store from "@/store";
 
 export function isTrackPlayable(track) {
@@ -7,7 +10,7 @@ export function isTrackPlayable(track) {
     reason: "",
   };
   if (track.fee === 1 || track.privilege?.fee === 1) {
-    if (isLoggedIn && store.state.settings.user.vipType === 11) {
+    if (isAccountLoggedIn() && store.state.settings.user.vipType === 11) {
       result.playable = true;
     } else {
       result.playable = false;
@@ -74,4 +77,33 @@ export function throttle(fn, time) {
 export function updateHttps(url) {
   if (!url) return "";
   return url.replace(/^http:/, "https:");
+}
+
+export function dailyTask() {
+  let lastDate = store.state.settings.lastRefreshCookieDate;
+  if (
+    isAccountLoggedIn() &&
+    (lastDate === undefined || lastDate !== dayjs().date())
+  ) {
+    console.log("execute dailyTask");
+    store.commit("updateSettings", {
+      key: "lastRefreshCookieDate",
+      value: dayjs().date(),
+    });
+    refreshCookie();
+    dailySignin(0);
+    dailySignin(1);
+  }
+}
+
+export function changeAppearance(appearance) {
+  if (appearance === "auto" || appearance === undefined) {
+    appearance = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+  document.body.setAttribute("data-theme", appearance);
+  document
+    .querySelector('meta[name="theme-color"]')
+    .setAttribute("content", appearance === "dark" ? "#222" : "#fff");
 }

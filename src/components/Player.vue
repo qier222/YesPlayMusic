@@ -36,7 +36,8 @@
             </span>
           </div>
         </div>
-        <div class="like-button" v-show="isLoggedIn">
+        <!-- 账号登录才会显示 like 图标 -->
+        <div class="like-button" v-show="accountLogin">
           <button-icon
             @click.native="likeCurrentSong"
             :title="$t('player.like')"
@@ -118,7 +119,7 @@
 <script>
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { mapState, mapMutations, mapActions } from "vuex";
-import { isLoggedIn } from "@/utils/auth";
+import { isAccountLoggedIn } from "@/utils/auth";
 import { userLikedSongsIDs } from "@/api/user";
 import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
@@ -144,14 +145,14 @@ export default {
     setInterval(() => {
       this.progress = ~~this.howler.seek();
     }, 1000);
-    if (this.isLoggedIn) {
+    if (isAccountLoggedIn()) {
       userLikedSongsIDs(this.settings.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);
       });
     }
   },
   computed: {
-    ...mapState(["player", "howler", "settings", "liked"]),
+    ...mapState(["player", "howler", "settings", "liked", "accountLogin"]),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -173,9 +174,6 @@ export default {
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
-    },
-    isLoggedIn() {
-      return isLoggedIn();
     },
   },
   methods: {
@@ -296,7 +294,8 @@ export default {
   justify-content: space-around;
   height: 64px;
   backdrop-filter: saturate(180%) blur(30px);
-  background-color: rgba(255, 255, 255, 0.86);
+  // background-color: rgba(255, 255, 255, 0.86);
+  background-color: var(--color-navbar-bg);
   z-index: 100;
 }
 
@@ -336,7 +335,8 @@ export default {
     .name {
       font-weight: 600;
       font-size: 16px;
-      color: rgba(0, 0, 0, 0.88);
+      opacity: 0.88;
+      color: var(--color-text);
       margin-bottom: 4px;
       cursor: pointer;
       display: -webkit-box;
@@ -350,7 +350,8 @@ export default {
     }
     .artist {
       font-size: 12px;
-      color: rgba(0, 0, 0, 0.58);
+      opacity: 0.58;
+      color: var(--color-text);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
@@ -396,7 +397,7 @@ export default {
     }
   }
   .active .svg-icon {
-    color: #335eea;
+    color: var(--color-primary);
   }
   .volume-control {
     margin-left: 4px;

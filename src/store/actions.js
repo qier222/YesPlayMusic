@@ -1,6 +1,6 @@
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
-import { isLoggedIn } from "@/utils/auth";
+import { isAccountLoggedIn } from "@/utils/auth";
 import { updateHttps } from "@/utils/common";
 
 export default {
@@ -41,8 +41,7 @@ export default {
           dispatch("nextTrack");
         });
       }
-
-      if (isLoggedIn) {
+      if (isAccountLoggedIn()) {
         getMP3(track.id).then((data) => {
           // 未知情况下会没有返回数据导致报错，增加防范逻辑
           if (data.data[0]) {

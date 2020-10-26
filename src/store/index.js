@@ -5,6 +5,7 @@ import mutations from "./mutations";
 import actions from "./actions";
 import initState from "./initState";
 import { Howl, Howler } from "howler";
+import { changeAppearance } from "@/utils/common";
 
 if (localStorage.getItem("appVersion") === null) {
   localStorage.setItem("player", JSON.stringify(initState.player));
@@ -44,5 +45,14 @@ if ([undefined, null].includes(store.state.settings.lang)) {
   store.state.settings.lang = lang;
   localStorage.setItem("settings", JSON.stringify(store.state.settings));
 }
+
+changeAppearance(store.state.settings.appearance);
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", () => {
+    if (store.state.settings.appearance === "auto") {
+      changeAppearance(store.state.settings.appearance);
+    }
+  });
 
 export default store;

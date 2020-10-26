@@ -58,7 +58,7 @@
 import { mapState } from "vuex";
 import { getTrackDetail, getLyric } from "@/api/track";
 import { userDetail, userPlaylist } from "@/api/user";
-import { randomNum } from "@/utils/common";
+import { randomNum, dailyTask } from "@/utils/common";
 import { getPlaylistDetail } from "@/api/playlist";
 import { playPlaylistByID } from "@/utils/play";
 import NProgress from "nprogress";
@@ -98,6 +98,7 @@ export default {
   },
   activated() {
     this.loadData();
+    dailyTask();
   },
   computed: {
     ...mapState(["settings"]),
@@ -185,6 +186,7 @@ export default {
 <style lang="scss" scoped>
 h1 {
   font-size: 42px;
+  color: var(--color-text);
   .head {
     height: 44px;
     margin-right: 12px;
@@ -219,25 +221,21 @@ h1 {
   transition: all 0.4s;
   box-sizing: border-box;
 
-  background: #eaeffd;
-  // background: linear-gradient(-30deg, #60a6f7, #4364f7, #0052d4);
-  // color: white;
-  // background: linear-gradient(149.46deg, #450af5, #8e8ee5 99.16%);
+  background: var(--color-primary-bg);
 
   .bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--color-primary);
 
     .title {
       font-size: 24px;
       font-weight: 700;
-      color: #335eea;
     }
     .sub-title {
       font-size: 15px;
       margin-top: 2px;
-      color: #335eea;
     }
 
     button {
@@ -247,16 +245,14 @@ h1 {
       align-items: center;
       height: 44px;
       width: 44px;
-      // background: rgba(255, 255, 255, 1);
-      background: #335eea;
+      background: var(--color-primary);
       border-radius: 50%;
       transition: 0.2s;
       box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.2);
       cursor: default;
 
       .svg-icon {
-        // color: #3f63f5;
-        color: #eaeffd;
+        color: var(--color-primary-bg);
         margin-left: 4px;
         height: 16px;
         width: 16px;
@@ -276,7 +272,8 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     font-size: 14px;
-    color: rgba(51, 94, 234, 0.88);
+    opacity: 0.88;
+    color: var(--color-primary);
     p {
       margin-top: 2px;
     }
@@ -286,7 +283,8 @@ h1 {
 .playlists {
   margin-top: 54px;
   .title {
-    color: rgba(0, 0, 0, 0.88);
+    color: var(--color-text);
+    opacity: 0.88;
     margin-bottom: 8px;
     font-size: 24px;
     font-weight: 600;

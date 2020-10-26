@@ -1,5 +1,7 @@
 export default {
   howler: null,
+  accountLogin: false,
+  usernameLogin: false,
   liked: {
     songs: [],
   },

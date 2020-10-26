@@ -76,11 +76,12 @@ export default {
 .mv {
   margin: 12px 12px 24px 12px;
   width: 204px;
+  color: var(--color-text);
 
   .title {
     font-size: 16px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.88);
+    opacity: 0.88;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -88,7 +89,7 @@ export default {
   }
   .artist {
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.68);
+    opacity: 0.68;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;

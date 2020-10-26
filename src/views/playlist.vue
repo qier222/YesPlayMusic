@@ -46,7 +46,7 @@
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="
-              isLoggedIn && playlist.creator.userId !== settings.user.userId
+              accountLogin && playlist.creator.userId !== settings.user.userId
             "
             shape="round"
             :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
@@ -92,7 +92,6 @@ import NProgress from "nprogress";
 import { getPlaylistDetail, subscribePlaylist } from "@/api/playlist";
 import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
-import { isLoggedIn } from "@/utils/auth";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
@@ -132,10 +131,7 @@ export default {
     window.removeEventListener("scroll", this.handleScroll, true);
   },
   computed: {
-    ...mapState(["player", "settings"]),
-    isLoggedIn() {
-      return isLoggedIn();
-    },
+    ...mapState(["player", "settings", "accountLogin"]),
     isLikeSongsPage() {
       return this.$route.name === "likedSongs";
     },
@@ -230,20 +226,24 @@ export default {
     .title {
       font-size: 36px;
       font-weight: 700;
+      color: var(--color-text);
     }
     .artist {
       font-size: 18px;
-      color: rgba(0, 0, 0, 0.88);
+      opacity: 0.88;
+      color: var(--color-text);
       margin-top: 24px;
     }
     .date-and-count {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
+      color: var(--color-text);
       margin-top: 2px;
     }
     .description {
       font-size: 14px;
-      color: rgba(0, 0, 0, 0.68);
+      opacity: 0.68;
+      color: var(--color-text);
       margin-top: 24px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
@@ -251,8 +251,8 @@ export default {
       overflow: hidden;
       cursor: pointer;
       &:hover {
-        transition: color 0.3s;
-        color: rgba(0, 0, 0, 0.88);
+        transition: opacity 0.3s;
+        opacity: 0.88;
       }
     }
     .buttons {
@@ -303,6 +303,7 @@ export default {
 .user-info {
   h1 {
     font-size: 42px;
+    color: var(--color-text);
     .avatar {
       height: 44px;
       margin-right: 12px;
