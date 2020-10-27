@@ -1,12 +1,21 @@
 "use strict";
-const { exec } = require("child_process");
-// const fs = require('fs')
-import { app, protocol, BrowserWindow } from "electron";
+
+import path from 'path'
+// import { autoUpdater } from "electron-updater"
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  globalShortcut,
+} from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
-const isDevelopment = process.env.NODE_ENV !== "production";
+
 // maybe use for modify app menu
-// const contextMenu = require('electron-context-menu');
+// import contextMenu from 'electron-context-menu'
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -18,36 +27,19 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createWindow() {
-  console.log("Node Version: ", process.version);
-  const napi = exec("npm run napi:run");
-  let scriptOutput = "";
-  napi.stdout.setEncoding('utf8');
-  napi.stdout.on('data', (data) => {
-    console.log('napi: ' + data);
-    data = data.toString();
-    scriptOutput += data + '\n';
-    // TODO write file with stream
-    // const log = fs.createWriteStream(__dirname, '/tmp/' + +new Date + '.log')
-    // log.write(scriptOutput)
-  });
-  // napi.stdout.on('error', (err) => {
-  //   console.log('napi error: ' + err);
-  //   data = err.toString();
-  //   scriptOutput += data + '\n';
-  //   const log = fs.createWriteStream(__dirname, '/tmp/' + +new Date + 'error.log')
-  //   log.write(scriptOutput)
-  // });
+  require('./electron/services')
 
-  // Create the browser window.
+// Create the browser window.
   win = new BrowserWindow({
-    width: 1920,
+    width: 1153,
     height: 768,
     webPreferences: {
       webSecurity: false,
-      // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
     },
+    icon: path.join(__static, "./img/icons/android-chrome-512x512.png"),
+    preload: path.join(__dirname, "./electron/preload.js"),
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -58,7 +50,7 @@ function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
-    win.webContents.openDevTools();
+    // autoUpdater.checkForUpdatesAndNotify()
   }
 
   win.on("closed", () => {
@@ -95,8 +87,37 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  // Register shortcut for debug
+  globalShortcut.register("CommandOrControl+K", function () {
+    win.webContents.openDevTools();
+  });
   createWindow();
 });
+
+ipcMain.on("close", () => {
+  win.close();
+  app.quit();
+});
+ipcMain.on("minimize", () => {
+  win.minimize();
+});
+
+// autoUpdater.on("checking-for-update", () => {});
+// autoUpdater.on("update-available", info => {
+//   console.log(info);
+//   dialog.showMessageBox({
+//     title: "新版本发布",
+//     message: "有新内容更新，稍后将重新为您安装",
+//     buttons: ["确定"],
+//     type: "info",
+//     noLink: true
+//   });
+// });
+
+// autoUpdater.on("update-downloaded", info => {
+//   console.log(info);
+//   autoUpdater.quitAndInstall();
+// });
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
@@ -112,3 +133,19 @@ if (isDevelopment) {
     });
   }
 }
+
+// Make sure the app is singleton.
+function initialize() {
+  const shouldQuit = !app.requestSingleInstanceLock();
+  if (shouldQuit) return app.quit();
+  // loadComponent()
+}
+
+/**
+ * 注册主线程文件里的所有js
+ */
+// function loadComponent () {
+//   require('./electron/menu.js')
+// }
+
+initialize();

@@ -1,5 +1,5 @@
 const path = require("path");
-const CopywebpackPlugin = require('copy-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -50,72 +50,56 @@ module.exports = {
   pluginOptions: {
     // electron-builder的配置文件
     electronBuilder: {
+      preload: 'src/electron/preload.js',
       builderOptions: {
-        // files: [
-        //   {
-        //     'filter': ['**/*']
-        //   }
-        // ],
-        // extraFiles: ['./extensions/'],
         // 应用名称
         productName: 'Yes Play Music',
         // 版权
         copyright: 'Copyright © YesPlayMusic',
         compression: "maximum",
-        // 是否打包加密
+        publish: ["github"],
+        // Compress app using 'electron/asar'
         asar: true,
-        // // 项目打包生成的文件目录
-        // directories: {
-        //   output: 'build'
-        // },
-        // window的icon头标
+
+        // 项目打包生成的文件目录
+        directories: {
+          output: 'dist_electron'
+        },
+        // window 的 icon 头标
         win: {
           icon: 'public/favicon.ico'
         },
         // 是否静默安装
         nsis: {
+          // 是否一键安装，建议为 false，可以让用户点击下一步、下一步、下一步的形式安装程序，如果为true，当用户双击构建好的程序，自动安装程序并打开，即：一键安装
           oneClick: false,
+          // 允许修改安装目录，建议为 true，是否允许用户改变安装目录，默认是不允许
           allowToChangeInstallationDirectory: true
         },
         // 集成 nodejs, https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration
         // nodeIntegration: true
       },
+      // 主线程的配置文件
       chainWebpackMainProcess: config => {
-        // console.log(config)
-        let outputDir = 'dist_electron/bundled'
-        config.plugin('copy').use(CopywebpackPlugin, [
-          [
-            {
-              from: path.resolve(__dirname, './NeteaseCloudMusicApi-master'),
-              to: path.join(__dirname, outputDir, 'NeteaseCloudMusicApi-master')
-            }
-          ]
-        ])
-      }
+        config.plugin('define').tap((args) => {
+          args[0]['IS_ELECTRON'] = true
+          return args
+        })
+      },
       // 渲染线程的配置文件
-      // chainWebpackRendererProcess: config => {
-      //   // 渲染线程的一些其他配置
-      //   // Chain webpack config for electron renderer process only
-      //   // The following example will set IS_ELECTRON to true in your app
-      //   config.plugin('define').tap((args) => {
-      //     args[0]['IS_ELECTRON'] = true
-      //     return args
-      //   })
-      // },
+      chainWebpackRendererProcess: config => {
+        // 渲染线程的一些其他配置
+        // Chain webpack config for electron renderer process only
+        // The following example will set IS_ELECTRON to true in your app
+        config.plugin('define').tap((args) => {
+          args[0]['IS_ELECTRON'] = true
+          return args
+        })
+      },
       // 主入口文件
       // mainProcessFile: 'src/main.js',
-      // mainProcessWatch: [],
+      mainProcessWatch: ['../napi/routes.js'],
       // mainProcessArgs: []
     }
-  },
-  // 打包时不生成.map文件，减少体积，加快速度如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
-  productionSourceMap: false,
-  // 放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录。
-  assetsDir: 'src/renderer/static',
-  // 跨域配置
-  devServer: {
-    disableHostCheck: true
-  },
-  // css 样式
-  css: {}
+  }
 };
