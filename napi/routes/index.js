@@ -1,5 +1,5 @@
-const { cookieToJson } = require('./util/index');
-const request = require('./util/request');
+const { cookieToJson } = require('../util/index');
+const request = require('../util/request');
 module.exports = {
   '/yunbei/today': (req, res) => {
     if (typeof req.query.cookie === 'string') {
