@@ -16,19 +16,8 @@
   ],
   "main": "main.js",
   "types": "./interface.d.ts",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "engines": {
     "node": ">=12"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
   },
   "author": "binaryify",
   "license": "MIT",
@@ -56,9 +45,7 @@
     "eslint-config-prettier": "6.13.0",
     "eslint-plugin-html": "6.0.3",
     "eslint-plugin-prettier": "3.1.4",
-    "husky": "4.2.5",
     "intelli-espower-loader": "1.0.1",
-    "lint-staged": "10.4.0",
     "mocha": "8.2.0",
     "power-assert": "1.6.1",
     "prettier": "2.1.2",
