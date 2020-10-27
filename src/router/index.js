@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import store from "@/store";
 import NProgress from "nprogress";
 import "@/assets/css/nprogress.css";
 import { isLooseLoggedIn } from "@/utils/auth";
@@ -118,9 +117,6 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // 需要登录的逻辑
   if (to.meta.requireLogin) {
-    if (store.state.data.user.nickname === undefined) {
-      next({ path: "/login" });
-    }
     if (isLooseLoggedIn()) {
       next();
     } else {

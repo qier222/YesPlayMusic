@@ -85,6 +85,7 @@ export default {
       if (state.player.repeat !== "off") {
         nextTrack = state.player.list.find((t) => t.sort === 0);
       } else {
+        document.title = "YesPlayMusic";
         return;
       }
     }
