@@ -35,6 +35,8 @@ export default {
     withAlbums: "Albums",
     artist: "Artist",
     videos: "Music Videos",
+    following: "Following",
+    follow: "Follow"
   },
   album: {
     released: "Released",

@@ -17,8 +17,8 @@
             {{ $t("play") }}
           </ButtonTwoTone>
           <ButtonTwoTone @click.native="followArtist" color="grey">
-            <span v-if="artist.followed">Following</span>
-            <span v-else>Follow</span>
+            <span v-if="artist.followed">{{ $t("artist.following") }}</span>
+            <span v-else>{{ $t("artist.follow") }}</span>
           </ButtonTwoTone>
         </div>
       </div>
@@ -84,7 +84,7 @@
       <div class="section-title">MVs</div>
       <MvRow :mvs="mvs" subtitle="publishTime" />
     </div>
-    <div class="eps">
+    <div class="eps" v-if="eps.length !== 0">
       <div class="section-title">{{ $t("artist.EPsSingles") }}</div>
       <CoverRow
         :type="'album'"
@@ -305,7 +305,6 @@ export default {
       font-weight: 600;
       &:hover {
         opacity: 1;
-        // background: var(--color-primary-bg);
       }
     }
   }
