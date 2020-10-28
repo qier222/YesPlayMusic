@@ -13,6 +13,7 @@ export function mvDetail(mvid) {
     method: "get",
     params: {
       mvid,
+      timestamp: new Date().getTime(),
     },
   });
 }
@@ -27,7 +28,6 @@ export function mvDetail(mvid) {
  * @param {number} params.id
  * @param {number=} params.r
  */
-
 export function mvUrl(params) {
   return request({
     url: "/mv/url",
@@ -35,6 +35,7 @@ export function mvUrl(params) {
     params,
   });
 }
+
 /**
  * 相似 mv
  * 说明 : 调用此接口 , 传入 mvid 可获取相似 mv
@@ -45,5 +46,24 @@ export function simiMv(mvid) {
     url: "/simi/mv",
     method: "get",
     params: { mvid },
+  });
+}
+
+/**
+ * 收藏/取消收藏 MV
+ * 说明 : 调用此接口,可收藏/取消收藏 MV
+ * - mvid: mv id
+ * - t: 1 为收藏,其他为取消收藏
+ * @param {Object} params
+ * @param {number} params.mvid
+ * @param {number=} params.t
+ */
+
+export function likeAMV(params) {
+  params.timestamp = new Date().getTime();
+  return request({
+    url: "/mv/sub",
+    method: "post",
+    params,
   });
 }

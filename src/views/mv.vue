@@ -11,6 +11,12 @@
           }}</router-link>
           -
           {{ mv.data.name }}
+          <div class="like-button" v-show="accountLogin">
+            <button-icon @click.native="likeMV">
+              <svg-icon icon-class="heart-solid" v-if="mv.subed"></svg-icon>
+              <svg-icon icon-class="heart" v-else></svg-icon>
+            </button-icon>
+          </div>
         </div>
         <div class="info">
           {{ mv.data.playCount | formatPlayCount }} Views ·
@@ -26,17 +32,20 @@
 </template>
 
 <script>
+import { mvDetail, mvUrl, simiMv, likeAMV } from "@/api/mv";
+import { isAccountLoggedIn } from "@/utils/auth";
 import NProgress from "nprogress";
-import { mvDetail, mvUrl, simiMv } from "@/api/mv";
-import Plyr from "plyr";
 import "@/assets/css/plyr.css";
+import Plyr from "plyr";
 
+import ButtonIcon from "@/components/ButtonIcon.vue";
 import MvRow from "@/components/MvRow.vue";
 
 export default {
   name: "mv",
   components: {
     MvRow,
+    ButtonIcon,
   },
   data() {
     return {
@@ -52,6 +61,11 @@ export default {
       player: null,
       simiMvs: [],
     };
+  },
+  computed: {
+    accountLogin() {
+      return isAccountLoggedIn();
+    },
   },
   methods: {
     getData(id) {
@@ -79,6 +93,14 @@ export default {
       });
       simiMv(id).then((data) => {
         this.simiMvs = data.mvs;
+      });
+    },
+    likeMV() {
+      likeAMV({
+        mvid: this.mv.data.id,
+        t: this.mv.subed ? 0 : 1,
+      }).then((data) => {
+        if (data.code === 200) this.mv.subed = !this.mv.subed;
       });
     },
   },
@@ -152,6 +174,15 @@ export default {
     font-weight: 600;
     color: var(--color-text);
     opacity: 0.88;
+  }
+}
+
+.like-button {
+  display: inline-block;
+  .svg-icon {
+    height: 18px;
+    width: 18px;
+    color: var(--color-primary);
   }
 }
 </style>
