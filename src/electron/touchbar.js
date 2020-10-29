@@ -1,4 +1,8 @@
-const { app, BrowserWindow, TouchBar } = require('electron')
+const {
+  app,
+  BrowserWindow,
+  TouchBar
+} = require('electron')
 
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar
 
@@ -88,16 +92,16 @@ const touchBar = new TouchBar({
   ]
 })
 
-let window
+// let window
 
-app.whenReady().then(() => {
-  window = new BrowserWindow({
-    frame: false,
-    titleBarStyle: 'hiddenInset',
-    width: 200,
-    height: 200,
-    backgroundColor: '#000'
-  })
-  window.loadURL('about:blank')
-  window.setTouchBar(touchBar)
-})
+// app.whenReady().then(() => {
+//   window = new BrowserWindow({
+//     frame: false,
+//     titleBarStyle: 'hiddenInset',
+//     backgroundColor: '#000'
+//   })
+//   window.loadURL('about:blank')
+//   window.setTouchBar(touchBar)
+// })
+
+module.exports = touchBar

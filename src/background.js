@@ -8,14 +8,11 @@ import {
   BrowserWindow,
   ipcMain,
   dialog,
-  Tray,
   globalShortcut,
 } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 
-// maybe use for modify app menu
-// import contextMenu from 'electron-context-menu'
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -29,25 +26,40 @@ protocol.registerSchemesAsPrivileged([
 const iconString = path.join(__static, "img/icons/apple-touch-icon.png")
 
 let bounceId = app.dock.bounce()
-// app.dock.setBadge('Yes Play Music')
 app.dock.setIcon(iconString)
+
 function createWindow() {
-  require('./electron/services')
-  // TODO Set the tray icon, need a white icon
-  // const trayIcon = path.join(__static, "img/icons/32x32.png")
-  // const tray = new Tray(trayIcon)
-// Create the browser window.
+  const touchbar = require('./electron/touchbar.js')
+  const tray = require('./electron/tray.js')
+  const createMenu = require('./electron/menu.js')
+  tray.on('click', function () {
+    if (win.isVisible()) {
+      win.hide()
+    } else {
+      win.show()
+    }
+  })
   win = new BrowserWindow({
     width: 1440,
     height: 768,
     icon: iconString,
+    titleBarStyle: 'default',
     webPreferences: {
       webSecurity: false,
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
     },
     preload: path.join(__dirname, "./electron/preload.js"),
   });
+
+  try {
+    createMenu(win)
+    win.setTouchBar(touchbar)
+    win.setAutoHideCursor(true)
+    app.dock.cancelBounce(bounceId)
+    // autoUpdater.checkForUpdatesAndNotify()
+  } catch (error) {
+    console.log(error)
+  }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -57,17 +69,12 @@ function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
-    app.dock.cancelBounce(bounceId)
-    
-    // autoUpdater.checkForUpdatesAndNotify()
   }
 
   win.on("closed", () => {
     win = null;
   });
 }
-
-
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
@@ -90,6 +97,8 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
+  // 启动 api 服务器
+  require('./electron/services.js')
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
@@ -149,14 +158,6 @@ if (isDevelopment) {
 function initialize() {
   const shouldQuit = !app.requestSingleInstanceLock();
   if (shouldQuit) return app.quit();
-  // loadComponent()
 }
-
-/**
- * 注册主线程文件里的所有js
- */
-// function loadComponent () {
-//   require('./electron/menu.js')
-// }
 
 initialize();

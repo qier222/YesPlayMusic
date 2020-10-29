@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const bodyParser = require('body-parser')
 const cache = require('../../napi/util/apicache').middleware
 const fileUpload = require('express-fileupload')
@@ -50,8 +49,8 @@ Object.keys(routes).forEach(route => {
   app.use(route, routes[route])
 })
 
-const port = process.env.PORT || 3000
-const host = process.env.HOST || ''
+const port = process.env.PORT || 10754
+const host = process.env.HOST || '127.0.0.1'
 
 app.server = app.listen(port, host, () => {
   console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
