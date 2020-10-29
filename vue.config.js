@@ -67,7 +67,7 @@ module.exports = {
         },
         // window 的 icon 头标
         win: {
-          icon: 'public/favicon.ico'
+          icon: 'public/img/icons/512x512.png'
         },
         // 是否静默安装
         nsis: {
