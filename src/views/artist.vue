@@ -81,7 +81,12 @@
       />
     </div>
     <div class="mvs" v-if="mvs.length !== 0">
-      <div class="section-title">MVs</div>
+      <div class="section-title"
+        >MVs
+        <router-link :to="`/artist/${this.artist.id}/mv`">{{
+          $t("home.seeMore")
+        }}</router-link>
+      </div>
       <MvRow :mvs="mvs" subtitle="publishTime" />
     </div>
     <div class="eps" v-if="eps.length !== 0">
@@ -163,7 +168,7 @@ export default {
         this.albumsData = data.hotAlbums;
         this.latestRelease = data.hotAlbums[0];
       });
-      artistMv(id).then((data) => {
+      artistMv({ id }).then((data) => {
         this.mvs = data.mvs;
       });
     },
@@ -256,6 +261,15 @@ export default {
   color: var(--color-text);
   margin-bottom: 16px;
   margin-top: 46px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  a {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.68;
+  }
 }
 
 .latest-release {

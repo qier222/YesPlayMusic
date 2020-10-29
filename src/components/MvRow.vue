@@ -51,9 +51,11 @@ export default {
       this.$router.push({ path: "/mv/" + id, query });
     },
     getUrl(mv) {
-      if (mv.cover !== undefined) return mv.cover;
-      if (mv.imgurl16v9 !== undefined) return mv.imgurl16v9;
-      if (mv.coverUrl !== undefined) return mv.coverUrl;
+      if (mv.cover !== undefined) return mv.cover.replace(/^http:/, "https:");
+      if (mv.imgurl16v9 !== undefined)
+        return mv.imgurl16v9.replace(/^http:/, "https:");
+      if (mv.coverUrl !== undefined)
+        return mv.coverUrl.replace(/^http:/, "https:");
     },
     getID(mv) {
       if (mv.id !== undefined) return mv.id;

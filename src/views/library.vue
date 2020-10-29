@@ -253,18 +253,24 @@ export default {
       });
     },
     loadLikedAlbums() {
+      NProgress.start();
       likedAlbums().then((data) => {
         this.albums = data.data;
+        NProgress.done();
       });
     },
     loadLikedArtists() {
+      NProgress.start();
       likedArtists().then((data) => {
         this.artists = data.data;
+        NProgress.done();
       });
     },
     loadLikedMVs() {
+      NProgress.start();
       likedMVs().then((data) => {
         this.mvs = data.data;
+        NProgress.done();
       });
     },
   },
