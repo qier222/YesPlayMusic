@@ -8,6 +8,7 @@ import {
   BrowserWindow,
   ipcMain,
   dialog,
+  Tray,
   globalShortcut,
 } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
@@ -25,20 +26,26 @@ let win;
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
+const iconString = path.join(__static, "img/icons/apple-touch-icon.png")
 
+let bounceId = app.dock.bounce()
+// app.dock.setBadge('Yes Play Music')
+app.dock.setIcon(iconString)
 function createWindow() {
   require('./electron/services')
-
+  // TODO Set the tray icon, need a white icon
+  // const trayIcon = path.join(__static, "img/icons/32x32.png")
+  // const tray = new Tray(trayIcon)
 // Create the browser window.
   win = new BrowserWindow({
     width: 1440,
     height: 768,
+    icon: iconString,
     webPreferences: {
       webSecurity: false,
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
     },
-    icon: path.join(__static, "./img/icons/android-chrome-512x512.png"),
     preload: path.join(__dirname, "./electron/preload.js"),
   });
 
@@ -50,6 +57,8 @@ function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
+    app.dock.cancelBounce(bounceId)
+    
     // autoUpdater.checkForUpdatesAndNotify()
   }
 
@@ -57,6 +66,8 @@ function createWindow() {
     win = null;
   });
 }
+
+
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

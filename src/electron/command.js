@@ -1,11 +1,11 @@
 "use strict";
 
-import { app, ipcMain, Menu, MenuItem, BrowserWindow, globalShortcut } from 'electron'
+const { app, ipcMain, Menu, MenuItem, BrowserWindow, globalShortcut } = require('electron')
 
-let loginWindow, senders;
+let loginWindow, senders, win
 
 function openWindow(url) {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     height: 500,
     width: 350,
     useContentSize: true,
@@ -68,7 +68,7 @@ const settingsMenu = {
   },
 };
 
-export function command(mainWindow, winURL) {
+function command(mainWindow, winURL) {
   // 显示播放菜单
   settingsMenu.playMenu();
   // 接收显示菜单指令
@@ -114,3 +114,8 @@ export function command(mainWindow, winURL) {
     require("electron-debug")({ showDevTools: true });
   });
 }
+
+app.on("ready", async () => {
+  openWindow();
+  command(win)
+});
