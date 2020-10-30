@@ -1,6 +1,6 @@
 <template>
   <div class="player">
-    <div class="progress-bar">
+    <div class="progress-bar" :class="{ nyancat: settings.nyancatStyle }">
       <vue-slider
         v-model="progress"
         :min="0"

@@ -106,6 +106,22 @@
           </div>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title" style="transform: scaleX(-1)">🐈️ 🏳️‍🌈</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="nyancat-style"
+              id="nyancat-style"
+              v-model="nyancatStyle"
+            />
+            <label for="nyancat-style"></label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -170,6 +186,18 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showPlaylistsByAppleMusic",
+          value,
+        });
+      },
+    },
+    nyancatStyle: {
+      get() {
+        if (this.settings.nyancatStyle === undefined) return false;
+        return this.settings.nyancatStyle;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "nyancatStyle",
           value,
         });
       },
