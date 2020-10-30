@@ -57,7 +57,16 @@ module.exports = {
         // 版权
         copyright: 'Copyright © YesPlayMusic',
         compression: "maximum",
-        publish: ["github"],
+        publish: [
+          {
+            "provider": "github",
+            "owner": "qier222",
+            "repo": "YesPlayMusic",
+            "vPrefixedTagName": true,
+            "private": true,
+            "releaseType": "draft"
+          }
+        ],
         // Compress app using 'electron/asar'
         asar: true,
 
@@ -67,7 +76,22 @@ module.exports = {
         },
         // window 的 icon 头标
         win: {
-          icon: 'public/img/icons/512x512.png'
+          publisherName: 'Yes Play Music',
+          icon: 'public/img/icons/512x512.png',
+          publish: [
+            "github"
+          ],
+        },
+        // linux 的配置
+        linux: {
+          "target": [
+            "AppImage",
+            "tar.gz",
+            "deb"
+          ]
+        },
+        "dmg": {
+          "icon": "build/icons/icon.icns"
         },
         // 是否静默安装
         nsis: {
@@ -76,8 +100,6 @@ module.exports = {
           // 允许修改安装目录，建议为 true，是否允许用户改变安装目录，默认是不允许
           allowToChangeInstallationDirectory: true
         },
-        // 集成 nodejs, https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration
-        // nodeIntegration: true
       },
       // 主线程的配置文件
       chainWebpackMainProcess: config => {

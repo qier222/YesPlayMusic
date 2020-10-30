@@ -8,7 +8,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build -mwl",
+    "electron:build": "vue-cli-service electron:build -mwl -p never",
     "electron:serve": "vue-cli-service electron:serve",
     "electron:buildicon": "electron-icon-builder --input=./public/img/icons/android-chrome-512x512.png --output=build --flatten",
     "electron:publish": "vue-cli-service electron:build -p always",
