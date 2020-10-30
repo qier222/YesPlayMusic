@@ -1,12 +1,12 @@
-const path = require('path')
-const { Menu, Tray } = require('electron')
+const path = require("path");
+const { Menu, Tray } = require("electron");
 
-let tray = null
+let tray = null;
 
-const macIcon = path.join(__static, "img/icons/menu.png")
-const winIcon = path.join(__static, "img/icons/icon.ico")
+const macIcon = path.join(__static, "img/icons/menu.png");
+const winIcon = path.join(__static, "img/icons/icon.ico");
 
-tray = new Tray(macIcon)
+tray = new Tray(macIcon);
 
 // Temporary no need for menu.
 // const contextMenu = Menu.buildFromTemplate([
@@ -21,4 +21,4 @@ tray = new Tray(macIcon)
 
 // Call this again for Linux because we modified the context menu
 // tray.setContextMenu(contextMenu)
-module.exports = tray
+module.exports = tray;

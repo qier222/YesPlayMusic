@@ -1,178 +1,177 @@
-const { app, Menu } = require('electron')
+const { app, Menu } = require("electron");
 // import { autoUpdater } from "electron-updater"
 // const version = app.getVersion();
 
-const isMac = process.platform === 'darwin'
+const isMac = process.platform === "darwin";
 
 function createMenu(win) {
-  let menu = null
+  let menu = null;
   const template = [
-    ...(isMac ? [{
-      label: app.name,
-      submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { role: 'services' },
-        { type: 'separator' },
-        { type: 'separator' },
-        {
-          label: 'Preferences...',
-          accelerator: (() => isMac ? 'CmdOrCtrl+,' : 'Ctrl+,')(),
-          click: () => {
-            win.webContents.send("changeRouteTo", "/settings")
-          },
-          role: 'preferences'
-        },
-        { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideothers' },
-        { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' }
-      ]
-    }] : []),
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
-        { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        ...(isMac ? [
-          { role: 'delete' },
-          { role: 'selectAll' },
-          { type: 'separator' },
+    ...(isMac
+      ? [
           {
-            label: 'Speech',
+            label: app.name,
             submenu: [
-              { role: 'startspeaking' },
-              { role: 'stopspeaking' }
+              { role: "about" },
+              { type: "separator" },
+              { role: "services" },
+              { type: "separator" },
+              { type: "separator" },
+              {
+                label: "Preferences...",
+                accelerator: (() => (isMac ? "CmdOrCtrl+," : "Ctrl+,"))(),
+                click: () => {
+                  win.webContents.send("changeRouteTo", "/settings");
+                },
+                role: "preferences",
+              },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideothers" },
+              { role: "unhide" },
+              { type: "separator" },
+              { role: "quit" },
+            ],
+          },
+        ]
+      : []),
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        ...(isMac
+          ? [
+              { role: "delete" },
+              { role: "selectAll" },
+              { type: "separator" },
+              {
+                label: "Speech",
+                submenu: [{ role: "startspeaking" }, { role: "stopspeaking" }],
+              },
             ]
-          }
-        ] : [
-          { role: 'delete' },
-          { type: 'separator' },
-          { role: 'selectAll' }
-        ])
-      ]
+          : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
+      ],
     },
     {
-      label: 'Controls',
+      label: "Controls",
       submenu: [
         {
-          label: 'Play',
-          accelerator: 'Space',
+          label: "Play",
+          accelerator: "Space",
           click: () => {
-            win.webContents.send("play")
+            win.webContents.send("play");
           },
         },
         {
-          label: 'Next',
-          accelerator: 'CmdOrCtrl+Right',
+          label: "Next",
+          accelerator: "CmdOrCtrl+Right",
           click: () => {
-            win.webContents.send("next")
+            win.webContents.send("next");
           },
         },
         {
-          label: 'Previous',
-          accelerator: 'CmdOrCtrl+Left',
+          label: "Previous",
+          accelerator: "CmdOrCtrl+Left",
           click: () => {
-            win.webContents.send("previous")
+            win.webContents.send("previous");
           },
         },
         {
-          label: 'Increase Volume',
-          accelerator: 'CmdOrCtrl+Up',
+          label: "Increase Volume",
+          accelerator: "CmdOrCtrl+Up",
           click: () => {
-            win.webContents.send("increaseVolume")
+            win.webContents.send("increaseVolume");
           },
         },
         {
-          label: 'Decrease Volume',
-          accelerator: 'CmdOrCtrl+Down',
+          label: "Decrease Volume",
+          accelerator: "CmdOrCtrl+Down",
           click: () => {
-            win.webContents.send("decreaseVolume")
+            win.webContents.send("decreaseVolume");
           },
         },
         {
-          label: 'Like',
-          accelerator: 'CmdOrCtrl+L',
+          label: "Like",
+          accelerator: "CmdOrCtrl+L",
           click: () => {
-            win.webContents.send("like")
+            win.webContents.send("like");
           },
         },
         {
-          label: 'Repeat',
-          accelerator: 'Alt+R',
+          label: "Repeat",
+          accelerator: "Alt+R",
           click: () => {
-            win.webContents.send("repeat")
+            win.webContents.send("repeat");
           },
         },
         {
-          label: 'Shuffle',
-          accelerator: 'Alt+S',
+          label: "Shuffle",
+          accelerator: "Alt+S",
           click: () => {
-            win.webContents.send("shuffle")
+            win.webContents.send("shuffle");
           },
-        }
-      ]
+        },
+      ],
     },
     {
-      label: 'Window',
+      label: "Window",
       submenu: [
-        { role: 'minimize' },
-        { role: 'zoom' },
-        { role: 'reload' },
-        { role: 'forcereload' },
-        { role: 'toggledevtools' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' },
-        ...(isMac ? [
-          { type: 'separator' },
-          { role: 'front' },
-          { type: 'separator' },
-          {
-            role: 'window',
-            id: 'window',
-            label: 'Yes Play Music',
-            type: 'checkbox',
-            checked: true,
-            click: () => {
-              const current = menu.getMenuItemById('window')
-              if (current.checked === false) {
-                win.hide()
-              } else {
-                win.show()
-              }
-            },
-          }
-        ] : [
-          { role: 'close' }
-        ])
-      ]
+        { role: "minimize" },
+        { role: "zoom" },
+        { role: "reload" },
+        { role: "forcereload" },
+        { role: "toggledevtools" },
+        { type: "separator" },
+        { role: "togglefullscreen" },
+        ...(isMac
+          ? [
+              { type: "separator" },
+              { role: "front" },
+              { type: "separator" },
+              {
+                role: "window",
+                id: "window",
+                label: "Yes Play Music",
+                type: "checkbox",
+                checked: true,
+                click: () => {
+                  const current = menu.getMenuItemById("window");
+                  if (current.checked === false) {
+                    win.hide();
+                  } else {
+                    win.show();
+                  }
+                },
+              },
+            ]
+          : [{ role: "close" }]),
+      ],
     },
     {
-      label: 'Help',
+      label: "Help",
       submenu: [
         {
-          label: 'Github',
+          label: "Github",
           click: async () => {
-            const { shell } = require('electron')
-            await shell.openExternal('https://github.com/qier222/YesPlayMusic')
-          }
+            const { shell } = require("electron");
+            await shell.openExternal("https://github.com/qier222/YesPlayMusic");
+          },
         },
         {
-          label: 'Electron',
+          label: "Electron",
           click: async () => {
-            const { shell } = require('electron')
-            await shell.openExternal('https://electronjs.org')
-          }
+            const { shell } = require("electron");
+            await shell.openExternal("https://electronjs.org");
+          },
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ];
   // for window
   // if (process.platform === "win32") {
   //   template.push({
@@ -194,10 +193,8 @@ function createMenu(win) {
   //     ],
   //   });
   // }
-  menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
-module.exports = createMenu
-
-
+module.exports = createMenu;

@@ -1,6 +1,6 @@
 "use strict";
 
-import path from 'path'
+import path from "path";
 // import { autoUpdater } from "electron-updater"
 import {
   app,
@@ -23,27 +23,27 @@ let win;
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
-const iconString = path.join(__static, "img/icons/apple-touch-icon.png")
+const iconString = path.join(__static, "img/icons/apple-touch-icon.png");
 
-let bounceId = app.dock.bounce()
-app.dock.setIcon(iconString)
+let bounceId = app.dock.bounce();
+app.dock.setIcon(iconString);
 
 function createWindow() {
-  const touchbar = require('./electron/touchbar.js')
-  const tray = require('./electron/tray.js')
-  const createMenu = require('./electron/menu.js')
-  tray.on('click', function () {
+  const touchbar = require("./electron/touchbar.js");
+  const tray = require("./electron/tray.js");
+  const createMenu = require("./electron/menu.js");
+  tray.on("click", function () {
     if (win.isVisible()) {
-      win.hide()
+      win.hide();
     } else {
-      win.show()
+      win.show();
     }
-  })
+  });
   win = new BrowserWindow({
     width: 1440,
     height: 768,
     icon: iconString,
-    titleBarStyle: 'default',
+    titleBarStyle: "default",
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
@@ -52,13 +52,13 @@ function createWindow() {
   });
 
   try {
-    createMenu(win)
-    win.setTouchBar(touchbar)
-    win.setAutoHideCursor(true)
-    app.dock.cancelBounce(bounceId)
+    createMenu(win);
+    win.setTouchBar(touchbar);
+    win.setAutoHideCursor(true);
+    app.dock.cancelBounce(bounceId);
     // autoUpdater.checkForUpdatesAndNotify()
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -98,7 +98,7 @@ app.on("activate", () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
   // 启动 api 服务器
-  require('./electron/services.js')
+  require("./electron/services.js");
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
