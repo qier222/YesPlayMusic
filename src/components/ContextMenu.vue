@@ -1,5 +1,5 @@
 <template>
-  <div class="context-menu">
+  <div class="context-menu" ref="contextMenu">
     <div
       class="menu"
       tabindex="-1"
@@ -37,6 +37,7 @@ export default {
 
     closeMenu() {
       this.showMenu = false;
+      this.$parent.closeMenu();
     },
 
     openMenu(e) {
@@ -62,10 +63,11 @@ export default {
 .menu {
   position: fixed;
   min-width: 136px;
+  max-width: 240px;
   list-style: none;
   background: rgba(255, 255, 255, 0.88);
   box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(12px);
   border-radius: 8px;
   box-sizing: border-box;
@@ -77,15 +79,65 @@ export default {
   }
 }
 
+[data-theme="dark"] {
+  .menu {
+    background: rgba(46, 46, 46, 0.68);
+    backdrop-filter: blur(16px) contrast(120%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
 .menu .item {
   font-weight: 600;
   font-size: 14px;
   padding: 10px 14px;
   border-radius: 7px;
   cursor: default;
+  color: var(--color-text);
   &:hover {
-    background: #eaeffd;
-    color: #335eea;
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+  }
+}
+
+hr {
+  margin: 4px 10px;
+  background: rgba(128, 128, 128, 0.18);
+  height: 1px;
+  box-shadow: none;
+  border: none;
+}
+
+.item-info {
+  padding: 10px 10px;
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+  cursor: default;
+  img {
+    height: 38px;
+    border-radius: 4px;
+  }
+  .info {
+    margin-left: 8px;
+  }
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
+  }
+  .subtitle {
+    font-size: 12px;
+    opacity: 0.68;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    word-break: break-all;
   }
 }
 </style>
