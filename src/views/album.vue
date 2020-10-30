@@ -11,9 +11,8 @@
         :id="album.id"
       />
       <div class="info">
-        <div class="title">
-          {{ album.name }}
-        </div>
+        <div class="title"> {{ title }}</div>
+        <div class="subtitle" v-if="subtitle !== ''">{{ subtitle }}</div>
         <div class="artist">
           <span>{{ album.type | formatAlbumType(album) }} by </span
           ><router-link :to="`/artist/${album.artist.id}`">{{
@@ -53,7 +52,12 @@
         </div>
       </div>
     </div>
-    <TrackList :tracks="tracks" :type="'album'" :id="album.id" />
+    <TrackList
+      :tracks="tracks"
+      :type="'album'"
+      :id="album.id"
+      :albumObject="album"
+    />
     <div class="extra-info">
       <div class="album-time"></div>
       <div class="release-date">
@@ -103,6 +107,7 @@ import { getArtistAlbum } from "@/api/artist";
 import { getTrackDetail } from "@/api/track";
 import { playAlbumByID } from "@/utils/play";
 import { getAlbum, albumDynamicDetail, likeAAlbum } from "@/api/album";
+import { splitSoundtrackAlbumTitle, splitAlbumTitle } from "@/utils/common";
 import NProgress from "nprogress";
 import { isAccountLoggedIn } from "@/utils/auth";
 
@@ -135,6 +140,8 @@ export default {
       show: false,
       moreAlbums: [],
       dynamicDetail: {},
+      subtitle: "",
+      title: "",
     };
   },
   created() {
@@ -161,7 +168,11 @@ export default {
           realAlbums.find((a1) => a1.id === a.id) === undefined &&
           eps.find((a1) => a1.id === a.id) === undefined
       );
-      return [...realAlbums, ...eps, ...restItems].slice(0, 5);
+      if (realAlbums.length === 0) {
+        return [...realAlbums, ...eps, ...restItems].slice(0, 5);
+      } else {
+        return [...realAlbums, ...restItems].slice(0, 5);
+      }
     },
   },
   methods: {
@@ -182,10 +193,24 @@ export default {
           this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
       });
     },
+    formatTitle() {
+      let splitTitle = splitSoundtrackAlbumTitle(this.album.name);
+      let splitTitle2 = splitAlbumTitle(splitTitle.title);
+      this.title = splitTitle2.title;
+      if (splitTitle.subtitle !== "" && splitTitle2.subtitle !== "") {
+        this.subtitle = splitTitle.subtitle + " · " + splitTitle2.subtitle;
+      } else {
+        this.subtitle =
+          splitTitle.subtitle === ""
+            ? splitTitle2.subtitle
+            : splitTitle.subtitle;
+      }
+    },
     loadData(id) {
       getAlbum(id).then((data) => {
         this.album = data.album;
         this.tracks = data.songs;
+        this.formatTitle();
         NProgress.done();
         this.show = true;
 
@@ -230,8 +255,10 @@ export default {
     .title {
       font-size: 56px;
       font-weight: 700;
-      display: inline-flex;
-      align-items: center;
+    }
+    .subtitle {
+      font-size: 22px;
+      font-weight: 600;
     }
     .artist {
       font-size: 18px;
