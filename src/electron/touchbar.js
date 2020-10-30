@@ -1,4 +1,5 @@
-const { app, BrowserWindow, TouchBar } = require("electron");
+// 运用 ipdMain 请求用户喜欢的歌手的数据，随机抽几个歌手进行随机
+const { TouchBar } = require("electron");
 
 const { TouchBarLabel, TouchBarButton, TouchBarSpacer } = TouchBar;
 
@@ -101,3 +102,4 @@ const touchBar = new TouchBar({
 // })
 
 module.exports = touchBar;
+

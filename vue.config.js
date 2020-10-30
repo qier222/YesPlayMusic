@@ -56,7 +56,8 @@ module.exports = {
         productName: 'Yes Play Music',
         // 版权
         copyright: 'Copyright © YesPlayMusic',
-        compression: "maximum",
+        // 机器好的可以打开，配置压缩
+        // compression: "maximum",
         publish: [
           {
             "provider": "github",
