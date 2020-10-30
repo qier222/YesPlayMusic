@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "description": "A third party music application for Netease Cloud Music",
-  "author": "qier222",
+  "author": "hawtim<hawtimzhang@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
