@@ -64,6 +64,7 @@ export function dailySignin(type = 0) {
     method: "post",
     params: {
       type,
+      timestamp: new Date().getTime(),
     },
   });
 }

@@ -1,8 +1,8 @@
 <template>
   <div v-show="show">
     <h1>
-      <img class="head" :src="user.profile.avatarUrl | resizeImage" />{{
-        user.profile.nickname
+      <img class="head" :src="data.user.avatarUrl | resizeImage" />{{
+        data.user.nickname
       }}{{ $t("library.sLibrary") }}
     </h1>
     <div class="section-one">
@@ -129,12 +129,6 @@ export default {
   data() {
     return {
       show: false,
-      user: {
-        profile: {
-          avatarUrl: "",
-          nickname: "",
-        },
-      },
       playlists: [],
       hasMorePlaylists: true,
       likedSongsPlaylist: {
@@ -153,7 +147,7 @@ export default {
   created() {
     NProgress.start();
     userDetail(this.data.user.userId).then((data) => {
-      this.user = data;
+      this.$store.commit("updateData", { key: "user", value: data.profile });
     });
   },
   activated() {

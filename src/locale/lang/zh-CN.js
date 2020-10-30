@@ -33,7 +33,7 @@ export default {
     artist: "歌手",
     videos: "个MV",
     following: "已关注",
-    follow: "关注"
+    follow: "关注",
   },
   album: {
     released: "发行于",
