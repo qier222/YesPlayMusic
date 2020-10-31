@@ -79,7 +79,8 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "browser": true
     },
     "extends": [
       "plugin:vue/essential",
@@ -87,6 +88,9 @@
     ],
     "parserOptions": {
       "parser": "babel-eslint"
+    },
+    "globals": {
+      "ipcRenderer": "off"
     },
     "rules": {}
   },

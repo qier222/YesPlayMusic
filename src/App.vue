@@ -25,8 +25,6 @@
 import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
 import GlobalEvents from "vue-global-events";
-const electron = window.require("electron");
-const ipcRenderer = electron.ipcRenderer;
 
 export default {
   name: "App",
@@ -35,44 +33,56 @@ export default {
     Player,
     GlobalEvents,
   },
+  data() {
+    return {
+      isElectron: process.env.IS_ELECTRON // "true" || undefined
+    }
+  },
   created() {
-    // listens to the main process 'changeRouteTo' event and changes the route from
-    // inside this Vue instance, according to what path the main process requires.
-    // responds to Menu click() events at the main process and changes the route accordingly.
-    ipcRenderer.on("changeRouteTo", (event, path) => {
-      console.log(event);
-      this.$router.push(path);
-    });
-    ipcRenderer.on("play", () => {
-      this.$refs.player.play();
-    });
-    ipcRenderer.on("next", () => {
-      this.$refs.player.next();
-    });
-    ipcRenderer.on("previous", () => {
-      this.$refs.player.previous();
-    });
-    ipcRenderer.on("increaseVolume", () => {
-      if (this.$refs.player.volume + 0.1 >= 1) {
-        return (this.$refs.player.volume = 1);
-      }
-      this.$refs.player.volume += 0.1;
-    });
-    ipcRenderer.on("decreaseVolume", () => {
-      if (this.$refs.player.volume - 0.1 <= 0) {
-        return (this.$refs.player.volume = 0);
-      }
-      this.$refs.player.volume -= 0.1;
-    });
-    ipcRenderer.on("like", () => {
-      this.$refs.player.likeCurrentSong();
-    });
-    ipcRenderer.on("repeat", () => {
-      this.$refs.player.repeat();
-    });
-    ipcRenderer.on("shuffle", () => {
-      this.$refs.player.shuffle();
-    });
+    if (this.isElectron) {
+      // 添加专有的类名
+      document.body.classList.add('is-electron')
+      // ipc message channel
+      const electron = window.require("electron");
+      const ipcRenderer = electron.ipcRenderer;
+      // listens to the main process 'changeRouteTo' event and changes the route from
+      // inside this Vue instance, according to what path the main process requires.
+      // responds to Menu click() events at the main process and changes the route accordingly.
+      ipcRenderer.on("changeRouteTo", (event, path) => {
+        console.log(event);
+        this.$router.push(path);
+      });
+      ipcRenderer.on("play", () => {
+        this.$refs.player.play();
+      });
+      ipcRenderer.on("next", () => {
+        this.$refs.player.next();
+      });
+      ipcRenderer.on("previous", () => {
+        this.$refs.player.previous();
+      });
+      ipcRenderer.on("increaseVolume", () => {
+        if (this.$refs.player.volume + 0.1 >= 1) {
+          return (this.$refs.player.volume = 1);
+        }
+        this.$refs.player.volume += 0.1;
+      });
+      ipcRenderer.on("decreaseVolume", () => {
+        if (this.$refs.player.volume - 0.1 <= 0) {
+          return (this.$refs.player.volume = 0);
+        }
+        this.$refs.player.volume -= 0.1;
+      });
+      ipcRenderer.on("like", () => {
+        this.$refs.player.likeCurrentSong();
+      });
+      ipcRenderer.on("repeat", () => {
+        this.$refs.player.repeat();
+      });
+      ipcRenderer.on("shuffle", () => {
+        this.$refs.player.shuffle();
+      });
+    }
   },
   methods: {
     play(e) {
@@ -159,6 +169,11 @@ a {
   &:hover {
     text-decoration: underline;
   }
+}
+
+// for electron
+body.is-electron::-webkit-scrollbar {
+  width: 0;
 }
 
 /* Let's get this party started */
