@@ -76,6 +76,16 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"
+            >Cached {{ tracksCache.length }} songs ({{ tracksCache.size }})</div
+          >
+        </div>
+        <div class="right">
+          <button @click="clearCache('tracks')"> Clear Songs Cache </button>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title"> Show Github Icon </div>
         </div>
         <div class="right">
@@ -129,10 +139,19 @@
 <script>
 import { mapState } from "vuex";
 import { doLogout } from "@/utils/auth";
-import { changeAppearance } from "@/utils/common";
+import { changeAppearance, bytesToSize } from "@/utils/common";
+import { countDBSize, clearDB } from "@/utils/db";
 
 export default {
   name: "settings",
+  data() {
+    return {
+      tracksCache: {
+        size: "0KB",
+        length: 0,
+      },
+    };
+  },
   computed: {
     ...mapState(["settings", "data"]),
     lang: {
@@ -159,11 +178,13 @@ export default {
     },
     musicQuality: {
       get() {
-        if (this.settings.appearance === undefined) return 320000;
+        if (this.settings.musicQuality === undefined) return 320000;
         return this.settings.musicQuality;
       },
       set(value) {
+        if (value === this.settings.musicQuality) return;
         this.$store.commit("changeMusicQuality", value);
+        this.clearCache("tracks");
       },
     },
     showGithubIcon: {
@@ -208,6 +229,31 @@ export default {
       doLogout();
       this.$router.push({ name: "home" });
     },
+    countDBSize(dbName) {
+      countDBSize(dbName).then((data) => {
+        if (data === undefined) {
+          this.tracksCache = {
+            size: "0KB",
+            length: 0,
+          };
+          return;
+        }
+        this.tracksCache.size = bytesToSize(data.bytes);
+        this.tracksCache.length = data.length;
+      });
+    },
+    clearCache(dbName) {
+      // TODO: toast
+      clearDB(dbName).then(() => {
+        this.countDBSize("tracks");
+      });
+    },
+  },
+  created() {
+    this.countDBSize("tracks");
+  },
+  activated() {
+    this.countDBSize("tracks");
   },
 };
 </script>
@@ -327,6 +373,21 @@ h2 {
       outline: none;
       color: var(--color-primary);
       background: var(--color-primary-bg);
+    }
+  }
+
+  button {
+    color: var(--color-text);
+    background: var(--color-secondary-bg);
+    padding: 8px 12px 8px 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: 0.2s;
+    &:hover {
+      transform: scale(1.06);
+    }
+    &:active {
+      transform: scale(0.94);
     }
   }
 }
