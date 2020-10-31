@@ -89,6 +89,7 @@ import { loginWithPhone, loginWithEmail } from "@/api/auth";
 import md5 from "crypto-js/md5";
 import { mapMutations } from "vuex";
 import { userPlaylist } from "@/api/user";
+import { getMusicU, setMusicU } from '@/utils/auth';
 
 export default {
   name: "Login",
@@ -177,6 +178,10 @@ export default {
           md5_password: md5(this.password).toString(),
         })
           .then((data) => {
+            // 获取接口返回的 MUSIC_U 写进本地 cookie 解决登录时跳转的问题
+            // 但是仍然无法完全模拟登录状态，像喜欢歌曲和喜欢列表都会遇到 301 需要登录问题
+            const MUSIC_U = getMusicU(data.cookie)
+            setMusicU('MUSIC_U', MUSIC_U)
             if (data.code !== 502) {
               this.updateData({ key: "user", value: data.profile });
               this.afterLogin();
