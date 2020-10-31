@@ -23,6 +23,7 @@
     "dayjs": "^1.8.36",
     "howler": "^2.2.0",
     "js-cookie": "^2.2.1",
+    "localforage": "^1.9.0",
     "nprogress": "^0.2.0",
     "plyr": "^3.6.2",
     "prettier": "2.1.2",
