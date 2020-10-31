@@ -166,6 +166,7 @@ button {
 a {
   color: inherit;
   text-decoration: none;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }

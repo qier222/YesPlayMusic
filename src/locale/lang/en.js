@@ -19,7 +19,7 @@ export default {
   library: {
     sLibrary: "'s Library",
     likedSongs: "Liked Songs",
-    sLikedSongs: "'s LikedSongs",
+    sLikedSongs: "'s Liked Songs",
   },
   explore: {
     explore: "Explore",
@@ -91,7 +91,7 @@ export default {
     artist: "Artists",
     album: "Albums",
     song: "Songs",
-    mv: "MVs",
+    mv: "Music Videos",
     playlist: "Playlists",
     noResult: "No Results",
     searchFor: "Search for",

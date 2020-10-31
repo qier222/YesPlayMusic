@@ -4,8 +4,8 @@
     :class="trackClass"
     :style="trackStyle"
     :title="track.reason"
-    @mouseover="focus = true"
-    @mouseleave="focus = false"
+    @mouseover="hover = true"
+    @mouseleave="hover = false"
   >
     <img
       :src="imgUrl | resizeImage(224)"
@@ -34,9 +34,11 @@
       <div class="container">
         <div class="title">
           {{ track.name }}
-          <span class="featured" v-if="isAlbum && track.ar.length > 1">
-            -
-            <ArtistsInLine :artists="track.ar" :showFirstArtist="false"
+          <span class="featured" v-if="isAlbum">
+            <ArtistsInLine
+              :artists="track.ar"
+              :exclude="this.$parent.albumObject.artist.name"
+              prefix="-"
           /></span>
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
             ><ExplicitSymbol
@@ -90,7 +92,7 @@ export default {
     track: Object,
   },
   data() {
-    return { focus: false, trackStyle: {} };
+    return { hover: false, trackStyle: {} };
   },
   computed: {
     imgUrl() {
@@ -125,10 +127,20 @@ export default {
       let trackClass = [this.type];
       if (!this.track.playable) trackClass.push("disable");
       if (this.isPlaying) trackClass.push("playing");
+      if (this.focus) trackClass.push("focus");
       return trackClass;
     },
     accountLogin() {
       return isAccountLoggedIn();
+    },
+    isMenuOpened() {
+      return this.$parent.rightClickedTrack.id === this.track.id ? true : false;
+    },
+    focus() {
+      return (
+        (this.hover && this.$parent.rightClickedTrack.id === 0) ||
+        this.isMenuOpened
+      );
     },
   },
   methods: {
@@ -285,11 +297,13 @@ button {
     opacity: 0.88;
     color: var(--color-text);
   }
-  &:hover {
-    transition: all 0.3s;
-    background: var(--color-secondary-bg);
-  }
 }
+
+.track.focus {
+  transition: all 0.3s;
+  background: var(--color-secondary-bg);
+}
+
 .track.disable {
   img {
     filter: grayscale(1) opacity(0.6);

@@ -3,7 +3,7 @@ export default {
   nav: {
     home: "首页",
     explore: "发现",
-    library: "资料库",
+    library: "音乐库",
     search: "搜索",
   },
   home: {
@@ -14,7 +14,7 @@ export default {
     charts: "排行榜",
   },
   library: {
-    sLibrary: "的资料库",
+    sLibrary: "的音乐库",
     likedSongs: "我喜欢的歌",
     sLikedSongs: "喜欢的歌",
   },

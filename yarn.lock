@@ -7017,6 +7017,13 @@ localforage@1.8.1:
   dependencies:
     lie "3.1.1"
 
+localforage@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.9.0.tgz#f3e4d32a8300b362b4634cc4e066d9d00d2f09d1"
+  integrity sha512-rR1oyNrKulpe+VM9cYmcFn6tsHuokyVHFaCM3+osEmxaHTbEk8oQu6eGDfS6DQLWi/N67XRmB8ECG37OES368g==
+  dependencies:
+    lie "3.1.1"
+
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/locate-path/download/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
@@ -11046,7 +11053,7 @@ vue-class-component@^7.1.0:
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.2.6.tgz#8471e037b8e4762f5a464686e19e5afc708502e4"
   integrity sha512-+eaQXVrAm/LldalI272PpDe3+i4mPis0ORiMYxF6Ae4hyuCh15W8Idet7wPUEs4N4YptgFHGys4UrgNQOMyO6w==
 
-vue-cli-plugin-electron-builder@^2.0.0-rc.5:
+vue-cli-plugin-electron-builder@~2.0.0-rc.4:
   version "2.0.0-rc.5"
   resolved "https://registry.npm.taobao.org/vue-cli-plugin-electron-builder/download/vue-cli-plugin-electron-builder-2.0.0-rc.5.tgz#87cd8d09877f5f3ae339abc0bedc47d7d2b733ac"
   integrity sha1-h82NCYd/XzrjOavAvtxH19K3M6w=

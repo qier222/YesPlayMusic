@@ -1,8 +1,9 @@
 <template>
   <span class="artist-in-line">
-    <span v-for="(ar, index) in slicedArtists" :key="ar.id">
+    {{ computedPrefix }}
+    <span v-for="(ar, index) in filteredArtists" :key="ar.id">
       <router-link :to="`/artist/${ar.id}`">{{ ar.name }}</router-link>
-      <span v-if="index !== slicedArtists.length - 1">, </span>
+      <span v-if="index !== filteredArtists.length - 1">, </span>
     </span>
   </span>
 </template>
@@ -15,16 +16,22 @@ export default {
       type: Array,
       required: true,
     },
-    showFirstArtist: {
-      type: Boolean,
-      default: true,
+    exclude: {
+      type: String,
+      default: "",
+    },
+    prefix: {
+      type: String,
+      default: "",
     },
   },
   computed: {
-    slicedArtists() {
-      return this.showFirstArtist
-        ? this.artists
-        : this.artists.slice(1, this.artists.length);
+    filteredArtists() {
+      return this.artists.filter((a) => a.name !== this.exclude);
+    },
+    computedPrefix() {
+      if (this.filteredArtists.length !== 0) return this.prefix;
+      else return "";
     },
   },
 };

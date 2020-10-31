@@ -1,6 +1,14 @@
 <template>
   <div class="track-list" :style="listStyles">
     <ContextMenu ref="menu">
+      <div class="item-info">
+        <img :src="rightClickedTrack.al.picUrl | resizeImage(128)" />
+        <div class="info">
+          <div class="title">{{ rightClickedTrack.name }}</div>
+          <div class="subtitle">{{ rightClickedTrack.ar[0].name }}</div>
+        </div>
+      </div>
+      <hr />
       <div class="item" @click="play">Play</div>
       <div class="item" @click="playNext">Play Next</div>
       <div
@@ -60,10 +68,25 @@ export default {
       type: String,
       default: "default",
     },
+    albumObject: {
+      type: Object,
+      default: () => {
+        return {
+          artist: {
+            name: "",
+          },
+        };
+      },
+    },
   },
   data() {
     return {
-      rightClickedTrack: null,
+      rightClickedTrack: {
+        id: 0,
+        name: "",
+        ar: [{ name: "" }],
+        al: { picUrl: "" },
+      },
       listStyles: {},
     };
   },
@@ -89,6 +112,14 @@ export default {
       }
       this.rightClickedTrack = track;
       this.$refs.menu.openMenu(e);
+    },
+    closeMenu() {
+      this.rightClickedTrack = {
+        id: 0,
+        name: "",
+        ar: [{ name: "" }],
+        al: { picUrl: "" },
+      };
     },
     playThisList(trackID) {
       if (this.dbclickTrackFunc === "default") {

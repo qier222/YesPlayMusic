@@ -107,3 +107,89 @@ export function changeAppearance(appearance) {
     .querySelector('meta[name="theme-color"]')
     .setAttribute("content", appearance === "dark" ? "#222" : "#fff");
 }
+
+export function splitSoundtrackAlbumTitle(title) {
+  let keywords = [
+    "Music from the Original Motion Picture Score",
+    "The Original Motion Picture Soundtrack",
+    "Original MGM Motion Picture Soundtrack",
+    "Complete Original Motion Picture Score",
+    "Original Music From The Motion Picture",
+    "Music From The Disney+ Original Movie",
+    "Original Music From The Netflix Film",
+    "Original Score to the Motion Picture",
+    "Original Motion Picture Soundtrack",
+    "Soundtrack from the Motion Picture",
+    "Original Television Soundtrack",
+    "Original Motion Picture Score",
+    "Music From the Motion Picture",
+    "Music From The Motion Picture",
+    "Complete Motion Picture Score",
+    "Music from the Motion Picture",
+    "Original Videogame Soundtrack",
+    "La Bande Originale du Film",
+    "Music from the Miniseries",
+    "Bande Originale du Film",
+    "Die Original Filmmusik",
+    "Original Soundtrack",
+    "Complete Score",
+    "Original Score",
+  ];
+  for (let keyword of keywords) {
+    if (title.includes(keyword) === false) continue;
+    return {
+      title: title
+        .replace(`(${keyword})`, "")
+        .replace(`: ${keyword}`, "")
+        .replace(`[${keyword}]`, "")
+        .replace(`- ${keyword}`, "")
+        .replace(`${keyword}`, ""),
+      subtitle: keyword,
+    };
+  }
+  return {
+    title: title,
+    subtitle: "",
+  };
+}
+
+export function splitAlbumTitle(title) {
+  let keywords = [
+    "Bonus Tracks Edition",
+    "Complete Edition",
+    "Deluxe Edition",
+    "Deluxe Version",
+    "Tour Edition",
+  ];
+  for (let keyword of keywords) {
+    if (title.includes(keyword) === false) continue;
+    return {
+      title: title
+        .replace(`(${keyword})`, "")
+        .replace(`: ${keyword}`, "")
+        .replace(`[${keyword}]`, "")
+        .replace(`- ${keyword}`, "")
+        .replace(`${keyword}`, ""),
+      subtitle: keyword,
+    };
+  }
+  return {
+    title: title,
+    subtitle: "",
+  };
+}
+
+export function bytesToSize(bytes) {
+  var marker = 1024; // Change to 1000 if required
+  var decimal = 2; // Change as required
+  var kiloBytes = marker;
+  var megaBytes = marker * marker;
+  var gigaBytes = marker * marker * marker;
+
+  if (bytes < kiloBytes) return bytes + " Bytes";
+  else if (bytes < megaBytes)
+    return (bytes / kiloBytes).toFixed(decimal) + " KB";
+  else if (bytes < gigaBytes)
+    return (bytes / megaBytes).toFixed(decimal) + " MB";
+  else return (bytes / gigaBytes).toFixed(decimal) + " GB";
+}

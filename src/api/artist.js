@@ -61,15 +61,15 @@ export function toplistOfArtists(type = null) {
 /**
  * 获取歌手 mv
  * 说明 : 调用此接口 , 传入歌手 id, 可获得歌手 mv 信息 , 具体 mv 播放地址可调 用/mv传入此接口获得的 mvid 来拿到 , 如 : /artist/mv?id=6452,/mv?mvid=5461064
- * @param {number} id 歌手 id, 可由搜索接口获得
+ * @param {number} params.id 歌手 id, 可由搜索接口获得
+ * @param {number} params.offset
+ * @param {number} params.limit
  */
-export function artistMv(id) {
+export function artistMv(params) {
   return request({
     url: "/artist/mv",
     method: "get",
-    params: {
-      id,
-    },
+    params,
   });
 }
 

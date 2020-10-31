@@ -50,6 +50,14 @@ const routes = [
     },
   },
   {
+    path: "/artist/:id/mv",
+    name: "artistMV",
+    component: () => import("@/views/artistMV.vue"),
+    meta: {
+      keepAlive: true,
+    },
+  },
+  {
     path: "/mv/:id",
     name: "mv",
     component: () => import("@/views/mv.vue"),
