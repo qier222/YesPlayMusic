@@ -8,9 +8,17 @@
         <div class="name">{{ artist.name }}</div>
         <div class="artist">{{ $t("artist.artist") }}</div>
         <div class="statistics">
-          {{ artist.musicSize }} {{ $t("common.songs") }} ·
-          {{ artist.albumSize }} {{ $t("artist.withAlbums") }} ·
-          {{ artist.mvSize }} {{ $t("artist.videos") }}
+          <a @click="scrollTo('popularTracks')"
+            >{{ artist.musicSize }} {{ $t("common.songs") }}</a
+          >
+          ·
+          <a @click="scrollTo('seeMore', 'start')"
+            >{{ artist.albumSize }} {{ $t("artist.withAlbums") }}</a
+          >
+          ·
+          <a @click="scrollTo('mvs')"
+            >{{ artist.mvSize }} {{ $t("artist.videos") }}</a
+          >
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPopularSongs()" :iconClass="`play`">
@@ -57,21 +65,21 @@
         <div></div>
       </div>
     </div>
-    <div class="popular-tracks">
+    <div class="popular-tracks" id="popularTracks">
       <div class="section-title">{{ $t("artist.popularSongs") }}</div>
       <TrackList
         :tracks="popularTracks.slice(0, showMorePopTracks ? 24 : 12)"
         :type="'tracklist'"
       />
 
-      <div class="show-more">
+      <div class="show-more" id="seeMore">
         <button @click="showMorePopTracks = !showMorePopTracks">
           <span v-show="!showMorePopTracks">{{ $t("artist.showMore") }}</span>
           <span v-show="showMorePopTracks">{{ $t("artist.showLess") }}</span>
         </button>
       </div>
     </div>
-    <div class="albums" v-if="albums.length !== 0">
+    <div class="albums" id="albums" v-if="albums.length !== 0">
       <div class="section-title">{{ $t("artist.albums") }}</div>
       <CoverRow
         :type="'album'"
@@ -80,10 +88,10 @@
         :showPlayButton="true"
       />
     </div>
-    <div class="mvs" v-if="mvs.length !== 0">
+    <div class="mvs" id="mvs" v-if="mvs.length !== 0">
       <div class="section-title"
         >MVs
-        <router-link :to="`/artist/${this.artist.id}/mv`">{{
+        <router-link v-show="hasMoreMV" :to="`/artist/${this.artist.id}/mv`">{{
           $t("home.seeMore")
         }}</router-link>
       </div>
@@ -140,6 +148,7 @@ export default {
       },
       showMorePopTracks: false,
       mvs: [],
+      hasMoreMV: false,
     };
   },
   computed: {
@@ -170,6 +179,7 @@ export default {
       });
       artistMv({ id }).then((data) => {
         this.mvs = data.mvs;
+        this.hasMoreMV = data.hasMore;
       });
     },
     goToAlbum(id) {
@@ -188,6 +198,12 @@ export default {
         t: this.artist.followed ? 0 : 1,
       }).then((data) => {
         if (data.code === 200) this.artist.followed = !this.artist.followed;
+      });
+    },
+    scrollTo(div, block = "center") {
+      document.getElementById(div).scrollIntoView({
+        behavior: "smooth",
+        block,
       });
     },
   },
@@ -216,7 +232,7 @@ export default {
 .artist-info {
   display: flex;
   align-items: center;
-  margin-bottom: 72px;
+  margin-bottom: 26px;
   color: var(--color-text);
   img {
     height: 192px;
@@ -260,7 +276,7 @@ export default {
   opacity: 0.88;
   color: var(--color-text);
   margin-bottom: 16px;
-  margin-top: 46px;
+  padding-top: 46px;
 
   display: flex;
   justify-content: space-between;

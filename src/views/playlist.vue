@@ -121,7 +121,7 @@ export default {
   },
   created() {
     if (this.$route.name === "likedSongs") {
-      this.loadData(this.data.user.likedSongPlaylistID);
+      this.loadData(this.data.likedSongPlaylistID);
     } else {
       this.loadData(this.$route.params.id);
     }

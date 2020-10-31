@@ -2,7 +2,7 @@
   <div class="track-list" :style="listStyles">
     <ContextMenu ref="menu">
       <div class="item-info">
-        <img :src="rightClickedTrack.al.picUrl | resizeImage(512)" />
+        <img :src="rightClickedTrack.al.picUrl | resizeImage(128)" />
         <div class="info">
           <div class="title">{{ rightClickedTrack.name }}</div>
           <div class="subtitle">{{ rightClickedTrack.ar[0].name }}</div>
@@ -67,6 +67,16 @@ export default {
     dbclickTrackFunc: {
       type: String,
       default: "default",
+    },
+    albumObject: {
+      type: Object,
+      default: () => {
+        return {
+          artist: {
+            name: "",
+          },
+        };
+      },
     },
   },
   data() {

@@ -34,9 +34,11 @@
       <div class="container">
         <div class="title">
           {{ track.name }}
-          <span class="featured" v-if="isAlbum && track.ar.length > 1">
-            -
-            <ArtistsInLine :artists="track.ar" :showFirstArtist="false"
+          <span class="featured" v-if="isAlbum">
+            <ArtistsInLine
+              :artists="track.ar"
+              :exclude="this.$parent.albumObject.artist.name"
+              prefix="-"
           /></span>
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
             ><ExplicitSymbol
