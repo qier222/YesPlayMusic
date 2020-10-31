@@ -35,13 +35,13 @@ export default {
   },
   data() {
     return {
-      isElectron: process.env.IS_ELECTRON // "true" || undefined
-    }
+      isElectron: process.env.IS_ELECTRON, // "true" || undefined
+    };
   },
   created() {
     if (this.isElectron) {
       // 添加专有的类名
-      document.body.classList.add('is-electron')
+      document.body.classList.add("is-electron");
       // ipc message channel
       const electron = window.require("electron");
       const ipcRenderer = electron.ipcRenderer;

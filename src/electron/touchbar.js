@@ -102,4 +102,3 @@ const touchBar = new TouchBar({
 // })
 
 module.exports = touchBar;
-
