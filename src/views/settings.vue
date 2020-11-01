@@ -76,8 +76,24 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"> Automatically Cache Songs </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="automatically-cache-songs"
+              id="automatically-cache-songs"
+              v-model="automaticallyCacheSongs"
+            />
+            <label for="automatically-cache-songs"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title"
-            >Cached {{ tracksCache.length }} songs ({{ tracksCache.size }})</div
+            >Cached {{ tracksCache.length }} Songs ({{ tracksCache.size }})</div
           >
         </div>
         <div class="right">
@@ -221,6 +237,21 @@ export default {
           key: "nyancatStyle",
           value,
         });
+      },
+    },
+    automaticallyCacheSongs: {
+      get() {
+        if (this.settings.automaticallyCacheSongs === undefined) return false;
+        return this.settings.automaticallyCacheSongs;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "automaticallyCacheSongs",
+          value,
+        });
+        if (value === false) {
+          this.clearCache("tracks");
+        }
       },
     },
   },

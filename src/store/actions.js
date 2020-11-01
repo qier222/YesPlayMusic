@@ -1,8 +1,9 @@
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
-import { getTrackDetail, scrobble } from "@/api/track";
+import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
 import { isAccountLoggedIn } from "@/utils/auth";
-// import { updateHttps } from "@/utils/common";
+import { updateHttps } from "@/utils/common";
 import localforage from "localforage";
+import store from "@/store";
 import { cacheTrack } from "@/utils/db";
 
 export default {
@@ -46,18 +47,28 @@ export default {
         });
       }
       if (isAccountLoggedIn()) {
-        let tracks = localforage.createInstance({
-          name: "tracks",
-        });
-        tracks.getItem(`${track.id}`).then((t) => {
-          if (t !== null) {
-            commitMP3(URL.createObjectURL(t.mp3));
-          } else {
-            cacheTrack(`${track.id}`).then((t) => {
+        if (store.state.settings.automaticallyCacheSongs === true) {
+          let tracks = localforage.createInstance({
+            name: "tracks",
+          });
+          tracks.getItem(`${track.id}`).then((t) => {
+            if (t !== null) {
               commitMP3(URL.createObjectURL(t.mp3));
-            });
-          }
-        });
+            } else {
+              cacheTrack(`${track.id}`).then((t) => {
+                commitMP3(URL.createObjectURL(t.mp3));
+              });
+            }
+          });
+        } else {
+          getMP3(track.id).then((data) => {
+            // 未知情况下会没有返回数据导致报错，增加防范逻辑
+            if (data.data[0]) {
+              const url = updateHttps(data.data[0].url);
+              commitMP3(url);
+            }
+          });
+        }
       } else {
         commitMP3(`https://music.163.com/song/media/outer/url?id=${track.id}`);
       }
