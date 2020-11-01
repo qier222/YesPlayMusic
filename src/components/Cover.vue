@@ -1,27 +1,25 @@
 <template>
   <div style="position: relative">
-    <transition name="zoom">
-      <div
-        class="cover"
-        @mouseover="focus = true"
-        @mouseleave="focus = false"
-        :style="coverStyle"
-        :class="{
-          'hover-float': hoverEffect,
-          'hover-play-button': showPlayButton,
-        }"
-        @click="clickToPlay ? play() : goTo()"
+    <div
+      class="cover"
+      @mouseover="focus = true"
+      @mouseleave="focus = false"
+      :style="coverStyle"
+      :class="{
+        'hover-float': hoverEffect,
+        'hover-play-button': showPlayButton,
+      }"
+      @click="clickToPlay ? play() : goTo()"
+    >
+      <button
+        class="play-button"
+        v-if="showPlayButton"
+        :style="playButtonStyle"
+        @click.stop="playButtonClicked"
       >
-        <button
-          class="play-button"
-          v-if="showPlayButton"
-          :style="playButtonStyle"
-          @click.stop="playButtonClicked"
-        >
-          <svg-icon icon-class="play" />
-        </button>
-      </div>
-    </transition>
+        <svg-icon icon-class="play" />
+      </button>
+    </div>
 
     <transition name="fade" v-if="hoverEffect">
       <img class="shadow" v-show="focus" :src="url" :style="shadowStyle"

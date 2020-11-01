@@ -116,6 +116,7 @@ hr {
   cursor: default;
   img {
     height: 38px;
+    width: 38px;
     border-radius: 4px;
   }
   .info {
