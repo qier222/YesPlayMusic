@@ -1,3 +1,5 @@
+import { playlistCategories } from "@/utils/staticData";
+
 export default {
   player: {
     enable: false,
@@ -31,48 +33,7 @@ export default {
     },
   },
   settings: {
-    playlistCategories: [
-      {
-        name: "全部",
-        enable: true,
-      },
-      {
-        name: "推荐歌单",
-        enable: true,
-      },
-      {
-        name: "精品歌单",
-        enable: true,
-      },
-      {
-        name: "官方",
-        enable: true,
-      },
-      {
-        name: "流行",
-        enable: true,
-      },
-      {
-        name: "电子",
-        enable: true,
-      },
-      {
-        name: "摇滚",
-        enable: true,
-      },
-      {
-        name: "ACG",
-        enable: true,
-      },
-      // {
-      //   name: "最新专辑",
-      //   enable: true,
-      // },
-      {
-        name: "排行榜",
-        enable: true,
-      },
-    ],
+    playlistCategories,
     lang: null,
     appearance: "auto",
     musicQuality: 320000,

@@ -63,7 +63,7 @@
 <script>
 import { toplists, recommendPlaylist } from "@/api/playlist";
 import { toplistOfArtists } from "@/api/artist";
-import { byAppleMusic } from "@/utils/staticPlaylist";
+import { byAppleMusic } from "@/utils/staticData";
 import { newAlbums } from "@/api/album";
 import NProgress from "nprogress";
 import { mapState } from "vuex";

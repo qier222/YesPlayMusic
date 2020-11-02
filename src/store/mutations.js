@@ -106,4 +106,16 @@ export default {
   updateData(state, { key, value }) {
     state.data[key] = value;
   },
+  togglePlaylistCategory(state, name) {
+    let cat = state.settings.playlistCategories.find((c) => c.name === name);
+    cat.enable = !cat.enable;
+    state.settings.playlistCategories = state.settings.playlistCategories.map(
+      (c) => {
+        if (c.name === name) {
+          return cat;
+        }
+        return c;
+      }
+    );
+  },
 };
