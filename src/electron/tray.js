@@ -1,12 +1,14 @@
 const path = require("path");
-const { Menu, Tray } = require("electron");
+const { nativeImage, Tray } = require("electron");
 
-let tray = null;
+function getNativeIcon(name, width = 24, height = 24) {
+  return nativeImage.createFromPath(path.join(__static, 'img/icons/', name)).resize({
+    width,
+    height,
+  })
+}
 
-const macIcon = path.join(__static, "img/icons/menu.png");
-const winIcon = path.join(__static, "img/icons/icon.ico");
-
-tray = new Tray(macIcon);
+let tray = new Tray(getNativeIcon('menu@88.png', 20, 20));;
 
 // Temporary no need for menu.
 // const contextMenu = Menu.buildFromTemplate([

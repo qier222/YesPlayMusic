@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar />
+    <Navbar ref="navbar"/>
     <main>
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
@@ -40,6 +40,7 @@ export default {
   },
   created() {
     if (this.isElectron) {
+      const self = this
       // 添加专有的类名
       document.body.classList.add("is-electron");
       // ipc message channel
@@ -49,38 +50,42 @@ export default {
       // inside this Vue instance, according to what path the main process requires.
       // responds to Menu click() events at the main process and changes the route accordingly.
       ipcRenderer.on("changeRouteTo", (event, path) => {
-        console.log(event);
-        this.$router.push(path);
+        self.$router.push(path);
       });
+      ipcRenderer.on("search", () => {
+        // 触发数据响应
+        self.$refs.navbar.$refs.searchInput.focus()
+        self.$refs.navbar.inputFocus = true
+      })
       ipcRenderer.on("play", () => {
-        this.$refs.player.play();
+        self.$refs.player.play();
       });
       ipcRenderer.on("next", () => {
-        this.$refs.player.next();
+        self.$refs.player.next();
       });
       ipcRenderer.on("previous", () => {
-        this.$refs.player.previous();
+        self.$refs.player.previous();
       });
       ipcRenderer.on("increaseVolume", () => {
-        if (this.$refs.player.volume + 0.1 >= 1) {
-          return (this.$refs.player.volume = 1);
+        if (self.$refs.player.volume + 0.1 >= 1) {
+          return (self.$refs.player.volume = 1);
         }
-        this.$refs.player.volume += 0.1;
+        self.$refs.player.volume += 0.1;
       });
       ipcRenderer.on("decreaseVolume", () => {
-        if (this.$refs.player.volume - 0.1 <= 0) {
-          return (this.$refs.player.volume = 0);
+        if (self.$refs.player.volume - 0.1 <= 0) {
+          return (self.$refs.player.volume = 0);
         }
-        this.$refs.player.volume -= 0.1;
+        self.$refs.player.volume -= 0.1;
       });
       ipcRenderer.on("like", () => {
-        this.$refs.player.likeCurrentSong();
+        self.$refs.player.likeCurrentSong();
       });
       ipcRenderer.on("repeat", () => {
-        this.$refs.player.repeat();
+        self.$refs.player.repeat();
       });
       ipcRenderer.on("shuffle", () => {
-        this.$refs.player.shuffle();
+        self.$refs.player.shuffle();
       });
     }
   },

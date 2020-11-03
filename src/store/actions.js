@@ -3,7 +3,7 @@ import { getTrackDetail, scrobble } from "@/api/track";
 import { isAccountLoggedIn } from "@/utils/auth";
 // import { updateHttps } from "@/utils/common";
 import localforage from "localforage";
-import { cacheTrack } from "@/utils/db";
+// import { cacheTrack } from "@/utils/db";
 
 export default {
   switchTrack({ state, dispatch, commit }, basicTrack) {
@@ -51,11 +51,13 @@ export default {
         });
         tracks.getItem(`${track.id}`).then((t) => {
           if (t !== null) {
-            commitMP3(URL.createObjectURL(t.mp3));
+            // commitMP3(URL.createObjectURL(t.mp3));
+            commitMP3(t.mp3);
           } else {
-            cacheTrack(`${track.id}`).then((t) => {
-              commitMP3(URL.createObjectURL(t.mp3));
-            });
+            commitMP3(t.mp3);
+            // cacheTrack(`${track.id}`).then((t) => {
+              // commitMP3(URL.createObjectURL(t.mp3));
+            // });
           }
         });
       } else {

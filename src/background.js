@@ -1,48 +1,59 @@
 "use strict";
-
-import path from "path";
+const path = require('path')
 // import { autoUpdater } from "electron-updater"
 import {
   app,
   protocol,
   BrowserWindow,
   ipcMain,
-  dialog,
-  globalShortcut,
+  globalShortcut 
 } from "electron";
+
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
+const { createTouchBar } = require("./electron/touchbar");
+const { createMenu } = require("./electron/menu");
+const { setAppBounced } = require("./electron/bounced")
+const { setIcon } = require("./electron/setIcon")
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let touchbar
+
+const iconString = path.join(__static, "img/icons/apple-touch-icon.png");
+
+// Make vuex copy for electron.
+global.vuexCopy = null
+// 同步 vuex 状态，由于 player 有循环引用问题，拷贝部分属性
+ipcMain.on('vuex-state', (e, state) => {
+  global.vuexCopy = state
+})
+ipcMain.on("close", () => {
+  win.close();
+  app.quit(); 
+});
+ipcMain.on("minimize", () => {
+  win.minimize();
+});
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
-const iconString = path.join(__static, "img/icons/apple-touch-icon.png");
 
-let bounceId = app.dock.bounce();
-app.dock.setIcon(iconString);
+setAppBounced(app)
+setIcon(app, iconString)
 
 function createWindow() {
-  const touchbar = require("./electron/touchbar.js");
   const tray = require("./electron/tray.js");
-  const createMenu = require("./electron/menu.js");
-  tray.on("click", function () {
-    if (win.isVisible()) {
-      win.hide();
-    } else {
-      win.show();
-    }
-  });
   win = new BrowserWindow({
     width: 1440,
     height: 768,
     icon: iconString,
+    backgroundColor: '#2e2c29',
     titleBarStyle: "default",
     webPreferences: {
       webSecurity: false,
@@ -51,15 +62,13 @@ function createWindow() {
     preload: path.join(__dirname, "./electron/preload.js"),
   });
 
-  try {
-    createMenu(win);
-    win.setTouchBar(touchbar);
-    win.setAutoHideCursor(true);
-    app.dock.cancelBounce(bounceId);
-    // autoUpdater.checkForUpdatesAndNotify()
-  } catch (error) {
-    console.log(error);
-  }
+  tray.on("click", () => {
+    if (win && win.isVisible()) {
+      win.hide();
+    } else {
+      win.show();
+    }
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -74,6 +83,7 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
+  return win
 }
 
 // Quit when all windows are closed.
@@ -112,14 +122,13 @@ app.on("ready", async () => {
     win.webContents.openDevTools();
   });
   createWindow();
-});
-
-ipcMain.on("close", () => {
-  win.close();
-  app.quit();
-});
-ipcMain.on("minimize", () => {
-  win.minimize();
+  win.once("ready-to-show", () => {
+    win.show()
+  })
+  createMenu(win);
+  touchbar = createTouchBar(win)
+  win.setTouchBar(touchbar);
+  // autoUpdater.checkForUpdatesAndNotify()
 });
 
 // autoUpdater.on("checking-for-update", () => {});

@@ -78,7 +78,7 @@ module.exports = {
         // window 的 icon 头标
         win: {
           publisherName: 'Yes Play Music',
-          icon: 'public/img/icons/512x512.png',
+          icon: 'build/icons/icon.ico',
           publish: [
             "github"
           ],
@@ -89,7 +89,8 @@ module.exports = {
             "AppImage",
             "tar.gz",
             "deb"
-          ]
+          ],
+          icon: "build/icons"
         },
         "dmg": {
           "icon": "build/icons/icon.icns"
