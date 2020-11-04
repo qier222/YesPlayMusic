@@ -9,7 +9,11 @@
         :size="288"
       />
       <div class="info">
-        <div class="title">{{ playlist.name }}</div>
+        <div class="title"
+          ><span class="lock-icon" v-if="playlist.privacy === 10">
+            <svg-icon icon-class="lock" /></span
+          >{{ playlist.name }}</div
+        >
         <div class="artist">
           Playlist by
           <span
@@ -229,6 +233,16 @@ export default {
       font-size: 36px;
       font-weight: 700;
       color: var(--color-text);
+
+      .lock-icon {
+        opacity: 0.28;
+        color: var(--color-text);
+        margin-right: 8px;
+        .svg-icon {
+          height: 26px;
+          width: 26px;
+        }
+      }
     }
     .artist {
       font-size: 18px;

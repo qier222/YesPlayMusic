@@ -14,6 +14,7 @@ export default {
       src: [mp3],
       autoplay: true,
       html5: true,
+      format: ["mp3", "flac"],
     });
     state.howler.play();
   },

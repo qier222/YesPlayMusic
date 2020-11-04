@@ -14,10 +14,13 @@
         <div class="title"> {{ title }}</div>
         <div class="subtitle" v-if="subtitle !== ''">{{ subtitle }}</div>
         <div class="artist">
-          <span>{{ album.type | formatAlbumType(album) }} by </span
-          ><router-link :to="`/artist/${album.artist.id}`">{{
-            album.artist.name
-          }}</router-link>
+          <span v-if="album.artist.id !== 104700">
+            <span>{{ album.type | formatAlbumType(album) }} by </span
+            ><router-link :to="`/artist/${album.artist.id}`">{{
+              album.artist.name
+            }}</router-link></span
+          >
+          <span v-else>Compilation by Various Artists</span>
         </div>
         <div class="date-and-count">
           <span class="explicit-symbol" v-if="album.mark === 1056768"
