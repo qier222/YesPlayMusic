@@ -29,6 +29,14 @@ export default {
       type: String,
       default: "blue",
     },
+    backgroundColor: {
+      type: String,
+      default: "",
+    },
+    textColor: {
+      type: String,
+      default: "",
+    },
     shape: {
       type: String,
       default: "square",
@@ -36,12 +44,16 @@ export default {
   },
   computed: {
     buttonStyle() {
-      return {
+      let styles = {
         borderRadius: this.shape === "round" ? "50%" : "8px",
         padding: `8px ${this.horizontalPadding}px`,
         // height: "38px",
         width: this.shape === "round" ? "38px" : "auto",
       };
+      if (this.backgroundColor !== "")
+        styles.backgroundColor = this.backgroundColor;
+      if (this.textColor !== "") styles.color = this.textColor;
+      return styles;
     },
   },
 };
@@ -74,7 +86,8 @@ button {
 }
 button.grey {
   background-color: var(--color-secondary-bg);
-  color: var(--color-secondary);
+  color: var(--color-text);
+  opacity: 0.78;
 }
 button.transparent {
   background-color: transparent;
