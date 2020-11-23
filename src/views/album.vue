@@ -45,10 +45,11 @@
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="accountLogin"
-            shape="round"
             :iconClass="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
             :iconButton="true"
             :horizontalPadding="0"
+            color="grey"
+            :textColor="playlist.subscribed ? '#335eea' : ''"
             @click.native="likeAlbum"
           >
           </ButtonTwoTone>

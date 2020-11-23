@@ -102,12 +102,13 @@ nav {
     right: 10vw;
     left: 10vw;
   }
-  backdrop-filter: saturate(180%) blur(30px);
+  backdrop-filter: saturate(180%) blur(20px);
 
   // background: var(--color-body-bg);
   // background-color: rgba(255, 255, 255, 0.86);
   background-color: var(--color-navbar-bg);
   z-index: 100;
+  -webkit-app-region: drag;
 }
 
 .navigation-buttons {
