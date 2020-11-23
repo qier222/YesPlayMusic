@@ -8,7 +8,8 @@
   <p align="center">
     高颜值的第三方网易云播放器
     <br />
-    <a href="https://music.bluepill.one" target="blank"><strong>⏩️ 访问 DEMO ⏪</strong></a>
+    <a href="https://music.bluepill.one" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="#%EF%B8%8F-安装" target="blank"><strong>📦️ 下载安装包</strong></a>
     <br />
     <br />
   </p>
@@ -29,9 +30,18 @@
 - ✔️ 每日自动签到（手机端和电脑端同时签到）
 - 🌚 Light/Dark Mode 自动切换
 - 🚫🤝 无任何社交功能
+- 🌎️ 海外用户可直接播放（需要登录网易云账号）
 - 🛠 更多特性开发中
 
-## ⚙️ 部署
+## 📦️ 安装
+
+Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://github.com/qier222) 适配并维护，支持 macOS、Windows、Linux。
+
+访问本项目的 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载安装包，或者访问 [镜像下载站 (大陆访问更快)](https://dl.bluepill.one/YesPlayMusic/) 下载。
+
+## ⚙️ 部署至服务器
+
+除了下载安装包使用，你还可以将本项目部署到你的服务器上。
 
 1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 2. 克隆本仓库
@@ -43,7 +53,7 @@ git clone https://github.com/qier222/YesPlayMusic.git
 3. 安装依赖
 
 ```sh
-npm install
+yarn install
 ```
 
 4. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:3000`，YesPlayMusic 地址为 `http://localhost:8080`
@@ -55,7 +65,7 @@ VUE_APP_NETEASE_API_URL=http://localhost:3000
 5. 编译打包
 
 ```sh
-npm run build
+yarn run build
 ```
 
 6. 将 `/dist` 目录下的文件上传到你的 Web 服务器
