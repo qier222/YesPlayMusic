@@ -109,6 +109,7 @@ nav {
   // background-color: rgba(255, 255, 255, 0.86);
   background-color: var(--color-navbar-bg);
   z-index: 100;
+  -webkit-app-region: drag;
 }
 
 .navigation-buttons {

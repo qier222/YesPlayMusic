@@ -173,9 +173,9 @@ export default {
         this.updatePlayerState({ key: "playing", value: true });
         return true;
       }
-      const status = this.howler.playing()
+      const status = this.howler.playing();
       this.updatePlayerState({ key: "playing", value: status });
-      return status
+      return status;
     },
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);

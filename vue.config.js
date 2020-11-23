@@ -1,5 +1,4 @@
 const path = require("path");
-const CopyPlugin = require('copy-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -7,7 +6,7 @@ function resolve(dir) {
 module.exports = {
   devServer: {
     disableHostCheck: true,
-    port: process.env.DEV_SERVER_PORT || 8080
+    port: process.env.DEV_SERVER_PORT || 8080,
   },
   pwa: {
     name: "YesPlayMusic",
@@ -50,80 +49,68 @@ module.exports = {
   pluginOptions: {
     // electron-builder的配置文件
     electronBuilder: {
-      preload: 'src/electron/preload.js',
       builderOptions: {
-        // 应用名称
-        productName: 'Yes Play Music',
-        // 版权
-        copyright: 'Copyright © YesPlayMusic',
-        // 机器好的可以打开，配置压缩
-        // compression: "maximum",
+        productName: "YesPlayMusic",
+        copyright: "Copyright © YesPlayMusic",
+        compression: "maximum", // 机器好的可以打开，配置压缩
+        asar: true,
         publish: [
           {
-            "provider": "github",
-            "owner": "qier222",
-            "repo": "YesPlayMusic",
-            "vPrefixedTagName": true,
-            "private": true,
-            "releaseType": "draft"
-          }
+            provider: "github",
+            owner: "qier222",
+            repo: "YesPlayMusic",
+            vPrefixedTagName: true,
+            private: true,
+            releaseType: "draft",
+          },
         ],
-        // Compress app using 'electron/asar'
-        asar: true,
-
-        // 项目打包生成的文件目录
         directories: {
-          output: 'dist_electron'
+          output: "dist_electron",
         },
-        // window 的 icon 头标
+        mac: {
+          category: "public.app-category.music",
+          target: "dmg",
+          darkModeSupport: true,
+        },
         win: {
-          publisherName: 'Yes Play Music',
-          icon: 'build/icons/icon.ico',
-          publish: [
-            "github"
-          ],
+          publisherName: "YesPlayMusic",
+          icon: "build/icons/icon.ico",
+          publish: ["github"],
         },
-        // linux 的配置
         linux: {
-          "target": [
-            "AppImage",
-            "tar.gz",
-            "deb"
-          ],
-          icon: "build/icons"
+          target: ["AppImage", "tar.gz", "deb", "rpm", "snap"],
+          category: "Music",
+          icon: "./build/icon.icns",
         },
-        "dmg": {
-          "icon": "build/icons/icon.icns"
+        dmg: {
+          icon: "build/icons/icon.icns",
         },
-        // 是否静默安装
         nsis: {
-          // 是否一键安装，建议为 false，可以让用户点击下一步、下一步、下一步的形式安装程序，如果为true，当用户双击构建好的程序，自动安装程序并打开，即：一键安装
           oneClick: false,
-          // 允许修改安装目录，建议为 true，是否允许用户改变安装目录，默认是不允许
-          allowToChangeInstallationDirectory: true
+          allowToChangeInstallationDirectory: true,
         },
       },
       // 主线程的配置文件
-      chainWebpackMainProcess: config => {
-        config.plugin('define').tap((args) => {
-          args[0]['IS_ELECTRON'] = true
-          return args
-        })
+      chainWebpackMainProcess: (config) => {
+        config.plugin("define").tap((args) => {
+          args[0]["IS_ELECTRON"] = true;
+          return args;
+        });
       },
       // 渲染线程的配置文件
-      chainWebpackRendererProcess: config => {
+      chainWebpackRendererProcess: (config) => {
         // 渲染线程的一些其他配置
         // Chain webpack config for electron renderer process only
         // The following example will set IS_ELECTRON to true in your app
-        config.plugin('define').tap((args) => {
-          args[0]['IS_ELECTRON'] = true
-          return args
-        })
+        config.plugin("define").tap((args) => {
+          args[0]["IS_ELECTRON"] = true;
+          return args;
+        });
       },
       // 主入口文件
       // mainProcessFile: 'src/main.js',
-      mainProcessWatch: ['../napi/routes.js'],
+      mainProcessWatch: ["../netease_api/routes.js"],
       // mainProcessArgs: []
-    }
-  }
+    },
+  },
 };

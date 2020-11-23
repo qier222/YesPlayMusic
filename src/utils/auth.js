@@ -36,17 +36,17 @@ export function isLooseLoggedIn() {
 }
 
 export function getMusicU(string) {
-  const temp = string.split(';')
+  const temp = string.split(";");
   if (!temp.length) {
-    return undefined
+    return undefined;
   }
-  const MUSIC_U = temp.find(item => item.includes('MUSIC_U'))
+  const MUSIC_U = temp.find((item) => item.includes("MUSIC_U"));
   if (MUSIC_U) {
-    return MUSIC_U.split('=')[1]
+    return MUSIC_U.split("=")[1];
   }
-  return ''
+  return "";
 }
 
 export function setMusicU(key, value) {
-  return Cookies.set(key, value)
+  return Cookies.set(key, value);
 }

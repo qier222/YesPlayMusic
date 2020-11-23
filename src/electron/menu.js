@@ -55,6 +55,13 @@ export function createMenu(win) {
               },
             ]
           : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
+        {
+          label: "Search",
+          accelerator: "CmdOrCtrl+F",
+          click: () => {
+            win.webContents.send("search");
+          },
+        },
       ],
     },
     {
@@ -136,7 +143,7 @@ export function createMenu(win) {
               {
                 role: "window",
                 id: "window",
-                label: "Yes Play Music",
+                label: "YesPlayMusic",
                 type: "checkbox",
                 checked: true,
                 click: () => {

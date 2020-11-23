@@ -26,7 +26,7 @@ export function cacheTrack(id) {
     //     tracks.setItem(`${id}`, { mp3: data.data });
     //     return { mp3: data.data };
     //   });
-    return { mp3: data.data[0].url.replace(/^http:/, "https:")}
+    return { mp3: data.data[0].url.replace(/^http:/, "https:") };
   });
 }
 

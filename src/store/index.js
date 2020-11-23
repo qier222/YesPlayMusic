@@ -9,8 +9,8 @@ import { changeAppearance } from "@/utils/common";
 import updateApp from "@/utils/updateApp";
 import pkg from "../../package.json";
 // vuex 自定义插件
-import vuexBroadCast from './plugins/broadcast'
-import saveToLocalStorage from './plugins/localStorage'
+import vuexBroadCast from "./plugins/broadcast";
+import saveToLocalStorage from "./plugins/localStorage";
 
 if (localStorage.getItem("appVersion") === null) {
   localStorage.setItem("player", JSON.stringify(initLocalStorage.player));
@@ -28,11 +28,8 @@ const options = {
   state,
   mutations,
   actions,
-  plugins: [
-    saveToLocalStorage,
-    vuexBroadCast,
-  ],
-}
+  plugins: [saveToLocalStorage, vuexBroadCast],
+};
 
 const store = new Vuex.Store(options);
 

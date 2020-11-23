@@ -1,26 +1,21 @@
-const path = require("path");
-const { nativeImage, Tray } = require("electron");
+import path from "path";
+import { nativeImage, Tray } from "electron";
 
-function getNativeIcon(name, width = 24, height = 24) {
-  return nativeImage.createFromPath(path.join(__static, 'img/icons/', name)).resize({
-    width,
-    height,
-  })
+export function createTray(win) {
+  let icon = nativeImage
+    .createFromPath(path.join(__static, "img/icons/menu@88.png"))
+    .resize({
+      height: 20,
+      width: 20,
+    });
+  let tray = new Tray(icon);
+
+  tray.on("click", () => {
+    if (win && win.isVisible()) {
+      win.hide();
+    } else {
+      win.show();
+    }
+  });
+  return tray;
 }
-
-let tray = new Tray(getNativeIcon('menu@88.png', 20, 20));;
-
-// Temporary no need for menu.
-// const contextMenu = Menu.buildFromTemplate([
-//   { label: 'Item1', type: 'radio' },
-//   { label: 'Item2', type: 'radio' }
-// ])
-
-// Make a change to the context menu
-// contextMenu.items[1].checked = false
-
-// tray.setToolTip('Yes Play Music')
-
-// Call this again for Linux because we modified the context menu
-// tray.setContextMenu(contextMenu)
-module.exports = tray;

@@ -1,74 +1,44 @@
 "use strict";
-const path = require('path')
-// import { autoUpdater } from "electron-updater"
-import {
-  app,
-  protocol,
-  BrowserWindow,
-  ipcMain,
-  globalShortcut 
-} from "electron";
-
+import { app, protocol, BrowserWindow, globalShortcut } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import { startNeteaseMusicApi } from "./electron/services";
+import { initIpcMain } from "./electron/ipcMain.js";
+import { createMenu } from "./electron/menu";
+import { createTouchBar } from "./electron/touchBar";
+import { createDockMenu } from "./electron/dockMenu";
+import { createTray } from "./electron/tray.js";
+// import { autoUpdater } from "electron-updater"
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-const { createTouchBar } = require("./electron/touchbar");
-const { createMenu } = require("./electron/menu");
-const { setAppBounced } = require("./electron/bounced")
-const { setIcon } = require("./electron/setIcon")
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
-let touchbar
 
-const iconString = path.join(__static, "img/icons/apple-touch-icon.png");
-
-// Make vuex copy for electron.
-global.vuexCopy = null
-// 同步 vuex 状态，由于 player 有循环引用问题，拷贝部分属性
-ipcMain.on('vuex-state', (e, state) => {
-  global.vuexCopy = state
-})
-ipcMain.on("close", () => {
-  win.close();
-  app.quit(); 
-});
-ipcMain.on("minimize", () => {
-  win.minimize();
-});
+// ipcMain
+initIpcMain(win);
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
-setAppBounced(app)
-setIcon(app, iconString)
-
 function createWindow() {
-  const tray = require("./electron/tray.js");
   win = new BrowserWindow({
     width: 1440,
-    height: 768,
-    icon: iconString,
-    backgroundColor: '#2e2c29',
-    titleBarStyle: "default",
+    height: 840,
+    titleBarStyle: "hiddenInset",
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
     },
-    preload: path.join(__dirname, "./electron/preload.js"),
   });
+  win.setMenuBarVisibility(false);
 
-  tray.on("click", () => {
-    if (win && win.isVisible()) {
-      win.hide();
-    } else {
-      win.show();
-    }
-  });
+  if (process.platform !== "darwin") {
+    createTray(win);
+  }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -83,7 +53,7 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
-  return win
+  return win;
 }
 
 // Quit when all windows are closed.
@@ -107,27 +77,38 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
-  // 启动 api 服务器
-  require("./electron/services.js");
+  // start netease music api
+  startNeteaseMusicApi();
+
+  // Install Vue Devtools xtension
   if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
     try {
       await installExtension(VUEJS_DEVTOOLS);
     } catch (e) {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+
   // Register shortcut for debug
   globalShortcut.register("CommandOrControl+K", function () {
     win.webContents.openDevTools();
   });
+
+  // create window
   createWindow();
   win.once("ready-to-show", () => {
-    win.show()
-  })
+    win.show();
+  });
+
+  // create menu
   createMenu(win);
-  touchbar = createTouchBar(win)
-  win.setTouchBar(touchbar);
+
+  // create dock menu for macOS
+  app.dock.setMenu(createDockMenu(win));
+
+  // create touchbar
+  win.setTouchBar(createTouchBar(win));
+
   // autoUpdater.checkForUpdatesAndNotify()
 });
 
