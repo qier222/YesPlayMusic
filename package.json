@@ -2,35 +2,58 @@
   "name": "YesPlayMusic",
   "version": "0.2.1",
   "private": true,
+  "description": "A third party music application for Netease Cloud Music",
+  "author": "hawtim<hawtimzhang@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "prettier": "npx prettier --write ./src"
+    "electron:build": "vue-cli-service electron:build -mwl -p never",
+    "electron:build-mac": "vue-cli-service electron:build -m -p never",
+    "electron:build-win": "vue-cli-service electron:build -w -p never",
+    "electron:build-linux": "vue-cli-service electron:build -l -p never",
+    "electron:serve": "vue-cli-service electron:serve",
+    "electron:buildicon": "electron-icon-builder --input=./build/icons/icon.png --output=build --flatten",
+    "electron:publish": "vue-cli-service electron:build -mwl -p always",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "prettier": "npx prettier --write ./src ./script",
+    "netease_api:run": "cd ./netease_api && npm run start",
+    "netease_api:pull": "node script/pull.js",
+    "netease_api:install": "cd ./netease_api && npm install",
+    "netease_api:setup": "npm run netease_api:pull && npm run netease_api:install"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettier"
-    }
-  },
+  "main": "background.js",
   "dependencies": {
-    "@sentry/browser": "^5.27.0",
-    "@sentry/integrations": "^5.27.0",
-    "@sentry/tracing": "^5.27.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
+    "big-integer": "^1.6.48",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "dayjs": "^1.8.36",
+    "electron": "11.0.2",
+    "electron-context-menu": "^2.3.0",
+    "electron-debug": "^3.1.0",
+    "electron-devtools-installer": "^3.1.1",
+    "electron-icon-builder": "^1.0.2",
+    "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.2.4",
+    "electron-updater": "^4.3.5",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
+    "extract-zip": "^2.0.1",
     "howler": "^2.2.0",
     "js-cookie": "^2.2.1",
     "localforage": "^1.9.0",
     "nprogress": "^0.2.0",
+    "pac-proxy-agent": "^4.1.0",
     "plyr": "^3.6.2",
     "prettier": "2.1.2",
     "register-service-worker": "^1.7.1",
     "svg-sprite-loader": "^5.0.0",
+    "tunnel": "^0.0.6",
     "vue": "^2.6.11",
     "vue-analytics": "^5.22.1",
+    "vue-electron": "^1.0.6",
     "vue-global-events": "^1.2.1",
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.4.3",
@@ -38,6 +61,9 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@sentry/browser": "^5.27.0",
+    "@sentry/integrations": "^5.27.0",
+    "@sentry/tracing": "^5.27.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",
@@ -49,12 +75,14 @@
     "husky": "^4.3.0",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "browser": true
     },
     "extends": [
       "plugin:vue/essential",
@@ -63,11 +91,19 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
+    "globals": {
+      "ipcRenderer": "off"
+    },
     "rules": {}
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier"
+    }
+  }
 }

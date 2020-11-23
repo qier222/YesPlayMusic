@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar />
+    <Navbar ref="navbar" />
     <main>
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
@@ -25,6 +25,7 @@
 import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
 import GlobalEvents from "vue-global-events";
+import { ipcRenderer } from "./electron/ipcRenderer";
 
 export default {
   name: "App",
@@ -32,6 +33,16 @@ export default {
     Navbar,
     Player,
     GlobalEvents,
+  },
+  data() {
+    return {
+      isElectron: process.env.IS_ELECTRON, // true || undefined
+    };
+  },
+  created() {
+    if (this.isElectron) {
+      ipcRenderer(this);
+    }
   },
   methods: {
     play(e) {
@@ -119,6 +130,11 @@ a {
   &:hover {
     text-decoration: underline;
   }
+}
+
+// for electron
+body.is-electron::-webkit-scrollbar {
+  width: 0;
 }
 
 /* Let's get this party started */

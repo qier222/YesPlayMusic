@@ -25,4 +25,8 @@ pnpm-debug.log*
 *.sw?
 
 .vercel
+
+#Electron-builder output
+/dist_electron
+NeteaseCloudMusicApi-master
 NeteaseCloudMusicApi-master.zip

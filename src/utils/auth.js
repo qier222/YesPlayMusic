@@ -34,3 +34,19 @@ export function isUsernameLoggedIn() {
 export function isLooseLoggedIn() {
   return isAccountLoggedIn() || isUsernameLoggedIn();
 }
+
+export function getMusicU(string) {
+  const temp = string.split(";");
+  if (!temp.length) {
+    return undefined;
+  }
+  const MUSIC_U = temp.find((item) => item.includes("MUSIC_U"));
+  if (MUSIC_U) {
+    return MUSIC_U.split("=")[1];
+  }
+  return "";
+}
+
+export function setMusicU(key, value) {
+  return Cookies.set(key, value);
+}

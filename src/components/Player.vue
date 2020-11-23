@@ -18,7 +18,7 @@
     <div class="controls">
       <div class="playing">
         <img
-          :src="currentTrack.al.picUrl | resizeImage(224)"
+          :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
           @click="goToAlbum"
         />
         <div class="track-info">
@@ -141,9 +141,12 @@ export default {
       oldVolume: 0.5,
     };
   },
-  created() {
+  mounted() {
     setInterval(() => {
-      this.progress = ~~this.howler.seek();
+      // fix 歌曲播放完还设置进度的问题，及 _id 不存在的问题
+      if (this.howler && this.howler._sounds[0]._id) {
+        this.progress = ~~this.howler.seek();
+      }
     }, 1000);
     if (isAccountLoggedIn()) {
       userLikedSongsIDs(this.data.user.userId).then((data) => {
@@ -167,9 +170,12 @@ export default {
     },
     playing() {
       if (this.howler.state() === "loading") {
+        this.updatePlayerState({ key: "playing", value: true });
         return true;
       }
-      return this.howler.playing();
+      const status = this.howler.playing();
+      this.updatePlayerState({ key: "playing", value: status });
+      return status;
     },
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);

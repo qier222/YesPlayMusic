@@ -35,6 +35,7 @@
           <svg-icon icon-class="search" />
           <div class="input">
             <input
+              ref="searchInput"
               :placeholder="inputFocus ? '' : $t('nav.search')"
               v-model="keywords"
               @keydown.enter="goToSearchPage"
