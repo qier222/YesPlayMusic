@@ -9,7 +9,7 @@ import { changeAppearance } from "@/utils/common";
 import updateApp from "@/utils/updateApp";
 import pkg from "../../package.json";
 // vuex 自定义插件
-import vuexBroadCast from "./plugins/broadcast";
+import { getBroadcastPlugin } from "./plugins/broadcast";
 import saveToLocalStorage from "./plugins/localStorage";
 
 if (localStorage.getItem("appVersion") === null) {
@@ -24,11 +24,17 @@ updateApp();
 
 Vue.use(Vuex);
 
+let plugins = [saveToLocalStorage];
+if (process.env.IS_ELECTRON === true) {
+  let vuexBroadCast = getBroadcastPlugin();
+  plugins.push(vuexBroadCast);
+}
+
 const options = {
   state,
   mutations,
   actions,
-  plugins: [saveToLocalStorage, vuexBroadCast],
+  plugins,
 };
 
 const store = new Vuex.Store(options);

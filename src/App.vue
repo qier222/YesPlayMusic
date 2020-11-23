@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      isElectron: process.env.IS_ELECTRON, // "true" || undefined
+      isElectron: process.env.IS_ELECTRON, // true || undefined
     };
   },
   created() {
