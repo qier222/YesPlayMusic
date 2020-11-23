@@ -1,5 +1,5 @@
 "use strict";
-import { app, protocol, BrowserWindow, globalShortcut } from "electron";
+import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { startNeteaseMusicApi } from "./electron/services";
@@ -8,7 +8,7 @@ import { createMenu } from "./electron/menu";
 import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
 import { createTray } from "./electron/tray.js";
-// import { autoUpdater } from "electron-updater"
+import { autoUpdater } from "electron-updater";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -18,6 +18,9 @@ let win;
 
 // ipcMain
 initIpcMain(win);
+
+// check for update
+autoUpdater.checkForUpdatesAndNotify();
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -80,7 +83,7 @@ app.on("ready", async () => {
   // start netease music api
   startNeteaseMusicApi();
 
-  // Install Vue Devtools xtension
+  // Install Vue Devtools extension
   if (isDevelopment && !process.env.IS_TEST) {
     try {
       await installExtension(VUEJS_DEVTOOLS);
@@ -88,11 +91,6 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
-
-  // Register shortcut for debug
-  globalShortcut.register("CommandOrControl+K", function () {
-    win.webContents.openDevTools();
-  });
 
   // create window
   createWindow();
@@ -108,26 +106,7 @@ app.on("ready", async () => {
 
   // create touchbar
   win.setTouchBar(createTouchBar(win));
-
-  // autoUpdater.checkForUpdatesAndNotify()
 });
-
-// autoUpdater.on("checking-for-update", () => {});
-// autoUpdater.on("update-available", info => {
-//   console.log(info);
-//   dialog.showMessageBox({
-//     title: "新版本发布",
-//     message: "有新内容更新，稍后将重新为您安装",
-//     buttons: ["确定"],
-//     type: "info",
-//     noLink: true
-//   });
-// });
-
-// autoUpdater.on("update-downloaded", info => {
-//   console.log(info);
-//   autoUpdater.quitAndInstall();
-// });
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
