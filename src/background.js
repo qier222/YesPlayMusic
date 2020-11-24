@@ -9,6 +9,7 @@ import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
 import { createTray } from "./electron/tray.js";
 import { autoUpdater } from "electron-updater";
+import express from "express";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -49,8 +50,11 @@ function createWindow() {
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
-    // Load the index.html when not in development
-    win.loadURL("app://./index.html");
+    // win.loadURL("app://./index.html");
+    const expressApp = express();
+    expressApp.use("/", express.static(__dirname + "/"));
+    expressApp.listen(27232);
+    win.loadURL("http://localhost:27232");
   }
 
   win.webContents.on("new-window", function (e, url) {
