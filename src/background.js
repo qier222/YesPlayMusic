@@ -1,5 +1,5 @@
 "use strict";
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, shell } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { startNeteaseMusicApi } from "./electron/services";
@@ -53,6 +53,10 @@ function createWindow() {
     win.loadURL("app://./index.html");
   }
 
+  win.webContents.on("new-window", function (e, url) {
+    e.preventDefault();
+    shell.openExternal(url);
+  });
   win.on("closed", () => {
     win = null;
   });
