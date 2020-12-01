@@ -49,7 +49,7 @@
             :iconButton="true"
             :horizontalPadding="0"
             color="grey"
-            :textColor="playlist.subscribed ? '#335eea' : ''"
+            :textColor="dynamicDetail.isSub ? '#335eea' : ''"
             @click.native="likeAlbum"
           >
           </ButtonTwoTone>
