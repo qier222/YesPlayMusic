@@ -34,7 +34,7 @@ export function getTrackDetail(ids) {
       ids,
     },
   }).then((data) => {
-    data.songs = mapTrackPlayableStatus(data.songs);
+    data.songs = mapTrackPlayableStatus(data.songs, data.privileges);
     return data;
   });
 }

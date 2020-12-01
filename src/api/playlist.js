@@ -47,7 +47,10 @@ export function getPlaylistDetail(id, noCache = false) {
     method: "get",
     params,
   }).then((data) => {
-    data.playlist.tracks = mapTrackPlayableStatus(data.playlist.tracks);
+    data.playlist.tracks = mapTrackPlayableStatus(
+      data.playlist.tracks,
+      data.privileges || []
+    );
     return data;
   });
 }
