@@ -25,12 +25,21 @@ export function isTrackPlayable(track) {
   ) {
     result.playable = false;
     result.reason = "No Copyright";
+  } else if (track.privilege?.st < 0) {
+    result.playable = false;
+    result.reason = "The song has been removed from the shelves";
   }
   return result;
 }
 
-export function mapTrackPlayableStatus(tracks) {
+export function mapTrackPlayableStatus(tracks, privileges = []) {
   return tracks.map((t) => {
+    const privilege = privileges.find((item) => item.id === t.id) || {};
+    if (t.privilege) {
+      Object.assign(t.privilege, privilege);
+    } else {
+      t.privilege = privilege;
+    }
     let result = isTrackPlayable(t);
     t.playable = result.playable;
     t.reason = result.reason;
