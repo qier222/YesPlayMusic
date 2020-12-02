@@ -17,6 +17,10 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+// eslint-disable-next-line no-unused-vars
+let tray;
+
+let willQuitApp = false;
 
 // ipcMain
 initIpcMain(win);
@@ -39,7 +43,7 @@ function createWindow() {
   win.setMenuBarVisibility(false);
 
   if (process.platform !== "darwin") {
-    createTray(win);
+    tray = createTray(win);
   }
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -60,9 +64,19 @@ function createWindow() {
     e.preventDefault();
     shell.openExternal(url);
   });
-  win.on("closed", () => {
-    win = null;
+  win.on("close", (e) => {
+    if (willQuitApp) {
+      /* the user tried to quit the app */
+      win = null;
+    } else {
+      /* the user only tried to close the window */
+      e.preventDefault();
+      win.hide();
+    }
   });
+  // win.on("closed", () => {
+  //   win = null;
+  // });
   return win;
 }
 
@@ -71,7 +85,7 @@ app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== "darwin") {
-    app.quit();
+    // app.quit();
   }
 });
 
@@ -80,8 +94,15 @@ app.on("activate", () => {
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
     createWindow();
+  } else {
+    win.show();
   }
 });
+
+/**
+ * 'before-quit' is emitted when Electron receives the signal to exit and wants to start closing windows
+ */
+app.on("before-quit", () => (willQuitApp = true));
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

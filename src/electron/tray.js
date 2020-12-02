@@ -1,5 +1,6 @@
+/* global __static */
 import path from "path";
-import { nativeImage, Tray } from "electron";
+import { app, nativeImage, Tray, Menu } from "electron";
 
 export function createTray(win) {
   let icon = nativeImage
@@ -17,5 +18,18 @@ export function createTray(win) {
       win.show();
     }
   });
+
+  tray.on("right-click", () => {
+    const contextMenu = Menu.buildFromTemplate([
+      {
+        label: "Quit",
+        click: () => {
+          app.exit();
+        },
+      },
+    ]);
+    tray.popUpContextMenu(contextMenu);
+  });
+
   return tray;
 }
