@@ -6,6 +6,9 @@ import localforage from "localforage";
 import store from "@/store";
 import { cacheTrack } from "@/utils/db";
 
+const electron = window.require("electron");
+const ipcRenderer = electron.ipcRenderer;
+
 export default {
   switchTrack({ state, dispatch, commit }, basicTrack) {
     getTrackDetail(basicTrack.id).then((data) => {
@@ -36,7 +39,12 @@ export default {
       document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
 
       if (track.playable === false) {
-        dispatch("nextTrack");
+        const res = ipcRenderer.sendSync("unblock-music", track.id);
+        if (res?.url) {
+          commitMP3(res.url);
+        } else {
+          dispatch("nextTrack");
+        }
         return;
       }
 

@@ -1270,6 +1270,11 @@
   resolved "https://registry.npm.taobao.org/@nodelib/fs.stat/download/@nodelib/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha1-K1o6s/kYzKSKjHVMCBaOPwPrphs=
 
+"@nondanee/unblockneteasemusic@^0.25.3":
+  version "0.25.3"
+  resolved "https://registry.yarnpkg.com/@nondanee/unblockneteasemusic/-/unblockneteasemusic-0.25.3.tgz#72d936f18f46523a2b929b8eaec8dfd2acf25e7e"
+  integrity sha512-Fgl0iRvuFCNhyFlovbqqnJQRomaFVjMLosS1hRUd/X47y6HeNlQsxa9c8RtmeLwNnZ27rj0DsUZlECqU7FyNPA==
+
 "@npmcli/move-file@^1.0.1":
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/@npmcli/move-file/download/@npmcli/move-file-1.0.1.tgz#de103070dac0f48ce49cf6693c23af59c0f70464"
