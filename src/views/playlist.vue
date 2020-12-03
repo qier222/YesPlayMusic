@@ -56,8 +56,11 @@
             :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
             :iconButton="true"
             :horizontalPadding="0"
-            color="grey"
+            :color="playlist.subscribed ? 'blue' : 'grey'"
             :textColor="playlist.subscribed ? '#335eea' : ''"
+            :backgroundColor="
+              playlist.subscribed ? 'var(--color-secondary-bg)' : ''
+            "
             @click.native="likePlaylist"
           >
           </ButtonTwoTone>

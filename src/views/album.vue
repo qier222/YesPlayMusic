@@ -48,8 +48,11 @@
             :iconClass="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
             :iconButton="true"
             :horizontalPadding="0"
-            color="grey"
+            :color="dynamicDetail.isSub ? 'blue' : 'grey'"
             :textColor="dynamicDetail.isSub ? '#335eea' : ''"
+            :backgroundColor="
+              dynamicDetail.isSub ? 'var(--color-secondary-bg)' : ''
+            "
             @click.native="likeAlbum"
           >
           </ButtonTwoTone>
