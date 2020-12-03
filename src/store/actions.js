@@ -43,7 +43,7 @@ export default {
       if (track.playable === false) {
         let res = undefined;
         if (process.env.IS_ELECTRON === true) {
-          res = ipcRenderer.sendSync("unblock-music", track.id);
+          res = ipcRenderer.sendSync("unblock-music", track);
         }
         if (res?.url) {
           commitMP3(res.url);
