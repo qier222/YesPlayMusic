@@ -32,7 +32,8 @@ export function playPlaylistByID(id, trackID = "first", noCache = false) {
 
 export function playArtistByID(id, trackID = "first") {
   getArtist(id).then((data) => {
-    playAList(data.hotSongs, id, "artist", trackID);
+    let trackIDs = data.hotSongs.map((t) => t.id);
+    playAList(trackIDs, id, "artist", trackID);
   });
 }
 
