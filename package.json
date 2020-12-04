@@ -37,7 +37,7 @@
     "electron-devtools-installer": "^3.1.1",
     "electron-icon-builder": "^1.0.2",
     "electron-is-dev": "^1.2.0",
-    "electron-log": "^4.2.4",
+    "electron-log": "^4.3.0",
     "electron-updater": "^4.3.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.0",

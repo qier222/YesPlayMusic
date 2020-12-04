@@ -1,5 +1,5 @@
 "use strict";
-import { app, protocol, BrowserWindow, shell } from "electron";
+import { app, protocol, BrowserWindow, shell, dialog } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { startNeteaseMusicApi } from "./electron/services";
@@ -19,9 +19,6 @@ let win;
 
 // ipcMain
 initIpcMain(win);
-
-// check for update
-autoUpdater.checkForUpdatesAndNotify();
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -90,6 +87,34 @@ app.on("activate", () => {
 app.on("ready", async () => {
   // start netease music api
   startNeteaseMusicApi();
+
+  // check for update
+  const log = require("electron-log");
+  log.transports.file.level = "debug";
+  autoUpdater.logger = log;
+  autoUpdater.checkForUpdatesAndNotify();
+
+  if (process.platform === "darwin") {
+    autoUpdater.on("update-available", (info) => {
+      log.debug(info);
+      dialog
+        .showMessageBox({
+          title: "发现新版本 v" + info.version,
+          message: "发现新版本 v" + info.version,
+          detail: "是否前往 Github 下载新版本安装包？",
+          buttons: ["下载", "取消"],
+          type: "question",
+          noLink: true,
+        })
+        .then((result) => {
+          if (result.response === 0) {
+            shell.openExternal(
+              "https://github.com/qier222/YesPlayMusic/releases"
+            );
+          }
+        });
+    });
+  }
 
   // Install Vue Devtools extension
   if (isDevelopment && !process.env.IS_TEST) {

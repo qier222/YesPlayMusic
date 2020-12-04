@@ -61,7 +61,6 @@ module.exports = {
             owner: "qier222",
             repo: "YesPlayMusic",
             vPrefixedTagName: true,
-            private: true,
             releaseType: "draft",
           },
         ],
@@ -70,7 +69,6 @@ module.exports = {
         },
         mac: {
           category: "public.app-category.music",
-          target: "dmg",
           darkModeSupport: true,
         },
         win: {
