@@ -12,13 +12,13 @@ const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
 export default {
-  switchTrack({ state, dispatch, commit }, basicTrack) {
-    getTrackDetail(basicTrack.id).then((data) => {
+  switchTrack({ state, dispatch, commit }, { id, sort = 0, autoplay = true }) {
+    getTrackDetail(id).then((data) => {
       let track = data.songs[0];
-      track.sort = basicTrack.sort;
+      track.sort = sort;
 
       // 获取当前的播放时间。初始化为 loading 状态时返回 howler 的实例而不是浮点数时间，比如 1.332
-      let time = state.howler.seek();
+      let time = state.howler ? state.howler.seek() : 0;
       let currentTime = 0;
       if (time === 0) {
         // state.howler._duration 可以获得当前实例的播放时长
@@ -54,7 +54,7 @@ export default {
       }
 
       function commitMP3(mp3) {
-        commit("replaceMP3", mp3);
+        commit("replaceMP3", { mp3, autoplay });
         state.howler.once("end", () => {
           dispatch("nextTrack");
         });

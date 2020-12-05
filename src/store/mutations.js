@@ -8,15 +8,16 @@ export default {
   updateCurrentTrack(state, track) {
     state.player.currentTrack = track;
   },
-  replaceMP3(state, mp3) {
-    Howler.unload();
+  replaceMP3(state, { mp3, autoplay }) {
+    if (state.howler) {
+      Howler.unload();
+    }
     state.howler = new Howl({
       src: [mp3],
-      autoplay: true,
+      autoplay,
       html5: true,
       format: ["mp3", "flac"],
     });
-    state.howler.play();
   },
   updatePlayerList(state, list) {
     state.player.list = list;
