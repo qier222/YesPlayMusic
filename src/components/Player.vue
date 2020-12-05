@@ -144,7 +144,7 @@ export default {
   mounted() {
     setInterval(() => {
       // fix 歌曲播放完还设置进度的问题，及 _id 不存在的问题
-      if (this.howler && this.howler._sounds[0]._id) {
+      if (this.howler && this.howler._sounds?.[0]?._id) {
         this.progress = ~~this.howler.seek();
       }
     }, 1000);
@@ -169,13 +169,17 @@ export default {
       },
     },
     playing() {
-      if (this.howler.state() === "loading") {
-        this.updatePlayerState({ key: "playing", value: true });
-        return true;
+      if (this.howler) {
+        if (this.howler.state() === "loading") {
+          this.updatePlayerState({ key: "playing", value: true });
+          return true;
+        }
+        const status = this.howler.playing();
+        this.updatePlayerState({ key: "playing", value: status });
+        return status;
+      } else {
+        return false;
       }
-      const status = this.howler.playing();
-      this.updatePlayerState({ key: "playing", value: status });
-      return status;
     },
     progressMax() {
       let max = ~~(this.currentTrack.dt / 1000);

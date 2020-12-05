@@ -4,7 +4,7 @@ import state from "./state";
 import mutations from "./mutations";
 import actions from "./actions";
 import initLocalStorage from "./initLocalStorage";
-import { Howl, Howler } from "howler";
+import { Howler } from "howler";
 import { changeAppearance } from "@/utils/common";
 import updateApp from "@/utils/updateApp";
 import pkg from "../../package.json";
@@ -39,15 +39,17 @@ const options = {
 
 const store = new Vuex.Store(options);
 
-store.state.howler = new Howl({
-  src: [
-    `https://music.163.com/song/media/outer/url?id=${store.state.player.currentTrack.id}`,
-  ],
-  html5: true,
-  format: ["webm", "mp3"],
-});
-
 Howler.volume(store.state.player.volume);
+// 防止软件第一次打开资源加载2次
+Howler.autoUnlock = false;
+
+const currentTrackId = store.state?.player?.currentTrack?.id;
+if (currentTrackId) {
+  store.dispatch("switchTrack", {
+    id: currentTrackId,
+    autoplay: false,
+  });
+}
 
 if ([undefined, null].includes(store.state.settings.lang)) {
   let lang = "en";
