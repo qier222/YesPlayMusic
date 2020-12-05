@@ -10,6 +10,7 @@ import { createDockMenu } from "./electron/dockMenu";
 import { createTray } from "./electron/tray.js";
 import { autoUpdater } from "electron-updater";
 import express from "express";
+import expressProxy from "express-http-proxy";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -50,6 +51,7 @@ function createWindow() {
     // win.loadURL("app://./index.html");
     const expressApp = express();
     expressApp.use("/", express.static(__dirname + "/"));
+    expressApp.use("/api", expressProxy("http://127.0.0.1:10754"));
     expressApp.listen(27232);
     win.loadURL("http://localhost:27232");
   }

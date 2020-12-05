@@ -41,6 +41,7 @@
     "electron-updater": "^4.3.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.0",
+    "express-http-proxy": "^1.6.2",
     "extract-zip": "^2.0.1",
     "howler": "^2.2.0",
     "js-cookie": "^2.2.1",
