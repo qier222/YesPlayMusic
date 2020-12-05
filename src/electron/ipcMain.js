@@ -1,5 +1,5 @@
 import { app, ipcMain } from "electron";
-import match from "@nondanee/unblockneteasemusic";
+import match from "@njzy/unblockneteasemusic";
 
 export function initIpcMain(win) {
   // Make vuex copy for electron.
@@ -9,10 +9,27 @@ export function initIpcMain(win) {
     global.vuexCopy = state;
   });
 
-  ipcMain.on("unblock-music", (event, id) => {
-    match(id, ["qq", "kuwo", "migu"]).then((res) => {
-      event.returnValue = res;
+  ipcMain.on("unblock-music", (event, track) => {
+    // 兼容 unblockneteasemusic 所使用的 api 字段
+    track.alias = track.alia || [];
+    track.duration = track.dt || 0;
+    track.album = track.al || [];
+    track.artists = track.ar || [];
+
+    const matchPromise = match(track.id, ["qq", "kuwo", "migu"], track);
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject("timeout");
+      }, 3000);
     });
+    Promise.race([matchPromise, timeoutPromise])
+      .then((res) => {
+        event.returnValue = res;
+      })
+      .catch((err) => {
+        console.log("unblock music error: ", err);
+        event.returnValue = null;
+      });
   });
 
   ipcMain.on("close", () => {

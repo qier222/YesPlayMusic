@@ -25,7 +25,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@nondanee/unblockneteasemusic": "^0.25.3",
+    "@njzy/unblockneteasemusic": "^0.25.3",
     "axios": "^0.21.0",
     "big-integer": "^1.6.48",
     "core-js": "^3.6.5",

@@ -49,7 +49,7 @@ module.exports = {
   pluginOptions: {
     // electron-builder的配置文件
     electronBuilder: {
-      externals: ["@nondanee/unblockneteasemusic"],
+      externals: ["@nondanee/unblockneteasemusic", "@njzy/unblockneteasemusic"],
       builderOptions: {
         productName: "YesPlayMusic",
         copyright: "Copyright © YesPlayMusic",
