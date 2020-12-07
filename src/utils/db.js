@@ -1,11 +1,10 @@
-// import axios from "axios";
+import axios from "axios";
 import localforage from "localforage";
-import { getMP3 } from "@/api/track";
 
-export function cacheTrack(id) {
-  // let tracks = localforage.createInstance({
-  //   name: "tracks",
-  // });
+export function cacheTrack(id, url) {
+  let tracks = localforage.createInstance({
+    name: "tracks",
+  });
 
   // TODO: limit cache songs number
   // tracks.length().then(function (length) {
@@ -17,17 +16,14 @@ export function cacheTrack(id) {
   // });
 
   // TODO: cache track details
-  return getMP3(id).then((data) => {
-    // return axios
-    //   .get(data.data[0].url.replace(/^http:/, "https:"), {
-    //     responseType: "blob",
-    //   })
-    //   .then((data) => {
-    //     tracks.setItem(`${id}`, { mp3: data.data });
-    //     return { mp3: data.data };
-    //   });
-    return { mp3: data.data[0].url.replace(/^http:/, "https:") };
-  });
+  return axios
+    .get(url, {
+      responseType: "arraybuffer",
+    })
+    .then((response) => {
+      tracks.setItem(`${id}`, { mp3: response.data });
+      return { mp3: response.data };
+    });
 }
 
 export function countDBSize(dbName) {
@@ -37,11 +33,11 @@ export function countDBSize(dbName) {
   let trackSizes = [];
   return db
     .iterate((value) => {
-      trackSizes.push(value.mp3.size);
+      trackSizes.push(value.mp3.byteLength);
     })
     .then(() => {
       return {
-        bytes: trackSizes.reduce((s1, s2) => s1 + s2),
+        bytes: trackSizes.reduce((s1, s2) => s1 + s2, 0),
         length: trackSizes.length,
       };
     })
