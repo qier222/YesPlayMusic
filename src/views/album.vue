@@ -41,7 +41,7 @@
             @click.native="playAlbumByID(album.id)"
             :iconClass="`play`"
           >
-            {{ $t("play") }}
+            {{ $t("common.play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="accountLogin"

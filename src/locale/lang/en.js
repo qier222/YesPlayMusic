@@ -1,5 +1,8 @@
 export default {
-  play: "PLAY",
+  common: {
+    play: "PLAY",
+    songs: "Songs",
+  },
   nav: {
     home: "Home",
     explore: "Explore",
@@ -97,9 +100,6 @@ export default {
     noResult: "No Results",
     searchFor: "Search for",
   },
-  common: {
-    songs: "Songs",
-  },
   settings: {
     settings: "Settings",
     logout: "LOGOUT",
@@ -117,5 +117,15 @@ export default {
       light: "Light",
       dark: "Dark",
     },
+  },
+  contextMenu: {
+    play: "Play",
+    playNext: "Play Next",
+    saveToMyLikedSongs: "Save to my Liked Songs",
+    removeFromMyLikedSongs: "Remove from my Liked Songs",
+  },
+  toast: {
+    savedToMyLikedSongs: "Saved to my Liked Songs",
+    removedFromMyLikedSongs: "Removed from my Liked Songs",
   },
 };

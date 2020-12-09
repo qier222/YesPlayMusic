@@ -49,7 +49,7 @@
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPlaylistByID()" :iconClass="`play`">
-            {{ $t("play") }}
+            {{ $t("common.play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
             v-if="accountLogin && playlist.creator.userId !== data.user.userId"
@@ -84,7 +84,7 @@
           iconClass="play"
           color="grey"
         >
-          {{ $t("play") }}
+          {{ $t("common.play") }}
         </ButtonTwoTone>
         <ButtonTwoTone
           v-if="accountLogin && playlist.creator.userId !== data.user.userId"

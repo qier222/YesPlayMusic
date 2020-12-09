@@ -22,7 +22,7 @@
         </div>
         <div class="buttons">
           <ButtonTwoTone @click.native="playPopularSongs()" :iconClass="`play`">
-            {{ $t("play") }}
+            {{ $t("common.play") }}
           </ButtonTwoTone>
           <ButtonTwoTone @click.native="followArtist" color="grey">
             <span v-if="artist.followed">{{ $t("artist.following") }}</span>
