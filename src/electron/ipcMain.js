@@ -33,8 +33,9 @@ export function initIpcMain(win) {
   });
 
   ipcMain.on("close", () => {
-    win.close();
-    app.quit();
+    win.hide();
+    // win.close();
+    // app.quit();
   });
 
   ipcMain.on("minimize", () => {
