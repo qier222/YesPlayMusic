@@ -1,5 +1,5 @@
 import { updateMediaSessionMetaData } from "@/utils/mediaSession";
-import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
+import { getTrackDetail, scrobble, getMP3 as getMP3Api } from "@/api/track";
 import { isAccountLoggedIn } from "@/utils/auth";
 import { updateHttps } from "@/utils/common";
 import localforage from "localforage";
@@ -40,17 +40,18 @@ export default {
       updateMediaSessionMetaData(track);
       document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
 
+      let unblockSongUrl = null;
       if (track.playable === false) {
         let res = undefined;
         if (process.env.IS_ELECTRON === true) {
           res = ipcRenderer.sendSync("unblock-music", track);
         }
         if (res?.url) {
-          commitMP3(res.url);
+          unblockSongUrl = res.url;
         } else {
           dispatch("nextTrack");
+          return;
         }
-        return;
       }
 
       function commitMP3(mp3) {
@@ -59,31 +60,56 @@ export default {
           dispatch("nextTrack");
         });
       }
+
+      function getMP3(id) {
+        return getMP3Api(id).then((data) => {
+          // 未知情况下会没有返回数据导致报错，增加防范逻辑
+          if (data.data[0]) {
+            const url = updateHttps(data.data[0].url);
+            commitMP3(url);
+            return url;
+          }
+        });
+      }
+
       if (isAccountLoggedIn()) {
         if (store.state.settings.automaticallyCacheSongs === true) {
           let tracks = localforage.createInstance({
             name: "tracks",
           });
-          tracks.getItem(`${track.id}`).then((t) => {
-            if (t !== null) {
-              commitMP3(URL.createObjectURL(t.mp3));
-            } else {
-              cacheTrack(`${track.id}`).then((t) => {
-                commitMP3(URL.createObjectURL(t.mp3));
-              });
-            }
-          });
+          tracks
+            .getItem(`${track.id}`)
+            .then((t) => {
+              if (t !== null) {
+                const blob = new Blob([t.mp3]);
+                commitMP3(URL.createObjectURL(blob));
+              } else {
+                if (unblockSongUrl) {
+                  commitMP3(unblockSongUrl);
+                  cacheTrack(`${track.id}`, unblockSongUrl);
+                } else {
+                  getMP3(track.id).then((url) => {
+                    cacheTrack(`${track.id}`, url);
+                  });
+                }
+              }
+            })
+            .catch((err) => {
+              console.log(err.messaeg);
+              if (unblockSongUrl) {
+                commitMP3(unblockSongUrl);
+              } else {
+                getMP3(track.id);
+              }
+            });
         } else {
-          getMP3(track.id).then((data) => {
-            // 未知情况下会没有返回数据导致报错，增加防范逻辑
-            if (data.data[0]) {
-              const url = updateHttps(data.data[0].url);
-              commitMP3(url);
-            }
-          });
+          getMP3(track.id);
         }
       } else {
-        commitMP3(`https://music.163.com/song/media/outer/url?id=${track.id}`);
+        commitMP3(
+          unblockSongUrl ||
+            `https://music.163.com/song/media/outer/url?id=${track.id}`
+        );
       }
     });
   },
