@@ -2,7 +2,7 @@
 node_modules
 /dist
 dist_electron
-
+Icon?
 
 # local env files
 .env
