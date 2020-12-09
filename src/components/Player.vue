@@ -76,7 +76,11 @@
           ><svg-icon icon-class="list"
         /></button-icon>
         <button-icon
-          :title="$t('player.repeat')"
+          :title="
+            player.repeat === 'one'
+              ? $t('player.repeatTrack')
+              : $t('player.repeat')
+          "
           @click.native="repeat"
           :class="{ active: player.repeat !== 'off' }"
         >

@@ -78,6 +78,7 @@ export default {
     previous: "Previous Song",
     next: "Next Song",
     repeat: "Repeat",
+    repeatTrack: "Repeat Track",
     shuffle: "Shuffle",
     play: "Play",
     pause: "Pause",
