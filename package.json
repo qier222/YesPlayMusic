@@ -2,7 +2,7 @@
   "name": "YesPlayMusic",
   "version": "0.2.2",
   "private": true,
-  "description": "A third party music application for Netease Cloud Music",
+  "description": "A third party music application for Netease Music",
   "author": "hawtim<hawtimzhang@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
