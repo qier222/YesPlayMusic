@@ -120,6 +120,9 @@ nav {
     height: 24px;
     width: 24px;
   }
+  button {
+    -webkit-app-region: no-drag;
+  }
 }
 .navigation-links {
   flex: 1;
@@ -127,6 +130,7 @@ nav {
   justify-content: center;
   text-transform: uppercase;
   a {
+    -webkit-app-region: no-drag;
     font-size: 18px;
     font-weight: 700;
     text-decoration: none;
@@ -160,8 +164,8 @@ nav {
 
 .search-box {
   display: flex;
-
   justify-content: flex-end;
+  -webkit-app-region: no-drag;
 
   .container {
     display: flex;
@@ -224,6 +228,7 @@ nav {
     height: 24px;
     width: 24px;
     color: var(--color-text);
+    -webkit-app-region: no-drag;
   }
 }
 </style>

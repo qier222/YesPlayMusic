@@ -1,7 +1,7 @@
 export function ipcRenderer(vueInstance) {
   const self = vueInstance;
   // 添加专有的类名
-  document.body.classList.add("is-electron");
+  document.body.setAttribute("data-electron", "yes");
   // ipc message channel
   const electron = window.require("electron");
   const ipcRenderer = electron.ipcRenderer;

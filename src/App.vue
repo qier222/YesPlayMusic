@@ -139,11 +139,6 @@ a {
   }
 }
 
-// for electron
-body.is-electron::-webkit-scrollbar {
-  width: 0;
-}
-
 /* Let's get this party started */
 ::-webkit-scrollbar {
   width: 8px;
@@ -152,6 +147,7 @@ body.is-electron::-webkit-scrollbar {
 ::-webkit-scrollbar-track {
   background: transparent;
   border-left: 1px solid rgba(128, 128, 128, 0.18);
+  background: var(--color-body-bg);
 }
 
 ::-webkit-scrollbar-thumb {
