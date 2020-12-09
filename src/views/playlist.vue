@@ -52,7 +52,7 @@
             {{ $t("common.play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
-            v-if="accountLogin && playlist.creator.userId !== data.user.userId"
+            v-if="playlist.creator.userId !== data.user.userId"
             :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
             :iconButton="true"
             :horizontalPadding="0"
@@ -77,7 +77,7 @@
         >{{ playlist.englishTitle }} · {{ playlist.updateFrequency }}
       </div>
 
-      <div class="buttons" v-if="accountLogin">
+      <div class="buttons">
         <ButtonTwoTone
           class="play-button"
           @click.native="playPlaylistByID()"
@@ -87,7 +87,7 @@
           {{ $t("common.play") }}
         </ButtonTwoTone>
         <ButtonTwoTone
-          v-if="accountLogin && playlist.creator.userId !== data.user.userId"
+          v-if="playlist.creator.userId !== data.user.userId"
           :iconClass="playlist.subscribed ? 'heart-solid' : 'heart'"
           :iconButton="true"
           :horizontalPadding="0"
@@ -266,21 +266,22 @@ export default {
     isLikeSongsPage() {
       return this.$route.name === "likedSongs";
     },
-    accountLogin() {
-      return isAccountLoggedIn();
-    },
     specialPlaylistInfo() {
       return specialPlaylist[this.playlist.id];
     },
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
-    ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
+    ...mapActions(["playFirstTrackOnList", "playTrackOnListByID", "showToast"]),
     playPlaylistByID(trackID = "first") {
       let trackIDs = this.playlist.trackIds.map((t) => t.id);
       playAList(trackIDs, this.playlist.id, "playlist", trackID);
     },
     likePlaylist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       subscribePlaylist({
         id: this.playlist.id,
         t: this.playlist.subscribed ? 2 : 1,

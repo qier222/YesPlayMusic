@@ -11,18 +11,10 @@
       <hr />
       <div class="item" @click="play">{{ $t("contextMenu.play") }}</div>
       <div class="item" @click="playNext">{{ $t("contextMenu.playNext") }}</div>
-      <div
-        class="item"
-        @click="like"
-        v-show="!isRightClickedTrackLiked && accountLogin"
-      >
+      <div class="item" @click="like" v-show="!isRightClickedTrackLiked">
         {{ $t("contextMenu.saveToMyLikedSongs") }}
       </div>
-      <div
-        class="item"
-        @click="like"
-        v-show="isRightClickedTrackLiked && accountLogin"
-      >
+      <div class="item" @click="like" v-show="isRightClickedTrackLiked">
         {{ $t("contextMenu.removeFromMyLikedSongs") }}
       </div>
     </ContextMenu>
@@ -99,9 +91,6 @@ export default {
     isRightClickedTrackLiked() {
       return this.liked.songs.includes(this.rightClickedTrack?.id);
     },
-    accountLogin() {
-      return isAccountLoggedIn();
-    },
   },
   methods: {
     ...mapMutations(["updateLikedSongs"]),
@@ -152,6 +141,10 @@ export default {
       this.likeASong(this.rightClickedTrack.id);
     },
     likeASong(id) {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       let like = true;
       let likedSongs = this.liked.songs;
       if (likedSongs.includes(id)) like = false;

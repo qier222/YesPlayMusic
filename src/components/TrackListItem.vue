@@ -62,7 +62,7 @@
       <div></div>
     </div>
     <div class="actions" v-if="!isTracklist">
-      <button v-if="accountLogin" @click="likeThisSong">
+      <button @click="likeThisSong">
         <svg-icon
           icon-class="heart"
           :style="{
@@ -80,8 +80,6 @@
 </template>
 
 <script>
-import { isAccountLoggedIn } from "@/utils/auth";
-
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 import { mapState } from "vuex";
@@ -127,14 +125,11 @@ export default {
     },
     trackClass() {
       let trackClass = [this.type];
-      if (!this.track.playable && this.settings.showUnavailableSongGrey)
+      if (!this.track.playable && this.settings.showUnavailableSongInGreyStyle)
         trackClass.push("disable");
       if (this.isPlaying) trackClass.push("playing");
       if (this.focus) trackClass.push("focus");
       return trackClass;
-    },
-    accountLogin() {
-      return isAccountLoggedIn();
     },
     isMenuOpened() {
       return this.$parent.rightClickedTrack.id === this.track.id ? true : false;

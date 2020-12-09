@@ -11,7 +11,7 @@
           }}</router-link>
           -
           {{ mv.data.name }}
-          <div class="like-button" v-show="accountLogin">
+          <div class="like-button">
             <button-icon @click.native="likeMV">
               <svg-icon icon-class="heart-solid" v-if="mv.subed"></svg-icon>
               <svg-icon icon-class="heart" v-else></svg-icon>
@@ -40,6 +40,7 @@ import Plyr from "plyr";
 
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import MvRow from "@/components/MvRow.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "mv",
@@ -62,12 +63,8 @@ export default {
       simiMvs: [],
     };
   },
-  computed: {
-    accountLogin() {
-      return isAccountLoggedIn();
-    },
-  },
   methods: {
+    ...mapActions(["showToast"]),
     getData(id) {
       mvDetail(id).then((data) => {
         this.mv = data;
@@ -96,6 +93,10 @@ export default {
       });
     },
     likeMV() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       likeAMV({
         mvid: this.mv.data.id,
         t: this.mv.subed ? 0 : 1,

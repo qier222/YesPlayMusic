@@ -44,7 +44,6 @@
             {{ $t("common.play") }}
           </ButtonTwoTone>
           <ButtonTwoTone
-            v-if="accountLogin"
             :iconClass="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
             :iconButton="true"
             :horizontalPadding="0"
@@ -161,9 +160,6 @@ export default {
       this.tracks.map((t) => (time = time + t.dt));
       return time;
     },
-    accountLogin() {
-      return isAccountLoggedIn();
-    },
     filteredMoreAlbums() {
       let moreAlbums = this.moreAlbums.filter((a) => a.id !== this.album.id);
       let realAlbums = moreAlbums.filter((a) => a.type === "专辑");
@@ -184,7 +180,7 @@ export default {
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
-    ...mapActions(["playFirstTrackOnList", "playTrackOnListByID"]),
+    ...mapActions(["playFirstTrackOnList", "playTrackOnListByID", "showToast"]),
     playAlbumByID(id, trackID = "first") {
       if (this.tracks.find((t) => t.playable !== false) === undefined) {
         return;
@@ -192,6 +188,10 @@ export default {
       playAlbumByID(id, trackID);
     },
     likeAlbum() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       likeAAlbum({
         id: this.album.id,
         t: this.dynamicDetail.isSub ? 0 : 1,
