@@ -43,10 +43,11 @@ Howler.volume(store.state.player.volume);
 // 防止软件第一次打开资源加载2次
 Howler.autoUnlock = false;
 
-const currentTrackId = store.state?.player?.currentTrack?.id;
-if (currentTrackId) {
+const currentTrack = store.state?.player?.currentTrack;
+if (currentTrack?.id) {
   store.dispatch("switchTrack", {
-    id: currentTrackId,
+    id: currentTrack.id,
+    sort: currentTrack.sort,
     autoplay: false,
   });
 }
