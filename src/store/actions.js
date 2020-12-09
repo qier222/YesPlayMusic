@@ -103,7 +103,11 @@ export default {
               }
             });
         } else {
-          getMP3(track.id);
+          if (unblockSongUrl) {
+            commitMP3(unblockSongUrl);
+          } else {
+            getMP3(track.id);
+          }
         }
       } else {
         commitMP3(
