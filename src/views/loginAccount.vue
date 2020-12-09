@@ -79,7 +79,10 @@
         $t("login.loginWithPhone")
       }}</a>
     </div>
-    <div class="notice" v-html="$t('login.notice')"></div>
+    <div
+      class="notice"
+      v-html="isElectron ? $t('login.noticeElectron') : $t('login.notice')"
+    ></div>
   </div>
 </template>
 
@@ -103,6 +106,11 @@ export default {
       smsCode: "",
       inputFocus: "",
     };
+  },
+  computed: {
+    isElectron() {
+      return process.env.IS_ELECTRON;
+    },
   },
   created() {
     if (this.$route.query.mode === "phone") {
@@ -197,6 +205,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: calc(100vh - 192px);
 }
 
