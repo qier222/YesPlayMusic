@@ -23,6 +23,7 @@ export default {
     musicQuality: 320000,
     showGithubIcon: true,
     showPlaylistsByAppleMusic: true,
+    showUnavailableSongInGreyStyle: true,
   },
   data: {
     user: {},

@@ -84,6 +84,7 @@ import { isAccountLoggedIn } from "@/utils/auth";
 
 import ArtistsInLine from "@/components/ArtistsInLine.vue";
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "TrackListItem",
@@ -95,6 +96,7 @@ export default {
     return { hover: false, trackStyle: {} };
   },
   computed: {
+    ...mapState(["settings"]),
     imgUrl() {
       if (this.track.al !== undefined) return this.track.al.picUrl;
       if (this.track.album !== undefined) return this.track.album.picUrl;
@@ -125,7 +127,8 @@ export default {
     },
     trackClass() {
       let trackClass = [this.type];
-      if (!this.track.playable) trackClass.push("disable");
+      if (!this.track.playable && this.settings.showUnavailableSongGrey)
+        trackClass.push("disable");
       if (this.isPlaying) trackClass.push("playing");
       if (this.focus) trackClass.push("focus");
       return trackClass;

@@ -76,7 +76,7 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Automatically Cache Songs </div>
+          <div class="title"> Automatically cache songs </div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -93,7 +93,7 @@
       <div class="item">
         <div class="left">
           <div class="title"
-            >Cached {{ tracksCache.length }} Songs ({{ tracksCache.size }})</div
+            >Cached {{ tracksCache.length }} songs ({{ tracksCache.size }})</div
           >
         </div>
         <div class="right">
@@ -102,7 +102,7 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Show Github Icon </div>
+          <div class="title"> Show Github icon </div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -118,7 +118,23 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Show Playlists by Apple Music</div>
+          <div class="title"> Show unavailable song in grey style</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-unavailable-song-grey"
+              id="show-unavailable-song-grey"
+              v-model="showUnavailableSongInGreyStyle"
+            />
+            <label for="show-unavailable-song-grey"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"> Show playlists by Apple Music</div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -211,6 +227,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showGithubIcon",
+          value,
+        });
+      },
+    },
+    showUnavailableSongInGreyStyle: {
+      get() {
+        return this.settings.showUnavailableSongInGreyStyle;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showUnavailableSongInGreyStyle",
           value,
         });
       },
@@ -450,7 +477,7 @@ h2 {
   -webkit-transition: 0.4s ease;
   transition: 0.4s ease;
   height: 32px;
-  width: 68px;
+  width: 52px;
   background: var(--color-secondary-bg);
   border-radius: 8px;
 }
@@ -461,7 +488,7 @@ h2 {
   -webkit-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
   transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
   height: 32px;
-  width: 68px;
+  width: 52px;
   top: 0;
   left: 0;
   border-radius: 8px;
@@ -476,7 +503,7 @@ h2 {
   transition: 0.35s cubic-bezier(0.54, 1.6, 0.5, 1);
   background: #fff;
   height: 20px;
-  width: 28px;
+  width: 20px;
   top: 6px;
   left: 6px;
   border-radius: 6px;
@@ -487,6 +514,6 @@ h2 {
   transition: width 0.2s cubic-bezier(0, 0, 0, 0.1);
 }
 .toggle input:checked + label:after {
-  left: 34px;
+  left: 26px;
 }
 </style>

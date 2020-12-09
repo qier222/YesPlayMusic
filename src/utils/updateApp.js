@@ -5,6 +5,8 @@ const updateSetting = () => {
   const parsedSettings = JSON.parse(localStorage.getItem("settings"));
   const setting = {
     playlistCategories: initLocalStorage?.settings?.playlistCategories,
+    showUnavailableSongInGreyStyle:
+      initLocalStorage?.settings?.showUnavailableSongInGreyStyle,
     ...parsedSettings,
   };
 
