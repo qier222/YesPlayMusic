@@ -120,4 +120,7 @@ export default {
       }
     );
   },
+  updateToast(state, toast) {
+    state.toast = toast;
+  },
 };

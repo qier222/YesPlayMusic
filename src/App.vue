@@ -17,6 +17,7 @@
           ) === false
         "
     /></transition>
+    <Toast />
     <GlobalEvents :filter="globalEventFilter" @keydown.space="play" />
   </div>
 </template>
@@ -24,6 +25,7 @@
 <script>
 import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
+import Toast from "./components/Toast.vue";
 import GlobalEvents from "vue-global-events";
 import { ipcRenderer } from "./electron/ipcRenderer";
 
@@ -33,6 +35,7 @@ export default {
     Navbar,
     Player,
     GlobalEvents,
+    Toast,
   },
   data() {
     return {

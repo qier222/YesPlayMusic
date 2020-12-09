@@ -9,21 +9,21 @@
         </div>
       </div>
       <hr />
-      <div class="item" @click="play">Play</div>
-      <div class="item" @click="playNext">Play Next</div>
+      <div class="item" @click="play">{{ $t("contextMenu.play") }}</div>
+      <div class="item" @click="playNext">{{ $t("contextMenu.playNext") }}</div>
       <div
         class="item"
         @click="like"
         v-show="!isRightClickedTrackLiked && accountLogin"
       >
-        Save to my Liked Songs
+        {{ $t("contextMenu.saveToMyLikedSongs") }}
       </div>
       <div
         class="item"
         @click="like"
         v-show="isRightClickedTrackLiked && accountLogin"
       >
-        Remove from my Liked Songs
+        {{ $t("contextMenu.removeFromMyLikedSongs") }}
       </div>
     </ContextMenu>
     <TrackListItem
@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     ...mapMutations(["updateLikedSongs"]),
-    ...mapActions(["nextTrack", "playTrackOnListByID"]),
+    ...mapActions(["nextTrack", "playTrackOnListByID", "showToast"]),
     openMenu(e, track) {
       if (!track.playable) {
         return;
@@ -158,8 +158,10 @@ export default {
       likeATrack({ id, like }).then((data) => {
         if (data.code !== 200) return;
         if (like === false) {
+          this.showToast(this.$t("toast.removedFromMyLikedSongs"));
           this.updateLikedSongs(likedSongs.filter((d) => d !== id));
         } else {
+          this.showToast(this.$t("toast.savedToMyLikedSongs"));
           likedSongs.push(id);
           this.updateLikedSongs(likedSongs);
         }
