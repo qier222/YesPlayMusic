@@ -95,8 +95,7 @@ export default {
   cursor: default;
   color: var(--color-text);
   &:hover {
-    background: var(--color-primary-bg);
-    color: var(--color-primary);
+    background: var(--color-secondary-bg);
   }
 }
 
