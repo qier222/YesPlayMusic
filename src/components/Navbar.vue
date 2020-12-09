@@ -139,7 +139,7 @@ nav {
       left: 12px;
     }
     &:hover {
-      background: var(--color-secondary-bg);
+      background: var(--color-secondary-bg-for-transparent);
     }
     &:active {
       transform: scale(0.92);
@@ -167,7 +167,7 @@ nav {
     display: flex;
     align-items: center;
     height: 32px;
-    background: var(--color-secondary-bg);
+    background: var(--color-secondary-bg-for-transparent);
     border-radius: 8px;
     width: 200px;
   }
@@ -194,11 +194,22 @@ nav {
   }
 
   .active {
-    background: var(--color-primary-bg);
+    background: var(--color-primary-bg-for-transparent);
     input,
     .svg-icon {
       opacity: 1;
       color: var(--color-primary);
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .search-box {
+    .active {
+      input,
+      .svg-icon {
+        color: var(--color-text);
+      }
     }
   }
 }

@@ -85,6 +85,9 @@ export default {
     backdrop-filter: blur(16px) contrast(120%);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
+  .menu .item:hover {
+    color: var(--color-text);
+  }
 }
 
 .menu .item {
@@ -95,7 +98,8 @@ export default {
   cursor: default;
   color: var(--color-text);
   &:hover {
-    background: var(--color-secondary-bg);
+    color: var(--color-primary);
+    background: var(--color-primary-bg-for-transparent);
   }
 }
 

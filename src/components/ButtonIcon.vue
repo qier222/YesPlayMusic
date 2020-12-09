@@ -27,7 +27,7 @@ button {
     margin-left: 0;
   }
   &:hover {
-    background: var(--color-secondary-bg);
+    background: var(--color-secondary-bg-for-transparent);
   }
   &:active {
     transform: scale(0.92);
