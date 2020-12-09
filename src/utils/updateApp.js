@@ -3,14 +3,14 @@ import pkg from "../../package.json";
 
 const updateSetting = () => {
   const parsedSettings = JSON.parse(localStorage.getItem("settings"));
-  const setting = {
+  const settings = {
     playlistCategories: initLocalStorage?.settings?.playlistCategories,
     showUnavailableSongInGreyStyle:
       initLocalStorage?.settings?.showUnavailableSongInGreyStyle,
     ...parsedSettings,
   };
 
-  localStorage.setItem("setting", JSON.stringify(setting));
+  localStorage.setItem("settings", JSON.stringify(settings));
 };
 
 const updateData = () => {
