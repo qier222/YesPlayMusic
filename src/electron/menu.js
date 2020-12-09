@@ -128,6 +128,7 @@ export function createMenu(win) {
     {
       label: "Window",
       submenu: [
+        { role: "close" },
         { role: "minimize" },
         { role: "zoom" },
         { role: "reload" },
