@@ -9,6 +9,10 @@ export function isTrackPlayable(track) {
     playable: true,
     reason: "",
   };
+  // cloud storage judgement logic
+  if (isAccountLoggedIn() && track?.privilege?.cs) {
+    return result;
+  }
   if (track.fee === 1 || track.privilege?.fee === 1) {
     if (isAccountLoggedIn() && store.state.data.user.vipType === 11) {
       result.playable = true;
