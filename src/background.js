@@ -11,6 +11,14 @@ import { createTray } from "./electron/tray.js";
 import { autoUpdater } from "electron-updater";
 import express from "express";
 import expressProxy from "express-http-proxy";
+import Store from "electron-store";
+
+const store = new Store({
+  windowWidth: {
+    width: { type: "number", default: 1440 },
+    height: { type: "number", default: 840 },
+  },
+});
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -32,8 +40,8 @@ protocol.registerSchemesAsPrivileged([
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1440,
-    height: 840,
+    width: store.get("window.width"),
+    height: store.get("window.height"),
     titleBarStyle: "hiddenInset",
     webPreferences: {
       webSecurity: false,
@@ -77,6 +85,10 @@ function createWindow() {
   // win.on("closed", () => {
   //   win = null;
   // });
+  win.on("resize", () => {
+    let { height, width } = win.getBounds();
+    store.set("window", { height, width });
+  });
   return win;
 }
 
