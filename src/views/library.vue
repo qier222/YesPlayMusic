@@ -41,35 +41,44 @@
     </div>
 
     <div class="section-two" id="liked">
-      <div class="tabs">
-        <div
-          class="tab"
-          :class="{ active: currentTab === 'playlists' }"
-          @click="updateCurrentTab('playlists')"
-        >
-          Playlists
+      <div class="tabs-row">
+        <div class="tabs">
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'playlists' }"
+            @click="updateCurrentTab('playlists')"
+          >
+            Playlists
+          </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'albums' }"
+            @click="updateCurrentTab('albums')"
+          >
+            Albums
+          </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'artists' }"
+            @click="updateCurrentTab('artists')"
+          >
+            Artists
+          </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'mvs' }"
+            @click="updateCurrentTab('mvs')"
+          >
+            MVs
+          </div>
         </div>
-        <div
-          class="tab"
-          :class="{ active: currentTab === 'albums' }"
-          @click="updateCurrentTab('albums')"
+        <button
+          class="add-playlist"
+          icon="plus"
+          v-show="currentTab === 'playlists'"
+          @click="showAddPlaylistModal = true"
+          ><svg-icon icon-class="plus" />新建歌单</button
         >
-          Albums
-        </div>
-        <div
-          class="tab"
-          :class="{ active: currentTab === 'artists' }"
-          @click="updateCurrentTab('artists')"
-        >
-          Artists
-        </div>
-        <div
-          class="tab"
-          :class="{ active: currentTab === 'mvs' }"
-          @click="updateCurrentTab('mvs')"
-        >
-          MVs
-        </div>
       </div>
 
       <div v-show="currentTab === 'playlists'">
@@ -100,11 +109,39 @@
         <MvRow :mvs="mvs" />
       </div>
     </div>
+
+    <Modal
+      class="add-playlist-modal"
+      :show="showAddPlaylistModal"
+      :close="closeAddPlaylistModal"
+      title="新建歌单"
+      width="25vw"
+    >
+      <template slot="default">
+        <input
+          type="text"
+          placeholder="歌单标题"
+          maxlength="40"
+          v-model="newPlaylist.title"
+        />
+        <div class="checkbox">
+          <input
+            type="checkbox"
+            id="checkbox-private"
+            v-model="newPlaylist.private"
+          />
+          <label for="checkbox-private">设置为隐私歌单</label>
+        </div>
+      </template>
+      <template slot="footer">
+        <button class="primary block" @click="createPlaylist">创建</button>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import { getTrackDetail, getLyric } from "@/api/track";
 import {
   userDetail,
@@ -114,18 +151,19 @@ import {
   likedMVs,
 } from "@/api/user";
 import { randomNum, dailyTask } from "@/utils/common";
-import { getPlaylistDetail } from "@/api/playlist";
+import { getPlaylistDetail, createPlaylist } from "@/api/playlist";
 import { playPlaylistByID } from "@/utils/play";
 import NProgress from "nprogress";
 
 import TrackList from "@/components/TrackList.vue";
 import CoverRow from "@/components/CoverRow.vue";
-import MvRow from "@/components/MvRow.vue";
 import SvgIcon from "@/components/SvgIcon.vue";
+import MvRow from "@/components/MvRow.vue";
+import Modal from "@/components/Modal.vue";
 
 export default {
   name: "Library",
-  components: { SvgIcon, CoverRow, TrackList, MvRow },
+  components: { SvgIcon, CoverRow, TrackList, MvRow, Modal },
   data() {
     return {
       show: false,
@@ -142,6 +180,11 @@ export default {
       albums: [],
       artists: [],
       mvs: [],
+      showAddPlaylistModal: false,
+      newPlaylist: {
+        title: "",
+        private: false,
+      },
     };
   },
   created() {
@@ -180,6 +223,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["showToast"]),
     playLikedSongs() {
       playPlaylistByID(this.playlists[0].id, "first", true);
     },
@@ -266,6 +310,25 @@ export default {
         this.mvs = data.data;
         NProgress.done();
       });
+    },
+    createPlaylist() {
+      let params = { name: this.newPlaylist.title };
+      if (this.newPlaylist.private) params.type = 10;
+      createPlaylist(params).then((data) => {
+        if (data.code === 200) {
+          this.closeAddPlaylistModal();
+          this.showToast("成功创建歌单");
+          this.playlists = [];
+          this.getUserPlaylists(true);
+        }
+      });
+    },
+    closeAddPlaylistModal() {
+      this.showAddPlaylistModal = false;
+      this.newPlaylist = {
+        title: "",
+        private: false,
+      };
     },
   },
   watch: {
@@ -381,16 +444,21 @@ h1 {
   min-height: calc(100vh - 182px);
 }
 
+.tabs-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
   font-size: 18px;
   color: var(--color-text);
-  margin-bottom: 6px;
   .tab {
     font-weight: 600;
     padding: 8px 14px;
-    margin: 10px 14px 6px 0;
+    margin-right: 14px;
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
@@ -404,6 +472,70 @@ h1 {
   .tab.active {
     opacity: 0.88;
     background-color: var(--color-secondary-bg);
+  }
+}
+
+button.add-playlist {
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 0 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+  opacity: 0.68;
+  font-weight: 500;
+  .svg-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+  }
+  &:hover {
+    opacity: 1;
+    background: var(--color-secondary-bg);
+  }
+  &:active {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+}
+
+.add-playlist-modal {
+  .content {
+    display: flex;
+    flex-direction: column;
+    input {
+      margin-bottom: 12px;
+    }
+    input[type="text"] {
+      width: calc(100% - 24px);
+      flex: 1;
+      background: var(--color-secondary-bg-for-transparent);
+      font-size: 16px;
+      border: none;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: -1px;
+      color: var(--color-text);
+      &:focus {
+        background: var(--color-primary-bg-for-transparent);
+        opacity: 1;
+        [data-theme="light"] {
+          color: var(--color-primary);
+        }
+      }
+    }
+    .checkbox {
+      input[type="checkbox" i] {
+        margin: 3px 3px 3px 4px;
+      }
+      display: flex;
+      align-items: center;
+      label {
+        font-size: 12px;
+      }
+    }
   }
 }
 </style>

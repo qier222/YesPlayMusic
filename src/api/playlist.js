@@ -102,6 +102,7 @@ export function playlistCatlist() {
     method: "get",
   });
 }
+
 /**
  * 所有榜单
  * 说明 : 调用此接口,可获取所有榜单 接口地址 : /toplist
@@ -112,6 +113,7 @@ export function toplists() {
     method: "get",
   });
 }
+
 /**
  * 收藏/取消收藏歌单
  * 说明 : 调用此接口, 传入类型和歌单 id 可收藏歌单或者取消收藏歌单
@@ -125,6 +127,39 @@ export function subscribePlaylist(params) {
   return request({
     url: "/playlist/subscribe",
     method: "get",
+    params,
+  });
+}
+
+/**
+ * 删除歌单
+ * 说明 : 调用此接口 , 传入歌单id可删除歌单
+ * - id : 歌单id,可多个,用逗号隔开
+ *  * @param {number} id
+ */
+export function deletePlaylist(id) {
+  return request({
+    url: "/playlist/delete",
+    method: "post",
+    params: { id },
+  });
+}
+
+/**
+ * 新建歌单
+ * 说明 : 调用此接口 , 传入歌单名字可新建歌单
+ * - name : 歌单名
+ * - privacy : 是否设置为隐私歌单，默认否，传'10'则设置成隐私歌单
+ * - type : 歌单类型,默认'NORMAL',传 'VIDEO'则为视频歌单
+ * @param {Object} params
+ * @param {string} params.name
+ * @param {number} params.privacy
+ * @param {string} params.type
+ */
+export function createPlaylist(params) {
+  return request({
+    url: "/playlist/create",
+    method: "post",
     params,
   });
 }
