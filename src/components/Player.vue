@@ -320,7 +320,7 @@ export default {
 
 .progress-bar {
   margin-top: -6px;
-  margin-bottom: -4px;
+  margin-bottom: -6px;
   width: 100%;
 }
 

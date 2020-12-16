@@ -129,6 +129,7 @@ nav {
   display: flex;
   justify-content: center;
   text-transform: uppercase;
+  user-select: none;
   a {
     -webkit-app-region: no-drag;
     font-size: 18px;

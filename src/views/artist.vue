@@ -118,6 +118,7 @@ import {
   followAArtist,
 } from "@/api/artist";
 import { playAList } from "@/utils/play";
+import { isAccountLoggedIn } from "@/utils/auth";
 import NProgress from "nprogress";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
@@ -193,6 +194,10 @@ export default {
       playAList(trackIDs, this.artist.id, "artist", trackID);
     },
     followArtist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       followAArtist({
         id: this.artist.id,
         t: this.artist.followed ? 0 : 1,

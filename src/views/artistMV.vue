@@ -44,7 +44,7 @@ export default {
       this.loadMVs();
     },
     loadMVs() {
-      artistMv({ id: this.id, limit: 100, offset: this.mvs.length + 1 }).then(
+      artistMv({ id: this.id, limit: 100, offset: this.mvs.length }).then(
         (data) => {
           this.mvs.push(...data.mvs);
           this.hasMore = data.hasMore;
