@@ -125,10 +125,10 @@ export default {
     play: "播放",
     playNext: "下一首播放",
     saveToMyLikedSongs: "添加到我喜欢的音乐",
-    removeFromMyLikedSongs: "从喜欢的音乐中移除",
+    removeFromMyLikedSongs: "从喜欢的音乐中删除",
   },
   toast: {
     savedToMyLikedSongs: "已添加到我喜欢的音乐",
-    removedFromMyLikedSongs: "已从喜欢的音乐中移除",
+    removedFromMyLikedSongs: "已从喜欢的音乐中删除",
   },
 };

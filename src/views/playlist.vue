@@ -10,9 +10,10 @@
         :alwaysShowShadow="true"
         :clickToPlay="true"
         :size="288"
+        @click.right.native="openMenu"
       />
       <div class="info">
-        <div class="title"
+        <div class="title" @click.right="openMenu"
           ><span class="lock-icon" v-if="playlist.privacy === 10">
             <svg-icon icon-class="lock" /></span
           >{{ playlist.name }}</div
@@ -64,12 +65,24 @@
             @click.native="likePlaylist"
           >
           </ButtonTwoTone>
+          <ButtonTwoTone
+            iconClass="more"
+            :iconButton="true"
+            :horizontalPadding="0"
+            color="grey"
+            @click.native="openMenu"
+          >
+          </ButtonTwoTone>
         </div>
       </div>
     </div>
 
     <div class="special-playlist" v-if="specialPlaylistInfo !== undefined">
-      <div class="title" :class="specialPlaylistInfo.gradient">
+      <div
+        class="title"
+        :class="specialPlaylistInfo.gradient"
+        @click.right="openMenu"
+      >
         <!-- <img :src="playlist.coverImgUrl | resizeImage" /> -->
         {{ specialPlaylistInfo.name }}
       </div>
@@ -99,6 +112,14 @@
           @click.native="likePlaylist"
         >
         </ButtonTwoTone>
+        <ButtonTwoTone
+          iconClass="more"
+          :iconButton="true"
+          :horizontalPadding="0"
+          color="grey"
+          @click.native="openMenu"
+        >
+        </ButtonTwoTone>
       </div>
     </div>
 
@@ -115,20 +136,46 @@
     <Modal
       :show="showFullDescription"
       :close="() => (showFullDescription = false)"
-      :text="playlist.description"
-    />
+      :showFooter="false"
+      title="歌单介绍"
+      >{{ playlist.description }}</Modal
+    >
+
+    <ContextMenu ref="playlistMenu">
+      <div class="item">{{ $t("contextMenu.playNext") }}</div>
+      <div class="item" @click="likePlaylist(true)">{{
+        playlist.subscribed ? "从音乐库删除" : "保存到音乐库"
+      }}</div>
+      <div
+        class="item"
+        v-if="playlist.creator.userId === data.user.userId"
+        @click="editPlaylist"
+        >编辑歌单信息</div
+      >
+      <div
+        class="item"
+        v-if="playlist.creator.userId === data.user.userId"
+        @click="deletePlaylist"
+        >删除歌单</div
+      >
+    </ContextMenu>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
 import NProgress from "nprogress";
-import { getPlaylistDetail, subscribePlaylist } from "@/api/playlist";
+import {
+  getPlaylistDetail,
+  subscribePlaylist,
+  deletePlaylist,
+} from "@/api/playlist";
 import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
 import { isAccountLoggedIn } from "@/utils/auth";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
+import ContextMenu from "@/components/ContextMenu.vue";
 import TrackList from "@/components/TrackList.vue";
 import Cover from "@/components/Cover.vue";
 import Modal from "@/components/Modal.vue";
@@ -227,6 +274,7 @@ export default {
     ButtonTwoTone,
     TrackList,
     Modal,
+    ContextMenu,
   },
   data() {
     return {
@@ -270,7 +318,7 @@ export default {
       let trackIDs = this.playlist.trackIds.map((t) => t.id);
       playAList(trackIDs, this.playlist.id, "playlist", trackID);
     },
-    likePlaylist() {
+    likePlaylist(toast = false) {
       if (!isAccountLoggedIn()) {
         this.showToast("此操作需要登录网易云账号");
         return;
@@ -279,8 +327,13 @@ export default {
         id: this.playlist.id,
         t: this.playlist.subscribed ? 2 : 1,
       }).then((data) => {
-        if (data.code === 200)
+        if (data.code === 200) {
           this.playlist.subscribed = !this.playlist.subscribed;
+          if (toast === true)
+            this.showToast(
+              this.playlist.subscribed ? "已保存到音乐库" : "已从音乐库删除"
+            );
+        }
         getPlaylistDetail(this.id, true).then((data) => {
           this.playlist = data.playlist;
         });
@@ -338,6 +391,25 @@ export default {
         this.loadingMore = true;
         this.loadMore();
       }
+    },
+    openMenu(e) {
+      this.$refs.playlistMenu.openMenu(e);
+    },
+    deletePlaylist() {
+      let confirmation = confirm(`确定要删除歌单 ${this.playlist.name}？`);
+      if (confirmation === true) {
+        deletePlaylist(this.playlist.id).then((data) => {
+          if (data.code === 200) {
+            alert(`已删除歌单 ${this.playlist.name}`);
+            this.$router.go(-1);
+          } else {
+            alert("发生错误");
+          }
+        });
+      }
+    },
+    editPlaylist() {
+      alert("此功能开发中");
     },
   },
 };

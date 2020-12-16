@@ -9,10 +9,13 @@
         :size="288"
         :type="'album'"
         :id="album.id"
+        @click.right.native="openMenu"
       />
       <div class="info">
-        <div class="title"> {{ title }}</div>
-        <div class="subtitle" v-if="subtitle !== ''">{{ subtitle }}</div>
+        <div class="title" @click.right="openMenu"> {{ title }}</div>
+        <div class="subtitle" v-if="subtitle !== ''" @click.right="openMenu">{{
+          subtitle
+        }}</div>
         <div class="artist">
           <span v-if="album.artist.id !== 104700">
             <span>{{ album.type | formatAlbumType(album) }} by </span
@@ -39,7 +42,7 @@
         <div class="buttons" style="margin-top: 32px">
           <ButtonTwoTone
             @click.native="playAlbumByID(album.id)"
-            :iconClass="`play`"
+            iconClass="play"
           >
             {{ $t("common.play") }}
           </ButtonTwoTone>
@@ -53,6 +56,14 @@
               dynamicDetail.isSub ? 'var(--color-secondary-bg)' : ''
             "
             @click.native="likeAlbum"
+          >
+          </ButtonTwoTone>
+          <ButtonTwoTone
+            iconClass="more"
+            :iconButton="true"
+            :horizontalPadding="0"
+            color="grey"
+            @click.native="openMenu"
           >
           </ButtonTwoTone>
         </div>
@@ -93,8 +104,17 @@
     <Modal
       :show="showFullDescription"
       :close="() => (showFullDescription = false)"
-      :text="album.description"
-    />
+      :showFooter="false"
+      title="专辑介绍"
+      >{{ album.description }}</Modal
+    >
+    <ContextMenu ref="albumMenu">
+      <div class="item">{{ $t("contextMenu.playNext") }}</div>
+      <div class="item" @click="likeAlbum(true)">{{
+        dynamicDetail.isSub ? "从音乐库删除" : "保存到音乐库"
+      }}</div>
+      <div class="item">添加到歌单</div>
+    </ContextMenu>
   </div>
 </template>
 
@@ -110,6 +130,7 @@ import { isAccountLoggedIn } from "@/utils/auth";
 
 import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
+import ContextMenu from "@/components/ContextMenu.vue";
 import TrackList from "@/components/TrackList.vue";
 import CoverRow from "@/components/CoverRow.vue";
 import Cover from "@/components/Cover.vue";
@@ -124,6 +145,7 @@ export default {
     ExplicitSymbol,
     CoverRow,
     Modal,
+    ContextMenu,
   },
   data() {
     return {
@@ -180,7 +202,7 @@ export default {
       }
       playAlbumByID(id, trackID);
     },
-    likeAlbum() {
+    likeAlbum(toast = false) {
       if (!isAccountLoggedIn()) {
         this.showToast("此操作需要登录网易云账号");
         return;
@@ -189,8 +211,13 @@ export default {
         id: this.album.id,
         t: this.dynamicDetail.isSub ? 0 : 1,
       }).then((data) => {
-        if (data.code === 200)
+        if (data.code === 200) {
           this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
+          if (toast === true)
+            this.showToast(
+              this.dynamicDetail.isSub ? "已保存到音乐库" : "已从音乐库删除"
+            );
+        }
       });
     },
     formatTitle() {
@@ -230,6 +257,9 @@ export default {
       albumDynamicDetail(id).then((data) => {
         this.dynamicDetail = data;
       });
+    },
+    openMenu(e) {
+      this.$refs.albumMenu.openMenu(e);
     },
   },
   beforeRouteUpdate(to, from, next) {

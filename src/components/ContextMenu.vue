@@ -37,7 +37,9 @@ export default {
 
     closeMenu() {
       this.showMenu = false;
-      this.$parent.closeMenu();
+      if (this.$parent.closeMenu !== undefined) {
+        this.$parent.closeMenu();
+      }
     },
 
     openMenu(e) {
