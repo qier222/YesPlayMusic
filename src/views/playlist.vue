@@ -112,20 +112,11 @@
 
     <TrackList :tracks="tracks" :type="'playlist'" :id="playlist.id" />
 
-    <transition name="fade">
-      <div
-        class="shade"
-        @click="showFullDescription = false"
-        v-show="showFullDescription"
-      >
-        <div class="description-full" @click.stop>
-          <span>{{ playlist.description }}</span>
-          <span class="close" @click="showFullDescription = false">
-            {{ $t("modal.close") }}
-          </span>
-        </div>
-      </div>
-    </transition>
+    <Modal
+      :show="showFullDescription"
+      :close="() => (showFullDescription = false)"
+      :text="playlist.description"
+    />
   </div>
 </template>
 
@@ -140,6 +131,7 @@ import { isAccountLoggedIn } from "@/utils/auth";
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import TrackList from "@/components/TrackList.vue";
 import Cover from "@/components/Cover.vue";
+import Modal from "@/components/Modal.vue";
 
 const specialPlaylist = {
   2829816518: {
@@ -234,6 +226,7 @@ export default {
     Cover,
     ButtonTwoTone,
     TrackList,
+    Modal,
   },
   data() {
     return {
@@ -408,41 +401,6 @@ export default {
       button {
         margin-right: 16px;
       }
-    }
-  }
-}
-
-.shade {
-  background: rgba(255, 255, 255, 0.38);
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  .description-full {
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(12px);
-    padding: 32px;
-    border-radius: 12px;
-    width: 50vw;
-    margin: auto 0;
-    font-size: 14px;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-
-    .close {
-      display: flex;
-      justify-content: flex-end;
-      font-size: 16px;
-      margin-top: 20px;
-      color: #335eea;
-      cursor: pointer;
     }
   }
 }
@@ -646,13 +604,5 @@ export default {
       border: rgba(0, 0, 0, 0.2);
     }
   }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
 }
 </style>
