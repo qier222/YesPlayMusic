@@ -11,19 +11,20 @@
       <hr />
       <div class="item" @click="play">{{ $t("contextMenu.play") }}</div>
       <div class="item" @click="playNext">{{ $t("contextMenu.playNext") }}</div>
+      <hr />
       <div class="item" @click="like" v-show="!isRightClickedTrackLiked">
         {{ $t("contextMenu.saveToMyLikedSongs") }}
       </div>
       <div class="item" @click="like" v-show="isRightClickedTrackLiked">
         {{ $t("contextMenu.removeFromMyLikedSongs") }}
       </div>
-      <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
       <div
         v-if="extraContextMenuItem.includes('removeTrackFromPlaylist')"
         class="item"
         @click="removeTrackFromPlaylist"
         >从歌单中删除</div
       >
+      <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
     </ContextMenu>
     <TrackListItem
       v-for="track in tracks"
@@ -195,17 +196,19 @@ export default {
         this.showToast("此操作需要登录网易云账号");
         return;
       }
-      let trackID = this.rightClickedTrack.id;
-      addOrRemoveTrackFromPlaylist({
-        op: "del",
-        pid: this.id,
-        tracks: trackID,
-      }).then((data) => {
-        this.showToast(
-          data.body.code === 200 ? "已从歌单中删除" : data.body.message
-        );
-        this.$parent.removeTrack(trackID);
-      });
+      if (confirm(`确定要从歌单删除 ${this.rightClickedTrack.name}？`)) {
+        let trackID = this.rightClickedTrack.id;
+        addOrRemoveTrackFromPlaylist({
+          op: "del",
+          pid: this.id,
+          tracks: trackID,
+        }).then((data) => {
+          this.showToast(
+            data.body.code === 200 ? "已从歌单中删除" : data.body.message
+          );
+          this.$parent.removeTrack(trackID);
+        });
+      }
     },
   },
 };
