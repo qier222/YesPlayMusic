@@ -124,9 +124,10 @@ export function toplists() {
  * @param {number} params.id
  */
 export function subscribePlaylist(params) {
+  params.timestamp = new Date().getTime();
   return request({
     url: "/playlist/subscribe",
-    method: "get",
+    method: "post",
     params,
   });
 }
@@ -157,8 +158,27 @@ export function deletePlaylist(id) {
  * @param {string} params.type
  */
 export function createPlaylist(params) {
+  params.timestamp = new Date().getTime();
   return request({
     url: "/playlist/create",
+    method: "post",
+    params,
+  });
+}
+
+/**
+ * 对歌单添加或删除歌曲
+ * 说明 : 调用此接口 , 可以添加歌曲到歌单或者从歌单删除某首歌曲 ( 需要登录 )
+ * - op: 从歌单增加单曲为 add, 删除为 del
+ * - pid: 歌单 id tracks: 歌曲 id,可多个,用逗号隔开
+ * @param {Object} params
+ * @param {string} params.op
+ * @param {string} params.pid
+ */
+export function addOrRemoveTrackFromPlaylist(params) {
+  params.timestamp = new Date().getTime();
+  return request({
+    url: "/playlist/tracks",
     method: "post",
     params,
   });

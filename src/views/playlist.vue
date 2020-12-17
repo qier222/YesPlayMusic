@@ -131,12 +131,20 @@
       </h1>
     </div>
 
-    <TrackList :tracks="tracks" :type="'playlist'" :id="playlist.id" />
+    <TrackList
+      :tracks="tracks"
+      :type="'playlist'"
+      :id="playlist.id"
+      :extraContextMenuItem="
+        isUserOwnPlaylist ? ['removeTrackFromPlaylist'] : []
+      "
+    />
 
     <Modal
       :show="showFullDescription"
       :close="() => (showFullDescription = false)"
       :showFooter="false"
+      :clickOutsideHide="true"
       title="歌单介绍"
       >{{ playlist.description }}</Modal
     >
@@ -310,6 +318,12 @@ export default {
     specialPlaylistInfo() {
       return specialPlaylist[this.playlist.id];
     },
+    isUserOwnPlaylist() {
+      return (
+        this.playlist.creator.userId === this.data.user.userId &&
+        this.playlist.id !== this.data.likedSongPlaylistID
+      );
+    },
   },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
@@ -396,6 +410,10 @@ export default {
       this.$refs.playlistMenu.openMenu(e);
     },
     deletePlaylist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       let confirmation = confirm(`确定要删除歌单 ${this.playlist.name}？`);
       if (confirmation === true) {
         deletePlaylist(this.playlist.id).then((data) => {
@@ -410,6 +428,13 @@ export default {
     },
     editPlaylist() {
       alert("此功能开发中");
+    },
+    removeTrack(trackID) {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
+      this.tracks = this.tracks.filter((t) => t.id !== trackID);
     },
   },
 };

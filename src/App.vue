@@ -19,10 +19,14 @@
     /></transition>
     <Toast />
     <GlobalEvents :filter="globalEventFilter" @keydown.space="play" />
+    <ModalAddTrackToPlaylist />
+    <ModalNewPlaylist />
   </div>
 </template>
 
 <script>
+import ModalAddTrackToPlaylist from "./components/ModalAddTrackToPlaylist.vue";
+import ModalNewPlaylist from "./components/ModalNewPlaylist.vue";
 import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
 import Toast from "./components/Toast.vue";
@@ -36,6 +40,8 @@ export default {
     Player,
     GlobalEvents,
     Toast,
+    ModalAddTrackToPlaylist,
+    ModalNewPlaylist,
   },
   data() {
     return {
@@ -162,5 +168,13 @@ a {
 }
 .slide-up-enter, .slide-up-leave-to /* .fade-leave-active below version 2.1.8 */ {
   transform: translateY(100%);
+}
+
+[data-electron="yes"] {
+  button,
+  .navigation-links a,
+  .playlist-info .description {
+    cursor: default !important;
+  }
 }
 </style>

@@ -17,6 +17,13 @@
       <div class="item" @click="like" v-show="isRightClickedTrackLiked">
         {{ $t("contextMenu.removeFromMyLikedSongs") }}
       </div>
+      <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
+      <div
+        v-if="extraContextMenuItem.includes('removeTrackFromPlaylist')"
+        class="item"
+        @click="removeTrackFromPlaylist"
+        >从歌单中删除</div
+      >
     </ContextMenu>
     <TrackListItem
       v-for="track in tracks"
@@ -37,6 +44,7 @@ import {
   playAList,
   appendTrackToPlayerList,
 } from "@/utils/play";
+import { addOrRemoveTrackFromPlaylist } from "@/api/playlist";
 import { isAccountLoggedIn } from "@/utils/auth";
 
 import TrackListItem from "@/components/TrackListItem.vue";
@@ -70,6 +78,12 @@ export default {
         };
       },
     },
+    extraContextMenuItem: {
+      type: Array,
+      default: () => {
+        return []; // 'removeTrackFromPlaylist'
+      },
+    },
   },
   data() {
     return {
@@ -93,7 +107,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["updateLikedSongs"]),
+    ...mapMutations(["updateLikedSongs", "updateModal"]),
     ...mapActions(["nextTrack", "playTrackOnListByID", "showToast"]),
     openMenu(e, track) {
       if (!track.playable) {
@@ -158,6 +172,39 @@ export default {
           likedSongs.push(id);
           this.updateLikedSongs(likedSongs);
         }
+      });
+    },
+    addTrackToPlaylist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
+      this.updateModal({
+        modalName: "addTrackToPlaylistModal",
+        key: "show",
+        value: true,
+      });
+      this.updateModal({
+        modalName: "addTrackToPlaylistModal",
+        key: "selectedTrackID",
+        value: this.rightClickedTrack.id,
+      });
+    },
+    removeTrackFromPlaylist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
+      let trackID = this.rightClickedTrack.id;
+      addOrRemoveTrackFromPlaylist({
+        op: "del",
+        pid: this.id,
+        tracks: trackID,
+      }).then((data) => {
+        this.showToast(
+          data.body.code === 200 ? "已从歌单中删除" : data.body.message
+        );
+        this.$parent.removeTrack(trackID);
       });
     },
   },
