@@ -1,6 +1,6 @@
 import { playlistCategories } from "@/utils/staticData";
 
-export default {
+let localStorage = {
   player: {
     enable: false,
     show: true,
@@ -24,6 +24,8 @@ export default {
     showGithubIcon: true,
     showPlaylistsByAppleMusic: true,
     showUnavailableSongInGreyStyle: true,
+    automaticallyCacheSongs: false,
+    nyancatStyle: false,
   },
   data: {
     user: {},
@@ -32,3 +34,9 @@ export default {
     loginMode: null,
   },
 };
+
+if (process.env.IS_ELECTRON === true) {
+  localStorage.settings.automaticallyCacheSongs = true;
+}
+
+export default localStorage;

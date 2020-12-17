@@ -76,7 +76,9 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Automatically cache songs </div>
+          <div class="title">
+            {{ $t("settings.automaticallyCacheSongs") }}
+          </div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -92,17 +94,24 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"
-            >Cached {{ tracksCache.length }} songs ({{ tracksCache.size }})</div
+          <div class="title">
+            {{
+              $t("settings.cacheCount", {
+                song: tracksCache.length,
+                size: tracksCache.size,
+              })
+            }}</div
           >
         </div>
         <div class="right">
-          <button @click="clearCache('tracks')"> Clear Songs Cache </button>
+          <button @click="clearCache('tracks')">
+            {{ $t("settings.clearSongsCache") }}
+          </button>
         </div>
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Show Github icon </div>
+          <div class="title"> {{ $t("settings.showGitHubIcon") }} </div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -118,7 +127,9 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Show unavailable song in grey style</div>
+          <div class="title">
+            {{ $t("settings.showUnavailableSongInGreyStyle") }}</div
+          >
         </div>
         <div class="right">
           <div class="toggle">
@@ -134,7 +145,9 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> Show playlists by Apple Music</div>
+          <div class="title">
+            {{ $t("settings.showPlaylistsByAppleMusic") }}</div
+          >
         </div>
         <div class="right">
           <div class="toggle">

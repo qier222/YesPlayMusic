@@ -105,6 +105,7 @@
       :show="showFullDescription"
       :close="() => (showFullDescription = false)"
       :showFooter="false"
+      :clickOutsideHide="true"
       title="专辑介绍"
       >{{ album.description }}</Modal
     >

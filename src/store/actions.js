@@ -12,7 +12,10 @@ const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
 export default {
-  switchTrack({ state, dispatch, commit }, { id, sort = 0, autoplay = true }) {
+  switchTrack(
+    { state, dispatch, commit },
+    { id, sort = 0, autoplay = true, ifUnplayableThen = "nextTrack" }
+  ) {
     getTrackDetail(id).then((data) => {
       let track = data.songs[0];
       track.sort = sort;
@@ -49,7 +52,7 @@ export default {
         if (res?.url) {
           unblockSongUrl = res.url;
         } else {
-          dispatch("nextTrack");
+          dispatch(ifUnplayableThen);
           return;
         }
       }
@@ -166,7 +169,11 @@ export default {
         previousTrack = state.player.list.find((t) => t.sort === 0);
       }
     }
-    dispatch("switchTrack", previousTrack);
+    dispatch("switchTrack", {
+      id: previousTrack.id,
+      sort: previousTrack.sort,
+      ifUnplayableThen: "previousTrack",
+    });
   },
   addNextTrackEvent({ state, dispatch }) {
     state.howler.once("end", () => {

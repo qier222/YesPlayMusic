@@ -120,6 +120,12 @@ export default {
       light: "浅色",
       dark: "深色",
     },
+    automaticallyCacheSongs: "自动缓存歌曲",
+    clearSongsCache: "清除歌曲缓存",
+    cacheCount: "已缓存 {song} 首 ({size})",
+    showGitHubIcon: "显示 GitHub 图标",
+    showUnavailableSongInGreyStyle: "显示不可播放的歌曲为灰色",
+    showPlaylistsByAppleMusic: "首页显示来自 Apple Music 的歌单",
   },
   contextMenu: {
     play: "播放",

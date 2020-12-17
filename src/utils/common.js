@@ -29,7 +29,7 @@ export function isTrackPlayable(track) {
   ) {
     result.playable = false;
     result.reason = "No Copyright";
-  } else if (track.privilege?.st < 0) {
+  } else if (track.privilege?.st < 0 && isAccountLoggedIn()) {
     result.playable = false;
     result.reason = "The song has been removed from the shelves";
   }
@@ -193,13 +193,15 @@ export function splitAlbumTitle(title) {
 }
 
 export function bytesToSize(bytes) {
-  var marker = 1024; // Change to 1000 if required
-  var decimal = 2; // Change as required
-  var kiloBytes = marker;
-  var megaBytes = marker * marker;
-  var gigaBytes = marker * marker * marker;
+  let marker = 1024; // Change to 1000 if required
+  let decimal = 2; // Change as required
+  let kiloBytes = marker;
+  let megaBytes = marker * marker;
+  let gigaBytes = marker * marker * marker;
 
-  if (bytes < kiloBytes) return bytes + " Bytes";
+  let lang = store.state.settings.lang;
+
+  if (bytes < kiloBytes) return bytes + (lang === "en" ? " Bytes" : "字节");
   else if (bytes < megaBytes)
     return (bytes / kiloBytes).toFixed(decimal) + " KB";
   else if (bytes < gigaBytes)

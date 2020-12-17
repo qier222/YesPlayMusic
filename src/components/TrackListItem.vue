@@ -173,8 +173,11 @@ button {
     width: 16px;
     color: var(--color-primary);
   }
+  &:hover {
+    transform: scale(1.12);
+  }
   &:active {
-    transform: scale(0.92);
+    transform: scale(0.96);
   }
 }
 
@@ -216,8 +219,8 @@ button {
 
   img {
     border-radius: 8px;
-    height: 56px;
-    width: 56px;
+    height: 46px;
+    width: 46px;
     margin-right: 20px;
     border: 1px solid rgba(0, 0, 0, 0.04);
     cursor: pointer;

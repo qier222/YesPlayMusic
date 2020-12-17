@@ -7,6 +7,9 @@ const updateSetting = () => {
     playlistCategories: initLocalStorage?.settings?.playlistCategories,
     showUnavailableSongInGreyStyle:
       initLocalStorage?.settings?.showUnavailableSongInGreyStyle,
+    automaticallyCacheSongs:
+      initLocalStorage?.settings?.automaticallyCacheSongs,
+    nyancatStyle: initLocalStorage?.settings?.nyancatStyle,
     ...parsedSettings,
   };
 
