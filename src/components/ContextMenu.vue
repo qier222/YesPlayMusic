@@ -83,7 +83,7 @@ export default {
 
 [data-theme="dark"] {
   .menu {
-    background: rgba(46, 46, 46, 0.68);
+    background: rgba(36, 36, 36, 0.78);
     backdrop-filter: blur(16px) contrast(120%);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }

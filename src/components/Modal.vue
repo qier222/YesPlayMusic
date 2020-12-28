@@ -7,9 +7,7 @@
           ><svg-icon icon-class="x"
         /></button>
       </div>
-      <div class="content">
-        <slot></slot>
-      </div>
+      <div class="content"><slot></slot></div>
       <div class="footer" v-if="showFooter">
         <!-- <button>取消</button>
         <button class="primary">确定</button> -->
@@ -77,7 +75,7 @@ export default {
   box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(12px) opacity(1);
-  padding: 20px 24px 24px 24px;
+  padding: 24px 0;
   border-radius: 12px;
   width: 50vw;
   margin: auto 0;
@@ -85,13 +83,32 @@ export default {
   z-index: 100;
   display: flex;
   flex-direction: column;
+  max-height: calc(100vh - 128px - 64px);
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border: unset;
+    width: 0;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-secondary-bg-for-transparent);
+  }
+}
+
+.content {
+  overflow: auto;
+  overflow-x: hidden;
+  padding: 0 24px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin: 0 24px 24px 24px;
   .title {
     font-weight: 600;
     font-size: 20px;
@@ -118,8 +135,8 @@ export default {
 }
 
 .footer {
-  margin-top: 16px;
   padding-top: 16px;
+  margin: 16px 24px 24px 24px;
   border-top: 1px solid rgba(128, 128, 128, 0.18);
   display: flex;
   justify-content: flex-end;
@@ -157,7 +174,7 @@ export default {
   }
 
   .modal {
-    background: rgba(46, 46, 46, 0.68);
+    background: rgba(36, 36, 36, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 }
