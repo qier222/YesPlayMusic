@@ -1,130 +1,84 @@
-const { TouchBar, nativeImage, ipcMain } = require("electron");
-const path = require("path");
+const { TouchBar, ipcMain } = require("electron");
+const { TouchBarButton, TouchBarSpacer } = TouchBar;
 
-const {
-  TouchBarButton,
-  TouchBarGroup,
-  TouchBarSpacer,
-  TouchBarSegmentedControl,
-} = TouchBar;
+export function createTouchBar(window) {
+  const renderer = window.webContents;
 
-function getNativeIcon(name, width = 24, height = 24) {
-  return nativeImage
-    .createFromPath(path.join(__static, "img/icons/touchbar/", name))
-    .resize({
-      width,
-      height,
-    });
-}
+  // use SF Symbols as label, you probably will see a 􀂒 instead of real icon
 
-export function createSegmentedControl(renderer) {
-  const segments = [
-    {
-      icon: getNativeIcon("previous.png"),
+  const previousPage = new TouchBarButton({
+    label: "􀆉",
+    click: () => {
+      renderer.send("routerGo", "back");
     },
-    {
-      icon: getNativeIcon("play.png", 20, 20),
-    },
-    {
-      icon: getNativeIcon("next.png"),
-    },
-  ];
-  const segmentedControl = new TouchBarSegmentedControl({
-    segments,
-    change: (selectedIndex) => {
-      const temp = Object.assign([], segmentedControl.segments);
-      if (selectedIndex === 0) {
-        renderer.send("previous");
-      }
-      if (selectedIndex === 1) {
-        ipcMain.on("vuex-state", (e, { player }) => {
-          const playing = player.playing;
-          if (playing === true) {
-            // To be paused
-            temp[1].icon = getNativeIcon("play.png", 20, 20);
-            segmentedControl.segments = temp;
-          } else {
-            temp[1].icon = getNativeIcon("play.png", 20, 20);
-            segmentedControl.segments = temp;
-          }
-        });
-        renderer.send("play");
-      }
-      if (selectedIndex === 2) {
-        renderer.send("next");
-      }
-    },
-    mode: "buttons",
   });
-  return segmentedControl;
-}
 
-export function createPreferGroup(renderer) {
-  const search = new TouchBarButton({
-    icon: getNativeIcon("search.png", 22, 22),
+  const nextPage = new TouchBarButton({
+    label: "􀆊",
+    click: () => {
+      renderer.send("routerGo", "forward");
+    },
+  });
+
+  const searchButton = new TouchBarButton({
+    label: "􀊫",
     click: () => {
       renderer.send("search");
     },
   });
-  const like = new TouchBarButton({
-    icon: getNativeIcon("like.png"),
+
+  const playButton = new TouchBarButton({
+    label: "􀊄",
     click: () => {
-      ipcMain.on("vuex-state", (e, { liked, player }) => {
-        const currentTrack = player.currentTrack;
-        if (liked.songs.includes(currentTrack.id)) {
-          like.icon = getNativeIcon("liked.png");
-        } else {
-          like.icon = getNativeIcon("like.png");
-        }
-      });
+      renderer.send("play");
+    },
+  });
+
+  const previousTrackButton = new TouchBarButton({
+    label: "􀊎",
+    click: () => {
+      renderer.send("previous");
+    },
+  });
+
+  const nextTrackButton = new TouchBarButton({
+    label: "􀊐",
+    click: () => {
+      renderer.send("next");
+    },
+  });
+
+  const likeButton = new TouchBarButton({
+    label: "􀊴",
+    click: () => {
       renderer.send("like");
     },
   });
-  const repeat = new TouchBarButton({
-    icon: getNativeIcon("repeat.png"),
-    click: () => {
-      ipcMain.on("vuex-state", (e, { player }) => {
-        const repeat = player.repeat;
-        if (repeat === "on") {
-          repeat.icon = getNativeIcon("repeat.png");
-        } else if (repeat === "one") {
-          repeat.icon = getNativeIcon("repeat.png");
-        } else {
-          repeat.icon = getNativeIcon("repeat.png");
-        }
-      });
-      renderer.send("repeat");
-    },
-  });
-  const shuffle = new TouchBarButton({
-    icon: getNativeIcon("shuffle.png"),
-    click: () => {
-      ipcMain.on("vuex-state", (e, { player }) => {
-        const shuffle = player.shuffle;
-        if (shuffle === true) {
-          shuffle.icon = getNativeIcon("shuffle.png");
-        } else {
-          shuffle.icon = getNativeIcon("shuffle.png");
-        }
-      });
-      renderer.send("shuffle");
-    },
-  });
-  return new TouchBar({
-    items: [search, like, repeat, shuffle],
-  });
-}
 
-export function createTouchBar(window) {
-  const renderer = window.webContents;
-  const segmentedControl = createSegmentedControl(renderer);
-  const preferGroup = createPreferGroup(renderer);
+  const nextUpButton = new TouchBarButton({
+    label: "􀑬",
+    click: () => {
+      renderer.send("nextUp");
+    },
+  });
+
+  ipcMain.on("vuex-state", (e, { player, liked }) => {
+    playButton.label = player.playing === true ? "􀊆" : "􀊄";
+    likeButton.label = liked.songs.includes(player.currentTrack.id) ? "􀊵" : "􀊴";
+  });
+
   const touchBar = new TouchBar({
     items: [
-      new TouchBarGroup({ items: preferGroup }),
-      new TouchBarSpacer({ size: "large" }),
-      segmentedControl,
-      new TouchBarSpacer({ size: "large" }),
+      previousPage,
+      nextPage,
+      searchButton,
+      new TouchBarSpacer({ size: "flexible" }),
+      previousTrackButton,
+      playButton,
+      nextTrackButton,
+      new TouchBarSpacer({ size: "flexible" }),
+      likeButton,
+      nextUpButton,
     ],
   });
   return touchBar;
