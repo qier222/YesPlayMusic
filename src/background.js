@@ -7,131 +7,112 @@ import { initIpcMain } from "./electron/ipcMain.js";
 import { createMenu } from "./electron/menu";
 import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
-import { createTray } from "./electron/tray.js";
 import { autoUpdater } from "electron-updater";
 import express from "express";
 import expressProxy from "express-http-proxy";
 import Store from "electron-store";
 
-const store = new Store({
-  windowWidth: {
-    width: { type: "number", default: 1440 },
-    height: { type: "number", default: 840 },
-  },
-});
+class Background {
+  constructor() {
+    this.window = null;
+    this.store = new Store({
+      windowWidth: {
+        width: { type: "number", default: 1440 },
+        height: { type: "number", default: 840 },
+      },
+    });
+    this.neteaseMusicAPI = null;
+    this.expressApp = null;
+    this.willQuitApp = process.platform === "darwin" ? false : true;
 
-const isDevelopment = process.env.NODE_ENV !== "production";
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let win;
-// eslint-disable-next-line no-unused-vars
-let tray;
-
-let willQuitApp = false;
-
-// ipcMain
-initIpcMain(win);
-
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
-]);
-
-function createWindow() {
-  win = new BrowserWindow({
-    width: store.get("window.width"),
-    height: store.get("window.height"),
-    titleBarStyle: "hiddenInset",
-    webPreferences: {
-      webSecurity: false,
-      nodeIntegration: true,
-    },
-  });
-  win.setMenuBarVisibility(false);
-
-  if (process.platform !== "darwin") {
-    tray = createTray(win);
+    this.init();
   }
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-    if (!process.env.IS_TEST) win.webContents.openDevTools();
-  } else {
-    createProtocol("app");
-    // win.loadURL("app://./index.html");
+  init() {
+    console.log("initializing");
+
+    // Make sure the app is singleton.
+    if (!app.requestSingleInstanceLock()) return app.quit();
+
+    // start netease music api
+    this.neteaseMusicAPI = startNeteaseMusicApi();
+
+    // create Express app
+    this.createExpressApp();
+
+    // init ipcMain
+    initIpcMain(this.window);
+
+    // Scheme must be registered before the app is ready
+    protocol.registerSchemesAsPrivileged([
+      { scheme: "app", privileges: { secure: true, standard: true } },
+    ]);
+
+    // handle app events
+    this.handleAppEvents();
+  }
+
+  async initDevtools() {
+    // Install Vue Devtools extension
+    try {
+      await installExtension(VUEJS_DEVTOOLS);
+    } catch (e) {
+      console.error("Vue Devtools failed to install:", e.toString());
+    }
+
+    // Exit cleanly on request from parent process in development mode.
+    if (process.platform === "win32") {
+      process.on("message", (data) => {
+        if (data === "graceful-exit") {
+          app.quit();
+        }
+      });
+    } else {
+      process.on("SIGTERM", () => {
+        app.quit();
+      });
+    }
+  }
+
+  createExpressApp() {
+    console.log("creating express app");
+
     const expressApp = express();
     expressApp.use("/", express.static(__dirname + "/"));
     expressApp.use("/api", expressProxy("http://127.0.0.1:10754"));
-    expressApp.listen(27232);
-    win.loadURL("http://localhost:27232");
+    this.expressApp = expressApp.listen(27232);
   }
 
-  win.webContents.on("new-window", function (e, url) {
-    e.preventDefault();
-    shell.openExternal(url);
-  });
-  win.on("close", (e) => {
-    if (willQuitApp) {
-      /* the user tried to quit the app */
-      win = null;
+  createWindow() {
+    console.log("creating app window");
+
+    this.window = new BrowserWindow({
+      width: this.store.get("window.width") | 1440,
+      height: this.store.get("window.height") | 840,
+      titleBarStyle: "hiddenInset",
+      webPreferences: {
+        webSecurity: false,
+        nodeIntegration: true,
+      },
+    });
+
+    // hide menu bar on Microsoft Windows and Linux
+    this.window.setMenuBarVisibility(false);
+
+    if (process.env.WEBPACK_DEV_SERVER_URL) {
+      // Load the url of the dev server if in development mode
+      this.window.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+      if (!process.env.IS_TEST) this.window.webContents.openDevTools();
     } else {
-      /* the user only tried to close the window */
-      e.preventDefault();
-      win.hide();
+      createProtocol("app");
+      this.window.loadURL("http://localhost:27232");
     }
-  });
-  // win.on("closed", () => {
-  //   win = null;
-  // });
-  win.on("resize", () => {
-    let { height, width } = win.getBounds();
-    store.set("window", { height, width });
-  });
-  return win;
-}
-
-// Quit when all windows are closed.
-app.on("window-all-closed", () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
-    // app.quit();
   }
-});
 
-app.on("activate", () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (win === null) {
-    createWindow();
-  } else {
-    win.show();
-  }
-});
+  checkForUpdates() {
+    autoUpdater.checkForUpdatesAndNotify();
 
-/**
- * 'before-quit' is emitted when Electron receives the signal to exit and wants to start closing windows
- */
-app.on("before-quit", () => (willQuitApp = true));
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", async () => {
-  // start netease music api
-  startNeteaseMusicApi();
-
-  // check for update
-  const log = require("electron-log");
-  log.transports.file.level = "debug";
-  autoUpdater.logger = log;
-  autoUpdater.checkForUpdatesAndNotify();
-
-  if (process.platform === "darwin") {
-    autoUpdater.on("update-available", (info) => {
-      log.debug(info);
+    const showNewVersionMessage = (info) => {
       dialog
         .showMessageBox({
           title: "发现新版本 v" + info.version,
@@ -148,53 +129,99 @@ app.on("ready", async () => {
             );
           }
         });
-    });
-  }
+    };
 
-  // Install Vue Devtools extension
-  if (isDevelopment && !process.env.IS_TEST) {
-    try {
-      await installExtension(VUEJS_DEVTOOLS);
-    } catch (e) {
-      console.error("Vue Devtools failed to install:", e.toString());
+    if (process.platform === "darwin") {
+      autoUpdater.on("update-available", (info) => {
+        showNewVersionMessage(info);
+      });
     }
   }
 
-  // create window
-  createWindow();
-  win.once("ready-to-show", () => {
-    win.show();
-  });
+  handleWindowEvents() {
+    this.window.once("ready-to-show", () => {
+      console.log("windows ready-to-show event");
+      this.window.show();
+    });
 
-  // create menu
-  createMenu(win);
+    this.window.on("close", (e) => {
+      console.log("windows close event");
+      if (this.willQuitApp) {
+        /* the user tried to quit the app */
+        this.window = null;
+        app.quit();
+      } else {
+        /* the user only tried to close the window */
+        e.preventDefault();
+        this.window.hide();
+      }
+    });
 
-  // create dock menu for macOS
-  app.dock.setMenu(createDockMenu(win));
+    this.window.on("resize", () => {
+      let { height, width } = this.window.getBounds();
+      this.store.set("window", { height, width });
+    });
 
-  // create touchbar
-  win.setTouchBar(createTouchBar(win));
-});
+    this.window.webContents.on("new-window", function (e, url) {
+      e.preventDefault();
+      shell.openExternal(url);
+    });
+  }
 
-// Exit cleanly on request from parent process in development mode.
-if (isDevelopment) {
-  if (process.platform === "win32") {
-    process.on("message", (data) => {
-      if (data === "graceful-exit") {
+  handleAppEvents() {
+    app.on("ready", async () => {
+      // This method will be called when Electron has finished
+      // initialization and is ready to create browser windows.
+      // Some APIs can only be used after this event occurs.
+      console.log("app ready event");
+
+      // for development
+      if (process.env.NODE_ENV !== "production") {
+        this.initDevtools();
+      }
+
+      // create window
+      this.createWindow();
+      this.handleWindowEvents();
+
+      // check for updates
+      this.checkForUpdates();
+
+      // create menu
+      createMenu(this.window);
+
+      // create dock menu for macOS
+      app.dock.setMenu(createDockMenu(this.window));
+
+      // create touch bar
+      this.window.setTouchBar(createTouchBar(this.window));
+    });
+
+    app.on("activate", () => {
+      // On macOS it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      console.log("app activate event");
+      if (this.window === null) {
+        this.createWindow();
+      } else {
+        this.window.show();
+      }
+    });
+
+    app.on("window-all-closed", () => {
+      if (process.platform !== "darwin") {
         app.quit();
       }
     });
-  } else {
-    process.on("SIGTERM", () => {
-      app.quit();
+
+    app.on("before-quit", () => {
+      this.willQuitApp = true;
+    });
+
+    app.on("quit", () => {
+      this.expressApp.close();
     });
   }
 }
 
-// Make sure the app is singleton.
-function initialize() {
-  const shouldQuit = !app.requestSingleInstanceLock();
-  if (shouldQuit) return app.quit();
-}
-
-initialize();
+new Background();
