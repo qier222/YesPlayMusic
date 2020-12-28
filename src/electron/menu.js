@@ -69,7 +69,6 @@ export function createMenu(win) {
       submenu: [
         {
           label: "Play",
-          accelerator: "Space",
           click: () => {
             win.webContents.send("play");
           },

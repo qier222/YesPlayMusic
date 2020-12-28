@@ -57,7 +57,6 @@
     "vue": "^2.6.11",
     "vue-analytics": "^5.22.1",
     "vue-electron": "^1.0.6",
-    "vue-global-events": "^1.2.1",
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.4.3",
     "vue-slider-component": "^3.2.5",

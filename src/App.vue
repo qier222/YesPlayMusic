@@ -18,7 +18,6 @@
         "
     /></transition>
     <Toast />
-    <GlobalEvents :filter="globalEventFilter" @keydown.space="play" />
     <ModalAddTrackToPlaylist />
     <ModalNewPlaylist />
   </div>
@@ -30,7 +29,6 @@ import ModalNewPlaylist from "./components/ModalNewPlaylist.vue";
 import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
 import Toast from "./components/Toast.vue";
-import GlobalEvents from "vue-global-events";
 import { ipcRenderer } from "./electron/ipcRenderer";
 
 export default {
@@ -38,7 +36,6 @@ export default {
   components: {
     Navbar,
     Player,
-    GlobalEvents,
     Toast,
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
@@ -52,16 +49,16 @@ export default {
     if (this.isElectron) {
       ipcRenderer(this);
     }
+    window.addEventListener("keydown", this.handleKeydown);
   },
   methods: {
-    play(e) {
-      e.preventDefault();
-      this.$refs.player.play();
-    },
-    globalEventFilter(event) {
-      if (event.target.tagName === "INPUT") return false;
-      if (this.$route.name === "mv") return false;
-      return true;
+    handleKeydown(e) {
+      if (e.code === "Space") {
+        if (e.target.tagName === "INPUT") return false;
+        if (this.$route.name === "mv") return false;
+        e.preventDefault();
+        this.$refs.player.play();
+      }
     },
   },
 };
@@ -96,11 +93,14 @@ export default {
 }
 
 #app {
+  width: 100%;
+  transition: all 0.4s;
+}
+#app,
+input {
   font-family: "Barlow", -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
     WenQuanYi Micro Hei, sans-serif;
-  width: 100%;
-  transition: all 0.4s;
 }
 body {
   background-color: var(--color-body-bg);
