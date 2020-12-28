@@ -20,6 +20,10 @@ export default {
     sLibrary: "的音乐库",
     likedSongs: "我喜欢的音乐",
     sLikedSongs: "喜欢的音乐",
+    playlists: "歌单",
+    albums: "专辑",
+    artists: "歌手",
+    mvs: "MV",
   },
   explore: {
     explore: "发现",

@@ -48,28 +48,28 @@
             :class="{ active: currentTab === 'playlists' }"
             @click="updateCurrentTab('playlists')"
           >
-            Playlists
+            {{ $t("library.playlists") }}
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'albums' }"
             @click="updateCurrentTab('albums')"
           >
-            Albums
+            {{ $t("library.albums") }}
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'artists' }"
             @click="updateCurrentTab('artists')"
           >
-            Artists
+            {{ $t("library.artists") }}
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'mvs' }"
             @click="updateCurrentTab('mvs')"
           >
-            MVs
+            {{ $t("library.mvs") }}
           </div>
         </div>
         <button

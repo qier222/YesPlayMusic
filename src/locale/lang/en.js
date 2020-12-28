@@ -23,6 +23,10 @@ export default {
     sLibrary: "'s Library",
     likedSongs: "Liked Songs",
     sLikedSongs: "'s Liked Songs",
+    playlists: "Playlists",
+    albums: "Albums",
+    artists: "Artists",
+    mvs: "MVs",
   },
   explore: {
     explore: "Explore",
