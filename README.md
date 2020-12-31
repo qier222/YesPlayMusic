@@ -1,6 +1,6 @@
 <br />
 <p align="center">
-  <a href="https://music.bluepill.one" target="blank">
+  <a href="https://music.qier222.com" target="blank">
     <img src="images/logo.png" alt="Logo" width="156" height="156">
   </a>
   <h2 align="center" style="font-weight: 600">YesPlayMusic</h2>
@@ -8,14 +8,14 @@
   <p align="center">
     高颜值的第三方网易云播放器
     <br />
-    <a href="https://music.bluepill.one" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="https://music.qier222.com" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     <a href="#%EF%B8%8F-安装" target="blank"><strong>📦️ 下载安装包</strong></a>
     <br />
     <br />
   </p>
 </p>
 
-[![Library][library-screenshot]](https://music.bluepill.one)
+[![Library][library-screenshot]](https://music.qier222.com)
 
 ## ✨ 特性
 
@@ -31,13 +31,14 @@
 - 🌚 Light/Dark Mode 自动切换
 - 🚫🤝 无任何社交功能
 - 🌎️ 海外用户可直接播放（需要登录网易云账号）
+- 👆 支持 Touch Bar
 - 🛠 更多特性开发中
 
 ## 📦️ 安装
 
 Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://github.com/qier222) 适配并维护，支持 macOS、Windows、Linux。
 
-访问本项目的 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载安装包，或者访问 [镜像下载站 (大陆访问更快)](https://dl.bluepill.one/YesPlayMusic/) 下载。
+访问本项目的 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载安装包，或者访问 [镜像下载站 (大陆访问更快)](https://dl.qier222.com/YesPlayMusic/) 下载。
 
 ## ⚙️ 部署至服务器
 
@@ -82,12 +83,12 @@ yarn run build
 
 ## 🖼️ 截图
 
-[![artist][artist-screenshot]](https://music.bluepill.one)
-[![album][album-screenshot]](https://music.bluepill.one)
-[![playlist][playlist-screenshot]](https://music.bluepill.one)
-[![explore][explore-screenshot]](https://music.bluepill.one)
-[![search][search-screenshot]](https://music.bluepill.one)
-[![home][home-screenshot]](https://music.bluepill.one)
+[![artist][artist-screenshot]](https://music.qier222.com)
+[![album][album-screenshot]](https://music.qier222.com)
+[![playlist][playlist-screenshot]](https://music.qier222.com)
+[![explore][explore-screenshot]](https://music.qier222.com)
+[![search][search-screenshot]](https://music.qier222.com)
+[![home][home-screenshot]](https://music.qier222.com)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
