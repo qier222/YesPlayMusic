@@ -33,9 +33,9 @@
         <TrackList
           :tracks="likedSongs"
           :type="'tracklist'"
-          :itemWidth="220"
           :id="likedSongsPlaylist.id"
           dbclickTrackFunc="playPlaylistByID"
+          :columnNumber="3"
         />
       </div>
     </div>
@@ -245,7 +245,7 @@ export default {
     getLikedSongs(getLyric = true) {
       getPlaylistDetail(this.data.likedSongPlaylistID, true).then((data) => {
         this.likedSongsPlaylist = data.playlist;
-        let TrackIDs = data.playlist.trackIds.slice(0, 20).map((t) => t.id);
+        let TrackIDs = data.playlist.trackIds.slice(0, 12).map((t) => t.id);
         this.likedSongIDs = TrackIDs;
         getTrackDetail(this.likedSongIDs.join(",")).then((data) => {
           this.likedSongs = data.songs;
@@ -323,7 +323,6 @@ h1 {
     flex: 7;
     margin-top: 8px;
     margin-left: 36px;
-    height: 216px;
     overflow: hidden;
   }
 }
@@ -332,8 +331,6 @@ h1 {
   flex: 3;
   margin-top: 8px;
   cursor: pointer;
-  height: 216px;
-  width: 300px;
   border-radius: 16px;
   padding: 18px 24px;
   display: flex;
@@ -442,7 +439,7 @@ h1 {
 button.add-playlist {
   color: var(--color-text);
   border-radius: 8px;
-  padding: 0 12px;
+  padding: 0 14px;
   display: flex;
   justify-content: center;
   align-items: center;

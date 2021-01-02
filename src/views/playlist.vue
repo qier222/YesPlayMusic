@@ -5,11 +5,15 @@
       v-if="specialPlaylistInfo === undefined && !isLikeSongsPage"
     >
       <Cover
-        :url="playlist.coverImgUrl | resizeImage(1024)"
+        :imageUrl="playlist.coverImgUrl | resizeImage(1024)"
         :showPlayButton="true"
         :alwaysShowShadow="true"
-        :clickToPlay="true"
-        :size="288"
+        :clickCoverToPlay="true"
+        :fixedSize="288"
+        type="playlist"
+        :id="playlist.id"
+        :coverHover="false"
+        :playButtonSize="18"
         @click.right.native="openMenu"
       />
       <div class="info">
@@ -288,6 +292,7 @@ export default {
     return {
       show: false,
       playlist: {
+        id: 0,
         coverImgUrl: "",
         creator: {
           userId: "",

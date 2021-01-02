@@ -1,35 +1,30 @@
 <template>
-  <div style="position: relative">
-    <div
-      class="cover"
-      @mouseover="focus = true"
-      @mouseleave="focus = false"
-      :style="coverStyle"
-      :class="{
-        'hover-float': hoverEffect,
-        'hover-play-button': showPlayButton,
-      }"
-      @click="clickToPlay ? play() : goTo()"
-    >
-      <button
-        class="play-button"
-        v-if="showPlayButton"
-        :style="playButtonStyle"
-        @click.stop="playButtonClicked"
-      >
-        <svg-icon icon-class="play" />
-      </button>
+  <div
+    class="cover"
+    @mouseover="focus = true"
+    @mouseleave="focus = false"
+    :class="{ 'cover-hover': coverHover }"
+    @click="clickCoverToPlay ? play() : goTo()"
+  >
+    <div class="cover-container">
+      <div class="shade">
+        <button
+          v-show="focus"
+          class="play-button"
+          @click.stop="play()"
+          :style="playButtonStyles"
+          ><svg-icon icon-class="play" />
+        </button>
+      </div>
+      <img :src="imageUrl" :style="imageStyles" />
+      <transition name="fade" v-if="coverHover || alwaysShowShadow">
+        <div
+          class="shadow"
+          v-show="focus || alwaysShowShadow"
+          :style="shadowStyles"
+        ></div>
+      </transition>
     </div>
-
-    <transition name="fade" v-if="hoverEffect">
-      <img class="shadow" v-show="focus" :src="url" :style="shadowStyle"
-    /></transition>
-    <img
-      class="shadow"
-      v-if="alwaysShowShadow"
-      :src="url"
-      :style="shadowStyle"
-    />
   </div>
 </template>
 
@@ -37,83 +32,54 @@
 import { playAlbumByID, playPlaylistByID, playArtistByID } from "@/utils/play";
 
 export default {
-  name: "Cover",
   props: {
-    id: Number,
-    type: String,
-    url: String,
-    hoverEffect: Boolean,
-    showPlayButton: Boolean,
-    alwaysShowShadow: Boolean,
-    showBlackShadow: Boolean,
-    clickToPlay: Boolean,
-    size: {
-      type: Number,
-      default: 208,
-    },
-    shadowMargin: {
-      type: Number,
-      default: 12,
-    },
-    radius: {
-      type: Number,
-      default: 12,
-    },
-    playButtonSize: {
-      type: Number,
-      default: 48,
-    },
+    id: { type: Number, required: true },
+    type: { type: String, required: true },
+    imageUrl: { type: String, required: true },
+    fixedSize: { type: Number, default: 0 },
+    playButtonSize: { type: Number, default: 22 },
+    coverHover: { type: Boolean, default: true },
+    alwaysShowPlayButton: { type: Boolean, default: true },
+    alwaysShowShadow: { type: Boolean, default: false },
+    clickCoverToPlay: { type: Boolean, default: false },
+    shadowMargin: { type: Number, default: 12 },
+    radius: { type: Number, default: 12 },
   },
   data() {
     return {
       focus: false,
-      shadowStyle: {},
-      playButtonStyle: {},
-    };
-  },
-  created() {
-    this.shadowStyle = {
-      height: `${this.size}px`,
-      width: `${~~(this.size * 0.96)}px`,
-      top: `${this.shadowMargin}px`,
-      right: `${~~(this.size * 0.02)}px`,
-      borderRadius: `${this.radius}px`,
-    };
-    this.playButtonStyle = {
-      height: `${this.playButtonSize}px`,
-      width: `${this.playButtonSize}px`,
     };
   },
   computed: {
-    coverStyle() {
-      return {
-        backgroundImage: `url('${this.url}')`,
-        boxShadow: this.showBlackShadow
-          ? "0 12px 16px -8px rgba(0, 0, 0, 0.2)"
-          : "",
-        height: `${this.size}px`,
-        width: `${this.size}px`,
-        borderRadius: `${this.radius}px`,
-        cursor: this.clickToPlay ? "default" : "pointer",
-      };
+    imageStyles() {
+      let styles = {};
+      if (this.fixedSize !== 0) {
+        styles.width = this.fixedSize + "px";
+      }
+      if (this.type === "artist") styles.borderRadius = "50%";
+      return styles;
+    },
+    playButtonStyles() {
+      let styles = {};
+      styles.width = this.playButtonSize + "%";
+      styles.height = this.playButtonSize + "%";
+      return styles;
+    },
+    shadowStyles() {
+      let styles = {};
+      styles.backgroundImage = `url(${this.imageUrl})`;
+      if (this.type === "artist") styles.borderRadius = "50%";
+      return styles;
     },
   },
   methods: {
     play() {
-      if (this.type === "album") {
-        playAlbumByID(this.id);
-      } else if (this.type === "playlist") {
-        playPlaylistByID(this.id);
-      }
-    },
-    playButtonClicked() {
-      if (this.type === "album") {
-        playAlbumByID(this.id);
-      } else if (this.type === "playlist") {
-        playPlaylistByID(this.id);
-      } else if (this.type === "artist") {
-        playArtistByID(this.id);
-      }
+      const playActions = {
+        album: playAlbumByID,
+        playlist: playPlaylistByID,
+        artist: playArtistByID,
+      };
+      playActions[this.type](this.id);
     },
     goTo() {
       this.$router.push({ name: this.type, params: { id: this.id } });
@@ -125,72 +91,70 @@ export default {
 <style lang="scss" scoped>
 .cover {
   position: relative;
-  padding: 0;
-  background-size: cover;
+  transition: transform 0.3s;
+}
+.cover-container {
+  position: relative;
+}
+img {
+  border-radius: 0.75em;
+  width: 100%;
+  user-select: none;
+}
+
+.cover-hover {
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+  }
+}
+
+.shade {
+  position: absolute;
+  top: 0;
+  height: calc(100% - 3px);
+  width: 100%;
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.3s;
 }
-
-.hover-float {
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.05);
-  }
-}
-
-.hover-play-button {
-  &:hover {
-    .play-button {
-      opacity: 1;
-      transform: unset;
+.play-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  backdrop-filter: blur(12px) brightness(96%);
+  background: transparent;
+  height: 22%;
+  width: 22%;
+  border-radius: 50%;
+  cursor: default;
+  transition: 0.2s;
+  .svg-icon {
+    height: 44%;
+    margin: {
+      left: 4px;
     }
   }
-  .play-button {
-    &:hover {
-      transform: scale(1.06);
-    }
-    &:active {
-      transform: scale(0.94);
-    }
+  &:hover {
+    transform: scale(1.06);
+  }
+  &:active {
+    transform: scale(0.94);
   }
 }
 
 .shadow {
   position: absolute;
+  top: 12px;
+  height: 100%;
+  width: 100%;
   filter: blur(16px) opacity(0.6);
+  transform: scale(0.92, 0.96);
   z-index: -1;
-  height: 208px;
-  transform: scale(0.98);
-}
-[data-theme="dark"] {
-  .shadow {
-    filter: blur(16px) brightness(68%);
-    transform: scale(0.96);
-  }
-}
-
-.play-button {
-  opacity: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  // right: 72px;
-  // top: 72px;
-  border: none;
-  backdrop-filter: blur(12px) brightness(96%);
-  background: transparent;
-  color: white;
-  border-radius: 50%;
-  cursor: default;
-  transition: 0.2s;
-  .svg-icon {
-    height: 50%;
-    margin: {
-      left: 3px;
-    }
-  }
+  background-size: cover;
+  border-radius: 0.75em;
 }
 
 .fade-enter-active,

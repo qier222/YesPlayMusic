@@ -2,13 +2,15 @@
   <div class="album" v-show="show">
     <div class="playlist-info">
       <Cover
-        :url="album.picUrl | resizeImage(1024)"
+        :imageUrl="album.picUrl | resizeImage(1024)"
         :showPlayButton="true"
         :alwaysShowShadow="true"
-        :clickToPlay="true"
-        :size="288"
-        :type="'album'"
+        :clickCoverToPlay="true"
+        :fixedSize="288"
+        type="album"
         :id="album.id"
+        :coverHover="false"
+        :playButtonSize="18"
         @click.right.native="openMenu"
       />
       <div class="info">
@@ -97,7 +99,6 @@
           type="album"
           :items="filteredMoreAlbums"
           subText="albumType+releaseYear"
-          :showPlayButton="true"
         />
       </div>
     </div>
@@ -361,7 +362,7 @@ export default {
     font-weight: 600;
     opacity: 0.88;
     color: var(--color-text);
-    margin-bottom: 8px;
+    margin-bottom: 20px;
   }
 }
 </style>

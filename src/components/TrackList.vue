@@ -1,5 +1,5 @@
 <template>
-  <div class="track-list" :style="listStyles">
+  <div class="track-list">
     <ContextMenu ref="menu">
       <div class="item-info">
         <img :src="rightClickedTrack.al.picUrl | resizeImage(224)" />
@@ -26,13 +26,15 @@
       >
       <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
     </ContextMenu>
-    <TrackListItem
-      v-for="track in tracks"
-      :track="track"
-      :key="track.id"
-      @dblclick.native="playThisList(track.id)"
-      @click.right.native="openMenu($event, track)"
-    />
+    <div :style="listStyles">
+      <TrackListItem
+        v-for="track in tracks"
+        :track="track"
+        :key="track.id"
+        @dblclick.native="playThisList(track.id)"
+        @click.right.native="openMenu($event, track)"
+      />
+    </div>
   </div>
 </template>
 
@@ -61,10 +63,6 @@ export default {
     tracks: Array,
     type: String,
     id: Number,
-    itemWidth: {
-      type: Number,
-      default: -1,
-    },
     dbclickTrackFunc: {
       type: String,
       default: "default",
@@ -85,6 +83,10 @@ export default {
         return []; // 'removeTrackFromPlaylist'
       },
     },
+    columnNumber: {
+      type: Number,
+      default: 4,
+    },
   },
   data() {
     return {
@@ -98,8 +100,13 @@ export default {
     };
   },
   created() {
-    if (this.type === "tracklist")
-      this.listStyles = { display: "flex", flexWrap: "wrap" };
+    if (this.type === "tracklist") {
+      this.listStyles = {
+        display: "grid",
+        gap: "4px",
+        gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
+      };
+    }
   },
   computed: {
     ...mapState(["liked"]),

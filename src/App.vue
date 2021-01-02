@@ -108,15 +108,21 @@ body {
 
 html {
   overflow-y: overlay;
-  min-width: 1000px;
+  min-width: 768px;
 }
 
 main {
-  margin-top: 96px;
+  margin-top: 84px;
   margin-bottom: 96px;
   padding: {
     right: 10vw;
     left: 10vw;
+  }
+}
+
+@media (max-width: 1336px) {
+  main {
+    padding: 0 5vw;
   }
 }
 

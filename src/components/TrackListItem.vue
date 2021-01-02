@@ -152,10 +152,6 @@ export default {
       this.$parent.likeASong(this.track.id);
     },
   },
-  created() {
-    if (this.$parent.itemWidth !== -1)
-      this.trackStyle = { width: this.$parent.itemWidth + "px" };
-  },
 };
 </script>
 
@@ -323,7 +319,6 @@ button {
 }
 
 .track.tracklist {
-  width: 256px;
   img {
     height: 36px;
     width: 36px;

@@ -89,6 +89,8 @@ class Background {
     this.window = new BrowserWindow({
       width: this.store.get("window.width") | 1440,
       height: this.store.get("window.height") | 840,
+      minWidth: 768,
+      minHeight: 608,
       titleBarStyle: "hiddenInset",
       webPreferences: {
         webSecurity: false,

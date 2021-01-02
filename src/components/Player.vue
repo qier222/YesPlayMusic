@@ -335,6 +335,12 @@ export default {
   }
 }
 
+@media (max-width: 1336px) {
+  .controls {
+    padding: 0 5vw;
+  }
+}
+
 .playing {
   flex: 1;
   display: flex;

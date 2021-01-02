@@ -36,16 +36,11 @@
       <div class="release">
         <div class="container">
           <Cover
-            :url="latestRelease.picUrl | resizeImage"
-            :showPlayButton="true"
-            :showBlackShadow="true"
-            :type="`album`"
+            :imageUrl="latestRelease.picUrl | resizeImage"
+            type="album"
             :id="latestRelease.id"
-            :hoverEffect="true"
-            :size="128"
-            :playButtonSize="36"
-            :shadowMargin="8"
-            :radius="8"
+            :fixedSize="128"
+            :playButtonSize="30"
           />
           <div class="info">
             <div class="name">

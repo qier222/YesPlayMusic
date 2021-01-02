@@ -1,20 +1,19 @@
 <template>
   <div class="mv-row">
     <div class="mv" v-for="mv in mvs" :key="getID(mv)">
-      <div class="cover-container">
-        <img
-          class="cover"
-          :src="getUrl(mv)"
-          @mouseover="hoverVideoID = getID(mv)"
-          @mouseleave="hoverVideoID = 0"
-          @click="goToMv(getID(mv))"
-        />
+      <div
+        class="cover"
+        @mouseover="hoverVideoID = getID(mv)"
+        @mouseleave="hoverVideoID = 0"
+        @click="goToMv(getID(mv))"
+      >
+        <img :src="getUrl(mv)" />
         <transition name="fade">
-          <img
+          <div
             class="shadow"
             v-show="hoverVideoID === getID(mv)"
-            :src="getUrl(mv)"
-          />
+            :style="{ background: 'url(' + getUrl(mv) + ')' }"
+          ></div>
         </transition>
       </div>
       <div class="info">
@@ -87,14 +86,12 @@ export default {
 
 <style lang="scss" scoped>
 .mv-row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: -12px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 36px 24px;
 }
 
 .mv {
-  margin: 12px 12px 24px 12px;
-  width: 204px;
   color: var(--color-text);
 
   .title {
@@ -116,31 +113,30 @@ export default {
   }
 }
 
-.cover-container {
+.cover {
   position: relative;
-  .cover {
-    position: relative;
-    padding: 0;
-    background-size: cover;
-    transition: 0.3s;
-    width: 200px;
-    border-radius: 10px;
+  transition: transform 0.3s;
+  &:hover {
     cursor: pointer;
-    &:hover {
-      transform: scale(1.02);
-      box-shadow: 0 12px 16px -8px rgba(0, 0, 0, 0.05);
-    }
+    transform: scale(1.02);
   }
+}
+img {
+  border-radius: 0.75em;
+  width: 100%;
+  user-select: none;
+}
 
-  .shadow {
-    position: absolute;
-    filter: blur(16px) opacity(0.6);
-    z-index: -1;
-    width: 200px;
-    top: 6px;
-    left: 0;
-    border-radius: 10px;
-  }
+.shadow {
+  position: absolute;
+  top: 6px;
+  height: 100%;
+  width: 100%;
+  filter: blur(16px) opacity(0.4);
+  transform: scale(0.9, 0.9);
+  z-index: -1;
+  background-size: cover;
+  border-radius: 0.75em;
 }
 
 .fade-enter-active,

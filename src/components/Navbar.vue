@@ -105,11 +105,15 @@ nav {
   }
   backdrop-filter: saturate(180%) blur(20px);
 
-  // background: var(--color-body-bg);
-  // background-color: rgba(255, 255, 255, 0.86);
   background-color: var(--color-navbar-bg);
   z-index: 100;
   -webkit-app-region: drag;
+}
+
+@media (max-width: 1336px) {
+  nav {
+    padding: 0 5vw;
+  }
 }
 
 .navigation-buttons {
@@ -124,6 +128,12 @@ nav {
     -webkit-app-region: no-drag;
   }
 }
+@media (max-width: 970px) {
+  .navigation-buttons {
+    flex: unset;
+  }
+}
+
 .navigation-links {
   flex: 1;
   display: flex;
