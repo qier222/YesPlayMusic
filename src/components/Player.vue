@@ -318,6 +318,12 @@ export default {
   z-index: 100;
 }
 
+@supports (-moz-appearance: none) {
+  .player {
+    background-color: var(--color-body-bg);
+  }
+}
+
 .progress-bar {
   margin-top: -6px;
   margin-bottom: -6px;

@@ -98,6 +98,12 @@ export default {
   }
 }
 
+@supports (-moz-appearance: none) {
+  .modal {
+    background: var(--color-body-bg) !important;
+  }
+}
+
 .content {
   overflow: auto;
   overflow-x: hidden;

@@ -116,6 +116,12 @@ nav {
   }
 }
 
+@supports (-moz-appearance: none) {
+  nav {
+    background-color: var(--color-body-bg);
+  }
+}
+
 .navigation-buttons {
   flex: 1;
   display: flex;

@@ -92,6 +92,12 @@ export default {
   }
 }
 
+@supports (-moz-appearance: none) {
+  .menu {
+    background-color: var(--color-body-bg) !important;
+  }
+}
+
 .menu .item {
   font-weight: 600;
   font-size: 14px;
