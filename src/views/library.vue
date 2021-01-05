@@ -125,7 +125,6 @@ import {
 import { randomNum, dailyTask } from "@/utils/common";
 import { getPlaylistDetail } from "@/api/playlist";
 import { isAccountLoggedIn } from "@/utils/auth";
-import { playPlaylistByID } from "@/utils/play";
 import NProgress from "nprogress";
 
 import TrackList from "@/components/TrackList.vue";
@@ -193,7 +192,11 @@ export default {
     ...mapActions(["showToast"]),
     ...mapMutations(["updateModal"]),
     playLikedSongs() {
-      playPlaylistByID(this.playlists[0].id, "first", true);
+      this.$store.state.player.playPlaylistByID(
+        this.playlists[0].id,
+        "first",
+        true
+      );
     },
     updateCurrentTab(tab) {
       if (!isAccountLoggedIn() && tab !== "playlists") {

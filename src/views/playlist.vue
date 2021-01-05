@@ -182,7 +182,6 @@ import {
   subscribePlaylist,
   deletePlaylist,
 } from "@/api/playlist";
-import { playAList } from "@/utils/play";
 import { getTrackDetail } from "@/api/track";
 import { isAccountLoggedIn } from "@/utils/auth";
 
@@ -335,7 +334,12 @@ export default {
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID", "showToast"]),
     playPlaylistByID(trackID = "first") {
       let trackIDs = this.playlist.trackIds.map((t) => t.id);
-      playAList(trackIDs, this.playlist.id, "playlist", trackID);
+      this.$store.state.player.replacePlaylist(
+        trackIDs,
+        this.playlist.id,
+        "playlist",
+        trackID
+      );
     },
     likePlaylist(toast = false) {
       if (!isAccountLoggedIn()) {

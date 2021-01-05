@@ -41,12 +41,6 @@
 <script>
 import { mapActions, mapMutations, mapState } from "vuex";
 import { likeATrack } from "@/api/track";
-import {
-  playPlaylistByID,
-  playAlbumByID,
-  playAList,
-  appendTrackToPlayerList,
-} from "@/utils/play";
 import { addOrRemoveTrackFromPlaylist } from "@/api/playlist";
 import { isAccountLoggedIn } from "@/utils/auth";
 
@@ -140,24 +134,32 @@ export default {
       } else if (this.dbclickTrackFunc === "playTrackOnListByID") {
         this.playTrackOnListByID(trackID);
       } else if (this.dbclickTrackFunc === "playPlaylistByID") {
-        playPlaylistByID(this.id, trackID);
+        this.$store.state.player.playPlaylistByID(this.id, trackID);
       }
     },
     playThisListDefault(trackID) {
       if (this.type === "playlist") {
-        playPlaylistByID(this.id, trackID);
+        this.$store.state.player.playPlaylistByID(this.id, trackID);
       } else if (this.type === "album") {
-        playAlbumByID(this.id, trackID);
+        this.$store.state.player.playAlbumByID(this.id, trackID);
       } else if (this.type === "tracklist") {
         let trackIDs = this.tracks.map((t) => t.id);
-        playAList(trackIDs, this.tracks[0].ar[0].id, "artist", trackID);
+        this.$store.state.player.replacePlaylist(
+          trackIDs,
+          this.id,
+          "artist",
+          trackID
+        );
       }
     },
     play() {
-      appendTrackToPlayerList(this.clickTrack.id, true);
+      this.$store.state.player.addTrackToPlayNext(
+        this.rightClickedTrack.id,
+        true
+      );
     },
     playNext() {
-      appendTrackToPlayerList(this.clickTrack.id);
+      this.$store.state.player.addTrackToPlayNext(this.rightClickedTrack.id);
     },
     like() {
       this.likeASong(this.rightClickedTrack.id);

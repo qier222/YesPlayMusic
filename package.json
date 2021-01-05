@@ -47,6 +47,7 @@
     "howler": "^2.2.0",
     "js-cookie": "^2.2.1",
     "localforage": "^1.9.0",
+    "lodash": "^4.17.20",
     "nprogress": "^0.2.0",
     "pac-proxy-agent": "^4.1.0",
     "plyr": "^3.6.2",

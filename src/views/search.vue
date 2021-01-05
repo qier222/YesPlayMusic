@@ -105,7 +105,6 @@
 <script>
 import { mapState } from "vuex";
 import NProgress from "nprogress";
-import { appendTrackToPlayerList } from "@/utils/play";
 import { search } from "@/api/others";
 
 import Cover from "@/components/Cover.vue";
@@ -148,7 +147,7 @@ export default {
     },
     playTrackInSearchResult(id) {
       let track = this.tracks.find((t) => t.id === id);
-      appendTrackToPlayerList(track, true);
+      this.$store.state.player.appendTrackToPlayerList(track, true);
     },
     getData(keywords) {
       search({ keywords: keywords, type: 1018 }).then((data) => {

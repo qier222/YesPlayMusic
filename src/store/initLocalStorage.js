@@ -1,21 +1,7 @@
 import { playlistCategories } from "@/utils/staticData";
 
 let localStorage = {
-  player: {
-    enable: false,
-    show: true,
-    playing: false,
-    shuffle: false,
-    volume: 1,
-    repeat: "off", // on | off | one
-    currentTrack: {},
-    notShuffledList: [],
-    list: [],
-    listInfo: {
-      type: "",
-      id: "",
-    },
-  },
+  player: {},
   settings: {
     playlistCategories,
     lang: null,

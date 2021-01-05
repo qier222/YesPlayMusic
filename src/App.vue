@@ -9,7 +9,7 @@
     </main>
     <transition name="slide-up">
       <Player
-        v-if="this.$store.state.player.enable"
+        v-if="this.$store.state.player.enabled"
         ref="player"
         v-show="
           ['mv', 'loginUsername', 'login', 'loginAccount'].includes(

@@ -124,7 +124,6 @@
 import { mapMutations, mapActions, mapState } from "vuex";
 import { getArtistAlbum } from "@/api/artist";
 import { getTrackDetail } from "@/api/track";
-import { playAlbumByID } from "@/utils/play";
 import { getAlbum, albumDynamicDetail, likeAAlbum } from "@/api/album";
 import { splitSoundtrackAlbumTitle, splitAlbumTitle } from "@/utils/common";
 import NProgress from "nprogress";
@@ -202,7 +201,7 @@ export default {
       if (this.tracks.find((t) => t.playable !== false) === undefined) {
         return;
       }
-      playAlbumByID(id, trackID);
+      this.$store.state.player.playAlbumByID(id, trackID);
     },
     likeAlbum(toast = false) {
       if (!isAccountLoggedIn()) {

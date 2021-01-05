@@ -62,9 +62,9 @@ export function createTouchBar(window) {
     },
   });
 
-  ipcMain.on("vuex-state", (e, { player, liked }) => {
-    playButton.label = player.playing === true ? "􀊆" : "􀊄";
-    likeButton.label = liked.songs.includes(player.currentTrack.id) ? "􀊵" : "􀊴";
+  ipcMain.on("player", (e, { playing, likedCurrentTrack }) => {
+    playButton.label = playing === true ? "􀊆" : "􀊄";
+    likeButton.label = likedCurrentTrack ? "􀊵" : "􀊴";
   });
 
   const touchBar = new TouchBar({

@@ -112,7 +112,6 @@ import {
   artistMv,
   followAArtist,
 } from "@/api/artist";
-import { playAList } from "@/utils/play";
 import { isAccountLoggedIn } from "@/utils/auth";
 import NProgress from "nprogress";
 
@@ -186,7 +185,12 @@ export default {
     },
     playPopularSongs(trackID = "first") {
       let trackIDs = this.popularTracks.map((t) => t.id);
-      playAList(trackIDs, this.artist.id, "artist", trackID);
+      this.$store.state.player.replacePlaylist(
+        trackIDs,
+        this.artist.id,
+        "artist",
+        trackID
+      );
     },
     followArtist() {
       if (!isAccountLoggedIn()) {

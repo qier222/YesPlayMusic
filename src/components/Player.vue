@@ -36,7 +36,6 @@
             </span>
           </div>
         </div>
-        <!-- 账号登录才会显示 like 图标 -->
         <div class="like-button">
           <button-icon
             @click.native="likeCurrentSong"
@@ -60,9 +59,9 @@
         <button-icon
           class="play"
           @click.native="play"
-          :title="$t(playing ? 'player.pause' : 'player.play')"
+          :title="$t(player.playing ? 'player.pause' : 'player.play')"
         >
-          <svg-icon :iconClass="playing ? 'pause' : 'play'"
+          <svg-icon :iconClass="player.playing ? 'pause' : 'play'"
         /></button-icon>
         <button-icon @click.native="next" :title="$t('player.next')"
           ><svg-icon icon-class="next"
@@ -77,15 +76,18 @@
         /></button-icon>
         <button-icon
           :title="
-            player.repeat === 'one'
+            player.repeatMode === 'one'
               ? $t('player.repeatTrack')
               : $t('player.repeat')
           "
           @click.native="repeat"
-          :class="{ active: player.repeat !== 'off' }"
+          :class="{ active: player.repeatMode !== 'off' }"
         >
-          <svg-icon icon-class="repeat" v-show="player.repeat !== 'one'" />
-          <svg-icon icon-class="repeat-1" v-show="player.repeat === 'one'" />
+          <svg-icon icon-class="repeat" v-show="player.repeatMode !== 'one'" />
+          <svg-icon
+            icon-class="repeat-1"
+            v-show="player.repeatMode === 'one'"
+          />
         </button-icon>
         <button-icon
           @click.native="shuffle"
@@ -94,7 +96,7 @@
           ><svg-icon icon-class="shuffle"
         /></button-icon>
         <div class="volume-control">
-          <button-icon :title="$t('player.mute')" @click.native="mute">
+          <button-icon :title="$t('player.mute')" @click.native="player.mute">
             <svg-icon icon-class="volume" v-show="volume > 0.5" />
             <svg-icon icon-class="volume-mute" v-show="volume === 0" />
             <svg-icon
@@ -121,13 +123,11 @@
 </template>
 
 <script>
-import { updateMediaSessionMetaData } from "@/utils/mediaSession";
 import { mapState, mapMutations, mapActions } from "vuex";
 import { isAccountLoggedIn } from "@/utils/auth";
 import { userLikedSongsIDs } from "@/api/user";
 import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
-import { Howler } from "howler";
 
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import VueSlider from "vue-slider-component";
@@ -147,10 +147,7 @@ export default {
   },
   mounted() {
     setInterval(() => {
-      // fix 歌曲播放完还设置进度的问题，及 _id 不存在的问题
-      if (this.howler && this.howler._sounds?.[0]?._id) {
-        this.progress = ~~this.howler.seek();
-      }
+      this.progress = ~~this.player.seek();
     }, 1000);
     if (isAccountLoggedIn()) {
       userLikedSongsIDs(this.data.user.userId).then((data) => {
@@ -159,7 +156,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["player", "howler", "settings", "liked", "data"]),
+    ...mapState(["player", "settings", "liked", "data"]),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -168,92 +165,46 @@ export default {
         return this.player.volume;
       },
       set(value) {
-        this.updatePlayerState({ key: "volume", value });
-        Howler.volume(value);
+        this.player.volume = value;
       },
     },
     playing() {
-      if (this.howler) {
-        if (this.howler.state() === "loading") {
-          this.updatePlayerState({ key: "playing", value: true });
-          return true;
-        }
-        const status = this.howler.playing();
-        this.updatePlayerState({ key: "playing", value: status });
-        return status;
-      } else {
-        return false;
-      }
+      return this.player.playing;
     },
     progressMax() {
-      let max = ~~(this.currentTrack.dt / 1000);
+      let max = ~~(this.player.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
     },
   },
   methods: {
-    ...mapMutations([
-      "turnOnShuffleMode",
-      "turnOffShuffleMode",
-      "updatePlayerState",
-      "updateRepeatStatus",
-      "updateLikedSongs",
-    ]),
-    ...mapActions([
-      "nextTrack",
-      "previousTrack",
-      "playTrackOnListByID",
-      "addNextTrackEvent",
-      "showToast",
-    ]),
+    ...mapMutations(["updateLikedSongs"]),
+    ...mapActions(["showToast"]),
     play() {
-      if (this.playing) {
-        this.howler.pause();
-      } else {
-        if (this.howler.state() === "unloaded") {
-          this.playTrackOnListByID(this.currentTrack.id);
-        }
-        this.howler.play();
-        if (this.howler._onend.length === 0) {
-          this.addNextTrackEvent();
-          updateMediaSessionMetaData(this.currentTrack);
-        }
-      }
+      this.player.playing ? this.player.pause() : this.player.play();
     },
     next() {
-      this.progress = 0;
-      this.nextTrack(true);
+      if (this.player.playNextTrack()) this.progress = 0;
     },
     previous() {
-      this.progress = 0;
-      this.previousTrack();
+      if (this.player.playPrevTrack()) this.progress = 0;
     },
     shuffle() {
-      if (this.player.shuffle === true) {
-        this.turnOffShuffleMode();
-      } else {
-        this.turnOnShuffleMode();
-      }
+      this.player.shuffle = !this.player.shuffle;
+      console.log(this.player);
     },
     repeat() {
-      if (this.player.repeat === "on") {
-        this.updateRepeatStatus("one");
-      } else if (this.player.repeat === "one") {
-        this.updateRepeatStatus("off");
+      console.log(this.player.repeatMode);
+      if (this.player.repeatMode === "on") {
+        this.player.repeatMode = "one";
+      } else if (this.player.repeatMode === "one") {
+        this.player.repeatMode = "off";
       } else {
-        this.updateRepeatStatus("on");
-      }
-    },
-    mute() {
-      if (this.volume === 0) {
-        this.volume = this.oldVolume;
-      } else {
-        this.oldVolume = this.volume;
-        this.volume = 0;
+        this.player.repeatMode = "on";
       }
     },
     setSeek() {
       this.progress = this.$refs.progress.getValue();
-      this.howler.seek(this.$refs.progress.getValue());
+      this.player.seek(this.$refs.progress.getValue());
     },
     goToNextTracksPage() {
       this.$route.name === "next"
@@ -285,15 +236,20 @@ export default {
       });
     },
     goToList() {
-      if (this.player.listInfo.id === this.data.likedSongPlaylistID)
+      if (this.player.playlistSource.id === this.data.likedSongPlaylistID)
         this.$router.push({ path: "/library/liked-songs" });
       else
         this.$router.push({
-          path: "/" + this.player.listInfo.type + "/" + this.player.listInfo.id,
+          path:
+            "/" +
+            this.player.playlistSource.type +
+            "/" +
+            this.player.playlistSource.id,
         });
     },
     goToAlbum() {
-      this.$router.push({ path: "/album/" + this.currentTrack.al.id });
+      if (this.player.currentTrack.al.id === 0) return;
+      this.$router.push({ path: "/album/" + this.player.currentTrack.al.id });
     },
     goToArtist(id) {
       this.$router.push({ path: "/artist/" + id });

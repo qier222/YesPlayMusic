@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import { playAlbumByID, playPlaylistByID, playArtistByID } from "@/utils/play";
-
 export default {
   props: {
     id: { type: Number, required: true },
@@ -74,12 +72,13 @@ export default {
   },
   methods: {
     play() {
+      const player = this.$store.state.player;
       const playActions = {
-        album: playAlbumByID,
-        playlist: playPlaylistByID,
-        artist: playArtistByID,
+        album: player.playAlbumByID,
+        playlist: player.playPlaylistByID,
+        artist: player.playArtistByID,
       };
-      playActions[this.type](this.id);
+      playActions[this.type].bind(player)(this.id);
     },
     goTo() {
       this.$router.push({ name: this.type, params: { id: this.id } });

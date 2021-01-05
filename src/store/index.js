@@ -3,22 +3,12 @@ import Vuex from "vuex";
 import state from "./state";
 import mutations from "./mutations";
 import actions from "./actions";
-import initLocalStorage from "./initLocalStorage";
-import { Howler } from "howler";
 import { changeAppearance } from "@/utils/common";
 import updateApp from "@/utils/updateApp";
-import pkg from "../../package.json";
+import Player from "@/utils/Player";
 // vuex 自定义插件
 import { getBroadcastPlugin } from "./plugins/broadcast";
 import saveToLocalStorage from "./plugins/localStorage";
-
-if (localStorage.getItem("appVersion") === null) {
-  localStorage.setItem("player", JSON.stringify(initLocalStorage.player));
-  localStorage.setItem("settings", JSON.stringify(initLocalStorage.settings));
-  localStorage.setItem("data", JSON.stringify(initLocalStorage.data));
-  localStorage.setItem("appVersion", pkg.version);
-  window.location.reload();
-}
 
 updateApp();
 
@@ -39,19 +29,6 @@ const options = {
 
 const store = new Vuex.Store(options);
 
-Howler.volume(store.state.player.volume);
-// 防止软件第一次打开资源加载2次
-Howler.autoUnlock = false;
-
-const currentTrack = store.state?.player?.currentTrack;
-if (currentTrack?.id) {
-  store.dispatch("switchTrack", {
-    id: currentTrack.id,
-    sort: currentTrack.sort,
-    autoplay: false,
-  });
-}
-
 if ([undefined, null].includes(store.state.settings.lang)) {
   let lang = "en";
   if (navigator.language.slice(0, 2) === "zh") lang = "zh-CN";
@@ -68,5 +45,18 @@ window
       changeAppearance(store.state.settings.appearance);
     }
   });
+
+let player = new Player();
+player = new Proxy(player, {
+  set(target, prop, val) {
+    // console.log({ prop, val });
+    target[prop] = val;
+    if (prop === "_howler") return true;
+    target.saveSelfToLocalStorage();
+    target.sendSelfToIpcMain();
+    return true;
+  },
+});
+store.state.player = player;
 
 export default store;
