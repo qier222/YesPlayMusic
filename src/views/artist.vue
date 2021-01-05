@@ -101,6 +101,16 @@
         :showPlayButton="true"
       />
     </div>
+
+    <div class="similar-artists" v-if="similarArtists.length !== 0">
+      <div class="section-title">相似歌手</div>
+      <CoverRow
+        type="artist"
+        :columnNumber="7"
+        gap="36px 28px"
+        :items="similarArtists.slice(0, 14)"
+      />
+    </div>
   </div>
 </template>
 
@@ -111,6 +121,7 @@ import {
   getArtistAlbum,
   artistMv,
   followAArtist,
+  similarArtists,
 } from "@/api/artist";
 import { isAccountLoggedIn } from "@/utils/auth";
 import NProgress from "nprogress";
@@ -144,6 +155,7 @@ export default {
       showMorePopTracks: false,
       mvs: [],
       hasMoreMV: false,
+      similarArtists: [],
     };
   },
   computed: {
@@ -175,6 +187,9 @@ export default {
       artistMv({ id }).then((data) => {
         this.mvs = data.mvs;
         this.hasMoreMV = data.hasMore;
+      });
+      similarArtists(id).then((data) => {
+        this.similarArtists = data.artists;
       });
     },
     goToAlbum(id) {
@@ -341,6 +356,12 @@ export default {
         opacity: 1;
       }
     }
+  }
+}
+
+.similar-artists {
+  .section-title {
+    margin-bottom: 24px;
   }
 }
 </style>

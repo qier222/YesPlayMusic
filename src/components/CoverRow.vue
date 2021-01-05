@@ -1,5 +1,5 @@
 <template>
-  <div class="cover-row">
+  <div class="cover-row" :style="rowStyles">
     <div
       class="item"
       v-for="item in items"
@@ -47,6 +47,16 @@ export default {
     type: { type: String, required: true },
     subText: { type: String, default: "null" },
     showPlayCount: { type: Boolean, default: false },
+    columnNumber: { type: Number, default: 5 },
+    gap: { type: String, default: "44px 24px" },
+  },
+  computed: {
+    rowStyles() {
+      return {
+        "grid-template-columns": `repeat(${this.columnNumber}, 1fr)`,
+        gap: this.gap,
+      };
+    },
   },
   methods: {
     getSubText(item) {
@@ -93,7 +103,8 @@ export default {
           return "https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512x512";
         }
       }
-      return item.img1v1Url || item.picUrl || item.coverImgUrl;
+      let img = item.img1v1Url || item.picUrl || item.coverImgUrl;
+      return `${img}?param=512x512`;
     },
   },
 };
@@ -102,8 +113,6 @@ export default {
 <style lang="scss" scoped>
 .cover-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 44px 24px;
 }
 
 .item {
@@ -134,7 +143,6 @@ export default {
 .item.artist {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   text-align: center;
   .cover {
     display: flex;

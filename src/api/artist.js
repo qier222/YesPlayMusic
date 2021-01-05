@@ -89,3 +89,17 @@ export function followAArtist(params) {
     params,
   });
 }
+
+/**
+ * 相似歌手
+ * 说明 : 调用此接口 , 传入歌手 id, 可获得相似歌手
+ * - id: 歌手 id
+ * @param {number} id
+ */
+export function similarArtists(id) {
+  return request({
+    url: "/simi/artist",
+    method: "post",
+    params: { id },
+  });
+}
