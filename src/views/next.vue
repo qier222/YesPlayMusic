@@ -3,14 +3,23 @@
     <h1>{{ $t("next.nowPlaying") }}</h1>
     <TrackList
       :tracks="[currentTrack]"
-      :type="'playlist'"
+      type="playlist"
       dbclickTrackFunc="none"
     />
-    <h1>{{ $t("next.nextUp") }}</h1>
-
+    <h1 v-show="playNextList.length > 0">插队播放</h1>
     <TrackList
-      :tracks="sortedTracks"
-      :type="'playlist'"
+      :tracks="playNextTracks"
+      type="playlist"
+      :highlightPlayingTrack="false"
+      dbclickTrackFunc="playTrackOnListByID"
+      itemKey="id+index"
+      v-show="playNextList.length > 0"
+    />
+    <h1>{{ $t("next.nextUp") }}</h1>
+    <TrackList
+      :tracks="filteredTracks"
+      type="playlist"
+      :highlightPlayingTrack="false"
       dbclickTrackFunc="playTrackOnListByID"
     />
   </div>
@@ -39,20 +48,20 @@ export default {
     playerShuffle() {
       return this.player.shuffle;
     },
-    sortedTracks() {
-      function compare(property) {
-        return function (obj1, obj2) {
-          var value1 = obj1[property];
-          var value2 = obj2[property];
-          return value1 - value2;
-        };
-      }
-      return this.tracks
-        .filter(
-          (t) => this.player.list.find((t2) => t2.id === t.id) !== undefined
-        )
-        .filter((t) => t.sort > this.player.currentTrack.sort)
-        .sort(compare("sort"));
+    filteredTracks() {
+      let trackIDs = this.player.list.slice(
+        this.player.current + 1,
+        this.player.current + 100
+      );
+      return this.tracks.filter((t) => trackIDs.includes(t.id));
+    },
+    playNextList() {
+      return this.player.playNextList;
+    },
+    playNextTracks() {
+      return this.playNextList.map((tid) => {
+        return this.tracks.find((t) => t.id === tid);
+      });
     },
   },
   watch: {
@@ -60,36 +69,35 @@ export default {
       this.loadTracks();
     },
     playerShuffle() {
-      this.tracks = this.tracks.map((t) => {
-        t.sort = this.player.list.find((t2) => t.id === t2.id).sort;
-        return t;
-      });
+      this.loadTracks();
+    },
+    playNextList() {
+      this.loadTracks();
     },
   },
   methods: {
     ...mapActions(["playTrackOnListByID"]),
     loadTracks() {
-      console.time("loadTracks");
-      let loadedTrackIDs = this.tracks.map((t) => t.id);
-      let basicTracks = this.player.list
-        .filter(
-          (t) =>
-            t.sort > this.player.currentTrack.sort &&
-            t.sort <= this.player.currentTrack.sort + 100
-        )
-        .filter((t) => loadedTrackIDs.includes(t.id) === false);
+      // 获取播放列表当前歌曲后100首歌
+      let trackIDs = this.player.list.slice(
+        this.player.current + 1,
+        this.player.current + 100
+      );
 
-      let trackIDs = basicTracks.map((t) => t.id);
+      // 将playNextList的歌曲加进trackIDs
+      trackIDs.push(...this.playNextList);
+
+      // 获取已经加载了的歌曲
+      let loadedTrackIDs = this.tracks.map((t) => t.id);
+
       if (trackIDs.length > 0) {
         getTrackDetail(trackIDs.join(",")).then((data) => {
-          let newTracks = data.songs.map((t) => {
-            t.sort = this.player.list.find((t2) => t2.id == t.id).sort;
-            return t;
-          });
+          let newTracks = data.songs.filter(
+            (t) => !loadedTrackIDs.includes(t.id)
+          );
           this.tracks.push(...newTracks);
         });
       }
-      console.timeEnd("loadTracks");
     },
   },
   activated() {
@@ -99,9 +107,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.next-tracks {
-  width: 78vw;
-}
 h1 {
   margin-top: 36px;
   margin-bottom: 18px;
