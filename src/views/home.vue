@@ -41,7 +41,7 @@
         }}</router-link>
       </div>
       <CoverRow
-        :type="'chart'"
+        type="playlist"
         :items="topList.items"
         :subText="'updateFrequency'"
         :imageSize="1024"

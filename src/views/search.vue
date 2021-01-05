@@ -14,7 +14,7 @@
               :key="artist.id"
             >
               <Cover
-                :imageUrl="artist.img1v1Url | resizeImage"
+                :imageUrl="getArtistImageUrl(artist)"
                 type="artist"
                 :id="artist.id"
                 :fixedSize="128"
@@ -158,6 +158,17 @@ export default {
       search({ keywords: keywords, type: 1004 }).then((data) => {
         this.mvs = data.result.mvs;
       });
+    },
+    getArtistImageUrl(artist) {
+      if (artist.img1v1Url) {
+        let img1v1ID = artist.img1v1Url.split("/");
+        img1v1ID = img1v1ID[img1v1ID.length - 1];
+        if (img1v1ID === "5639395138885805.jpg") {
+          // 没有头像的歌手，网易云返回的img1v1Url并不是正方形的 😅😅😅
+          return "https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512x512";
+        }
+      }
+      return artist.img1v1Url + "?param=512x512";
     },
   },
   created() {

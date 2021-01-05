@@ -1,4 +1,5 @@
 const { cookieToJson } = require('../util/index');
+const crypto = require('crypto');
 const request = require('../util/request');
 module.exports = {
   '/yunbei/today': (req, res) => {

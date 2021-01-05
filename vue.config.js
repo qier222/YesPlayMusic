@@ -87,6 +87,7 @@ module.exports = {
         nsis: {
           oneClick: false,
           allowToChangeInstallationDirectory: true,
+          perMachine: true,
         },
       },
       // 主线程的配置文件

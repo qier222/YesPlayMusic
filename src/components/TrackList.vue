@@ -28,9 +28,10 @@
     </ContextMenu>
     <div :style="listStyles">
       <TrackListItem
-        v-for="track in tracks"
+        v-for="(track, index) in tracks"
         :track="track"
-        :key="track.id"
+        :key="itemKey === 'id' ? track.id : `${track.id}${index}`"
+        :highlightPlayingTrack="highlightPlayingTrack"
         @dblclick.native="playThisList(track.id)"
         @click.right.native="openMenu($event, track)"
       />
@@ -80,6 +81,14 @@ export default {
     columnNumber: {
       type: Number,
       default: 4,
+    },
+    highlightPlayingTrack: {
+      type: Boolean,
+      default: true,
+    },
+    itemKey: {
+      type: String,
+      default: "id",
     },
   },
   data() {

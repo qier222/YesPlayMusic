@@ -401,9 +401,6 @@ h1 {
 }
 
 .section-two {
-  // margin-top: 42px;
-  // padding-top: 14px;
-  // border-top: 1px solid rgba(128, 128, 128, 0.18);
   margin-top: 54px;
   min-height: calc(100vh - 182px);
 }
@@ -411,7 +408,7 @@ h1 {
 .tabs-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .tabs {

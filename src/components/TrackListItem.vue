@@ -8,7 +8,7 @@
     @mouseleave="hover = false"
   >
     <img
-      :src="imgUrl | resizeImage(224)"
+      :src="imgUrl"
       v-if="!isAlbum"
       @click="goToAlbum"
       :class="{ hover: focus }"
@@ -89,6 +89,10 @@ export default {
   components: { ArtistsInLine, ExplicitSymbol },
   props: {
     track: Object,
+    highlightPlayingTrack: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return { hover: false, trackStyle: {} };
@@ -96,9 +100,11 @@ export default {
   computed: {
     ...mapState(["settings"]),
     imgUrl() {
-      if (this.track.al !== undefined) return this.track.al.picUrl;
-      if (this.track.album !== undefined) return this.track.album.picUrl;
-      return "";
+      let image =
+        this.track?.al?.picUrl ??
+        this.track?.album?.picUrl ??
+        "https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg";
+      return image + "?param=224y224";
     },
     artists() {
       if (this.track.ar !== undefined) return this.track.ar;
@@ -127,7 +133,8 @@ export default {
       let trackClass = [this.type];
       if (!this.track.playable && this.settings.showUnavailableSongInGreyStyle)
         trackClass.push("disable");
-      if (this.isPlaying) trackClass.push("playing");
+      if (this.isPlaying && this.highlightPlayingTrack)
+        trackClass.push("playing");
       if (this.focus) trackClass.push("focus");
       return trackClass;
     },

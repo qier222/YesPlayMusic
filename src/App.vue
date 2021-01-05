@@ -18,8 +18,8 @@
         "
     /></transition>
     <Toast />
-    <ModalAddTrackToPlaylist />
-    <ModalNewPlaylist />
+    <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
+    <ModalNewPlaylist v-if="isAccountLoggedIn" />
   </div>
 </template>
 
@@ -30,6 +30,7 @@ import Navbar from "./components/Navbar.vue";
 import Player from "./components/Player.vue";
 import Toast from "./components/Toast.vue";
 import { ipcRenderer } from "./electron/ipcRenderer";
+import { isAccountLoggedIn } from "@/utils/auth";
 
 export default {
   name: "App",
@@ -44,6 +45,11 @@ export default {
     return {
       isElectron: process.env.IS_ELECTRON, // true || undefined
     };
+  },
+  computed: {
+    isAccountLoggedIn() {
+      return isAccountLoggedIn();
+    },
   },
   created() {
     if (this.isElectron) {

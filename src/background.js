@@ -1,7 +1,6 @@
 "use strict";
 import { app, protocol, BrowserWindow, shell, dialog } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { startNeteaseMusicApi } from "./electron/services";
 import { initIpcMain } from "./electron/ipcMain.js";
 import { createMenu } from "./electron/menu";
@@ -9,6 +8,7 @@ import { createTray } from "@/electron/tray";
 import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
 import { autoUpdater } from "electron-updater";
+import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import express from "express";
 import expressProxy from "express-http-proxy";
 import Store from "electron-store";
@@ -91,8 +91,8 @@ class Background {
     this.window = new BrowserWindow({
       width: this.store.get("window.width") | 1440,
       height: this.store.get("window.height") | 840,
-      minWidth: 768,
-      minHeight: 608,
+      minWidth: 1080,
+      minHeight: 720,
       titleBarStyle: "hiddenInset",
       webPreferences: {
         webSecurity: false,

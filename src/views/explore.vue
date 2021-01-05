@@ -287,6 +287,7 @@ h1 {
 .load-more {
   display: flex;
   justify-content: center;
+  margin-top: 32px;
 }
 
 .button.more {

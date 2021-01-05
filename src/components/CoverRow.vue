@@ -6,11 +6,7 @@
       :key="item.id"
       :class="{ artist: type === 'artist' }"
     >
-      <Cover
-        :imageUrl="item.img1v1Url || item.picUrl || item.coverImgUrl"
-        :type="type"
-        :id="item.id"
-      />
+      <Cover :imageUrl="getImageUrl(item)" :type="type" :id="item.id" />
       <div class="text">
         <div class="info" v-if="showPlayCount">
           <span class="play-count"
@@ -86,8 +82,18 @@ export default {
       return this.type === "album" && item.mark === 1056768;
     },
     getTitleLink(item) {
-      let type = this.type === "chart" ? "playlist" : this.type;
-      return `/${type}/${item.id}`;
+      return `/${this.type}/${item.id}`;
+    },
+    getImageUrl(item) {
+      if (item.img1v1Url) {
+        let img1v1ID = item.img1v1Url.split("/");
+        img1v1ID = img1v1ID[img1v1ID.length - 1];
+        if (img1v1ID === "5639395138885805.jpg") {
+          // 没有头像的歌手，网易云返回的img1v1Url并不是正方形的 😅😅😅
+          return "https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512x512";
+        }
+      }
+      return item.img1v1Url || item.picUrl || item.coverImgUrl;
     },
   },
 };
