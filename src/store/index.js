@@ -7,7 +7,6 @@ import { changeAppearance } from "@/utils/common";
 import updateApp from "@/utils/updateApp";
 import Player from "@/utils/Player";
 // vuex 自定义插件
-import { getBroadcastPlugin } from "./plugins/broadcast";
 import saveToLocalStorage from "./plugins/localStorage";
 
 updateApp();
@@ -15,11 +14,6 @@ updateApp();
 Vue.use(Vuex);
 
 let plugins = [saveToLocalStorage];
-if (process.env.IS_ELECTRON === true) {
-  let vuexBroadCast = getBroadcastPlugin();
-  plugins.push(vuexBroadCast);
-}
-
 const options = {
   state,
   mutations,
