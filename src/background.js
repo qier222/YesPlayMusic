@@ -5,6 +5,7 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import { startNeteaseMusicApi } from "./electron/services";
 import { initIpcMain } from "./electron/ipcMain.js";
 import { createMenu } from "./electron/menu";
+import { createTray } from "@/electron/tray";
 import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
 import { autoUpdater } from "electron-updater";
@@ -15,6 +16,7 @@ import Store from "electron-store";
 class Background {
   constructor() {
     this.window = null;
+    this.tray = null;
     this.store = new Store({
       windowWidth: {
         width: { type: "number", default: 1440 },
@@ -101,6 +103,11 @@ class Background {
     // hide menu bar on Microsoft Windows and Linux
     this.window.setMenuBarVisibility(false);
 
+    // create tray only for Microsoft windows
+    if (process.platform === "win32") {
+      this.tray = createTray(this.window);
+    }
+
     if (process.env.WEBPACK_DEV_SERVER_URL) {
       // Load the url of the dev server if in development mode
       this.window.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
@@ -162,6 +169,12 @@ class Background {
     this.window.on("resize", () => {
       let { height, width } = this.window.getBounds();
       this.store.set("window", { height, width });
+    });
+
+    this.window.on("minimize", () => {
+      if (process.platform === "win32") {
+        this.window.hide();
+      }
     });
 
     this.window.webContents.on("new-window", function (e, url) {
