@@ -119,6 +119,14 @@
         </div>
       </div>
     </div>
+
+    <button-icon
+      class="lyrics-button"
+      title="Lyrics"
+      style="margin-left: 12px"
+      @click.native="toggleLyrics"
+      ><svg-icon icon-class="arrow-up"
+    /></button-icon>
   </div>
 </template>
 
@@ -175,9 +183,12 @@ export default {
       let max = ~~(this.player.currentTrack.dt / 1000);
       return max > 1 ? max - 1 : max;
     },
+    isCurrentTrackLiked() {
+      return this.liked.songs.includes(this.currentTrack.id);
+    },
   },
   methods: {
-    ...mapMutations(["updateLikedSongs"]),
+    ...mapMutations(["updateLikedSongs", "toggleLyrics"]),
     ...mapActions(["showToast"]),
     play() {
       this.player.playing ? this.player.pause() : this.player.play();
@@ -205,6 +216,9 @@ export default {
     setSeek() {
       this.progress = this.$refs.progress.getValue();
       this.player.seek(this.$refs.progress.getValue());
+    },
+    setProgress(value) {
+      this.progress = value;
     },
     goToNextTracksPage() {
       this.$route.name === "next"
@@ -398,5 +412,14 @@ export default {
 
 .like-button {
   margin-left: 16px;
+}
+
+.lyrics-button {
+  position: fixed;
+  right: 18px;
+  .svg-icon {
+    height: 20px;
+    width: 20px;
+  }
 }
 </style>

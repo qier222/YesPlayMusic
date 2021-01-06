@@ -33,4 +33,7 @@ export default {
   updateModal(state, { modalName, key, value }) {
     state.modals[modalName][key] = value;
   },
+  toggleLyrics(state) {
+    state.showLyrics = !state.showLyrics;
+  },
 };

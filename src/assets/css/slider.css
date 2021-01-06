@@ -99,3 +99,32 @@
   box-sizing: border-box;
   visibility: visible;
 }
+
+/* lyrics */
+.lyrics-page .vue-slider-rail {
+  background-color: rgba(128, 128, 128, 0.18);
+  border-radius: 2px;
+  height: 4px;
+  opacity: 0.88;
+}
+
+.lyrics-page .vue-slider-process {
+  background-color: #060606;
+}
+
+.lyrics-page .vue-slider-dot-handle {
+  background-color: #060606;
+  box-shadow: unset;
+}
+
+.lyrics-page .vue-slider-dot-tooltip {
+  display: none;
+}
+
+body[data-theme="dark"] .lyrics-page .vue-slider-process {
+  background-color: #fafafa;
+}
+
+body[data-theme="dark"] .lyrics-page .vue-slider-dot-handle {
+  background-color: #fff;
+}

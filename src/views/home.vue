@@ -24,7 +24,11 @@
     </div>
     <div class="index-row">
       <div class="title">{{ $t("home.recommendArtist") }}</div>
-      <CoverRow type="artist" :items="recommendArtists.items" />
+      <CoverRow
+        type="artist"
+        :columnNumber="6"
+        :items="recommendArtists.items"
+      />
     </div>
     <div class="index-row">
       <div class="title">

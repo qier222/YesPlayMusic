@@ -208,3 +208,10 @@ export function bytesToSize(bytes) {
     return (bytes / megaBytes).toFixed(decimal) + " MB";
   else return (bytes / gigaBytes).toFixed(decimal) + " GB";
 }
+
+export function formatTrackTime(value) {
+  if (!value) return "";
+  let min = ~~((value / 60) % 60);
+  let sec = (~~(value % 60)).toString().padStart(2, "0");
+  return `${min}:${sec}`;
+}

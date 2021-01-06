@@ -8,7 +8,7 @@ if (localStorage.getItem("appVersion") === null) {
 }
 
 export default {
-  howler: null,
+  showLyrics: false,
   liked: {
     songs: [],
   },

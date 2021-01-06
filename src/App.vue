@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Navbar ref="navbar" />
-    <main>
+    <main v-show="!this.$store.state.showLyrics">
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
       </keep-alive>
@@ -20,6 +20,9 @@
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
+    <transition name="slide-up">
+      <Lyrics v-show="this.$store.state.showLyrics" /> </transition
+    >">
   </div>
 </template>
 
@@ -31,6 +34,7 @@ import Player from "./components/Player.vue";
 import Toast from "./components/Toast.vue";
 import { ipcRenderer } from "./electron/ipcRenderer";
 import { isAccountLoggedIn } from "@/utils/auth";
+import Lyrics from "./views/lyrics.vue";
 
 export default {
   name: "App",
@@ -40,6 +44,7 @@ export default {
     Toast,
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
+    Lyrics,
   },
   data() {
     return {
