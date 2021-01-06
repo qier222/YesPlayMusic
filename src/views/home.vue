@@ -117,7 +117,7 @@ export default {
       });
       toplistOfArtists(2).then((data) => {
         let indexs = [];
-        while (indexs.length < 5) {
+        while (indexs.length < 6) {
           let tmp = ~~(Math.random() * 100);
           if (!indexs.includes(tmp)) indexs.push(tmp);
         }

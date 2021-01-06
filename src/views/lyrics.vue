@@ -15,7 +15,7 @@
           <div class="controls">
             <div class="top-part">
               <div class="track-info">
-                <div class="title"
+                <div class="title" :title="currentTrack.name"
                   ><router-link
                     :to="`/${player.playlistSource.type}/${player.playlistSource.id}`"
                     @click.native="toggleLyrics"
@@ -32,6 +32,7 @@
                   <router-link
                     :to="`/album/${currentTrack.al.id}`"
                     @click.native="toggleLyrics"
+                    :title="currentTrack.al.name"
                     >{{ currentTrack.al.name }}</router-link
                   ></div
                 >
@@ -309,8 +310,10 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-right: 24px;
+  margin-top: 24px;
   align-items: center;
   .controls {
+    max-width: 54vh;
     margin-top: 24px;
     color: var(--color-text);
     .title {
@@ -318,11 +321,19 @@ export default {
       font-size: 1.4rem;
       font-weight: 600;
       opacity: 0.88;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
     }
     .subtitle {
       margin-top: 4px;
       font-size: 1rem;
       opacity: 0.58;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
     }
 
     .top-part {
@@ -456,7 +467,7 @@ export default {
   top: 24px;
   right: 24px;
   z-index: 300;
-  border-radius: 50%;
+  border-radius: 0.75rem;
   height: 44px;
   width: 44px;
   display: flex;
@@ -464,6 +475,7 @@ export default {
   align-items: center;
   opacity: 0.28;
   transition: 0.2s;
+  -webkit-app-region: no-drag;
   .svg-icon {
     color: var(--color-text);
     padding-top: 5px;

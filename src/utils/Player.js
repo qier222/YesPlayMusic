@@ -104,6 +104,7 @@ export default class {
     this._loadSelfFromLocalStorage();
     this._replaceCurrentTrack(this._currentTrack.id, false); // update audio source and init howler
     this._initMediaSession();
+    Howler.volume(this.volume);
   }
   _getNextTrack() {
     // 返回 [trackID, index]

@@ -50,11 +50,8 @@ export default {
       this.$router.push({ path: "/mv/" + id, query });
     },
     getUrl(mv) {
-      if (mv.cover !== undefined) return mv.cover.replace(/^http:/, "https:");
-      if (mv.imgurl16v9 !== undefined)
-        return mv.imgurl16v9.replace(/^http:/, "https:");
-      if (mv.coverUrl !== undefined)
-        return mv.coverUrl.replace(/^http:/, "https:");
+      let url = mv.imgurl16v9 ?? mv.cover ?? mv.coverUrl;
+      return url.replace(/^http:/, "https:") + "?param=464x260";
     },
     getID(mv) {
       if (mv.id !== undefined) return mv.id;
@@ -102,6 +99,7 @@ export default {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    word-break: break-all;
   }
   .artist {
     font-size: 12px;
