@@ -1,6 +1,6 @@
 <template>
   <transition name="slide-up">
-    <div class="lyrics-page">
+    <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
       <div class="left-side">
         <div>
           <div class="cover">
@@ -117,24 +117,21 @@
         </div>
       </div>
       <div class="right-side">
-        <div class="lyrics-container" ref="lyricsContainer">
-          <div
-            class="line"
-            :class="{
-              highlight: highlightLyricIndex === index,
-            }"
-            :style="lineStyles"
-            v-for="(line, index) in lyricWithTranslation"
-            :key="index"
-            :id="`line-${index}`"
-            v-html="
-              haveTranslation
-                ? line.contents[0] + '<br/>' + line.contents[1]
-                : line.contents[0]
-            "
-          ></div>
-        </div>
+        <transition name="slide-fade">
+          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric">
+            <div
+              class="line"
+              :class="{
+                highlight: highlightLyricIndex === index,
+              }"
+              :style="lineStyles"
+              v-for="(line, index) in lyricWithTranslation"
+              :key="index"
+              :id="`line-${index}`"
               v-html="formatLine(line)"
+            ></div>
+          </div>
+        </transition>
       </div>
       <div class="close-button" @click="toggleLyrics">
         <button><svg-icon icon-class="arrow-down" /></button>
@@ -233,6 +230,9 @@ export default {
     showLyrics() {
       return this.$store.state.showLyrics;
     },
+    noLyric() {
+      return this.lyric.length == 0;
+    },
   },
   created() {
     this.getLyric();
@@ -244,9 +244,16 @@ export default {
     ...mapMutations(["toggleLyrics"]),
     getLyric() {
       return getLyric(this.currentTrack.id).then((data) => {
-        let { lyric, tlyric } = lyricParser(data);
-        this.lyric = lyric;
-        this.tlyric = tlyric;
+        if (data.nolyric) {
+          this.lyric = [];
+          this.tlyric = [];
+          return false;
+        } else {
+          let { lyric, tlyric } = lyricParser(data);
+          this.lyric = lyric;
+          this.tlyric = tlyric;
+          return true;
+        }
       });
     },
     formatTrackTime(value) {
@@ -287,9 +294,11 @@ export default {
   },
   watch: {
     currentTrack() {
-      this.getLyric().then(() => {
-        const el = document.getElementById(`line-0`);
-        el.scrollIntoView({ block: "center" });
+      this.getLyric().then((result) => {
+        if (result) {
+          const el = document.getElementById(`line-0`);
+          el.scrollIntoView({ block: "center" });
+        }
       });
     },
     showLyrics(show) {
@@ -316,12 +325,13 @@ export default {
 }
 
 .left-side {
-  flex: 4;
+  flex: 1;
   display: flex;
   justify-content: flex-end;
-  margin-right: 24px;
+  margin-right: 32px;
   margin-top: 24px;
   align-items: center;
+  transition: all 0.5s;
   .controls {
     max-width: 54vh;
     margin-top: 24px;
@@ -441,9 +451,10 @@ export default {
 }
 
 .right-side {
-  flex: 5;
+  flex: 1;
   font-weight: 600;
   color: var(--color-text);
+  margin-right: 24px;
   .lyrics-container {
     height: 100%;
     display: flex;
@@ -498,11 +509,31 @@ export default {
   }
 }
 
+.lyrics-page.no-lyric {
+  .left-side {
+    transition: all 0.5s;
+    transform: translateX(27vh);
+    margin-right: 0;
+  }
+}
+
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.4s;
 }
 .slide-up-enter, .slide-up-leave-to /* .fade-leave-active below version 2.1.8 */ {
   transform: translateY(100%);
+}
+
+.slide-fade-enter-active {
+  transition: all 0.5s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(27vh);
+  opacity: 0;
 }
 </style>
