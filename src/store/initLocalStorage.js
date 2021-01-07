@@ -12,6 +12,7 @@ let localStorage = {
     showUnavailableSongInGreyStyle: true,
     automaticallyCacheSongs: false,
     nyancatStyle: false,
+    showLyricsTranslation: true,
   },
   data: {
     user: {},

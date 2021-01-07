@@ -111,6 +111,22 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title">显示歌词翻译</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-lyrics-translation"
+              id="show-lyrics-translation"
+              v-model="showLyricsTranslation"
+            />
+            <label for="show-lyrics-translation"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title"> {{ $t("settings.showGitHubIcon") }} </div>
         </div>
         <div class="right">
@@ -292,6 +308,17 @@ export default {
         if (value === false) {
           this.clearCache("tracks");
         }
+      },
+    },
+    showLyricsTranslation: {
+      get() {
+        return this.settings.showLyricsTranslation;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showLyricsTranslation",
+          value,
+        });
       },
     },
   },

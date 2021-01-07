@@ -3,13 +3,19 @@ import pkg from "../../package.json";
 
 const updateSetting = () => {
   const parsedSettings = JSON.parse(localStorage.getItem("settings"));
+  const {
+    playlistCategories,
+    showUnavailableSongInGreyStyle,
+    automaticallyCacheSongs,
+    nyancatStyle,
+    showLyricsTranslation,
+  } = initLocalStorage.settings;
   const settings = {
-    playlistCategories: initLocalStorage?.settings?.playlistCategories,
-    showUnavailableSongInGreyStyle:
-      initLocalStorage?.settings?.showUnavailableSongInGreyStyle,
-    automaticallyCacheSongs:
-      initLocalStorage?.settings?.automaticallyCacheSongs,
-    nyancatStyle: initLocalStorage?.settings?.nyancatStyle,
+    playlistCategories,
+    showUnavailableSongInGreyStyle,
+    automaticallyCacheSongs,
+    nyancatStyle,
+    showLyricsTranslation,
     ...parsedSettings,
   };
 

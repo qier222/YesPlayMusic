@@ -134,6 +134,7 @@
             "
           ></div>
         </div>
+              v-html="formatLine(line)"
       </div>
       <div class="close-button" @click="toggleLyrics">
         <button><svg-icon icon-class="arrow-down" /></button>
@@ -273,6 +274,15 @@ export default {
           if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }, 500);
+    },
+    formatLine(line) {
+      const showLyricsTranslation = this.$store.state.settings
+        .showLyricsTranslation;
+      if (showLyricsTranslation && line.contents[1]) {
+        return line.contents[0] + "<br/>" + line.contents[1];
+      } else {
+        return line.contents[0];
+      }
     },
   },
   watch: {
