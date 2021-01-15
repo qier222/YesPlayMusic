@@ -156,7 +156,7 @@ export default {
   mounted() {
     setInterval(() => {
       this.progress = ~~this.player.seek();
-    }, 1000);
+    }, 500);
     if (isAccountLoggedIn()) {
       userLikedSongsIDs(this.data.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);

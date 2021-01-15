@@ -119,6 +119,7 @@
       <div class="right-side">
         <transition name="slide-fade">
           <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric">
+            <div class="line" id="line-1"></div>
             <div
               class="line"
               :class="{
@@ -127,7 +128,7 @@
               :style="lineStyles"
               v-for="(line, index) in lyricWithTranslation"
               :key="index"
-              :id="`line-${index}`"
+              :id="`line${index}`"
               v-html="formatLine(line)"
             ></div>
           </div>
@@ -162,7 +163,7 @@ export default {
       lyricsInterval: null,
       lyric: [],
       tlyric: [],
-      highlightLyricIndex: -1,
+      highlightLyricIndex: 0,
       minimize: true,
     };
   },
@@ -244,7 +245,7 @@ export default {
     ...mapMutations(["toggleLyrics"]),
     getLyric() {
       return getLyric(this.currentTrack.id).then((data) => {
-        if (data.nolyric) {
+        if (!data?.lrc?.lyric) {
           this.lyric = [];
           this.tlyric = [];
           return false;
@@ -275,10 +276,12 @@ export default {
           );
         });
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
-          const el = document.getElementById(
-            `line-${this.highlightLyricIndex}`
-          );
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          const el = document.getElementById(`line${this.highlightLyricIndex}`);
+          if (el)
+            el.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
         }
       }, 500);
     },
@@ -294,12 +297,7 @@ export default {
   },
   watch: {
     currentTrack() {
-      this.getLyric().then((result) => {
-        if (result) {
-          const el = document.getElementById(`line-0`);
-          el.scrollIntoView({ block: "center" });
-        }
-      });
+      this.getLyric();
     },
     showLyrics(show) {
       if (show) {
