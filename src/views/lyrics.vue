@@ -163,7 +163,7 @@ export default {
       lyricsInterval: null,
       lyric: [],
       tlyric: [],
-      highlightLyricIndex: 0,
+      highlightLyricIndex: -1,
       minimize: true,
     };
   },
@@ -195,10 +195,10 @@ export default {
       // content统一转换数组形式
       if (lyricFiltered.length) {
         lyricFiltered.forEach((l) => {
-          const { time, content } = l;
+          const { rawTime, time, content } = l;
           const lyricItem = { time, content, contents: [content] };
           const sameTimeTLyric = this.tlyric.find(
-            ({ time: tLyricTime }) => tLyricTime === time
+            ({ rawTime: tLyricRawTime }) => tLyricRawTime === rawTime
           );
           if (sameTimeTLyric) {
             const { content: tLyricContent } = sameTimeTLyric;
@@ -267,12 +267,12 @@ export default {
     },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
+        const progress = this.player.seek() ?? 0;
         let oldHighlightLyricIndex = this.highlightLyricIndex;
         this.highlightLyricIndex = this.lyric.findIndex((l, index) => {
           const nextLyric = this.lyric[index + 1];
           return (
-            this.progress >= l.time &&
-            (nextLyric ? this.progress < nextLyric.time : true)
+            progress >= l.time && (nextLyric ? progress < nextLyric.time : true)
           );
         });
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
@@ -283,7 +283,7 @@ export default {
               block: "center",
             });
         }
-      }, 500);
+      }, 50);
     },
     formatLine(line) {
       const showLyricsTranslation = this.$store.state.settings

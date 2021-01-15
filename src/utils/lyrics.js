@@ -22,9 +22,10 @@ export function parseLyric(lrc) {
       const t = timeRegExpArr[k];
       const min = Number(String(t.match(/\[\d*/i)).slice(1));
       const sec = Number(String(t.match(/:\d*/i)).slice(1));
-      const time = min * 60 + sec;
+      const ms = Number(t.match(/\d*\]/i)[0].slice(0, 2)) / 100;
+      const time = min * 60 + sec + ms;
       if (content !== "") {
-        lrcObj.push({ time: time, content });
+        lrcObj.push({ time: time, rawTime: timeRegExpArr[0], content });
       }
     }
   }
