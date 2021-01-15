@@ -7,6 +7,7 @@ import { getAlbum } from "@/api/album";
 import { getPlaylistDetail } from "@/api/playlist";
 import { getArtist } from "@/api/artist";
 import store from "@/store";
+import { isAccountLoggedIn } from "@/utils/auth";
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require("electron") : null;
@@ -163,15 +164,22 @@ export default class {
     });
   }
   _getAudioSourceFromNetease(track) {
-    return getMP3(track.id).then((data) => {
-      if (!data.data[0]) return null;
-      if (data.data[0].freeTrialInfo !== null) return null; // 跳过只能试听的歌曲
-      const source = data.data[0].url.replace(/^http:/, "https:");
-      if (store.state.settings.automaticallyCacheSongs) {
-        cacheTrack(track.id, source);
-      }
-      return source;
-    });
+    if (isAccountLoggedIn()) {
+      return getMP3(track.id).then((result) => {
+        if (!result.data[0]) return null;
+        if (!result.data[0].url) return null;
+        if (result.data[0].freeTrialInfo !== null) return null; // 跳过只能试听的歌曲
+        const source = result.data[0].url.replace(/^http:/, "https:");
+        if (store.state.settings.automaticallyCacheSongs) {
+          cacheTrack(track.id, source);
+        }
+        return source;
+      });
+    } else {
+      return new Promise((resolve) => {
+        resolve(`https://music.163.com/song/media/outer/url?id=${track.id}`);
+      });
+    }
   }
   _getAudioSourceFromUnblockMusic(track) {
     if (process.env.IS_ELECTRON !== true) return null;
