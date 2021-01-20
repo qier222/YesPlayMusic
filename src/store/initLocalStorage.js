@@ -24,6 +24,7 @@ let localStorage = {
 
 if (process.env.IS_ELECTRON === true) {
   localStorage.settings.automaticallyCacheSongs = true;
+  localStorage.settings.showUnavailableSongInGreyStyle = false;
 }
 
 export default localStorage;

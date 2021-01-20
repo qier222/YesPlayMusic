@@ -184,21 +184,18 @@ export default class {
   _getAudioSourceFromUnblockMusic(track) {
     if (process.env.IS_ELECTRON !== true) return null;
     const source = ipcRenderer.sendSync("unblock-music", track);
+    if (store.state.settings.automaticallyCacheSongs && source?.url) {
+      cacheTrack(track.id, source.url);
+    }
     return source?.url;
   }
   _getAudioSource(track) {
     return this._getAudioSourceFromCache(String(track.id))
       .then((source) => {
-        if (!source) return null;
-        return source;
+        return source ?? this._getAudioSourceFromNetease(track);
       })
       .then((source) => {
-        if (source) return source;
-        return this._getAudioSourceFromNetease(track);
-      })
-      .then((source) => {
-        if (source) return source;
-        return this._getAudioSourceFromUnblockMusic(track);
+        return source ?? this._getAudioSourceFromUnblockMusic(track);
       });
   }
   _replaceCurrentTrack(
@@ -216,6 +213,7 @@ export default class {
           this._playAudioSource(source, autoplay);
           return source;
         } else {
+          store.dispatch("showToast", `无法播放 ${track.name}`);
           ifUnplayableThen === "playNextTrack"
             ? this.playNextTrack()
             : this.playPrevTrack();

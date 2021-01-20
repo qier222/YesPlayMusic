@@ -11,18 +11,14 @@
       <Player
         v-if="this.$store.state.player.enabled"
         ref="player"
-        v-show="
-          ['mv', 'loginUsername', 'login', 'loginAccount'].includes(
-            this.$route.name
-          ) === false
-        "
+        v-show="showPlayer"
     /></transition>
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
     <transition name="slide-up">
-      <Lyrics v-show="this.$store.state.showLyrics" /> </transition
-    >">
+      <Lyrics v-show="this.$store.state.showLyrics" />
+    </transition>
   </div>
 </template>
 
@@ -54,6 +50,13 @@ export default {
   computed: {
     isAccountLoggedIn() {
       return isAccountLoggedIn();
+    },
+    showPlayer() {
+      return (
+        ["mv", "loginUsername", "login", "loginAccount"].includes(
+          this.$route.name
+        ) === false
+      );
     },
   },
   created() {

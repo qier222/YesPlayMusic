@@ -3,7 +3,7 @@
     class="track"
     :class="trackClass"
     :style="trackStyle"
-    :title="track.reason"
+    :title="showUnavailableSongInGreyStyle ? track.reason : ''"
     @mouseover="hover = true"
     @mouseleave="hover = false"
   >
@@ -146,6 +146,9 @@ export default {
         (this.hover && this.$parent.rightClickedTrack.id === 0) ||
         this.isMenuOpened
       );
+    },
+    showUnavailableSongInGreyStyle() {
+      return this.$store.state.settings.showUnavailableSongInGreyStyle;
     },
   },
   methods: {

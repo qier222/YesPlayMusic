@@ -21,7 +21,7 @@
           :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
           @click="goToAlbum"
         />
-        <div class="track-info">
+        <div class="track-info" :title="audioSource">
           <div class="name" @click="goToList">
             {{ currentTrack.name }}
           </div>
@@ -155,8 +155,8 @@ export default {
   },
   mounted() {
     setInterval(() => {
-      this.progress = ~~this.player.seek();
-    }, 500);
+      this.progress = this.player.seek();
+    }, 1000);
     if (isAccountLoggedIn()) {
       userLikedSongsIDs(this.data.user.userId).then((data) => {
         this.updateLikedSongs(data.ids);
@@ -185,6 +185,11 @@ export default {
     },
     isCurrentTrackLiked() {
       return this.liked.songs.includes(this.currentTrack.id);
+    },
+    audioSource() {
+      return this.player._howler?._src.includes("kuwo.cn")
+        ? "音源来自酷我音乐"
+        : "";
     },
   },
   methods: {

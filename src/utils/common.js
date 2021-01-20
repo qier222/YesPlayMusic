@@ -22,16 +22,16 @@ export function isTrackPlayable(track) {
     }
   } else if (track.fee === 4 || track.privilege?.fee === 4) {
     result.playable = false;
-    result.reason = "Paid Album";
+    result.reason = "付费专辑";
   } else if (
     track.noCopyrightRcmd !== null &&
     track.noCopyrightRcmd !== undefined
   ) {
     result.playable = false;
-    result.reason = "No Copyright";
+    result.reason = "无版权";
   } else if (track.privilege?.st < 0 && isAccountLoggedIn()) {
     result.playable = false;
-    result.reason = "The song has been removed from the shelves";
+    result.reason = "已下架";
   }
   return result;
 }

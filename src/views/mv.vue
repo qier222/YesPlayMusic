@@ -118,7 +118,7 @@ export default {
     this.player = new Plyr(this.$refs.videoPlayer, videoOptions);
     this.player.volume = this.$store.state.player.volume;
     this.player.on("playing", () => {
-      this.$store.state.howler.pause();
+      this.$store.state.player.pause();
     });
     this.getData(this.$route.params.id);
     console.log("网易云你这mv音频码率也太糊了吧🙄");

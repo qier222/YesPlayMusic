@@ -106,9 +106,9 @@
       <div class="section-title">相似歌手</div>
       <CoverRow
         type="artist"
-        :columnNumber="7"
+        :columnNumber="6"
         gap="36px 28px"
-        :items="similarArtists.slice(0, 14)"
+        :items="similarArtists.slice(0, 12)"
       />
     </div>
   </div>

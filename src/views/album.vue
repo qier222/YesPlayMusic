@@ -198,9 +198,6 @@ export default {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID", "showToast"]),
     playAlbumByID(id, trackID = "first") {
-      if (this.tracks.find((t) => t.playable !== false) === undefined) {
-        return;
-      }
       this.$store.state.player.playAlbumByID(id, trackID);
     },
     likeAlbum(toast = false) {
