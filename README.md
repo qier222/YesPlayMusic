@@ -20,18 +20,18 @@
 ## ✨ 特性
 
 - ✅ 使用 Vue.js 全家桶开发
-- ⭐ 简洁美观的 UI
 - 🔴 网易云账号登录
-- ⏭️ 支持 MediaSession API，可以使用系统快捷键操作上一首下一首
-- 😾 不能播放的歌曲会显示为灰色
-- 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
-- 🙉 支持显示歌曲和专辑的 Explicit 标志
 - 📺 MV 播放
-- ✔️ 每日自动签到（手机端和电脑端同时签到）
-- 🌚 Light/Dark Mode 自动切换
+- 📃 支持歌词显示
 - 🚫🤝 无任何社交功能
 - 🌎️ 海外用户可直接播放（需要登录网易云账号）
+- 🔐 支持 [UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic)，自动使用 QQ/酷狗/酷我音源替换变灰歌曲链接 （网页版不支持）
+- ⏭️ 支持 MediaSession API，可以使用系统快捷键操作上一首下一首
+- ✔️ 每日自动签到（手机端和电脑端同时签到）
+- 🌚 Light/Dark Mode 自动切换
 - 👆 支持 Touch Bar
+- 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
+- 🙉 支持显示歌曲和专辑的 Explicit 标志
 - 🛠 更多特性开发中
 
 ## 📦️ 安装
