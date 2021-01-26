@@ -45,6 +45,7 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 除了下载安装包使用，你还可以将本项目部署到你的服务器上。
 
 1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+
 2. 克隆本仓库
 
 ```sh
@@ -78,6 +79,8 @@ yarn run build
 欢迎提 Issue 和 Pull request。
 
 ## 📜 开源许可
+
+本项目仅供个人学习研究使用，禁止用于商业及非法用途。
 
 基于 [MIT license](https://opensource.org/licenses/MIT) 许可进行开源。
 
