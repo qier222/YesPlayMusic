@@ -25,6 +25,7 @@ pnpm-debug.log*
 *.sw?
 
 .vercel
+/netease_api
 
 #Electron-builder output
 /dist_electron
