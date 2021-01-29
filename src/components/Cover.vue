@@ -50,9 +50,12 @@ export default {
   },
   computed: {
     imageStyles() {
-      let styles = {};
+      let styles = {
+        objectFit: "cover",
+      };
       if (this.fixedSize !== 0) {
         styles.width = this.fixedSize + "px";
+        styles.height = this.fixedSize + "px";
       }
       if (this.type === "artist") styles.borderRadius = "50%";
       return styles;

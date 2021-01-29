@@ -174,7 +174,20 @@ export default {
     });
   },
   activated() {
-    this.loadData();
+    if (!this.data.likedSongPlaylistID) {
+      userPlaylist({
+        uid: this.data.user.userId,
+        limit: 1,
+      }).then((data) => {
+        this.updateData({
+          key: "likedSongPlaylistID",
+          value: data.playlist[0].id,
+        });
+        this.loadData();
+      });
+    } else {
+      this.loadData();
+    }
     dailyTask();
   },
   computed: {
@@ -204,7 +217,7 @@ export default {
   },
   methods: {
     ...mapActions(["showToast"]),
-    ...mapMutations(["updateModal"]),
+    ...mapMutations(["updateModal", "updateData"]),
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
         this.playlists[0].id,

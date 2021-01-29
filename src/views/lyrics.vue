@@ -543,7 +543,7 @@ export default {
   transition: all 0.5s ease;
 }
 .slide-fade-leave-active {
-  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.5s cubic-bezier(0.2, 0.2, 0, 1);
 }
 .slide-fade-enter,
 .slide-fade-leave-to {

@@ -95,7 +95,6 @@ import NProgress from "nprogress";
 import { loginWithPhone, loginWithEmail } from "@/api/auth";
 import md5 from "crypto-js/md5";
 import { mapMutations } from "vuex";
-import { userPlaylist } from "@/api/user";
 
 export default {
   name: "Login",
@@ -124,19 +123,6 @@ export default {
   },
   methods: {
     ...mapMutations(["updateData"]),
-    afterLogin() {
-      this.updateData({ key: "loginMode", value: "account" });
-      userPlaylist({
-        uid: this.$store.state.data.user.userId,
-        limit: 1,
-      }).then((data) => {
-        this.updateData({
-          key: "likedSongPlaylistID",
-          value: data.playlist[0].id,
-        });
-        this.$router.push({ path: "/library" });
-      });
-    },
     validatePhone() {
       if (
         this.countryCode === "" ||
@@ -198,7 +184,8 @@ export default {
       }
       if (data.code === 200) {
         this.updateData({ key: "user", value: data.profile });
-        this.afterLogin();
+        this.updateData({ key: "loginMode", value: "account" });
+        this.$router.push({ path: "/library" });
       } else {
         this.processing = false;
         alert(data.msg ?? data.message);

@@ -150,7 +150,6 @@ export default {
     return {
       interval: null,
       progress: 0,
-      oldVolume: 0.5,
     };
   },
   mounted() {

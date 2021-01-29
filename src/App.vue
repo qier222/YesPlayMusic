@@ -16,7 +16,7 @@
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
-    <transition name="slide-up">
+    <transition name="slide-up" v-if="this.$store.state.player.enabled">
       <Lyrics v-show="this.$store.state.showLyrics" />
     </transition>
   </div>
