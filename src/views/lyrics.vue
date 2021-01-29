@@ -173,7 +173,7 @@ export default {
       return this.player.currentTrack;
     },
     imageUrl() {
-      return this.player.currentTrack.al.picUrl + "?param=1024x1024";
+      return this.player.currentTrack.al.picUrl + "?param=1024y1024";
     },
     progress: {
       get() {
@@ -433,7 +433,9 @@ export default {
   img {
     border-radius: 0.75em;
     width: 54vh;
+    height: 54vh;
     user-select: none;
+    object-fit: cover;
   }
   .shadow {
     position: absolute;
