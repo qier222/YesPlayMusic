@@ -105,9 +105,17 @@ export default {
   border-radius: 7px;
   cursor: default;
   color: var(--color-text);
+  display: flex;
+  align-items: center;
   &:hover {
     color: var(--color-primary);
     background: var(--color-primary-bg-for-transparent);
+  }
+
+  .svg-icon {
+    height: 16px;
+    width: 16px;
+    margin-right: 5px;
   }
 }
 

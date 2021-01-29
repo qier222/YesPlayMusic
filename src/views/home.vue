@@ -51,16 +51,6 @@
         :imageSize="1024"
       />
     </div>
-
-    <footer>
-      <ButtonTwoTone
-        :iconClass="'settings'"
-        :color="'grey'"
-        @click.native="goTo('/settings')"
-      >
-        {{ $t("settings.settings") }}
-      </ButtonTwoTone>
-    </footer>
   </div>
 </template>
 
@@ -73,11 +63,10 @@ import NProgress from "nprogress";
 import { mapState } from "vuex";
 
 import CoverRow from "@/components/CoverRow.vue";
-import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 
 export default {
   name: "Home",
-  components: { CoverRow, ButtonTwoTone },
+  components: { CoverRow },
   data() {
     return {
       show: false,
@@ -131,9 +120,6 @@ export default {
           this.topList.ids.includes(l.id)
         );
       });
-    },
-    goTo(path) {
-      this.$router.push({ path });
     },
   },
   activated() {
