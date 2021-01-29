@@ -18,28 +18,10 @@ const service = axios.create({
   timeout: 15000,
 });
 
-const errors = new Map([
-  [401, "The token you are using has expired."],
-  [301, "You must login to use this feature."],
-  [-1, "An unexpected error has occurred: "],
-]);
-
 service.interceptors.response.use(
   (response) => {
     const res = response.data;
-
-    if (response.status !== 200) {
-      alert(
-        errors.has(response.status)
-          ? errors.get(response.status) ||
-              // null = `The server returned ${res.msg}`
-              `The server returned ${res.msg}`
-          : // -1 = default expection message
-            errors.get(-1) + response.status
-      );
-    } else {
-      return res;
-    }
+    return res;
   },
   (error) => {
     const errMsg = `error: ${error}`;

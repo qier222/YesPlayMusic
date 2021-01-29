@@ -17,6 +17,7 @@
               v-model="countryCode"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
+              @keyup.enter="login"
             />
             <input
               id="phoneNumber"
@@ -24,6 +25,7 @@
               v-model="phoneNumber"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
+              @keyup.enter="login"
             />
           </div>
         </div>
@@ -39,6 +41,7 @@
               v-model="email"
               @focus="inputFocus = 'email'"
               @blur="inputFocus = ''"
+              @keyup.enter="login"
             />
           </div>
         </div>
@@ -56,6 +59,7 @@
               v-model="password"
               @focus="inputFocus = 'password'"
               @blur="inputFocus = ''"
+              @keyup.enter="login"
             />
           </div>
         </div>
@@ -139,7 +143,7 @@ export default {
         this.phone === "" ||
         this.password === ""
       ) {
-        alert("国家区号、手机或密码不正确");
+        alert("国家区号或手机号不正确");
         this.processing = false;
         return false;
       }
@@ -152,15 +156,15 @@ export default {
         this.password === "" ||
         !emailReg.test(this.email)
       ) {
-        alert("邮箱或密码不正确");
+        alert("邮箱不正确");
         return false;
       }
       return true;
     },
     login() {
-      this.processing = true;
       if (this.mode === "phone") {
         this.processing = this.validatePhone();
+        if (!this.processing) return;
         loginWithPhone({
           countrycode: this.countryCode.replace("+", "").replace(/\s/g, ""),
           phone: this.phoneNumber.replace(/\s/g, ""),
@@ -174,6 +178,7 @@ export default {
           });
       } else {
         this.processing = this.validateEmail();
+        if (!this.processing) return;
         loginWithEmail({
           email: this.email.replace(/\s/g, ""),
           password: "fakePassword",
@@ -191,9 +196,12 @@ export default {
         this.processing = false;
         return;
       }
-      if (data.code !== 502) {
+      if (data.code === 200) {
         this.updateData({ key: "user", value: data.profile });
         this.afterLogin();
+      } else {
+        this.processing = false;
+        alert(data.msg ?? data.message);
       }
     },
   },
