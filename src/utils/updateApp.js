@@ -9,6 +9,7 @@ const updateSetting = () => {
     automaticallyCacheSongs,
     nyancatStyle,
     showLyricsTranslation,
+    minimizeToTray,
   } = initLocalStorage.settings;
   const settings = {
     playlistCategories,
@@ -16,6 +17,7 @@ const updateSetting = () => {
     automaticallyCacheSongs,
     nyancatStyle,
     showLyricsTranslation,
+    minimizeToTray,
     ...parsedSettings,
   };
 

@@ -1,7 +1,7 @@
 import { app, ipcMain } from "electron";
 import match from "@njzy/unblockneteasemusic";
 
-export function initIpcMain(win) {
+export function initIpcMain(win, store) {
   ipcMain.on("unblock-music", (event, track) => {
     // 兼容 unblockneteasemusic 所使用的 api 字段
     track.alias = track.alia || [];
@@ -33,5 +33,9 @@ export function initIpcMain(win) {
 
   ipcMain.on("minimize", () => {
     win.minimize();
+  });
+
+  ipcMain.on("settings", (event, options) => {
+    store.set("settings", options);
   });
 }

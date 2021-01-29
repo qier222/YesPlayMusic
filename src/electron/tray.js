@@ -14,11 +14,8 @@ export function createTray(win) {
   tray.setToolTip("YesPlayMusic");
 
   tray.on("click", () => {
-    if (win && win.isVisible()) {
-      win.hide();
-    } else {
-      win.show();
-    }
+    win.show();
+    tray.destroy();
   });
 
   tray.on("right-click", () => {

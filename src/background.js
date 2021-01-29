@@ -43,7 +43,7 @@ class Background {
     this.createExpressApp();
 
     // init ipcMain
-    initIpcMain(this.window);
+    initIpcMain(this.window, this.store);
 
     // Scheme must be registered before the app is ready
     protocol.registerSchemesAsPrivileged([
@@ -102,11 +102,6 @@ class Background {
 
     // hide menu bar on Microsoft Windows and Linux
     this.window.setMenuBarVisibility(false);
-
-    // create tray only for Microsoft windows
-    if (process.platform === "win32") {
-      this.tray = createTray(this.window);
-    }
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
       // Load the url of the dev server if in development mode
@@ -172,7 +167,11 @@ class Background {
     });
 
     this.window.on("minimize", () => {
-      if (process.platform === "win32") {
+      if (
+        ["win32", "linux"].includes(process.platform) &&
+        this.store.get("settings.minimizeToTray")
+      ) {
+        this.tray = createTray(this.window);
         this.window.hide();
       }
     });

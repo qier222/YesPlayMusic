@@ -125,6 +125,22 @@
           </div>
         </div>
       </div>
+      <div class="item" v-if="isElectron && !isMac">
+        <div class="left">
+          <div class="title">最小化到托盘</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="minimize-to-tray"
+              id="minimize-to-tray"
+              v-model="minimizeToTray"
+            />
+            <label for="minimize-to-tray"></label>
+          </div>
+        </div>
+      </div>
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t("settings.showGitHubIcon") }} </div>
@@ -215,6 +231,12 @@ export default {
   },
   computed: {
     ...mapState(["settings", "data"]),
+    isElectron() {
+      return process.env.IS_ELECTRON;
+    },
+    isMac() {
+      return /macintosh|mac os x/i.test(navigator.userAgent);
+    },
     lang: {
       get() {
         return this.settings.lang;
@@ -317,6 +339,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showLyricsTranslation",
+          value,
+        });
+      },
+    },
+    minimizeToTray: {
+      get() {
+        return this.settings.minimizeToTray;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "minimizeToTray",
           value,
         });
       },

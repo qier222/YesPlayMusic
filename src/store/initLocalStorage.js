@@ -13,6 +13,7 @@ let localStorage = {
     automaticallyCacheSongs: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
+    minimizeToTray: false,
   },
   data: {
     user: {},
