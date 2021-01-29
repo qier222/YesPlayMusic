@@ -129,7 +129,8 @@
               v-for="(line, index) in lyricWithTranslation"
               :key="index"
               :id="`line${index}`"
-              v-html="formatLine(line)"
+              @click="seek(line.time)"
+              ><span v-html="formatLine(line)"></span
             ></div>
           </div>
         </transition>
@@ -265,6 +266,10 @@ export default {
       this.$parent.$refs.player.setProgress(value);
       this.$parent.$refs.player.player.seek(value);
     },
+    seek(value) {
+      this.$parent.$refs.player.setProgress(value);
+      this.$parent.$refs.player.player.seek(value);
+    },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
         const progress = this.player.seek() ?? 0;
@@ -289,9 +294,9 @@ export default {
       const showLyricsTranslation = this.$store.state.settings
         .showLyricsTranslation;
       if (showLyricsTranslation && line.contents[1]) {
-        return line.contents[0] + "<br/>" + line.contents[1];
+        return `<span>${line.contents[0]}<br/>${line.contents[1]}</span>`;
       } else {
-        return line.contents[0];
+        return `<span>${line.contents[0]}</span>`;
       }
     },
   },
@@ -459,15 +464,24 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding-left: 96px;
+    padding-left: 78px;
     max-width: 460px;
     overflow-y: auto;
     transition: 0.5s;
     .line {
-      margin-top: 38px;
-      opacity: 0.28;
+      // margin-top: 38px;
+      padding: 18px;
+      transition: 0.2s;
+      border-radius: 12px;
+      &:hover {
+        background: var(--color-secondary-bg);
+      }
+      span {
+        opacity: 0.28;
+        cursor: default;
+      }
     }
-    .highlight {
+    .highlight span {
       opacity: 0.98;
       transition: 0.5s;
     }
