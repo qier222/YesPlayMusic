@@ -103,7 +103,14 @@ export default class {
   _init() {
     Howler.autoUnlock = false;
     this._loadSelfFromLocalStorage();
-    this._replaceCurrentTrack(this._currentTrack.id, false); // update audio source and init howler
+    this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
+      this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
+      setInterval(
+        () =>
+          localStorage.setItem("playerCurrentTrackTime", this._howler.seek()),
+        1000
+      );
+    }); // update audio source and init howler
     this._initMediaSession();
     Howler.volume(this.volume);
   }
@@ -208,7 +215,7 @@ export default class {
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
       document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
-      this._getAudioSource(track).then((source) => {
+      return this._getAudioSource(track).then((source) => {
         if (source) {
           this._playAudioSource(source, autoplay);
           return source;
@@ -319,7 +326,7 @@ export default class {
   }
   seek(time = null) {
     if (time !== null) this._howler.seek(time);
-    return this._howler.seek();
+    return this._howler === null ? 0 : this._howler.seek();
   }
   mute() {
     if (this.volume === 0) {
