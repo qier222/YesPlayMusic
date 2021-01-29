@@ -84,6 +84,13 @@ yarn run build
 
 基于 [MIT license](https://opensource.org/licenses/MIT) 许可进行开源。
 
+## 灵感来源
+
+- [Apple Music](https://music.apple.com)
+- [YouTube Music](https://music.youtube.com)
+- [Spotify](https://www.spotify.com)
+- [网易云音乐](https://music.163.com)
+
 ## 🖼️ 截图
 
 [![artist][artist-screenshot]](https://music.qier222.com)
