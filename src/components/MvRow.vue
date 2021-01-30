@@ -51,7 +51,7 @@ export default {
     },
     getUrl(mv) {
       let url = mv.imgurl16v9 ?? mv.cover ?? mv.coverUrl;
-      return url.replace(/^http:/, "https:") + "?param=464x260";
+      return url.replace(/^http:/, "https:") + "?param=464y260";
     },
     getID(mv) {
       if (mv.id !== undefined) return mv.id;

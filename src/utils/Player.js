@@ -157,7 +157,10 @@ export default class {
       html5: true,
       format: ["mp3", "flac"],
     });
-    if (autoplay) this.play();
+    if (autoplay) {
+      this.play();
+      document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+    }
     this._howler.once("end", () => {
       this._nextTrackCallback();
     });
@@ -214,7 +217,6 @@ export default class {
       let track = data.songs[0];
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
-      document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
       return this._getAudioSource(track).then((source) => {
         if (source) {
           this._playAudioSource(source, autoplay);
@@ -319,10 +321,12 @@ export default class {
   pause() {
     this._howler.pause();
     this._playing = false;
+    document.title = "YesPlayMusic";
   }
   play() {
     this._howler.play();
     this._playing = true;
+    document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
   }
   seek(time = null) {
     if (time !== null) this._howler.seek(time);

@@ -275,6 +275,11 @@ export default {
     getLikedSongs(getLyric = true) {
       getPlaylistDetail(this.data.likedSongPlaylistID, true).then((data) => {
         this.likedSongsPlaylist = data.playlist;
+        if (data.playlist.trackIds.length === 0) {
+          NProgress.done();
+          this.show = true;
+          return;
+        }
         let TrackIDs = data.playlist.trackIds.slice(0, 12).map((t) => t.id);
         this.likedSongIDs = TrackIDs;
         getTrackDetail(this.likedSongIDs.join(",")).then((data) => {

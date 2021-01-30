@@ -103,7 +103,7 @@
     </div>
 
     <div class="similar-artists" v-if="similarArtists.length !== 0">
-      <div class="section-title">相似歌手</div>
+      <div class="section-title">相似艺人</div>
       <CoverRow
         type="artist"
         :columnNumber="6"

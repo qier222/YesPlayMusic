@@ -160,7 +160,7 @@ export default {
           .then(this.handleLoginResponse)
           .catch((error) => {
             this.processing = false;
-            alert(error);
+            alert(`发生错误，请检查你的账号密码是否正确\n${error}`);
           });
       } else {
         this.processing = this.validateEmail();
@@ -173,7 +173,7 @@ export default {
           .then(this.handleLoginResponse)
           .catch((error) => {
             this.processing = false;
-            alert(error);
+            alert(`发生错误，请检查你的账号密码是否正确\n${error}`);
           });
       }
     },
@@ -188,7 +188,8 @@ export default {
         this.$router.push({ path: "/library" });
       } else {
         this.processing = false;
-        alert(data.msg ?? data.message);
+        console.log(data.msg);
+        alert(data.msg ?? data.message ?? "账号或密码错误，请检查");
       }
     },
   },
