@@ -1,270 +1,275 @@
 <template>
-  <div class="search" v-show="show">
-    <h1>
-      <span>{{ $t("search.searchFor") }}</span> "{{ keywords }}"
-    </h1>
-    <div class="result" v-if="isExistResult">
-      <div class="row">
-        <div class="artists" v-if="result.hasOwnProperty('artist')">
-          <div class="section-title">{{ $t("search.artist") }}</div>
-          <div class="artists-list">
-            <div
-              class="artist"
-              v-for="artist in result.artist.artists.slice(0, 3)"
-              :key="artist.id"
-            >
-              <Cover
-                :imageUrl="getArtistImageUrl(artist)"
-                type="artist"
-                :id="artist.id"
-                :fixedSize="128"
-                :playButtonSize="30"
-              />
-              <div class="name">
-                <router-link :to="`/artist/${artist.id}`">{{
-                  artist.name
-                }}</router-link>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="albums" v-if="result.hasOwnProperty('album')">
-          <div class="section-title">{{ $t("search.album") }}</div>
-          <div class="albums-list">
-            <div
-              class="album"
-              v-for="album in result.album.albums.slice(0, 4)"
-              :key="album.id"
-            >
-              <div>
-                <Cover
-                  :imageUrl="album.picUrl | resizeImage"
-                  type="album"
-                  :id="album.id"
-                  :fixedSize="128"
-                  :playButtonSize="30"
-                />
-              </div>
-              <div class="name">
-                <router-link :to="`/album/${album.id}`">{{
-                  album.name
-                }}</router-link>
-              </div>
-              <div class="artist">
-                <router-link :to="`/artist/${album.artist.id}`">{{
-                  album.artist.name
-                }}</router-link>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="search">
+    <div class="row" v-show="artists.length > 0 || albums.length > 0">
+      <div class="artists">
+        <div class="section-title" v-show="artists.length > 0"
+          >{{ $t("search.artist")
+          }}<router-link :to="`/search/${keywords}/artists`">{{
+            $t("home.seeMore")
+          }}</router-link></div
+        >
+        <CoverRow
+          type="artist"
+          :columnNumber="3"
+          :items="artists.slice(0, 3)"
+          gap="34px 24px"
+        />
       </div>
 
-      <div class="tracks" v-if="result.hasOwnProperty('song')">
-        <div class="section-title">{{ $t("search.song") }}</div>
-        <TrackList :tracks="tracks" type="tracklist" />
-      </div>
-
-      <div class="mvs" v-if="mvs !== null && mvs.length > 0">
-        <div class="section-title">{{ $t("search.mv") }}</div>
-        <MvRow :mvs="mvs.slice(0, 5)" />
-      </div>
-
-      <div class="playlists" v-if="result.hasOwnProperty('playList')">
-        <div class="section-title">{{ $t("search.playlist") }}</div>
-        <div class="albums-list">
-          <div
-            class="album"
-            v-for="playlist in result.playList.playLists.slice(0, 12)"
-            :key="playlist.id"
-          >
-            <div>
-              <Cover
-                :imageUrl="playlist.coverImgUrl | resizeImage"
-                type="playlist"
-                :id="playlist.id"
-                :fixedSize="128"
-                :playButtonSize="30"
-              />
-            </div>
-            <div class="name">
-              <router-link :to="`/playlist/${playlist.id}`">{{
-                playlist.name
-              }}</router-link>
-            </div>
-          </div>
-        </div>
+      <div class="albums">
+        <div class="section-title" v-show="albums.length > 0"
+          >{{ $t("search.album")
+          }}<router-link :to="`/search/${keywords}/albums`">{{
+            $t("home.seeMore")
+          }}</router-link></div
+        >
+        <CoverRow
+          type="album"
+          :items="albums.slice(0, 3)"
+          subText="artist"
+          :columnNumber="3"
+          subTextFontSize="14px"
+          gap="34px 24px"
+        />
       </div>
     </div>
-    <div class="no-results" v-else>
-      {{ $t("search.noResult") }}
+
+    <div class="tracks" v-show="tracks.length > 0">
+      <div class="section-title"
+        >{{ $t("search.song")
+        }}<router-link :to="`/search/${keywords}/tracks`">{{
+          $t("home.seeMore")
+        }}</router-link></div
+      >
+      <TrackList :tracks="tracks" type="tracklist" />
+    </div>
+
+    <div class="music-videos" v-show="musicVideos.length > 0">
+      <div class="section-title"
+        >{{ $t("search.mv")
+        }}<router-link :to="`/search/${keywords}/music-videos`">{{
+          $t("home.seeMore")
+        }}</router-link></div
+      >
+      <MvRow :mvs="musicVideos.slice(0, 5)" />
+    </div>
+
+    <div class="playlists" v-show="playlists.length > 0">
+      <div class="section-title"
+        >{{ $t("search.playlist")
+        }}<router-link :to="`/search/${keywords}/playlists`">{{
+          $t("home.seeMore")
+        }}</router-link></div
+      >
+      <CoverRow
+        type="playlist"
+        :items="playlists.slice(0, 12)"
+        subText="title"
+        :columnNumber="6"
+        subTextFontSize="14px"
+        gap="34px 24px"
+      />
+    </div>
+
+    <div class="no-results" v-show="!haveResult">
+      <div
+        ><svg-icon icon-class="search" />
+        {{
+          keywords.length === 0 ? "输入关键字搜索" : $t("search.noResult")
+        }}</div
+      >
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import NProgress from "nprogress";
+import { getTrackDetail } from "@/api/track";
 import { search } from "@/api/others";
 
-import Cover from "@/components/Cover.vue";
 import TrackList from "@/components/TrackList.vue";
 import MvRow from "@/components/MvRow.vue";
+import CoverRow from "@/components/CoverRow.vue";
 
 export default {
   name: "Search",
   components: {
-    Cover,
     TrackList,
     MvRow,
+    CoverRow,
   },
   data() {
     return {
-      show: false,
-      result: {},
-      mvs: [],
-      type: 1,
-      limit: 30,
-      offset: 0,
+      tracks: [],
+      artists: [],
+      albums: [],
+      playlists: [],
+      musicVideos: [],
     };
   },
   computed: {
-    ...mapState(["search"]),
     keywords() {
-      return this.$route.query.keywords;
+      return this.$store.state.search.keywords;
     },
-    tracks() {
-      let tracks = this.result.song.songs.slice(0, 12);
-      return tracks;
-    },
-    isExistResult() {
-      return Object.keys(this.result).length;
+    haveResult() {
+      return (
+        this.tracks.length +
+          this.artists.length +
+          this.albums.length +
+          this.playlists.length +
+          this.musicVideos.length >
+        0
+      );
     },
   },
   methods: {
-    goToAlbum(id) {
-      this.$router.push({ name: "album", params: { id } });
-    },
     playTrackInSearchResult(id) {
       let track = this.tracks.find((t) => t.id === id);
       this.$store.state.player.appendTrackToPlayerList(track, true);
     },
-    getData(keywords) {
-      search({ keywords: keywords, type: 1018 }).then((data) => {
-        this.result = data.result;
-        NProgress.done();
-        this.show = true;
-      });
-      search({ keywords: keywords, type: 1004 }).then((data) => {
-        this.mvs = data.result.mvs;
-      });
-    },
-    getArtistImageUrl(artist) {
-      if (artist.img1v1Url) {
-        let img1v1ID = artist.img1v1Url.split("/");
-        img1v1ID = img1v1ID[img1v1ID.length - 1];
-        if (img1v1ID === "5639395138885805.jpg") {
-          // 没有头像的歌手，网易云返回的img1v1Url并不是正方形的 😅😅😅
-          return "https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512x512";
+    search(type = "all") {
+      const typeTable = {
+        all: 1018,
+        musicVideos: 1004,
+        tracks: 1,
+        albums: 10,
+        artists: 100,
+        playlists: 1000,
+      };
+      const keywords = this.keywords;
+      return search({ keywords, type: typeTable[type], limit: 16 }).then(
+        (result) => {
+          return { result: result.result, type };
         }
-      }
-      return artist.img1v1Url + "?param=512x512";
+      );
+    },
+    getData() {
+      const requests = [
+        this.search("artists"),
+        this.search("albums"),
+        this.search("tracks"),
+      ];
+      const requests2 = [this.search("musicVideos"), this.search("playlists")];
+
+      const requestAll = (requests) => {
+        const keywords = this.keywords;
+        Promise.all(requests).then((results) => {
+          if (keywords != this.keywords) return;
+          results.map((result) => {
+            const searchType = result.type;
+            result = result.result;
+            switch (searchType) {
+              case "all":
+                this.result = result;
+                break;
+              case "musicVideos":
+                this.musicVideos = result.mvs ?? [];
+                break;
+              case "artists":
+                this.artists = result.artists ?? [];
+                break;
+              case "albums":
+                this.albums = result.albums ?? [];
+                break;
+              case "tracks":
+                this.tracks = result.songs ?? [];
+                this.getTracksDetail();
+                break;
+              case "playlists":
+                this.playlists = result.playlists ?? [];
+                break;
+            }
+          });
+        });
+      };
+
+      requestAll(requests);
+      requestAll(requests2);
+    },
+    getTracksDetail() {
+      const trackIDs = this.tracks.map((t) => t.id);
+      if (trackIDs.length === 0) return;
+      getTrackDetail(trackIDs.join(",")).then((result) => {
+        this.tracks = result.songs;
+      });
     },
   },
   created() {
-    this.getData(this.$route.query.keywords);
+    if (this.keywords.length === 0) {
+      this.$store.commit("updateSearch", {
+        key: "keywords",
+        value: this.$route.params.keywords,
+      });
+    }
   },
-  beforeRouteUpdate(to, from, next) {
-    this.show = false;
-    next();
-    NProgress.start();
-    this.getData(to.query.keywords);
+  watch: {
+    keywords: function () {
+      this.getData();
+      this.$router.replace({
+        params: { keywords: this.keywords },
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  margin-top: -10px;
-  margin-bottom: 0;
-  color: var(--color-text);
-  span {
-    opacity: 0.58;
-  }
-}
-
 .section-title {
   font-weight: 600;
   font-size: 22px;
   opacity: 0.88;
   color: var(--color-text);
   margin-bottom: 16px;
-  margin-top: 46px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  a {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.68;
+  }
 }
 
 .row {
   display: flex;
   flex-wrap: wrap;
-}
+  margin-top: 98px;
 
-.artists,
-.albums {
-  flex: 1;
-}
-
-.artists-list {
-  display: flex;
-  padding-right: 48px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text);
-  .artist {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 8px;
-    margin: {
-      left: 8px;
-      right: 24px;
-    }
-    .name {
-      margin-top: 8px;
-    }
+  .artists {
+    flex: 1;
+    margin-right: 8rem;
+  }
+  .albums {
+    flex: 1;
   }
 }
 
-.albums-list {
-  display: flex;
-  color: var(--color-text);
-  .album {
-    img {
-      height: 128px;
-      border-radius: 8px;
-    }
-    border-radius: 8px;
-    margin: {
-      right: 14px;
-      left: 4px;
-    }
-    .name {
-      margin-top: 6px;
-      font-weight: 600;
-      font-size: 14px;
-      width: 128px;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-    }
-    .artist {
-      font-size: 12px;
-      opacity: 0.68;
-    }
-  }
+.tracks,
+.music-videos,
+.playlists {
+  margin-top: 46px;
 }
 
 .no-results {
-  margin-top: 24px;
+  position: absolute;
+  top: 64px;
+  right: 0;
+  left: 0;
+  bottom: 64px;
   font-size: 24px;
+  color: var(--color-text);
+  opacity: 0.38;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  div {
+    display: flex;
+    align-items: center;
+  }
+  .svg-icon {
+    height: 24px;
+    width: 24px;
+    margin-right: 16px;
+  }
 }
 </style>

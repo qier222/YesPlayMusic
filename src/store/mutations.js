@@ -36,4 +36,7 @@ export default {
   toggleLyrics(state) {
     state.showLyrics = !state.showLyrics;
   },
+  updateSearch(state, { key, value }) {
+    state.search[key] = value;
+  },
 };

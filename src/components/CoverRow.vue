@@ -15,7 +15,7 @@
             }}
           </span>
         </div>
-        <div class="title">
+        <div class="title" :style="{ fontSize: subTextFontSize }">
           <span class="explicit-symbol" v-if="isExplicit(item)"
             ><ExplicitSymbol
           /></span>
@@ -46,6 +46,7 @@ export default {
     items: { type: Array, required: true },
     type: { type: String, required: true },
     subText: { type: String, default: "null" },
+    subTextFontSize: { type: String, default: "16px" },
     showPlayCount: { type: Boolean, default: false },
     columnNumber: { type: Number, default: 5 },
     gap: { type: String, default: "44px 24px" },
