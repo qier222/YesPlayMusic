@@ -26,26 +26,28 @@ export function initIpcMain(win, store) {
   });
 
   // 去除Windows原生顶部菜单栏
-  mainWindow.setMenu(null)
+  if (process.platform === "win32") {
+    mainWindow.setMenu(null)
 
-    if ( process.env.WEBPACK_DEV_SERVER_URL ) {
-      mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    } else {
-      createProtocol(ACHEME)
-      mainWindow.loadURL(LOAD_URL)
-    }
+      if ( process.env.WEBPACK_DEV_SERVER_URL ) {
+        mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+      } else {
+        createProtocol(ACHEME)
+        mainWindow.loadURL(LOAD_URL)
+      }
 
-    mainWindow.on('close', (event) => {
-      event.preventDefault()
-      mainWindow.webContents.send('will-close')
+      mainWindow.on('close', (event) => {
+        event.preventDefault()
+        mainWindow.webContents.send('will-close')
+      })
+
+    mainWindow.on('closed', () => {
+      mainWindow = null
     })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow.once('ready-to-show', () => {
+      mainWindow.show()
+    }
   
   ipcMain.on("close", (e) => {
     if (process.platform == "darwin") {
