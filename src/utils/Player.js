@@ -277,7 +277,7 @@ export default class {
   _nextTrackCallback() {
     this._scrobble(true);
     if (this.repeatMode === "one") {
-      this._howler.play();
+      this._replaceCurrentTrack(this._currentTrack.id);
     } else {
       this.playNextTrack();
     }

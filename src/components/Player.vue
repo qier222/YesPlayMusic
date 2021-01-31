@@ -133,17 +133,17 @@
               ></vue-slider>
             </div>
           </div>
+
+          <button-icon
+            class="lyrics-button"
+            title="歌词"
+            style="margin-left: 12px"
+            @click.native.stop="toggleLyrics"
+            ><svg-icon icon-class="arrow-up"
+          /></button-icon>
         </div>
       </div>
     </div>
-
-    <button-icon
-      class="lyrics-button"
-      title="Lyrics"
-      style="margin-left: 12px"
-      @click.native.stop="toggleLyrics"
-      ><svg-icon icon-class="arrow-up"
-    /></button-icon>
   </div>
 </template>
 
@@ -402,6 +402,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 8px;
   .button-icon {
     margin: 0 8px;
   }
@@ -447,12 +448,12 @@ export default {
   margin-left: 16px;
 }
 
-.lyrics-button {
-  position: fixed;
-  right: 18px;
-  .svg-icon {
-    height: 20px;
-    width: 20px;
-  }
-}
+// .lyrics-button {
+//   position: fixed;
+//   right: 18px;
+//   .svg-icon {
+//     height: 20px;
+//     width: 20px;
+//   }
+// }
 </style>

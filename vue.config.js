@@ -69,13 +69,17 @@ module.exports = {
         },
         mac: {
           target: [
-            "dmg",
+            {
+              target: "dmg",
+              arch: ["arm64", "x64"],
+            },
             {
               target: "zip",
-              // arch: ["x64", "arm64"],
+              arch: ["arm64", "x64"],
+              // arch: ["universal"]
             },
           ],
-          // artifactName: "${productName}-${version}-${os}-${arch}.${ext}",
+          artifactName: "${productName}-${arch}.${ext}",
           category: "public.app-category.music",
           darkModeSupport: true,
         },
