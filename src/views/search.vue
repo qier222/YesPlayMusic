@@ -1,5 +1,5 @@
 <template>
-  <div class="search">
+  <div class="search" v-show="show">
     <div class="row" v-show="artists.length > 0 || albums.length > 0">
       <div class="artists">
         <div class="section-title" v-show="artists.length > 0"
@@ -85,6 +85,7 @@
 <script>
 import { getTrackDetail } from "@/api/track";
 import { search } from "@/api/others";
+import NProgress from "nprogress";
 
 import TrackList from "@/components/TrackList.vue";
 import MvRow from "@/components/MvRow.vue";
@@ -99,6 +100,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       tracks: [],
       artists: [],
       albums: [],
@@ -108,7 +110,7 @@ export default {
   },
   computed: {
     keywords() {
-      return this.$store.state.search.keywords;
+      return this.$route.params.keywords ?? "";
     },
     haveResult() {
       return (
@@ -135,20 +137,17 @@ export default {
         artists: 100,
         playlists: 1000,
       };
-      const keywords = this.keywords;
-      return search({ keywords, type: typeTable[type], limit: 16 }).then(
-        (result) => {
-          return { result: result.result, type };
-        }
-      );
+      return search({
+        keywords: this.keywords,
+        type: typeTable[type],
+        limit: 16,
+      }).then((result) => {
+        return { result: result.result, type };
+      });
     },
     getData() {
-      const requests = [
-        this.search("artists"),
-        this.search("albums"),
-        this.search("tracks"),
-      ];
-      const requests2 = [this.search("musicVideos"), this.search("playlists")];
+      NProgress.start();
+      this.show = false;
 
       const requestAll = (requests) => {
         const keywords = this.keywords;
@@ -156,6 +155,7 @@ export default {
           if (keywords != this.keywords) return;
           results.map((result) => {
             const searchType = result.type;
+            if (result.result === undefined) return;
             result = result.result;
             switch (searchType) {
               case "all":
@@ -179,8 +179,17 @@ export default {
                 break;
             }
           });
+          NProgress.done();
+          this.show = true;
         });
       };
+
+      const requests = [
+        this.search("artists"),
+        this.search("albums"),
+        this.search("tracks"),
+      ];
+      const requests2 = [this.search("musicVideos"), this.search("playlists")];
 
       requestAll(requests);
       requestAll(requests2);
@@ -194,19 +203,12 @@ export default {
     },
   },
   created() {
-    if (this.keywords.length === 0) {
-      this.$store.commit("updateSearch", {
-        key: "keywords",
-        value: this.$route.params.keywords,
-      });
-    }
+    this.getData();
   },
   watch: {
-    keywords: function () {
+    keywords: function (newKeywords) {
+      if (newKeywords.length === 0) return;
       this.getData();
-      this.$router.replace({
-        params: { keywords: this.keywords },
-      });
     },
   },
 };

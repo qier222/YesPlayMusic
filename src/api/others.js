@@ -22,7 +22,7 @@ export function search(params) {
     method: "get",
     params,
   }).then((data) => {
-    if (data.result.song !== undefined)
+    if (data.result?.song !== undefined)
       data.result.song.songs = mapTrackPlayableStatus(data.result.song.songs);
     return data;
   });

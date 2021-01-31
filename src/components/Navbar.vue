@@ -38,7 +38,8 @@
               ref="searchInput"
               :placeholder="inputFocus ? '' : $t('nav.search')"
               v-model="keywords"
-              @focus="focusSearchBox"
+              @keydown.enter="doSearch"
+              @focus="inputFocus = true"
               @blur="inputFocus = false"
             />
           </div>
@@ -61,32 +62,29 @@ export default {
     return {
       inputFocus: false,
       langs: ["zh-CN", "en"],
+      keywords: "",
     };
   },
   computed: {
-    ...mapState(["settings", "search"]),
-    keywords: {
-      get() {
-        return this.search.keywords;
-      },
-      set(value) {
-        this.$store.commit("updateSearch", { key: "keywords", value });
-      },
-    },
+    ...mapState(["settings"]),
   },
   methods: {
     go(where) {
       if (where === "back") this.$router.go(-1);
       else this.$router.go(1);
     },
-    focusSearchBox() {
-      this.inputFocus = true;
-      if (this.$route.name !== "search") {
-        this.$router.push({
-          name: "search",
-          params: { keywords: this.keywords },
-        });
+    doSearch() {
+      if (!this.keywords) return;
+      if (
+        this.$route.name === "search" &&
+        this.$route.params.keywords === this.keywords
+      ) {
+        return;
       }
+      this.$router.push({
+        name: "search",
+        params: { keywords: this.keywords },
+      });
     },
   },
 };

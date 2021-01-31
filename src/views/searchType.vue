@@ -7,7 +7,7 @@
     </h1>
 
     <div v-if="type === 'artists'">
-      <CoverRow type="artist" :items="result" columnNumber="6" />
+      <CoverRow type="artist" :items="result" :columnNumber="6" />
     </div>
     <div v-if="type === 'albums'">
       <CoverRow
@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     keywords() {
-      return this.$store.state.search.keywords;
+      return this.$route.params.keywords;
     },
     type() {
       return camelCase(this.$route.params.type);
@@ -131,12 +131,6 @@ export default {
     },
   },
   created() {
-    if (this.keywords.length === 0) {
-      this.$store.commit("updateSearch", {
-        key: "keywords",
-        value: this.$route.params.keywords,
-      });
-    }
     this.fetchData();
   },
 };
