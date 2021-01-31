@@ -24,9 +24,13 @@ export function initIpcMain(win, store) {
         event.returnValue = null;
       });
   });
-
-  ipcMain..on('close', (e) => {
-    e.preventDefault()//阻止默认行为，一定要有
+	
+  ipcMain.on('close', (e) => {
+    if (process.platform == 'darwin') {
+  //判断mac
+       win.hide();
+    })
+    e.preventDefault()//阻止默认行为
     dialog.showMessageBox({
       type: 'info',
       title: 'Information',
@@ -47,6 +51,7 @@ export function initIpcMain(win, store) {
       console.log(err)
     })
   });
+  
 
   ipcMain.on("minimize", () => {
     win.minimize();
