@@ -152,7 +152,6 @@ import { formatTrackTime } from "@/utils/common";
 import { getLyric } from "@/api/track";
 import { lyricParser } from "@/utils/lyrics";
 import ButtonIcon from "@/components/ButtonIcon.vue";
-import func from 'vue-temp/vue-editor-bridge';
 
 export default {
   name: "Lyrics",
