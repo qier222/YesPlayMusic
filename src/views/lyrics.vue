@@ -152,6 +152,7 @@ import { formatTrackTime } from "@/utils/common";
 import { getLyric } from "@/api/track";
 import { lyricParser } from "@/utils/lyrics";
 import ButtonIcon from "@/components/ButtonIcon.vue";
+import func from 'vue-temp/vue-editor-bridge';
 
 export default {
   name: "Lyrics",
@@ -282,11 +283,27 @@ export default {
         });
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
           const el = document.getElementById(`line${this.highlightLyricIndex}`);
-          if (el)
-            el.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
+          if (el) {
+            const duration = 500;
+            var start;
+            var animationProgress;
+            const oldY = el.parentNode.scrollTop;
+            const newY = el.offsetTop - window.innerHeight / 2 - el.clientHeight;
+            const distance = oldY - newY;
+            function animation(timeStamp) {
+              if (!start) { start = timeStamp; }
+              animationProgress = (timeStamp - start) / duration;
+              if (animationProgress < 1) {
+                el.parentNode.scrollTo(0, oldY - (2 * animationProgress - animationProgress * animationProgress) * distance);
+                //                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                //                                if x = animationProgress, 2x + x^2 .
+                window.requestAnimationFrame(animation);
+              } else {
+                window.cancelAnimationFrame(animation);
+              }
+            }
+            window.requestAnimationFrame(animation);
+          }
         }
       }, 50);
     },
