@@ -287,13 +287,22 @@ export default {
             var start;
             var animationProgress;
             const oldY = el.parentNode.scrollTop;
-            const newY = el.offsetTop - window.innerHeight / 2 - el.clientHeight;
+            const newY =
+              el.offsetTop - window.innerHeight / 2 - el.clientHeight;
             const distance = oldY - newY;
             function animation(timeStamp) {
-              if (!start) { start = timeStamp; }
+              if (!start) {
+                start = timeStamp;
+              }
               animationProgress = (timeStamp - start) / duration;
               if (animationProgress < 1) {
-                el.parentNode.scrollTo(0, oldY - (2 * animationProgress - animationProgress * animationProgress) * distance);
+                el.parentNode.scrollTo(
+                  0,
+                  oldY -
+                    (2 * animationProgress -
+                      animationProgress * animationProgress) *
+                      distance
+                );
                 //                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 //                                if x = animationProgress, 2x + x^2 .
                 window.requestAnimationFrame(animation);
