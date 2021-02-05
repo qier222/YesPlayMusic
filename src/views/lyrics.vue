@@ -118,7 +118,7 @@
       </div>
       <div class="right-side">
         <transition name="slide-fade">
-          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric">
+          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric" @scroll="blurEffect($event)">
             <div class="line" id="line-1"></div>
             <div
               class="line"
@@ -270,6 +270,13 @@ export default {
       this.$parent.$refs.player.setProgress(value);
       this.$parent.$refs.player.player.seek(value);
     },
+    blurEffect(ev) { 
+      ev.target.children.forEach((el) => {
+        const distanceToCenterPercentage = Math.abs(el.getBoundingClientRect().y + el.clientHeight / 2 - window.innerHeight / 2) / (window.innerHeight / 2);
+        const functionedEffectValue = 1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
+        el.style.filter = `blur(${functionedEffectValue * 12}px)`
+      })
+     },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
         const progress = this.player.seek() ?? 0;
@@ -288,9 +295,9 @@ export default {
             var animationProgress;
             const oldY = el.parentNode.scrollTop;
             const newY =
-              el.offsetTop - window.innerHeight / 2 - el.clientHeight;
+              el.offsetTop - window.innerHeight / 2 + el.clientHeight / 2;
             const distance = oldY - newY;
-            function animation(timeStamp) {
+            var animation = (timeStamp) => {
               if (!start) {
                 start = timeStamp;
               }
@@ -299,17 +306,16 @@ export default {
                 el.parentNode.scrollTo(
                   0,
                   oldY -
-                    (2 * animationProgress -
-                      animationProgress * animationProgress) *
+                    Math.sqrt(2 * animationProgress -
+                      Math.pow(animationProgress, 2)) *
                       distance
                 );
-                //                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                //                                if x = animationProgress, 2x + x^2 .
                 window.requestAnimationFrame(animation);
               } else {
                 window.cancelAnimationFrame(animation);
               }
             }
+            
             window.requestAnimationFrame(animation);
           }
         }
