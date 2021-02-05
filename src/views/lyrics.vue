@@ -118,7 +118,12 @@
       </div>
       <div class="right-side">
         <transition name="slide-fade">
-          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric" @scroll="blurEffect($event)">
+          <div
+            class="lyrics-container"
+            ref="lyricsContainer"
+            v-show="!noLyric"
+            @scroll="blurEffect($event)"
+          >
             <div class="line" id="line-1"></div>
             <div
               class="line"
@@ -270,13 +275,20 @@ export default {
       this.$parent.$refs.player.setProgress(value);
       this.$parent.$refs.player.player.seek(value);
     },
-    blurEffect(ev) { 
+    blurEffect(ev) {
       ev.target.children.forEach((el) => {
-        const distanceToCenterPercentage = Math.abs(el.getBoundingClientRect().y + el.clientHeight / 2 - window.innerHeight / 2) / (window.innerHeight / 2);
-        const functionedEffectValue = 1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
-        el.style.filter = `blur(${functionedEffectValue * 12}px)`
-      })
-     },
+        const distanceToCenterPercentage =
+          Math.abs(
+            el.getBoundingClientRect().y +
+              el.clientHeight / 2 -
+              window.innerHeight / 2
+          ) /
+          (window.innerHeight / 2);
+        const functionedEffectValue =
+          1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
+        el.style.filter = `blur(${functionedEffectValue * 12}px)`;
+      });
+    },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
         const progress = this.player.seek() ?? 0;
@@ -306,16 +318,17 @@ export default {
                 el.parentNode.scrollTo(
                   0,
                   oldY -
-                    Math.sqrt(2 * animationProgress -
-                      Math.pow(animationProgress, 2)) *
+                    Math.sqrt(
+                      2 * animationProgress - Math.pow(animationProgress, 2)
+                    ) *
                       distance
                 );
                 window.requestAnimationFrame(animation);
               } else {
                 window.cancelAnimationFrame(animation);
               }
-            }
-            
+            };
+
             window.requestAnimationFrame(animation);
           }
         }
