@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="panel" v-show="showCatOptions">
+    <div class="panel" v-bind:class="{ show: showCatOptions }">
       <div class="big-cat" v-for="bigCat in allBigCats" :key="bigCat">
         <div class="name">{{ bigCat }}</div>
         <div class="cats">
@@ -174,6 +174,23 @@ export default {
     },
   },
   activated() {
+    var updatePanelHeight = () => {
+      var panelChildren = this.$el.getElementsByClassName("panel")[0].children;
+      this.$el.style.setProperty(
+        "--explore-panel-children-height",
+        `${
+          Math.abs(
+            panelChildren[0].getBoundingClientRect().y -
+              (panelChildren[panelChildren.length - 1].getBoundingClientRect()
+                .y +
+                panelChildren[panelChildren.length - 1].clientHeight)
+          ) + 16
+        }px`
+      );
+    };
+    window.addEventListener("load", updatePanelHeight);
+    window.addEventListener("resize", updatePanelHeight);
+
     this.loadData();
   },
   beforeRouteUpdate(to, from, next) {
@@ -226,8 +243,18 @@ h1 {
   margin-top: 10px;
   background: var(--color-secondary-bg);
   border-radius: 10px;
-  padding: 8px;
+  padding: 0 8px;
   color: var(--color-text);
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.3s;
+
+  &.show {
+    height: var(--explore-panel-children-height);
+    opacity: 1;
+    padding: 8px;
+  }
 
   .big-cat {
     display: flex;
