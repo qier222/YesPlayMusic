@@ -517,6 +517,7 @@ export default {
       padding: 18px;
       transition: 0.2s;
       border-radius: 12px;
+      filter: blur(12px);
       &:hover {
         background: var(--color-secondary-bg);
       }
