@@ -286,7 +286,9 @@ export default {
           (window.innerHeight / 2);
         const functionedEffectValue =
           1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
-        el.style.filter = `blur(${functionedEffectValue * 12}px)`;
+        el.style.filter = `blur(${(functionedEffectValue * 12).toString()}px)`;
+        el.style.opacity = `${(1 - functionedEffectValue).toString()}`;
+        // ...e...+..., float number may appears in CSS without `toString()`
       });
     },
     setLyricsInterval() {
