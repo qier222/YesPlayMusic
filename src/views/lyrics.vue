@@ -517,11 +517,15 @@ export default {
     .line {
       // margin-top: 38px;
       padding: 18px;
-      transition: 0.2s;
+      transition: background 0.2s, transform 0.5s cubic-bezier(0.2, 0, 0, 1);
       border-radius: 12px;
       filter: blur(12px);
+      transform: scale(0.9) translate(-5%, 0);
       &:hover {
         background: var(--color-secondary-bg);
+      }
+      &.highlight {
+      transform: scale(1) translate(0, 0);
       }
       span {
         opacity: 0.28;
