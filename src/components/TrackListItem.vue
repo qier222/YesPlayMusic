@@ -193,6 +193,7 @@ button {
   padding: 8px;
   border-radius: 12px;
   user-select: none;
+  transition: all 0.3s;
 
   .no {
     display: flex;
@@ -307,7 +308,6 @@ button {
 }
 
 .track.focus {
-  transition: all 0.3s;
   background: var(--color-secondary-bg);
 }
 
