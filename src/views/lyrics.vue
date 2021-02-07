@@ -525,7 +525,7 @@ export default {
         background: var(--color-secondary-bg);
       }
       &.highlight {
-      transform: scale(1) translate(0, 0);
+        transform: scale(1) translate(0, 0);
       }
       span {
         opacity: 0.28;
