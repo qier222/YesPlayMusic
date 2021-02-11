@@ -114,7 +114,7 @@ nav {
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid transparent;
   transition-property: padding-bottom, border-bottom;
-  transition-duration: .4s;
+  transition-duration: 0.4s;
 
   background-color: var(--color-navbar-bg);
   z-index: 100;
@@ -298,7 +298,7 @@ nav {
       height: 0;
       overflow: hidden;
       transition-property: height, opacity;
-      transition-duration: .4s;
+      transition-duration: 0.4s;
       .input {
         width: 100%;
       }

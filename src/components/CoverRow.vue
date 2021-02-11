@@ -1,5 +1,9 @@
 <template>
-  <div class="cover-row" :style="rowStyles" :class="{ 'without-padding': withoutPadding }">
+  <div
+    class="cover-row"
+    :style="rowStyles"
+    :class="{ 'without-padding': withoutPadding }"
+  >
     <div
       class="item"
       v-for="item in items"

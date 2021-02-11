@@ -70,7 +70,7 @@
         :columnNumber="6"
         subTextFontSize="14px"
         gap="34px 24px"
-          :withoutPadding="true"
+        :withoutPadding="true"
       />
     </div>
 
