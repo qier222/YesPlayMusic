@@ -286,9 +286,10 @@ export default {
           (window.innerHeight / 2);
         const functionedEffectValue =
           1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
-        el.style.filter = `blur(${(functionedEffectValue * 12).toString()}px)`;
-        el.style.opacity = `${(1 - functionedEffectValue).toString()}`;
-        // ...e...+..., float number may appears in CSS without `toString()`
+        el.style.setProperty(
+          "--func-val",
+          isNaN(functionedEffectValue) ? "" : functionedEffectValue.toFixed(2)
+        );
       });
     },
     setLyricsInterval() {
@@ -515,14 +516,20 @@ export default {
     overflow-y: auto;
     transition: 0.5s;
     .line {
+      --func-val: 1;
       // margin-top: 38px;
       padding: 18px;
       transition: background 0.2s, transform 0.5s cubic-bezier(0.2, 0, 0, 1);
       border-radius: 12px;
       filter: blur(12px);
+      filter: blur(calc(var(--func-val) * 12px));
+      opacity: calc(1 - var(--func-val));
       transform: scale(0.9) translate(-5%, 0);
       &:hover {
         background: var(--color-secondary-bg);
+      }
+      &#line-1 {
+        pointer-events: none;
       }
       &.highlight {
         transform: scale(1) translate(0, 0);
