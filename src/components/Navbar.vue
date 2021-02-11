@@ -249,4 +249,22 @@ nav {
     -webkit-app-region: no-drag;
   }
 }
+
+@media (max-width: 800px) {
+  .navigation-links > a {
+    margin: 4px;
+  }
+}
+
+@media (max-width: 700px) {
+  .navigation-buttons {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .search-box {
+    display: none;
+  }
+}
 </style>

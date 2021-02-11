@@ -210,10 +210,12 @@ export default {
 h1 {
   color: var(--color-text);
   font-size: 56px;
+  padding: var(--main-content-padding);
 }
 .buttons {
   display: flex;
   flex-wrap: wrap;
+  padding: var(--main-content-padding);
 }
 .button {
   user-select: none;
@@ -244,6 +246,7 @@ h1 {
   background: var(--color-secondary-bg);
   border-radius: 10px;
   padding: 0 8px;
+  margin: var(--main-content-padding);
   color: var(--color-text);
   height: 0;
   opacity: 0;

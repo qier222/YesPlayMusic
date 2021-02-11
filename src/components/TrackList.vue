@@ -26,7 +26,7 @@
       >
       <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
     </ContextMenu>
-    <div :style="listStyles">
+    <div :style="listStyles" class="track-list-inner-container">
       <TrackListItem
         v-for="(track, index) in tracks"
         :track="track"
@@ -78,10 +78,6 @@ export default {
         return []; // 'removeTrackFromPlaylist'
       },
     },
-    columnNumber: {
-      type: Number,
-      default: 4,
-    },
     highlightPlayingTrack: {
       type: Boolean,
       default: true,
@@ -107,7 +103,6 @@ export default {
       this.listStyles = {
         display: "grid",
         gap: "4px",
-        gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
       };
     }
   },
@@ -240,4 +235,31 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.track-list {
+  --col-num: 4;
+  padding: var(--main-content-padding);
+
+  .track-list-inner-container {
+    grid-template-columns: repeat(var(--col-num), 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .track-list {
+    --col-num: 3;
+  }
+}
+
+@media (max-width: 700px) {
+  .track-list {
+    --col-num: 2;
+  }
+}
+
+@media (max-width: 550px) {
+  .track-list {
+    --col-num: 1;
+  }
+}
+</style>

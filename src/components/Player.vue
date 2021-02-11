@@ -62,7 +62,10 @@
       <div class="middle-control-buttons">
         <div class="blank"></div>
         <div class="container" @click.stop>
-          <button-icon @click.native="previous" :title="$t('player.previous')"
+          <button-icon
+            @click.native="previous"
+            :title="$t('player.previous')"
+            class="auto-hide"
             ><svg-icon icon-class="previous"
           /></button-icon>
           <button-icon
@@ -78,7 +81,7 @@
         </div>
         <div class="blank"></div>
       </div>
-      <div class="right-control-buttons">
+      <div class="right-control-buttons auto-hide">
         <div class="blank"></div>
         <div class="container" @click.stop>
           <button-icon
@@ -446,6 +449,20 @@ export default {
 
 .like-button {
   margin-left: 16px;
+}
+
+@media (max-width: 700px) {
+  .controls {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .middle-control-buttons {
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+  .auto-hide,
+  .blank {
+    display: none;
+  }
 }
 
 // .lyrics-button {

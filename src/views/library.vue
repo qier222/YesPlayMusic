@@ -355,6 +355,7 @@ h1 {
   color: var(--color-text);
   display: flex;
   align-items: center;
+  padding: var(--main-content-padding);
   .avatar {
     height: 44px;
     margin-right: 12px;
@@ -373,11 +374,22 @@ h1 {
 .section-one {
   display: flex;
   margin-top: 24px;
+  padding: var(--main-content-padding);
   .songs {
     flex: 7;
     margin-top: 8px;
     margin-left: 36px;
     overflow: hidden;
+  }
+}
+
+@media (max-width: 800px) {
+  .section-one {
+    display: block;
+    .songs {
+      margin-top: 20px;
+      margin-left: 0;
+    }
   }
 }
 
@@ -460,6 +472,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
+  padding: var(--main-content-padding);
 }
 
 .tabs {

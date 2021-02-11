@@ -106,6 +106,7 @@ export default {
 .login {
   display: flex;
   color: var(--color-text);
+  padding: var(--main-content-padding);
 }
 
 .title {

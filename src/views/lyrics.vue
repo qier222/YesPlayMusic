@@ -474,6 +474,14 @@ export default {
       }
     }
   }
+
+  @media (max-width: 600px) {
+    .controls {
+      max-width: 100vw;
+      width: calc(100vw - 2 * var(--main-content-padding-x));
+      padding: var(--main-content-padding);
+    }
+  }
 }
 
 .cover {
@@ -482,6 +490,15 @@ export default {
   .cover-container {
     position: relative;
   }
+
+  @media (max-width: 600px) {
+    .cover-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
   img {
     border-radius: 0.75em;
     width: 54vh;

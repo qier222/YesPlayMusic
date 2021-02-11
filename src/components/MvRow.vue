@@ -83,9 +83,35 @@ export default {
 
 <style lang="scss" scoped>
 .mv-row {
+  --col-num: 5;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(var(--col-num), 1fr);
   gap: 36px 24px;
+  padding: var(--main-content-padding);
+}
+
+@media (max-width: 900px) {
+  .mv-row {
+    --col-num: 4;
+  }
+}
+
+@media (max-width: 800px) {
+  .mv-row {
+    --col-num: 3;
+  }
+}
+
+@media (max-width: 700px) {
+  .mv-row {
+    --col-num: 2;
+  }
+}
+
+@media (max-width: 550px) {
+  .mv-row {
+    --col-num: 1;
+  }
 }
 
 .mv {

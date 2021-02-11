@@ -294,6 +294,11 @@ button {
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
+  @media (max-width: 600px) {
+    .album {
+      flex: 0;
+    }
+  }
   .time {
     font-size: 16px;
     width: 50px;
@@ -352,6 +357,12 @@ button {
   width: 80px;
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .actions {
+    width: auto;
+  }
 }
 
 .track.playing {

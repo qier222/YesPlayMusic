@@ -114,6 +114,9 @@ export default {
 <style lang="scss" scoped>
 .cover-row {
   display: grid;
+  padding: var(--main-content-padding);
+  max-width: calc(100vw - var(--main-content-padding-x));
+  overflow-x: scroll;
 }
 
 .item {
@@ -140,6 +143,18 @@ export default {
       overflow: hidden;
       word-break: break-word;
     }
+  }
+}
+
+@media (max-width: 800px) {
+  .item {
+    width: 256px;
+  }
+}
+
+@media (max-width: 600px) {
+  .item {
+    width: 192px;
   }
 }
 
