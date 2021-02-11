@@ -1,5 +1,5 @@
 <template>
-  <div class="track-list">
+  <div class="track-list" :class="{ 'without-padding': withoutPadding }">
     <ContextMenu ref="menu">
       <div class="item-info">
         <img :src="rightClickedTrack.al.picUrl | resizeImage(224)" />
@@ -85,6 +85,10 @@ export default {
     itemKey: {
       type: String,
       default: "id",
+    },
+    withoutPadding: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -245,9 +249,14 @@ export default {
   }
 }
 
+.track-list.without-padding {
+  padding: 0;
+}
+
 @media (max-width: 800px) {
   .track-list {
     --col-num: 3;
+    padding: var(--main-content-padding);
   }
 }
 

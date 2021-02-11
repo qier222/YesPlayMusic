@@ -393,6 +393,7 @@ export default {
 .settings {
   display: flex;
   justify-content: center;
+  padding: var(--main-content-padding);
 }
 .container {
   margin-top: 24px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="mv-row">
+  <div class="mv-row" :class="{ 'without-padding': withoutPadding }">
     <div class="mv" v-for="mv in mvs" :key="getID(mv)">
       <div
         class="cover"
@@ -35,6 +35,7 @@ export default {
       type: String,
       default: "artist",
     },
+    withoutPadding: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -88,6 +89,10 @@ export default {
   grid-template-columns: repeat(var(--col-num), 1fr);
   gap: 36px 24px;
   padding: var(--main-content-padding);
+}
+
+.mv-row.without-padding {
+  padding: 0;
 }
 
 @media (max-width: 900px) {

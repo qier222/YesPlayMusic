@@ -39,6 +39,7 @@
           :id="likedSongsPlaylist.id"
           dbclickTrackFunc="playPlaylistByID"
           :columnNumber="3"
+          :withoutPadding="true"
         />
       </div>
     </div>

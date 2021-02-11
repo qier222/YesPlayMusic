@@ -453,6 +453,7 @@ export default {
 .playlist-info {
   display: flex;
   margin-bottom: 72px;
+  padding: var(--main-content-padding);
   .info {
     display: flex;
     flex-direction: column;
@@ -514,7 +515,6 @@ export default {
 @media (max-width: 600px) {
   .playlist-info {
     width: calc(100vw - 2 * var(--main-content-padding-x));
-    padding: var(--main-content-padding);
     display: block;
 
     .cover {

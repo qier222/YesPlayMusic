@@ -1,5 +1,5 @@
 <template>
-  <div class="cover-row" :style="rowStyles">
+  <div class="cover-row" :style="rowStyles" :class="{ 'without-padding': withoutPadding }">
     <div
       class="item"
       v-for="item in items"
@@ -50,6 +50,7 @@ export default {
     showPlayCount: { type: Boolean, default: false },
     columnNumber: { type: Number, default: 5 },
     gap: { type: String, default: "44px 24px" },
+    withoutPadding: { type: Boolean, default: false },
   },
   computed: {
     rowStyles() {
@@ -117,6 +118,10 @@ export default {
   padding: var(--main-content-padding);
   max-width: calc(100vw - var(--main-content-padding-x));
   overflow-x: scroll;
+}
+
+.cover-row.without-padding {
+  padding: 0;
 }
 
 .item {
