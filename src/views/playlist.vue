@@ -453,6 +453,7 @@ export default {
 .playlist-info {
   display: flex;
   margin-bottom: 72px;
+  padding: var(--main-content-padding);
   .info {
     display: flex;
     flex-direction: column;
@@ -506,6 +507,28 @@ export default {
       display: flex;
       button {
         margin-right: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .playlist-info {
+    width: calc(100vw - 2 * var(--main-content-padding-x));
+    display: block;
+
+    .cover {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .info {
+      margin-top: 24px;
+      margin-left: 0;
+
+      .title {
+        font-size: 48px;
       }
     }
   }

@@ -21,24 +21,24 @@ export function createTray(win) {
   tray.on("right-click", () => {
     const contextMenu = Menu.buildFromTemplate([
       {
-          label: "播放/暂停",
-          click: () => {
-            win.webContents.send("play");
-          },
+        label: "播放/暂停",
+        click: () => {
+          win.webContents.send("play");
         },
-        {
-          label: "下一首",
-          accelerator: "CmdOrCtrl+Right",
-          click: () => {
-            win.webContents.send("next");
-          },
+      },
+      {
+        label: "下一首",
+        accelerator: "CmdOrCtrl+Right",
+        click: () => {
+          win.webContents.send("next");
         },
-        {
-          label: "退出",
-          click: () => {
-            app.exit();
-          },
+      },
+      {
+        label: "退出",
+        click: () => {
+          app.exit();
         },
+      },
     ]);
     tray.popUpContextMenu(contextMenu);
   });

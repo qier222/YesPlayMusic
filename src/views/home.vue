@@ -152,6 +152,7 @@ export default {
   font-size: 28px;
   font-weight: 700;
   color: var(--color-text);
+  padding: var(--main-content-padding);
   a {
     font-size: 13px;
     font-weight: 600;
