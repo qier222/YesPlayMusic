@@ -258,6 +258,11 @@ nav {
     color: var(--color-text);
     -webkit-app-region: no-drag;
   }
+  @media (max-width: 400px) {
+    .github {
+      display: none;
+    }
+  }
   .search-button {
     display: none;
   }
@@ -265,6 +270,12 @@ nav {
     .search-button {
       display: flex;
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .right-part {
+    flex: 0;
   }
 }
 

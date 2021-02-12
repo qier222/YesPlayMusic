@@ -363,6 +363,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$layoutBreakpoint: 1000px;
+
 .lyrics-page {
   position: fixed;
   top: 0;
@@ -471,15 +473,26 @@ export default {
           height: 22px;
           width: 22px;
         }
+        @media (max-width: $layoutBreakpoint) {
+          button:nth-child(2) .svg-icon {
+            height: 48px;
+            width: 48px;
+          }
+          .svg-icon {
+            height: 36px;
+            width: 36px;
+          }
+        }
       }
     }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: $layoutBreakpoint) {
     .controls {
       max-width: 100vw;
       width: calc(100vw - 2 * var(--main-content-padding-x));
       padding: var(--main-content-padding);
+      margin-top: 48px;
     }
   }
 }
@@ -491,7 +504,7 @@ export default {
     position: relative;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: $layoutBreakpoint) {
     .cover-container {
       display: flex;
       justify-content: center;
@@ -501,16 +514,20 @@ export default {
 
   img {
     border-radius: 0.75em;
-    width: 54vh;
-    height: 54vh;
+    width: 86vw;
+    height: 86vw;
+    max-width: 54vh;
+    max-height: 54vh;
     user-select: none;
     object-fit: cover;
   }
   .shadow {
     position: absolute;
     top: 12px;
-    height: 54vh;
-    width: 54vh;
+    width: 86vw;
+    height: 86vw;
+    max-width: 54vh;
+    max-height: 54vh;
     filter: blur(16px) opacity(0.6);
     transform: scale(0.92, 0.96);
     z-index: -1;
@@ -569,6 +586,12 @@ export default {
   }
   .lyrics-container .line:last-child {
     margin-bottom: calc(50vh - 128px);
+  }
+}
+
+@media (max-width: $layoutBreakpoint) {
+  .right-side {
+    display: none;
   }
 }
 

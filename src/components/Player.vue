@@ -346,6 +346,18 @@ export default {
   display: flex;
 }
 
+@media (max-width: 700px) {
+  .controls {
+    display: flex;
+  }
+  .playing {
+    flex: 1;
+  }
+  .playing .container {
+    pointer-events: none;
+  }
+}
+
 .playing .container {
   display: flex;
   align-items: center;
