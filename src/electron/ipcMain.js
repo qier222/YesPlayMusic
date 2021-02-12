@@ -61,4 +61,12 @@ export function initIpcMain(win, store) {
   ipcMain.on("settings", (event, options) => {
     store.set("settings", options);
   });
+
+  ipcMain.on("max-restore", () => {
+    if (win.isMaximized()) {
+      win.restore();
+    } else {
+      win.maximize();
+    }
+  });
 }

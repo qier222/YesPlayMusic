@@ -57,6 +57,7 @@
     "register-service-worker": "^1.7.1",
     "svg-sprite-loader": "^5.0.0",
     "tunnel": "^0.0.6",
+    "vscode-codicons": "^0.0.14",
     "vue": "^2.6.11",
     "vue-analytics": "^5.22.1",
     "vue-electron": "^1.0.6",

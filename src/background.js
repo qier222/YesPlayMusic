@@ -88,15 +88,20 @@ class Background {
   createWindow() {
     console.log("creating app window");
 
+    // Only for Windows, a special title bar for it
+    const withoutFrame = process.platform == "win32";
+
     this.window = new BrowserWindow({
       width: this.store.get("window.width") | 1440,
       height: this.store.get("window.height") | 840,
-      minWidth: 1080,
-      minHeight: 720,
+      minWidth: 360,
+      minHeight: 240,
       titleBarStyle: "hiddenInset",
+      frame: !withoutFrame,
       webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
+        enableRemoteModule: true,
       },
     });
 
