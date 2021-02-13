@@ -22,14 +22,14 @@ export function createTray(win) {
     const contextMenu = Menu.buildFromTemplate([
       {
           label: "播放/暂停",
-          icon:  "src/icon/play.png",
+          icon:  "src/assets/icons/play.png",
           click: () => {
             win.webContents.send("play");
           },
         },
         {
           label: "上一首",
-          icon:  "src/icon/left.png",
+          icon:  "src/assets/icons/left.png",
           accelerator: "CmdOrCtrl+Left",
           click: () => {
             win.webContents.send("previous");
@@ -37,7 +37,7 @@ export function createTray(win) {
         },
         {
           label: "下一首",
-          icon:  "src/icon/right.png",
+          icon:  "src/assets/icons/right.png",
           accelerator: "CmdOrCtrl+Right",
           click: () => {
             win.webContents.send("next");
@@ -45,7 +45,7 @@ export function createTray(win) {
         },
         {
           label: "循环播放",
-          icon:  "src/icon/repeat.png",
+          icon:  "src/assets/icons/repeat.png",
           accelerator: "Alt+R",
           click: () => {
             win.webContents.send("repeat");
@@ -53,7 +53,7 @@ export function createTray(win) {
         },
         {
           label: "加入喜欢",
-          icon:  "src/icon/like.png",
+          icon:  "src/assets/icons/like.png",
           accelerator: "CmdOrCtrl+L",
           click: () => {
             win.webContents.send("like");
@@ -61,7 +61,7 @@ export function createTray(win) {
         },
         {
           label: "退出",
-          icon:  "src/icon/exit.png",
+          icon:  "src/assets/icons/exit.png",
           accelerator: "CmdOrCtrl+W",
           click: () => {
             app.exit();
