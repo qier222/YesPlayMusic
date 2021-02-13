@@ -12,6 +12,8 @@
         v-if="this.$store.state.player.enabled"
         ref="player"
         v-show="showPlayer"
+        :isNextSidebarOpen="isNextSidebarOpen"
+        v-on:setNextSidebarOpen="setNextSidebarOpen($event)"
     /></transition>
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
@@ -19,6 +21,7 @@
     <transition name="slide-up" v-if="this.$store.state.player.enabled">
       <Lyrics v-show="this.$store.state.showLyrics" />
     </transition>
+    <Next :open="isNextSidebarOpen" />
   </div>
 </template>
 
@@ -31,6 +34,7 @@ import Toast from "./components/Toast.vue";
 import { ipcRenderer } from "./electron/ipcRenderer";
 import { isAccountLoggedIn } from "@/utils/auth";
 import Lyrics from "./views/lyrics.vue";
+import Next from "./views/next.vue";
 
 export default {
   name: "App",
@@ -41,10 +45,12 @@ export default {
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
     Lyrics,
+    Next,
   },
   data() {
     return {
       isElectron: process.env.IS_ELECTRON, // true || undefined
+      isNextSidebarOpen: false,
     };
   },
   computed: {
@@ -73,6 +79,9 @@ export default {
         e.preventDefault();
         this.$refs.player.play();
       }
+    },
+    setNextSidebarOpen(open) {
+      this.isNextSidebarOpen = open;
     },
   },
 };

@@ -85,9 +85,9 @@
         <div class="blank"></div>
         <div class="container" @click.stop>
           <button-icon
-            @click.native="goToNextTracksPage"
+            @click.native="setNextSidebarOpen"
             :title="$t('player.nextUp')"
-            :class="{ active: this.$route.name === 'next' }"
+            :class="{ active: isNextSidebarOpen }"
             ><svg-icon icon-class="list"
           /></button-icon>
           <button-icon
@@ -166,6 +166,9 @@ export default {
     ButtonIcon,
     VueSlider,
   },
+  props: {
+    isNextSidebarOpen: { type: Boolean, default: false },
+  },
   data() {
     return {
       interval: null,
@@ -242,10 +245,8 @@ export default {
     setProgress(value) {
       this.progress = value;
     },
-    goToNextTracksPage() {
-      this.$route.name === "next"
-        ? this.$router.go(-1)
-        : this.$router.push({ name: "next" });
+    setNextSidebarOpen() {
+      this.$emit("setNextSidebarOpen", !this.isNextSidebarOpen);
     },
     formatTrackTime(value) {
       if (!value) return "";

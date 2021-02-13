@@ -631,17 +631,17 @@ $layoutBreakpoint: 1000px;
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.4s;
+  transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
 }
 .slide-up-enter, .slide-up-leave-to /* .fade-leave-active below version 2.1.8 */ {
   transform: translateY(100%);
 }
 
 .slide-fade-enter-active {
-  transition: all 0.5s ease;
+  transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
 }
 .slide-fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.2, 0.2, 0, 1);
+  transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
 }
 .slide-fade-enter,
 .slide-fade-leave-to {

@@ -400,19 +400,23 @@ export default {
       });
     },
     handleScroll(e) {
-      let dom = document.querySelector("html");
-      let scrollHeight = Math.max(dom.scrollHeight, dom.scrollHeight);
-      let scrollTop = e.target.scrollingElement.scrollTop;
-      let clientHeight =
-        dom.innerHeight || Math.min(dom.clientHeight, dom.clientHeight);
-      if (clientHeight + scrollTop + 200 >= scrollHeight) {
-        if (
-          this.lastLoadedTrackIndex + 1 === this.playlist.trackIds.length ||
-          this.loadingMore
-        )
-          return;
-        this.loadingMore = true;
-        this.loadMore();
+      if (
+        e.target.classList ? !e.target.classList.contains("next-tracks") : true
+      ) {
+        let dom = document.querySelector("html");
+        let scrollHeight = Math.max(dom.scrollHeight, dom.scrollHeight);
+        let scrollTop = e.target.scrollingElement.scrollTop;
+        let clientHeight =
+          dom.innerHeight || Math.min(dom.clientHeight, dom.clientHeight);
+        if (clientHeight + scrollTop + 200 >= scrollHeight) {
+          if (
+            this.lastLoadedTrackIndex + 1 === this.playlist.trackIds.length ||
+            this.loadingMore
+          )
+            return;
+          this.loadingMore = true;
+          this.loadMore();
+        }
       }
     },
     openMenu(e) {

@@ -1,10 +1,11 @@
 <template>
-  <div class="next-tracks">
+  <div class="next-tracks" :class="{ open: open }">
     <h1>{{ $t("next.nowPlaying") }}</h1>
     <TrackList
       :tracks="[currentTrack]"
       type="playlist"
       dbclickTrackFunc="none"
+      :withoutPadding="true"
     />
     <h1 v-show="playNextList.length > 0">插队播放</h1>
     <TrackList
@@ -14,6 +15,7 @@
       dbclickTrackFunc="playTrackOnListByID"
       itemKey="id+index"
       v-show="playNextList.length > 0"
+      :withoutPadding="true"
     />
     <h1>{{ $t("next.nextUp") }}</h1>
     <TrackList
@@ -21,6 +23,7 @@
       type="playlist"
       :highlightPlayingTrack="false"
       dbclickTrackFunc="playTrackOnListByID"
+      :withoutPadding="true"
     />
   </div>
 </template>
@@ -34,6 +37,9 @@ export default {
   name: "Next",
   components: {
     TrackList,
+  },
+  props: {
+    open: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -107,10 +113,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  margin-top: 36px;
-  margin-bottom: 18px;
-  cursor: default;
-  color: var(--color-text);
+.next-tracks {
+  $width: 400px;
+  $paddingX: 20px;
+  position: fixed;
+  right: -$width;
+  // need to be responsive
+  top: 85px;
+  bottom: 64px;
+  width: $width - 2 * $paddingX;
+  max-width: calc(100vw - #{2 * $paddingX});
+  background-color: var(--color-navbar-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  padding: 0 $paddingX;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-secondary-bg-for-transparent);
+  transition-property: right;
+  transition-duration: 0.4s;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+
+  &.open {
+    right: 0;
+  }
+
+  h1 {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    cursor: default;
+    font-size: 24px;
+    color: var(--color-text);
+  }
 }
 </style>
