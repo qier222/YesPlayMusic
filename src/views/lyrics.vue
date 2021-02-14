@@ -276,7 +276,9 @@ export default {
       this.$parent.$refs.player.player.seek(value);
     },
     blurEffect(ev) {
-      ev.target.children.forEach((el) => {
+      for (let i = 0; i < ev.target.children.length; i++) {
+        const el = ev.target.children[i];
+        
         const distanceToCenterPercentage =
           Math.abs(
             el.getBoundingClientRect().y +
@@ -290,7 +292,7 @@ export default {
           "--func-val",
           isNaN(functionedEffectValue) ? "" : functionedEffectValue.toFixed(2)
         );
-      });
+      }
     },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
