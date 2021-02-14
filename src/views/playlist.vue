@@ -729,6 +729,7 @@ export default {
   h1 {
     font-size: 42px;
     color: var(--color-text);
+    padding: var(--main-content-padding);
     .avatar {
       height: 44px;
       margin-right: 12px;

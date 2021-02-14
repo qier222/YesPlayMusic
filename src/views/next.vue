@@ -118,8 +118,12 @@ export default {
   $paddingX: 20px;
   position: fixed;
   right: -$width;
-  // need to be responsive
-  top: 85px;
+  top: 65px;
+  [data-electron-platform-win32="yes"] {
+    & {
+      top: calc(65px + 20px);
+    }
+  }
   bottom: 64px;
   width: $width - 2 * $paddingX;
   max-width: calc(100vw - #{2 * $paddingX});
