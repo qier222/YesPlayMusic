@@ -2,6 +2,10 @@ export function ipcRenderer(vueInstance) {
   const self = vueInstance;
   // 添加专有的类名
   document.body.setAttribute("data-electron", "yes");
+  document.body.setAttribute(
+    "data-electron-platform-win32",
+    window.require("os").platform() == "win32" ? "yes" : "no"
+  );
   // ipc message channel
   const electron = window.require("electron");
   const ipcRenderer = electron.ipcRenderer;

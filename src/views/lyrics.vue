@@ -118,7 +118,12 @@
       </div>
       <div class="right-side">
         <transition name="slide-fade">
-          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric">
+          <div
+            class="lyrics-container"
+            ref="lyricsContainer"
+            v-show="!noLyric"
+            @scroll="blurEffect($event)"
+          >
             <div class="line" id="line-1"></div>
             <div
               class="line"
@@ -270,6 +275,23 @@ export default {
       this.$parent.$refs.player.setProgress(value);
       this.$parent.$refs.player.player.seek(value);
     },
+    blurEffect(ev) {
+      ev.target.children.forEach((el) => {
+        const distanceToCenterPercentage =
+          Math.abs(
+            el.getBoundingClientRect().y +
+              el.clientHeight / 2 -
+              window.innerHeight / 2
+          ) /
+          (window.innerHeight / 2);
+        const functionedEffectValue =
+          1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
+        el.style.setProperty(
+          "--func-val",
+          isNaN(functionedEffectValue) ? "" : functionedEffectValue.toFixed(2)
+        );
+      });
+    },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
         const progress = this.player.seek() ?? 0;
@@ -282,11 +304,36 @@ export default {
         });
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
           const el = document.getElementById(`line${this.highlightLyricIndex}`);
-          if (el)
-            el.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
+          if (el) {
+            const duration = 500;
+            var start;
+            var animationProgress;
+            const oldY = el.parentNode.scrollTop;
+            const newY =
+              el.offsetTop - window.innerHeight / 2 + el.clientHeight / 2;
+            const distance = oldY - newY;
+            var animation = (timeStamp) => {
+              if (!start) {
+                start = timeStamp;
+              }
+              animationProgress = (timeStamp - start) / duration;
+              if (animationProgress < 1) {
+                el.parentNode.scrollTo(
+                  0,
+                  oldY -
+                    Math.sqrt(
+                      2 * animationProgress - Math.pow(animationProgress, 2)
+                    ) *
+                      distance
+                );
+                window.requestAnimationFrame(animation);
+              } else {
+                window.cancelAnimationFrame(animation);
+              }
+            };
+
+            window.requestAnimationFrame(animation);
+          }
         }
       }, 50);
     },
@@ -316,6 +363,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$layoutBreakpoint: 1000px;
+
 .lyrics-page {
   position: fixed;
   top: 0;
@@ -424,7 +473,26 @@ export default {
           height: 22px;
           width: 22px;
         }
+        @media (max-width: $layoutBreakpoint) {
+          button:nth-child(2) .svg-icon {
+            height: 48px;
+            width: 48px;
+          }
+          .svg-icon {
+            height: 36px;
+            width: 36px;
+          }
+        }
       }
+    }
+  }
+
+  @media (max-width: $layoutBreakpoint) {
+    .controls {
+      max-width: 100vw;
+      width: calc(100vw - 2 * var(--main-content-padding-x));
+      padding: var(--main-content-padding);
+      margin-top: 48px;
     }
   }
 }
@@ -435,18 +503,31 @@ export default {
   .cover-container {
     position: relative;
   }
+
+  @media (max-width: $layoutBreakpoint) {
+    .cover-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
   img {
     border-radius: 0.75em;
-    width: 54vh;
-    height: 54vh;
+    width: 86vw;
+    height: 86vw;
+    max-width: 54vh;
+    max-height: 54vh;
     user-select: none;
     object-fit: cover;
   }
   .shadow {
     position: absolute;
     top: 12px;
-    height: 54vh;
-    width: 54vh;
+    width: 86vw;
+    height: 86vw;
+    max-width: 54vh;
+    max-height: 54vh;
     filter: blur(16px) opacity(0.6);
     transform: scale(0.92, 0.96);
     z-index: -1;
@@ -469,12 +550,23 @@ export default {
     overflow-y: auto;
     transition: 0.5s;
     .line {
+      --func-val: 1;
       // margin-top: 38px;
       padding: 18px;
-      transition: 0.2s;
+      transition: background 0.2s, transform 0.5s cubic-bezier(0.2, 0, 0, 1);
       border-radius: 12px;
+      filter: blur(12px);
+      filter: blur(calc(var(--func-val) * 12px));
+      opacity: calc(1 - var(--func-val));
+      transform: scale(0.9) translate(-5%, 0);
       &:hover {
         background: var(--color-secondary-bg);
+      }
+      &#line-1 {
+        pointer-events: none;
+      }
+      &.highlight {
+        transform: scale(1) translate(0, 0);
       }
       span {
         opacity: 0.28;
@@ -494,6 +586,12 @@ export default {
   }
   .lyrics-container .line:last-child {
     margin-bottom: calc(50vh - 128px);
+  }
+}
+
+@media (max-width: $layoutBreakpoint) {
+  .right-side {
+    display: none;
   }
 }
 

@@ -67,6 +67,7 @@ export function createTray(win) {
             app.exit();
           },
         },
+      },
     ]);
     
     tray.popUpContextMenu(contextMenu);
