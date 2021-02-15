@@ -94,6 +94,10 @@ export default {
     pause: "暂停",
     mute: "静音",
     nextUp: "播放列表",
+    openLyrics: "打开歌词",
+    closeLyrics: "关闭歌词",
+    openNextUp: "打开播放列表",
+    closeNextUp: "关闭播放列表",
   },
   modal: {
     close: "关闭",

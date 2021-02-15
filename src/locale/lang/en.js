@@ -93,6 +93,10 @@ export default {
     pause: "Pause",
     mute: "Mute",
     nextUp: "Next Up",
+    openLyrics: "Open Lyrics",
+    closeLyrics: "Close Lyrics",
+    openNextUp: "Open Next Up",
+    closeNextUp: "Close Next Up",
   },
   modal: {
     close: "Close",

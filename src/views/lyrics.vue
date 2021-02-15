@@ -1,7 +1,11 @@
 <template>
   <transition name="slide-up">
     <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
-      <div class="left-side">
+      <div
+        class="left-side"
+        :class="{ full: coverView, hide: !coverView }"
+        ref="leftSide"
+      >
         <div>
           <div class="cover">
             <div class="cover-container">
@@ -113,13 +117,36 @@
                 ><svg-icon icon-class="shuffle"
               /></button-icon>
             </div>
+            <div class="view-controls">
+              <button-icon
+                @click.native="toggleLyricsOpen"
+                :title="
+                  lyricsOpen
+                    ? $t('player.closeLyrics')
+                    : $t('player.openLyrics')
+                "
+              >
+                <svg-icon :icon-class="lyricsOpen ? 'lyrics-fill' : 'lyrics'" />
+              </button-icon>
+              <button-icon
+                @click.native="toggleNextUpOpen"
+                :title="
+                  nextUpOpen
+                    ? $t('player.closeNextUp')
+                    : $t('player.openNextUp')
+                "
+              >
+                <svg-icon icon-class="list" />
+              </button-icon>
+            </div>
           </div>
         </div>
       </div>
-      <div class="right-side">
+      <div class="right-side" :class="{ hide: coverView }">
         <transition name="slide-fade">
           <div
             class="lyrics-container"
+            :class="{ open: lyricsOpen }"
             ref="lyricsContainer"
             v-show="!noLyric"
             @scroll="blurEffect($event)"
@@ -139,6 +166,25 @@
             ></div>
           </div>
         </transition>
+        <Next :open="nextUpOpen" ref="nextUpSideBar" />
+      </div>
+      <div class="view-controls-floating" :class="{ hide: coverView }">
+        <button-icon
+          @click.native="toggleLyricsOpen"
+          :title="
+            lyricsOpen ? $t('player.closeLyrics') : $t('player.openLyrics')
+          "
+        >
+          <svg-icon :icon-class="lyricsOpen ? 'lyrics-fill' : 'lyrics'" />
+        </button-icon>
+        <button-icon
+          @click.native="toggleNextUpOpen"
+          :title="
+            nextUpOpen ? $t('player.closeNextUp') : $t('player.openNextUp')
+          "
+        >
+          <svg-icon icon-class="list" />
+        </button-icon>
       </div>
       <div class="close-button" @click="toggleLyrics">
         <button><svg-icon icon-class="arrow-down" /></button>
@@ -157,12 +203,14 @@ import { formatTrackTime } from "@/utils/common";
 import { getLyric } from "@/api/track";
 import { lyricParser } from "@/utils/lyrics";
 import ButtonIcon from "@/components/ButtonIcon.vue";
+import Next from "@/views/next.vue";
 
 export default {
   name: "Lyrics",
   components: {
     VueSlider,
     ButtonIcon,
+    Next,
   },
   data() {
     return {
@@ -171,6 +219,9 @@ export default {
       tlyric: [],
       highlightLyricIndex: -1,
       minimize: true,
+      coverView: true,
+      lyricsOpen: false,
+      nextUpOpen: false,
     };
   },
   computed: {
@@ -244,6 +295,9 @@ export default {
   created() {
     this.getLyric();
   },
+  activated() {
+    window.addEventListener("resize", this.updateNextUpWidth);
+  },
   destroyed() {
     clearInterval(this.lyricsInterval);
   },
@@ -275,10 +329,46 @@ export default {
       this.$parent.$refs.player.setProgress(value);
       this.$parent.$refs.player.player.seek(value);
     },
+    toggleLyricsOpen() {
+      if (this.nextUpOpen) {
+        this.nextUpOpen = false;
+      }
+      this.lyricsOpen = !this.lyricsOpen;
+      this.checkCoverView();
+    },
+    toggleNextUpOpen() {
+      if (this.lyricsOpen) {
+        this.lyricsOpen = false;
+      }
+      this.nextUpOpen = !this.nextUpOpen;
+      if (this.nextUpOpen) {
+        this.updateNextUpWidth();
+      }
+      this.checkCoverView();
+    },
+    checkCoverView() {
+      if (this.lyricsOpen == false && this.nextUpOpen == false) {
+        this.coverView = true;
+      } else {
+        this.coverView = false;
+        setTimeout(() => {
+          this.$refs.leftSide.classList.add("display-none");
+        }, 500);
+      }
+    },
+    updateNextUpWidth() {
+      this.$refs.nextUpSideBar.$el.style.setProperty(
+        "--width",
+        `${this.$refs.nextUpSideBar.$el.parentNode.clientWidth}px`
+      );
+      setTimeout(() => {
+        this.updateNextUpWidth();
+      }, 100);
+    },
     blurEffect(ev) {
       for (let i = 0; i < ev.target.children.length; i++) {
         const el = ev.target.children[i];
-        
+
         const distanceToCenterPercentage =
           Math.abs(
             el.getBoundingClientRect().y +
@@ -386,6 +476,18 @@ $layoutBreakpoint: 1000px;
   margin-top: 24px;
   align-items: center;
   transition: all 0.5s;
+  &.full {
+    justify-content: center;
+  }
+  @media (max-width: $layoutBreakpoint) {
+    &.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    &.display-none {
+      display: none;
+    }
+  }
   .controls {
     max-width: 54vh;
     margin-top: 24px;
@@ -487,6 +589,16 @@ $layoutBreakpoint: 1000px;
         }
       }
     }
+    .view-controls {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      margin-top: 16px;
+      .button-icon {
+        width: 36px;
+        height: 36px;
+      }
+    }
   }
 
   @media (max-width: $layoutBreakpoint) {
@@ -543,6 +655,9 @@ $layoutBreakpoint: 1000px;
   font-weight: 600;
   color: var(--color-text);
   margin-right: 24px;
+  &.hide {
+    display: none;
+  }
   .lyrics-container {
     height: 100%;
     display: flex;
@@ -550,7 +665,17 @@ $layoutBreakpoint: 1000px;
     padding-left: 78px;
     max-width: 460px;
     overflow-y: auto;
+    transform: scale(0.9);
+    filter: blur(16px);
     transition: 0.5s;
+    opacity: 0;
+    pointer-events: none;
+    &.open {
+      opacity: 1;
+      pointer-events: initial;
+      transform: initial;
+      filter: initial;
+    }
     .line {
       --func-val: 1;
       // margin-top: 38px;
@@ -589,11 +714,36 @@ $layoutBreakpoint: 1000px;
   .lyrics-container .line:last-child {
     margin-bottom: calc(50vh - 128px);
   }
+
+  .next-tracks {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: unset;
+    width: calc(var(--width) - 24px - 78px);
+    max-width: 460px;
+    padding: 64px 24px 64px 78px;
+    opacity: 0;
+    pointer-events: none;
+    border-left-color: transparent;
+    transform: scale(0.9);
+    filter: blur(16px);
+    transition: 0.5s;
+    &.open {
+      opacity: 1;
+      pointer-events: initial;
+      transform: initial;
+      filter: initial;
+    }
+  }
 }
 
 @media (max-width: $layoutBreakpoint) {
-  .right-side {
-    display: none;
+  .lyrics-container,
+  .next-tracks {
+    width: calc(100vw - 2 * 16px) !important;
+    padding: 64px 16px !important;
+    max-width: none !important;
   }
 }
 
@@ -620,6 +770,32 @@ $layoutBreakpoint: 1000px;
   &:hover {
     background: var(--color-secondary-bg);
     opacity: 0.88;
+  }
+}
+
+.view-controls-floating {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 36px 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  display: none;
+  transition: 0.2s;
+  &.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (max-width: $layoutBreakpoint) {
+    & {
+      display: flex;
+    }
+  }
+  .button-icon {
+    width: 36px;
+    height: 36px;
   }
 }
 
