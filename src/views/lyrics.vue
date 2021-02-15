@@ -415,6 +415,7 @@ $layoutBreakpoint: 1000px;
 
 .cover-view {
   --cover-img-width: 40vw;
+  --cover-img-max-width: 55vh;
   position: fixed;
   right: 50vw;
   bottom: 40vh;
