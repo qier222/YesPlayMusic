@@ -21,55 +21,54 @@ export function createTray(win) {
   tray.on("right-click", () => {
     const contextMenu = Menu.buildFromTemplate([
       {
-          label: "播放/暂停",
-          icon:  "src/assets/icons/play.png",
-          click: () => {
-            win.webContents.send("play");
-          },
+        label: "播放/暂停",
+        icon: "src/assets/icons/play.png",
+        click: () => {
+          win.webContents.send("play");
         },
-        {
-          label: "上一首",
-          icon:  "src/assets/icons/left.png",
-          accelerator: "CmdOrCtrl+Left",
-          click: () => {
-            win.webContents.send("previous");
-          },
+      },
+      {
+        label: "上一首",
+        icon: "src/assets/icons/left.png",
+        accelerator: "CmdOrCtrl+Left",
+        click: () => {
+          win.webContents.send("previous");
         },
-        {
-          label: "下一首",
-          icon:  "src/assets/icons/right.png",
-          accelerator: "CmdOrCtrl+Right",
-          click: () => {
-            win.webContents.send("next");
-          },
+      },
+      {
+        label: "下一首",
+        icon: "src/assets/icons/right.png",
+        accelerator: "CmdOrCtrl+Right",
+        click: () => {
+          win.webContents.send("next");
         },
-        {
-          label: "循环播放",
-          icon:  "src/assets/icons/repeat.png",
-          accelerator: "Alt+R",
-          click: () => {
-            win.webContents.send("repeat");
-          },
+      },
+      {
+        label: "循环播放",
+        icon: "src/assets/icons/repeat.png",
+        accelerator: "Alt+R",
+        click: () => {
+          win.webContents.send("repeat");
         },
-        {
-          label: "加入喜欢",
-          icon:  "src/assets/icons/like.png",
-          accelerator: "CmdOrCtrl+L",
-          click: () => {
-            win.webContents.send("like");
-          },
+      },
+      {
+        label: "加入喜欢",
+        icon: "src/assets/icons/like.png",
+        accelerator: "CmdOrCtrl+L",
+        click: () => {
+          win.webContents.send("like");
         },
-        {
-          label: "退出",
-          icon:  "src/assets/icons/exit.png",
-          accelerator: "CmdOrCtrl+W",
-          click: () => {
-            app.exit();
-          },
+      },
+      {
+        label: "退出",
+        icon: "src/assets/icons/exit.png",
+        accelerator: "CmdOrCtrl+W",
+        click: () => {
+          app.exit();
         },
       },
     ]);
-    
+
     tray.popUpContextMenu(contextMenu);
   });
 
