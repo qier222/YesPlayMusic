@@ -25,6 +25,7 @@
         </div>
       </transition>
       <Next :open="view == 'nextup'" ref="nextUpSideBar" />
+      <div class="mask"></div>
       <div class="cover-view" :class="{ open: view == 'cover' }" ref="cover">
         <div class="container">
           <div class="cover">
@@ -200,6 +201,7 @@ export default {
       highlightLyricIndex: -1,
       minimize: true,
       view: "cover",
+      layoutBreakpoint: 1000, // this must be the same as the SCSS variable $layoutBreakpoint
     };
   },
   computed: {
@@ -315,13 +317,19 @@ export default {
       for (let i = 0; i < ev.target.children.length; i++) {
         const el = ev.target.children[i];
 
+        const percentageStandard =
+          window.innerWidth <= this.layoutBreakpoint
+            ? 44 + 2 * 24
+            : window.innerHeight / 2;
+        const distanceToCenterPx =
+          el.getBoundingClientRect().y +
+          el.clientHeight / 2 -
+          percentageStandard;
         const distanceToCenterPercentage =
-          Math.abs(
-            el.getBoundingClientRect().y +
-              el.clientHeight / 2 -
-              window.innerHeight / 2
-          ) /
-          (window.innerHeight / 2);
+          Math.abs(distanceToCenterPx) /
+          (distanceToCenterPx < 0
+            ? percentageStandard
+            : window.innerHeight - percentageStandard);
         const functionedEffectValue =
           1 - Math.sqrt(1 - Math.pow(distanceToCenterPercentage, 2));
         el.style.setProperty(
@@ -348,7 +356,9 @@ export default {
             var animationProgress;
             const oldY = el.parentNode.scrollTop;
             const newY =
-              el.offsetTop - window.innerHeight / 2 + el.clientHeight / 2;
+              window.innerWidth <= this.layoutBreakpoint
+                ? el.offsetTop - 44 - 2 * 24
+                : el.offsetTop - window.innerHeight / 2 + el.clientHeight / 2;
             const distance = oldY - newY;
             var animation = (timeStamp) => {
               if (!start) {
@@ -402,6 +412,9 @@ export default {
 
 <style lang="scss" scoped>
 $layoutBreakpoint: 1000px;
+$animationCurve: cubic-bezier(0.2, 0, 0, 1);
+$animationDuration: 0.5s;
+$animationDurationFast: 0.4s;
 
 .lyrics-page {
   position: fixed;
@@ -411,6 +424,19 @@ $layoutBreakpoint: 1000px;
   bottom: 0;
   z-index: 200;
   background: var(--color-body-bg);
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(44px + 2 * 24px);
+  transition: all $animationDuration $animationCurve;
+  [view="nextup"] & {
+    background: var(--color-navbar-bg);
+    backdrop-filter: blur(16px);
+  }
 }
 
 .cover-view {
@@ -425,7 +451,7 @@ $layoutBreakpoint: 1000px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.5s;
+  transition: all $animationDurationFast $animationCurve;
   @media (max-width: $layoutBreakpoint) {
     --cover-img-width: 44px;
     width: var(--cover-img-width);
@@ -470,7 +496,7 @@ $layoutBreakpoint: 1000px;
         max-height: var(--cover-img-max-width);
         user-select: none;
         object-fit: cover;
-        transition: all 0.5s;
+        transition: all $animationDurationFast $animationCurve;
         [view="cover"] & {
           border-radius: 0.75em;
         }
@@ -487,7 +513,7 @@ $layoutBreakpoint: 1000px;
         z-index: -1;
         background-size: cover;
         border-radius: 0.75em;
-        transition: all 0.5s;
+        transition: all $animationDurationFast $animationCurve;
         @media (max-width: $layoutBreakpoint) {
           top: 0;
           filter: blur(2px) opacity(0.6);
@@ -510,7 +536,7 @@ $layoutBreakpoint: 1000px;
   width: 40vw;
   height: 10vh;
   bottom: calc(30vh - 12px);
-  transition: all 0.5s;
+  transition: all $animationDurationFast $animationCurve;
   @media (max-width: $layoutBreakpoint) {
     width: calc(100vw - 4 * 24px - 2 * 44px);
     height: 44px;
@@ -571,7 +597,7 @@ $layoutBreakpoint: 1000px;
   width: 40vw;
   height: 30vh;
   color: var(--color-text);
-  transition: all 0.5s;
+  transition: all $animationDuration $animationCurve;
   [view="cover"] & {
     right: 30vw;
     width: 40vw;
@@ -579,6 +605,13 @@ $layoutBreakpoint: 1000px;
   @media (max-width: $layoutBreakpoint) {
     right: 10vw !important;
     width: 80vw !important;
+    [view="nextup"] & {
+      right: 0vw !important;
+      width: 80vw !important;
+      padding: 0 10vw;
+      backdrop-filter: blur(16px);
+      background-color: var(--color-navbar-bg);
+    }
   }
   .progress-bar {
     margin-top: 22px;
@@ -664,7 +697,7 @@ $layoutBreakpoint: 1000px;
   overflow-y: auto;
   transform: scale(0.9);
   filter: blur(16px);
-  transition: 0.5s;
+  transition: $animationDuration;
   opacity: 0;
   pointer-events: none;
   @media (max-width: $layoutBreakpoint) {
@@ -681,7 +714,8 @@ $layoutBreakpoint: 1000px;
     --func-val: 1;
     // margin-top: 38px;
     padding: 18px;
-    transition: background 0.2s, transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+    transition: background 0.2s,
+      transform $animationDuration cubic-bezier(0.2, 0, 0, 1);
     border-radius: 12px;
     filter: blur(12px);
     filter: blur(calc(var(--func-val) * 12px));
@@ -703,7 +737,7 @@ $layoutBreakpoint: 1000px;
   }
   .highlight span {
     opacity: 0.98;
-    transition: 0.5s;
+    transition: $animationDuration;
   }
 }
 ::-webkit-scrollbar {
@@ -714,6 +748,9 @@ $layoutBreakpoint: 1000px;
 }
 .lyrics-container .line:last-child {
   margin-bottom: calc(50vh - 128px);
+  @media (max-width: $layoutBreakpoint) {
+    margin-bottom: calc(100vh - 128px - 2 * 24px - 44px);
+  }
 }
 
 .next-tracks {
@@ -728,7 +765,7 @@ $layoutBreakpoint: 1000px;
   border-left-color: transparent;
   transform: scale(0.9);
   filter: blur(16px);
-  transition: 0.5s;
+  transition: $animationDuration;
   z-index: unset;
   background-color: transparent;
   backdrop-filter: none;
@@ -807,7 +844,7 @@ $layoutBreakpoint: 1000px;
 
 .lyrics-page.no-lyric {
   .left-side {
-    transition: all 0.5s;
+    transition: all $animationDuration $animationCurve;
     transform: translateX(27vh);
     margin-right: 0;
   }
@@ -815,17 +852,17 @@ $layoutBreakpoint: 1000px;
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+  transition: all $animationDurationFast $animationCurve;
 }
 .slide-up-enter, .slide-up-leave-to /* .fade-leave-active below version 2.1.8 */ {
   transform: translateY(100%);
 }
 
 .slide-fade-enter-active {
-  transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
+  transition: all $animationDuration $animationCurve;
 }
 .slide-fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
+  transition: all $animationDuration $animationCurve;
 }
 .slide-fade-enter,
 .slide-fade-leave-to {
