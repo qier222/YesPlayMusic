@@ -432,10 +432,14 @@ $animationDurationFast: 0.4s;
   left: 0;
   right: 0;
   height: calc(44px + 2 * 24px);
+  pointer-events: none;
   transition: all $animationDuration $animationCurve;
-  [view="nextup"] & {
-    background: var(--color-navbar-bg);
-    backdrop-filter: blur(16px);
+  @media (max-width: $layoutBreakpoint) {
+    [view="nextup"] & {
+      background: var(--color-navbar-bg);
+      backdrop-filter: blur(16px);
+      pointer-events: initial;
+    }
   }
 }
 
@@ -531,6 +535,8 @@ $animationDurationFast: 0.4s;
 
 .info {
   position: fixed;
+  display: flex;
+  align-items: flex-end;
   color: var(--color-text);
   right: 50vw;
   width: 40vw;
@@ -573,6 +579,7 @@ $animationDurationFast: 0.4s;
   }
 
   .top-part {
+    flex: 1;
     display: flex;
     justify-content: space-between;
     .buttons {
