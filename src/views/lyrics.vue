@@ -728,6 +728,7 @@ $animationDurationFast: 0.4s;
     filter: blur(calc(var(--func-val) * 12px));
     opacity: calc(1 - var(--func-val));
     transform: scale(0.9) translate(-5%, 0);
+    user-select: none;
     &:hover {
       background: var(--color-secondary-bg);
     }
@@ -766,7 +767,7 @@ $animationDurationFast: 0.4s;
   bottom: 0;
   left: 55vw;
   max-width: 460px;
-  padding: 64px 0;
+  padding: calc(2 * 24px + 44px) 0;
   opacity: 0;
   pointer-events: none;
   border-left-color: transparent;
@@ -792,7 +793,7 @@ $animationDurationFast: 0.4s;
   .lyrics-container,
   .next-tracks {
     width: calc(100vw - 2 * 16px) !important;
-    padding: 64px 16px !important;
+    padding: calc(2 * 24px + 44px) 16px !important;
     max-width: none !important;
   }
 }
