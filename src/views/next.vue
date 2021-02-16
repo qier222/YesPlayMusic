@@ -147,5 +147,9 @@ export default {
     font-size: 24px;
     color: var(--color-text);
   }
+
+  ::v-deep .actions {
+    width: auto;
+  }
 }
 </style>

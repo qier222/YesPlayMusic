@@ -766,6 +766,7 @@ $animationDurationFast: 0.4s;
   top: 0;
   bottom: 0;
   left: 55vw;
+  width: auto;
   max-width: 460px;
   padding: calc(2 * 24px + 44px) 0;
   opacity: 0;
