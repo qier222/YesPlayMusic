@@ -493,7 +493,10 @@ $animationDurationFast: 0.4s;
       }
 
       img {
-        border-radius: 0.25em;
+        border-radius: 0.75em;
+        @media (max-width: $layoutBreakpoint) {
+          border-radius: 0.25em;
+        }
         width: var(--cover-img-width);
         height: var(--cover-img-width);
         max-width: var(--cover-img-max-width);
