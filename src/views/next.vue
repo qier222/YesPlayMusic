@@ -151,5 +151,9 @@ export default {
   ::v-deep .actions {
     width: auto;
   }
+
+  ::v-deep .album {
+    display: none;
+  }
 }
 </style>
