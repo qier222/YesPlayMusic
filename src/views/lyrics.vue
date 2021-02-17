@@ -771,7 +771,7 @@ $animationDurationFast: 0.4s;
   left: 55vw;
   width: auto;
   max-width: 460px;
-  padding: calc(2 * 24px + 44px) 0 30vh 0;
+  padding: calc(2 * 24px + 44px) 16px;
   opacity: 0;
   pointer-events: none;
   border-left-color: transparent;
@@ -797,8 +797,13 @@ $animationDurationFast: 0.4s;
   .lyrics-container,
   .next-tracks {
     width: calc(100vw - 2 * 16px) !important;
-    padding: calc(2 * 24px + 44px) 16px !important;
     max-width: none !important;
+  }
+  .lyrics-container {
+    padding: calc(2 * 24px + 44px) 16px !important;
+  }
+  .next-tracks {
+    padding: calc(2 * 24px + 44px) 16px 30vh 16px;
   }
 }
 
