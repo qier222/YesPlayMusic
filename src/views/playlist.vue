@@ -135,8 +135,22 @@
       </h1>
     </div>
 
+    <div class="search-box">
+      <div class="container" :class="{ active: inputFocus }">
+        <svg-icon icon-class="search" />
+        <div class="input">
+          <input
+            v-model="playlistKeyword"
+            :placeholder="inputFocus ? '' : 'Search in paylist'"
+            @focus="inputFocus = true"
+            @blur="inputFocus = false"
+          />
+        </div>
+      </div>
+    </div>
+
     <TrackList
-      :tracks="tracks"
+      :tracks="filteredTracks"
       :type="'playlist'"
       :id="playlist.id"
       :extraContextMenuItem="
@@ -302,6 +316,8 @@ export default {
       tracks: [],
       loadingMore: false,
       lastLoadedTrackIndex: 9,
+      playlistKeyword: "",
+      inputFocus: false,
     };
   },
   created() {
@@ -326,6 +342,13 @@ export default {
       return (
         this.playlist.creator.userId === this.data.user.userId &&
         this.playlist.id !== this.data.likedSongPlaylistID
+      );
+    },
+    filteredTracks() {
+      return this.tracks.filter(song =>
+          song.name.toLowerCase().includes(this.playlistKeyword.toLowerCase()) ||
+          song.al.name.toLowerCase().includes(this.playlistKeyword.toLowerCase()) ||
+          song.ar.find(artist => artist.name.toLowerCase().includes(this.playlistKeyword.toLowerCase()))
       );
     },
   },
@@ -374,6 +397,7 @@ export default {
           this.lastLoadedTrackIndex = data.playlist.tracks.length - 1;
           if (this.playlist.trackCount > this.tracks.length) {
             window.addEventListener("scroll", this.handleScroll, true);
+            window.addEventListener("input", this.handleSearch, this.playlistKeyword);
           }
           return data;
         })
@@ -384,11 +408,11 @@ export default {
           }
         });
     },
-    loadMore() {
+    loadMore(loadNum = 50) {
       let trackIDs = this.playlist.trackIds.filter((t, index) => {
         if (
           index > this.lastLoadedTrackIndex &&
-          index <= this.lastLoadedTrackIndex + 50
+          index <= this.lastLoadedTrackIndex + loadNum
         )
           return t;
       });
@@ -414,6 +438,15 @@ export default {
         this.loadingMore = true;
         this.loadMore();
       }
+    },
+    handleSearch() {
+      if (
+        this.lastLoadedTrackIndex + 1 === this.playlist.trackIds.length ||
+        this.loadingMore
+      )
+        return;
+      this.loadingMore = true;
+      this.loadMore(this.playlist.trackIds.length - this.lastLoadedTrackIndex);
     },
     openMenu(e) {
       this.$refs.playlistMenu.openMenu(e);
@@ -452,7 +485,7 @@ export default {
 <style lang="scss" scoped>
 .playlist-info {
   display: flex;
-  margin-bottom: 72px;
+  margin-bottom: 40px;
   padding: var(--main-content-padding);
   .info {
     display: flex;
@@ -507,28 +540,6 @@ export default {
       display: flex;
       button {
         margin-right: 16px;
-      }
-    }
-  }
-}
-
-@media (max-width: 600px) {
-  .playlist-info {
-    width: calc(100vw - 2 * var(--main-content-padding-x));
-    display: block;
-
-    .cover {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .info {
-      margin-top: 24px;
-      margin-left: 0;
-
-      .title {
-        font-size: 48px;
       }
     }
   }
@@ -598,6 +609,54 @@ export default {
     justify-content: center;
     button {
       margin-right: 16px;
+    }
+  }
+}
+
+.search-box {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  -webkit-app-region: no-drag;
+  padding: var(--main-content-padding);
+
+  .container {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    background: var(--color-secondary-bg-for-transparent);
+    border-radius: 8px;
+    width: 200px;
+  }
+
+  .svg-icon {
+    height: 15px;
+    width: 15px;
+    color: var(--color-text);
+    opacity: 0.28;
+    margin: {
+      left: 8px;
+      right: 4px;
+      bottom: 4px;
+    }
+  }
+
+  input {
+    font-size: 16px;
+    border: none;
+    background: transparent;
+    width: 96%;
+    font-weight: 600;
+    margin-top: -1px;
+    color: var(--color-text);
+  }
+
+  .active {
+    background: var(--color-primary-bg-for-transparent);
+    input,
+    .svg-icon {
+      opacity: 1;
+      color: var(--color-primary);
     }
   }
 }
