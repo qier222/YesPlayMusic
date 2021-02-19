@@ -68,7 +68,7 @@ export function createTray(win) {
         },
       },
     ]);
-    
+
     tray.popUpContextMenu(contextMenu);
   });
 
