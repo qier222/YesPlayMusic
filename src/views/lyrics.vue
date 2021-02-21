@@ -134,7 +134,7 @@
               v-for="(line, index) in lyricWithTranslation"
               :key="index"
               :id="`line${index}`"
-              @click="seek(line.time)"
+              @click="clickLyricLine(line.time)"
               ><span v-html="formatLine(line)"></span
             ></div>
           </div>
@@ -275,10 +275,15 @@ export default {
       this.$parent.$refs.player.setProgress(value);
       this.$parent.$refs.player.player.seek(value);
     },
+    clickLyricLine(value) {
+      if (window.getSelection().toString().length === 0) {
+        this.seek(value);
+      }
+    },
     blurEffect(ev) {
       for (let i = 0; i < ev.target.children.length; i++) {
         const el = ev.target.children[i];
-        
+
         const distanceToCenterPercentage =
           Math.abs(
             el.getBoundingClientRect().y +
