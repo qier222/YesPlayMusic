@@ -76,6 +76,18 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"> {{ $t("settings.deviceSelector") }} </div>
+        </div>
+        <div class="right">
+          <select v-model="outputDevice">
+            <option v-for="device in allOutputDevices" :key="device.deviceId" :value="device.deviceId" :selected="device.deviceId == outputDevice">
+              {{ device.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title">
             {{ $t("settings.automaticallyCacheSongs") }}
           </div>
@@ -227,6 +239,7 @@ export default {
         size: "0KB",
         length: 0,
       },
+      allOutputDevices: [],
     };
   },
   computed: {
@@ -268,6 +281,19 @@ export default {
         if (value === this.settings.musicQuality) return;
         this.$store.commit("changeMusicQuality", value);
         this.clearCache("tracks");
+      },
+    },
+    outputDevice: {
+      get() {
+        if (this.allOutputDevices.length == 0) this.getAllOutputDevices(); // Ensure devices loaded before get
+        const isValidDevice = this.allOutputDevices.find(device => device.deviceId === this.settings.outputDevice);
+        if (this.settings.outputDevice === undefined || isValidDevice === undefined) return "default"; // Default deviceId
+        return this.settings.outputDevice;
+      },
+      set(deviceId) {
+        if (deviceId === this.settings.outputDevice || deviceId === undefined) return;
+        this.$store.commit("changeOutputDevice", deviceId);
+        document.querySelector("audio").setSinkId(deviceId); // Change output device
       },
     },
     showGithubIcon: {
@@ -356,6 +382,11 @@ export default {
     },
   },
   methods: {
+    getAllOutputDevices() {
+      return navigator.mediaDevices.enumerateDevices().then(
+        devices => this.allOutputDevices = devices.filter(device => device.kind == "audiooutput")
+      );
+    },
     logout() {
       doLogout();
       this.$router.push({ name: "home" });

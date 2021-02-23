@@ -545,28 +545,6 @@ export default {
   }
 }
 
-@media (max-width: 600px) {
-  .playlist-info {
-    width: calc(100vw - 2 * var(--main-content-padding-x));
-    display: block;
-
-    .cover {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .info {
-      margin-top: 24px;
-      margin-left: 0;
-
-      .title {
-        font-size: 48px;
-      }
-    }
-  }
-}
-
 .special-playlist {
   margin-top: 192px;
   margin-bottom: 128px;

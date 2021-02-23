@@ -118,6 +118,7 @@ export default {
       high: "High",
       lossless: "Lossless",
     },
+    deviceSelector: "Output Device",
     appearance: {
       text: "Appearance",
       auto: "Auto",

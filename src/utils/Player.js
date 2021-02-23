@@ -102,6 +102,8 @@ export default class {
 
   _init() {
     Howler.autoUnlock = false;
+    Howler.usingWebAudio = true;
+    Howler.masterGain = true;
     this._loadSelfFromLocalStorage();
     this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
       this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
@@ -150,11 +152,27 @@ export default class {
       time,
     });
   }
+  _setupAudioNode() {
+    Howler.masterGain.disconnect();
+    const mediaStreamNode = Howler.ctx.createMediaStreamDestination();
+    Howler.masterGain.connect(mediaStreamNode);
+    let audio = '';
+    if (document.querySelector('audio') !== null) {
+      audio = document.querySelector('audio');
+    } else {
+      audio = document.createElement('audio');
+      document.body.append(audio);
+    }
+    audio.autoplay = true;
+    audio.srcObject = mediaStreamNode.stream;
+    audio.setSinkId(store.state.settings.outputDevice);
+  }
   _playAudioSource(source, autoplay = true) {
     Howler.unload();
+    this._setupAudioNode();
     this._howler = new Howl({
       src: [source],
-      html5: true,
+      html5: false,
       format: ["mp3", "flac"],
     });
     if (autoplay) {
