@@ -156,11 +156,11 @@ export default class {
     Howler.masterGain.disconnect();
     const mediaStreamNode = Howler.ctx.createMediaStreamDestination();
     Howler.masterGain.connect(mediaStreamNode);
-    let audio = '';
-    if (document.querySelector('audio') !== null) {
-      audio = document.querySelector('audio');
+    let audio = "";
+    if (document.querySelector("audio") !== null) {
+      audio = document.querySelector("audio");
     } else {
-      audio = document.createElement('audio');
+      audio = document.createElement("audio");
       document.body.append(audio);
     }
     audio.autoplay = true;

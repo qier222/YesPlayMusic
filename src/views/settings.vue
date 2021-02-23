@@ -80,7 +80,12 @@
         </div>
         <div class="right">
           <select v-model="outputDevice">
-            <option v-for="device in allOutputDevices" :key="device.deviceId" :value="device.deviceId" :selected="device.deviceId == outputDevice">
+            <option
+              v-for="device in allOutputDevices"
+              :key="device.deviceId"
+              :value="device.deviceId"
+              :selected="device.deviceId == outputDevice"
+            >
               {{ device.label }}
             </option>
           </select>
@@ -286,12 +291,19 @@ export default {
     outputDevice: {
       get() {
         if (this.allOutputDevices.length == 0) this.getAllOutputDevices(); // Ensure devices loaded before get
-        const isValidDevice = this.allOutputDevices.find(device => device.deviceId === this.settings.outputDevice);
-        if (this.settings.outputDevice === undefined || isValidDevice === undefined) return "default"; // Default deviceId
+        const isValidDevice = this.allOutputDevices.find(
+          (device) => device.deviceId === this.settings.outputDevice
+        );
+        if (
+          this.settings.outputDevice === undefined ||
+          isValidDevice === undefined
+        )
+          return "default"; // Default deviceId
         return this.settings.outputDevice;
       },
       set(deviceId) {
-        if (deviceId === this.settings.outputDevice || deviceId === undefined) return;
+        if (deviceId === this.settings.outputDevice || deviceId === undefined)
+          return;
         this.$store.commit("changeOutputDevice", deviceId);
         document.querySelector("audio").setSinkId(deviceId); // Change output device
       },
@@ -383,9 +395,14 @@ export default {
   },
   methods: {
     getAllOutputDevices() {
-      return navigator.mediaDevices.enumerateDevices().then(
-        devices => this.allOutputDevices = devices.filter(device => device.kind == "audiooutput")
-      );
+      return navigator.mediaDevices
+        .enumerateDevices()
+        .then(
+          (devices) =>
+            (this.allOutputDevices = devices.filter(
+              (device) => device.kind == "audiooutput"
+            ))
+        );
     },
     logout() {
       doLogout();

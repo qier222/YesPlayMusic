@@ -345,10 +345,19 @@ export default {
       );
     },
     filteredTracks() {
-      return this.tracks.filter(song =>
-          song.name.toLowerCase().includes(this.playlistKeyword.toLowerCase()) ||
-          song.al.name.toLowerCase().includes(this.playlistKeyword.toLowerCase()) ||
-          song.ar.find(artist => artist.name.toLowerCase().includes(this.playlistKeyword.toLowerCase()))
+      return this.tracks.filter(
+        (song) =>
+          song.name
+            .toLowerCase()
+            .includes(this.playlistKeyword.toLowerCase()) ||
+          song.al.name
+            .toLowerCase()
+            .includes(this.playlistKeyword.toLowerCase()) ||
+          song.ar.find((artist) =>
+            artist.name
+              .toLowerCase()
+              .includes(this.playlistKeyword.toLowerCase())
+          )
       );
     },
   },
@@ -397,7 +406,11 @@ export default {
           this.lastLoadedTrackIndex = data.playlist.tracks.length - 1;
           if (this.playlist.trackCount > this.tracks.length) {
             window.addEventListener("scroll", this.handleScroll, true);
-            window.addEventListener("input", this.handleSearch, this.playlistKeyword);
+            window.addEventListener(
+              "input",
+              this.handleSearch,
+              this.playlistKeyword
+            );
           }
           return data;
         })
