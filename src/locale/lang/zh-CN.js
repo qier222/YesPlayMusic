@@ -118,6 +118,7 @@ export default {
       high: "极高",
       lossless: "无损",
     },
+    deviceSelector: "音频输出设备",
     appearance: {
       text: "外观",
       auto: "自动",
