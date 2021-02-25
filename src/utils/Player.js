@@ -164,7 +164,6 @@ export default class {
       document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     }
     this.setOutputDevice();
-    // this._updatePositionState();
     this._howler.once("end", () => {
       this._nextTrackCallback();
     });
@@ -281,15 +280,6 @@ export default class {
       ],
     });
   }
-  // _updatePositionState() {
-  //   if ('setPositionState' in navigator.mediaSession) {
-  //     navigator.mediaSession.setPositionState({
-  //       duration: this._currentTrack.dt / 1000,
-  //       playbackRate: 1,
-  //       position: this.seek(),
-  //     })
-  //   }
-  // }
   _nextTrackCallback() {
     this._scrobble(true);
     if (this.repeatMode === "one") {
