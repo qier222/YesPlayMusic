@@ -152,33 +152,19 @@ export default class {
       time,
     });
   }
-  _setupAudioNode() {
-    Howler.masterGain.disconnect();
-    const mediaStreamNode = Howler.ctx.createMediaStreamDestination();
-    Howler.masterGain.connect(mediaStreamNode);
-    let audio = '';
-    if (document.querySelector('audio') !== null) {
-      audio = document.querySelector('audio');
-    } else {
-      audio = document.createElement('audio');
-      document.body.append(audio);
-    }
-    audio.autoplay = true;
-    audio.srcObject = mediaStreamNode.stream;
-    audio.setSinkId(store.state.settings.outputDevice);
-  }
   _playAudioSource(source, autoplay = true) {
     Howler.unload();
-    this._setupAudioNode();
     this._howler = new Howl({
       src: [source],
-      html5: false,
+      html5: true,
       format: ["mp3", "flac"],
     });
     if (autoplay) {
       this.play();
       document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     }
+    this.setOutputDevice();
+    // this._updatePositionState();
     this._howler.once("end", () => {
       this._nextTrackCallback();
     });
@@ -272,6 +258,9 @@ export default class {
       navigator.mediaSession.setActionHandler("stop", () => {
         this.pause();
       });
+      navigator.mediaSession.setActionHandler("seekto", (event) => {
+        this.seek(event.seekTime);
+      });
     }
   }
   _updateMediaSessionMetaData(track) {
@@ -292,6 +281,15 @@ export default class {
       ],
     });
   }
+  // _updatePositionState() {
+  //   if ('setPositionState' in navigator.mediaSession) {
+  //     navigator.mediaSession.setPositionState({
+  //       duration: this._currentTrack.dt / 1000,
+  //       playbackRate: 1,
+  //       position: this.seek(),
+  //     })
+  //   }
+  // }
   _nextTrackCallback() {
     this._scrobble(true);
     if (this.repeatMode === "one") {
@@ -357,6 +355,10 @@ export default class {
       this._volumeBeforeMuted = this.volume;
       this.volume = 0;
     }
+  }
+  setOutputDevice() {
+    if (this._howler._sounds.length <= 0) return;
+    this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
   }
 
   replacePlaylist(
