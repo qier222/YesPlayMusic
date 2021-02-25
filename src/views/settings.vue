@@ -248,7 +248,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["settings", "data"]),
+    ...mapState(["player", "settings", "data"]),
     isElectron() {
       return process.env.IS_ELECTRON;
     },
@@ -305,7 +305,7 @@ export default {
         if (deviceId === this.settings.outputDevice || deviceId === undefined)
           return;
         this.$store.commit("changeOutputDevice", deviceId);
-        document.querySelector("audio").setSinkId(deviceId); // Change output device
+        this.player.setOutputDevice();
       },
     },
     showGithubIcon: {
