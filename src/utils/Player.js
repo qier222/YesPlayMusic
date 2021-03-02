@@ -102,6 +102,8 @@ export default class {
 
   _init() {
     Howler.autoUnlock = false;
+    Howler.usingWebAudio = true;
+    Howler.masterGain = true;
     this._loadSelfFromLocalStorage();
     this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
       this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
@@ -161,6 +163,7 @@ export default class {
       this.play();
       document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     }
+    this.setOutputDevice();
     this._howler.once("end", () => {
       this._nextTrackCallback();
     });
@@ -254,6 +257,9 @@ export default class {
       navigator.mediaSession.setActionHandler("stop", () => {
         this.pause();
       });
+      navigator.mediaSession.setActionHandler("seekto", (event) => {
+        this.seek(event.seekTime);
+      });
     }
   }
   _updateMediaSessionMetaData(track) {
@@ -339,6 +345,10 @@ export default class {
       this._volumeBeforeMuted = this.volume;
       this.volume = 0;
     }
+  }
+  setOutputDevice() {
+    if (this._howler._sounds.length <= 0) return;
+    this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
   }
 
   replacePlaylist(

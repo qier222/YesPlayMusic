@@ -118,6 +118,7 @@ export default {
       high: "High",
       lossless: "Lossless",
     },
+    deviceSelector: "Audio Output Device",
     appearance: {
       text: "Appearance",
       auto: "Auto",
