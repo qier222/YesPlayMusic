@@ -13,6 +13,7 @@ const i18n = new VueI18n({
     en,
     "zh-CN": zhCN,
   },
+  silentTranslationWarn: true,
 });
 
 export default i18n;
