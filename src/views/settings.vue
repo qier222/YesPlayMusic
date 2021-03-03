@@ -244,10 +244,12 @@ export default {
         size: "0KB",
         length: 0,
       },
-      allOutputDevices: [{
-        deviceId: "default",
-        label: "settings.permissionRequired"
-      }],
+      allOutputDevices: [
+        {
+          deviceId: "default",
+          label: "settings.permissionRequired",
+        },
+      ],
       withoutAudioPriviledge: true,
     };
   },
@@ -399,25 +401,27 @@ export default {
   },
   methods: {
     getAllOutputDevices() {
-      navigator.mediaDevices.
-        getUserMedia({ audio: true })
-          .then(() => {
-            this.withoutAudioPriviledge = false;
-            navigator.mediaDevices
-              .enumerateDevices()
-              .then(
-                (devices) =>
-                  (this.allOutputDevices = devices.filter(
-                    (device) => device.kind == "audiooutput"
-                  ))
-              );
-          })
-          .catch(() => {
-            this.allOutputDevices = [{
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(() => {
+          this.withoutAudioPriviledge = false;
+          navigator.mediaDevices
+            .enumerateDevices()
+            .then(
+              (devices) =>
+                (this.allOutputDevices = devices.filter(
+                  (device) => device.kind == "audiooutput"
+                ))
+            );
+        })
+        .catch(() => {
+          this.allOutputDevices = [
+            {
               deviceId: "default",
               label: "settings.permissionDenied",
-            }];
-          })
+            },
+          ];
+        });
     },
     logout() {
       doLogout();
