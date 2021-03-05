@@ -120,6 +120,8 @@ export default {
       lossless: "无损",
     },
     deviceSelector: "音频输出设备",
+    permissionDenied: "无麦克风权限",
+    permissionRequired: "需要麦克风权限",
     appearance: {
       text: "外观",
       auto: "自动",

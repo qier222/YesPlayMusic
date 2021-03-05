@@ -79,14 +79,14 @@
           <div class="title"> {{ $t("settings.deviceSelector") }} </div>
         </div>
         <div class="right">
-          <select v-model="outputDevice">
+          <select v-model="outputDevice" :disabled="withoutAudioPriviledge">
             <option
               v-for="device in allOutputDevices"
               :key="device.deviceId"
               :value="device.deviceId"
               :selected="device.deviceId == outputDevice"
             >
-              {{ device.label }}
+              {{ $t(device.label) }}
             </option>
           </select>
         </div>
@@ -244,7 +244,13 @@ export default {
         size: "0KB",
         length: 0,
       },
-      allOutputDevices: [],
+      allOutputDevices: [
+        {
+          deviceId: "default",
+          label: "settings.permissionRequired",
+        },
+      ],
+      withoutAudioPriviledge: true,
     };
   },
   computed: {
@@ -290,7 +296,7 @@ export default {
     },
     outputDevice: {
       get() {
-        if (this.allOutputDevices.length == 0) this.getAllOutputDevices(); // Ensure devices loaded before get
+        if (this.withoutAudioPriviledge === true) this.getAllOutputDevices();
         const isValidDevice = this.allOutputDevices.find(
           (device) => device.deviceId === this.settings.outputDevice
         );
@@ -395,14 +401,27 @@ export default {
   },
   methods: {
     getAllOutputDevices() {
-      return navigator.mediaDevices
-        .enumerateDevices()
-        .then(
-          (devices) =>
-            (this.allOutputDevices = devices.filter(
-              (device) => device.kind == "audiooutput"
-            ))
-        );
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(() => {
+          this.withoutAudioPriviledge = false;
+          navigator.mediaDevices
+            .enumerateDevices()
+            .then(
+              (devices) =>
+                (this.allOutputDevices = devices.filter(
+                  (device) => device.kind == "audiooutput"
+                ))
+            );
+        })
+        .catch(() => {
+          this.allOutputDevices = [
+            {
+              deviceId: "default",
+              label: "settings.permissionDenied",
+            },
+          ];
+        });
     },
     logout() {
       doLogout();
