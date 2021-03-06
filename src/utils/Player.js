@@ -32,6 +32,7 @@ export default class {
     this._playing = false;
     this._isPersonalFM = false;
     this._personalFMTrack = { id: 0 };
+    this._personalFMNextTrack = { id: 0 };
 
     this._howler = null;
     Object.defineProperty(this, "_howler", {
@@ -112,19 +113,27 @@ export default class {
   _init() {
     Howler.autoUnlock = false;
     Howler.usingWebAudio = true;
-    Howler.masterGain = true;
     this._loadSelfFromLocalStorage();
-    this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
-      this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
-      setInterval(
-        () =>
-          localStorage.setItem("playerCurrentTrackTime", this._howler.seek()),
-        1000
-      );
-    }); // update audio source and init howler
-    this._initMediaSession();
+    if (this._enabled) {
+      this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
+        this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
+        setInterval(
+          () =>
+            localStorage.setItem("playerCurrentTrackTime", this._howler.seek()),
+          1000
+        );
+      }); // update audio source and init howler
+      this._initMediaSession();
+    }
     Howler.volume(this.volume);
-    this._loadPersonalFMTrack();
+    if (this._personalFMTrack.id === 0 || this._personalFMNextTrack.id === 0) {
+      // init fm
+      personalFM().then((result) => {
+        this._personalFMTrack = result.data[0];
+        this._personalFMNextTrack = result.data[1];
+        return this._personalFMTrack;
+      });
+    }
   }
   _getNextTrack() {
     // 返回 [trackID, index]
@@ -298,10 +307,10 @@ export default class {
       this.playNextTrack();
     }
   }
-  _loadPersonalFMTrack() {
+  _loadPersonalFMNextTrack() {
     return personalFM().then((result) => {
-      this._personalFMTrack = result.data[0];
-      return this._personalFMTrack;
+      this._personalFMNextTrack = result.data[0];
+      return this._personalFMNextTrack;
     });
   }
 
@@ -315,9 +324,9 @@ export default class {
   playNextTrack(isFM = false) {
     if (this._isPersonalFM || isFM) {
       this._isPersonalFM = true;
-      this._loadPersonalFMTrack().then(() => {
-        this._replaceCurrentTrack(this._personalFMTrack.id);
-      });
+      this._personalFMTrack = this._personalFMNextTrack;
+      this._replaceCurrentTrack(this._personalFMTrack.id);
+      this._loadPersonalFMNextTrack();
       return true;
     }
     // TODO: 切换歌曲时增加加载中的状态

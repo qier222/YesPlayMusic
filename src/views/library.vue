@@ -129,6 +129,7 @@ import { mapActions, mapMutations, mapState } from "vuex";
 import { getTrackDetail, getLyric } from "@/api/track";
 import {
   userDetail,
+  userAccount,
   userPlaylist,
   likedAlbums,
   likedArtists,
@@ -169,9 +170,21 @@ export default {
   },
   created() {
     NProgress.start();
-    userDetail(this.data.user.userId).then((data) => {
-      this.$store.commit("updateData", { key: "user", value: data.profile });
-    });
+    if (isAccountLoggedIn()) {
+      userAccount().then((result) => {
+        this.$store.commit("updateData", {
+          key: "user",
+          value: result.profile,
+        });
+      });
+    } else {
+      userDetail(this.data.user.userId).then((result) => {
+        this.$store.commit("updateData", {
+          key: "user",
+          value: result.profile,
+        });
+      });
+    }
   },
   activated() {
     if (!this.data.likedSongPlaylistID) {

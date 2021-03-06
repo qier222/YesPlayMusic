@@ -17,6 +17,20 @@ export function userDetail(uid) {
 }
 
 /**
+ * 获取账号详情
+ * 说明 : 登录后调用此接口 ,可获取用户账号信息
+ */
+export function userAccount() {
+  return request({
+    url: "/user/account",
+    method: "get",
+    params: {
+      timestamp: new Date().getTime(),
+    },
+  });
+}
+
+/**
  * 获取用户歌单
  * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户歌单
  * - uid : 用户 id

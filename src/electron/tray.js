@@ -15,7 +15,6 @@ export function createTray(win) {
 
   tray.on("click", () => {
     win.show();
-    tray.destroy();
   });
 
   tray.on("right-click", () => {

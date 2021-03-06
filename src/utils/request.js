@@ -20,6 +20,7 @@ const service = axios.create({
 });
 
 service.interceptors.request.use(function (config) {
+  if (!config.params) config.params = {};
   config.params.cookie = `MUSIC_U=${Cookies.get("MUSIC_U")};`;
   return config;
 });
