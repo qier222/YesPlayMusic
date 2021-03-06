@@ -276,7 +276,6 @@ export default {
   display: flex;
   width: 78vw;
   margin-bottom: 72px;
-  padding: var(--main-content-padding);
   .info {
     display: flex;
     flex-direction: column;
@@ -331,29 +330,6 @@ export default {
   }
 }
 
-@media (max-width: 600px) {
-  .playlist-info {
-    width: calc(100vw - 2 * var(--main-content-padding-x));
-    padding: var(--main-content-padding);
-    display: block;
-
-    .cover {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .info {
-      margin-top: 24px;
-      margin-left: 0;
-
-      .title {
-        font-size: 48px;
-      }
-    }
-  }
-}
-
 .explicit-symbol {
   opacity: 0.28;
   color: var(--color-text);
@@ -369,7 +345,6 @@ export default {
   font-size: 12px;
   opacity: 0.48;
   color: var(--color-text);
-  padding: var(--main-content-padding);
   div {
     margin-bottom: 4px;
   }
@@ -388,7 +363,6 @@ export default {
     opacity: 0.88;
     color: var(--color-text);
     margin-bottom: 20px;
-    padding: var(--main-content-padding);
   }
 }
 .description-fulltext {

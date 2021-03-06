@@ -193,7 +193,6 @@ button {
   padding: 8px;
   border-radius: 12px;
   user-select: none;
-  transition: all 0.3s;
 
   .no {
     display: flex;
@@ -294,11 +293,6 @@ button {
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
-  @media (max-width: 600px) {
-    .album {
-      flex: 0;
-    }
-  }
   .time {
     font-size: 16px;
     width: 50px;
@@ -313,6 +307,7 @@ button {
 }
 
 .track.focus {
+  transition: all 0.3s;
   background: var(--color-secondary-bg);
 }
 
@@ -357,12 +352,6 @@ button {
   width: 80px;
   display: flex;
   justify-content: flex-end;
-}
-
-@media (max-width: 600px) {
-  .actions {
-    width: auto;
-  }
 }
 
 .track.playing {

@@ -1,5 +1,5 @@
 <template>
-  <nav :class="{ 'search-box-open': isSearchBoxOpen }">
+  <nav>
     <div class="win32-titlebar">
       <div class="title">YesPlayMusic</div>
       <div class="controls">
@@ -51,9 +51,6 @@
         v-if="settings.showGithubIcon !== false"
         ><svg-icon icon-class="github" class="github"
       /></a>
-      <button-icon @click.native="toggleSearchBox()" class="search-button">
-        <svg-icon icon-class="search" />
-      </button-icon>
       <div class="search-box">
         <div class="container" :class="{ active: inputFocus }">
           <svg-icon icon-class="search" />
@@ -96,7 +93,6 @@ export default {
       inputFocus: false,
       langs: ["zh-CN", "en"],
       keywords: "",
-      isSearchBoxOpen: false,
       windowIsMaximized: win ? win.isMaximized() : true,
     };
   },
@@ -120,9 +116,6 @@ export default {
         name: "search",
         params: { keywords: this.keywords },
       });
-    },
-    toggleSearchBox() {
-      this.isSearchBoxOpen = !this.isSearchBoxOpen;
     },
     windowMinimize() {
       win.minimize();
@@ -158,9 +151,6 @@ nav {
     left: 10vw;
   }
   backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid transparent;
-  transition-property: padding-bottom, border-bottom;
-  transition-duration: 0.4s;
 
   background-color: var(--color-navbar-bg);
   z-index: 100;
@@ -368,75 +358,9 @@ nav {
     color: var(--color-text);
     -webkit-app-region: no-drag;
   }
-  @media (max-width: 400px) {
-    .github {
-      display: none;
-    }
-  }
   .search-button {
     display: none;
     -webkit-app-region: no-drag;
-  }
-  @media (max-width: 600px) {
-    .search-button {
-      display: flex;
-    }
-  }
-}
-
-@media (max-width: 600px) {
-  .right-part {
-    flex: 0;
-  }
-}
-
-@media (max-width: 800px) {
-  .navigation-links > a {
-    margin: 4px;
-  }
-}
-
-@media (max-width: 700px) {
-  .navigation-buttons {
-    display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  nav.search-box-open {
-    padding-bottom: 36px;
-    border-bottom-color: var(--color-secondary-bg-for-transparent);
-  }
-
-  .search-box {
-    display: block;
-    position: fixed;
-    top: 56px;
-    left: 16px;
-    right: 16px;
-    .container {
-      width: 100%;
-      opacity: 0;
-      height: 0;
-      overflow: hidden;
-      transition-property: height, opacity;
-      transition-duration: 0.4s;
-      .input {
-        width: 100%;
-      }
-    }
-  }
-
-  [data-electron-platform-win32="yes"] {
-    .search-box {
-      // Add more 20px to top for title bar
-      top: calc(56px + 20px);
-    }
-  }
-
-  nav.search-box-open .container {
-    opacity: 1;
-    height: 32px;
   }
 }
 </style>

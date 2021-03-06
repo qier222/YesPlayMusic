@@ -140,7 +140,6 @@ export default {
 h1 {
   margin-top: -10px;
   margin-bottom: 28px;
-  padding: var(--main-content-padding);
   color: var(--color-text);
   span {
     opacity: 0.58;

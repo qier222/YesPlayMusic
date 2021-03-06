@@ -146,13 +146,11 @@ export default {
   background: transparent;
   overflow: hidden;
   max-height: 100vh;
-  margin: var(--main-content-padding);
 }
 
 .video-info {
   margin-top: 12px;
   color: var(--color-text);
-  padding: var(--main-content-padding);
   .title {
     font-size: 24px;
     font-weight: 600;
@@ -177,8 +175,6 @@ export default {
     font-weight: 600;
     color: var(--color-text);
     opacity: 0.88;
-    padding: var(--main-content-padding);
-    margin-bottom: 8px;
   }
 }
 

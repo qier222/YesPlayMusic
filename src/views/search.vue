@@ -13,7 +13,6 @@
           :columnNumber="3"
           :items="artists.slice(0, 3)"
           gap="34px 24px"
-          :withoutPadding="true"
         />
       </div>
 
@@ -31,7 +30,6 @@
           :columnNumber="3"
           subTextFontSize="14px"
           gap="34px 24px"
-          :withoutPadding="true"
         />
       </div>
     </div>
@@ -43,7 +41,7 @@
           $t("home.seeMore")
         }}</router-link></div
       >
-      <TrackList :tracks="tracks" type="tracklist" :withoutPadding="true" />
+      <TrackList :tracks="tracks" type="tracklist" />
     </div>
 
     <div class="music-videos" v-show="musicVideos.length > 0">
@@ -53,7 +51,7 @@
           $t("home.seeMore")
         }}</router-link></div
       >
-      <MvRow :mvs="musicVideos.slice(0, 5)" :withoutPadding="true" />
+      <MvRow :mvs="musicVideos.slice(0, 5)" />
     </div>
 
     <div class="playlists" v-show="playlists.length > 0">
@@ -70,7 +68,6 @@
         :columnNumber="6"
         subTextFontSize="14px"
         gap="34px 24px"
-        :withoutPadding="true"
       />
     </div>
 
@@ -218,10 +215,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search {
-  padding: var(--main-content-padding);
-}
-
 .section-title {
   font-weight: 600;
   font-size: 22px;

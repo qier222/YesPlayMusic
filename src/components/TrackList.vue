@@ -1,5 +1,5 @@
 <template>
-  <div class="track-list" :class="{ 'without-padding': withoutPadding }">
+  <div class="track-list">
     <ContextMenu ref="menu">
       <div class="item-info">
         <img :src="rightClickedTrack.al.picUrl | resizeImage(224)" />
@@ -26,7 +26,7 @@
       >
       <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
     </ContextMenu>
-    <div :style="listStyles" class="track-list-inner-container">
+    <div :style="listStyles">
       <TrackListItem
         v-for="(track, index) in tracks"
         :track="track"
@@ -78,6 +78,10 @@ export default {
         return []; // 'removeTrackFromPlaylist'
       },
     },
+    columnNumber: {
+      type: Number,
+      default: 4,
+    },
     highlightPlayingTrack: {
       type: Boolean,
       default: true,
@@ -85,10 +89,6 @@ export default {
     itemKey: {
       type: String,
       default: "id",
-    },
-    withoutPadding: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -107,6 +107,7 @@ export default {
       this.listStyles = {
         display: "grid",
         gap: "4px",
+        gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
       };
     }
   },
@@ -239,36 +240,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.track-list {
-  --col-num: 4;
-  padding: var(--main-content-padding);
-
-  .track-list-inner-container {
-    grid-template-columns: repeat(var(--col-num), 1fr);
-  }
-}
-
-.track-list.without-padding {
-  padding: 0;
-}
-
-@media (max-width: 800px) {
-  .track-list {
-    --col-num: 3;
-    padding: var(--main-content-padding);
-  }
-}
-
-@media (max-width: 700px) {
-  .track-list {
-    --col-num: 2;
-  }
-}
-
-@media (max-width: 550px) {
-  .track-list {
-    --col-num: 1;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

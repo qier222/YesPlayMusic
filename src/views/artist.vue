@@ -4,7 +4,7 @@
       <div class="head">
         <img :src="artist.img1v1Url | resizeImage(1024)" />
       </div>
-      <div class="info">
+      <div>
         <div class="name">{{ artist.name }}</div>
         <div class="artist">{{ $t("artist.artist") }}</div>
         <div class="statistics">
@@ -253,7 +253,6 @@ export default {
   align-items: center;
   margin-bottom: 26px;
   color: var(--color-text);
-  padding: var(--main-content-padding);
   img {
     height: 192px;
     width: 192px;
@@ -290,37 +289,12 @@ export default {
   }
 }
 
-@media (max-width: 600px) {
-  .artist-info {
-    display: block;
-
-    .head {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .info {
-      margin-top: 24px;
-    }
-
-    .name {
-      font-size: 36px;
-    }
-
-    img {
-      margin: 0;
-    }
-  }
-}
-
 .section-title {
   font-weight: 600;
   font-size: 22px;
   opacity: 0.88;
   color: var(--color-text);
   margin-bottom: 16px;
-  padding: var(--main-content-padding);
   padding-top: 46px;
 
   display: flex;
@@ -335,11 +309,6 @@ export default {
 
 .latest-release {
   color: var(--color-text);
-  padding: var(--main-content-padding);
-  .section-title {
-    padding-left: 0;
-    padding-right: 0;
-  }
   .release {
     display: flex;
   }
@@ -374,7 +343,6 @@ export default {
 .popular-tracks {
   .show-more {
     display: flex;
-    padding: var(--main-content-padding);
 
     button {
       padding: 4px 8px;

@@ -91,15 +91,6 @@ export default {
   --color-navbar-bg: rgba(255, 255, 255, 0.86);
   --color-primary-bg-for-transparent: rgba(189, 207, 255, 0.28);
   --color-secondary-bg-for-transparent: rgba(209, 209, 214, 0.28);
-
-  --main-content-padding-x: 10vw;
-  --main-content-padding: 0 var(--main-content-padding-x);
-}
-
-@media (max-width: 1336px) {
-  :root {
-    --main-content-padding-x: 5vw;
-  }
 }
 
 [data-theme="dark"] {
@@ -126,18 +117,27 @@ input {
 }
 body {
   background-color: var(--color-body-bg);
-  margin: 0;
 }
 
 html {
   overflow-y: overlay;
-  min-width: 340px;
+  min-width: 768px;
+  overscroll-behavior: none;
 }
 
 main {
-  max-width: 100vw;
   margin-top: 84px;
   margin-bottom: 96px;
+  padding: {
+    right: 10vw;
+    left: 10vw;
+  }
+}
+
+@media (max-width: 1336px) {
+  main {
+    padding: 0 5vw;
+  }
 }
 
 select,
