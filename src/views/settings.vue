@@ -401,27 +401,24 @@ export default {
   },
   methods: {
     getAllOutputDevices() {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(() => {
+      navigator.mediaDevices.enumerateDevices().then((devices) => {
+        this.allOutputDevices = devices.filter((device) => {
+          return device.kind == "audiooutput";
+        });
+        if (
+          this.allOutputDevices.length > 0 &&
+          this.allOutputDevices[0].label !== ""
+        ) {
           this.withoutAudioPriviledge = false;
-          navigator.mediaDevices
-            .enumerateDevices()
-            .then(
-              (devices) =>
-                (this.allOutputDevices = devices.filter(
-                  (device) => device.kind == "audiooutput"
-                ))
-            );
-        })
-        .catch(() => {
+        } else {
           this.allOutputDevices = [
             {
               deviceId: "default",
-              label: "settings.permissionDenied",
+              label: "settings.permissionRequired",
             },
           ];
-        });
+        }
+      });
     },
     logout() {
       doLogout();
