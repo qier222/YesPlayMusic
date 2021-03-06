@@ -13,10 +13,6 @@ import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
 import { Integrations } from "@sentry/tracing";
 
-// import icons for win32 title bar
-// icons by https://github.com/microsoft/vscode-codicons
-import "vscode-codicons/dist/codicon.css";
-
 Vue.use(VueAnalytics, {
   id: "UA-180189423-1",
   router,

@@ -12,6 +12,7 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import express from "express";
 import expressProxy from "express-http-proxy";
 import Store from "electron-store";
+import path from "path";
 
 class Background {
   constructor() {
@@ -88,20 +89,18 @@ class Background {
   createWindow() {
     console.log("creating app window");
 
-    // Only for Windows, a special title bar for it
-    const withoutFrame = process.platform == "win32";
-
     this.window = new BrowserWindow({
       width: this.store.get("window.width") | 1440,
       height: this.store.get("window.height") | 840,
       minWidth: 1080,
       minHeight: 720,
       titleBarStyle: "hiddenInset",
-      frame: !withoutFrame,
+      frame: process.platform !== "win32",
       webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
         enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 

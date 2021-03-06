@@ -58,6 +58,7 @@ module.exports = {
   pluginOptions: {
     // electron-builder的配置文件
     electronBuilder: {
+      nodeIntegration: true,
       externals: ["@nondanee/unblockneteasemusic", "@njzy/unblockneteasemusic"],
       builderOptions: {
         productName: "YesPlayMusic",
@@ -80,20 +81,28 @@ module.exports = {
           target: [
             {
               target: "dmg",
-              arch: ["arm64", "x64"],
+              arch: ["x64", "arm64", "universal"],
             },
             {
               target: "zip",
-              arch: ["arm64", "x64"],
-              // arch: ["universal"]
+              arch: ["x64", "arm64", "universal"],
             },
           ],
-          artifactName: "${productName}-${arch}.${ext}",
+          artifactName: "${productName}-${os}-${arch}.${ext}",
           category: "public.app-category.music",
           darkModeSupport: true,
         },
         win: {
-          target: ["nsis", "portable"],
+          target: [
+            {
+              target: "portable",
+              arch: ["x64"],
+            },
+            {
+              target: "nsis",
+              arch: ["x64"],
+            },
+          ],
           publisherName: "YesPlayMusic",
           icon: "build/icons/icon.ico",
           publish: ["github"],

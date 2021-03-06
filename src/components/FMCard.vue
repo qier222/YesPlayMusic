@@ -8,7 +8,7 @@
     <div class="right-part">
       <div class="info">
         <div class="title">{{ track.name }}</div>
-        <div class="artist"><ArtistsInLine :artists="track.artists" /></div>
+        <div class="artist"><ArtistsInLine :artists="artists" /></div>
       </div>
       <div class="controls">
         <div class="buttons">
@@ -46,6 +46,9 @@ export default {
     },
     isPlaying() {
       return this.player.playing && this.player.isPersonalFM;
+    },
+    artists() {
+      return this.track.artists || this.track.ar || [];
     },
   },
   methods: {

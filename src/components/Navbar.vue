@@ -73,15 +73,16 @@
 <script>
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import { mapState } from "vuex";
-const platformIsWin32 = window.require
-  ? window.require("os").platform() == "win32"
-    ? true
-    : false
-  : false;
 
-const win = platformIsWin32
-  ? window.require("electron").remote.getCurrentWindow()
-  : null;
+// import icons for win32 title bar
+// icons by https://github.com/microsoft/vscode-codicons
+import "vscode-codicons/dist/codicon.css";
+
+let win = undefined;
+if (process.env.IS_ELECTRON === true) {
+  const electron = require("electron");
+  win = electron.remote.BrowserWindow.getFocusedWindow();
+}
 
 export default {
   name: "Navbar",
@@ -173,7 +174,7 @@ nav {
   display: none;
 }
 
-[data-electron-platform-win32="yes"] {
+[data-electron-os="win32"] {
   nav {
     padding-top: 20px;
     -webkit-app-region: no-drag;

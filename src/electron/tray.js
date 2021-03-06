@@ -21,14 +21,18 @@ export function createTray(win) {
     const contextMenu = Menu.buildFromTemplate([
       {
         label: "播放/暂停",
-        icon: "src/assets/icons/play.png",
+        icon: nativeImage.createFromPath(
+          path.join(__static, "img/icons/play.png")
+        ),
         click: () => {
           win.webContents.send("play");
         },
       },
       {
         label: "上一首",
-        icon: "src/assets/icons/left.png",
+        icon: nativeImage.createFromPath(
+          path.join(__static, "img/icons/left.png")
+        ),
         accelerator: "CmdOrCtrl+Left",
         click: () => {
           win.webContents.send("previous");
@@ -36,7 +40,9 @@ export function createTray(win) {
       },
       {
         label: "下一首",
-        icon: "src/assets/icons/right.png",
+        icon: nativeImage.createFromPath(
+          path.join(__static, "img/icons/right.png")
+        ),
         accelerator: "CmdOrCtrl+Right",
         click: () => {
           win.webContents.send("next");
@@ -44,7 +50,9 @@ export function createTray(win) {
       },
       {
         label: "循环播放",
-        icon: "src/assets/icons/repeat.png",
+        icon: nativeImage.createFromPath(
+          path.join(__static, "img/icons/repeat.png")
+        ),
         accelerator: "Alt+R",
         click: () => {
           win.webContents.send("repeat");
@@ -52,7 +60,9 @@ export function createTray(win) {
       },
       {
         label: "加入喜欢",
-        icon: "src/assets/icons/like.png",
+        icon: nativeImage.createFromPath(
+          path.join(__static, "img/icons/like.png")
+        ),
         accelerator: "CmdOrCtrl+L",
         click: () => {
           win.webContents.send("like");
@@ -60,7 +70,9 @@ export function createTray(win) {
       },
       {
         label: "退出",
-        icon: "src/assets/icons/exit.png",
+        icon: nativeImage.createFromPath(
+          path.join(__static, "img/icons/exit.png")
+        ),
         accelerator: "CmdOrCtrl+W",
         click: () => {
           app.exit();
