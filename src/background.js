@@ -94,8 +94,8 @@ class Background {
     this.window = new BrowserWindow({
       width: this.store.get("window.width") | 1440,
       height: this.store.get("window.height") | 840,
-      minWidth: 360,
-      minHeight: 240,
+      minWidth: 1080,
+      minHeight: 720,
       titleBarStyle: "hiddenInset",
       frame: !withoutFrame,
       webPreferences: {
@@ -140,11 +140,9 @@ class Background {
         });
     };
 
-    if (process.platform === "darwin") {
-      autoUpdater.on("update-available", (info) => {
-        showNewVersionMessage(info);
-      });
-    }
+    autoUpdater.on("update-available", (info) => {
+      showNewVersionMessage(info);
+    });
   }
 
   handleWindowEvents() {
