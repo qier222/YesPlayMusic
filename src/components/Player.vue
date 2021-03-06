@@ -62,8 +62,17 @@
       <div class="middle-control-buttons">
         <div class="blank"></div>
         <div class="container" @click.stop>
-          <button-icon @click.native="previous" :title="$t('player.previous')"
+          <button-icon
+            v-show="!player.isPersonalFM"
+            @click.native="previous"
+            :title="$t('player.previous')"
             ><svg-icon icon-class="previous"
+          /></button-icon>
+          <button-icon
+            v-show="player.isPersonalFM"
+            @click.native="moveToFMTrash"
+            title="不喜欢"
+            ><svg-icon icon-class="thumbs-down"
           /></button-icon>
           <button-icon
             class="play"
@@ -84,7 +93,10 @@
           <button-icon
             @click.native="goToNextTracksPage"
             :title="$t('player.nextUp')"
-            :class="{ active: this.$route.name === 'next' }"
+            :class="{
+              active: this.$route.name === 'next',
+              disabled: player.isPersonalFM,
+            }"
             ><svg-icon icon-class="list"
           /></button-icon>
           <button-icon
@@ -94,7 +106,10 @@
                 : $t('player.repeat')
             "
             @click.native="repeat"
-            :class="{ active: player.repeatMode !== 'off' }"
+            :class="{
+              active: player.repeatMode !== 'off',
+              disabled: player.isPersonalFM,
+            }"
           >
             <svg-icon
               icon-class="repeat"
@@ -107,7 +122,7 @@
           </button-icon>
           <button-icon
             @click.native="shuffle"
-            :class="{ active: player.shuffle }"
+            :class="{ active: player.shuffle, disabled: player.isPersonalFM }"
             :title="$t('player.shuffle')"
             ><svg-icon icon-class="shuffle"
           /></button-icon>
@@ -221,9 +236,11 @@ export default {
       if (this.player.playPrevTrack()) this.progress = 0;
     },
     shuffle() {
+      if (this.player.isPersonalFM) return;
       this.player.shuffle = !this.player.shuffle;
     },
     repeat() {
+      if (this.player.isPersonalFM) return;
       if (this.player.repeatMode === "on") {
         this.player.repeatMode = "one";
       } else if (this.player.repeatMode === "one") {
@@ -240,6 +257,7 @@ export default {
       this.progress = value;
     },
     goToNextTracksPage() {
+      if (this.player.isPersonalFM) return;
       this.$route.name === "next"
         ? this.$router.go(-1)
         : this.$router.push({ name: "next" });
@@ -267,6 +285,9 @@ export default {
           this.updateLikedSongs(newLikeSongs);
         }
       });
+    },
+    moveToFMTrash() {
+      this.player.moveToFMTrash();
     },
     goToList() {
       if (this.player.playlistSource.id === this.data.likedSongPlaylistID)
@@ -351,6 +372,7 @@ export default {
     border-radius: 5px;
     box-shadow: 0 6px 8px -2px rgba(0, 0, 0, 0.16);
     cursor: pointer;
+    user-select: none;
   }
   .track-info {
     height: 46px;
@@ -448,12 +470,14 @@ export default {
   margin-left: 16px;
 }
 
-// .lyrics-button {
-//   position: fixed;
-//   right: 18px;
-//   .svg-icon {
-//     height: 20px;
-//     width: 20px;
-//   }
-// }
+.button-icon.disabled {
+  cursor: default;
+  opacity: 0.38;
+  &:hover {
+    background: none;
+  }
+  &:active {
+    transform: unset;
+  }
+}
 </style>

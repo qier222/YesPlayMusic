@@ -72,6 +72,7 @@
             </div>
             <div class="media-controls">
               <button-icon
+                v-show="!player.isPersonalFM"
                 @click.native="playerRef.repeat"
                 :title="
                   player.repeatMode === 'one'
@@ -91,11 +92,19 @@
               </button-icon>
               <div class="middle">
                 <button-icon
+                  v-show="!player.isPersonalFM"
                   @click.native="playerRef.previous"
                   :title="$t('player.previous')"
                   ><svg-icon icon-class="previous"
                 /></button-icon>
                 <button-icon
+                  v-show="player.isPersonalFM"
+                  @click.native="moveToFMTrash"
+                  title="不喜欢"
+                  ><svg-icon icon-class="thumbs-down"
+                /></button-icon>
+                <button-icon
+                  id="play"
                   @click.native="playerRef.play"
                   :title="$t(player.playing ? 'player.pause' : 'player.play')"
                   ><svg-icon :icon-class="playerRef.playing ? 'pause' : 'play'"
@@ -107,6 +116,7 @@
                 /></button-icon>
               </div>
               <button-icon
+                v-show="!player.isPersonalFM"
                 @click.native="playerRef.shuffle"
                 :title="$t('player.shuffle')"
                 :class="{ active: player.shuffle }"
@@ -353,6 +363,9 @@ export default {
         return `<span>${line.contents[0]}</span>`;
       }
     },
+    moveToFMTrash() {
+      this.player.moveToFMTrash();
+    },
   },
   watch: {
     currentTrack() {
@@ -470,7 +483,7 @@ $layoutBreakpoint: 1000px;
         button {
           margin: 0 8px;
         }
-        button:nth-child(2) .svg-icon {
+        button#play .svg-icon {
           height: 28px;
           width: 28px;
           padding: 2px;
