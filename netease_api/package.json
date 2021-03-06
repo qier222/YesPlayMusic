@@ -1,0 +1,63 @@
+{
+  "name": "NeteaseCloudMusicApi",
+  "version": "4.0.8",
+  "description": "网易云音乐 NodeJS 版 API",
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha -r intelli-espower-loader -t 20000 app.test.js --exit",
+    "lint": "eslint **/*.{js,ts}",
+    "lint-fix": "eslint --fix **/*.{js,ts}"
+  },
+  "keywords": [
+    "网易云音乐",
+    "网易云",
+    "音乐",
+    "网易云音乐nodejs"
+  ],
+  "main": "main.js",
+  "types": "./interface.d.ts",
+  "engines": {
+    "node": ">=12"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "author": "binaryify",
+  "license": "MIT",
+  "files": [
+    "module",
+    "util",
+    "plugins",
+    "main.d.ts",
+    "interface.d.ts",
+    "module_types"
+  ],
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.9",
+    "md5": "^2.3.0",
+    "music-metadata": "^7.5.3",
+    "pac-proxy-agent": "^4.0.0",
+    "qrcode": "^1.4.4",
+    "tunnel": "^0.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "14.14.31",
+    "@typescript-eslint/eslint-plugin": "4.4.1",
+    "@typescript-eslint/parser": "4.4.1",
+    "eslint": "7.21.0",
+    "eslint-config-prettier": "7.1.0",
+    "eslint-plugin-html": "6.1.1",
+    "eslint-plugin-prettier": "3.3.1",
+    "intelli-espower-loader": "1.0.1",
+    "lint-staged": "10.5.4",
+    "mocha": "8.3.1",
+    "power-assert": "1.6.1",
+    "prettier": "2.2.1",
+    "typescript": "4.2.3"
+  }
+}
