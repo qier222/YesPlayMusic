@@ -119,7 +119,6 @@ export default {
       lossless: "Lossless",
     },
     deviceSelector: "Audio Output Device",
-    permissionDenied: "Microphone Permission Denied",
     permissionRequired: "Microphone Permission Required",
     appearance: {
       text: "Appearance",
