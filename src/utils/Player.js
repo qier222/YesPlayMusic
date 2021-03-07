@@ -440,9 +440,12 @@ export default class {
     this._isPersonalFM = true;
     if (!this._enabled) this._enabled = true;
     if (this._currentTrack.id !== this._personalFMTrack.id) {
-      this._replaceCurrentTrack(this._personalFMTrack.id);
+      this._replaceCurrentTrack(this._personalFMTrack.id).then(() =>
+        this.playOrPause()
+      );
+    } else {
+      this.playOrPause();
     }
-    this.playOrPause();
   }
   moveToFMTrash() {
     this._isPersonalFM = true;

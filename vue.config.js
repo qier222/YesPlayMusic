@@ -83,10 +83,6 @@ module.exports = {
               target: "dmg",
               arch: ["x64", "arm64", "universal"],
             },
-            {
-              target: "zip",
-              arch: ["x64", "arm64", "universal"],
-            },
           ],
           artifactName: "${productName}-${os}-${version}-${arch}.${ext}",
           category: "public.app-category.music",
@@ -108,7 +104,32 @@ module.exports = {
           publish: ["github"],
         },
         linux: {
-          target: ["AppImage", "tar.gz", "deb", "rpm", "snap", "pacman"],
+          target: [
+            {
+              target: "AppImage",
+              arch: ["x64"],
+            },
+            {
+              target: "tar.gz",
+              arch: ["x64"],
+            },
+            {
+              target: "deb",
+              arch: ["x64"],
+            },
+            {
+              target: "rpm",
+              arch: ["x64"],
+            },
+            {
+              target: "snap",
+              arch: ["x64"],
+            },
+            {
+              target: "pacman",
+              arch: ["x64"],
+            },
+          ],
           category: "Music",
           icon: "./build/icon.icns",
         },

@@ -19,14 +19,14 @@ jobs:
         with:
           node-version: 14.16.0
 
-      - name: Install RPM & Pacman (only on Linux)
+      - name: Install RPM & Pacman (on Ubuntu)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update &&
           sudo apt-get install --no-install-recommends -y rpm &&
           sudo apt-get install --no-install-recommends -y bsdtar
 
-      - name: Install Snapcraft (only on Ubuntu)
+      - name: Install Snapcraft (on Ubuntu)
         uses: samuelmeuli/action-snapcraft@v1
         if: startsWith(matrix.os, 'ubuntu')
         with:
@@ -34,6 +34,10 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
+        env:
+          VUE_APP_ELECTRON_API_URL: /api
+          VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
+          VUE_APP_ENABLE_SENTRY: true
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
