@@ -88,7 +88,7 @@ module.exports = {
               arch: ["x64", "arm64", "universal"],
             },
           ],
-          artifactName: "${productName}-${os}-${arch}.${ext}",
+          artifactName: "${productName}-${os}-${version}-${arch}.${ext}",
           category: "public.app-category.music",
           darkModeSupport: true,
         },

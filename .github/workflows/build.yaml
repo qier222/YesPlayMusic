@@ -1,4 +1,4 @@
-name: Build/release
+name: Build / Release
 
 on: [push, pull_request]
 
@@ -25,6 +25,12 @@ jobs:
           sudo apt-get update &&
           sudo apt-get install --no-install-recommends -y rpm &&
           sudo apt-get install --no-install-recommends -y bsdtar
+
+      - name: Install Snapcraft (only on Ubuntu)
+        uses: samuelmeuli/action-snapcraft@v1
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
