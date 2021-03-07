@@ -21,8 +21,9 @@
 
 - ✅ 使用 Vue.js 全家桶开发
 - 🔴 网易云账号登录
-- 📺 MV 播放
+- 📺 支持 MV 播放
 - 📃 支持歌词显示
+- 📻 支持私人 FM
 - 🚫🤝 无任何社交功能
 - 🌎️ 海外用户可直接播放（需要登录网易云账号）
 - 🔐 支持 [UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic)，自动使用 QQ/酷狗/酷我音源替换变灰歌曲链接 （网页版不支持）
@@ -42,37 +43,40 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
 
-## ⚙️ 部署至服务器
+## ⚙️ 部署至 Vercel
 
-除了下载安装包使用，你还可以将本项目部署到你的服务器上。
+除了下载安装包使用，你还可以将本项目部署到 Vercel 或你的服务器上。下面是部署到 Vercel 的方法
 
-1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://neteasecloudmusicapi.vercel.app/#/?id=%e5%ae%89%e8%a3%85) 。你也可以将 API 部署到 Vercel。
 
-2. 克隆本仓库
+2. 点击本仓库右上角的 Fork，复制本仓库到你的 GitHub 账号。
 
-```sh
-git clone https://github.com/qier222/YesPlayMusic.git
-```
+3. 打开 [Vercel.com](https://vercel.com)，使用 GitHub 登录。
 
-3. 安装依赖
+4. 点击 Import Git Repository 并选择你刚刚复制的仓库并点击 Import。
 
-```sh
-yarn install
-```
+5. 点击 PERSONAL ACCOUNT 旁边的 Select。
 
-4. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:3000`，YesPlayMusic 地址为 `http://localhost:8080`
+6. 点击 Environment Variables，填写 Name 为 `VUE_APP_NETEASE_API_URL`，Value 为你刚刚部署的网易云 API 地址，点击 Add。最后点击底部的 Deploy 就可以部署到 Vercel 了。
 
-```
-VUE_APP_NETEASE_API_URL=http://localhost:3000
-```
+## 👷‍♂️ 打包客户端
 
-5. 编译打包
+如果在 Release 页面没有找到适合你的设备的安装包的话，你可以根据下面的步骤来打包自己的客户端。
 
-```sh
-yarn run build
-```
+1. 打包 Electron 需要用到 Node.js 和 Yarn。可前往 [Node.js 官网](https://nodejs.org/zh-cn/) 下载安装包。安装 Node.js 后可在终端里执行 `npm install -g yarn` 来安装 Yarn。
 
-6. 将 `/dist` 目录下的文件上传到你的 Web 服务器
+2. 使用 `git clone https://github.com/qier222/YesPlayMusic.git` 克隆本仓库到本地。
+
+3. 使用 `yarn install` 安装项目依赖。
+
+4. 选择下列表格的命令来打包适合的你的安装包，打包出来的文件在 `/dist_electron` 目录下。了解更多信息可访问 [electron-builder 文档](https://www.electron.build/cli)
+
+| 命令                                       | 说明                      |
+| ------------------------------------------ | ------------------------- |
+| `yarn electron:build --windows nsis:ia32`  | Windows 32 位             |
+| `yarn electron:build --windows nsis:arm64` | Windows ARM               |
+| `yarn electron:build --linux deb:armv7l`   | Debian armv7l（树莓派等） |
+| `yarn electron:build --macos dir:arm64`    | macOS ARM                 |
 
 ## ☑️ Todo
 
@@ -87,6 +91,8 @@ yarn run build
 基于 [MIT license](https://opensource.org/licenses/MIT) 许可进行开源。
 
 ## 灵感来源
+
+API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 - [Apple Music](https://music.apple.com)
 - [YouTube Music](https://music.youtube.com)
