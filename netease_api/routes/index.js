@@ -5165,7 +5165,7 @@ module.exports = {
       req.body,
       req.files,
     );
-    const like = (query, request) => (query, request) => {
+    const like = (query, request) => {
       query.cookie.os = 'pc'
       query.cookie.appver = '2.7.1.198277'
       query.like = query.like == 'false' ? false : true
