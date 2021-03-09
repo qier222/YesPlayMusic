@@ -69,7 +69,9 @@ macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
 
 3. 使用 `yarn install` 安装项目依赖。
 
-4. 选择下列表格的命令来打包适合的你的安装包，打包出来的文件在 `/dist_electron` 目录下。了解更多信息可访问 [electron-builder 文档](https://www.electron.build/cli)
+4. 复制 `/.env.example` 文件为 `/.env` 。
+
+5. 选择下列表格的命令来打包适合的你的安装包，打包出来的文件在 `/dist_electron` 目录下。了解更多信息可访问 [electron-builder 文档](https://www.electron.build/cli)
 
 | 命令                                       | 说明                      |
 | ------------------------------------------ | ------------------------- |
