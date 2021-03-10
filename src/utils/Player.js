@@ -278,6 +278,15 @@ export default class {
       });
       navigator.mediaSession.setActionHandler("seekto", (event) => {
         this.seek(event.seekTime);
+        this._updateMediaSessionPositionState();
+      });
+      navigator.mediaSession.setActionHandler("seekbackward", (event) => {
+        this.seek(this.seek() - (event.seekOffset || 10));
+        this._updateMediaSessionPositionState();
+      });
+      navigator.mediaSession.setActionHandler("seekforward", (event) => {
+        this.seek(this.seek() + (event.seekOffset || 10));
+        this._updateMediaSessionPositionState();
       });
     }
   }
@@ -298,6 +307,18 @@ export default class {
         },
       ],
     });
+  }
+  _updateMediaSessionPositionState() {
+    if ("mediaSession" in navigator === false) {
+      return;
+    }
+    if ("setPositionState" in navigator.mediaSession) {
+      navigator.mediaSession.setPositionState({
+        duration: ~~(this.currentTrack.dt / 1000),
+        playbackRate: 1.0,
+        position: this.seek(),
+      });
+    }
   }
   _nextTrackCallback() {
     this._scrobble(true);
@@ -388,7 +409,9 @@ export default class {
     }
   }
   setOutputDevice() {
-    if (this._howler._sounds.length <= 0) return;
+    if (this._howler._sounds.length <= 0 || !this._howler._sounds[0]._node) {
+      return;
+    }
     this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
   }
 
