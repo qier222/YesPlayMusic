@@ -114,12 +114,14 @@
     </div>
 
     <ContextMenu ref="userProfileMenu">
-      <div class="item" @click="settings"
-        ><svg-icon icon-class="settings" />{{ $t("library.userProfileMenu.settings") }}</div
-      >
-      <div class="item" @click="logout"
-        ><svg-icon icon-class="logout" />{{ $t("library.userProfileMenu.logout") }}</div
-      >
+      <div class="item" @click="settings">
+        <svg-icon icon-class="settings" />
+        {{ $t("library.userProfileMenu.settings") }}
+      </div>
+      <div class="item" @click="logout">
+        <svg-icon icon-class="logout" />
+        {{ $t("library.userProfileMenu.logout") }}
+      </div>
     </ContextMenu>
   </div>
 </template>

@@ -45,7 +45,7 @@ window
 
 let player = new Player();
 player = new Proxy(player, {
-  set (target, prop, val) {
+  set(target, prop, val) {
     // console.log({ prop, val });
     target[prop] = val;
     if (prop === "_howler") return true;
