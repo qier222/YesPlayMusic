@@ -80,7 +80,7 @@
           icon="plus"
           v-show="currentTab === 'playlists'"
           @click="openAddPlaylistModal"
-          ><svg-icon icon-class="plus" />新建歌单</button
+          ><svg-icon icon-class="plus" />{{ $t("library.newPlayList") }}</button
         >
       </div>
 
@@ -115,10 +115,10 @@
 
     <ContextMenu ref="userProfileMenu">
       <div class="item" @click="settings"
-        ><svg-icon icon-class="settings" />设置</div
+        ><svg-icon icon-class="settings" />{{ $t("library.userProfileMenu.settings") }}</div
       >
       <div class="item" @click="logout"
-        ><svg-icon icon-class="logout" />退出登录</div
+        ><svg-icon icon-class="logout" />{{ $t("library.userProfileMenu.logout") }}</div
       >
     </ContextMenu>
   </div>
