@@ -50,3 +50,11 @@ export function getMusicU(string) {
 export function setMusicU(key, value) {
   return Cookies.set(key, value);
 }
+
+export function setCookies(string) {
+  const cookies = string.split(";;");
+  cookies.map((cookie) => {
+    document.cookie = cookie;
+    console.log(cookie);
+  });
+}

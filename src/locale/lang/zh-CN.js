@@ -11,9 +11,9 @@ export default {
   },
   home: {
     recommendPlaylist: "推荐歌单",
-    recommendArtist: "推荐歌手",
+    recommendArtist: "推荐艺人",
     newAlbum: "新专速递",
-    seeMore: "更多",
+    seeMore: "查看全部",
     charts: "排行榜",
   },
   library: {
@@ -22,7 +22,7 @@ export default {
     sLikedSongs: "喜欢的音乐",
     playlists: "歌单",
     albums: "专辑",
-    artists: "歌手",
+    artists: "艺人",
     mvs: "MV",
   },
   explore: {
@@ -37,7 +37,7 @@ export default {
     EPsSingles: "EP和单曲",
     albums: "专辑",
     withAlbums: "张专辑",
-    artist: "歌手",
+    artist: "艺人",
     videos: "个MV",
     following: "已关注",
     follow: "关注",
@@ -48,6 +48,7 @@ export default {
   playlist: {
     playlist: "歌单",
     updatedAt: "最后更新于",
+    search: "搜索歌单音乐",
   },
   login: {
     accessToAll: "可访问全部数据",
@@ -99,7 +100,7 @@ export default {
     close: "关闭",
   },
   search: {
-    artist: "歌手",
+    artist: "艺人",
     album: "专辑",
     song: "歌曲",
     mv: "视频",
@@ -118,6 +119,8 @@ export default {
       high: "极高",
       lossless: "无损",
     },
+    deviceSelector: "音频输出设备",
+    permissionRequired: "需要麦克风权限",
     appearance: {
       text: "外观",
       auto: "自动",

@@ -176,6 +176,13 @@ export function createMenu(win) {
             await shell.openExternal("https://electronjs.org");
           },
         },
+        {
+          label: "开发者工具",
+          accelerator: "F12",
+          click: () => {
+            win.webContents.openDevTools();
+          },
+        },
       ],
     },
   ];

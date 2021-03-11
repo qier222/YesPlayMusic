@@ -1,6 +1,10 @@
 <template>
-  <div class="player">
-    <div class="progress-bar" :class="{ nyancat: settings.nyancatStyle }">
+  <div class="player" @click="toggleLyrics">
+    <div
+      class="progress-bar"
+      :class="{ nyancat: settings.nyancatStyle }"
+      @click.stop
+    >
       <vue-slider
         v-model="progress"
         :min="0"
@@ -17,116 +21,144 @@
     </div>
     <div class="controls">
       <div class="playing">
-        <img
-          :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
-          @click="goToAlbum"
-        />
-        <div class="track-info" :title="audioSource">
-          <div class="name" @click="goToList">
-            {{ currentTrack.name }}
+        <div class="container" @click.stop>
+          <img
+            :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
+            @click="goToAlbum"
+          />
+          <div class="track-info" :title="audioSource">
+            <div class="name" @click="goToList">
+              {{ currentTrack.name }}
+            </div>
+            <div class="artist">
+              <span
+                v-for="(ar, index) in currentTrack.ar"
+                :key="ar.id"
+                @click="goToArtist(ar.id)"
+              >
+                <span class="ar">{{ ar.name }}</span
+                ><span v-if="index !== currentTrack.ar.length - 1">, </span>
+              </span>
+            </div>
           </div>
-          <div class="artist">
-            <span
-              v-for="(ar, index) in currentTrack.ar"
-              :key="ar.id"
-              @click="goToArtist(ar.id)"
+          <div class="like-button">
+            <button-icon
+              @click.native="likeCurrentSong"
+              :title="$t('player.like')"
             >
-              <span class="ar">{{ ar.name }}</span
-              ><span v-if="index !== currentTrack.ar.length - 1">, </span>
-            </span>
+              <svg-icon
+                icon-class="heart"
+                v-show="!liked.songs.includes(currentTrack.id)"
+              ></svg-icon>
+              <svg-icon
+                icon-class="heart-solid"
+                v-show="liked.songs.includes(currentTrack.id)"
+              ></svg-icon>
+            </button-icon>
           </div>
         </div>
-        <div class="like-button">
-          <button-icon
-            @click.native="likeCurrentSong"
-            :title="$t('player.like')"
-          >
-            <svg-icon
-              icon-class="heart"
-              v-show="!liked.songs.includes(currentTrack.id)"
-            ></svg-icon>
-            <svg-icon
-              icon-class="heart-solid"
-              v-show="liked.songs.includes(currentTrack.id)"
-            ></svg-icon>
-          </button-icon>
-        </div>
+        <div class="blank"></div>
       </div>
       <div class="middle-control-buttons">
-        <button-icon @click.native="previous" :title="$t('player.previous')"
-          ><svg-icon icon-class="previous"
-        /></button-icon>
-        <button-icon
-          class="play"
-          @click.native="play"
-          :title="$t(player.playing ? 'player.pause' : 'player.play')"
-        >
-          <svg-icon :iconClass="player.playing ? 'pause' : 'play'"
-        /></button-icon>
-        <button-icon @click.native="next" :title="$t('player.next')"
-          ><svg-icon icon-class="next"
-        /></button-icon>
+        <div class="blank"></div>
+        <div class="container" @click.stop>
+          <button-icon
+            v-show="!player.isPersonalFM"
+            @click.native="previous"
+            :title="$t('player.previous')"
+            ><svg-icon icon-class="previous"
+          /></button-icon>
+          <button-icon
+            v-show="player.isPersonalFM"
+            @click.native="moveToFMTrash"
+            title="不喜欢"
+            ><svg-icon icon-class="thumbs-down"
+          /></button-icon>
+          <button-icon
+            class="play"
+            @click.native="play"
+            :title="$t(player.playing ? 'player.pause' : 'player.play')"
+          >
+            <svg-icon :iconClass="player.playing ? 'pause' : 'play'"
+          /></button-icon>
+          <button-icon @click.native="next" :title="$t('player.next')"
+            ><svg-icon icon-class="next"
+          /></button-icon>
+        </div>
+        <div class="blank"></div>
       </div>
       <div class="right-control-buttons">
-        <button-icon
-          @click.native="goToNextTracksPage"
-          :title="$t('player.nextUp')"
-          :class="{ active: this.$route.name === 'next' }"
-          ><svg-icon icon-class="list"
-        /></button-icon>
-        <button-icon
-          :title="
-            player.repeatMode === 'one'
-              ? $t('player.repeatTrack')
-              : $t('player.repeat')
-          "
-          @click.native="repeat"
-          :class="{ active: player.repeatMode !== 'off' }"
-        >
-          <svg-icon icon-class="repeat" v-show="player.repeatMode !== 'one'" />
-          <svg-icon
-            icon-class="repeat-1"
-            v-show="player.repeatMode === 'one'"
-          />
-        </button-icon>
-        <button-icon
-          @click.native="shuffle"
-          :class="{ active: player.shuffle }"
-          :title="$t('player.shuffle')"
-          ><svg-icon icon-class="shuffle"
-        /></button-icon>
-        <div class="volume-control">
-          <button-icon :title="$t('player.mute')" @click.native="player.mute">
-            <svg-icon icon-class="volume" v-show="volume > 0.5" />
-            <svg-icon icon-class="volume-mute" v-show="volume === 0" />
+        <div class="blank"></div>
+        <div class="container" @click.stop>
+          <button-icon
+            @click.native="goToNextTracksPage"
+            :title="$t('player.nextUp')"
+            :class="{
+              active: this.$route.name === 'next',
+              disabled: player.isPersonalFM,
+            }"
+            ><svg-icon icon-class="list"
+          /></button-icon>
+          <button-icon
+            :title="
+              player.repeatMode === 'one'
+                ? $t('player.repeatTrack')
+                : $t('player.repeat')
+            "
+            @click.native="repeat"
+            :class="{
+              active: player.repeatMode !== 'off',
+              disabled: player.isPersonalFM,
+            }"
+          >
             <svg-icon
-              icon-class="volume-half"
-              v-show="volume <= 0.5 && volume !== 0"
+              icon-class="repeat"
+              v-show="player.repeatMode !== 'one'"
+            />
+            <svg-icon
+              icon-class="repeat-1"
+              v-show="player.repeatMode === 'one'"
             />
           </button-icon>
-          <div class="volume-bar">
-            <vue-slider
-              v-model="volume"
-              :min="0"
-              :max="1"
-              :interval="0.01"
-              :drag-on-click="true"
-              :duration="0"
-              :tooltip="`none`"
-              :dotSize="12"
-            ></vue-slider>
+          <button-icon
+            @click.native="shuffle"
+            :class="{ active: player.shuffle, disabled: player.isPersonalFM }"
+            :title="$t('player.shuffle')"
+            ><svg-icon icon-class="shuffle"
+          /></button-icon>
+          <div class="volume-control">
+            <button-icon :title="$t('player.mute')" @click.native="player.mute">
+              <svg-icon icon-class="volume" v-show="volume > 0.5" />
+              <svg-icon icon-class="volume-mute" v-show="volume === 0" />
+              <svg-icon
+                icon-class="volume-half"
+                v-show="volume <= 0.5 && volume !== 0"
+              />
+            </button-icon>
+            <div class="volume-bar">
+              <vue-slider
+                v-model="volume"
+                :min="0"
+                :max="1"
+                :interval="0.01"
+                :drag-on-click="true"
+                :duration="0"
+                :tooltip="`none`"
+                :dotSize="12"
+              ></vue-slider>
+            </div>
           </div>
+
+          <button-icon
+            class="lyrics-button"
+            title="歌词"
+            style="margin-left: 12px"
+            @click.native.stop="toggleLyrics"
+            ><svg-icon icon-class="arrow-up"
+          /></button-icon>
         </div>
       </div>
     </div>
-
-    <button-icon
-      class="lyrics-button"
-      title="Lyrics"
-      style="margin-left: 12px"
-      @click.native="toggleLyrics"
-      ><svg-icon icon-class="arrow-up"
-    /></button-icon>
   </div>
 </template>
 
@@ -204,11 +236,11 @@ export default {
       if (this.player.playPrevTrack()) this.progress = 0;
     },
     shuffle() {
+      if (this.player.isPersonalFM) return;
       this.player.shuffle = !this.player.shuffle;
-      console.log(this.player);
     },
     repeat() {
-      console.log(this.player.repeatMode);
+      if (this.player.isPersonalFM) return;
       if (this.player.repeatMode === "on") {
         this.player.repeatMode = "one";
       } else if (this.player.repeatMode === "one") {
@@ -225,6 +257,7 @@ export default {
       this.progress = value;
     },
     goToNextTracksPage() {
+      if (this.player.isPersonalFM) return;
       this.$route.name === "next"
         ? this.$router.go(-1)
         : this.$router.push({ name: "next" });
@@ -252,6 +285,9 @@ export default {
           this.updateLikedSongs(newLikeSongs);
         }
       });
+    },
+    moveToFMTrash() {
+      this.player.moveToFMTrash();
     },
     goToList() {
       if (this.player.playlistSource.id === this.data.likedSongPlaylistID)
@@ -305,10 +341,9 @@ export default {
 }
 
 .controls {
-  flex: 1;
-  display: flex;
-  justify-content: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
   padding: {
     right: 10vw;
     left: 10vw;
@@ -321,8 +356,15 @@ export default {
   }
 }
 
+.blank {
+  flex-grow: 1;
+}
+
 .playing {
-  flex: 1;
+  display: flex;
+}
+
+.playing .container {
   display: flex;
   align-items: center;
   img {
@@ -330,6 +372,7 @@ export default {
     border-radius: 5px;
     box-shadow: 0 6px 8px -2px rgba(0, 0, 0, 0.16);
     cursor: pointer;
+    user-select: none;
   }
   .track-info {
     height: 46px;
@@ -373,10 +416,15 @@ export default {
 }
 
 .middle-control-buttons {
+  display: flex;
+}
+
+.middle-control-buttons .container {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 8px;
   .button-icon {
     margin: 0 8px;
   }
@@ -389,8 +437,12 @@ export default {
     }
   }
 }
+
 .right-control-buttons {
-  flex: 1;
+  display: flex;
+}
+
+.right-control-buttons .container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -418,12 +470,14 @@ export default {
   margin-left: 16px;
 }
 
-.lyrics-button {
-  position: fixed;
-  right: 18px;
-  .svg-icon {
-    height: 20px;
-    width: 20px;
+.button-icon.disabled {
+  cursor: default;
+  opacity: 0.38;
+  &:hover {
+    background: none;
+  }
+  &:active {
+    transform: unset;
   }
 }
 </style>

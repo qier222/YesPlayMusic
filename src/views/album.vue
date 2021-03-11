@@ -108,8 +108,11 @@
       :showFooter="false"
       :clickOutsideHide="true"
       title="专辑介绍"
-      >{{ album.description }}</Modal
     >
+      <p class="description-fulltext">
+        {{ album.description }}
+      </p>
+    </Modal>
     <ContextMenu ref="albumMenu">
       <div class="item">{{ $t("contextMenu.playNext") }}</div>
       <div class="item" @click="likeAlbum(true)">{{
@@ -311,6 +314,7 @@ export default {
       -webkit-line-clamp: 3;
       overflow: hidden;
       cursor: pointer;
+      white-space: pre-line;
       &:hover {
         transition: opacity 0.3s;
         opacity: 0.88;
@@ -360,5 +364,13 @@ export default {
     color: var(--color-text);
     margin-bottom: 20px;
   }
+}
+.description-fulltext {
+  font-size: 16px;
+  margin-top: 24px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
 }
 </style>

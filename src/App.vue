@@ -122,6 +122,7 @@ body {
 html {
   overflow-y: overlay;
   min-width: 768px;
+  overscroll-behavior: none;
 }
 
 main {
@@ -178,6 +179,10 @@ a {
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
+  background: rgba(128, 128, 128, 0.38);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
   background: var(--color-secondary-bg);
 }
 

@@ -93,6 +93,7 @@
 <script>
 import NProgress from "nprogress";
 import { loginWithPhone, loginWithEmail } from "@/api/auth";
+import { setCookies } from "@/utils/auth";
 import md5 from "crypto-js/md5";
 import { mapMutations } from "vuex";
 
@@ -136,7 +137,7 @@ export default {
       return true;
     },
     validateEmail() {
-      const emailReg = /^[A-Za-z0-9]+([_][A-Za-z0-9]+)*@([A-Za-z0-9]+\.)+[A-Za-z]{2,6}$/;
+      const emailReg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (
         this.email === "" ||
         this.password === "" ||
@@ -160,7 +161,7 @@ export default {
           .then(this.handleLoginResponse)
           .catch((error) => {
             this.processing = false;
-            alert(error);
+            alert(`发生错误，请检查你的账号密码是否正确\n${error}`);
           });
       } else {
         this.processing = this.validateEmail();
@@ -173,7 +174,7 @@ export default {
           .then(this.handleLoginResponse)
           .catch((error) => {
             this.processing = false;
-            alert(error);
+            alert(`发生错误，请检查你的账号密码是否正确\n${error}`);
           });
       }
     },
@@ -183,12 +184,14 @@ export default {
         return;
       }
       if (data.code === 200) {
+        setCookies(data.cookie);
         this.updateData({ key: "user", value: data.profile });
         this.updateData({ key: "loginMode", value: "account" });
         this.$router.push({ path: "/library" });
       } else {
         this.processing = false;
-        alert(data.msg ?? data.message);
+        console.log(data.msg);
+        alert(data.msg ?? data.message ?? "账号或密码错误，请检查");
       }
     },
   },

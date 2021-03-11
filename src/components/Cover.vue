@@ -50,9 +50,7 @@ export default {
   },
   computed: {
     imageStyles() {
-      let styles = {
-        objectFit: "cover",
-      };
+      let styles = {};
       if (this.fixedSize !== 0) {
         styles.width = this.fixedSize + "px";
         styles.height = this.fixedSize + "px";

@@ -12,6 +12,7 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import express from "express";
 import expressProxy from "express-http-proxy";
 import Store from "electron-store";
+import path from "path";
 
 class Background {
   constructor() {
@@ -94,9 +95,12 @@ class Background {
       minWidth: 1080,
       minHeight: 720,
       titleBarStyle: "hiddenInset",
+      frame: process.platform !== "win32",
       webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
+        enableRemoteModule: true,
+        contextIsolation: false,
       },
     });
 
@@ -135,11 +139,9 @@ class Background {
         });
     };
 
-    if (process.platform === "darwin") {
-      autoUpdater.on("update-available", (info) => {
-        showNewVersionMessage(info);
-      });
-    }
+    autoUpdater.on("update-available", (info) => {
+      showNewVersionMessage(info);
+    });
   }
 
   handleWindowEvents() {
@@ -171,7 +173,6 @@ class Background {
         ["win32", "linux"].includes(process.platform) &&
         this.store.get("settings.minimizeToTray")
       ) {
-        this.tray = createTray(this.window);
         this.window.hide();
       }
     });
@@ -203,6 +204,11 @@ class Background {
 
       // create menu
       createMenu(this.window);
+
+      // create tray
+      if (["win32", "linux"].includes(process.platform)) {
+        this.tray = createTray(this.window);
+      }
 
       // create dock menu for macOS
       app.dock.setMenu(createDockMenu(this.window));

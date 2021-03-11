@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>二维码登录</title>
+  </head>
+
+  <body>
+    <img id="qrImg" />
+    <div id="info" class="info"></div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.min.js
+    "></script>
+    <script>
+      async function checkStatus(key) {
+        const res = await axios({
+          url: `/login/qr/check?key=${key}&timerstamp=${Date.now()}`,
+          withCredentials: true, //关键
+        })
+        return res.data
+      }
+      async function getLoginStatus() {
+        const res = await axios({
+          url: `/login/status?timerstamp=${Date.now()}`,
+          withCredentials: true, //关键
+        })
+        document.querySelector('#info').innerText = JSON.stringify(res.data, null, 2)
+      }
+      async function login() {
+        let timer
+        let timestamp = Date.now()
+        this.getLoginStatus()
+        const res = await axios({
+          url: `/login/qr/key?timerstamp=${Date.now()}`,
+          withCredentials: true, //关键
+        })
+        const key = res.data.data.unikey
+        const res2 = await axios({
+          url: `/login/qr/create?key=${key}&qrimg=true&timerstamp=${Date.now()}`,
+          withCredentials: true, //关键
+        })
+        document.querySelector('#qrImg').src = res2.data.data.qrimg
+
+        timer = setInterval(async () => {
+          const statusRes = await this.checkStatus(key)
+          if (statusRes.code === 800) {
+            alert('二维码已过期,请重新获取')
+            clearInterval(timer)
+          }
+          if (statusRes.code === 803) {
+            // 这一步会返回cookie
+            clearInterval(timer)
+            alert('授权登录成功')
+            await this.getLoginStatus()
+          }
+        }, 3000)
+      }
+      login()
+    </script>
+    <style>
+        .info{
+          white-space: pre;
+        }
+    </style>
+  </body>
+</html>

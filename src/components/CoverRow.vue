@@ -15,7 +15,7 @@
             }}
           </span>
         </div>
-        <div class="title">
+        <div class="title" :style="{ fontSize: subTextFontSize }">
           <span class="explicit-symbol" v-if="isExplicit(item)"
             ><ExplicitSymbol
           /></span>
@@ -46,6 +46,7 @@ export default {
     items: { type: Array, required: true },
     type: { type: String, required: true },
     subText: { type: String, default: "null" },
+    subTextFontSize: { type: String, default: "16px" },
     showPlayCount: { type: Boolean, default: false },
     columnNumber: { type: Number, default: 5 },
     gap: { type: String, default: "44px 24px" },
@@ -100,11 +101,11 @@ export default {
         img1v1ID = img1v1ID[img1v1ID.length - 1];
         if (img1v1ID === "5639395138885805.jpg") {
           // 没有头像的歌手，网易云返回的img1v1Url并不是正方形的 😅😅😅
-          return "https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512x512";
+          return "https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512y512";
         }
       }
       let img = item.img1v1Url || item.picUrl || item.coverImgUrl;
-      return `${img}?param=512x512`;
+      return `${img}?param=512y512`;
     },
   },
 };
@@ -127,6 +128,7 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
+      word-break: break-all;
     }
     .info {
       font-size: 12px;
@@ -136,6 +138,7 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
+      word-break: break-word;
     }
   }
 }

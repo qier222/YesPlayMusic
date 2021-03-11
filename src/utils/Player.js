@@ -6,6 +6,7 @@ import { cacheTrack } from "@/utils/db";
 import { getAlbum } from "@/api/album";
 import { getPlaylistDetail } from "@/api/playlist";
 import { getArtist } from "@/api/artist";
+import { personalFM, fmTrash } from "@/api/others";
 import store from "@/store";
 import { isAccountLoggedIn } from "@/utils/auth";
 
@@ -29,6 +30,9 @@ export default class {
     this._currentTrack = { id: 86827685 };
     this._playNextList = []; // 当这个list不为空时，会优先播放这个list的歌
     this._playing = false;
+    this._isPersonalFM = false;
+    this._personalFMTrack = { id: 0 };
+    this._personalFMNextTrack = { id: 0 };
 
     this._howler = null;
     Object.defineProperty(this, "_howler", {
@@ -99,20 +103,37 @@ export default class {
   get playNextList() {
     return this._playNextList;
   }
+  get isPersonalFM() {
+    return this._isPersonalFM;
+  }
+  get personalFMTrack() {
+    return this._personalFMTrack;
+  }
 
   _init() {
     Howler.autoUnlock = false;
+    Howler.usingWebAudio = true;
     this._loadSelfFromLocalStorage();
-    this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
-      this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
-      setInterval(
-        () =>
-          localStorage.setItem("playerCurrentTrackTime", this._howler.seek()),
-        1000
-      );
-    }); // update audio source and init howler
-    this._initMediaSession();
+    if (this._enabled) {
+      this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
+        this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
+        setInterval(
+          () =>
+            localStorage.setItem("playerCurrentTrackTime", this._howler.seek()),
+          1000
+        );
+      }); // update audio source and init howler
+      this._initMediaSession();
+    }
     Howler.volume(this.volume);
+    if (this._personalFMTrack.id === 0 || this._personalFMNextTrack.id === 0) {
+      // init fm
+      personalFM().then((result) => {
+        this._personalFMTrack = result.data[0];
+        this._personalFMNextTrack = result.data[1];
+        return this._personalFMTrack;
+      });
+    }
   }
   _getNextTrack() {
     // 返回 [trackID, index]
@@ -157,7 +178,11 @@ export default class {
       html5: true,
       format: ["mp3", "flac"],
     });
-    if (autoplay) this.play();
+    if (autoplay) {
+      this.play();
+      document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+    }
+    this.setOutputDevice();
     this._howler.once("end", () => {
       this._nextTrackCallback();
     });
@@ -214,7 +239,6 @@ export default class {
       let track = data.songs[0];
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
-      document.title = `${track.name} · ${track.ar[0].name} - YesPlayMusic`;
       return this._getAudioSource(track).then((source) => {
         if (source) {
           this._playAudioSource(source, autoplay);
@@ -252,6 +276,9 @@ export default class {
       navigator.mediaSession.setActionHandler("stop", () => {
         this.pause();
       });
+      navigator.mediaSession.setActionHandler("seekto", (event) => {
+        this.seek(event.seekTime);
+      });
     }
   }
   _updateMediaSessionMetaData(track) {
@@ -275,10 +302,16 @@ export default class {
   _nextTrackCallback() {
     this._scrobble(true);
     if (this.repeatMode === "one") {
-      this._howler.play();
+      this._replaceCurrentTrack(this._currentTrack.id);
     } else {
       this.playNextTrack();
     }
+  }
+  _loadPersonalFMNextTrack() {
+    return personalFM().then((result) => {
+      this._personalFMNextTrack = result.data[0];
+      return this._personalFMNextTrack;
+    });
   }
 
   currentTrackID() {
@@ -288,11 +321,19 @@ export default class {
   appendTrack(trackID) {
     this.list.append(trackID);
   }
-  playNextTrack() {
+  playNextTrack(isFM = false) {
+    if (this._isPersonalFM || isFM) {
+      this._isPersonalFM = true;
+      this._personalFMTrack = this._personalFMNextTrack;
+      this._replaceCurrentTrack(this._personalFMTrack.id);
+      this._loadPersonalFMNextTrack();
+      return true;
+    }
     // TODO: 切换歌曲时增加加载中的状态
     const [trackID, index] = this._getNextTrack();
     if (trackID === undefined) {
       this._howler.stop();
+      this._playing = false;
       return false;
     }
     this.current = index;
@@ -319,10 +360,20 @@ export default class {
   pause() {
     this._howler.pause();
     this._playing = false;
+    document.title = "YesPlayMusic";
   }
   play() {
+    if (this._howler.playing()) return;
     this._howler.play();
     this._playing = true;
+    document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+  }
+  playOrPause() {
+    if (this._howler.playing()) {
+      this.pause();
+    } else {
+      this.play();
+    }
   }
   seek(time = null) {
     if (time !== null) this._howler.seek(time);
@@ -336,6 +387,10 @@ export default class {
       this.volume = 0;
     }
   }
+  setOutputDevice() {
+    if (this._howler._sounds.length <= 0) return;
+    this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
+  }
 
   replacePlaylist(
     trackIDs,
@@ -343,6 +398,7 @@ export default class {
     playlistSourceType,
     autoPlayTrackID = "first"
   ) {
+    this._isPersonalFM = false;
     if (!this._enabled) this._enabled = true;
     this.list = trackIDs;
     this.current = 0;
@@ -379,6 +435,22 @@ export default class {
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);
     if (playNow) this.playNextTrack();
+  }
+  playPersonalFM() {
+    this._isPersonalFM = true;
+    if (!this._enabled) this._enabled = true;
+    if (this._currentTrack.id !== this._personalFMTrack.id) {
+      this._replaceCurrentTrack(this._personalFMTrack.id).then(() =>
+        this.playOrPause()
+      );
+    } else {
+      this.playOrPause();
+    }
+  }
+  moveToFMTrash() {
+    this._isPersonalFM = true;
+    this.playNextTrack();
+    fmTrash(this._personalFMTrack.id);
   }
 
   sendSelfToIpcMain() {

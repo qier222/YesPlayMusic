@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>test</title>
+</head>
+
+<body>
+  <p>请在控制台看结果</p>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+  <script>
+    const phone = ''
+    const password = ''
+    if (!phone || !password) {
+      const msg = '请设置你的手机号码和密码'
+      alert(msg)
+      throw new Error(msg)
+    }
+    $.ajax({
+      url: `/login/cellphone?phone=${phone}&password=${password}`,
+      xhrFields: {
+        withCredentials: true, //关键
+      },
+      success: function (data) {
+        console.log(data)
+        $.ajax({
+          url: `/recommend/resource `,
+          xhrFields: {
+            withCredentials: true, //关键
+          },
+          success: function (data) {
+            console.log(data)
+          },
+          error: function (err) {
+            console.log(err)
+          },
+        })
+      },
+      error: function (err) {
+        console.log(err)
+      },
+    })
+
+    axios({
+      url: `/login/cellphone?phone=${phone}&password=${password}`,
+      withCredentials: true, //关键
+    }).then(function (res) {
+      console.log(res.data)
+      axios({
+        url: `/recommend/resource`,
+        withCredentials: true, //关键
+      }).then(function (res) {
+        console.log(res.data)
+      })
+    })
+  </script>
+</body>
+
+</html>

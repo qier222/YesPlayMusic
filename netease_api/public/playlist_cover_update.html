@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>歌单封面上传</title>
+  </head>
+
+  <body>
+    <input id="file" type="file" name="filename" />
+    <img
+      id="playlist_cover"
+      style="height: 200px; width: 200px; border-radius: 50%"
+    />
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.min.js"></script>
+    <script>
+      const phone = ''
+      const password = ''
+      const playlist_id = ''
+      let cookieToken = ''
+      if (!phone || !password) {
+        const msg = '请设置你的手机号码和密码'
+        alert(msg)
+        throw new Error(msg)
+      }
+      if (!playlist_id) {
+        const msg = '请设置你的歌单id'
+        alert(msg)
+        throw new Error(msg)
+      }
+
+      main()
+      login()
+      async function main() {
+        document.querySelector('input[type="file"]').addEventListener(
+          'change',
+          function (e) {
+            var file = this.files[0]
+            upload(file)
+          },
+          false,
+        )
+        const res = await axios({
+          url: `/playlist/detail?id=${playlist_id}&timestamp=${Date.now()}`,
+        })
+        document.querySelector('#playlist_cover').src = res.data.playlist.coverImgUrl
+      }
+      async function login() {
+        const res = await axios({
+          url: `/login/cellphone?phone=${phone}&password=${password}`,
+          withCredentials: true, //关键
+        })
+        cookieToken = res.data.cookie
+      }
+      async function upload(file) {
+        var formData = new FormData()
+        formData.append('imgFile', file)
+        const imgSize = await getImgSize(file)
+        const res = await axios({
+          method: 'post',
+          url: `http://localhost:3000/playlist/cover/update?id=${playlist_id}&cookie=${cookieToken}&imgSize=${
+            imgSize.width
+          }&imgX=0&imgY=0&timestamp=${Date.now()}`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          data: formData,
+        })
+        document.querySelector('#playlist_cover').src = res.data.data.url
+      }
+      function getImgSize(file) {
+        return new Promise((resolve, reject) => {
+          let reader = new FileReader()
+          reader.readAsDataURL(file)
+          reader.onload = function (theFile) {
+            let image = new Image()
+            image.src = theFile.target.result
+            image.onload = function () {
+              resolve({
+                width: this.width,
+                height: this.height,
+              })
+            }
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

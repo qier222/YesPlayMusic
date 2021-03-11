@@ -144,6 +144,14 @@ export default {
         this.playTrackOnListByID(trackID);
       } else if (this.dbclickTrackFunc === "playPlaylistByID") {
         this.$store.state.player.playPlaylistByID(this.id, trackID);
+      } else if (this.dbclickTrackFunc === "playAList") {
+        let trackIDs = this.tracks.map((t) => t.id);
+        this.$store.state.player.replacePlaylist(
+          trackIDs,
+          this.id,
+          "artist",
+          trackID
+        );
       }
     },
     playThisListDefault(trackID) {

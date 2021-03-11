@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>更新头像</title>
+  </head>
+
+  <body>
+    <input id="file" type="file" />
+    <img id="avatar" style="height: 200px; width: 200px; border-radius: 50%" />
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.min.js
+    "></script>
+    <script>
+      const phone = ''
+      const password = ''
+      let cookieToken = ''
+      if (!phone || !password) {
+        const msg = '请设置你的手机号码和密码'
+        alert(msg)
+        throw new Error(msg)
+      }
+
+      main()
+      login()
+      async function main() {
+        document.querySelector('input[type="file"]').addEventListener(
+          'change',
+          function (e) {
+            var file = this.files[0]
+            upload(file)
+          },
+          false,
+        )
+        const res = await axios({
+          url: `/user/detail?uid=32953014&timestamp=${Date.now()}`,
+          withCredentials: true, //关键
+        })
+        document.querySelector('#avatar').src = res.data.profile.avatarUrl
+      }
+      async function login() {
+        const res = await axios({
+          url: `/login/cellphone?phone=${phone}&password=${password}`,
+          withCredentials: true, //关键
+        })
+        cookieToken = res.data.cookie
+      }
+      async function upload(file) {
+        var formData = new FormData()
+        formData.append('imgFile', file)
+        const imgSize = await getImgSize(file)
+        const res = await axios({
+          method: 'post',
+          url: `http://localhost:3000/avatar/upload?cookie=${cookieToken}&imgSize=${
+            imgSize.width
+          }&imgX=0&imgY=0&timestamp=${Date.now()}`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          data: formData,
+        })
+        document.querySelector('#avatar').src = res.data.data.url
+      }
+      function getImgSize(file) {
+        return new Promise((resolve, reject) => {
+          let reader = new FileReader()
+          reader.readAsDataURL(file)
+          reader.onload = function (theFile) {
+            let image = new Image()
+            image.src = theFile.target.result
+            image.onload = function () {
+              resolve({
+                width: this.width,
+                height: this.height,
+              })
+            }
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

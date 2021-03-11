@@ -76,6 +76,23 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"> {{ $t("settings.deviceSelector") }} </div>
+        </div>
+        <div class="right">
+          <select v-model="outputDevice" :disabled="withoutAudioPriviledge">
+            <option
+              v-for="device in allOutputDevices"
+              :key="device.deviceId"
+              :value="device.deviceId"
+              :selected="device.deviceId == outputDevice"
+            >
+              {{ $t(device.label) }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title">
             {{ $t("settings.automaticallyCacheSongs") }}
           </div>
@@ -227,10 +244,17 @@ export default {
         size: "0KB",
         length: 0,
       },
+      allOutputDevices: [
+        {
+          deviceId: "default",
+          label: "settings.permissionRequired",
+        },
+      ],
+      withoutAudioPriviledge: true,
     };
   },
   computed: {
-    ...mapState(["settings", "data"]),
+    ...mapState(["player", "settings", "data"]),
     isElectron() {
       return process.env.IS_ELECTRON;
     },
@@ -268,6 +292,26 @@ export default {
         if (value === this.settings.musicQuality) return;
         this.$store.commit("changeMusicQuality", value);
         this.clearCache("tracks");
+      },
+    },
+    outputDevice: {
+      get() {
+        if (this.withoutAudioPriviledge === true) this.getAllOutputDevices();
+        const isValidDevice = this.allOutputDevices.find(
+          (device) => device.deviceId === this.settings.outputDevice
+        );
+        if (
+          this.settings.outputDevice === undefined ||
+          isValidDevice === undefined
+        )
+          return "default"; // Default deviceId
+        return this.settings.outputDevice;
+      },
+      set(deviceId) {
+        if (deviceId === this.settings.outputDevice || deviceId === undefined)
+          return;
+        this.$store.commit("changeOutputDevice", deviceId);
+        this.player.setOutputDevice();
       },
     },
     showGithubIcon: {
@@ -356,6 +400,26 @@ export default {
     },
   },
   methods: {
+    getAllOutputDevices() {
+      navigator.mediaDevices.enumerateDevices().then((devices) => {
+        this.allOutputDevices = devices.filter((device) => {
+          return device.kind == "audiooutput";
+        });
+        if (
+          this.allOutputDevices.length > 0 &&
+          this.allOutputDevices[0].label !== ""
+        ) {
+          this.withoutAudioPriviledge = false;
+        } else {
+          this.allOutputDevices = [
+            {
+              deviceId: "default",
+              label: "settings.permissionRequired",
+            },
+          ];
+        }
+      });
+    },
     logout() {
       doLogout();
       this.$router.push({ name: "home" });

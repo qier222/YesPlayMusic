@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>云盘上传</title>
+</head>
+
+<body>
+  <input id="file" type="file" multiple/>
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.min.js"></script>
+  <script>
+    const phone = '' // 这里填手机号
+    const password = '' // 这里填密码
+    const fileUpdateTime = {}
+    let fileLength = 0
+    let cookieToken = ''
+    if (!phone || !password) {
+      const msg = '请设置你的手机号码和密码'
+      alert(msg)
+      throw new Error(msg)
+    }
+    login()
+    main()
+    async function login() {
+      const res = await axios({
+        url: `/login/cellphone?phone=${phone}&password=${encodeURIComponent(password)}`,
+        withCredentials: true, //关键
+      })
+      cookieToken = res.data.cookie
+    }
+    function main() {
+      document
+        .querySelector('input[type="file"]')
+        .addEventListener('change', function (e) {
+          console.log(this.files)
+          let currentIndx = 0
+          fileLength = this.files.length
+          for (const item of this.files) {
+            currentIndx += 1
+            upload(item, currentIndx)
+          }
+        })
+    }
+
+    function upload(file, currentIndx) {
+      var formData = new FormData()
+      formData.append('songFile', file)
+      axios({
+        method: 'post',
+        url: `http://localhost:3000/cloud?time=${Date.now()}`,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data: formData,
+      }).then(res => {
+        console.log(`${file.name} 上传成功`)
+        if (currentIndx >= fileLength) { console.log('上传完毕') }
+      }).catch(async err => {
+        console.log(err)
+        console.log(fileUpdateTime)
+        fileUpdateTime[file.name] ? fileUpdateTime[file.name] += 1 : fileUpdateTime[file.name] = 1
+        if (fileUpdateTime[file.name] >= 4) {
+          console.error(`丢，这首歌怎么都传不上：${file.name}`)
+          return
+        } else {
+          console.error(`${file.name} 失败 ${fileUpdateTime[file.name]} 次`)
+        }
+        await login()
+        upload(file, currentIndx)
+      })
+    }
+  </script>
+</body>
+
+</html>

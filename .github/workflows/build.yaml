@@ -1,4 +1,4 @@
-name: Build/release
+name: Build / Release
 
 on: [push, pull_request]
 
@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     steps:
       - name: Check out Git repository
@@ -17,10 +17,27 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 12.16.3
+          node-version: 14.16.0
+
+      - name: Install RPM & Pacman (on Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update &&
+          sudo apt-get install --no-install-recommends -y rpm &&
+          sudo apt-get install --no-install-recommends -y bsdtar
+
+      - name: Install Snapcraft (on Ubuntu)
+        uses: samuelmeuli/action-snapcraft@v1
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
 
       - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+        uses: samuelmeuli/action-electron-builder@v1.6.0
+        env:
+          VUE_APP_ELECTRON_API_URL: /api
+          VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
+          VUE_APP_ENABLE_SENTRY: false
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
@@ -35,11 +52,17 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: YesPlayMusic-mac
-          path: dist_electron/*.dmg
+          path: dist_electron/*-universal.dmg
           if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v2
         with:
           name: YesPlayMusic-win
-          path: dist_electron/*.exe
+          path: dist_electron/*Setup*.exe
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: YesPlayMusic-linux
+          path: dist_electron/*.AppImage
           if-no-files-found: ignore
