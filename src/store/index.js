@@ -26,9 +26,10 @@ const options = {
 const store = new Vuex.Store(options);
 
 if ([undefined, null].includes(store.state.settings.lang)) {
-  let lang = "en";
-  if (navigator.language.slice(0, 2) === "zh") lang = "zh-CN";
-  store.state.settings.lang = lang;
+  const defaultLang = "en";
+  // when more languages are available, use Map instead of prefer logic
+  const preferChinese = navigator.language.slice(0, 2) === "zh";
+  store.state.settings.lang = preferChinese ? "zh-CN" : defaultLang;
   localStorage.setItem("settings", JSON.stringify(store.state.settings));
 }
 
@@ -44,7 +45,7 @@ window
 
 let player = new Player();
 player = new Proxy(player, {
-  set(target, prop, val) {
+  set (target, prop, val) {
     // console.log({ prop, val });
     target[prop] = val;
     if (prop === "_howler") return true;
