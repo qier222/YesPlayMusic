@@ -43,6 +43,8 @@
     "electron-log": "^4.3.0",
     "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.0",
     "express-http-proxy": "^1.6.2",
@@ -92,7 +94,8 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "plugin:prettier/recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"

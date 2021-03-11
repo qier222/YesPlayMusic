@@ -128,7 +128,7 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title">显示歌词翻译</div>
+          <div class="title">{{ $t("settings.showLyricsTranslation") }}</div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -144,7 +144,7 @@
       </div>
       <div class="item" v-if="isElectron && !isMac">
         <div class="left">
-          <div class="title">最小化到托盘</div>
+          <div class="title">{{ $t("settings.minimizeToTray") }}</div>
         </div>
         <div class="right">
           <div class="toggle">
