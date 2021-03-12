@@ -128,14 +128,18 @@
       </div>
       <div class="right-side">
         <transition name="slide-fade">
-          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric">
+          <div
+            class="lyrics-container"
+            :style="lyricFontSize"
+            ref="lyricsContainer"
+            v-show="!noLyric"
+          >
             <div class="line" id="line-1"></div>
             <div
               class="line"
               :class="{
                 highlight: highlightLyricIndex === index,
               }"
-              :style="lineStyles"
               v-for="(line, index) in lyricWithTranslation"
               :key="index"
               :id="`line${index}`"
@@ -228,12 +232,9 @@ export default {
       }
       return ret;
     },
-    haveTranslation() {
-      return this.tlyric.length > 0;
-    },
-    lineStyles() {
+    lyricFontSize() {
       return {
-        fontSize: this.haveTranslation ? "28px" : "36px",
+        fontSize: this.$store.state.settings.lyricFontSize + "px",
       };
     },
     playerRef() {

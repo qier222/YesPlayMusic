@@ -123,6 +123,13 @@ export default {
       high: "High",
       lossless: "Lossless",
     },
+    lyricFontSize: {
+      text: "Lyric Font Size",
+      small: "Small",
+      medium: "Medium",
+      large: "Large(Default)",
+      xlarge: "X-Large",
+    },
     deviceSelector: "Audio Output Device",
     permissionRequired: "Microphone Permission Required",
     appearance: {

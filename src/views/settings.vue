@@ -76,6 +76,27 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"> {{ $t("settings.lyricFontSize.text") }} </div>
+        </div>
+        <div class="right">
+          <select v-model="lyricFontSize">
+            <option value="14">
+              {{ $t("settings.lyricFontSize.small") }} - 14px
+            </option>
+            <option value="22">
+              {{ $t("settings.lyricFontSize.medium") }} - 22px
+            </option>
+            <option value="28">
+              {{ $t("settings.lyricFontSize.large") }} - 28px
+            </option>
+            <option value="36">
+              {{ $t("settings.lyricFontSize.xlarge") }} - 36px
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title"> {{ $t("settings.deviceSelector") }} </div>
         </div>
         <div class="right">
@@ -292,6 +313,15 @@ export default {
         if (value === this.settings.musicQuality) return;
         this.$store.commit("changeMusicQuality", value);
         this.clearCache("tracks");
+      },
+    },
+    lyricFontSize: {
+      get() {
+        if (this.settings.lyricFontSize === undefined) return 28;
+        return this.settings.lyricFontSize;
+      },
+      set(value) {
+        this.$store.commit("changeLyricFontSize", value);
       },
     },
     outputDevice: {
