@@ -234,7 +234,7 @@ export default {
     },
     lyricFontSize() {
       return {
-        fontSize: this.$store.state.settings.lyricFontSize + "px",
+        fontSize: `${this.$store.state.settings.lyricFontSize || 28}px`,
       };
     },
     playerRef() {
