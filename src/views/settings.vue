@@ -80,17 +80,17 @@
         </div>
         <div class="right">
           <select v-model="lyricFontSize">
+            <option value="14">
+              {{ $t("settings.lyricFontSize.small") }} - 14px
+            </option>
+            <option value="22">
+              {{ $t("settings.lyricFontSize.medium") }} - 22px
+            </option>
             <option value="28">
-              {{ $t("settings.lyricFontSize.small") }} - 28px
+              {{ $t("settings.lyricFontSize.large") }} - 28px
             </option>
             <option value="36">
-              {{ $t("settings.lyricFontSize.medium") }} - 36px
-            </option>
-            <option value="44">
-              {{ $t("settings.lyricFontSize.large") }} - 44px
-            </option>
-            <option value="52">
-              {{ $t("settings.lyricFontSize.xlarge") }} - 52px
+              {{ $t("settings.lyricFontSize.xlarge") }} - 36px
             </option>
           </select>
         </div>
