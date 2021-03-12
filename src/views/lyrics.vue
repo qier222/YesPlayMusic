@@ -128,14 +128,18 @@
       </div>
       <div class="right-side">
         <transition name="slide-fade">
-          <div class="lyrics-container" ref="lyricsContainer" v-show="!noLyric">
+          <div
+            class="lyrics-container"
+            :style="lyricFontSize"
+            ref="lyricsContainer"
+            v-show="!noLyric"
+          >
             <div class="line" id="line-1"></div>
             <div
               class="line"
               :class="{
                 highlight: highlightLyricIndex === index,
               }"
-              :style="lineStyles"
               v-for="(line, index) in lyricWithTranslation"
               :key="index"
               :id="`line${index}`"
@@ -147,18 +151,6 @@
       </div>
       <div class="close-button" @click="toggleLyrics">
         <button><svg-icon icon-class="arrow-down" /></button>
-      </div>
-      <div
-        class="plus-lyric-font-size-button"
-        @click="setLyricFontSize('plus')"
-      >
-        <button><svg-icon icon-class="plus" /></button>
-      </div>
-      <div
-        class="minus-lyric-font-size-button"
-        @click="setLyricFontSize('minus')"
-      >
-        <button><svg-icon icon-class="minus" /></button>
       </div>
     </div>
   </transition>
@@ -240,12 +232,9 @@ export default {
       }
       return ret;
     },
-    haveTranslation() {
-      return this.tlyric.length > 0;
-    },
-    lineStyles() {
+    lyricFontSize() {
       return {
-        fontSize: this.haveTranslation ? "28px" : "36px",
+        fontSize: this.$store.state.settings.lyricFontSize + "px",
       };
     },
     playerRef() {
@@ -328,20 +317,6 @@ export default {
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
-    },
-    setLyricFontSize(param) {
-      const childNodeList = document.querySelectorAll(".lyrics-container")[0]
-        .childNodes;
-      childNodeList.forEach((element) => {
-        if (param === "plus") {
-          element.style.fontSize =
-            parseFloat(element.style.fontSize) + 2 + "px";
-        }
-        if (param === "minus") {
-          element.style.fontSize =
-            parseFloat(element.style.fontSize) - 2 + "px";
-        }
-      });
     },
   },
   watch: {
@@ -546,57 +521,6 @@ export default {
 .close-button {
   position: fixed;
   top: 24px;
-  right: 24px;
-  z-index: 300;
-  border-radius: 0.75rem;
-  height: 44px;
-  width: 44px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.28;
-  transition: 0.2s;
-  -webkit-app-region: no-drag;
-  .svg-icon {
-    color: var(--color-text);
-    padding-top: 5px;
-    height: 22px;
-    width: 22px;
-  }
-  &:hover {
-    background: var(--color-secondary-bg);
-    opacity: 0.88;
-  }
-}
-.plus-lyric-font-size-button {
-  position: fixed;
-  top: 74px;
-  right: 24px;
-  z-index: 300;
-  border-radius: 0.75rem;
-  height: 44px;
-  width: 44px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.28;
-  transition: 0.2s;
-  -webkit-app-region: no-drag;
-  .svg-icon {
-    color: var(--color-text);
-    padding-top: 5px;
-    height: 22px;
-    width: 22px;
-  }
-  &:hover {
-    background: var(--color-secondary-bg);
-    opacity: 0.88;
-  }
-}
-
-.minus-lyric-font-size-button {
-  position: fixed;
-  top: 124px;
   right: 24px;
   z-index: 300;
   border-radius: 0.75rem;

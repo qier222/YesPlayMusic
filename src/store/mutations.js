@@ -9,6 +9,9 @@ export default {
   changeMusicQuality(state, value) {
     state.settings.musicQuality = value;
   },
+  changeLyricFontSize(state, value) {
+    state.settings.lyricFontSize = value;
+  },
   changeOutputDevice(state, deviceId) {
     state.settings.outputDevice = deviceId;
   },
