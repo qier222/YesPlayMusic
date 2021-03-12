@@ -24,6 +24,11 @@ export default {
     albums: "专辑",
     artists: "艺人",
     mvs: "MV",
+    newPlayList: "新建歌单",
+    userProfileMenu: {
+      settings: "设置",
+      logout: "退出登录",
+    },
   },
   explore: {
     explore: "发现",
@@ -130,6 +135,8 @@ export default {
     automaticallyCacheSongs: "自动缓存歌曲",
     clearSongsCache: "清除歌曲缓存",
     cacheCount: "已缓存 {song} 首 ({size})",
+    showLyricsTranslation: "显示歌词翻译",
+    minimizeToTray: "最小化到托盘",
     showGitHubIcon: "显示 GitHub 图标",
     showUnavailableSongInGreyStyle: "显示不可播放的歌曲为灰色",
     showPlaylistsByAppleMusic: "首页显示来自 Apple Music 的歌单",

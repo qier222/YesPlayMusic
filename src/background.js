@@ -12,7 +12,6 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import express from "express";
 import expressProxy from "express-http-proxy";
 import Store from "electron-store";
-import path from "path";
 
 class Background {
   constructor() {
