@@ -128,7 +128,7 @@ export default {
       text: "歌词字体大小",
       small: "小",
       medium: "中",
-      large: "大",
+      large: "大(默认)",
       xlarge: "超大",
     },
     deviceSelector: "音频输出设备",

@@ -127,7 +127,7 @@ export default {
       text: "Lyric Font Size",
       small: "Small",
       medium: "Medium",
-      large: "Large",
+      large: "Large(Default)",
       xlarge: "X-Large",
     },
     deviceSelector: "Audio Output Device",
