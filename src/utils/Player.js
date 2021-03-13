@@ -334,6 +334,26 @@ export default class {
       return this._personalFMNextTrack;
     });
   }
+  _playDiscordPresence(track, seekTime = 0) {
+    if (
+      process.env.IS_ELECTRON !== true ||
+      store.state.settings.enableDiscordRichPresence === false
+    ) {
+      return null;
+    }
+    let copyTrack = { ...track }
+    copyTrack.dt -= seekTime * 1000;
+    ipcRenderer.send("playDiscordPresence", copyTrack);
+  }
+  _pauseDiscordPresence(track) {
+    if (
+      process.env.IS_ELECTRON !== true ||
+      store.state.settings.enableDiscordRichPresence === false
+    ) {
+      return null;
+    }
+    ipcRenderer.send("pauseDiscordPresence", track);
+  }
 
   currentTrackID() {
     const { list, current } = this._getListAndCurrent();
@@ -382,12 +402,14 @@ export default class {
     this._howler.pause();
     this._playing = false;
     document.title = "YesPlayMusic";
+    this._pauseDiscordPresence(this._currentTrack);
   }
   play() {
     if (this._howler.playing()) return;
     this._howler.play();
     this._playing = true;
     document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+    this._playDiscordPresence(this._currentTrack, this.seek());
   }
   playOrPause() {
     if (this._howler.playing()) {
@@ -397,7 +419,10 @@ export default class {
     }
   }
   seek(time = null) {
-    if (time !== null) this._howler.seek(time);
+    if (time !== null) {
+      this._howler.seek(time);
+      if (this._playing) this._playDiscordPresence(this._currentTrack, this.seek());
+    }
     return this._howler === null ? 0 : this._howler.seek();
   }
   mute() {

@@ -132,6 +132,7 @@ export default {
     showGitHubIcon: "Show GitHub icon",
     showUnavailableSongInGreyStyle: "Show unavailable song in grey style",
     showPlaylistsByAppleMusic: "Show playlists by Apple Music",
+    enableDiscordRichPresence: "Enable Discord Rich Presence (Only for desktop)",
   },
   contextMenu: {
     play: "Play",
