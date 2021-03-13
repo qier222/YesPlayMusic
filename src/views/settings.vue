@@ -233,6 +233,24 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title">
+            {{ $t("settings.enableDiscordRichPresence") }}</div
+          >
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="enable-discord-rich-presence"
+              id="enable-discord-rich-presence"
+              v-model="enableDiscordRichPresence"
+            />
+            <label for="enable-discord-rich-presence"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title" style="transform: scaleX(-1)">🐈️ 🏳️‍🌈</div>
         </div>
         <div class="right">
@@ -424,6 +442,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "minimizeToTray",
+          value,
+        });
+      },
+    },
+    enableDiscordRichPresence: {
+      get() {
+        return this.settings.enableDiscordRichPresence;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "enableDiscordRichPresence",
           value,
         });
       },

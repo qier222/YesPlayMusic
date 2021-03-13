@@ -16,6 +16,7 @@ let localStorage = {
     nyancatStyle: false,
     showLyricsTranslation: true,
     minimizeToTray: false,
+    enableDiscordRichPresence: false,
   },
   data: {
     user: {},
