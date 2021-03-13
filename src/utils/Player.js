@@ -341,7 +341,7 @@ export default class {
     ) {
       return null;
     }
-    let copyTrack = { ...track }
+    let copyTrack = { ...track };
     copyTrack.dt -= seekTime * 1000;
     ipcRenderer.send("playDiscordPresence", copyTrack);
   }
@@ -421,7 +421,8 @@ export default class {
   seek(time = null) {
     if (time !== null) {
       this._howler.seek(time);
-      if (this._playing) this._playDiscordPresence(this._currentTrack, this.seek());
+      if (this._playing)
+        this._playDiscordPresence(this._currentTrack, this.seek());
     }
     return this._howler === null ? 0 : this._howler.seek();
   }
