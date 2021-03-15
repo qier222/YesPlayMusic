@@ -1,10 +1,16 @@
 <template>
   <transition name="slide-up">
     <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
-      <div
-        class="dynamic-background"
-        :style="{ backgroundImage: `url(${imageUrl})` }"
-      />
+      <div class="dynamic-background">
+        <div
+          class="top-right"
+          :style="{ backgroundImage: `url(${imageUrl})` }"
+        />
+        <div
+          class="bottom-left"
+          :style="{ backgroundImage: `url(${imageUrl})` }"
+        />
+      </div>
       <div class="left-side">
         <div>
           <div class="cover">
@@ -362,28 +368,37 @@ export default {
 }
 
 .dynamic-background {
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  filter: blur(50px) opacity(0.6);
-  background-size: cover;
-  animation: dynamics 200s ease infinite;
-  -webkit-animation: dynamics 200s ease infinite;
-  -moz-animation: dynamics 200s ease infinite;
+  .top-right,
+  .bottom-left {
+    z-index: 0;
+    width: 120vw;
+    height: 120vw;
+    position: absolute;
+    filter: blur(50px) opacity(0.6);
+    background-size: cover;
+    animation: rotate 150s linear infinite;
+  }
+
+  .top-right {
+    right: 0;
+    top: 0;
+    mix-blend-mode: luminosity;
+  }
+
+  .bottom-left {
+    left: 0;
+    bottom: 0;
+    animation-direction: reverse;
+    animation-delay: 10s;
+  }
 }
 
-@keyframes dynamic-background {
+@keyframes rotate {
   0% {
-    background-position: 0 0;
+    transform: rotate(0deg);
   }
-
-  50% {
-    background-position: 50% 100%;
-  }
-
   100% {
-    background-position: 100% 0;
+    transform: rotate(360deg);
   }
 }
 
