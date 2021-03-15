@@ -1,7 +1,10 @@
 <template>
   <transition name="slide-up">
     <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
-      <div class="dynamic-background">
+      <div
+        v-if="this.$store.state.settings.showDynamicBackground"
+        class="dynamic-background"
+      >
         <div
           class="top-right"
           :style="{ backgroundImage: `url(${imageUrl})` }"

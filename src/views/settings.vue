@@ -163,6 +163,22 @@
           </div>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title">{{ $t("settings.showDynamicBackground") }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-dynamic-background"
+              id="show-dynamic-background"
+              v-model="showDynamicBackground"
+            />
+            <label for="show-dynamic-background"></label>
+          </div>
+        </div>
+      </div>
       <div class="item" v-if="isElectron && !isMac">
         <div class="left">
           <div class="title">{{ $t("settings.minimizeToTray") }}</div>
@@ -413,6 +429,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showLyricsTranslation",
+          value,
+        });
+      },
+    },
+    showDynamicBackground: {
+      get() {
+        return this.settings.showDynamicBackground;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showDynamicBackground",
           value,
         });
       },

@@ -15,6 +15,7 @@ let localStorage = {
     automaticallyCacheSongs: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
+    showDynamicBackground: false,
     minimizeToTray: false,
   },
   data: {
