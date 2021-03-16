@@ -147,6 +147,7 @@ export default {
     showGitHubIcon: "显示 GitHub 图标",
     showUnavailableSongInGreyStyle: "显示不可播放的歌曲为灰色",
     showPlaylistsByAppleMusic: "首页显示来自 Apple Music 的歌单",
+    enableDiscordRichPresence: "启用 Discord Rich Presence",
   },
   contextMenu: {
     play: "播放",

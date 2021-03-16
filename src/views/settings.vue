@@ -74,7 +74,7 @@
           </select>
         </div>
       </div>
-      <div class="item">
+      <div class="item" v-if="isElectron">
         <div class="left">
           <div class="title"> {{ $t("settings.lyricFontSize.text") }} </div>
         </div>
@@ -228,6 +228,24 @@
               v-model="showPlaylistsByAppleMusic"
             />
             <label for="show-playlists-by-apple-music"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item" v-if="isElectron">
+        <div class="left">
+          <div class="title">
+            {{ $t("settings.enableDiscordRichPresence") }}</div
+          >
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="enable-discord-rich-presence"
+              id="enable-discord-rich-presence"
+              v-model="enableDiscordRichPresence"
+            />
+            <label for="enable-discord-rich-presence"></label>
           </div>
         </div>
       </div>
@@ -424,6 +442,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "minimizeToTray",
+          value,
+        });
+      },
+    },
+    enableDiscordRichPresence: {
+      get() {
+        return this.settings.enableDiscordRichPresence;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "enableDiscordRichPresence",
           value,
         });
       },
