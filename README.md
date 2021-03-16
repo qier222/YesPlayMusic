@@ -99,6 +99,9 @@ cp .env.example .env
 
 # 运行（网页端）
 yarn serve
+
+# 运行（electron）
+yarn electron:serve
 ```
 
 本地运行 NeteaseCloudMusicApi，或者将 API [部署至 Vercel](#%EF%B8%8F-部署至-vercel)
