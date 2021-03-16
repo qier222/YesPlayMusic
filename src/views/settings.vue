@@ -74,7 +74,7 @@
           </select>
         </div>
       </div>
-      <div class="item">
+      <div class="item" v-if="isElectron">
         <div class="left">
           <div class="title"> {{ $t("settings.deviceSelector") }} </div>
         </div>
@@ -210,7 +210,7 @@
           </div>
         </div>
       </div>
-      <div class="item">
+      <div class="item" v-if="isElectron">
         <div class="left">
           <div class="title">
             {{ $t("settings.enableDiscordRichPresence") }}</div
