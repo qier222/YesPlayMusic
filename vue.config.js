@@ -18,7 +18,7 @@ module.exports = {
     },
   },
   pwa: {
-    name: "早安喵音乐厅",
+    name: "早安喵音乐",
     iconPaths: {
       favicon32: "img/icons/favicon-32x32.png",
     },
@@ -35,7 +35,7 @@ module.exports = {
       entry: "src/main.js",
       template: "public/index.html",
       filename: "index.html",
-      title: "早安喵音乐厅",
+      title: "早安喵音乐",
       chunks: ["main", "chunk-vendors", "chunk-common", "index"],
     },
   },
