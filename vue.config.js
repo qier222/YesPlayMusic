@@ -61,7 +61,7 @@ module.exports = {
       nodeIntegration: true,
       externals: ["@nondanee/unblockneteasemusic", "@njzy/unblockneteasemusic"],
       builderOptions: {
-        productName: "YesPlayMusic",
+        productName: "456121",
         copyright: "Copyright © YesPlayMusic",
         // compression: "maximum", // 机器好的可以打开，配置压缩，开启后会让 .AppImage 格式的客户端启动缓慢
         asar: true,
@@ -69,7 +69,7 @@ module.exports = {
           {
             provider: "github",
             owner: "qier222",
-            repo: "YesPlayMusic",
+            repo: "456121",
             vPrefixedTagName: true,
             releaseType: "draft",
           },
@@ -99,7 +99,7 @@ module.exports = {
               arch: ["x64"],
             },
           ],
-          publisherName: "YesPlayMusic",
+          publisherName: "haha",
           icon: "build/icons/icon.ico",
           publish: ["github"],
         },
