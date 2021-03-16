@@ -27,6 +27,7 @@
               @blur="inputFocus = ''"
               @keyup.enter="login"
             />
+            <input type="text">
           </div>
         </div>
       </div>
