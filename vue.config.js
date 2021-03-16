@@ -35,7 +35,7 @@ module.exports = {
       entry: "src/main.js",
       template: "public/index.html",
       filename: "index.html",
-      title: "YesPlayMusic",
+      title: "早安喵音乐厅",
       chunks: ["main", "chunk-vendors", "chunk-common", "index"],
     },
   },
