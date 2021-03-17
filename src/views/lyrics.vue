@@ -5,14 +5,16 @@
         v-if="this.$store.state.settings.showDynamicBackground"
         class="dynamic-background"
       >
-        <div
-          class="top-right"
-          :style="{ backgroundImage: `url(${imageUrl})` }"
-        />
-        <div
-          class="bottom-left"
-          :style="{ backgroundImage: `url(${imageUrl})` }"
-        />
+        <div v-show="this.$store.state.showLyrics">
+          <div
+            class="top-right"
+            :style="{ backgroundImage: `url(${imageUrl})` }"
+          />
+          <div
+            class="bottom-left"
+            :style="{ backgroundImage: `url(${imageUrl})` }"
+          />
+        </div>
       </div>
       <div class="left-side">
         <div>
