@@ -9,6 +9,7 @@ import { getArtist } from "@/api/artist";
 import { personalFM, fmTrash } from "@/api/others";
 import store from "@/store";
 import { isAccountLoggedIn } from "@/utils/auth";
+import { sleep } from "@/utils/common";
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require("electron") : null;
@@ -398,14 +399,17 @@ export default class {
     localStorage.setItem("player", JSON.stringify(player));
   }
 
-  pause() {
-    this._howler.pause();
+  async pause() {
     this._playing = false;
+    this._howler.fade(this.volume, 0.0, 600);
+    await sleep(1000);
+    this._howler.pause();
     document.title = "YesPlayMusic";
     this._pauseDiscordPresence(this._currentTrack);
   }
   play() {
     if (this._howler.playing()) return;
+    this._howler.fade(0.0, this.volume, 600);
     this._howler.play();
     this._playing = true;
     document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;

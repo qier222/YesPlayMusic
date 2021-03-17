@@ -215,3 +215,7 @@ export function formatTrackTime(value) {
   let sec = (~~(value % 60)).toString().padStart(2, "0");
   return `${min}:${sec}`;
 }
+
+export function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
