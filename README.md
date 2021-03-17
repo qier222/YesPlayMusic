@@ -108,10 +108,10 @@ yarn electron:serve
 
 ```shell
 # 安装依赖
-cd netease_api && yarn
+yarn netease_api:install
 
 # 运行 API （默认 3000 端口）
-yarn start
+yarn netease_api:run
 ```
 
 ## ☑️ Todo
