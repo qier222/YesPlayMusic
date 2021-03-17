@@ -69,7 +69,7 @@ export function initIpcMain(win, store) {
       state: track.al.name,
       endTimestamp: Date.now() + track.dt,
       largeImageKey: "logo",
-      largeImageText: "YesPlayMusic",
+      largeImageText: "Listening " + track.name,
       smallImageKey: "play",
       smallImageText: "Playing",
       instance: true,
