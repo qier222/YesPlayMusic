@@ -4300,12 +4300,12 @@ dir-glob@^3.0.1:
 
 discord-rich-presence@^0.0.8:
   version "0.0.8"
-  resolved "https://registry.npm.taobao.org/discord-rich-presence/download/discord-rich-presence-0.0.8.tgz#7a2b41ff87a278e8a2c8835cd91c9890d6b9fbdd"
-  integrity sha1-eitB/4eieOiiyINc2RyYkNa5+90=
+  resolved "https://registry.yarnpkg.com/discord-rich-presence/-/discord-rich-presence-0.0.8.tgz#7a2b41ff87a278e8a2c8835cd91c9890d6b9fbdd"
+  integrity sha512-IpVMPjv15C9UvppxvrrGdv6bzQHOW1P1vLoMH15HvdJwGJ3dBd2bnrJ63Uy36YRUfrAMxGLiwUDHncvC8AuPaQ==
   dependencies:
     discord-rpc "github:discordjs/rpc"
 
-discord-rpc@^3.2.0, "discord-rpc@github:discordjs/rpc":
+"discord-rpc@github:discordjs/rpc":
   version "3.2.0"
   resolved "https://codeload.github.com/discordjs/rpc/tar.gz/32f1b9f8c47cf82ab87a83391ca9a9115513f01e"
   dependencies:
