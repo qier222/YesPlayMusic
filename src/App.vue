@@ -91,6 +91,8 @@ export default {
   --color-navbar-bg: rgba(255, 255, 255, 0.86);
   --color-primary-bg-for-transparent: rgba(189, 207, 255, 0.28);
   --color-secondary-bg-for-transparent: rgba(209, 209, 214, 0.28);
+  --contrast-dynamic-background: 75%;
+  --brightness-dynamic-background: 150%;
 }
 
 [data-theme="dark"] {
@@ -103,6 +105,8 @@ export default {
   --color-navbar-bg: rgba(34, 34, 34, 0.86);
   --color-primary-bg-for-transparent: rgba(255, 255, 255, 0.12);
   --color-secondary-bg-for-transparent: rgba(255, 255, 255, 0.08);
+  --contrast-dynamic-background: 125%;
+  --brightness-dynamic-background: 50%;
 }
 
 #app {

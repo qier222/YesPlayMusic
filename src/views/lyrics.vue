@@ -374,10 +374,11 @@ export default {
   .top-right,
   .bottom-left {
     z-index: 0;
-    width: 120vw;
-    height: 120vw;
+    width: 140vw;
+    height: 140vw;
     position: absolute;
-    filter: blur(50px) opacity(0.6);
+    filter: blur(50px) opacity(0.6) contrast(var(--contrast-dynamic-background))
+      brightness(var(--brightness-dynamic-background));
     background-size: cover;
     animation: rotate 150s linear infinite;
   }
