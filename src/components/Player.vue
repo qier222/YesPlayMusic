@@ -290,9 +290,11 @@ export default {
       this.player.moveToFMTrash();
     },
     goToList() {
-      if (this.player.playlistSource.id === this.data.likedSongPlaylistID)
+      if (this.player.playlistSource.id === this.data.likedSongPlaylistID) {
         this.$router.push({ path: "/library/liked-songs" });
-      else
+      } else if (this.player.playlistSource.type === "url") {
+        this.$router.push({ path: this.player.playlistSource.id });
+      } else {
         this.$router.push({
           path:
             "/" +
@@ -300,6 +302,7 @@ export default {
             "/" +
             this.player.playlistSource.id,
         });
+      }
     },
     goToAlbum() {
       if (this.player.currentTrack.al.id === 0) return;

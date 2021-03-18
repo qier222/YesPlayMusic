@@ -25,8 +25,8 @@
     <div class="index-row">
       <div class="title"> For You </div>
       <div class="for-you-row">
+        <DailyTracksCard />
         <FMCard />
-        <div></div>
       </div>
     </div>
     <div class="index-row">
@@ -70,10 +70,11 @@ import NProgress from "nprogress";
 import { mapState } from "vuex";
 import CoverRow from "@/components/CoverRow.vue";
 import FMCard from "@/components/FMCard.vue";
+import DailyTracksCard from "@/components/DailyTracksCard.vue";
 
 export default {
   name: "Home",
-  components: { CoverRow, FMCard },
+  components: { CoverRow, FMCard, DailyTracksCard },
   data() {
     return {
       show: false,
