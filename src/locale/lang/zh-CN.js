@@ -27,7 +27,7 @@ export default {
     newPlayList: "新建歌单",
     userProfileMenu: {
       settings: "设置",
-      logout: "退出登录",
+      logout: "登出",
     },
   },
   explore: {
