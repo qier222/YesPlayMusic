@@ -265,6 +265,14 @@
           </div>
         </div>
       </div>
+
+      <div class="footer">
+        <p class="author"
+          >MADE BY
+          <a href="http://github.com/qier222" target="_blank">QIER222</a></p
+        >
+        <p class="version">v{{ version }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -274,6 +282,7 @@ import { mapState } from "vuex";
 import { doLogout } from "@/utils/auth";
 import { changeAppearance, bytesToSize } from "@/utils/common";
 import { countDBSize, clearDB } from "@/utils/db";
+import pkg from "../../package.json";
 
 export default {
   name: "settings",
@@ -299,6 +308,9 @@ export default {
     },
     isMac() {
       return /macintosh|mac os x/i.test(navigator.userAgent);
+    },
+    version() {
+      return pkg.version;
     },
     lang: {
       get() {
@@ -643,6 +655,21 @@ h2 {
     &:active {
       transform: scale(0.94);
     }
+  }
+}
+
+.footer {
+  text-align: center;
+  margin-top: 6rem;
+  color: var(--color-text);
+  font-weight: 600;
+  .author {
+    font-size: 0.9rem;
+  }
+  .version {
+    font-size: 0.88rem;
+    opacity: 0.58;
+    margin-top: -10px;
   }
 }
 
