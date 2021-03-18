@@ -163,6 +163,24 @@
           </div>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title">{{
+            $t("settings.showLyricsDynamicBackground")
+          }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-lyrics-dynamic-background"
+              id="show-lyrics-dynamic-background"
+              v-model="showLyricsDynamicBackground"
+            />
+            <label for="show-lyrics-dynamic-background"></label>
+          </div>
+        </div>
+      </div>
       <div class="item" v-if="isElectron && !isMac">
         <div class="left">
           <div class="title">{{ $t("settings.minimizeToTray") }}</div>
@@ -443,6 +461,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showLyricsTranslation",
+          value,
+        });
+      },
+    },
+    showLyricsDynamicBackground: {
+      get() {
+        return this.settings.showLyricsDynamicBackground;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showLyricsDynamicBackground",
           value,
         });
       },

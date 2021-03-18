@@ -143,6 +143,7 @@ export default {
     clearSongsCache: "清除歌曲缓存",
     cacheCount: "已缓存 {song} 首 ({size})",
     showLyricsTranslation: "显示歌词翻译",
+    showLyricsDynamicBackground: "显示歌词动态背景",
     minimizeToTray: "最小化到托盘",
     showGitHubIcon: "显示 GitHub 图标",
     showUnavailableSongInGreyStyle: "显示不可播放的歌曲为灰色",

@@ -28,6 +28,7 @@ button {
   }
   &:hover {
     background: var(--color-secondary-bg-for-transparent);
+    opacity: 0.88;
   }
   &:active {
     transform: scale(0.92);
