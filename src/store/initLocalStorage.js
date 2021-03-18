@@ -17,6 +17,7 @@ let localStorage = {
     showLyricsTranslation: true,
     showDynamicBackground: false,
     minimizeToTray: false,
+    enableDiscordRichPresence: false,
   },
   data: {
     user: {},
