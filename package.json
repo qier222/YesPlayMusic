@@ -1,8 +1,8 @@
 {
-  "name": "YesPlayMusic",
+  "name": "yesplaymusic",
   "version": "0.3.4",
   "private": true,
-  "description": "A third party music application for Netease Music",
+  "description": "A third party music player for Netease Music",
   "author": "hawtim<hawtimzhang@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",

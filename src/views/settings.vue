@@ -74,27 +74,6 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
-        <div class="left">
-          <div class="title"> {{ $t("settings.lyricFontSize.text") }} </div>
-        </div>
-        <div class="right">
-          <select v-model="lyricFontSize">
-            <option value="14">
-              {{ $t("settings.lyricFontSize.small") }} - 14px
-            </option>
-            <option value="22">
-              {{ $t("settings.lyricFontSize.medium") }} - 22px
-            </option>
-            <option value="28">
-              {{ $t("settings.lyricFontSize.large") }} - 28px
-            </option>
-            <option value="36">
-              {{ $t("settings.lyricFontSize.xlarge") }} - 36px
-            </option>
-          </select>
-        </div>
-      </div>
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t("settings.deviceSelector") }} </div>
@@ -181,6 +160,27 @@
           </div>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"> {{ $t("settings.lyricFontSize.text") }} </div>
+        </div>
+        <div class="right">
+          <select v-model="lyricFontSize">
+            <option value="16">
+              {{ $t("settings.lyricFontSize.small") }} - 16px
+            </option>
+            <option value="22">
+              {{ $t("settings.lyricFontSize.medium") }} - 22px
+            </option>
+            <option value="28">
+              {{ $t("settings.lyricFontSize.large") }} - 28px
+            </option>
+            <option value="36">
+              {{ $t("settings.lyricFontSize.xlarge") }} - 36px
+            </option>
+          </select>
+        </div>
+      </div>
       <div class="item" v-if="isElectron && !isMac">
         <div class="left">
           <div class="title">{{ $t("settings.minimizeToTray") }}</div>
@@ -194,22 +194,6 @@
               v-model="minimizeToTray"
             />
             <label for="minimize-to-tray"></label>
-          </div>
-        </div>
-      </div>
-      <div class="item">
-        <div class="left">
-          <div class="title"> {{ $t("settings.showGitHubIcon") }} </div>
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              type="checkbox"
-              name="show-github-icon"
-              id="show-github-icon"
-              v-model="showGithubIcon"
-            />
-            <label for="show-github-icon"></label>
           </div>
         </div>
       </div>
@@ -390,18 +374,6 @@ export default {
           return;
         this.$store.commit("changeOutputDevice", deviceId);
         this.player.setOutputDevice();
-      },
-    },
-    showGithubIcon: {
-      get() {
-        if (this.settings.showGithubIcon === undefined) return true;
-        return this.settings.showGithubIcon;
-      },
-      set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showGithubIcon",
-          value,
-        });
       },
     },
     showUnavailableSongInGreyStyle: {

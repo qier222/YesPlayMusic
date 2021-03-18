@@ -160,6 +160,9 @@ export default {
     toGitHub() {
       window.open("https://github.com/qier222/YesPlayMusic");
     },
+    toLogin() {
+      this.$router.push({ name: "login" });
+    },
     windowMinimize() {
       win.minimize();
     },
