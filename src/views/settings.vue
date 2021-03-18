@@ -165,17 +165,19 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title">{{ $t("settings.showDynamicBackground") }}</div>
+          <div class="title">{{
+            $t("settings.showLyricsDynamicBackground")
+          }}</div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
               type="checkbox"
-              name="show-dynamic-background"
-              id="show-dynamic-background"
-              v-model="showDynamicBackground"
+              name="show-lyrics-dynamic-background"
+              id="show-lyrics-dynamic-background"
+              v-model="showLyricsDynamicBackground"
             />
-            <label for="show-dynamic-background"></label>
+            <label for="show-lyrics-dynamic-background"></label>
           </div>
         </div>
       </div>
@@ -451,13 +453,13 @@ export default {
         });
       },
     },
-    showDynamicBackground: {
+    showLyricsDynamicBackground: {
       get() {
-        return this.settings.showDynamicBackground;
+        return this.settings.showLyricsDynamicBackground;
       },
       set(value) {
         this.$store.commit("updateSettings", {
-          key: "showDynamicBackground",
+          key: "showLyricsDynamicBackground",
           value,
         });
       },

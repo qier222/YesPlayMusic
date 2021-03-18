@@ -2,7 +2,7 @@
   <transition name="slide-up">
     <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
       <div
-        v-if="this.$store.state.settings.showDynamicBackground"
+        v-if="this.$store.state.settings.showLyricsDynamicBackground"
         class="dynamic-background"
       >
         <div v-show="this.$store.state.showLyrics">
@@ -631,7 +631,7 @@ export default {
   }
 
   &:hover {
-    background: var(--color-secondary-bg);
+    background: var(--color-secondary-bg-for-transparent);
     opacity: 0.88;
   }
 }
