@@ -163,6 +163,24 @@
           </div>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title">{{
+            $t("settings.showLyricsDynamicBackground")
+          }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-lyrics-dynamic-background"
+              id="show-lyrics-dynamic-background"
+              v-model="showLyricsDynamicBackground"
+            />
+            <label for="show-lyrics-dynamic-background"></label>
+          </div>
+        </div>
+      </div>
       <div class="item" v-if="isElectron && !isMac">
         <div class="left">
           <div class="title">{{ $t("settings.minimizeToTray") }}</div>
@@ -265,6 +283,14 @@
           </div>
         </div>
       </div>
+
+      <div class="footer">
+        <p class="author"
+          >MADE BY
+          <a href="http://github.com/qier222" target="_blank">QIER222</a></p
+        >
+        <p class="version">v{{ version }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -274,6 +300,7 @@ import { mapState } from "vuex";
 import { doLogout } from "@/utils/auth";
 import { changeAppearance, bytesToSize } from "@/utils/common";
 import { countDBSize, clearDB } from "@/utils/db";
+import pkg from "../../package.json";
 
 export default {
   name: "settings",
@@ -299,6 +326,9 @@ export default {
     },
     isMac() {
       return /macintosh|mac os x/i.test(navigator.userAgent);
+    },
+    version() {
+      return pkg.version;
     },
     lang: {
       get() {
@@ -431,6 +461,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showLyricsTranslation",
+          value,
+        });
+      },
+    },
+    showLyricsDynamicBackground: {
+      get() {
+        return this.settings.showLyricsDynamicBackground;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showLyricsDynamicBackground",
           value,
         });
       },
@@ -643,6 +684,21 @@ h2 {
     &:active {
       transform: scale(0.94);
     }
+  }
+}
+
+.footer {
+  text-align: center;
+  margin-top: 6rem;
+  color: var(--color-text);
+  font-weight: 600;
+  .author {
+    font-size: 0.9rem;
+  }
+  .version {
+    font-size: 0.88rem;
+    opacity: 0.58;
+    margin-top: -10px;
   }
 }
 

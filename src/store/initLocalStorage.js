@@ -15,6 +15,7 @@ let localStorage = {
     automaticallyCacheSongs: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
+    showLyricsDynamicBackground: false,
     minimizeToTray: false,
     enableDiscordRichPresence: false,
   },
