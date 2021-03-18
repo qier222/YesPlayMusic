@@ -373,6 +373,16 @@ export default {
 }
 
 .dynamic-background {
+  --contrast-dynamic-background: 75%;
+  --brightness-dynamic-background: 150%;
+}
+
+[data-theme="dark"] .dynamic-background {
+  --contrast-dynamic-background: 125%;
+  --brightness-dynamic-background: 50%;
+}
+
+.dynamic-background {
   .top-right,
   .bottom-left {
     z-index: 0;
