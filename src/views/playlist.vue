@@ -86,6 +86,7 @@
             <input
               :placeholder="inputFocus ? '' : $t('playlist.search')"
               v-model.trim="inputSearchKeyWords"
+              v-focus="displaySearchInPlaylist"
               @input="inputDebounce()"
               @focus="inputFocus = true"
               @blur="inputFocus = false"
@@ -492,6 +493,13 @@ export default {
       this.debounceTimeout = setTimeout(() => {
         this.searchKeyWords = this.inputSearchKeyWords;
       }, 600);
+    },
+  },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus();
+      },
     },
   },
 };
