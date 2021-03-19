@@ -1,5 +1,12 @@
 "use strict";
-import { app, protocol, BrowserWindow, shell, dialog } from "electron";
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  shell,
+  dialog,
+  globalShortcut,
+} from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { startNeteaseMusicApi } from "./electron/services";
 import { initIpcMain } from "./electron/ipcMain.js";
@@ -7,6 +14,7 @@ import { createMenu } from "./electron/menu";
 import { createTray } from "@/electron/tray";
 import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
+import { registerGlobalShortcut } from "./electron/globalShortcut";
 import { autoUpdater } from "electron-updater";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import express from "express";
@@ -89,8 +97,8 @@ class Background {
     console.log("creating app window");
 
     this.window = new BrowserWindow({
-      width: this.store.get("window.width") | 1440,
-      height: this.store.get("window.height") | 840,
+      width: this.store.get("window.width") || 1440,
+      height: this.store.get("window.height") || 840,
       minWidth: 1080,
       minHeight: 720,
       titleBarStyle: "hiddenInset",
@@ -124,7 +132,7 @@ class Background {
         .showMessageBox({
           title: "发现新版本 v" + info.version,
           message: "发现新版本 v" + info.version,
-          detail: "是否前往 Github 下载新版本安装包？",
+          detail: "是否前往 GitHub 下载新版本安装包？",
           buttons: ["下载", "取消"],
           type: "question",
           noLink: true,
@@ -214,6 +222,9 @@ class Background {
 
       // create touch bar
       this.window.setTouchBar(createTouchBar(this.window));
+
+      // register global shortcuts
+      registerGlobalShortcut(this.window);
     });
 
     app.on("activate", () => {
@@ -239,6 +250,11 @@ class Background {
 
     app.on("quit", () => {
       this.expressApp.close();
+    });
+
+    app.on("will-quit", () => {
+      // unregister all global shortcuts
+      globalShortcut.unregisterAll();
     });
   }
 }

@@ -183,3 +183,24 @@ export function addOrRemoveTrackFromPlaylist(params) {
     params,
   });
 }
+
+/**
+ * 每日推荐歌曲
+ * 说明 : 调用此接口 , 可获得每日推荐歌曲 ( 需要登录 )
+ * @param {Object} params
+ * @param {string} params.op
+ * @param {string} params.pid
+ */
+export function dailyRecommendTracks() {
+  return request({
+    url: "/recommend/songs",
+    method: "post",
+    params: { timestamp: new Date().getTime() },
+  }).then((result) => {
+    result.data.dailySongs = mapTrackPlayableStatus(
+      result.data.dailySongs,
+      result.data.privileges
+    );
+    return result;
+  });
+}

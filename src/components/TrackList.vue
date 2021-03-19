@@ -152,6 +152,14 @@ export default {
           "artist",
           trackID
         );
+      } else if (this.dbclickTrackFunc === "dailyTracks") {
+        let trackIDs = this.tracks.map((t) => t.id);
+        this.$store.state.player.replacePlaylist(
+          trackIDs,
+          "/daily/songs",
+          "url",
+          trackID
+        );
       }
     },
     playThisListDefault(trackID) {

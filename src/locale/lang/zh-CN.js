@@ -8,6 +8,7 @@ export default {
     explore: "发现",
     library: "音乐库",
     search: "搜索",
+    github: "GitHub 仓库",
   },
   home: {
     recommendPlaylist: "推荐歌单",

@@ -68,7 +68,7 @@
     <ContextMenu ref="userProfileMenu">
       <div class="item" @click="toLogin" v-if="!isLooseLoggedIn">
         <svg-icon icon-class="login" />
-        登录
+        {{ $t("login.login") }}
       </div>
       <div class="item" @click="toSettings">
         <svg-icon icon-class="settings" />
@@ -80,7 +80,8 @@
       </div>
       <hr />
       <div class="item" @click="toGitHub">
-        <svg-icon icon-class="github" /> GitHub仓库
+        <svg-icon icon-class="github" />
+        {{ $t("nav.github") }}
       </div>
     </ContextMenu>
   </div>
@@ -159,6 +160,9 @@ export default {
     },
     toGitHub() {
       window.open("https://github.com/qier222/YesPlayMusic");
+    },
+    toLogin() {
+      this.$router.push({ name: "login" });
     },
     windowMinimize() {
       win.minimize();
@@ -309,6 +313,7 @@ nav {
     padding: 6px 10px;
     color: var(--color-text);
     transition: 0.2s;
+    -webkit-user-drag: none;
     margin: {
       right: 12px;
       left: 12px;
@@ -400,6 +405,8 @@ nav {
     vertical-align: -7px;
     border-radius: 50%;
     cursor: pointer;
+    -webkit-app-region: no-drag;
+    -webkit-user-drag: none;
     &:hover {
       filter: brightness(80%);
     }

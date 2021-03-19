@@ -9,7 +9,6 @@ let localStorage = {
     musicQuality: 320000,
     lyricFontSize: 28,
     outputDevice: "default",
-    showGithubIcon: true,
     showPlaylistsByAppleMusic: true,
     showUnavailableSongInGreyStyle: true,
     automaticallyCacheSongs: false,

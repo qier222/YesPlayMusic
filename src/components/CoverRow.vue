@@ -6,7 +6,12 @@
       :key="item.id"
       :class="{ artist: type === 'artist' }"
     >
-      <Cover :imageUrl="getImageUrl(item)" :type="type" :id="item.id" />
+      <Cover
+        :imageUrl="getImageUrl(item)"
+        :type="type"
+        :id="item.id"
+        :playButtonSize="type === 'artist' ? 26 : 22"
+      />
       <div class="text">
         <div class="info" v-if="showPlayCount">
           <span class="play-count"

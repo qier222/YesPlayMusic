@@ -42,4 +42,7 @@ export default {
   toggleLyrics(state) {
     state.showLyrics = !state.showLyrics;
   },
+  updateDailyTracks(state, dailyTracks) {
+    state.dailyTracks = dailyTracks;
+  },
 };
