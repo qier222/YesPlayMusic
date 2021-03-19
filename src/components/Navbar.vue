@@ -313,6 +313,7 @@ nav {
     padding: 6px 10px;
     color: var(--color-text);
     transition: 0.2s;
+    -webkit-user-drag: none;
     margin: {
       right: 12px;
       left: 12px;
@@ -404,6 +405,8 @@ nav {
     vertical-align: -7px;
     border-radius: 50%;
     cursor: pointer;
+    -webkit-app-region: no-drag;
+    -webkit-user-drag: none;
     &:hover {
       filter: brightness(80%);
     }

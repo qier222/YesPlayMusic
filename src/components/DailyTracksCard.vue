@@ -132,6 +132,9 @@ export default {
   &:hover {
     background: rgba(255, 255, 255, 0.44);
   }
+  &:active {
+    transform: scale(0.94);
+  }
 }
 
 @keyframes move {

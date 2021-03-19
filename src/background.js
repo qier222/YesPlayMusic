@@ -97,8 +97,8 @@ class Background {
     console.log("creating app window");
 
     this.window = new BrowserWindow({
-      width: this.store.get("window.width") | 1440,
-      height: this.store.get("window.height") | 840,
+      width: this.store.get("window.width") || 1440,
+      height: this.store.get("window.height") || 840,
       minWidth: 1080,
       minHeight: 720,
       titleBarStyle: "hiddenInset",

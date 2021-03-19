@@ -3,7 +3,7 @@ export function getSendSettingsPlugin() {
   const ipcRenderer = electron.ipcRenderer;
   return (store) => {
     store.subscribe((mutation, state) => {
-      console.log(mutation);
+      // console.log(mutation);
       if (mutation.type !== "updateSettings") return;
       ipcRenderer.send("settings", {
         minimizeToTray: state.settings.minimizeToTray,
