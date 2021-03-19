@@ -1,5 +1,12 @@
 "use strict";
-import { app, protocol, BrowserWindow, shell, dialog } from "electron";
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  shell,
+  dialog,
+  globalShortcut,
+} from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { startNeteaseMusicApi } from "./electron/services";
 import { initIpcMain } from "./electron/ipcMain.js";
@@ -7,6 +14,7 @@ import { createMenu } from "./electron/menu";
 import { createTray } from "@/electron/tray";
 import { createTouchBar } from "./electron/touchBar";
 import { createDockMenu } from "./electron/dockMenu";
+import { registerGlobalShortcut } from "./electron/globalShortcut";
 import { autoUpdater } from "electron-updater";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import express from "express";
@@ -214,6 +222,9 @@ class Background {
 
       // create touch bar
       this.window.setTouchBar(createTouchBar(this.window));
+
+      // register global shortcuts
+      registerGlobalShortcut(this.window);
     });
 
     app.on("activate", () => {
@@ -239,6 +250,11 @@ class Background {
 
     app.on("quit", () => {
       this.expressApp.close();
+    });
+
+    app.on("will-quit", () => {
+      // unregister all global shortcuts
+      globalShortcut.unregisterAll();
     });
   }
 }
