@@ -420,11 +420,11 @@ export default {
           }
         });
     },
-    loadMore() {
+    loadMore(loadNum = 50) {
       let trackIDs = this.playlist.trackIds.filter((t, index) => {
         if (
           index > this.lastLoadedTrackIndex &&
-          index <= this.lastLoadedTrackIndex + 500
+          index <= this.lastLoadedTrackIndex + loadNum
         )
           return t;
       });
@@ -479,6 +479,8 @@ export default {
       if (this.displaySearchInPlaylist == false) {
         this.searchKeyWords = "";
         this.inputSearchKeyWords = "";
+      } else {
+        this.loadMore(500);
       }
     },
     removeTrack(trackID) {
