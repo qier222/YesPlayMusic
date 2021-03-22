@@ -79,8 +79,22 @@
           </ButtonTwoTone>
         </div>
       </div>
+      <div class="search-box" v-if="displaySearchInPlaylist">
+        <div class="container" :class="{ active: inputFocus }">
+          <svg-icon icon-class="search" />
+          <div class="input">
+            <input
+              :placeholder="inputFocus ? '' : $t('playlist.search')"
+              v-model.trim="inputSearchKeyWords"
+              v-focus="displaySearchInPlaylist"
+              @input="inputDebounce()"
+              @focus="inputFocus = true"
+              @blur="inputFocus = false"
+            />
+          </div>
+        </div>
+      </div>
     </div>
-
     <div class="special-playlist" v-if="specialPlaylistInfo !== undefined">
       <div
         class="title"
@@ -136,7 +150,7 @@
     </div>
 
     <TrackList
-      :tracks="tracks"
+      :tracks="filteredTracks"
       :type="'playlist'"
       :id="playlist.id"
       :extraContextMenuItem="
@@ -158,6 +172,7 @@
       <div class="item" @click="likePlaylist(true)">{{
         playlist.subscribed ? "从音乐库删除" : "保存到音乐库"
       }}</div>
+      <div class="item" @click="searchInPlaylist()">歌单内搜索</div>
       <div
         class="item"
         v-if="playlist.creator.userId === data.user.userId"
@@ -302,6 +317,11 @@ export default {
       tracks: [],
       loadingMore: false,
       lastLoadedTrackIndex: 9,
+      displaySearchInPlaylist: false,
+      searchKeyWords: "", // 搜索使用的关键字
+      inputSearchKeyWords: "", // 搜索框中正在输入的关键字
+      inputFocus: false,
+      debounceTimeout: null,
     };
   },
   created() {
@@ -326,6 +346,22 @@ export default {
       return (
         this.playlist.creator.userId === this.data.user.userId &&
         this.playlist.id !== this.data.likedSongPlaylistID
+      );
+    },
+    filteredTracks() {
+      return this.tracks.filter(
+        (track) =>
+          track.name
+            .toLowerCase()
+            .includes(this.searchKeyWords.toLowerCase()) ||
+          track.al.name
+            .toLowerCase()
+            .includes(this.searchKeyWords.toLowerCase()) ||
+          track.ar.find((artist) =>
+            artist.name
+              .toLowerCase()
+              .includes(this.searchKeyWords.toLowerCase())
+          )
       );
     },
   },
@@ -384,11 +420,11 @@ export default {
           }
         });
     },
-    loadMore() {
+    loadMore(loadNum = 50) {
       let trackIDs = this.playlist.trackIds.filter((t, index) => {
         if (
           index > this.lastLoadedTrackIndex &&
-          index <= this.lastLoadedTrackIndex + 50
+          index <= this.lastLoadedTrackIndex + loadNum
         )
           return t;
       });
@@ -438,12 +474,34 @@ export default {
     editPlaylist() {
       alert("此功能开发中");
     },
+    searchInPlaylist() {
+      this.displaySearchInPlaylist = !this.displaySearchInPlaylist;
+      if (this.displaySearchInPlaylist == false) {
+        this.searchKeyWords = "";
+        this.inputSearchKeyWords = "";
+      } else {
+        this.loadMore(500);
+      }
+    },
     removeTrack(trackID) {
       if (!isAccountLoggedIn()) {
         this.showToast("此操作需要登录网易云账号");
         return;
       }
       this.tracks = this.tracks.filter((t) => t.id !== trackID);
+    },
+    inputDebounce() {
+      if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
+      this.debounceTimeout = setTimeout(() => {
+        this.searchKeyWords = this.inputSearchKeyWords;
+      }, 600);
+    },
+  },
+  directives: {
+    focus: {
+      inserted: function (el) {
+        el.focus();
+      },
     },
   },
 };
@@ -453,6 +511,7 @@ export default {
 .playlist-info {
   display: flex;
   margin-bottom: 72px;
+  position: relative;
   .info {
     display: flex;
     flex-direction: column;
@@ -708,6 +767,65 @@ export default {
       vertical-align: -7px;
       border-radius: 50%;
       border: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.search-box {
+  display: flex;
+  position: absolute;
+  right: 20px;
+  bottom: -55px;
+  justify-content: flex-end;
+  -webkit-app-region: no-drag;
+
+  .container {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    background: var(--color-secondary-bg-for-transparent);
+    border-radius: 8px;
+    width: 200px;
+  }
+
+  .svg-icon {
+    height: 15px;
+    width: 15px;
+    color: var(--color-text);
+    opacity: 0.28;
+    margin: {
+      left: 8px;
+      right: 4px;
+    }
+  }
+
+  input {
+    font-size: 16px;
+    border: none;
+    background: transparent;
+    width: 96%;
+    font-weight: 600;
+    margin-top: -1px;
+    color: var(--color-text);
+  }
+
+  .active {
+    background: var(--color-primary-bg-for-transparent);
+    input,
+    .svg-icon {
+      opacity: 1;
+      color: var(--color-primary);
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .search-box {
+    .active {
+      input,
+      .svg-icon {
+        color: var(--color-text);
+      }
     }
   }
 }
