@@ -1,8 +1,8 @@
 {
-  "name": "YesPlayMusic",
-  "version": "0.3.4",
+  "name": "yesplaymusic",
+  "version": "0.3.5",
   "private": true,
-  "description": "A third party music application for Netease Music",
+  "description": "A third party music player for Netease Music",
   "author": "hawtim<hawtimzhang@gmail.com>",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -33,6 +33,7 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "dayjs": "^1.8.36",
+    "discord-rich-presence": "^0.0.8",
     "electron": "^12.0.0",
     "electron-builder": "^22.10.5",
     "electron-context-menu": "^2.3.0",
@@ -77,6 +78,8 @@
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^6.2.2",
     "husky": "^4.3.0",
     "sass": "^1.26.11",
@@ -92,7 +95,8 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "eslint:recommended",
+      "plugin:prettier/recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"

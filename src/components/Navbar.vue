@@ -1,82 +1,102 @@
 <template>
-  <nav>
-    <div class="win32-titlebar">
-      <div class="title">YesPlayMusic</div>
-      <div class="controls">
-        <div
-          class="button minimize codicon codicon-chrome-minimize"
-          @click="windowMinimize"
-        ></div>
-        <div
-          class="button max-restore codicon"
-          @click="windowMaxRestore"
-          :class="{
-            'codicon-chrome-restore': windowIsMaximized,
-            'codicon-chrome-maximize': !windowIsMaximized,
-          }"
-        ></div>
-        <div
-          class="button close codicon codicon-chrome-close"
-          @click="windowClose"
-        ></div>
-      </div>
-    </div>
-    <div class="navigation-buttons">
-      <button-icon @click.native="go('back')"
-        ><svg-icon icon-class="arrow-left"
-      /></button-icon>
-      <button-icon @click.native="go('forward')"
-        ><svg-icon icon-class="arrow-right"
-      /></button-icon>
-    </div>
-    <div class="navigation-links">
-      <router-link to="/" :class="{ active: this.$route.name === 'home' }">{{
-        $t("nav.home")
-      }}</router-link>
-      <router-link
-        to="/explore"
-        :class="{ active: this.$route.name === 'explore' }"
-        >{{ $t("nav.explore") }}</router-link
-      >
-      <router-link
-        to="/library"
-        :class="{ active: this.$route.name === 'library' }"
-        >{{ $t("nav.library") }}</router-link
-      >
-    </div>
-    <div class="right-part">
-      <a
-        href="https://github.com/qier222/YesPlayMusic"
-        target="blank"
-        v-if="settings.showGithubIcon !== false"
-        ><svg-icon icon-class="github" class="github"
-      /></a>
-      <div class="search-box">
-        <div class="container" :class="{ active: inputFocus }">
-          <svg-icon icon-class="search" />
-          <div class="input">
-            <input
-              ref="searchInput"
-              :placeholder="inputFocus ? '' : $t('nav.search')"
-              v-model="keywords"
-              @keydown.enter="doSearch"
-              @focus="inputFocus = true"
-              @blur="inputFocus = false"
-            />
-          </div>
+  <div>
+    <nav>
+      <div class="win32-titlebar">
+        <div class="title">YesPlayMusic</div>
+        <div class="controls">
+          <div
+            class="button minimize codicon codicon-chrome-minimize"
+            @click="windowMinimize"
+          ></div>
+          <div
+            class="button max-restore codicon"
+            @click="windowMaxRestore"
+            :class="{
+              'codicon-chrome-restore': windowIsMaximized,
+              'codicon-chrome-maximize': !windowIsMaximized,
+            }"
+          ></div>
+          <div
+            class="button close codicon codicon-chrome-close"
+            @click="windowClose"
+          ></div>
         </div>
       </div>
-    </div>
-  </nav>
+      <div class="navigation-buttons">
+        <button-icon @click.native="go('back')"
+          ><svg-icon icon-class="arrow-left"
+        /></button-icon>
+        <button-icon @click.native="go('forward')"
+          ><svg-icon icon-class="arrow-right"
+        /></button-icon>
+      </div>
+      <div class="navigation-links">
+        <router-link to="/" :class="{ active: this.$route.name === 'home' }">{{
+          $t("nav.home")
+        }}</router-link>
+        <router-link
+          to="/explore"
+          :class="{ active: this.$route.name === 'explore' }"
+          >{{ $t("nav.explore") }}</router-link
+        >
+        <router-link
+          to="/library"
+          :class="{ active: this.$route.name === 'library' }"
+          >{{ $t("nav.library") }}</router-link
+        >
+      </div>
+      <div class="right-part">
+        <div class="search-box">
+          <div class="container" :class="{ active: inputFocus }">
+            <svg-icon icon-class="search" />
+            <div class="input">
+              <input
+                ref="searchInput"
+                :placeholder="inputFocus ? '' : $t('nav.search')"
+                v-model="keywords"
+                @keydown.enter="doSearch"
+                @focus="inputFocus = true"
+                @blur="inputFocus = false"
+              />
+            </div>
+          </div>
+        </div>
+        <img class="avatar" :src="avatarUrl" @click="showUserProfileMenu" />
+      </div>
+    </nav>
+
+    <ContextMenu ref="userProfileMenu">
+      <div class="item" @click="toLogin" v-if="!isLooseLoggedIn">
+        <svg-icon icon-class="login" />
+        {{ $t("login.login") }}
+      </div>
+      <div class="item" @click="toSettings">
+        <svg-icon icon-class="settings" />
+        {{ $t("library.userProfileMenu.settings") }}
+      </div>
+      <div class="item" @click="logout" v-if="isLooseLoggedIn">
+        <svg-icon icon-class="logout" />
+        {{ $t("library.userProfileMenu.logout") }}
+      </div>
+      <hr />
+      <div class="item" @click="toGitHub">
+        <svg-icon icon-class="github" />
+        {{ $t("nav.github") }}
+      </div>
+    </ContextMenu>
+  </div>
 </template>
 
 <script>
-import ButtonIcon from "@/components/ButtonIcon.vue";
 import { mapState } from "vuex";
+import { isLooseLoggedIn, doLogout } from "@/utils/auth";
 
 // import icons for win32 title bar
 // icons by https://github.com/microsoft/vscode-codicons
 import "vscode-codicons/dist/codicon.css";
+
+import ContextMenu from "@/components/ContextMenu.vue";
+import ButtonIcon from "@/components/ButtonIcon.vue";
 
 let win = undefined;
 if (process.env.IS_ELECTRON === true) {
@@ -88,6 +108,7 @@ export default {
   name: "Navbar",
   components: {
     ButtonIcon,
+    ContextMenu,
   },
   data() {
     return {
@@ -98,7 +119,15 @@ export default {
     };
   },
   computed: {
-    ...mapState(["settings"]),
+    ...mapState(["settings", "data"]),
+    isLooseLoggedIn() {
+      return isLooseLoggedIn();
+    },
+    avatarUrl() {
+      return this.data.user.avatarUrl
+        ? `${this.data.user.avatarUrl}?param=512y512`
+        : "http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60";
+    },
   },
   methods: {
     go(where) {
@@ -117,6 +146,23 @@ export default {
         name: "search",
         params: { keywords: this.keywords },
       });
+    },
+    showUserProfileMenu(e) {
+      this.$refs.userProfileMenu.openMenu(e);
+    },
+    logout() {
+      if (!confirm("确定要退出登录吗？")) return;
+      doLogout();
+      this.$router.push({ name: "home" });
+    },
+    toSettings() {
+      this.$router.push({ name: "settings" });
+    },
+    toGitHub() {
+      window.open("https://github.com/qier222/YesPlayMusic");
+    },
+    toLogin() {
+      this.$router.push({ name: "login" });
     },
     windowMinimize() {
       win.minimize();
@@ -267,6 +313,7 @@ nav {
     padding: 6px 10px;
     color: var(--color-text);
     transition: 0.2s;
+    -webkit-user-drag: none;
     margin: {
       right: 12px;
       left: 12px;
@@ -352,12 +399,17 @@ nav {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  .github {
-    margin-right: 16px;
-    height: 24px;
-    width: 24px;
-    color: var(--color-text);
+  .avatar {
+    height: 30px;
+    margin-left: 12px;
+    vertical-align: -7px;
+    border-radius: 50%;
+    cursor: pointer;
     -webkit-app-region: no-drag;
+    -webkit-user-drag: none;
+    &:hover {
+      filter: brightness(80%);
+    }
   }
   .search-button {
     display: none;

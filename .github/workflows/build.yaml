@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-16.04]
 
     steps:
       - name: Check out Git repository
@@ -24,7 +24,8 @@ jobs:
         run: |
           sudo apt-get update &&
           sudo apt-get install --no-install-recommends -y rpm &&
-          sudo apt-get install --no-install-recommends -y bsdtar
+          sudo apt-get install --no-install-recommends -y bsdtar &&
+          sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
       - name: Install Snapcraft (on Ubuntu)
         uses: samuelmeuli/action-snapcraft@v1
@@ -37,7 +38,7 @@ jobs:
         env:
           VUE_APP_ELECTRON_API_URL: /api
           VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
-          VUE_APP_ENABLE_SENTRY: true
+          VUE_APP_ENABLE_SENTRY: false
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
