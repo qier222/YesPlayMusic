@@ -33,6 +33,7 @@
 - 👆 支持 Touch Bar
 - 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
 - 🙉 支持显示歌曲和专辑的 Explicit 标志
+- 🟥 支持 Last.fm Scrobble
 - 🛠 更多特性开发中
 
 ## 📦️ 安装
@@ -148,15 +149,9 @@ API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryif
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [album-screenshot]: images/album.png
-
 [artist-screenshot]: images/artist.png
-
 [explore-screenshot]: images/explore.png
-
 [home-screenshot]: images/home.png
-
 [library-screenshot]: images/library.png
-
 [playlist-screenshot]: images/playlist.png
-
 [search-screenshot]: images/search.png
