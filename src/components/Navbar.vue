@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       inputFocus: false,
-      langs: ["zh-CN", "en"],
+      langs: ["zh-CN", "en", "tr"],
       keywords: "",
       windowIsMaximized: win ? win.isMaximized() : true,
     };
