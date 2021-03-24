@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar ref="navbar" />
+    <Navbar ref="navbar" v-show="showNavbar" />
     <main v-show="!this.$store.state.showLyrics">
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
@@ -8,15 +8,12 @@
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </main>
     <transition name="slide-up">
-      <Player
-        v-if="this.$store.state.player.enabled"
-        ref="player"
-        v-show="showPlayer"
+      <Player v-if="enablePlayer" ref="player" v-show="showPlayer"
     /></transition>
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
-    <transition name="slide-up" v-if="this.$store.state.player.enabled">
+    <transition name="slide-up" v-if="enablePlayer">
       <Lyrics v-show="this.$store.state.showLyrics" />
     </transition>
   </div>
@@ -53,10 +50,23 @@ export default {
     },
     showPlayer() {
       return (
-        ["mv", "loginUsername", "login", "loginAccount"].includes(
-          this.$route.name
-        ) === false
+        [
+          "mv",
+          "loginUsername",
+          "login",
+          "loginAccount",
+          "lastfmCallback",
+        ].includes(this.$route.name) === false
       );
+    },
+    enablePlayer() {
+      return (
+        this.$store.state.player.enabled &&
+        this.$route.name !== "lastfmCallback"
+      );
+    },
+    showNavbar() {
+      return this.$route.name !== "lastfmCallback";
     },
   },
   created() {

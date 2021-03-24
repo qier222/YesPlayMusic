@@ -103,6 +103,7 @@ class Background {
       minHeight: 720,
       titleBarStyle: "hiddenInset",
       frame: process.platform !== "win32",
+      title: "YesPlayMusic",
       webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
@@ -186,6 +187,25 @@ class Background {
 
     this.window.webContents.on("new-window", function (e, url) {
       e.preventDefault();
+      console.log("open url");
+      const excludeHosts = ["www.last.fm"];
+      const exclude = excludeHosts.find((host) => url.includes(host));
+      if (exclude) {
+        const newWindow = new BrowserWindow({
+          width: 800,
+          height: 600,
+          titleBarStyle: "default",
+          title: "YesPlayMusic",
+          webPreferences: {
+            webSecurity: false,
+            nodeIntegration: true,
+            enableRemoteModule: true,
+            contextIsolation: false,
+          },
+        });
+        newWindow.loadURL(url);
+        return;
+      }
       shell.openExternal(url);
     });
   }
