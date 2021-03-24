@@ -162,7 +162,7 @@ export default class {
     if (firstTrackID !== "first") this._shuffledList.unshift(firstTrackID);
   }
   async _scrobble(track, time, complete = false) {
-    console.log("scrobble");
+    console.log(`scrobble ${track.name} by ${track.ar[0].name}`);
     const trackDuration = ~~(track.dt / 1000);
     scrobble({
       id: track.id,
@@ -173,7 +173,6 @@ export default class {
       store.state.lastfm.key !== undefined &&
       (time >= trackDuration / 2 || time >= 240)
     ) {
-      console.log({ currentTrack: track });
       const timestamp = ~~(new Date().getTime() / 1000) - time;
       trackScrobble({
         artist: track.ar[0].name,
@@ -425,7 +424,6 @@ export default class {
     document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     this._playDiscordPresence(this._currentTrack, this.seek());
     if (store.state.lastfm.key !== undefined) {
-      console.log({ currentTrack: this.currentTrack });
       trackUpdateNowPlaying({
         artist: this.currentTrack.ar[0].name,
         track: this.currentTrack.name,
@@ -504,6 +502,12 @@ export default class {
       let trackIDs = data.hotSongs.map((t) => t.id);
       this.replacePlaylist(trackIDs, id, "artist", trackID);
     });
+  }
+  playTrackOnListByID(id, listName = "default") {
+    if (listName === "default") {
+      this._current = this._list.findIndex((t) => t === id);
+    }
+    this._replaceCurrentTrack(id);
   }
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);
