@@ -9,6 +9,7 @@ import { getArtist } from "@/api/artist";
 import { personalFM, fmTrash } from "@/api/others";
 import store from "@/store";
 import { isAccountLoggedIn } from "@/utils/auth";
+import { trackUpdateNowPlaying, trackScrobble } from "@/api/lastfm";
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require("electron") : null;
@@ -160,16 +161,28 @@ export default class {
     this._shuffledList = shuffle(list);
     if (firstTrackID !== "first") this._shuffledList.unshift(firstTrackID);
   }
-  async _scrobble(complete = false) {
-    let time = this._howler.seek();
-    if (complete) {
-      time = ~~(this._currentTrack.dt / 100);
-    }
+  async _scrobble(track, time, complete = false) {
+    console.log(`scrobble ${track.name} by ${track.ar[0].name}`);
+    const trackDuration = ~~(track.dt / 1000);
     scrobble({
-      id: this._currentTrack.id,
+      id: track.id,
       sourceid: this.playlistSource.id,
-      time,
+      time: complete ? trackDuration : time,
     });
+    if (
+      store.state.lastfm.key !== undefined &&
+      (time >= trackDuration / 2 || time >= 240)
+    ) {
+      const timestamp = ~~(new Date().getTime() / 1000) - time;
+      trackScrobble({
+        artist: track.ar[0].name,
+        track: track.name,
+        timestamp,
+        album: track.al.name,
+        trackNumber: track.no,
+        duration: trackDuration,
+      });
+    }
   }
   _playAudioSource(source, autoplay = true) {
     Howler.unload();
@@ -235,6 +248,7 @@ export default class {
     autoplay = true,
     ifUnplayableThen = "playNextTrack"
   ) {
+    if (autoplay) this._scrobble(this.currentTrack, this._howler.seek(), true);
     return getTrackDetail(id).then((data) => {
       let track = data.songs[0];
       this._currentTrack = track;
@@ -321,7 +335,6 @@ export default class {
     }
   }
   _nextTrackCallback() {
-    this._scrobble(true);
     if (this.repeatMode === "one") {
       this._replaceCurrentTrack(this._currentTrack.id);
     } else {
@@ -410,6 +423,15 @@ export default class {
     this._playing = true;
     document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     this._playDiscordPresence(this._currentTrack, this.seek());
+    if (store.state.lastfm.key !== undefined) {
+      trackUpdateNowPlaying({
+        artist: this.currentTrack.ar[0].name,
+        track: this.currentTrack.name,
+        album: this.currentTrack.al.name,
+        trackNumber: this.currentTrack.no,
+        duration: ~~(this.currentTrack.dt / 1000),
+      });
+    }
   }
   playOrPause() {
     if (this._howler.playing()) {
@@ -480,6 +502,12 @@ export default class {
       let trackIDs = data.hotSongs.map((t) => t.id);
       this.replacePlaylist(trackIDs, id, "artist", trackID);
     });
+  }
+  playTrackOnListByID(id, listName = "default") {
+    if (listName === "default") {
+      this._current = this._list.findIndex((t) => t === id);
+    }
+    this._replaceCurrentTrack(id);
   }
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);

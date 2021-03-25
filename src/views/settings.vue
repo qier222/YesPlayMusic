@@ -33,6 +33,7 @@
         <div class="right">
           <select v-model="lang">
             <option value="en">🇬🇧 English</option>
+            <option value="tr">🇹🇷 Türkçe</option>
             <option value="zh-CN">🇨🇳 简体中文</option>
           </select>
         </div>
@@ -197,6 +198,25 @@
           </div>
         </div>
       </div>
+
+      <div class="item">
+        <div class="left">
+          <div class="title">
+            {{
+              isLastfmConnected
+                ? `已连接到 Last.fm (${lastfm.name})`
+                : "连接 Last.fm "
+            }}</div
+          >
+        </div>
+        <div class="right">
+          <button @click="lastfmDisconnect()" v-if="isLastfmConnected"
+            >断开连接
+          </button>
+          <button @click="lastfmConnect()" v-else> 授权连接 </button>
+        </div>
+      </div>
+
       <div class="item">
         <div class="left">
           <div class="title">
@@ -298,6 +318,7 @@
 <script>
 import { mapState } from "vuex";
 import { doLogout } from "@/utils/auth";
+import { auth as lastfmAuth } from "@/api/lastfm";
 import { changeAppearance, bytesToSize } from "@/utils/common";
 import { countDBSize, clearDB } from "@/utils/db";
 import pkg from "../../package.json";
@@ -320,7 +341,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["player", "settings", "data"]),
+    ...mapState(["player", "settings", "data", "lastfm"]),
     isElectron() {
       return process.env.IS_ELECTRON;
     },
@@ -496,6 +517,8 @@ export default {
           value,
         });
       },
+    isLastfmConnected() {
+      return this.lastfm.key !== undefined;
     },
   },
   methods: {
@@ -541,6 +564,20 @@ export default {
       clearDB(dbName).then(() => {
         this.countDBSize("tracks");
       });
+    },
+    lastfmConnect() {
+      lastfmAuth();
+      let lastfmChecker = setInterval(() => {
+        const session = localStorage.getItem("lastfm");
+        if (session) {
+          this.$store.commit("updateLastfm", JSON.parse(session));
+          clearInterval(lastfmChecker);
+        }
+      }, 1000);
+    },
+    lastfmDisconnect() {
+      localStorage.removeItem("lastfm");
+      this.$store.commit("updateLastfm", {});
     },
   },
   created() {

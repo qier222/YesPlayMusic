@@ -123,6 +123,11 @@ const routes = [
     name: "dailySongs",
     component: () => import("@/views/dailyTracks.vue"),
   },
+  {
+    path: "/lastfm/callback",
+    name: "lastfmCallback",
+    component: () => import("@/views/lastfmCallback.vue"),
+  },
 ];
 const router = new VueRouter({
   routes,
@@ -160,7 +165,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to) => {
   if (
     to.matched.some((record) => !record.meta.keepAlive) &&
-    !["settings", "dailySongs"].includes(to.name)
+    !["settings", "dailySongs", "lastfmCallback"].includes(to.name)
   ) {
     NProgress.start();
   }

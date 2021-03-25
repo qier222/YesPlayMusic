@@ -66,13 +66,13 @@
     </nav>
 
     <ContextMenu ref="userProfileMenu">
-      <div class="item" @click="toLogin" v-if="!isLooseLoggedIn">
-        <svg-icon icon-class="login" />
-        {{ $t("login.login") }}
-      </div>
       <div class="item" @click="toSettings">
         <svg-icon icon-class="settings" />
         {{ $t("library.userProfileMenu.settings") }}
+      </div>
+      <div class="item" @click="toLogin" v-if="!isLooseLoggedIn">
+        <svg-icon icon-class="login" />
+        {{ $t("login.login") }}
       </div>
       <div class="item" @click="logout" v-if="isLooseLoggedIn">
         <svg-icon icon-class="logout" />
@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       inputFocus: false,
-      langs: ["zh-CN", "en"],
+      langs: ["zh-CN", "en", "tr"],
       keywords: "",
       windowIsMaximized: win ? win.isMaximized() : true,
     };

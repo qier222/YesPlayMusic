@@ -45,4 +45,7 @@ export default {
   updateDailyTracks(state, dailyTracks) {
     state.dailyTracks = dailyTracks;
   },
+  updateLastfm(state, session) {
+    state.lastfm = session;
+  },
 };
