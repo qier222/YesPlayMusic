@@ -50,9 +50,6 @@ class Background {
     // create Express app
     this.createExpressApp();
 
-    // init ipcMain
-    initIpcMain(this.window, this.store);
-
     // Scheme must be registered before the app is ready
     protocol.registerSchemesAsPrivileged([
       { scheme: "app", privileges: { secure: true, standard: true } },
@@ -225,6 +222,9 @@ class Background {
       // create window
       this.createWindow();
       this.handleWindowEvents();
+
+      // init ipcMain
+      initIpcMain(this.window, this.store);
 
       // check for updates
       this.checkForUpdates();

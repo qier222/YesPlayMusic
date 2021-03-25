@@ -1,6 +1,7 @@
-import { app, ipcMain, dialog, globalShortcut } from "electron";
+import { app, dialog, globalShortcut, ipcMain } from "electron";
 import match from "@njzy/unblockneteasemusic";
 import { registerGlobalShortcut } from "@/electron/globalShortcut";
+
 const client = require("discord-rich-presence")("818936529484906596");
 
 export function initIpcMain(win, store) {
@@ -66,10 +67,7 @@ export function initIpcMain(win, store) {
       "Alt+CommandOrControl+P"
     );
     if (options.enableGlobalShortcut) {
-      // Uncaught Exception:
-      // TypeError: Cannot read property 'webContents' of null
-      // at Function.<anonymous> (/Applications/YesPlayMusic.app/Contents/Resources/app.asar/background.js:2:2294263)
-      // !isRegisterShortcut && registerGlobalShortcut(win);
+      !isRegisterShortcut && registerGlobalShortcut(win);
     } else {
       isRegisterShortcut && globalShortcut.unregisterAll();
     }
