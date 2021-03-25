@@ -49,7 +49,7 @@
     "express-fileupload": "^1.2.0",
     "express-http-proxy": "^1.6.2",
     "extract-zip": "^2.0.1",
-    "howler": "^2.2.0",
+    "howler": "^2.2.1",
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.20",
     "nprogress": "^0.2.0",

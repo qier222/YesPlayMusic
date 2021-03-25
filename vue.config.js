@@ -97,7 +97,6 @@ module.exports = {
             {
               target: "nsis",
               arch: ["x64"],
-              deleteAppDataOnUninstall: true,
             },
           ],
           publisherName: "YesPlayMusic",
@@ -138,9 +137,9 @@ module.exports = {
           icon: "build/icons/icon.icns",
         },
         nsis: {
-          oneClick: false,
-          allowToChangeInstallationDirectory: true,
+          oneClick: true,
           perMachine: true,
+          deleteAppDataOnUninstall: true,
         },
       },
       // 主线程的配置文件

@@ -270,13 +270,7 @@ export default class {
     const nextTrack = this._getNextTrack();
     getTrackDetail(nextTrack[0]).then((data) => {
       let track = data.songs[0];
-      this._getAudioSourceFromCache(String(track.id))
-        .then((source) => {
-          return source ?? this._getAudioSourceFromNetease(track);
-        })
-        .then((source) => {
-          return source ?? this._getAudioSourceFromUnblockMusic(track);
-        });
+      this._getAudioSource(track);
     });
   }
   _loadSelfFromLocalStorage() {

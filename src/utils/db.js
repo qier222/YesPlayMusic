@@ -60,7 +60,3 @@ export function clearDB() {
     resolve();
   });
 }
-
-window.cacheTrackSource = cacheTrackSource;
-window.db = db;
-window.countDBSize = countDBSize;
