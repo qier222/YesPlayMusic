@@ -29,11 +29,7 @@ if ([undefined, null].includes(store.state.settings.lang)) {
   const defaultLang = "en";
   const langMapper = new Map()
     .set("zh", "zh-CN")
-    // .set("zh-CN", "zh-CN")
-    // .set("zh-Hans", "zh-CN")
     .set("en", "en")
-    // .set("en-US", "en")
-    // .set("en-GB", "en")
     .set("tr", "tr");
   store.state.settings.lang =
     langMapper.get(navigator.language.slice(0, 2)) || defaultLang;
