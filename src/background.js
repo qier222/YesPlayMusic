@@ -50,9 +50,6 @@ class Background {
     // create Express app
     this.createExpressApp();
 
-    // init ipcMain
-    initIpcMain(this.window, this.store);
-
     // Scheme must be registered before the app is ready
     protocol.registerSchemesAsPrivileged([
       { scheme: "app", privileges: { secure: true, standard: true } },
@@ -226,6 +223,9 @@ class Background {
       this.createWindow();
       this.handleWindowEvents();
 
+      // init ipcMain
+      initIpcMain(this.window, this.store);
+
       // check for updates
       this.checkForUpdates();
 
@@ -244,7 +244,9 @@ class Background {
       this.window.setTouchBar(createTouchBar(this.window));
 
       // register global shortcuts
-      registerGlobalShortcut(this.window);
+      if (this.store.get("settings.enableGlobalShortcut")) {
+        registerGlobalShortcut(this.window);
+      }
     });
 
     app.on("activate", () => {

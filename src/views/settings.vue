@@ -271,6 +271,22 @@
           </div>
         </div>
       </div>
+      <div class="item" v-if="isElectron">
+        <div class="left">
+          <div class="title"> {{ $t("settings.enableGlobalShortcut") }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="enable-enable-global-shortcut"
+              id="enable-enable-global-shortcut"
+              v-model="enableGlobalShortcut"
+            />
+            <label for="enable-enable-global-shortcut"></label>
+          </div>
+        </div>
+      </div>
       <div class="item">
         <div class="left">
           <div class="title" style="transform: scaleX(-1)">🐈️ 🏳️‍🌈</div>
@@ -491,8 +507,19 @@ export default {
         });
       },
     },
-    isLastfmConnected() {
-      return this.lastfm.key !== undefined;
+    enableGlobalShortcut: {
+      get() {
+        return this.settings.enableGlobalShortcut;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "enableGlobalShortcut",
+          value,
+        });
+      },
+      isLastfmConnected() {
+        return this.lastfm.key !== undefined;
+      },
     },
   },
   methods: {
