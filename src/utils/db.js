@@ -1,54 +1,66 @@
 import axios from "axios";
-import localforage from "localforage";
+import Dexie from "dexie";
+// import pkg from "../../package.json";
 
-export function cacheTrack(id, url) {
-  let tracks = localforage.createInstance({
-    name: "tracks",
-  });
+const db = new Dexie("yesplaymusic");
+db.version(1).stores({
+  trackSources: "&id",
+});
 
-  // TODO: limit cache songs number
-  // tracks.length().then(function (length) {
-  //   if (length > 2) {
-  //     tracks.keys().then(function (keys) {
-  //       tracks.removeItem(keys[keys.length - 2]);
-  //     });
-  //   }
-  // });
-
-  // TODO: cache track details
+export function cacheTrackSource(trackInfo, url, bitRate, from = "netease") {
+  const name = trackInfo.name;
+  const artist = trackInfo.ar[0]?.name || trackInfo.artists[0]?.name;
   return axios
     .get(url, {
       responseType: "arraybuffer",
     })
     .then((response) => {
-      tracks.setItem(`${id}`, { mp3: response.data });
-      return { mp3: response.data };
+      db.trackSources.put({
+        id: trackInfo.id,
+        source: response.data,
+        bitRate,
+        from,
+        name,
+        artist,
+      });
+      console.debug(`[debug][db.js] cached track 👉 ${name} by ${artist}`);
+      return { trackID: trackInfo.id, source: response.data, bitRate };
     });
 }
 
-export function countDBSize(dbName) {
-  let db = localforage.createInstance({
-    name: dbName,
+export function getTrackSource(id) {
+  return db.trackSources.get(Number(id)).then((track) => {
+    if (!track) return null;
+    console.debug(
+      `[debug][db.js] get track from cache 👉 ${track.name} by ${track.artist}`
+    );
+    return track;
   });
+}
+
+export function countDBSize() {
   let trackSizes = [];
-  return db
-    .iterate((value) => {
-      trackSizes.push(value.mp3.byteLength);
+  return db.trackSources
+    .each((track) => {
+      trackSizes.push(track.source.byteLength);
     })
     .then(() => {
       return {
         bytes: trackSizes.reduce((s1, s2) => s1 + s2, 0),
         length: trackSizes.length,
       };
-    })
-    .catch((err) => {
-      console.log(err);
     });
 }
 
-export function clearDB(dbName) {
-  let db = localforage.createInstance({
-    name: dbName,
+export function clearDB() {
+  return new Promise((resolve) => {
+    db.tables.forEach(function (table) {
+      table.clear();
+    });
+    resolve();
   });
-  return db.clear();
 }
+
+window.cacheTrackSource = cacheTrackSource;
+window.db = db;
+window.countDBSize = countDBSize;

@@ -122,7 +122,7 @@
           >
         </div>
         <div class="right">
-          <button @click="clearCache('tracks')">
+          <button @click="clearCache()">
             {{ $t("settings.clearSongsCache") }}
           </button>
         </div>
@@ -365,7 +365,7 @@ export default {
       set(value) {
         if (value === this.settings.musicQuality) return;
         this.$store.commit("changeMusicQuality", value);
-        this.clearCache("tracks");
+        this.clearCache();
       },
     },
     lyricFontSize: {
@@ -443,7 +443,7 @@ export default {
           value,
         });
         if (value === false) {
-          this.clearCache("tracks");
+          this.clearCache();
         }
       },
     },
@@ -520,8 +520,8 @@ export default {
       doLogout();
       this.$router.push({ name: "home" });
     },
-    countDBSize(dbName) {
-      countDBSize(dbName).then((data) => {
+    countDBSize() {
+      countDBSize().then((data) => {
         if (data === undefined) {
           this.tracksCache = {
             size: "0KB",
@@ -533,10 +533,9 @@ export default {
         this.tracksCache.length = data.length;
       });
     },
-    clearCache(dbName) {
-      // TODO: toast
-      clearDB(dbName).then(() => {
-        this.countDBSize("tracks");
+    clearCache() {
+      clearDB().then(() => {
+        this.countDBSize();
       });
     },
     lastfmConnect() {

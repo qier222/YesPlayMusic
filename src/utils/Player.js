@@ -1,8 +1,7 @@
 import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
 import { shuffle } from "lodash";
 import { Howler, Howl } from "howler";
-import localforage from "localforage";
-import { cacheTrack } from "@/utils/db";
+import { cacheTrackSource, getTrackSource } from "@/utils/db";
 import { getAlbum } from "@/api/album";
 import { getPlaylistDetail } from "@/api/playlist";
 import { getArtist } from "@/api/artist";
@@ -201,10 +200,9 @@ export default class {
     });
   }
   _getAudioSourceFromCache(id) {
-    let tracks = localforage.createInstance({ name: "tracks" });
-    return tracks.getItem(id).then((t) => {
-      if (t === null) return null;
-      const source = URL.createObjectURL(new Blob([t.mp3]));
+    return getTrackSource(id).then((t) => {
+      if (!t) return null;
+      const source = URL.createObjectURL(new Blob([t.source]));
       return source;
     });
   }
@@ -216,7 +214,7 @@ export default class {
         if (result.data[0].freeTrialInfo !== null) return null; // 跳过只能试听的歌曲
         const source = result.data[0].url.replace(/^http:/, "https:");
         if (store.state.settings.automaticallyCacheSongs) {
-          cacheTrack(track.id, source);
+          cacheTrackSource(track, source, result.data[0].br);
         }
         return source;
       });
@@ -230,7 +228,8 @@ export default class {
     if (process.env.IS_ELECTRON !== true) return null;
     const source = ipcRenderer.sendSync("unblock-music", track);
     if (store.state.settings.automaticallyCacheSongs && source?.url) {
-      cacheTrack(track.id, source.url);
+      // TODO: 将unblockMusic字样换成真正的来源（比如酷我咪咕等）
+      cacheTrackSource(track, source.url, 128000, "unblockMusic");
     }
     return source?.url;
   }
