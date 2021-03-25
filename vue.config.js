@@ -97,6 +97,7 @@ module.exports = {
             {
               target: "nsis",
               arch: ["x64"],
+              deleteAppDataOnUninstall: true,
             },
           ],
           publisherName: "YesPlayMusic",
@@ -115,7 +116,7 @@ module.exports = {
             },
             {
               target: "deb",
-              arch: ["x64"],
+              arch: ["x64", "armv7l"],
             },
             {
               target: "rpm",

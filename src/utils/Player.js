@@ -161,12 +161,12 @@ export default class {
     if (firstTrackID !== "first") this._shuffledList.unshift(firstTrackID);
   }
   async _scrobble(track, time, complete = false) {
-    console.log(`scrobble ${track.name} by ${track.ar[0].name}`);
     const trackDuration = ~~(track.dt / 1000);
+    time = complete ? trackDuration : time;
     scrobble({
       id: track.id,
       sourceid: this.playlistSource.id,
-      time: complete ? trackDuration : time,
+      time,
     });
     if (
       store.state.lastfm.key !== undefined &&

@@ -75,7 +75,7 @@
           </select>
         </div>
       </div>
-      <div class="item">
+      <div class="item" v-if="isElectron">
         <div class="left">
           <div class="title"> {{ $t("settings.deviceSelector") }} </div>
         </div>
@@ -92,7 +92,7 @@
           </select>
         </div>
       </div>
-      <div class="item">
+      <div class="item" v-if="isElectron">
         <div class="left">
           <div class="title">
             {{ $t("settings.automaticallyCacheSongs") }}
@@ -110,7 +110,7 @@
           </div>
         </div>
       </div>
-      <div class="item">
+      <div class="item" v-if="isElectron">
         <div class="left">
           <div class="title">
             {{
