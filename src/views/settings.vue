@@ -517,8 +517,9 @@ export default {
           value,
         });
       },
-    isLastfmConnected() {
-      return this.lastfm.key !== undefined;
+      isLastfmConnected() {
+        return this.lastfm.key !== undefined;
+      },
     },
   },
   methods: {
