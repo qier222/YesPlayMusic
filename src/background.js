@@ -224,8 +224,7 @@ class Background {
       this.window.setTouchBar(createTouchBar(this.window));
 
       // register global shortcuts
-      const settings = JSON.parse(localStorage.getItem("settings"));
-      if (settings.enableGlobalShortcut) {
+      if (this.store.get("settings.enableGlobalShortcut")) {
         registerGlobalShortcut(this.window);
       }
     });
