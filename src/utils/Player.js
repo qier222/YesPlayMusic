@@ -255,6 +255,7 @@ export default class {
       return this._getAudioSource(track).then((source) => {
         if (source) {
           this._playAudioSource(source, autoplay);
+          this._cacheNextTrack();
           return source;
         } else {
           store.dispatch("showToast", `无法播放 ${track.name}`);
@@ -263,6 +264,19 @@ export default class {
             : this.playPrevTrack();
         }
       });
+    });
+  }
+  _cacheNextTrack() {
+    const nextTrack = this._getNextTrack();
+    getTrackDetail(nextTrack[0]).then((data) => {
+      let track = data.songs[0];
+      this._getAudioSourceFromCache(String(track.id))
+        .then((source) => {
+          return source ?? this._getAudioSourceFromNetease(track);
+        })
+        .then((source) => {
+          return source ?? this._getAudioSourceFromUnblockMusic(track);
+        });
     });
   }
   _loadSelfFromLocalStorage() {
