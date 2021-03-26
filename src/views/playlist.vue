@@ -351,16 +351,20 @@ export default {
     filteredTracks() {
       return this.tracks.filter(
         (track) =>
-          track.name
-            .toLowerCase()
-            .includes(this.searchKeyWords.toLowerCase()) ||
-          track.al.name
-            .toLowerCase()
-            .includes(this.searchKeyWords.toLowerCase()) ||
-          track.ar.find((artist) =>
-            artist.name
+          (track.name &&
+            track.name
               .toLowerCase()
-              .includes(this.searchKeyWords.toLowerCase())
+              .includes(this.searchKeyWords.toLowerCase())) ||
+          (track.al.name &&
+            track.al.name
+              .toLowerCase()
+              .includes(this.searchKeyWords.toLowerCase())) ||
+          track.ar.find(
+            (artist) =>
+              artist.name &&
+              artist.name
+                .toLowerCase()
+                .includes(this.searchKeyWords.toLowerCase())
           )
       );
     },
