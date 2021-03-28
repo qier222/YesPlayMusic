@@ -464,7 +464,11 @@ export default class {
     }
   }
   setOutputDevice() {
-    if (this._howler._sounds.length <= 0 || !this._howler._sounds[0]._node) {
+    if (
+      process.env.IS_ELECTRON !== true ||
+      this._howler._sounds.length <= 0 ||
+      !this._howler._sounds[0]._node
+    ) {
       return;
     }
     this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
