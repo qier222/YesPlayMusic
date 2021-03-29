@@ -199,6 +199,7 @@ import {
 } from "@/api/playlist";
 import { getTrackDetail } from "@/api/track";
 import { isAccountLoggedIn } from "@/utils/auth";
+import nativeAlert from "@/utils/nativeAlert";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import ContextMenu from "@/components/ContextMenu.vue";
@@ -467,16 +468,16 @@ export default {
       if (confirmation === true) {
         deletePlaylist(this.playlist.id).then((data) => {
           if (data.code === 200) {
-            alert(`已删除歌单 ${this.playlist.name}`);
+            nativeAlert(`已删除歌单 ${this.playlist.name}`);
             this.$router.go(-1);
           } else {
-            alert("发生错误");
+            nativeAlert("发生错误");
           }
         });
       }
     },
     editPlaylist() {
-      alert("此功能开发中");
+      nativeAlert("此功能开发中");
     },
     searchInPlaylist() {
       this.displaySearchInPlaylist = !this.displaySearchInPlaylist;
