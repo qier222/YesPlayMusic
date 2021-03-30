@@ -1,10 +1,17 @@
 /**
- * 返回适合平台的 alert 函数
+ * Returns an alert-like function that fits current runtime environment
+ *
+ * This function is amid to solve a electron bug on Windows, that, when
+ * user dismissed a browser alert, <input> elements cannot be focused
+ * for further editing unless switching to another window and then back
+ *
  * @returns { (message:string) => void }
+ * Built-in alert function for browser environment
+ * A function wrapping {@link dialog.showMessageBoxSync} for electron environment
+ *
+ * @see {@link https://github.com/electron/electron/issues/19977} for upstream electron issue
  */
 const nativeAlert = (() => {
-  // Windows 环境下的 Electron 存在 bug, 页面内通过 alert 函数弹出提示框
-  // 确认后页面内输入框无法获得焦点, 需要切换焦点窗口才能恢复
   if (process.env.IS_ELECTRON === true) {
     const {
       remote: { dialog },
