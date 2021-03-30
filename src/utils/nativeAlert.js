@@ -20,7 +20,6 @@ const nativeAlert = (() => {
       return (message) => {
         var options = {
           type: "warning",
-          title: "提示",
           detail: message,
         };
         dialog.showMessageBoxSync(null, options);
