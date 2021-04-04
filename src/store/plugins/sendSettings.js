@@ -8,6 +8,7 @@ export function getSendSettingsPlugin() {
       ipcRenderer.send("settings", {
         minimizeToTray: state.settings.minimizeToTray,
         enableGlobalShortcut: state.settings.enableGlobalShortcut,
+        appearance: state.settings.appearance,
       });
     });
   };
