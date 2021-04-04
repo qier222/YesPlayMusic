@@ -6,6 +6,7 @@ import {
   shell,
   dialog,
   globalShortcut,
+  nativeTheme,
 } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import { startNeteaseMusicApi } from "./electron/services";
@@ -93,6 +94,8 @@ class Background {
   createWindow() {
     console.log("creating app window");
 
+    const appearance = this.store.get("settings.appearance");
+
     this.window = new BrowserWindow({
       width: this.store.get("window.width") || 1440,
       height: this.store.get("window.height") || 840,
@@ -107,6 +110,12 @@ class Background {
         enableRemoteModule: true,
         contextIsolation: false,
       },
+      backgroundColor:
+        ((appearance === undefined || appearance === "auto") &&
+          nativeTheme.shouldUseDarkColors) ||
+        appearance === "dark"
+          ? "#222"
+          : "#fff",
     });
 
     // hide menu bar on Microsoft Windows and Linux
