@@ -132,7 +132,7 @@ export default {
       large: "大(默认)",
       xlarge: "超大",
     },
-    deviceSelector: "音频输出设备",
+    deviceSelector: "音频输出设备",
     permissionRequired: "需要麦克风权限",
     appearance: {
       text: "外观",
