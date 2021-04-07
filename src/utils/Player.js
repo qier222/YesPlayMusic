@@ -342,7 +342,7 @@ export default class {
     }
   }
   _nextTrackCallback() {
-    if (this.repeatMode === "one") {
+    if (!this.isPersonalFM && this.repeatMode === "one") {
       this._replaceCurrentTrack(this._currentTrack.id);
     } else {
       this.playNextTrack();
