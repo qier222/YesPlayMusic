@@ -247,7 +247,7 @@ export default class {
     autoplay = true,
     ifUnplayableThen = "playNextTrack"
   ) {
-    if (autoplay) this._scrobble(this.currentTrack, this._howler.seek(), true);
+    if (autoplay) this._scrobble(this.currentTrack, this._howler?.seek(), true);
     return getTrackDetail(id).then((data) => {
       let track = data.songs[0];
       this._currentTrack = track;
