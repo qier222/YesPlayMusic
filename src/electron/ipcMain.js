@@ -61,6 +61,12 @@ export function initIpcMain(win, store) {
     win.minimize();
   });
 
+  ipcMain.on("maximizeOrUnmaximize", () => {
+    const isMaximized = win.isMaximized();
+    isMaximized ? win.unmaximize() : win.maximize();
+    win.webContents.send("isMaximized", isMaximized);
+  });
+
   ipcMain.on("settings", (event, options) => {
     store.set("settings", options);
     const isRegisterShortcut = globalShortcut.isRegistered(

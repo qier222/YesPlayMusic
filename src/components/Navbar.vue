@@ -12,8 +12,8 @@
             class="button max-restore codicon"
             @click="windowMaxRestore"
             :class="{
-              'codicon-chrome-restore': windowIsMaximized,
-              'codicon-chrome-maximize': !windowIsMaximized,
+              'codicon-chrome-restore': !isWindowMaximized,
+              'codicon-chrome-maximize': isWindowMaximized,
             }"
           ></div>
           <div
@@ -98,11 +98,10 @@ import "vscode-codicons/dist/codicon.css";
 import ContextMenu from "@/components/ContextMenu.vue";
 import ButtonIcon from "@/components/ButtonIcon.vue";
 
-let win = undefined;
-if (process.env.IS_ELECTRON === true) {
-  const electron = require("electron");
-  win = electron.remote.BrowserWindow.getFocusedWindow();
-}
+const electron =
+  process.env.IS_ELECTRON === true ? window.require("electron") : null;
+const ipcRenderer =
+  process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
 export default {
   name: "Navbar",
@@ -115,7 +114,7 @@ export default {
       inputFocus: false,
       langs: ["zh-CN", "en", "tr"],
       keywords: "",
-      windowIsMaximized: win ? win.isMaximized() : true,
+      isWindowMaximized: false,
     };
   },
   computed: {
@@ -128,6 +127,13 @@ export default {
         ? `${this.data?.user?.avatarUrl}?param=512y512`
         : "http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60";
     },
+  },
+  created() {
+    if (process.env.IS_ELECTRON === true) {
+      ipcRenderer.on("isMaximized", (event, value) => {
+        this.isWindowMaximized = value;
+      });
+    }
   },
   methods: {
     go(where) {
@@ -165,19 +171,13 @@ export default {
       this.$router.push({ name: "login" });
     },
     windowMinimize() {
-      win.minimize();
+      ipcRenderer.send("minimize");
     },
     windowMaxRestore() {
-      if (win.isMaximized()) {
-        win.restore();
-        this.windowIsMaximized = false;
-      } else {
-        win.maximize();
-        this.windowIsMaximized = true;
-      }
+      ipcRenderer.send("maximizeOrUnmaximize");
     },
     windowClose() {
-      win.close();
+      ipcRenderer.send("close");
     },
   },
 };
