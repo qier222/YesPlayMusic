@@ -10,7 +10,7 @@
         :imageUrl="getImageUrl(item)"
         :type="type"
         :id="item.id"
-        :playButtonSize="type === 'artist' ? 26 : 22"
+        :playButtonSize="type === 'artist' ? 26 : playButtonSize"
       />
       <div class="text">
         <div class="info" v-if="showPlayCount">
@@ -55,6 +55,7 @@ export default {
     showPlayCount: { type: Boolean, default: false },
     columnNumber: { type: Number, default: 5 },
     gap: { type: String, default: "44px 24px" },
+    playButtonSize: { type: Number, default: 22 },
   },
   computed: {
     rowStyles() {

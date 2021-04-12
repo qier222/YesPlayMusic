@@ -160,9 +160,12 @@ export default class {
     this._shuffledList = shuffle(list);
     if (firstTrackID !== "first") this._shuffledList.unshift(firstTrackID);
   }
-  async _scrobble(track, time, complete = false) {
+  async _scrobble(track, time, completed = false) {
+    console.debug(
+      `[debug][Player.js] scrobble track 👉 ${track.name} by ${track.ar[0].name} 👉 time:${time} completed: ${completed}`
+    );
     const trackDuration = ~~(track.dt / 1000);
-    time = complete ? trackDuration : time;
+    time = completed ? trackDuration : ~~time;
     scrobble({
       id: track.id,
       sourceid: this.playlistSource.id,
@@ -247,7 +250,9 @@ export default class {
     autoplay = true,
     ifUnplayableThen = "playNextTrack"
   ) {
-    if (autoplay) this._scrobble(this.currentTrack, this._howler?.seek(), true);
+    if (autoplay) {
+      this._scrobble(this.currentTrack, this._howler.seek());
+    }
     return getTrackDetail(id).then((data) => {
       let track = data.songs[0];
       this._currentTrack = track;
@@ -267,8 +272,11 @@ export default class {
     });
   }
   _cacheNextTrack() {
-    const nextTrack = this._getNextTrack();
-    getTrackDetail(nextTrack[0]).then((data) => {
+    let nextTrackID = this._isPersonalFM
+      ? this._personalFMNextTrack.id
+      : this._getNextTrack()[0];
+    if (!nextTrackID) return;
+    getTrackDetail(nextTrackID).then((data) => {
       let track = data.songs[0];
       this._getAudioSource(track);
     });
@@ -342,7 +350,8 @@ export default class {
     }
   }
   _nextTrackCallback() {
-    if (!this.isPersonalFM && this.repeatMode === "one") {
+    this._scrobble(this._currentTrack, 0, true);
+    if (this.repeatMode === "one") {
       this._replaceCurrentTrack(this._currentTrack.id);
     } else {
       this.playNextTrack();
@@ -464,11 +473,7 @@ export default class {
     }
   }
   setOutputDevice() {
-    if (
-      process.env.IS_ELECTRON !== true ||
-      this._howler._sounds.length <= 0 ||
-      !this._howler._sounds[0]._node
-    ) {
+    if (this._howler._sounds.length <= 0 || !this._howler._sounds[0]._node) {
       return;
     }
     this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);

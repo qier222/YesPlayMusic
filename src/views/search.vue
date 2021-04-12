@@ -1,7 +1,7 @@
 <template>
   <div class="search" v-show="show">
     <div class="row" v-show="artists.length > 0 || albums.length > 0">
-      <div class="artists">
+      <div class="artists" v-show="artists.length > 0">
         <div class="section-title" v-show="artists.length > 0"
           >{{ $t("search.artist")
           }}<router-link :to="`/search/${keywords}/artists`">{{
@@ -30,6 +30,7 @@
           :columnNumber="3"
           subTextFontSize="14px"
           gap="34px 24px"
+          :playButtonSize="26"
         />
       </div>
     </div>
@@ -68,6 +69,7 @@
         :columnNumber="6"
         subTextFontSize="14px"
         gap="34px 24px"
+        :playButtonSize="26"
       />
     </div>
 

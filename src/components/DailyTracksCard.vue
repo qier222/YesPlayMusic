@@ -21,8 +21,16 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState, mapActions } from "vuex";
 import { dailyRecommendTracks } from "@/api/playlist";
+import { isAccountLoggedIn } from "@/utils/auth";
+import { sample } from "lodash";
+
+const defaultCovers = [
+  "https://p2.music.126.net/0-Ybpa8FrDfRgKYCTJD8Xg==/109951164796696795.jpg",
+  "https://p2.music.126.net/QxJA2mr4hhb9DZyucIOIQw==/109951165422200291.jpg",
+  "https://p1.music.126.net/AhYP9TET8l-VSGOpWAKZXw==/109951165134386387.jpg",
+];
 
 export default {
   name: "DailyTracksCard",
@@ -31,26 +39,33 @@ export default {
   },
   computed: {
     ...mapState(["dailyTracks"]),
+    coverUrl() {
+      return this.dailyTracks[0]?.al.picUrl || sample(defaultCovers);
+    },
     cardStyles() {
       return {
-        background:
-          this.dailyTracks.length !== 0
-            ? `no-repeat url("${this.dailyTracks[0].al.picUrl}?param=1024y1024") center/cover`
-            : "",
+        background: `no-repeat url("${this.coverUrl}?param=1024y1024") center/cover`,
       };
     },
   },
   methods: {
+    ...mapActions(["showToast"]),
     ...mapMutations(["updateDailyTracks"]),
     loadDailyTracks() {
-      dailyRecommendTracks().then((result) => {
-        this.updateDailyTracks(result.data.dailySongs);
-      });
+      dailyRecommendTracks()
+        .then((result) => {
+          this.updateDailyTracks(result.data.dailySongs);
+        })
+        .catch(() => {});
     },
     goToDailyTracks() {
       this.$router.push({ name: "dailySongs" });
     },
     playDailyTracks() {
+      if (!isAccountLoggedIn()) {
+        this.showToast("此操作需要登录网易云账号");
+        return;
+      }
       let trackIDs = this.dailyTracks.map((t) => t.id);
       this.$store.state.player.replacePlaylist(
         trackIDs,

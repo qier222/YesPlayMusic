@@ -1,7 +1,7 @@
 <template>
   <div class="settings">
     <div class="container">
-      <div class="user" v-if="data.user.nickname !== undefined">
+      <div class="user" v-if="showUserInfo">
         <div class="left">
           <img class="avatar" :src="data.user.avatarUrl" />
           <div class="info">
@@ -317,7 +317,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { doLogout } from "@/utils/auth";
+import { isLooseLoggedIn, doLogout } from "@/utils/auth";
 import { auth as lastfmAuth } from "@/api/lastfm";
 import { changeAppearance, bytesToSize } from "@/utils/common";
 import { countDBSize, clearDB } from "@/utils/db";
@@ -351,6 +351,10 @@ export default {
     version() {
       return pkg.version;
     },
+    showUserInfo() {
+      return isLooseLoggedIn() && this.data.user.nickname;
+    },
+
     lang: {
       get() {
         return this.settings.lang;
@@ -517,9 +521,9 @@ export default {
           value,
         });
       },
-      isLastfmConnected() {
-        return this.lastfm.key !== undefined;
-      },
+    },
+    isLastfmConnected() {
+      return this.lastfm.key !== undefined;
     },
   },
   methods: {

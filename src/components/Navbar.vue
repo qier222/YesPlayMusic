@@ -124,8 +124,8 @@ export default {
       return isLooseLoggedIn();
     },
     avatarUrl() {
-      return this.data.user.avatarUrl
-        ? `${this.data.user.avatarUrl}?param=512y512`
+      return this.data?.user?.avatarUrl && this.isLooseLoggedIn
+        ? `${this.data?.user?.avatarUrl}?param=512y512`
         : "http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60";
     },
   },

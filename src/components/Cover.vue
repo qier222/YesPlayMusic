@@ -100,6 +100,7 @@ img {
   border-radius: 0.75em;
   width: 100%;
   user-select: none;
+  aspect-ratio: 1 / 1;
 }
 
 .cover-hover {
@@ -156,6 +157,7 @@ img {
   z-index: -1;
   background-size: cover;
   border-radius: 0.75em;
+  aspect-ratio: 1 / 1;
 }
 
 .fade-enter-active,
