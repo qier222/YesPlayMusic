@@ -100,6 +100,11 @@
   visibility: visible;
 }
 
+.nyancat-stop .vue-slider-dot-handle {
+  background-image: url("/img/logos/nyancat-stop.png");
+  transition: 300ms;
+}
+
 /* lyrics */
 .lyrics-page .vue-slider-rail {
   background-color: rgba(128, 128, 128, 0.18);

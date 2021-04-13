@@ -2,7 +2,10 @@
   <div class="player" @click="toggleLyrics">
     <div
       class="progress-bar"
-      :class="{ nyancat: settings.nyancatStyle }"
+      :class="{
+        nyancat: settings.nyancatStyle,
+        'nyancat-stop': settings.nyancatStyle && !player.playing,
+      }"
       @click.stop
     >
       <vue-slider
