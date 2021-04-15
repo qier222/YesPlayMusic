@@ -1,5 +1,5 @@
 import { getTrackDetail, scrobble, getMP3 } from "@/api/track";
-import { shuffle } from "lodash";
+import shuffle from "lodash/shuffle";
 import { Howler, Howl } from "howler";
 import { cacheTrackSource, getTrackSource } from "@/utils/db";
 import { getAlbum } from "@/api/album";
@@ -250,8 +250,8 @@ export default class {
     autoplay = true,
     ifUnplayableThen = "playNextTrack"
   ) {
-    if (autoplay) {
-      this._scrobble(this.currentTrack, this._howler.seek());
+    if (autoplay && this._currentTrack.name) {
+      this._scrobble(this.currentTrack, this._howler?.seek());
     }
     return getTrackDetail(id).then((data) => {
       let track = data.songs[0];
@@ -508,6 +508,9 @@ export default class {
     });
   }
   playPlaylistByID(id, trackID = "first", noCache = false) {
+    console.debug(
+      `[debug][Player.js] playPlaylistByID 👉 id:${id} trackID:${trackID} noCache:${noCache}`
+    );
     getPlaylistDetail(id, noCache).then((data) => {
       let trackIDs = data.playlist.trackIds.map((t) => t.id);
       this.replacePlaylist(trackIDs, id, "playlist", trackID);

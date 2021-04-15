@@ -73,6 +73,7 @@ button {
   color: var(--color-primary);
   margin-right: 12px;
   transition: 0.2s;
+  user-select: none;
   .svg-icon {
     width: 16px;
     height: 16px;

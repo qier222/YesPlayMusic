@@ -1,9 +1,6 @@
 <template>
-  <div
-    class="daily-recommend-card"
-    @click="goToDailyTracks"
-    :style="cardStyles"
-  >
+  <div class="daily-recommend-card" @click="goToDailyTracks">
+    <img :src="coverUrl" />
     <div class="container">
       <div class="title-box">
         <div class="title">
@@ -24,7 +21,7 @@
 import { mapMutations, mapState, mapActions } from "vuex";
 import { dailyRecommendTracks } from "@/api/playlist";
 import { isAccountLoggedIn } from "@/utils/auth";
-import { sample } from "lodash";
+import sample from "lodash/sample";
 
 const defaultCovers = [
   "https://p2.music.126.net/0-Ybpa8FrDfRgKYCTJD8Xg==/109951164796696795.jpg",
@@ -34,19 +31,19 @@ const defaultCovers = [
 
 export default {
   name: "DailyTracksCard",
-  created() {
-    if (this.dailyTracks.length === 0) this.loadDailyTracks();
+  data() {
+    return { useAnimation: false };
   },
   computed: {
     ...mapState(["dailyTracks"]),
     coverUrl() {
-      return this.dailyTracks[0]?.al.picUrl || sample(defaultCovers);
+      return `${
+        this.dailyTracks[0]?.al.picUrl || sample(defaultCovers)
+      }?param=1024y1024`;
     },
-    cardStyles() {
-      return {
-        background: `no-repeat url("${this.coverUrl}?param=1024y1024") center/cover`,
-      };
-    },
+  },
+  created() {
+    if (this.dailyTracks.length === 0) this.loadDailyTracks();
   },
   methods: {
     ...mapActions(["showToast"]),
@@ -81,15 +78,24 @@ export default {
 <style lang="scss" scoped>
 .daily-recommend-card {
   border-radius: 1rem;
-  animation: move 38s infinite;
-  animation-direction: alternate;
   height: 198px;
   cursor: pointer;
   position: relative;
+  overflow: hidden;
+}
+
+img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  animation: move 38s infinite;
+  animation-direction: alternate;
+  z-index: -1;
 }
 
 .container {
-  background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.38));
+  background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.28));
   height: 198px;
   width: 50%;
   display: flex;
@@ -154,10 +160,10 @@ export default {
 
 @keyframes move {
   0% {
-    background-position: 0% 0%;
+    transform: translateY(0);
   }
   100% {
-    background-position: 0% 100%;
+    transform: translateY(-50%);
   }
 }
 </style>

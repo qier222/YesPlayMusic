@@ -400,6 +400,7 @@ nav {
   align-items: center;
   justify-content: flex-end;
   .avatar {
+    user-select: none;
     height: 30px;
     margin-left: 12px;
     vertical-align: -7px;
