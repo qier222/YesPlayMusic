@@ -124,6 +124,10 @@ export default {
       high: "Yüksek",
       lossless: "Kaliteli",
     },
+    cacheLimit: {
+      text: "Şarkılar Önbellek sınırı",
+      none: "Yok",
+    },
     lyricFontSize: {
       text: "Şarkı Sözleri Yazı Boyutu",
       small: "Küçük",
