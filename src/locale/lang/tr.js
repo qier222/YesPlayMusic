@@ -149,6 +149,7 @@ export default {
     showUnavailableSongInGreyStyle: "Erişilemeyen müzikleri gri stilde göster",
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
     enableDiscordRichPresence: "Discord gösterimini aktifleştir",
+    showLibraryDefault: "Kitaplık Varsayılanını göster",
   },
   contextMenu: {
     play: "Oynat",

@@ -219,6 +219,23 @@
 
       <div class="item">
         <div class="left">
+          <div class="title"> {{ $t("settings.showLibraryDefault") }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              type="checkbox"
+              name="show-library-default"
+              id="show-library-default"
+              v-model="showLibraryDefault"
+            />
+            <label for="show-library-default"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="left">
           <div class="title">
             {{ $t("settings.showUnavailableSongInGreyStyle") }}</div
           >
@@ -518,6 +535,17 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "enableGlobalShortcut",
+          value,
+        });
+      },
+    },
+    showLibraryDefault: {
+      get() {
+        return this.settings.showLibraryDefault || false;
+      },
+      set(value) {
+        this.$store.commit("updateSettings", {
+          key: "showLibraryDefault",
           value,
         });
       },

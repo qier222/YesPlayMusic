@@ -70,6 +70,8 @@ export default {
     },
   },
   created() {
+    this.$store.state.settings.showLibraryDefault &&
+      this.$router.push("/library");
     if (this.isElectron) {
       ipcRenderer(this);
     }

@@ -151,6 +151,7 @@ export default {
     showPlaylistsByAppleMusic: "首页显示来自 Apple Music 的歌单",
     enableDiscordRichPresence: "启用 Discord Rich Presence",
     enableGlobalShortcut: "启用全局快捷键",
+    showLibraryDefault: "默认启动音乐库",
   },
   contextMenu: {
     play: "播放",

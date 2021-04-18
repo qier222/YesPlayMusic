@@ -150,6 +150,7 @@ export default {
     showPlaylistsByAppleMusic: "Show playlists by Apple Music",
     enableDiscordRichPresence: "Enable Discord Rich Presence",
     enableGlobalShortcut: "Enable Global Shortcut",
+    showLibraryDefault: "Show library default",
   },
   contextMenu: {
     play: "Play",
