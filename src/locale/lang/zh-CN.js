@@ -125,6 +125,10 @@ export default {
       high: "极高",
       lossless: "无损",
     },
+    cacheLimit: {
+      text: "歌曲缓存上限",
+      none: "无限制",
+    },
     lyricFontSize: {
       text: "歌词字体大小",
       small: "小",

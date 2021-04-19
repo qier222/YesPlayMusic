@@ -1,11 +1,48 @@
 import axios from "axios";
 import Dexie from "dexie";
+import store from "@/store";
 // import pkg from "../../package.json";
 
 const db = new Dexie("yesplaymusic");
+
+db.version(2)
+  .stores({
+    trackSources: "&id, createTime",
+  })
+  .upgrade((tx) =>
+    tx
+      .table("trackSources")
+      .toCollection()
+      .modify(
+        (track) =>
+          !track.createTime && (track.createTime = new Date().getTime())
+      )
+  );
+
 db.version(1).stores({
   trackSources: "&id",
 });
+
+let tracksCacheBytes = 0;
+
+async function deleteExcessCache() {
+  if (
+    store.state.settings.cacheLimit === false ||
+    tracksCacheBytes < store.state.settings.cacheLimit * Math.pow(1024, 2)
+  )
+    return;
+  try {
+    const delCache = await db.trackSources.orderBy("createTime").first();
+    await db.trackSources.delete(delCache.id);
+    tracksCacheBytes -= delCache.source.byteLength;
+    console.debug(
+      `[debug][db.js] deleteExcessCacheSucces, track: ${delCache.name}, size: ${delCache.source.byteLength}, cacheSize:${tracksCacheBytes}`
+    );
+    deleteExcessCache();
+  } catch (error) {
+    console.debug("[debug][db.js] deleteExcessCacheFailed", error);
+  }
+}
 
 export function cacheTrackSource(trackInfo, url, bitRate, from = "netease") {
   const name = trackInfo.name;
@@ -22,8 +59,11 @@ export function cacheTrackSource(trackInfo, url, bitRate, from = "netease") {
         from,
         name,
         artist,
+        createTime: new Date().getTime(),
       });
       console.debug(`[debug][db.js] cached track 👉 ${name} by ${artist}`);
+      tracksCacheBytes += response.data.byteLength;
+      deleteExcessCache();
       return { trackID: trackInfo.id, source: response.data, bitRate };
     });
 }
@@ -39,16 +79,21 @@ export function getTrackSource(id) {
 }
 
 export function countDBSize() {
-  let trackSizes = [];
+  const trackSizes = [];
   return db.trackSources
     .each((track) => {
       trackSizes.push(track.source.byteLength);
     })
     .then(() => {
-      return {
+      const res = {
         bytes: trackSizes.reduce((s1, s2) => s1 + s2, 0),
         length: trackSizes.length,
       };
+      tracksCacheBytes = res.bytes;
+      console.debug(
+        `[debug][db.js] load tracksCacheBytes: ${tracksCacheBytes}`
+      );
+      return res;
     });
 }
 

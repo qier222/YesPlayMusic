@@ -124,6 +124,10 @@ export default {
       high: "High",
       lossless: "Lossless",
     },
+    cacheLimit: {
+      text: "Songs Cache limit",
+      none: "None",
+    },
     lyricFontSize: {
       text: "Lyric Font Size",
       small: "Small",
