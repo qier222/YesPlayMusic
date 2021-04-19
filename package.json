@@ -28,7 +28,6 @@
   "dependencies": {
     "@njzy/unblockneteasemusic": "^0.25.3",
     "axios": "^0.21.0",
-    "big-integer": "^1.6.48",
     "change-case": "^4.1.2",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
@@ -53,7 +52,6 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.20",
     "nprogress": "^0.2.0",
-    "pac-proxy-agent": "^4.1.0",
     "plyr": "^3.6.2",
     "prettier": "2.1.2",
     "register-service-worker": "^1.7.1",
@@ -68,9 +66,6 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
-    "@sentry/browser": "^5.27.0",
-    "@sentry/integrations": "^5.27.0",
-    "@sentry/tracing": "^5.27.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",

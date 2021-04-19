@@ -38,7 +38,6 @@ jobs:
         env:
           VUE_APP_ELECTRON_API_URL: /api
           VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
-          VUE_APP_ENABLE_SENTRY: false
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
