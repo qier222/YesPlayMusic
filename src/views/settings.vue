@@ -562,6 +562,10 @@ export default {
       set(value) {
         this.$store.commit("updateSettings", {
           key: "showLibraryDefault",
+          value,
+        });
+      },
+    },
     cacheLimit: {
       get() {
         return this.settings.cacheLimit || false;
