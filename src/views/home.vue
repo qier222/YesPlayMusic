@@ -65,6 +65,7 @@
 import { toplists, recommendPlaylist } from "@/api/playlist";
 import { toplistOfArtists } from "@/api/artist";
 import { byAppleMusic } from "@/utils/staticData";
+import { countDBSize } from "@/utils/db";
 import { newAlbums } from "@/api/album";
 import NProgress from "nprogress";
 import { mapState } from "vuex";
@@ -128,6 +129,7 @@ export default {
           this.topList.ids.includes(l.id)
         );
       });
+      countDBSize();
     },
   },
   activated() {

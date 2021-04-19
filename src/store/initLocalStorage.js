@@ -12,6 +12,7 @@ let localStorage = {
     showPlaylistsByAppleMusic: true,
     showUnavailableSongInGreyStyle: true,
     automaticallyCacheSongs: false,
+    cacheLimit: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
     showLyricsDynamicBackground: false,
