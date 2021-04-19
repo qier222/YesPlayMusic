@@ -19,6 +19,7 @@ let localStorage = {
     minimizeToTray: false,
     enableDiscordRichPresence: false,
     enableGlobalShortcut: true,
+    showLibraryDefault: false,
   },
   data: {
     user: {},
