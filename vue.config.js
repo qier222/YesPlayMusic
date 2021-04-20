@@ -18,7 +18,7 @@ module.exports = {
     },
   },
   pwa: {
-    name: "YesPlayMusic-Test",
+    name: "YesPlayMusic",
     iconPaths: {
       favicon32: "img/icons/favicon-32x32.png",
     },
