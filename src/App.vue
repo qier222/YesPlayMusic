@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Navbar ref="navbar" v-show="showNavbar" />
-    <main v-show="!this.$store.state.showLyrics">
+    <main>
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
       </keep-alive>
