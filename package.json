@@ -1,6 +1,6 @@
 {
   "name": "yesplaymusic",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "private": true,
   "description": "A third party music player for Netease Music",
   "author": "hawtim<hawtimzhang@gmail.com>",
@@ -52,6 +52,7 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.20",
     "nprogress": "^0.2.0",
+    "pac-proxy-agent": "^4.1.0",
     "plyr": "^3.6.2",
     "prettier": "2.1.2",
     "register-service-worker": "^1.7.1",
