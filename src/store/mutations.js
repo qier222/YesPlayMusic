@@ -22,16 +22,16 @@ export default {
     state.data[key] = value;
   },
   togglePlaylistCategory(state, name) {
-    let cat = state.settings.playlistCategories.find((c) => c.name === name);
-    cat.enable = !cat.enable;
-    state.settings.playlistCategories = state.settings.playlistCategories.map(
-      (c) => {
-        if (c.name === name) {
-          return cat;
-        }
-        return c;
-      }
+    const index = state.settings.enabledPlaylistCategories.findIndex(
+      (c) => c.name === name
     );
+    if (index !== -1) {
+      state.settings.enabledPlaylistCategories = state.settings.enabledPlaylistCategories.filter(
+        (c) => c.name !== name
+      );
+    } else {
+      state.settings.enabledPlaylistCategories.push(name);
+    }
   },
   updateToast(state, toast) {
     state.toast = toast;

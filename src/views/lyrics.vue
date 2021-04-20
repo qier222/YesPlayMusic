@@ -39,23 +39,23 @@
                 </div>
                 <div class="subtitle">
                   <router-link
-                    :to="`/artist/${currentTrack.ar[0].id}`"
+                    :to="`/artist/${artist.id}`"
                     @click.native="toggleLyrics"
-                    >{{ currentTrack.ar[0].name }}
+                    >{{ artist.name }}
                   </router-link>
                   -
                   <router-link
-                    :to="`/album/${currentTrack.al.id}`"
+                    :to="`/album/${album.id}`"
+                    :title="album.name"
                     @click.native="toggleLyrics"
-                    :title="currentTrack.al.name"
-                    >{{ currentTrack.al.name }}
+                    >{{ album.name }}
                   </router-link>
                 </div>
               </div>
               <div class="buttons">
                 <button-icon
-                  @click.native="playerRef.likeCurrentSong"
                   :title="$t('player.like')"
+                  @click.native="playerRef.likeCurrentSong"
                 >
                   <svg-icon
                     :icon-class="
@@ -214,18 +214,18 @@ export default {
       return this.player.currentTrack;
     },
     imageUrl() {
-      return this.player.currentTrack.al.picUrl + "?param=1024y1024";
+      return this.player.currentTrack?.al?.picUrl + "?param=1024y1024";
     },
     progress: {
       get() {
-        return this.$parent.$refs.player.progress;
+        return this.playerRef.progress;
       },
       set(value) {
-        this.$parent.$refs.player.setProgress(value);
+        this.playerRef.setProgress(value);
       },
     },
     progressMax() {
-      return this.$parent.$refs.player.progressMax;
+      return this.playerRef.progressMax;
     },
     lyricWithTranslation() {
       let ret = [];
@@ -264,13 +264,21 @@ export default {
       };
     },
     playerRef() {
-      return this.$parent.$refs.player;
+      return this.$parent.$refs.player ? this.$parent.$refs.player : {};
     },
     showLyrics() {
       return this.$store.state.showLyrics;
     },
     noLyric() {
       return this.lyric.length == 0;
+    },
+    artist() {
+      // console.log(this.currentTrack);
+      // return this.currentTrack?.ar[0] || { id: 0, name: "unknown" };
+      return { id: 0, name: "unknown" };
+    },
+    album() {
+      return { id: 0, name: "unknown" };
     },
   },
   created() {
@@ -282,6 +290,7 @@ export default {
   methods: {
     ...mapMutations(["toggleLyrics"]),
     getLyric() {
+      if (!this.currentTrack.id) return;
       return getLyric(this.currentTrack.id).then((data) => {
         if (!data?.lrc?.lyric) {
           this.lyric = [];
@@ -300,12 +309,12 @@ export default {
     },
     setSeek() {
       let value = this.$refs.progress.getValue();
-      this.$parent.$refs.player.setProgress(value);
-      this.$parent.$refs.player.player.seek(value);
+      this.playerRef.setProgress(value);
+      this.playerRef.player.seek(value);
     },
     seek(value) {
-      this.$parent.$refs.player.setProgress(value);
-      this.$parent.$refs.player.player.seek(value);
+      this.playerRef.setProgress(value);
+      this.playerRef.player.seek(value);
     },
     clickLyricLine(value) {
       if (window.getSelection().toString().length === 0) {
@@ -336,9 +345,9 @@ export default {
       const showLyricsTranslation = this.$store.state.settings
         .showLyricsTranslation;
       if (showLyricsTranslation && line.contents[1]) {
-        return `<span>${line.contents[0]}<br/>${line.contents[1]}</span>`;
+        return `<span>${line?.contents[0]}<br/>${line.contents[1]}</span>`;
       } else {
-        return `<span>${line.contents[0]}</span>`;
+        return `<span>${line?.contents[0]}</span>`;
       }
     },
     moveToFMTrash() {

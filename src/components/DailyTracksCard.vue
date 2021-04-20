@@ -49,6 +49,7 @@ export default {
     ...mapActions(["showToast"]),
     ...mapMutations(["updateDailyTracks"]),
     loadDailyTracks() {
+      if (!isAccountLoggedIn()) return;
       dailyRecommendTracks()
         .then((result) => {
           this.updateDailyTracks(result.data.dailySongs);

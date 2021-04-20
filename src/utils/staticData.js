@@ -11,7 +11,6 @@ export const byAppleMusic = [
     name: "\u4e2d\u563b\u5408\u74a7",
     id: 5277771961,
   },
-
   {
     coverImgUrl:
       "https://p1.music.126.net/cPaBXr1wZSg86ddl47AK7Q==/109951165375130918.jpg",
@@ -38,6 +37,11 @@ export const playlistCategories = [
     enable: true,
     bigCat: "static",
   },
+  // {
+  //   name: "For You",
+  //   enable: true,
+  //   bigCat: "static",
+  // },
   {
     name: "推荐歌单",
     enable: true,

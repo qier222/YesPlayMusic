@@ -4,20 +4,20 @@ import pkg from "../../package.json";
 const updateSetting = () => {
   const parsedSettings = JSON.parse(localStorage.getItem("settings"));
   const {
-    playlistCategories,
     showUnavailableSongInGreyStyle,
     automaticallyCacheSongs,
     nyancatStyle,
     showLyricsTranslation,
     minimizeToTray,
+    enabledPlaylistCategories,
   } = initLocalStorage.settings;
   const settings = {
-    playlistCategories,
     showUnavailableSongInGreyStyle,
     automaticallyCacheSongs,
     nyancatStyle,
     showLyricsTranslation,
     minimizeToTray,
+    enabledPlaylistCategories,
     ...parsedSettings,
   };
 

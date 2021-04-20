@@ -1,9 +1,13 @@
 import { playlistCategories } from "@/utils/staticData";
 
+console.log("[debug][initLocalStorage.js]");
+const enabledPlaylistCategories = playlistCategories
+  .filter((c) => c.enable)
+  .map((c) => c.name);
+
 let localStorage = {
   player: {},
   settings: {
-    playlistCategories,
     lang: null,
     appearance: "auto",
     musicQuality: 320000,
@@ -20,6 +24,7 @@ let localStorage = {
     enableDiscordRichPresence: false,
     enableGlobalShortcut: true,
     showLibraryDefault: false,
+    enabledPlaylistCategories,
   },
   data: {
     user: {},

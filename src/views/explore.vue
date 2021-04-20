@@ -3,13 +3,13 @@
     <h1>{{ $t("explore.explore") }}</h1>
     <div class="buttons">
       <div
+        v-for="category in settings.enabledPlaylistCategories"
+        :key="category"
         class="button"
-        v-for="cat in settings.playlistCategories.filter((p) => p.enable)"
-        :key="cat.name"
-        :class="{ active: cat.name === activeCategory && !showCatOptions }"
-        @click="goToCategory(cat.name)"
+        :class="{ active: category === activeCategory && !showCatOptions }"
+        @click="goToCategory(category)"
       >
-        {{ cat.name }}
+        {{ category }}
       </div>
       <div
         class="button more"
@@ -20,15 +20,17 @@
       </div>
     </div>
 
-    <div class="panel" v-show="showCatOptions">
-      <div class="big-cat" v-for="bigCat in allBigCats" :key="bigCat">
+    <div v-show="showCatOptions" class="panel">
+      <div v-for="bigCat in allBigCats" :key="bigCat" class="big-cat">
         <div class="name">{{ bigCat }}</div>
         <div class="cats">
           <div
-            class="cat"
-            :class="{ active: cat.enable }"
             v-for="cat in getCatsByBigCat(bigCat)"
             :key="cat.name"
+            class="cat"
+            :class="{
+              active: settings.enabledPlaylistCategories.includes(cat.name),
+            }"
             @click="toggleCat(cat.name)"
             ><span>{{ cat.name }}</span></div
           >
@@ -40,21 +42,21 @@
       <CoverRow
         type="playlist"
         :items="playlists"
-        :subText="subText"
-        :showPlayButton="true"
-        :showPlayCount="activeCategory !== '排行榜' ? true : false"
-        :imageSize="activeCategory !== '排行榜' ? 512 : 1024"
+        :sub-text="subText"
+        :show-play-button="true"
+        :show-play-count="activeCategory !== '排行榜' ? true : false"
+        :image-size="activeCategory !== '排行榜' ? 512 : 1024"
       />
     </div>
     <div
-      class="load-more"
       v-show="['推荐歌单', '排行榜'].includes(activeCategory) === false"
+      class="load-more"
     >
       <ButtonTwoTone
         v-show="showLoadMoreButton && hasMore"
-        @click.native="getPlaylist"
         color="grey"
         :loading="loadingMore"
+        @click.native="getPlaylist"
         >{{ $t("explore.loadMore") }}</ButtonTwoTone
       >
     </div>
@@ -70,6 +72,7 @@ import {
   recommendPlaylist,
   toplists,
 } from "@/api/playlist";
+import { playlistCategories } from "@/utils/staticData";
 
 import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
 import CoverRow from "@/components/CoverRow.vue";
@@ -101,6 +104,9 @@ export default {
       if (this.activeCategory === "推荐歌单") return "copywriter";
       return "none";
     },
+  },
+  activated() {
+    this.loadData();
   },
   methods: {
     ...mapMutations(["togglePlaylistCategory"]),
@@ -167,14 +173,11 @@ export default {
       });
     },
     getCatsByBigCat(name) {
-      return this.settings.playlistCategories.filter((c) => c.bigCat === name);
+      return playlistCategories.filter((c) => c.bigCat === name);
     },
     toggleCat(name) {
       this.togglePlaylistCategory(name);
     },
-  },
-  activated() {
-    this.loadData();
   },
   beforeRouteUpdate(to, from, next) {
     NProgress.start();

@@ -7,7 +7,7 @@ const db = new Dexie("yesplaymusic");
 
 db.version(2)
   .stores({
-    trackSources: "&id, createTime",
+    trackSources: "&id",
   })
   .upgrade((tx) =>
     tx
@@ -29,8 +29,9 @@ async function deleteExcessCache() {
   if (
     store.state.settings.cacheLimit === false ||
     tracksCacheBytes < store.state.settings.cacheLimit * Math.pow(1024, 2)
-  )
+  ) {
     return;
+  }
   try {
     const delCache = await db.trackSources.orderBy("createTime").first();
     await db.trackSources.delete(delCache.id);
