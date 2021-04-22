@@ -273,12 +273,10 @@ export default {
       return this.lyric.length == 0;
     },
     artist() {
-      // console.log(this.currentTrack);
-      // return this.currentTrack?.ar[0] || { id: 0, name: "unknown" };
-      return { id: 0, name: "unknown" };
+      return this.currentTrack?.ar[0] || { id: 0, name: "unknown" };
     },
     album() {
-      return { id: 0, name: "unknown" };
+      return this.currentTrack?.al || { id: 0, name: "unknown" };
     },
   },
   created() {
