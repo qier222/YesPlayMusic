@@ -14,7 +14,7 @@ let localStorage = {
     lyricFontSize: 28,
     outputDevice: "default",
     showPlaylistsByAppleMusic: true,
-    showUnavailableSongInGreyStyle: true,
+    enableUnblockNeteaseMusic: true,
     automaticallyCacheSongs: false,
     cacheLimit: false,
     nyancatStyle: false,
@@ -36,7 +36,6 @@ let localStorage = {
 
 if (process.env.IS_ELECTRON === true) {
   localStorage.settings.automaticallyCacheSongs = true;
-  localStorage.settings.showUnavailableSongInGreyStyle = false;
 }
 
 export default localStorage;

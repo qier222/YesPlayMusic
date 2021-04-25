@@ -149,8 +149,6 @@ export default {
     showLyricsTranslation: "Show lyrics translation",
     showLyricsDynamicBackground: "Show lyrics dynamic background",
     minimizeToTray: "Minimize to tray",
-    showGitHubIcon: "Show GitHub icon",
-    showUnavailableSongInGreyStyle: "Show unavailable song in grey style",
     showPlaylistsByAppleMusic: "Show playlists by Apple Music",
     enableDiscordRichPresence: "Enable Discord Rich Presence",
     enableGlobalShortcut: "Enable Global Shortcut",

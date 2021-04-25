@@ -150,8 +150,6 @@ export default {
     showLyricsTranslation: "显示歌词翻译",
     showLyricsDynamicBackground: "显示歌词动态背景",
     minimizeToTray: "最小化到托盘",
-    showGitHubIcon: "显示 GitHub 图标",
-    showUnavailableSongInGreyStyle: "显示不可播放的歌曲为灰色",
     showPlaylistsByAppleMusic: "首页显示来自 Apple Music 的歌单",
     enableDiscordRichPresence: "启用 Discord Rich Presence",
     enableGlobalShortcut: "启用全局快捷键",

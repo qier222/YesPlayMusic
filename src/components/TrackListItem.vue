@@ -131,7 +131,7 @@ export default {
     },
     trackClass() {
       let trackClass = [this.type];
-      if (!this.track.playable && this.settings.showUnavailableSongInGreyStyle)
+      if (!this.track.playable && this.showUnavailableSongInGreyStyle)
         trackClass.push("disable");
       if (this.isPlaying && this.highlightPlayingTrack)
         trackClass.push("playing");
@@ -148,7 +148,9 @@ export default {
       );
     },
     showUnavailableSongInGreyStyle() {
-      return this.$store.state.settings.showUnavailableSongInGreyStyle;
+      return process.env.IS_ELECTRON
+        ? !this.$store.state.settings.enableUnblockNeteaseMusic
+        : true;
     },
   },
   methods: {

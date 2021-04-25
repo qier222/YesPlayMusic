@@ -1,7 +1,7 @@
 <template>
   <div class="settings">
     <div class="container">
-      <div class="user" v-if="showUserInfo">
+      <div v-if="showUserInfo" class="user">
         <div class="left">
           <img class="avatar" :src="data.user.avatarUrl" />
           <div class="info">
@@ -14,7 +14,7 @@
                 />
                 <span class="text">黑胶VIP</span>
               </span>
-              <span class="text" v-else>{{ data.user.signature }}</span>
+              <span v-else class="text">{{ data.user.signature }}</span>
             </div>
           </div>
         </div>
@@ -75,12 +75,12 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t("settings.deviceSelector") }} </div>
         </div>
         <div class="right">
-          <select v-model="outputDevice" :disabled="withoutAudioPriviledge">
+          <select v-model="outputDevice" :disabled="withoutAudioPrivilege">
             <option
               v-for="device in allOutputDevices"
               :key="device.deviceId"
@@ -92,7 +92,7 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
             {{ $t("settings.automaticallyCacheSongs") }}
@@ -101,16 +101,16 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="automatically-cache-songs"
               id="automatically-cache-songs"
               v-model="automaticallyCacheSongs"
+              type="checkbox"
+              name="automatically-cache-songs"
             />
             <label for="automatically-cache-songs"></label>
           </div>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t("settings.cacheLimit.text") }} </div>
         </div>
@@ -126,7 +126,7 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
             {{
@@ -150,10 +150,10 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-lyrics-translation"
               id="show-lyrics-translation"
               v-model="showLyricsTranslation"
+              type="checkbox"
+              name="show-lyrics-translation"
             />
             <label for="show-lyrics-translation"></label>
           </div>
@@ -168,10 +168,10 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-lyrics-dynamic-background"
               id="show-lyrics-dynamic-background"
               v-model="showLyricsDynamicBackground"
+              type="checkbox"
+              name="show-lyrics-dynamic-background"
             />
             <label for="show-lyrics-dynamic-background"></label>
           </div>
@@ -198,17 +198,17 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron && !isMac">
+      <div v-if="isElectron && !isMac" class="item">
         <div class="left">
           <div class="title">{{ $t("settings.minimizeToTray") }}</div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="minimize-to-tray"
               id="minimize-to-tray"
               v-model="minimizeToTray"
+              type="checkbox"
+              name="minimize-to-tray"
             />
             <label for="minimize-to-tray"></label>
           </div>
@@ -226,10 +226,10 @@
           >
         </div>
         <div class="right">
-          <button @click="lastfmDisconnect()" v-if="isLastfmConnected"
+          <button v-if="isLastfmConnected" @click="lastfmDisconnect()"
             >断开连接
           </button>
-          <button @click="lastfmConnect()" v-else> 授权连接 </button>
+          <button v-else @click="lastfmConnect()"> 授权连接 </button>
         </div>
       </div>
 
@@ -240,10 +240,10 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-library-default"
               id="show-library-default"
               v-model="showLibraryDefault"
+              type="checkbox"
+              name="show-library-default"
             />
             <label for="show-library-default"></label>
           </div>
@@ -252,22 +252,28 @@
 
       <div class="item">
         <div class="left">
-          <div class="title">
-            {{ $t("settings.showUnavailableSongInGreyStyle") }}</div
+          <div class="title"
+            >启用
+            <a
+              href="https://github.com/nondanee/UnblockNeteaseMusic"
+              target="blank"
+              >UnblockNeteaseMusic</a
+            ></div
           >
         </div>
         <div class="right">
           <div class="toggle">
             <input
+              id="enable-unblock-netease-music"
+              v-model="enableUnblockNeteaseMusic"
               type="checkbox"
-              name="show-unavailable-song-grey"
-              id="show-unavailable-song-grey"
-              v-model="showUnavailableSongInGreyStyle"
+              name="enable-unblock-netease-music"
             />
-            <label for="show-unavailable-song-grey"></label>
+            <label for="enable-unblock-netease-music"></label>
           </div>
         </div>
       </div>
+
       <div class="item">
         <div class="left">
           <div class="title">
@@ -277,16 +283,16 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-playlists-by-apple-music"
               id="show-playlists-by-apple-music"
               v-model="showPlaylistsByAppleMusic"
+              type="checkbox"
+              name="show-playlists-by-apple-music"
             />
             <label for="show-playlists-by-apple-music"></label>
           </div>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
             {{ $t("settings.enableDiscordRichPresence") }}</div
@@ -295,26 +301,26 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="enable-discord-rich-presence"
               id="enable-discord-rich-presence"
               v-model="enableDiscordRichPresence"
+              type="checkbox"
+              name="enable-discord-rich-presence"
             />
             <label for="enable-discord-rich-presence"></label>
           </div>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t("settings.enableGlobalShortcut") }}</div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="enable-enable-global-shortcut"
               id="enable-enable-global-shortcut"
               v-model="enableGlobalShortcut"
+              type="checkbox"
+              name="enable-enable-global-shortcut"
             />
             <label for="enable-enable-global-shortcut"></label>
           </div>
@@ -327,10 +333,10 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="nyancat-style"
               id="nyancat-style"
               v-model="nyancatStyle"
+              type="checkbox"
+              name="nyancat-style"
             />
             <label for="nyancat-style"></label>
           </div>
@@ -357,7 +363,7 @@ import { countDBSize, clearDB } from "@/utils/db";
 import pkg from "../../package.json";
 
 export default {
-  name: "settings",
+  name: "Settings",
   data() {
     return {
       tracksCache: {
@@ -370,7 +376,7 @@ export default {
           label: "settings.permissionRequired",
         },
       ],
-      withoutAudioPriviledge: true,
+      withoutAudioPrivilege: true,
     };
   },
   computed: {
@@ -432,7 +438,7 @@ export default {
     },
     outputDevice: {
       get() {
-        if (this.withoutAudioPriviledge === true) this.getAllOutputDevices();
+        if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
         const isValidDevice = this.allOutputDevices.find(
           (device) => device.deviceId === this.settings.outputDevice
         );
@@ -450,13 +456,13 @@ export default {
         this.player.setOutputDevice();
       },
     },
-    showUnavailableSongInGreyStyle: {
+    enableUnblockNeteaseMusic: {
       get() {
-        return this.settings.showUnavailableSongInGreyStyle;
+        return this.settings.enableUnblockNeteaseMusic || true;
       },
       set(value) {
         this.$store.commit("updateSettings", {
-          key: "showUnavailableSongInGreyStyle",
+          key: "enableUnblockNeteaseMusic",
           value,
         });
       },
@@ -581,6 +587,12 @@ export default {
       return this.lastfm.key !== undefined;
     },
   },
+  created() {
+    this.countDBSize("tracks");
+  },
+  activated() {
+    this.countDBSize("tracks");
+  },
   methods: {
     getAllOutputDevices() {
       navigator.mediaDevices.enumerateDevices().then((devices) => {
@@ -638,12 +650,6 @@ export default {
       localStorage.removeItem("lastfm");
       this.$store.commit("updateLastfm", {});
     },
-  },
-  created() {
-    this.countDBSize("tracks");
-  },
-  activated() {
-    this.countDBSize("tracks");
   },
 };
 </script>

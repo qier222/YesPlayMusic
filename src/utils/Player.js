@@ -228,7 +228,13 @@ export default class {
     }
   }
   _getAudioSourceFromUnblockMusic(track) {
-    if (process.env.IS_ELECTRON !== true) return null;
+    console.debug(`[debug][Player.js] _getAudioSourceFromUnblockMusic`);
+    if (
+      process.env.IS_ELECTRON !== true ||
+      store.state.settings.enableUnblockNeteaseMusic === false
+    ) {
+      return null;
+    }
     const source = ipcRenderer.sendSync("unblock-music", track);
     if (store.state.settings.automaticallyCacheSongs && source?.url) {
       // TODO: 将unblockMusic字样换成真正的来源（比如酷我咪咕等）
