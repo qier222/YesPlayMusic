@@ -85,6 +85,16 @@ export default {
     ButtonTwoTone,
     SvgIcon,
   },
+  beforeRouteUpdate(to, from, next) {
+    NProgress.start();
+    this.showLoadMoreButton = false;
+    this.hasMore = true;
+    this.playlists = [];
+    this.offset = 1;
+    this.activeCategory = to.query.category;
+    this.getPlaylist();
+    next();
+  },
   data() {
     return {
       show: false,
@@ -119,7 +129,7 @@ export default {
       this.getPlaylist();
     },
     goToCategory(Category) {
-      if (this.showCatOptions) return;
+      this.showCatOptions = false;
       this.$router.push({ path: "/explore?category=" + Category });
     },
     updatePlaylist(playlists) {
@@ -178,16 +188,6 @@ export default {
     toggleCat(name) {
       this.togglePlaylistCategory(name);
     },
-  },
-  beforeRouteUpdate(to, from, next) {
-    NProgress.start();
-    this.showLoadMoreButton = false;
-    this.hasMore = true;
-    this.playlists = [];
-    this.offset = 1;
-    this.activeCategory = to.query.category;
-    this.getPlaylist();
-    next();
   },
 };
 </script>

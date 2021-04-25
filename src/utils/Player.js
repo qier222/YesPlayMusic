@@ -116,10 +116,13 @@ export default class {
     this._loadSelfFromLocalStorage();
     if (this._enabled) {
       this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
-        this._howler.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
+        this._howler?.seek(localStorage.getItem("playerCurrentTrackTime") ?? 0);
         setInterval(
           () =>
-            localStorage.setItem("playerCurrentTrackTime", this._howler.seek()),
+            localStorage.setItem(
+              "playerCurrentTrackTime",
+              this._howler?.seek()
+            ),
           1000
         );
       }); // update audio source and init howler
@@ -408,7 +411,7 @@ export default class {
     // TODO: 切换歌曲时增加加载中的状态
     const [trackID, index] = this._getNextTrack();
     if (trackID === undefined) {
-      this._howler.stop();
+      this._howler?.stop();
       this._playing = false;
       return false;
     }
@@ -434,14 +437,14 @@ export default class {
   }
 
   pause() {
-    this._howler.pause();
+    this._howler?.pause();
     this._playing = false;
     document.title = "YesPlayMusic";
     this._pauseDiscordPresence(this._currentTrack);
   }
   play() {
-    if (this._howler.playing()) return;
-    this._howler.play();
+    if (this._howler?.playing()) return;
+    this._howler?.play();
     this._playing = true;
     document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     this._playDiscordPresence(this._currentTrack, this.seek());
@@ -456,7 +459,7 @@ export default class {
     }
   }
   playOrPause() {
-    if (this._howler.playing()) {
+    if (this._howler?.playing()) {
       this.pause();
     } else {
       this.play();
@@ -464,7 +467,7 @@ export default class {
   }
   seek(time = null) {
     if (time !== null) {
-      this._howler.seek(time);
+      this._howler?.seek(time);
       if (this._playing)
         this._playDiscordPresence(this._currentTrack, this.seek());
     }
@@ -479,10 +482,10 @@ export default class {
     }
   }
   setOutputDevice() {
-    if (this._howler._sounds.length <= 0 || !this._howler._sounds[0]._node) {
+    if (this._howler?._sounds.length <= 0 || !this._howler?._sounds[0]._node) {
       return;
     }
-    this._howler._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
+    this._howler?._sounds[0]._node.setSinkId(store.state.settings.outputDevice);
   }
 
   replacePlaylist(

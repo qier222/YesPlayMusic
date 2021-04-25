@@ -273,10 +273,24 @@ export default {
       return this.lyric.length == 0;
     },
     artist() {
-      return this.currentTrack?.ar[0] || { id: 0, name: "unknown" };
+      return this.currentTrack?.ar
+        ? this.currentTrack.ar[0]
+        : { id: 0, name: "unknown" };
     },
     album() {
       return this.currentTrack?.al || { id: 0, name: "unknown" };
+    },
+  },
+  watch: {
+    currentTrack() {
+      this.getLyric();
+    },
+    showLyrics(show) {
+      if (show) {
+        this.setLyricsInterval();
+      } else {
+        clearInterval(this.lyricsInterval);
+      }
     },
   },
   created() {
@@ -343,25 +357,14 @@ export default {
       const showLyricsTranslation = this.$store.state.settings
         .showLyricsTranslation;
       if (showLyricsTranslation && line.contents[1]) {
-        return `<span>${line?.contents[0]}<br/>${line.contents[1]}</span>`;
-      } else {
-        return `<span>${line?.contents[0]}</span>`;
+        return `<span>${line.contents[0]}<br/>${line.contents[1]}</span>`;
+      } else if (line.contents[0] !== undefined) {
+        return `<span>${line.contents[0]}</span>`;
       }
+      return "unknown";
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
-    },
-  },
-  watch: {
-    currentTrack() {
-      this.getLyric();
-    },
-    showLyrics(show) {
-      if (show) {
-        this.setLyricsInterval();
-      } else {
-        clearInterval(this.lyricsInterval);
-      }
     },
   },
 };

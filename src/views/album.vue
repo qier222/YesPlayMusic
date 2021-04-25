@@ -169,9 +169,6 @@ export default {
       title: "",
     };
   },
-  created() {
-    this.loadData(this.$route.params.id);
-  },
   computed: {
     ...mapState(["player", "data"]),
     albumTime() {
@@ -197,6 +194,9 @@ export default {
       }
     },
   },
+  created() {
+    this.loadData(this.$route.params.id);
+  },
   methods: {
     ...mapMutations(["appendTrackToPlayerList"]),
     ...mapActions(["playFirstTrackOnList", "playTrackOnListByID", "showToast"]),
@@ -211,15 +211,20 @@ export default {
       likeAAlbum({
         id: this.album.id,
         t: this.dynamicDetail.isSub ? 0 : 1,
-      }).then((data) => {
-        if (data.code === 200) {
-          this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
-          if (toast === true)
-            this.showToast(
-              this.dynamicDetail.isSub ? "已保存到音乐库" : "已从音乐库删除"
-            );
-        }
-      });
+      })
+        .then((data) => {
+          if (data.code === 200) {
+            this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
+            if (toast === true)
+              this.showToast(
+                this.dynamicDetail.isSub ? "已保存到音乐库" : "已从音乐库删除"
+              );
+          }
+          console.log(data);
+        })
+        .catch((error) => {
+          this.showToast(`${error.response.data.message || error}`);
+        });
     },
     formatTitle() {
       let splitTitle = splitSoundtrackAlbumTitle(this.album.name);

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar ref="navbar" v-show="showNavbar" />
+    <Navbar v-show="showNavbar" ref="navbar" />
     <main>
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
@@ -8,13 +8,13 @@
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </main>
     <transition name="slide-up">
-      <Player v-if="enablePlayer" ref="player" v-show="showPlayer"
+      <Player v-if="enablePlayer" v-show="showPlayer" ref="player"
     /></transition>
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
-    <transition name="slide-up" v-if="enablePlayer">
-      <Lyrics v-show="this.$store.state.showLyrics" />
+    <transition v-if="enablePlayer" name="slide-up">
+      <Lyrics v-show="showLyrics" />
     </transition>
   </div>
 </template>
@@ -28,6 +28,7 @@ import Toast from "./components/Toast.vue";
 import { ipcRenderer } from "./electron/ipcRenderer";
 import { isAccountLoggedIn } from "@/utils/auth";
 import Lyrics from "./views/lyrics.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "App",
@@ -45,6 +46,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["showLyrics"]),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },
@@ -177,7 +179,10 @@ a {
   }
 }
 
-/* Let's get this party started */
+main::-webkit-scrollbar {
+  width: 0px;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }

@@ -23,11 +23,11 @@ export default {
   },
   togglePlaylistCategory(state, name) {
     const index = state.settings.enabledPlaylistCategories.findIndex(
-      (c) => c.name === name
+      (c) => c === name
     );
     if (index !== -1) {
       state.settings.enabledPlaylistCategories = state.settings.enabledPlaylistCategories.filter(
-        (c) => c.name !== name
+        (c) => c !== name
       );
     } else {
       state.settings.enabledPlaylistCategories.push(name);

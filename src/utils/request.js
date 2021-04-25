@@ -33,9 +33,6 @@ service.interceptors.response.use(
     return res;
   },
   (error) => {
-    const errMsg = `error: ${error}`;
-    console.log(errMsg);
-
     return Promise.reject(error);
   }
 );
