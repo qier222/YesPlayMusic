@@ -92,8 +92,8 @@
     "extends": [
       "plugin:vue/essential",
       "plugin:vue/recommended",
-      "eslint:recommended",
-      "plugin:prettier/recommended"
+      "plugin:prettier/recommended",
+      "eslint:recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"

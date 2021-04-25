@@ -3,10 +3,10 @@
   "tabWidth": 2,
   "useTabs": false,
   "semi": true,
-  "singleQuote": false,
+  "singleQuote": true,
   "jsxSingleQuote": true,
   "jsxBracketSameLine": false,
-  "arrowParens": "always",
+  "arrowParens": "avoid",
   "endOfLine": "lf",
   "bracketSpacing": true,
   "htmlWhitespaceSensitivity": "strict"
