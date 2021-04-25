@@ -46,7 +46,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["showLyrics"]),
+    ...mapState(["showLyrics", "showLibraryDefault", "player"]),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },
@@ -62,18 +62,14 @@ export default {
       );
     },
     enablePlayer() {
-      return (
-        this.$store.state.player.enabled &&
-        this.$route.name !== "lastfmCallback"
-      );
+      return this.player.enabled && this.$route.name !== "lastfmCallback";
     },
     showNavbar() {
       return this.$route.name !== "lastfmCallback";
     },
   },
   created() {
-    this.$store.state.settings.showLibraryDefault &&
-      this.$router.push("/library");
+    this.showLibraryDefault && this.$router.push("/library");
     if (this.isElectron) {
       ipcRenderer(this);
     }
@@ -85,7 +81,7 @@ export default {
         if (e.target.tagName === "INPUT") return false;
         if (this.$route.name === "mv") return false;
         e.preventDefault();
-        this.$refs.player.play();
+        this.player.play();
       }
     },
   },
