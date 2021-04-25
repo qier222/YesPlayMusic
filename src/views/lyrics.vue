@@ -5,16 +5,16 @@
         v-if="this.$store.state.settings.showLyricsDynamicBackground"
         class="dynamic-background"
       >
-        <div v-show="this.$store.state.showLyrics">
-          <div
-            class="top-right"
-            :style="{ backgroundImage: `url(${imageUrl})` }"
-          />
-          <div
-            class="bottom-left"
-            :style="{ backgroundImage: `url(${imageUrl})` }"
-          />
-        </div>
+        <div
+          v-show="this.$store.state.showLyrics"
+          class="top-right"
+          :style="{ backgroundImage: `url(${imageUrl})` }"
+        />
+        <div
+          v-show="this.$store.state.showLyrics"
+          class="bottom-left"
+          :style="{ backgroundImage: `url(${imageUrl})` }"
+        />
       </div>
       <div class="left-side">
         <div>
@@ -216,6 +216,9 @@ export default {
     imageUrl() {
       return this.player.currentTrack?.al?.picUrl + "?param=1024y1024";
     },
+    bgImageUrl() {
+      return this.player.currentTrack?.al?.picUrl + "?param=500y500";
+    },
     progress: {
       get() {
         return this.playerRef.progress;
@@ -393,14 +396,14 @@ export default {
 }
 
 .dynamic-background {
+  filter: blur(50px) opacity(0.6) contrast(var(--contrast-dynamic-background))
+    brightness(var(--brightness-dynamic-background));
   .top-right,
   .bottom-left {
     z-index: 0;
-    width: 140vw;
-    height: 140vw;
+    width: 14vw;
+    height: 14vw;
     position: absolute;
-    filter: blur(50px) opacity(0.6) contrast(var(--contrast-dynamic-background))
-      brightness(var(--brightness-dynamic-background));
     background-size: cover;
     animation: rotate 150s linear infinite;
   }
@@ -421,10 +424,10 @@ export default {
 
 @keyframes rotate {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(10);
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scale(10);
   }
 }
 
