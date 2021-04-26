@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import { mapTrackPlayableStatus } from "@/utils/common";
+import request from '@/utils/request';
+import { mapTrackPlayableStatus } from '@/utils/common';
 
 /**
  * 获取专辑内容
@@ -8,12 +8,12 @@ import { mapTrackPlayableStatus } from "@/utils/common";
  */
 export function getAlbum(id) {
   return request({
-    url: "/album",
-    method: "get",
+    url: '/album',
+    method: 'get',
     params: {
       id,
     },
-  }).then((data) => {
+  }).then(data => {
     data.songs = mapTrackPlayableStatus(data.songs);
     return data;
   });
@@ -32,8 +32,8 @@ export function getAlbum(id) {
  */
 export function newAlbums(params) {
   return request({
-    url: "/album/new",
-    method: "get",
+    url: '/album/new',
+    method: 'get',
     params,
   });
 }
@@ -46,8 +46,8 @@ export function newAlbums(params) {
  */
 export function albumDynamicDetail(id) {
   return request({
-    url: "/album/detail/dynamic",
-    method: "get",
+    url: '/album/detail/dynamic',
+    method: 'get',
     params: { id, timestamp: new Date().getTime() },
   });
 }
@@ -63,8 +63,8 @@ export function albumDynamicDetail(id) {
  */
 export function likeAAlbum(params) {
   return request({
-    url: "/album/sub",
-    method: "post",
+    url: '/album/sub',
+    method: 'post',
     params,
   });
 }

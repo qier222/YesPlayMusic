@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { register } from "register-service-worker";
+import { register } from 'register-service-worker';
 
 register(`${process.env.BASE_URL}service-worker.js`, {
   ready() {
@@ -27,6 +27,6 @@ register(`${process.env.BASE_URL}service-worker.js`, {
     // );
   },
   error(error) {
-    console.error("Error during service worker registration:", error);
+    console.error('Error during service worker registration:', error);
   },
 });

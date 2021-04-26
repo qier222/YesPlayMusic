@@ -1,9 +1,9 @@
 <template>
   <div
     class="cover"
+    :class="{ 'cover-hover': coverHover }"
     @mouseover="focus = true"
     @mouseleave="focus = false"
-    :class="{ 'cover-hover': coverHover }"
     @click="clickCoverToPlay ? play() : goTo()"
   >
     <div class="cover-container">
@@ -11,16 +11,16 @@
         <button
           v-show="focus"
           class="play-button"
-          @click.stop="play()"
           :style="playButtonStyles"
+          @click.stop="play()"
           ><svg-icon icon-class="play" />
         </button>
       </div>
       <img :src="imageUrl" :style="imageStyles" />
-      <transition name="fade" v-if="coverHover || alwaysShowShadow">
+      <transition v-if="coverHover || alwaysShowShadow" name="fade">
         <div
-          class="shadow"
           v-show="focus || alwaysShowShadow"
+          class="shadow"
           :style="shadowStyles"
         ></div>
       </transition>
@@ -52,22 +52,22 @@ export default {
     imageStyles() {
       let styles = {};
       if (this.fixedSize !== 0) {
-        styles.width = this.fixedSize + "px";
-        styles.height = this.fixedSize + "px";
+        styles.width = this.fixedSize + 'px';
+        styles.height = this.fixedSize + 'px';
       }
-      if (this.type === "artist") styles.borderRadius = "50%";
+      if (this.type === 'artist') styles.borderRadius = '50%';
       return styles;
     },
     playButtonStyles() {
       let styles = {};
-      styles.width = this.playButtonSize + "%";
-      styles.height = this.playButtonSize + "%";
+      styles.width = this.playButtonSize + '%';
+      styles.height = this.playButtonSize + '%';
       return styles;
     },
     shadowStyles() {
       let styles = {};
       styles.backgroundImage = `url(${this.imageUrl})`;
-      if (this.type === "artist") styles.borderRadius = "50%";
+      if (this.type === 'artist') styles.borderRadius = '50%';
       return styles;
     },
   },

@@ -21,14 +21,14 @@
         <div class="right">
           <button @click="logout">
             <svg-icon icon-class="logout" />
-            {{ $t("settings.logout") }}
+            {{ $t('settings.logout') }}
           </button>
         </div>
       </div>
-      <h2>{{ $t("settings.settings") }}</h2>
+      <h2>{{ $t('settings.settings') }}</h2>
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.language") }} </div>
+          <div class="title"> {{ $t('settings.language') }} </div>
         </div>
         <div class="right">
           <select v-model="lang">
@@ -40,44 +40,44 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.appearance.text") }} </div>
+          <div class="title"> {{ $t('settings.appearance.text') }} </div>
         </div>
         <div class="right">
           <select v-model="appearance">
-            <option value="auto">{{ $t("settings.appearance.auto") }}</option>
+            <option value="auto">{{ $t('settings.appearance.auto') }}</option>
             <option value="light"
-              >🌞 {{ $t("settings.appearance.light") }}</option
+              >🌞 {{ $t('settings.appearance.light') }}</option
             >
             <option value="dark"
-              >🌚 {{ $t("settings.appearance.dark") }}</option
+              >🌚 {{ $t('settings.appearance.dark') }}</option
             >
           </select>
         </div>
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.musicQuality.text") }} </div>
+          <div class="title"> {{ $t('settings.musicQuality.text') }} </div>
         </div>
         <div class="right">
           <select v-model="musicQuality">
             <option value="128000">
-              {{ $t("settings.musicQuality.low") }} - 128Kbps
+              {{ $t('settings.musicQuality.low') }} - 128Kbps
             </option>
             <option value="192000">
-              {{ $t("settings.musicQuality.medium") }} - 192Kbps
+              {{ $t('settings.musicQuality.medium') }} - 192Kbps
             </option>
             <option value="320000">
-              {{ $t("settings.musicQuality.high") }} - 320Kbps
+              {{ $t('settings.musicQuality.high') }} - 320Kbps
             </option>
             <option value="999000">
-              {{ $t("settings.musicQuality.lossless") }} - FLAC
+              {{ $t('settings.musicQuality.lossless') }} - FLAC
             </option>
           </select>
         </div>
       </div>
       <div v-if="isElectron" class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.deviceSelector") }} </div>
+          <div class="title"> {{ $t('settings.deviceSelector') }} </div>
         </div>
         <div class="right">
           <select v-model="outputDevice" :disabled="withoutAudioPrivilege">
@@ -95,7 +95,7 @@
       <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
-            {{ $t("settings.automaticallyCacheSongs") }}
+            {{ $t('settings.automaticallyCacheSongs') }}
           </div>
         </div>
         <div class="right">
@@ -112,12 +112,12 @@
       </div>
       <div v-if="isElectron" class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.cacheLimit.text") }} </div>
+          <div class="title"> {{ $t('settings.cacheLimit.text') }} </div>
         </div>
         <div class="right">
           <select v-model="cacheLimit">
             <option :value="false">
-              {{ $t("settings.cacheLimit.none") }}
+              {{ $t('settings.cacheLimit.none') }}
             </option>
             <option :value="512"> 500MB </option>
             <option :value="1024"> 1GB </option>
@@ -130,7 +130,7 @@
         <div class="left">
           <div class="title">
             {{
-              $t("settings.cacheCount", {
+              $t('settings.cacheCount', {
                 song: tracksCache.length,
                 size: tracksCache.size,
               })
@@ -139,13 +139,13 @@
         </div>
         <div class="right">
           <button @click="clearCache()">
-            {{ $t("settings.clearSongsCache") }}
+            {{ $t('settings.clearSongsCache') }}
           </button>
         </div>
       </div>
       <div class="item">
         <div class="left">
-          <div class="title">{{ $t("settings.showLyricsTranslation") }}</div>
+          <div class="title">{{ $t('settings.showLyricsTranslation') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -162,7 +162,7 @@
       <div class="item">
         <div class="left">
           <div class="title">{{
-            $t("settings.showLyricsDynamicBackground")
+            $t('settings.showLyricsDynamicBackground')
           }}</div>
         </div>
         <div class="right">
@@ -179,28 +179,28 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.lyricFontSize.text") }} </div>
+          <div class="title"> {{ $t('settings.lyricFontSize.text') }} </div>
         </div>
         <div class="right">
           <select v-model="lyricFontSize">
             <option value="16">
-              {{ $t("settings.lyricFontSize.small") }} - 16px
+              {{ $t('settings.lyricFontSize.small') }} - 16px
             </option>
             <option value="22">
-              {{ $t("settings.lyricFontSize.medium") }} - 22px
+              {{ $t('settings.lyricFontSize.medium') }} - 22px
             </option>
             <option value="28">
-              {{ $t("settings.lyricFontSize.large") }} - 28px
+              {{ $t('settings.lyricFontSize.large') }} - 28px
             </option>
             <option value="36">
-              {{ $t("settings.lyricFontSize.xlarge") }} - 36px
+              {{ $t('settings.lyricFontSize.xlarge') }} - 36px
             </option>
           </select>
         </div>
       </div>
       <div v-if="isElectron && !isMac" class="item">
         <div class="left">
-          <div class="title">{{ $t("settings.minimizeToTray") }}</div>
+          <div class="title">{{ $t('settings.minimizeToTray') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -221,7 +221,7 @@
             {{
               isLastfmConnected
                 ? `已连接到 Last.fm (${lastfm.name})`
-                : "连接 Last.fm "
+                : '连接 Last.fm '
             }}</div
           >
         </div>
@@ -235,7 +235,7 @@
 
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.showLibraryDefault") }}</div>
+          <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -277,7 +277,7 @@
       <div class="item">
         <div class="left">
           <div class="title">
-            {{ $t("settings.showPlaylistsByAppleMusic") }}</div
+            {{ $t('settings.showPlaylistsByAppleMusic') }}</div
           >
         </div>
         <div class="right">
@@ -295,7 +295,7 @@
       <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
-            {{ $t("settings.enableDiscordRichPresence") }}</div
+            {{ $t('settings.enableDiscordRichPresence') }}</div
           >
         </div>
         <div class="right">
@@ -312,7 +312,7 @@
       </div>
       <div v-if="isElectron" class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.enableGlobalShortcut") }}</div>
+          <div class="title"> {{ $t('settings.enableGlobalShortcut') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
@@ -355,32 +355,32 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { isLooseLoggedIn, doLogout } from "@/utils/auth";
-import { auth as lastfmAuth } from "@/api/lastfm";
-import { changeAppearance, bytesToSize } from "@/utils/common";
-import { countDBSize, clearDB } from "@/utils/db";
-import pkg from "../../package.json";
+import { mapState } from 'vuex';
+import { isLooseLoggedIn, doLogout } from '@/utils/auth';
+import { auth as lastfmAuth } from '@/api/lastfm';
+import { changeAppearance, bytesToSize } from '@/utils/common';
+import { countDBSize, clearDB } from '@/utils/db';
+import pkg from '../../package.json';
 
 export default {
-  name: "Settings",
+  name: 'Settings',
   data() {
     return {
       tracksCache: {
-        size: "0KB",
+        size: '0KB',
         length: 0,
       },
       allOutputDevices: [
         {
-          deviceId: "default",
-          label: "settings.permissionRequired",
+          deviceId: 'default',
+          label: 'settings.permissionRequired',
         },
       ],
       withoutAudioPrivilege: true,
     };
   },
   computed: {
-    ...mapState(["player", "settings", "data", "lastfm"]),
+    ...mapState(['player', 'settings', 'data', 'lastfm']),
     isElectron() {
       return process.env.IS_ELECTRON;
     },
@@ -400,17 +400,17 @@ export default {
       },
       set(lang) {
         this.$i18n.locale = lang;
-        this.$store.commit("changeLang", lang);
+        this.$store.commit('changeLang', lang);
       },
     },
     appearance: {
       get() {
-        if (this.settings.appearance === undefined) return "auto";
+        if (this.settings.appearance === undefined) return 'auto';
         return this.settings.appearance;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "appearance",
+        this.$store.commit('updateSettings', {
+          key: 'appearance',
           value,
         });
         changeAppearance(value);
@@ -423,7 +423,7 @@ export default {
       },
       set(value) {
         if (value === this.settings.musicQuality) return;
-        this.$store.commit("changeMusicQuality", value);
+        this.$store.commit('changeMusicQuality', value);
         this.clearCache();
       },
     },
@@ -433,26 +433,26 @@ export default {
         return this.settings.lyricFontSize;
       },
       set(value) {
-        this.$store.commit("changeLyricFontSize", value);
+        this.$store.commit('changeLyricFontSize', value);
       },
     },
     outputDevice: {
       get() {
         if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
         const isValidDevice = this.allOutputDevices.find(
-          (device) => device.deviceId === this.settings.outputDevice
+          device => device.deviceId === this.settings.outputDevice
         );
         if (
           this.settings.outputDevice === undefined ||
           isValidDevice === undefined
         )
-          return "default"; // Default deviceId
+          return 'default'; // Default deviceId
         return this.settings.outputDevice;
       },
       set(deviceId) {
         if (deviceId === this.settings.outputDevice || deviceId === undefined)
           return;
-        this.$store.commit("changeOutputDevice", deviceId);
+        this.$store.commit('changeOutputDevice', deviceId);
         this.player.setOutputDevice();
       },
     },
@@ -461,8 +461,8 @@ export default {
         return this.settings.enableUnblockNeteaseMusic || true;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "enableUnblockNeteaseMusic",
+        this.$store.commit('updateSettings', {
+          key: 'enableUnblockNeteaseMusic',
           value,
         });
       },
@@ -473,8 +473,8 @@ export default {
         return this.settings.showPlaylistsByAppleMusic;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showPlaylistsByAppleMusic",
+        this.$store.commit('updateSettings', {
+          key: 'showPlaylistsByAppleMusic',
           value,
         });
       },
@@ -485,8 +485,8 @@ export default {
         return this.settings.nyancatStyle;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "nyancatStyle",
+        this.$store.commit('updateSettings', {
+          key: 'nyancatStyle',
           value,
         });
       },
@@ -497,8 +497,8 @@ export default {
         return this.settings.automaticallyCacheSongs;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "automaticallyCacheSongs",
+        this.$store.commit('updateSettings', {
+          key: 'automaticallyCacheSongs',
           value,
         });
         if (value === false) {
@@ -511,8 +511,8 @@ export default {
         return this.settings.showLyricsTranslation;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showLyricsTranslation",
+        this.$store.commit('updateSettings', {
+          key: 'showLyricsTranslation',
           value,
         });
       },
@@ -522,8 +522,8 @@ export default {
         return this.settings.showLyricsDynamicBackground;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showLyricsDynamicBackground",
+        this.$store.commit('updateSettings', {
+          key: 'showLyricsDynamicBackground',
           value,
         });
       },
@@ -533,8 +533,8 @@ export default {
         return this.settings.minimizeToTray;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "minimizeToTray",
+        this.$store.commit('updateSettings', {
+          key: 'minimizeToTray',
           value,
         });
       },
@@ -544,8 +544,8 @@ export default {
         return this.settings.enableDiscordRichPresence;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "enableDiscordRichPresence",
+        this.$store.commit('updateSettings', {
+          key: 'enableDiscordRichPresence',
           value,
         });
       },
@@ -555,8 +555,8 @@ export default {
         return this.settings.enableGlobalShortcut;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "enableGlobalShortcut",
+        this.$store.commit('updateSettings', {
+          key: 'enableGlobalShortcut',
           value,
         });
       },
@@ -566,8 +566,8 @@ export default {
         return this.settings.showLibraryDefault || false;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showLibraryDefault",
+        this.$store.commit('updateSettings', {
+          key: 'showLibraryDefault',
           value,
         });
       },
@@ -577,8 +577,8 @@ export default {
         return this.settings.cacheLimit || false;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "cacheLimit",
+        this.$store.commit('updateSettings', {
+          key: 'cacheLimit',
           value,
         });
       },
@@ -588,27 +588,27 @@ export default {
     },
   },
   created() {
-    this.countDBSize("tracks");
+    this.countDBSize('tracks');
   },
   activated() {
-    this.countDBSize("tracks");
+    this.countDBSize('tracks');
   },
   methods: {
     getAllOutputDevices() {
-      navigator.mediaDevices.enumerateDevices().then((devices) => {
-        this.allOutputDevices = devices.filter((device) => {
-          return device.kind == "audiooutput";
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        this.allOutputDevices = devices.filter(device => {
+          return device.kind == 'audiooutput';
         });
         if (
           this.allOutputDevices.length > 0 &&
-          this.allOutputDevices[0].label !== ""
+          this.allOutputDevices[0].label !== ''
         ) {
           this.withoutAudioPriviledge = false;
         } else {
           this.allOutputDevices = [
             {
-              deviceId: "default",
-              label: "settings.permissionRequired",
+              deviceId: 'default',
+              label: 'settings.permissionRequired',
             },
           ];
         }
@@ -616,13 +616,13 @@ export default {
     },
     logout() {
       doLogout();
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: 'home' });
     },
     countDBSize() {
-      countDBSize().then((data) => {
+      countDBSize().then(data => {
         if (data === undefined) {
           this.tracksCache = {
-            size: "0KB",
+            size: '0KB',
             length: 0,
           };
           return;
@@ -639,16 +639,16 @@ export default {
     lastfmConnect() {
       lastfmAuth();
       let lastfmChecker = setInterval(() => {
-        const session = localStorage.getItem("lastfm");
+        const session = localStorage.getItem('lastfm');
         if (session) {
-          this.$store.commit("updateLastfm", JSON.parse(session));
+          this.$store.commit('updateLastfm', JSON.parse(session));
           clearInterval(lastfmChecker);
         }
       }, 1000);
     },
     lastfmDisconnect() {
-      localStorage.removeItem("lastfm");
-      this.$store.commit("updateLastfm", {});
+      localStorage.removeItem('lastfm');
+      this.$store.commit('updateLastfm', {});
     },
   },
 };
@@ -835,7 +835,7 @@ h2 {
   border-radius: 8px;
 }
 .toggle input + label:before {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   -webkit-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
@@ -847,7 +847,7 @@ h2 {
   border-radius: 8px;
 }
 .toggle input + label:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.02), 0 4px 0px 0 hsla(0, 0%, 0%, 0.01),

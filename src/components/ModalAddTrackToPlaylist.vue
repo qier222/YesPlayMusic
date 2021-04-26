@@ -3,7 +3,7 @@
     class="add-track-to-playlist-modal"
     :show="show"
     :close="close"
-    :showFooter="false"
+    :show-footer="false"
     title="添加到歌单"
     width="25vw"
   >
@@ -12,9 +12,9 @@
         ><svg-icon icon-class="plus" />新建歌单</div
       >
       <div
-        class="playlist"
         v-for="playlist in ownPlaylists"
         :key="playlist.id"
+        class="playlist"
         @click="addTrackToPlaylist(playlist.id)"
       >
         <img :src="playlist.coverImgUrl | resizeImage(224)" />
@@ -28,13 +28,13 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
-import Modal from "@/components/Modal.vue";
-import { userPlaylist } from "@/api/user";
-import { addOrRemoveTrackFromPlaylist } from "@/api/playlist";
+import { mapActions, mapMutations, mapState } from 'vuex';
+import Modal from '@/components/Modal.vue';
+import { userPlaylist } from '@/api/user';
+import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 
 export default {
-  name: "ModalAddTrackToPlaylist",
+  name: 'ModalAddTrackToPlaylist',
   components: {
     Modal,
   },
@@ -44,22 +44,22 @@ export default {
     };
   },
   computed: {
-    ...mapState(["modals", "data"]),
+    ...mapState(['modals', 'data']),
     show: {
       get() {
         return this.modals.addTrackToPlaylistModal.show;
       },
       set(value) {
         this.updateModal({
-          modalName: "addTrackToPlaylistModal",
-          key: "show",
+          modalName: 'addTrackToPlaylistModal',
+          key: 'show',
           value,
         });
       },
     },
     ownPlaylists() {
       return this.playlists.filter(
-        (p) =>
+        p =>
           p.creator.userId === this.data.user.userId &&
           p.id !== this.data.likedSongPlaylistID
       );
@@ -69,8 +69,8 @@ export default {
     this.getUserPlaylists();
   },
   methods: {
-    ...mapMutations(["updateModal"]),
-    ...mapActions(["showToast"]),
+    ...mapMutations(['updateModal']),
+    ...mapActions(['showToast']),
     close() {
       this.show = false;
     },
@@ -79,19 +79,19 @@ export default {
         timestamp: new Date().getTime(),
         limit: 1000,
         uid: this.data.user.userId,
-      }).then((data) => {
+      }).then(data => {
         this.playlists = data.playlist;
       });
     },
     addTrackToPlaylist(playlistID) {
       addOrRemoveTrackFromPlaylist({
-        op: "add",
+        op: 'add',
         pid: playlistID,
         tracks: this.modals.addTrackToPlaylistModal.selectedTrackID,
-      }).then((data) => {
+      }).then(data => {
         if (data.body.code === 200) {
           this.show = false;
-          this.showToast("已添加到歌单");
+          this.showToast('已添加到歌单');
         } else {
           this.showToast(data.body.message);
         }
@@ -99,14 +99,14 @@ export default {
     },
     newPlaylist() {
       this.updateModal({
-        modalName: "newPlaylistModal",
-        key: "afterCreateAddTrackID",
+        modalName: 'newPlaylistModal',
+        key: 'afterCreateAddTrackID',
         value: this.modals.addTrackToPlaylistModal.selectedTrackID,
       });
       this.close();
       this.updateModal({
-        modalName: "newPlaylistModal",
-        key: "show",
+        modalName: 'newPlaylistModal',
+        key: 'show',
         value: true,
       });
     },

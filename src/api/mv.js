@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request';
 
 /**
  * 获取 mv 数据
@@ -9,8 +9,8 @@ import request from "@/utils/request";
  */
 export function mvDetail(mvid) {
   return request({
-    url: "/mv/detail",
-    method: "get",
+    url: '/mv/detail',
+    method: 'get',
     params: {
       mvid,
       timestamp: new Date().getTime(),
@@ -30,8 +30,8 @@ export function mvDetail(mvid) {
  */
 export function mvUrl(params) {
   return request({
-    url: "/mv/url",
-    method: "get",
+    url: '/mv/url',
+    method: 'get',
     params,
   });
 }
@@ -43,8 +43,8 @@ export function mvUrl(params) {
  */
 export function simiMv(mvid) {
   return request({
-    url: "/simi/mv",
-    method: "get",
+    url: '/simi/mv',
+    method: 'get',
     params: { mvid },
   });
 }
@@ -62,8 +62,8 @@ export function simiMv(mvid) {
 export function likeAMV(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: "/mv/sub",
-    method: "post",
+    url: '/mv/sub',
+    method: 'post',
     params,
   });
 }

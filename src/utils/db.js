@@ -1,26 +1,25 @@
-import axios from "axios";
-import Dexie from "dexie";
-import store from "@/store";
+import axios from 'axios';
+import Dexie from 'dexie';
+import store from '@/store';
 // import pkg from "../../package.json";
 
-const db = new Dexie("yesplaymusic");
+const db = new Dexie('yesplaymusic');
 
 db.version(2)
   .stores({
-    trackSources: "&id",
+    trackSources: '&id',
   })
-  .upgrade((tx) =>
+  .upgrade(tx =>
     tx
-      .table("trackSources")
+      .table('trackSources')
       .toCollection()
       .modify(
-        (track) =>
-          !track.createTime && (track.createTime = new Date().getTime())
+        track => !track.createTime && (track.createTime = new Date().getTime())
       )
   );
 
 db.version(1).stores({
-  trackSources: "&id",
+  trackSources: '&id',
 });
 
 let tracksCacheBytes = 0;
@@ -33,7 +32,7 @@ async function deleteExcessCache() {
     return;
   }
   try {
-    const delCache = await db.trackSources.orderBy("createTime").first();
+    const delCache = await db.trackSources.orderBy('createTime').first();
     await db.trackSources.delete(delCache.id);
     tracksCacheBytes -= delCache.source.byteLength;
     console.debug(
@@ -41,18 +40,18 @@ async function deleteExcessCache() {
     );
     deleteExcessCache();
   } catch (error) {
-    console.debug("[debug][db.js] deleteExcessCacheFailed", error);
+    console.debug('[debug][db.js] deleteExcessCacheFailed', error);
   }
 }
 
-export function cacheTrackSource(trackInfo, url, bitRate, from = "netease") {
+export function cacheTrackSource(trackInfo, url, bitRate, from = 'netease') {
   const name = trackInfo.name;
   const artist = trackInfo.ar[0]?.name || trackInfo.artists[0]?.name;
   return axios
     .get(url, {
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     })
-    .then((response) => {
+    .then(response => {
       db.trackSources.put({
         id: trackInfo.id,
         source: response.data,
@@ -70,7 +69,7 @@ export function cacheTrackSource(trackInfo, url, bitRate, from = "netease") {
 }
 
 export function getTrackSource(id) {
-  return db.trackSources.get(Number(id)).then((track) => {
+  return db.trackSources.get(Number(id)).then(track => {
     if (!track) return null;
     console.debug(
       `[debug][db.js] get track from cache 👉 ${track.name} by ${track.artist}`
@@ -82,7 +81,7 @@ export function getTrackSource(id) {
 export function countDBSize() {
   const trackSizes = [];
   return db.trackSources
-    .each((track) => {
+    .each(track => {
       trackSizes.push(track.source.byteLength);
     })
     .then(() => {
@@ -99,7 +98,7 @@ export function countDBSize() {
 }
 
 export function clearDB() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     db.tables.forEach(function (table) {
       table.clear();
     });

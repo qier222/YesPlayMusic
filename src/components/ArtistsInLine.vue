@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "ArtistInLine",
+  name: 'ArtistInLine',
   props: {
     artists: {
       type: Array,
@@ -18,20 +18,20 @@ export default {
     },
     exclude: {
       type: String,
-      default: "",
+      default: '',
     },
     prefix: {
       type: String,
-      default: "",
+      default: '',
     },
   },
   computed: {
     filteredArtists() {
-      return this.artists.filter((a) => a.name !== this.exclude);
+      return this.artists.filter(a => a.name !== this.exclude);
     },
     computedPrefix() {
       if (this.filteredArtists.length !== 0) return this.prefix;
-      else return "";
+      else return '';
     },
   },
 };

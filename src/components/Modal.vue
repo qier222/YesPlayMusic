@@ -1,6 +1,6 @@
 <template>
-  <div class="shade" @click="clickOutside" v-show="show">
-    <div class="modal" @click.stop :style="modalStyles">
+  <div v-show="show" class="shade" @click="clickOutside">
+    <div class="modal" :style="modalStyles" @click.stop>
       <div class="header">
         <div class="title">{{ title }}</div>
         <button class="close" @click="close"
@@ -8,7 +8,7 @@
         /></button>
       </div>
       <div class="content"><slot></slot></div>
-      <div class="footer" v-if="showFooter">
+      <div v-if="showFooter" class="footer">
         <!-- <button>取消</button>
         <button class="primary">确定</button> -->
         <slot name="footer"></slot>
@@ -19,13 +19,13 @@
 
 <script>
 export default {
-  name: "Modal",
+  name: 'Modal',
   props: {
     show: Boolean,
     close: Function,
     title: {
       type: String,
-      default: "Title",
+      default: 'Title',
     },
     showFooter: {
       type: Boolean,
@@ -33,7 +33,7 @@ export default {
     },
     width: {
       type: String,
-      default: "50vw",
+      default: '50vw',
     },
     clickOutsideHide: {
       type: Boolean,
@@ -173,7 +173,7 @@ export default {
   }
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   .shade {
     background: rgba(0, 0, 0, 0.38);
     color: var(--color-text);

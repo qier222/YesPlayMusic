@@ -1,18 +1,18 @@
-import { playlistCategories } from "@/utils/staticData";
+import { playlistCategories } from '@/utils/staticData';
 
-console.log("[debug][initLocalStorage.js]");
+console.log('[debug][initLocalStorage.js]');
 const enabledPlaylistCategories = playlistCategories
-  .filter((c) => c.enable)
-  .map((c) => c.name);
+  .filter(c => c.enable)
+  .map(c => c.name);
 
 let localStorage = {
   player: {},
   settings: {
     lang: null,
-    appearance: "auto",
+    appearance: 'auto',
     musicQuality: 320000,
     lyricFontSize: 28,
-    outputDevice: "default",
+    outputDevice: 'default',
     showPlaylistsByAppleMusic: true,
     enableUnblockNeteaseMusic: true,
     automaticallyCacheSongs: false,

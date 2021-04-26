@@ -7,25 +7,31 @@
     </h1>
     <MvRow :mvs="mvs" subtitle="publishTime" />
     <div class="load-more">
-      <ButtonTwoTone v-show="hasMore" @click.native="loadMVs" color="grey">{{
-        $t("explore.loadMore")
+      <ButtonTwoTone v-show="hasMore" color="grey" @click.native="loadMVs">{{
+        $t('explore.loadMore')
       }}</ButtonTwoTone>
     </div>
   </div>
 </template>
 
 <script>
-import { artistMv, getArtist } from "@/api/artist";
-import NProgress from "nprogress";
+import { artistMv, getArtist } from '@/api/artist';
+import NProgress from 'nprogress';
 
-import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
-import MvRow from "@/components/MvRow.vue";
+import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
+import MvRow from '@/components/MvRow.vue';
 
 export default {
-  name: "artistMV",
+  name: 'artistMV',
   components: {
     MvRow,
     ButtonTwoTone,
+  },
+  beforeRouteUpdate(to, from, next) {
+    NProgress.start();
+    this.id = to.params.id;
+    this.loadData();
+    next();
   },
   data() {
     return {
@@ -35,24 +41,6 @@ export default {
       artist: {},
       mvs: [],
     };
-  },
-  methods: {
-    loadData() {
-      getArtist(this.id).then((data) => {
-        this.artist = data.artist;
-      });
-      this.loadMVs();
-    },
-    loadMVs() {
-      artistMv({ id: this.id, limit: 100, offset: this.mvs.length }).then(
-        (data) => {
-          this.mvs.push(...data.mvs);
-          this.hasMore = data.hasMore;
-          NProgress.done();
-          this.show = true;
-        }
-      );
-    },
   },
   created() {
     this.id = this.$route.params.id;
@@ -68,11 +56,23 @@ export default {
       this.loadData();
     }
   },
-  beforeRouteUpdate(to, from, next) {
-    NProgress.start();
-    this.id = to.params.id;
-    this.loadData();
-    next();
+  methods: {
+    loadData() {
+      getArtist(this.id).then(data => {
+        this.artist = data.artist;
+      });
+      this.loadMVs();
+    },
+    loadMVs() {
+      artistMv({ id: this.id, limit: 100, offset: this.mvs.length }).then(
+        data => {
+          this.mvs.push(...data.mvs);
+          this.hasMore = data.hasMore;
+          NProgress.done();
+          this.show = true;
+        }
+      );
+    },
   },
 };
 </script>

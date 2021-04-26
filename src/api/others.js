@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import { mapTrackPlayableStatus } from "@/utils/common";
+import request from '@/utils/request';
+import { mapTrackPlayableStatus } from '@/utils/common';
 
 /**
  * 搜索
@@ -18,10 +18,10 @@ import { mapTrackPlayableStatus } from "@/utils/common";
  */
 export function search(params) {
   return request({
-    url: "/search",
-    method: "get",
+    url: '/search',
+    method: 'get',
     params,
-  }).then((data) => {
+  }).then(data => {
     if (data.result?.song !== undefined)
       data.result.song.songs = mapTrackPlayableStatus(data.result.song.songs);
     return data;
@@ -30,8 +30,8 @@ export function search(params) {
 
 export function personalFM() {
   return request({
-    url: "/personal_fm",
-    method: "get",
+    url: '/personal_fm',
+    method: 'get',
     params: {
       timestamp: new Date().getTime(),
     },
@@ -40,8 +40,8 @@ export function personalFM() {
 
 export function fmTrash(id) {
   return request({
-    url: "/fm_trash",
-    method: "post",
+    url: '/fm_trash',
+    method: 'post',
     params: {
       timestamp: new Date().getTime(),
       id,
