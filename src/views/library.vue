@@ -31,7 +31,7 @@
       </div>
       <div class="songs">
         <TrackList
-          :id="liked.playlist ? liked.playlist[0].id : 0"
+          :id="liked.playlists.length > 0 ? liked.playlists[0].id : 0"
           :tracks="liked.songsWithDetails"
           :column-number="3"
           type="tracklist"

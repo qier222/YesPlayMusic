@@ -55,7 +55,7 @@
               <div class="buttons">
                 <button-icon
                   :title="$t('player.like')"
-                  @click.native="likeASong(player.currentTrack.id)"
+                  @click.native="likeATrack(player.currentTrack.id)"
                 >
                   <svg-icon
                     :icon-class="
@@ -285,7 +285,7 @@ export default {
   },
   methods: {
     ...mapMutations(['toggleLyrics']),
-    ...mapActions(['likeASong']),
+    ...mapActions(['likeATrack']),
     getLyric() {
       if (!this.currentTrack.id) return;
       return getLyric(this.currentTrack.id).then(data => {

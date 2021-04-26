@@ -46,7 +46,7 @@
           <div class="like-button">
             <button-icon
               :title="$t('player.like')"
-              @click.native="likeASong(player.currentTrack.id)"
+              @click.native="likeATrack(player.currentTrack.id)"
             >
               <svg-icon
                 v-show="!player.isCurrentTrackLiked"
@@ -203,7 +203,7 @@ export default {
   },
   methods: {
     ...mapMutations(['toggleLyrics']),
-    ...mapActions(['showToast', 'likeASong']),
+    ...mapActions(['showToast', 'likeATrack']),
     goToNextTracksPage() {
       if (this.player.isPersonalFM) return;
       this.$route.name === 'next'

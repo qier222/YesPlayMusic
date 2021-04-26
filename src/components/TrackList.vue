@@ -12,10 +12,10 @@
       <div class="item" @click="play">{{ $t('contextMenu.play') }}</div>
       <div class="item" @click="playNext">{{ $t('contextMenu.playNext') }}</div>
       <hr />
-      <div class="item" @click="like" v-show="!isRightClickedTrackLiked">
+      <div v-show="!isRightClickedTrackLiked" class="item" @click="like">
         {{ $t('contextMenu.saveToMyLikedSongs') }}
       </div>
-      <div class="item" @click="like" v-show="isRightClickedTrackLiked">
+      <div v-show="isRightClickedTrackLiked" class="item" @click="like">
         {{ $t('contextMenu.removeFromMyLikedSongs') }}
       </div>
       <div
@@ -29,9 +29,9 @@
     <div :style="listStyles">
       <TrackListItem
         v-for="(track, index) in tracks"
-        :track="track"
         :key="itemKey === 'id' ? track.id : `${track.id}${index}`"
-        :highlightPlayingTrack="highlightPlayingTrack"
+        :track="track"
+        :highlight-playing-track="highlightPlayingTrack"
         @dblclick.native="playThisList(track.id)"
         @click.right.native="openMenu($event, track)"
       />
@@ -41,7 +41,6 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
-import { likeATrack } from '@/api/track';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { isAccountLoggedIn } from '@/utils/auth';
 
@@ -102,6 +101,12 @@ export default {
       listStyles: {},
     };
   },
+  computed: {
+    ...mapState(['liked']),
+    isRightClickedTrackLiked() {
+      return this.liked.songs.includes(this.rightClickedTrack?.id);
+    },
+  },
   created() {
     if (this.type === 'tracklist') {
       this.listStyles = {
@@ -111,15 +116,9 @@ export default {
       };
     }
   },
-  computed: {
-    ...mapState(['liked']),
-    isRightClickedTrackLiked() {
-      return this.liked.songs.includes(this.rightClickedTrack?.id);
-    },
-  },
   methods: {
-    ...mapMutations(['updateLikedSongs', 'updateModal']),
-    ...mapActions(['nextTrack', 'showToast']),
+    ...mapMutations(['updateModal']),
+    ...mapActions(['nextTrack', 'showToast', 'likeATrack']),
     openMenu(e, track) {
       this.rightClickedTrack = track;
       this.$refs.menu.openMenu(e);
@@ -184,27 +183,7 @@ export default {
       this.$store.state.player.addTrackToPlayNext(this.rightClickedTrack.id);
     },
     like() {
-      this.likeASong(this.rightClickedTrack.id);
-    },
-    likeASong(id) {
-      if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
-        return;
-      }
-      let like = true;
-      let likedSongs = this.liked.songs;
-      if (likedSongs.includes(id)) like = false;
-      likeATrack({ id, like }).then(data => {
-        if (data.code !== 200) return;
-        if (like === false) {
-          this.showToast(this.$t('toast.removedFromMyLikedSongs'));
-          this.updateLikedSongs(likedSongs.filter(d => d !== id));
-        } else {
-          this.showToast(this.$t('toast.savedToMyLikedSongs'));
-          likedSongs.push(id);
-          this.updateLikedSongs(likedSongs);
-        }
-      });
+      this.likeATrack(this.rightClickedTrack.id);
     },
     addTrackToPlaylist() {
       if (!isAccountLoggedIn()) {

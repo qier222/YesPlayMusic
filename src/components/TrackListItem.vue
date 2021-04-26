@@ -77,12 +77,12 @@
 </template>
 
 <script>
-import ArtistsInLine from "@/components/ArtistsInLine.vue";
-import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
-import { mapState } from "vuex";
+import ArtistsInLine from '@/components/ArtistsInLine.vue';
+import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
+import { mapState } from 'vuex';
 
 export default {
-  name: "TrackListItem",
+  name: 'TrackListItem',
   components: { ArtistsInLine, ExplicitSymbol },
   props: {
     track: Object,
@@ -95,13 +95,13 @@ export default {
     return { hover: false, trackStyle: {} };
   },
   computed: {
-    ...mapState(["settings"]),
+    ...mapState(['settings']),
     imgUrl() {
       let image =
         this.track?.al?.picUrl ??
         this.track?.album?.picUrl ??
-        "https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg";
-      return image + "?param=224y224";
+        'https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg';
+      return image + '?param=224y224';
     },
     artists() {
       if (this.track.ar !== undefined) return this.track.ar;
@@ -115,13 +115,13 @@ export default {
       return this.$parent.type;
     },
     isAlbum() {
-      return this.type === "album";
+      return this.type === 'album';
     },
     isTracklist() {
-      return this.type === "tracklist";
+      return this.type === 'tracklist';
     },
     isPlaylist() {
-      return this.type === "playlist";
+      return this.type === 'playlist';
     },
     isLiked() {
       return this.$parent.liked.songs.includes(this.track.id);
@@ -132,10 +132,10 @@ export default {
     trackClass() {
       let trackClass = [this.type];
       if (!this.track.playable && this.showUnavailableSongInGreyStyle)
-        trackClass.push("disable");
+        trackClass.push('disable');
       if (this.isPlaying && this.highlightPlayingTrack)
-        trackClass.push("playing");
-      if (this.focus) trackClass.push("focus");
+        trackClass.push('playing');
+      if (this.focus) trackClass.push('focus');
       return trackClass;
     },
     isMenuOpened() {
@@ -155,13 +155,13 @@ export default {
   },
   methods: {
     goToAlbum() {
-      this.$router.push({ path: "/album/" + this.track.al.id });
+      this.$router.push({ path: '/album/' + this.track.al.id });
     },
     playTrack() {
       this.$parent.playThisList(this.track.id);
     },
     likeThisSong() {
-      this.$parent.likeASong(this.track.id);
+      this.$parent.likeATrack(this.track.id);
     },
   },
 };
