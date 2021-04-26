@@ -25,7 +25,7 @@
           </button>
         </div>
       </div>
-      <h2>{{ $t('settings.settings') }}</h2>
+
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.language') }} </div>
@@ -54,6 +54,8 @@
           </select>
         </div>
       </div>
+
+      <h3>音质</h3>
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.musicQuality.text') }} </div>
@@ -92,6 +94,8 @@
           </select>
         </div>
       </div>
+
+      <h3>缓存</h3>
       <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
@@ -143,6 +147,8 @@
           </button>
         </div>
       </div>
+
+      <h3>歌词</h3>
       <div class="item">
         <div class="left">
           <div class="title">{{ $t('settings.showLyricsTranslation') }}</div>
@@ -198,23 +204,8 @@
           </select>
         </div>
       </div>
-      <div v-if="isElectron && !isMac" class="item">
-        <div class="left">
-          <div class="title">{{ $t('settings.minimizeToTray') }}</div>
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              id="minimize-to-tray"
-              v-model="minimizeToTray"
-              type="checkbox"
-              name="minimize-to-tray"
-            />
-            <label for="minimize-to-tray"></label>
-          </div>
-        </div>
-      </div>
 
+      <h3>第三方</h3>
       <div class="item">
         <div class="left">
           <div class="title">
@@ -232,24 +223,6 @@
           <button v-else @click="lastfmConnect()"> 授权连接 </button>
         </div>
       </div>
-
-      <div class="item">
-        <div class="left">
-          <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              id="show-library-default"
-              v-model="showLibraryDefault"
-              type="checkbox"
-              name="show-library-default"
-            />
-            <label for="show-library-default"></label>
-          </div>
-        </div>
-      </div>
-
       <div class="item">
         <div class="left">
           <div class="title"
@@ -273,6 +246,59 @@
           </div>
         </div>
       </div>
+      <div v-if="isElectron" class="item">
+        <div class="left">
+          <div class="title">
+            {{ $t('settings.enableDiscordRichPresence') }}</div
+          >
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-discord-rich-presence"
+              v-model="enableDiscordRichPresence"
+              type="checkbox"
+              name="enable-discord-rich-presence"
+            />
+            <label for="enable-discord-rich-presence"></label>
+          </div>
+        </div>
+      </div>
+
+      <h3>其他</h3>
+      <div v-if="isElectron && !isMac" class="item">
+        <div class="left">
+          <div class="title">{{ $t('settings.minimizeToTray') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="minimize-to-tray"
+              v-model="minimizeToTray"
+              type="checkbox"
+              name="minimize-to-tray"
+            />
+            <label for="minimize-to-tray"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="left">
+          <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="show-library-default"
+              v-model="showLibraryDefault"
+              type="checkbox"
+              name="show-library-default"
+            />
+            <label for="show-library-default"></label>
+          </div>
+        </div>
+      </div>
 
       <div class="item">
         <div class="left">
@@ -289,24 +315,6 @@
               name="show-playlists-by-apple-music"
             />
             <label for="show-playlists-by-apple-music"></label>
-          </div>
-        </div>
-      </div>
-      <div v-if="isElectron" class="item">
-        <div class="left">
-          <div class="title">
-            {{ $t('settings.enableDiscordRichPresence') }}</div
-          >
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              id="enable-discord-rich-presence"
-              v-model="enableDiscordRichPresence"
-              type="checkbox"
-              name="enable-discord-rich-presence"
-            />
-            <label for="enable-discord-rich-presence"></label>
           </div>
         </div>
       </div>
@@ -343,6 +351,40 @@
         </div>
       </div>
 
+      <div v-if="isElectron">
+        <h3>代理</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title"> 代理协议 </div>
+          </div>
+          <div class="right">
+            <select v-model="proxyProtocol">
+              <option value="noProxy"> 关闭代理 </option>
+              <option value="HTTP"> HTTP 代理 </option>
+              <option value="HTTPS"> HTTPS 代理 </option>
+              <option value="SOCKS"> SOCKS 代理 </option>
+            </select>
+          </div>
+        </div>
+        <div id="proxy-form" :class="{ disabled: proxyProtocol === 'noProxy' }">
+          <input
+            v-model="proxyServer"
+            class="text-input"
+            placeholder="服务器地址"
+            :disabled="proxyProtocol === 'noProxy'"
+          /><input
+            v-model="proxyPort"
+            class="text-input"
+            placeholder="端口"
+            type="number"
+            min="1"
+            max="65535"
+            :disabled="proxyProtocol === 'noProxy'"
+          />
+          <button @click="sendProxyConfig">更新代理</button>
+        </div>
+      </div>
+
       <div class="footer">
         <p class="author"
           >MADE BY
@@ -361,6 +403,11 @@ import { auth as lastfmAuth } from '@/api/lastfm';
 import { changeAppearance, bytesToSize } from '@/utils/common';
 import { countDBSize, clearDB } from '@/utils/db';
 import pkg from '../../package.json';
+
+const electron =
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
+const ipcRenderer =
+  process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
 export default {
   name: 'Settings',
@@ -438,16 +485,17 @@ export default {
     },
     outputDevice: {
       get() {
-        if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
-        const isValidDevice = this.allOutputDevices.find(
-          device => device.deviceId === this.settings.outputDevice
-        );
-        if (
-          this.settings.outputDevice === undefined ||
-          isValidDevice === undefined
-        )
-          return 'default'; // Default deviceId
-        return this.settings.outputDevice;
+        // if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
+        // const isValidDevice = this.allOutputDevices.find(
+        //   device => device.deviceId === this.settings.outputDevice
+        // );
+        // if (
+        //   this.settings.outputDevice === undefined ||
+        //   isValidDevice === undefined
+        // )
+        //   return 'default'; // Default deviceId
+        // return this.settings.outputDevice;
+        return 'default'; // Default deviceId
       },
       set(deviceId) {
         if (deviceId === this.settings.outputDevice || deviceId === undefined)
@@ -583,6 +631,48 @@ export default {
         });
       },
     },
+    proxyProtocol: {
+      get() {
+        return this.settings.proxyConfig?.protocol || 'noProxy';
+      },
+      set(value) {
+        let config = this.settings.proxyConfig || {};
+        config.protocol = value;
+        if (value === 'noProxy') {
+          ipcRenderer.send('removeProxy');
+        }
+        this.$store.commit('updateSettings', {
+          key: 'proxyConfig',
+          value: config,
+        });
+      },
+    },
+    proxyServer: {
+      get() {
+        return this.settings.proxyConfig?.server || '';
+      },
+      set(value) {
+        let config = this.settings.proxyConfig || {};
+        config.server = value;
+        this.$store.commit('updateSettings', {
+          key: 'proxyConfig',
+          value: config,
+        });
+      },
+    },
+    proxyPort: {
+      get() {
+        return this.settings.proxyConfig?.port || '';
+      },
+      set(value) {
+        let config = this.settings.proxyConfig || {};
+        config.port = value;
+        this.$store.commit('updateSettings', {
+          key: 'proxyConfig',
+          value: config,
+        });
+      },
+    },
     isLastfmConnected() {
       return this.lastfm.key !== undefined;
     },
@@ -650,6 +740,19 @@ export default {
       localStorage.removeItem('lastfm');
       this.$store.commit('updateLastfm', {});
     },
+    sendProxyConfig() {
+      if (this.proxyProtocol === 'noProxy') return;
+      const config = this.settings.proxyConfig;
+      if (
+        config.server === '' ||
+        !config.port ||
+        config.protocol === 'noProxy'
+      ) {
+        ipcRenderer.send('removeProxy');
+      } else {
+        ipcRenderer.send('setProxy', config);
+      }
+    },
   },
 };
 </script>
@@ -669,6 +772,14 @@ h2 {
   color: var(--color-text);
 }
 
+h3 {
+  margin-top: 48px;
+  padding-bottom: 12px;
+  font-size: 26px;
+  color: var(--color-text);
+  border-bottom: 1px solid rgba(128, 128, 128, 0.18);
+}
+
 .user {
   display: flex;
   align-items: center;
@@ -677,6 +788,7 @@ h2 {
   color: var(--color-text);
   padding: 16px 20px;
   border-radius: 16px;
+  margin-bottom: 48px;
   img.avatar {
     border-radius: 50%;
     height: 64px;
@@ -751,40 +863,69 @@ h2 {
   color: var(--color-text);
 
   .title {
-    font-size: 18px;
-    font-weight: 600;
-    opacity: 0.88;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.68;
   }
+}
 
-  select {
-    min-width: 192px;
-    font-weight: 600;
-    border: none;
-    padding: 8px 12px 8px 12px;
-    border-radius: 8px;
-    color: var(--color-text);
-    background: var(--color-secondary-bg);
-    appearance: none;
-    &:focus {
-      outline: none;
-      color: var(--color-primary);
-      background: var(--color-primary-bg);
-    }
+select {
+  min-width: 192px;
+  font-weight: 600;
+  border: none;
+  padding: 8px 12px 8px 12px;
+  border-radius: 8px;
+  color: var(--color-text);
+  background: var(--color-secondary-bg);
+  appearance: none;
+  &:focus {
+    outline: none;
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
   }
+}
 
-  button {
-    color: var(--color-text);
-    background: var(--color-secondary-bg);
-    padding: 8px 12px 8px 12px;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: 0.2s;
-    &:hover {
-      transform: scale(1.06);
-    }
-    &:active {
-      transform: scale(0.94);
-    }
+button {
+  color: var(--color-text);
+  background: var(--color-secondary-bg);
+  padding: 8px 12px 8px 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: 0.2s;
+  &:hover {
+    transform: scale(1.06);
+  }
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+input.text-input {
+  background: var(--color-secondary-bg);
+  border: none;
+  margin-right: 22px;
+  padding: 8px 12px 8px 12px;
+  border-radius: 8px;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 16px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+#proxy-form {
+  display: flex;
+  align-items: center;
+}
+#proxy-form.disabled {
+  opacity: 0.47;
+  button:hover {
+    transform: unset;
   }
 }
 

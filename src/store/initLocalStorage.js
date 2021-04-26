@@ -25,6 +25,11 @@ let localStorage = {
     enableGlobalShortcut: true,
     showLibraryDefault: false,
     enabledPlaylistCategories,
+    proxyConfig: {
+      protocol: 'noProxy',
+      server: '',
+      port: null,
+    },
   },
   data: {
     user: {},
