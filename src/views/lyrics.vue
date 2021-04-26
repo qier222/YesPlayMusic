@@ -289,6 +289,10 @@ export default {
       } else {
         clearInterval(this.lyricsInterval);
       }
+      document.documentElement.style.setProperty(
+        '--html-overflow-y',
+        show ? 'hidden' : 'overlay'
+      );
     },
   },
   created() {

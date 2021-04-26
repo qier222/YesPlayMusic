@@ -111,6 +111,7 @@ export default {
   --color-navbar-bg: rgba(255, 255, 255, 0.86);
   --color-primary-bg-for-transparent: rgba(189, 207, 255, 0.28);
   --color-secondary-bg-for-transparent: rgba(209, 209, 214, 0.28);
+  --html-overflow-y: overlay;
 }
 
 [data-theme='dark'] {
@@ -140,7 +141,7 @@ body {
 }
 
 html {
-  overflow-y: overlay;
+  overflow-y: var(--html-overflow-y);
   min-width: 768px;
   overscroll-behavior: none;
 }
