@@ -9,14 +9,14 @@
         </div>
       </div>
       <hr />
-      <div class="item" @click="play">{{ $t("contextMenu.play") }}</div>
-      <div class="item" @click="playNext">{{ $t("contextMenu.playNext") }}</div>
+      <div class="item" @click="play">{{ $t('contextMenu.play') }}</div>
+      <div class="item" @click="playNext">{{ $t('contextMenu.playNext') }}</div>
       <hr />
       <div class="item" @click="like" v-show="!isRightClickedTrackLiked">
-        {{ $t("contextMenu.saveToMyLikedSongs") }}
+        {{ $t('contextMenu.saveToMyLikedSongs') }}
       </div>
       <div class="item" @click="like" v-show="isRightClickedTrackLiked">
-        {{ $t("contextMenu.removeFromMyLikedSongs") }}
+        {{ $t('contextMenu.removeFromMyLikedSongs') }}
       </div>
       <div
         v-if="extraContextMenuItem.includes('removeTrackFromPlaylist')"
@@ -40,16 +40,16 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
-import { likeATrack } from "@/api/track";
-import { addOrRemoveTrackFromPlaylist } from "@/api/playlist";
-import { isAccountLoggedIn } from "@/utils/auth";
+import { mapActions, mapMutations, mapState } from 'vuex';
+import { likeATrack } from '@/api/track';
+import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
+import { isAccountLoggedIn } from '@/utils/auth';
 
-import TrackListItem from "@/components/TrackListItem.vue";
-import ContextMenu from "@/components/ContextMenu.vue";
+import TrackListItem from '@/components/TrackListItem.vue';
+import ContextMenu from '@/components/ContextMenu.vue';
 
 export default {
-  name: "TrackList",
+  name: 'TrackList',
   components: {
     TrackListItem,
     ContextMenu,
@@ -60,14 +60,14 @@ export default {
     id: Number,
     dbclickTrackFunc: {
       type: String,
-      default: "default",
+      default: 'default',
     },
     albumObject: {
       type: Object,
       default: () => {
         return {
           artist: {
-            name: "",
+            name: '',
           },
         };
       },
@@ -88,38 +88,38 @@ export default {
     },
     itemKey: {
       type: String,
-      default: "id",
+      default: 'id',
     },
   },
   data() {
     return {
       rightClickedTrack: {
         id: 0,
-        name: "",
-        ar: [{ name: "" }],
-        al: { picUrl: "" },
+        name: '',
+        ar: [{ name: '' }],
+        al: { picUrl: '' },
       },
       listStyles: {},
     };
   },
   created() {
-    if (this.type === "tracklist") {
+    if (this.type === 'tracklist') {
       this.listStyles = {
-        display: "grid",
-        gap: "4px",
+        display: 'grid',
+        gap: '4px',
         gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
       };
     }
   },
   computed: {
-    ...mapState(["liked"]),
+    ...mapState(['liked']),
     isRightClickedTrackLiked() {
       return this.liked.songs.includes(this.rightClickedTrack?.id);
     },
   },
   methods: {
-    ...mapMutations(["updateLikedSongs", "updateModal"]),
-    ...mapActions(["nextTrack", "showToast"]),
+    ...mapMutations(['updateLikedSongs', 'updateModal']),
+    ...mapActions(['nextTrack', 'showToast']),
     openMenu(e, track) {
       this.rightClickedTrack = track;
       this.$refs.menu.openMenu(e);
@@ -127,49 +127,49 @@ export default {
     closeMenu() {
       this.rightClickedTrack = {
         id: 0,
-        name: "",
-        ar: [{ name: "" }],
-        al: { picUrl: "" },
+        name: '',
+        ar: [{ name: '' }],
+        al: { picUrl: '' },
       };
     },
     playThisList(trackID) {
-      if (this.dbclickTrackFunc === "default") {
+      if (this.dbclickTrackFunc === 'default') {
         this.playThisListDefault(trackID);
-      } else if (this.dbclickTrackFunc === "none") {
+      } else if (this.dbclickTrackFunc === 'none') {
         // do nothing
-      } else if (this.dbclickTrackFunc === "playTrackOnListByID") {
+      } else if (this.dbclickTrackFunc === 'playTrackOnListByID') {
         this.$store.state.player.playTrackOnListByID(trackID);
-      } else if (this.dbclickTrackFunc === "playPlaylistByID") {
+      } else if (this.dbclickTrackFunc === 'playPlaylistByID') {
         this.$store.state.player.playPlaylistByID(this.id, trackID);
-      } else if (this.dbclickTrackFunc === "playAList") {
-        let trackIDs = this.tracks.map((t) => t.id);
+      } else if (this.dbclickTrackFunc === 'playAList') {
+        let trackIDs = this.tracks.map(t => t.id);
         this.$store.state.player.replacePlaylist(
           trackIDs,
           this.id,
-          "artist",
+          'artist',
           trackID
         );
-      } else if (this.dbclickTrackFunc === "dailyTracks") {
-        let trackIDs = this.tracks.map((t) => t.id);
+      } else if (this.dbclickTrackFunc === 'dailyTracks') {
+        let trackIDs = this.tracks.map(t => t.id);
         this.$store.state.player.replacePlaylist(
           trackIDs,
-          "/daily/songs",
-          "url",
+          '/daily/songs',
+          'url',
           trackID
         );
       }
     },
     playThisListDefault(trackID) {
-      if (this.type === "playlist") {
+      if (this.type === 'playlist') {
         this.$store.state.player.playPlaylistByID(this.id, trackID);
-      } else if (this.type === "album") {
+      } else if (this.type === 'album') {
         this.$store.state.player.playAlbumByID(this.id, trackID);
-      } else if (this.type === "tracklist") {
-        let trackIDs = this.tracks.map((t) => t.id);
+      } else if (this.type === 'tracklist') {
+        let trackIDs = this.tracks.map(t => t.id);
         this.$store.state.player.replacePlaylist(
           trackIDs,
           this.id,
-          "artist",
+          'artist',
           trackID
         );
       }
@@ -188,19 +188,19 @@ export default {
     },
     likeASong(id) {
       if (!isAccountLoggedIn()) {
-        this.showToast("此操作需要登录网易云账号");
+        this.showToast('此操作需要登录网易云账号');
         return;
       }
       let like = true;
       let likedSongs = this.liked.songs;
       if (likedSongs.includes(id)) like = false;
-      likeATrack({ id, like }).then((data) => {
+      likeATrack({ id, like }).then(data => {
         if (data.code !== 200) return;
         if (like === false) {
-          this.showToast(this.$t("toast.removedFromMyLikedSongs"));
-          this.updateLikedSongs(likedSongs.filter((d) => d !== id));
+          this.showToast(this.$t('toast.removedFromMyLikedSongs'));
+          this.updateLikedSongs(likedSongs.filter(d => d !== id));
         } else {
-          this.showToast(this.$t("toast.savedToMyLikedSongs"));
+          this.showToast(this.$t('toast.savedToMyLikedSongs'));
           likedSongs.push(id);
           this.updateLikedSongs(likedSongs);
         }
@@ -208,34 +208,34 @@ export default {
     },
     addTrackToPlaylist() {
       if (!isAccountLoggedIn()) {
-        this.showToast("此操作需要登录网易云账号");
+        this.showToast('此操作需要登录网易云账号');
         return;
       }
       this.updateModal({
-        modalName: "addTrackToPlaylistModal",
-        key: "show",
+        modalName: 'addTrackToPlaylistModal',
+        key: 'show',
         value: true,
       });
       this.updateModal({
-        modalName: "addTrackToPlaylistModal",
-        key: "selectedTrackID",
+        modalName: 'addTrackToPlaylistModal',
+        key: 'selectedTrackID',
         value: this.rightClickedTrack.id,
       });
     },
     removeTrackFromPlaylist() {
       if (!isAccountLoggedIn()) {
-        this.showToast("此操作需要登录网易云账号");
+        this.showToast('此操作需要登录网易云账号');
         return;
       }
       if (confirm(`确定要从歌单删除 ${this.rightClickedTrack.name}？`)) {
         let trackID = this.rightClickedTrack.id;
         addOrRemoveTrackFromPlaylist({
-          op: "del",
+          op: 'del',
           pid: this.id,
           tracks: trackID,
-        }).then((data) => {
+        }).then(data => {
           this.showToast(
-            data.body.code === 200 ? "已从歌单中删除" : data.body.message
+            data.body.code === 200 ? '已从歌单中删除' : data.body.message
           );
           this.$parent.removeTrack(trackID);
         });

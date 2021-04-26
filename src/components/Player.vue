@@ -11,14 +11,14 @@
       <vue-slider
         v-model="player.progress"
         :min="0"
-        :max="player.currentTrackDuration"
+        :max="player.currentTrackDuration + 1"
         :interval="1"
         :drag-on-click="true"
         :duration="0"
         :dot-size="12"
         :height="2"
         :tooltip-formatter="formatTrackTime"
-        @drag-end="player.seek"
+        :lazy="true"
       ></vue-slider>
     </div>
     <div class="controls">
@@ -167,20 +167,20 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
-import "@/assets/css/slider.css";
+import { mapState, mapMutations, mapActions } from 'vuex';
+import '@/assets/css/slider.css';
 
-import ButtonIcon from "@/components/ButtonIcon.vue";
-import VueSlider from "vue-slider-component";
+import ButtonIcon from '@/components/ButtonIcon.vue';
+import VueSlider from 'vue-slider-component';
 
 export default {
-  name: "Player",
+  name: 'Player',
   components: {
     ButtonIcon,
     VueSlider,
   },
   computed: {
-    ...mapState(["player", "settings", "data"]),
+    ...mapState(['player', 'settings', 'data']),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -196,47 +196,47 @@ export default {
       return this.player.playing;
     },
     audioSource() {
-      return this.player._howler?._src.includes("kuwo.cn")
-        ? "音源来自酷我音乐"
-        : "";
+      return this.player._howler?._src.includes('kuwo.cn')
+        ? '音源来自酷我音乐'
+        : '';
     },
   },
   methods: {
-    ...mapMutations(["toggleLyrics"]),
-    ...mapActions(["showToast", "likeASong"]),
+    ...mapMutations(['toggleLyrics']),
+    ...mapActions(['showToast', 'likeASong']),
     goToNextTracksPage() {
       if (this.player.isPersonalFM) return;
-      this.$route.name === "next"
+      this.$route.name === 'next'
         ? this.$router.go(-1)
-        : this.$router.push({ name: "next" });
+        : this.$router.push({ name: 'next' });
     },
     formatTrackTime(value) {
-      if (!value) return "";
+      if (!value) return '';
       let min = ~~((value / 60) % 60);
-      let sec = (~~(value % 60)).toString().padStart(2, "0");
+      let sec = (~~(value % 60)).toString().padStart(2, '0');
       return `${min}:${sec}`;
     },
     goToList() {
       if (this.player.playlistSource.id === this.data.likedSongPlaylistID) {
-        this.$router.push({ path: "/library/liked-songs" });
-      } else if (this.player.playlistSource.type === "url") {
+        this.$router.push({ path: '/library/liked-songs' });
+      } else if (this.player.playlistSource.type === 'url') {
         this.$router.push({ path: this.player.playlistSource.id });
       } else {
         this.$router.push({
           path:
-            "/" +
+            '/' +
             this.player.playlistSource.type +
-            "/" +
+            '/' +
             this.player.playlistSource.id,
         });
       }
     },
     goToAlbum() {
       if (this.player.currentTrack.al.id === 0) return;
-      this.$router.push({ path: "/album/" + this.player.currentTrack.al.id });
+      this.$router.push({ path: '/album/' + this.player.currentTrack.al.id });
     },
     goToArtist(id) {
-      this.$router.push({ path: "/artist/" + id });
+      this.$router.push({ path: '/artist/' + id });
     },
   },
 };

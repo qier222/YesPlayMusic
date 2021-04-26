@@ -69,19 +69,19 @@
               </div>
             </div>
             <div class="progress-bar">
-              <span>{{ formatTrackTime(player.progress) || "0:00" }}</span>
+              <span>{{ formatTrackTime(player.progress) || '0:00' }}</span>
               <div class="slider">
                 <vue-slider
                   v-model="player.progress"
                   :min="0"
-                  :max="player.currentTrackDuration"
+                  :max="player.currentTrackDuration + 1"
                   :interval="1"
                   :drag-on-click="true"
                   :duration="0"
                   :dot-size="12"
                   :height="2"
                   :tooltip-formatter="formatTrackTime"
-                  @drag-end="player.seek"
+                  :lazy="true"
                 ></vue-slider>
               </div>
               <span>{{ formatTrackTime(player.currentTrackDuration) }}</span>
@@ -184,15 +184,15 @@
 // The lyrics page of Apple Music is so gorgeous, so I copy the design.
 // Some of the codes are from https://github.com/sl1673495/vue-netease-music
 
-import { mapState, mapMutations, mapActions } from "vuex";
-import VueSlider from "vue-slider-component";
-import { formatTrackTime } from "@/utils/common";
-import { getLyric } from "@/api/track";
-import { lyricParser } from "@/utils/lyrics";
-import ButtonIcon from "@/components/ButtonIcon.vue";
+import { mapState, mapMutations, mapActions } from 'vuex';
+import VueSlider from 'vue-slider-component';
+import { formatTrackTime } from '@/utils/common';
+import { getLyric } from '@/api/track';
+import { lyricParser } from '@/utils/lyrics';
+import ButtonIcon from '@/components/ButtonIcon.vue';
 
 export default {
-  name: "Lyrics",
+  name: 'Lyrics',
   components: {
     VueSlider,
     ButtonIcon,
@@ -207,12 +207,12 @@ export default {
     };
   },
   computed: {
-    ...mapState(["player", "settings", "showLyrics"]),
+    ...mapState(['player', 'settings', 'showLyrics']),
     currentTrack() {
       return this.player.currentTrack;
     },
     imageUrl() {
-      return this.player.currentTrack?.al?.picUrl + "?param=1024y1024";
+      return this.player.currentTrack?.al?.picUrl + '?param=1024y1024';
     },
     lyricWithTranslation() {
       let ret = [];
@@ -222,7 +222,7 @@ export default {
       );
       // content统一转换数组形式
       if (lyricFiltered.length) {
-        lyricFiltered.forEach((l) => {
+        lyricFiltered.forEach(l => {
           const { rawTime, time, content } = l;
           const lyricItem = { time, content, contents: [content] };
           const sameTimeTLyric = this.tlyric.find(
@@ -259,10 +259,10 @@ export default {
     artist() {
       return this.currentTrack?.ar
         ? this.currentTrack.ar[0]
-        : { id: 0, name: "unknown" };
+        : { id: 0, name: 'unknown' };
     },
     album() {
-      return this.currentTrack?.al || { id: 0, name: "unknown" };
+      return this.currentTrack?.al || { id: 0, name: 'unknown' };
     },
   },
   watch: {
@@ -284,11 +284,11 @@ export default {
     clearInterval(this.lyricsInterval);
   },
   methods: {
-    ...mapMutations(["toggleLyrics"]),
-    ...mapActions(["likeASong"]),
+    ...mapMutations(['toggleLyrics']),
+    ...mapActions(['likeASong']),
     getLyric() {
       if (!this.currentTrack.id) return;
-      return getLyric(this.currentTrack.id).then((data) => {
+      return getLyric(this.currentTrack.id).then(data => {
         if (!data?.lrc?.lyric) {
           this.lyric = [];
           this.tlyric = [];
@@ -327,8 +327,8 @@ export default {
           const el = document.getElementById(`line${this.highlightLyricIndex}`);
           if (el)
             el.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
+              behavior: 'smooth',
+              block: 'center',
             });
         }
       }, 50);
@@ -341,7 +341,7 @@ export default {
       } else if (line.contents[0] !== undefined) {
         return `<span>${line.contents[0]}</span>`;
       }
-      return "unknown";
+      return 'unknown';
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
@@ -367,7 +367,7 @@ export default {
   --brightness-dynamic-background: 150%;
 }
 
-[data-theme="dark"] .dynamic-background {
+[data-theme='dark'] .dynamic-background {
   --contrast-dynamic-background: 125%;
   --brightness-dynamic-background: 50%;
 }

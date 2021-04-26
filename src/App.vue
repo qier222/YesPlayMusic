@@ -20,18 +20,18 @@
 </template>
 
 <script>
-import ModalAddTrackToPlaylist from "./components/ModalAddTrackToPlaylist.vue";
-import ModalNewPlaylist from "./components/ModalNewPlaylist.vue";
-import Navbar from "./components/Navbar.vue";
-import Player from "./components/Player.vue";
-import Toast from "./components/Toast.vue";
-import { ipcRenderer } from "./electron/ipcRenderer";
-import { isAccountLoggedIn } from "@/utils/auth";
-import Lyrics from "./views/lyrics.vue";
-import { mapState } from "vuex";
+import ModalAddTrackToPlaylist from './components/ModalAddTrackToPlaylist.vue';
+import ModalNewPlaylist from './components/ModalNewPlaylist.vue';
+import Navbar from './components/Navbar.vue';
+import Player from './components/Player.vue';
+import Toast from './components/Toast.vue';
+import { ipcRenderer } from './electron/ipcRenderer';
+import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
+import Lyrics from './views/lyrics.vue';
+import { mapState } from 'vuex';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Navbar,
     Player,
@@ -46,42 +46,52 @@ export default {
     };
   },
   computed: {
-    ...mapState(["showLyrics", "showLibraryDefault", "player"]),
+    ...mapState(['showLyrics', 'showLibraryDefault', 'player']),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },
     showPlayer() {
       return (
         [
-          "mv",
-          "loginUsername",
-          "login",
-          "loginAccount",
-          "lastfmCallback",
+          'mv',
+          'loginUsername',
+          'login',
+          'loginAccount',
+          'lastfmCallback',
         ].includes(this.$route.name) === false
       );
     },
     enablePlayer() {
-      return this.player.enabled && this.$route.name !== "lastfmCallback";
+      return this.player.enabled && this.$route.name !== 'lastfmCallback';
     },
     showNavbar() {
-      return this.$route.name !== "lastfmCallback";
+      return this.$route.name !== 'lastfmCallback';
     },
   },
   created() {
-    this.showLibraryDefault && this.$router.push("/library");
-    if (this.isElectron) {
-      ipcRenderer(this);
-    }
-    window.addEventListener("keydown", this.handleKeydown);
+    this.showLibraryDefault && this.$router.push('/library');
+    if (this.isElectron) ipcRenderer(this);
+    window.addEventListener('keydown', this.handleKeydown);
+    this.fetchData();
   },
   methods: {
     handleKeydown(e) {
-      if (e.code === "Space") {
-        if (e.target.tagName === "INPUT") return false;
-        if (this.$route.name === "mv") return false;
+      if (e.code === 'Space') {
+        if (e.target.tagName === 'INPUT') return false;
+        if (this.$route.name === 'mv') return false;
         e.preventDefault();
         this.player.play();
+      }
+    },
+    fetchData() {
+      if (!isLooseLoggedIn()) return;
+      this.$store.dispatch('fetchLikedSongs');
+      this.$store.dispatch('fetchLikedSongsWithDetails');
+      this.$store.dispatch('fetchLikedPlaylist');
+      if (isAccountLoggedIn()) {
+        this.$store.dispatch('fetchLikedAlbums');
+        this.$store.dispatch('fetchLikedArtists');
+        this.$store.dispatch('fetchLikedMVs');
       }
     },
   },
@@ -89,7 +99,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
   --color-body-bg: #ffffff;
@@ -103,7 +113,7 @@ export default {
   --color-secondary-bg-for-transparent: rgba(209, 209, 214, 0.28);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --color-body-bg: #222222;
   --color-text: #ffffff;
   --color-primary: #335eea;
@@ -121,7 +131,7 @@ export default {
 }
 #app,
 input {
-  font-family: "Barlow", -apple-system, BlinkMacSystemFont, Helvetica Neue,
+  font-family: 'Barlow', -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
     WenQuanYi Micro Hei, sans-serif;
 }
@@ -195,7 +205,7 @@ main::-webkit-scrollbar {
   background: rgba(128, 128, 128, 0.38);
 }
 
-[data-theme="dark"] ::-webkit-scrollbar-thumb {
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
   background: var(--color-secondary-bg);
 }
 
@@ -207,7 +217,7 @@ main::-webkit-scrollbar {
   transform: translateY(100%);
 }
 
-[data-electron="yes"] {
+[data-electron='yes'] {
   button,
   .navigation-links a,
   .playlist-info .description {

@@ -1,7 +1,9 @@
 export default {
-  updateLikedSongs(state, trackIDs) {
-    state.liked.songs = trackIDs;
-    state.player.sendSelfToIpcMain();
+  updateLikedXXX(state, { name, data }) {
+    state.liked[name] = data;
+    if (name === 'songs') {
+      state.player.sendSelfToIpcMain();
+    }
   },
   changeLang(state, lang) {
     state.settings.lang = lang;
@@ -23,11 +25,11 @@ export default {
   },
   togglePlaylistCategory(state, name) {
     const index = state.settings.enabledPlaylistCategories.findIndex(
-      (c) => c === name
+      c => c === name
     );
     if (index !== -1) {
       state.settings.enabledPlaylistCategories = state.settings.enabledPlaylistCategories.filter(
-        (c) => c !== name
+        c => c !== name
       );
     } else {
       state.settings.enabledPlaylistCategories.push(name);
