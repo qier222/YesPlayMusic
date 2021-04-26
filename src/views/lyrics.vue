@@ -6,12 +6,12 @@
         class="dynamic-background"
       >
         <div
-          v-show="this.$store.state.showLyrics"
+          v-show="showLyrics"
           class="top-right"
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
         />
         <div
-          v-show="this.$store.state.showLyrics"
+          v-show="showLyrics"
           class="bottom-left"
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
         />
@@ -387,13 +387,17 @@ export default {
 }
 
 .dynamic-background {
-  filter: blur(50px) opacity(0.6) contrast(var(--contrast-dynamic-background))
+  filter: blur(50px) contrast(var(--contrast-dynamic-background))
     brightness(var(--brightness-dynamic-background));
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
   .top-right,
   .bottom-left {
     z-index: 0;
-    width: 14vw;
-    height: 14vw;
+    width: 140vw;
+    height: 140vw;
+    opacity: 0.6;
     position: absolute;
     background-size: cover;
     animation: rotate 150s linear infinite;
@@ -415,10 +419,10 @@ export default {
 
 @keyframes rotate {
   0% {
-    transform: rotate(0deg) scale(10);
+    transform: rotate(0deg);
   }
   100% {
-    transform: rotate(360deg) scale(10);
+    transform: rotate(360deg);
   }
 }
 
