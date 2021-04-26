@@ -9,17 +9,16 @@
       @click.stop
     >
       <vue-slider
-        v-model="progress"
+        v-model="player.progress"
         :min="0"
-        :max="progressMax"
+        :max="player.currentTrackDuration"
         :interval="1"
         :drag-on-click="true"
         :duration="0"
-        :dotSize="12"
+        :dot-size="12"
         :height="2"
-        :tooltipFormatter="formatTrackTime"
-        @drag-end="setSeek"
-        ref="progress"
+        :tooltip-formatter="formatTrackTime"
+        @drag-end="player.seek"
       ></vue-slider>
     </div>
     <div class="controls">
@@ -46,16 +45,16 @@
           </div>
           <div class="like-button">
             <button-icon
-              @click.native="likeCurrentSong"
               :title="$t('player.like')"
+              @click.native="likeASong(player.currentTrack.id)"
             >
               <svg-icon
+                v-show="!player.isCurrentTrackLiked"
                 icon-class="heart"
-                v-show="!liked.songs.includes(currentTrack.id)"
               ></svg-icon>
               <svg-icon
+                v-show="player.isCurrentTrackLiked"
                 icon-class="heart-solid"
-                v-show="liked.songs.includes(currentTrack.id)"
               ></svg-icon>
             </button-icon>
           </div>
@@ -67,24 +66,26 @@
         <div class="container" @click.stop>
           <button-icon
             v-show="!player.isPersonalFM"
-            @click.native="previous"
             :title="$t('player.previous')"
+            @click.native="player.playPrevTrack"
             ><svg-icon icon-class="previous"
           /></button-icon>
           <button-icon
             v-show="player.isPersonalFM"
-            @click.native="moveToFMTrash"
             title="不喜欢"
+            @click.native="player.moveToFMTrash"
             ><svg-icon icon-class="thumbs-down"
           /></button-icon>
           <button-icon
             class="play"
-            @click.native="play"
             :title="$t(player.playing ? 'player.pause' : 'player.play')"
+            @click.native="player.playOrPause"
           >
-            <svg-icon :iconClass="player.playing ? 'pause' : 'play'"
+            <svg-icon :icon-class="player.playing ? 'pause' : 'play'"
           /></button-icon>
-          <button-icon @click.native="next" :title="$t('player.next')"
+          <button-icon
+            :title="$t('player.next')"
+            @click.native="player.playNextTrack"
             ><svg-icon icon-class="next"
           /></button-icon>
         </div>
@@ -94,48 +95,48 @@
         <div class="blank"></div>
         <div class="container" @click.stop>
           <button-icon
-            @click.native="goToNextTracksPage"
             :title="$t('player.nextUp')"
             :class="{
               active: this.$route.name === 'next',
               disabled: player.isPersonalFM,
             }"
+            @click.native="goToNextTracksPage"
             ><svg-icon icon-class="list"
           /></button-icon>
           <button-icon
+            :class="{
+              active: player.repeatMode !== 'off',
+              disabled: player.isPersonalFM,
+            }"
             :title="
               player.repeatMode === 'one'
                 ? $t('player.repeatTrack')
                 : $t('player.repeat')
             "
-            @click.native="repeat"
-            :class="{
-              active: player.repeatMode !== 'off',
-              disabled: player.isPersonalFM,
-            }"
+            @click.native="player.switchRepeatMode"
           >
             <svg-icon
-              icon-class="repeat"
               v-show="player.repeatMode !== 'one'"
+              icon-class="repeat"
             />
             <svg-icon
-              icon-class="repeat-1"
               v-show="player.repeatMode === 'one'"
+              icon-class="repeat-1"
             />
           </button-icon>
           <button-icon
-            @click.native="shuffle"
             :class="{ active: player.shuffle, disabled: player.isPersonalFM }"
             :title="$t('player.shuffle')"
+            @click.native="player.switchShuffle"
             ><svg-icon icon-class="shuffle"
           /></button-icon>
           <div class="volume-control">
             <button-icon :title="$t('player.mute')" @click.native="player.mute">
-              <svg-icon icon-class="volume" v-show="volume > 0.5" />
-              <svg-icon icon-class="volume-mute" v-show="volume === 0" />
+              <svg-icon v-show="volume > 0.5" icon-class="volume" />
+              <svg-icon v-show="volume === 0" icon-class="volume-mute" />
               <svg-icon
-                icon-class="volume-half"
                 v-show="volume <= 0.5 && volume !== 0"
+                icon-class="volume-half"
               />
             </button-icon>
             <div class="volume-bar">
@@ -147,7 +148,7 @@
                 :drag-on-click="true"
                 :duration="0"
                 :tooltip="`none`"
-                :dotSize="12"
+                :dot-size="12"
               ></vue-slider>
             </div>
           </div>
@@ -167,9 +168,6 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { isAccountLoggedIn } from "@/utils/auth";
-import { userLikedSongsIDs } from "@/api/user";
-import { likeATrack } from "@/api/track";
 import "@/assets/css/slider.css";
 
 import ButtonIcon from "@/components/ButtonIcon.vue";
@@ -181,24 +179,8 @@ export default {
     ButtonIcon,
     VueSlider,
   },
-  data() {
-    return {
-      interval: null,
-      progress: 0,
-    };
-  },
-  mounted() {
-    setInterval(() => {
-      this.progress = this.player.seek();
-    }, 1000);
-    if (isAccountLoggedIn()) {
-      userLikedSongsIDs(this.data.user.userId).then((data) => {
-        this.updateLikedSongs(data.ids);
-      });
-    }
-  },
   computed: {
-    ...mapState(["player", "settings", "liked", "data"]),
+    ...mapState(["player", "settings", "data"]),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -213,13 +195,6 @@ export default {
     playing() {
       return this.player.playing;
     },
-    progressMax() {
-      let max = ~~(this.player.currentTrack.dt / 1000);
-      return max > 1 ? max - 1 : max;
-    },
-    isCurrentTrackLiked() {
-      return this.liked.songs.includes(this.currentTrack.id);
-    },
     audioSource() {
       return this.player._howler?._src.includes("kuwo.cn")
         ? "音源来自酷我音乐"
@@ -227,38 +202,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["updateLikedSongs", "toggleLyrics"]),
-    ...mapActions(["showToast"]),
-    play() {
-      this.player.playing ? this.player.pause() : this.player.play();
-    },
-    next() {
-      if (this.player.playNextTrack()) this.progress = 0;
-    },
-    previous() {
-      if (this.player.playPrevTrack()) this.progress = 0;
-    },
-    shuffle() {
-      if (this.player.isPersonalFM) return;
-      this.player.shuffle = !this.player.shuffle;
-    },
-    repeat() {
-      if (this.player.isPersonalFM) return;
-      if (this.player.repeatMode === "on") {
-        this.player.repeatMode = "one";
-      } else if (this.player.repeatMode === "one") {
-        this.player.repeatMode = "off";
-      } else {
-        this.player.repeatMode = "on";
-      }
-    },
-    setSeek() {
-      this.progress = this.$refs.progress.getValue();
-      this.player.seek(this.$refs.progress.getValue());
-    },
-    setProgress(value) {
-      this.progress = value;
-    },
+    ...mapMutations(["toggleLyrics"]),
+    ...mapActions(["showToast", "likeASong"]),
     goToNextTracksPage() {
       if (this.player.isPersonalFM) return;
       this.$route.name === "next"
@@ -270,27 +215,6 @@ export default {
       let min = ~~((value / 60) % 60);
       let sec = (~~(value % 60)).toString().padStart(2, "0");
       return `${min}:${sec}`;
-    },
-    likeCurrentSong() {
-      if (!isAccountLoggedIn()) {
-        this.showToast("此操作需要登录网易云账号");
-        return;
-      }
-      let id = this.currentTrack.id;
-      let like = true;
-      if (this.liked.songs.includes(id)) like = false;
-      likeATrack({ id, like }).then(() => {
-        if (like === false) {
-          this.updateLikedSongs(this.liked.songs.filter((d) => d !== id));
-        } else {
-          let newLikeSongs = this.liked.songs;
-          newLikeSongs.push(id);
-          this.updateLikedSongs(newLikeSongs);
-        }
-      });
-    },
-    moveToFMTrash() {
-      this.player.moveToFMTrash();
     },
     goToList() {
       if (this.player.playlistSource.id === this.data.likedSongPlaylistID) {

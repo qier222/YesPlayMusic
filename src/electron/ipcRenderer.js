@@ -1,3 +1,7 @@
+import store from "@/store";
+
+const player = store.state.player;
+
 export function ipcRenderer(vueInstance) {
   const self = vueInstance;
   // 添加专有的类名
@@ -25,46 +29,44 @@ export function ipcRenderer(vueInstance) {
   });
 
   ipcRenderer.on("play", () => {
-    self.$refs.player.play();
+    player.playOrPause();
   });
 
   ipcRenderer.on("next", () => {
-    console.log("touchBar:next");
-    self.$refs.player.next();
+    player.playNextTrack();
   });
 
   ipcRenderer.on("previous", () => {
-    self.$refs.player.previous();
+    player.playPrevTrack();
   });
 
   ipcRenderer.on("increaseVolume", () => {
-    if (self.$refs.player.volume + 0.1 >= 1) {
-      return (self.$refs.player.volume = 1);
+    if (player.volume + 0.1 >= 1) {
+      return (player.volume = 1);
     }
-    self.$refs.player.volume += 0.1;
+    player.volume += 0.1;
   });
 
   ipcRenderer.on("decreaseVolume", () => {
-    if (self.$refs.player.volume - 0.1 <= 0) {
-      return (self.$refs.player.volume = 0);
+    if (player.volume - 0.1 <= 0) {
+      return (player.volume = 0);
     }
-    self.$refs.player.volume -= 0.1;
+    player.volume -= 0.1;
   });
 
   ipcRenderer.on("like", () => {
-    self.$refs.player.likeCurrentSong();
+    store.dispatch("likeASong", player.currentTrack.id);
   });
 
   ipcRenderer.on("repeat", () => {
-    self.$refs.player.repeat();
+    player.switchRepeatMode();
   });
 
   ipcRenderer.on("shuffle", () => {
-    self.$refs.player.shuffle();
+    player.switchShuffle();
   });
 
   ipcRenderer.on("routerGo", (event, where) => {
-    console.log(where);
     self.$refs.navbar.go(where);
   });
 
