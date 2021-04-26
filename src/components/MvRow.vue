@@ -147,7 +147,6 @@ export default {
   transition: transform 0.3s;
   &:hover {
     cursor: pointer;
-    transform: scale(1.02);
   }
 }
 img {

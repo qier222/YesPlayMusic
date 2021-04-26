@@ -43,7 +43,6 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { isAccountLoggedIn } from '@/utils/auth';
-import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 import TrackListItem from '@/components/TrackListItem.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
@@ -123,10 +122,8 @@ export default {
     openMenu(e, track) {
       this.rightClickedTrack = track;
       this.$refs.menu.openMenu(e);
-      disableScrolling();
     },
     closeMenu() {
-      enableScrolling();
       this.rightClickedTrack = {
         id: 0,
         name: '',

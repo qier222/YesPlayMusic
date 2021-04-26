@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { disableScrolling, enableScrolling } from '@/utils/ui';
+
 export default {
   name: 'ContextMenu',
   data() {
@@ -40,6 +42,7 @@ export default {
       if (this.$parent.closeMenu !== undefined) {
         this.$parent.closeMenu();
       }
+      enableScrolling();
     },
 
     openMenu(e) {
@@ -51,6 +54,7 @@ export default {
         }.bind(this)
       );
       e.preventDefault();
+      disableScrolling();
     },
   },
 };
@@ -61,6 +65,7 @@ export default {
   width: 100%;
   height: 100%;
   user-select: none;
+  -webkit-app-region: no-drag;
 }
 
 .menu {

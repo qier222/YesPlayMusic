@@ -55,7 +55,6 @@ export default {
   },
   fetchLikedSongs: ({ state, commit }) => {
     if (!isLooseLoggedIn()) return;
-    console.debug('[debug][actions.js] fetchLikedSongs');
     if (isAccountLoggedIn()) {
       return userLikedSongsIDs({ uid: state.data.user.userId }).then(result => {
         if (result.ids) {
@@ -70,7 +69,6 @@ export default {
     }
   },
   fetchLikedSongsWithDetails: ({ state, commit }) => {
-    console.debug('[debug][actions.js] fetchLikedSongsWithDetails');
     return getPlaylistDetail(state.data.likedSongPlaylistID, true).then(
       result => {
         return getTrackDetail(
@@ -89,7 +87,6 @@ export default {
   },
   fetchLikedPlaylist: ({ state, commit }) => {
     if (!isLooseLoggedIn()) return;
-    console.debug('[debug][actions.js] fetchLikedPlaylist');
     if (isAccountLoggedIn()) {
       return userPlaylist({
         uid: state.data.user.userId,
@@ -109,7 +106,6 @@ export default {
   },
   fetchLikedAlbums: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    console.debug('[debug][actions.js] fetchLikedAlbums');
     return likedAlbums({ limit: 2000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
@@ -121,7 +117,6 @@ export default {
   },
   fetchLikedArtists: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    console.debug('[debug][actions.js] fetchLikedArtists');
     return likedArtists().then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
@@ -133,7 +128,6 @@ export default {
   },
   fetchLikedMVs: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    console.debug('[debug][actions.js] fetchLikedMVs');
     return likedMVs().then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
