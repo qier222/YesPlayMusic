@@ -40,15 +40,22 @@
       </div>
     </div>
 
-    <div id="liked" class="section-two">
+    <div class="section-two">
       <div class="tabs-row">
         <div class="tabs">
           <div
-            class="tab"
+            class="tab dropdown"
             :class="{ active: currentTab === 'playlists' }"
             @click="updateCurrentTab('playlists')"
           >
-            {{ $t('library.playlists') }}
+            <span class="text">{{
+              { all: '全部歌单', mine: '创建的歌单', liked: '收藏的歌单' }[
+                playlistFilter
+              ]
+            }}</span>
+            <span class="icon" @click.stop="openPlaylistTabMenu"
+              ><svg-icon icon-class="dropdown"
+            /></span>
           </div>
           <div
             class="tab"
@@ -84,7 +91,7 @@
       <div v-show="currentTab === 'playlists'">
         <div v-if="liked.playlists.length > 1">
           <CoverRow
-            :items="liked.playlists.slice(1)"
+            :items="filterPlaylists.slice(1)"
             type="playlist"
             sub-text="creator"
             :show-play-button="true"
@@ -113,6 +120,17 @@
         <MvRow :mvs="liked.mvs" />
       </div>
     </div>
+
+    <ContextMenu ref="playlistTabMenu">
+      <div class="item" @click="changePlaylistFilter('all')"> 全部歌单 </div>
+      <hr />
+      <div class="item" @click="changePlaylistFilter('mine')">
+        我创建的歌单
+      </div>
+      <div class="item" @click="changePlaylistFilter('liked')">
+        收藏的歌单
+      </div>
+    </ContextMenu>
   </div>
 </template>
 
@@ -123,6 +141,7 @@ import { randomNum, dailyTask } from '@/utils/common';
 import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
 
+import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
@@ -130,7 +149,7 @@ import MvRow from '@/components/MvRow.vue';
 
 export default {
   name: 'Library',
-  components: { SvgIcon, CoverRow, TrackList, MvRow },
+  components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
   data() {
     return {
       show: false,
@@ -159,6 +178,19 @@ export default {
         lyric[lineIndex + 1].split(']')[1],
         lyric[lineIndex + 2].split(']')[1],
       ];
+    },
+    playlistFilter() {
+      return this.data.libraryPlaylistFilter || 'all';
+    },
+    filterPlaylists() {
+      const playlists = this.liked.playlists;
+      const userId = this.data.user.userId;
+      if (this.playlistFilter === 'mine') {
+        return playlists.filter(p => p.creator.userId === userId);
+      } else if (this.playlistFilter === 'liked') {
+        return playlists.filter(p => p.creator.userId !== userId);
+      }
+      return playlists;
     },
   },
   created() {
@@ -199,9 +231,7 @@ export default {
         return;
       }
       this.currentTab = tab;
-      document
-        .getElementById('liked')
-        .scrollIntoView({ block: 'start', behavior: 'smooth' });
+      window.scrollTo({ top: 375, behavior: 'smooth' });
     },
     goToLikedSongsList() {
       this.$router.push({ path: '/library/liked-songs' });
@@ -223,6 +253,13 @@ export default {
         key: 'show',
         value: true,
       });
+    },
+    openPlaylistTabMenu(e) {
+      this.$refs.playlistTabMenu.openMenu(e);
+    },
+    changePlaylistFilter(type) {
+      this.updateData({ key: 'libraryPlaylistFilter', value: type });
+      window.scrollTo({ top: 375, behavior: 'smooth' });
     },
   },
 };
@@ -357,6 +394,25 @@ h1 {
   .tab.active {
     opacity: 0.88;
     background-color: var(--color-secondary-bg);
+  }
+  .tab.dropdown {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    overflow: hidden;
+    .text {
+      padding: 8px 3px 8px 14px;
+    }
+    .icon {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 8px 0 3px;
+      .svg-icon {
+        height: 16px;
+        width: 16px;
+      }
+    }
   }
 }
 
