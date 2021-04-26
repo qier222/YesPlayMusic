@@ -115,6 +115,10 @@ export default {
         gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
       };
     }
+    window.addEventListener('scroll', this.closeMenuListener, false);
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.closeMenuListener, false);
   },
   methods: {
     ...mapMutations(['updateModal']),
@@ -122,6 +126,9 @@ export default {
     openMenu(e, track) {
       this.rightClickedTrack = track;
       this.$refs.menu.openMenu(e);
+    },
+    closeMenuListener() {
+      this.$refs.menu && this.$refs.menu.closeMenu();
     },
     closeMenu() {
       this.rightClickedTrack = {
