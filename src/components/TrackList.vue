@@ -43,6 +43,7 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { isAccountLoggedIn } from '@/utils/auth';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 import TrackListItem from '@/components/TrackListItem.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
@@ -115,10 +116,6 @@ export default {
         gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
       };
     }
-    window.addEventListener('scroll', this.closeMenuListener, false);
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.closeMenuListener, false);
   },
   methods: {
     ...mapMutations(['updateModal']),
@@ -126,11 +123,10 @@ export default {
     openMenu(e, track) {
       this.rightClickedTrack = track;
       this.$refs.menu.openMenu(e);
-    },
-    closeMenuListener() {
-      this.$refs.menu && this.$refs.menu.closeMenu();
+      disableScrolling();
     },
     closeMenu() {
+      enableScrolling();
       this.rightClickedTrack = {
         id: 0,
         name: '',
