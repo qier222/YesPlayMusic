@@ -167,20 +167,20 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title">{{
-            $t('settings.showLyricsDynamicBackground')
-          }}</div>
+          <div class="title">{{ $t('settings.lyricsBackground.text') }}</div>
         </div>
         <div class="right">
-          <div class="toggle">
-            <input
-              id="show-lyrics-dynamic-background"
-              v-model="showLyricsDynamicBackground"
-              type="checkbox"
-              name="show-lyrics-dynamic-background"
-            />
-            <label for="show-lyrics-dynamic-background"></label>
-          </div>
+          <select v-model="lyricsBackground">
+            <option :value="false">
+              {{ $t('settings.lyricsBackground.off') }}
+            </option>
+            <option :value="true">
+              {{ $t('settings.lyricsBackground.on') }}
+            </option>
+            <option value="dynamic">
+              {{ $t('settings.lyricsBackground.dynamic') }}
+            </option>
+          </select>
         </div>
       </div>
       <div class="item">
@@ -564,13 +564,13 @@ export default {
         });
       },
     },
-    showLyricsDynamicBackground: {
+    lyricsBackground: {
       get() {
-        return this.settings.showLyricsDynamicBackground;
+        return this.settings.lyricsBackground || false;
       },
       set(value) {
         this.$store.commit('updateSettings', {
-          key: 'showLyricsDynamicBackground',
+          key: 'lyricsBackground',
           value,
         });
       },

@@ -147,11 +147,16 @@ export default {
     clearSongsCache: 'Müzik çerezlerini temizle',
     cacheCount: 'Çerezlenen {song} Müzikler ({size})',
     showLyricsTranslation: 'Müzik sözlerinin çevirilerini göster',
-    showLyricsDynamicBackground: 'Dinamik arkaplanda müzik sözlerini gsöter',
     minimizeToTray: 'Küçült',
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
     enableDiscordRichPresence: 'Discord gösterimini aktifleştir',
     showLibraryDefault: 'Kitaplık Varsayılanını göster',
+    lyricsBackground: {
+      text: 'Şarkı Sözleri Arka Planını Göster',
+      off: 'kapalı',
+      on: 'açık',
+      dynamic: 'dinamik(Yüksek GPU kullanımı)',
+    },
   },
   contextMenu: {
     play: 'Oynat',
