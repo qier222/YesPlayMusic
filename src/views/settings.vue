@@ -82,7 +82,7 @@
           <div class="title"> {{ $t('settings.deviceSelector') }} </div>
         </div>
         <div class="right">
-          <select v-model="outputDevice" :disabled="withoutAudioPrivilege">
+          <select v-model="outputDevice">
             <option
               v-for="device in allOutputDevices"
               :key="device.deviceId"
@@ -423,7 +423,6 @@ export default {
           label: 'settings.permissionRequired',
         },
       ],
-      withoutAudioPrivilege: true,
     };
   },
   computed: {
