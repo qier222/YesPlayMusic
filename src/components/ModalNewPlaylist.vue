@@ -30,7 +30,7 @@
 
 <script>
 import Modal from '@/components/Modal.vue';
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapActions } from 'vuex';
 import { createPlaylist, addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
 
@@ -66,7 +66,8 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['updateModal']),
+    ...mapMutations(['updateModal', 'updateData']),
+    ...mapActions(['showToast', 'fetchLikedPlaylist']),
     close() {
       this.show = false;
       this.title = '';
@@ -94,6 +95,8 @@ export default {
           }
           this.close();
           this.showToast('成功创建歌单');
+          this.updateData({ key: 'libraryPlaylistFilter', value: 'mine' });
+          this.fetchLikedPlaylist();
         }
       });
     },

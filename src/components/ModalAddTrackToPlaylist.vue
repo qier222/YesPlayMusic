@@ -30,7 +30,6 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Modal from '@/components/Modal.vue';
-import { userPlaylist } from '@/api/user';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
 
@@ -45,7 +44,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['modals', 'data']),
+    ...mapState(['modals', 'data', 'liked']),
     show: {
       get() {
         return this.modals.addTrackToPlaylistModal.show;
@@ -64,30 +63,18 @@ export default {
       },
     },
     ownPlaylists() {
-      return this.playlists.filter(
+      return this.liked.playlists.filter(
         p =>
           p.creator.userId === this.data.user.userId &&
           p.id !== this.data.likedSongPlaylistID
       );
     },
   },
-  created() {
-    this.getUserPlaylists();
-  },
   methods: {
     ...mapMutations(['updateModal']),
     ...mapActions(['showToast']),
     close() {
       this.show = false;
-    },
-    getUserPlaylists() {
-      userPlaylist({
-        timestamp: new Date().getTime(),
-        limit: 1000,
-        uid: this.data.user.userId,
-      }).then(data => {
-        this.playlists = data.playlist;
-      });
     },
     addTrackToPlaylist(playlistID) {
       addOrRemoveTrackFromPlaylist({
