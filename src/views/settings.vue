@@ -485,7 +485,6 @@ export default {
     },
     outputDevice: {
       get() {
-        if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
         const isValidDevice = this.allOutputDevices.find(
           device => device.deviceId === this.settings.outputDevice
         );
@@ -679,9 +678,11 @@ export default {
   },
   created() {
     this.countDBSize('tracks');
+    if (process.env.IS_ELECTRON) this.getAllOutputDevices();
   },
   activated() {
     this.countDBSize('tracks');
+    if (process.env.IS_ELECTRON) this.getAllOutputDevices();
   },
   methods: {
     ...mapActions(['showToast']),
