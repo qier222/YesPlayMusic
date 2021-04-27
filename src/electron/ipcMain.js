@@ -121,4 +121,8 @@ export function initIpcMain(win, store) {
     console.log('removeProxy');
     win.webContents.session.setProxy({});
   });
+
+  ipcMain.on('playerInfo', (event, info) => {
+    store.set('playerInfo', info);
+  });
 }

@@ -177,6 +177,14 @@ export default class {
     setInterval(() => {
       this._progress = this._howler === null ? 0 : this._howler.seek();
     }, 1000);
+
+    // 发送正在播放的信息给主进程
+    setInterval(() => {
+      ipcRenderer.send('playerInfo', {
+        currentTrack: this.currentTrack,
+        progress: this._progress,
+      });
+    }, 1000);
   }
   _getNextTrack() {
     if (this._playNextList.length > 0) {
