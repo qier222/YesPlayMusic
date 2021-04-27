@@ -2,8 +2,11 @@
   <transition name="slide-up">
     <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
       <div
-        v-if="settings.showLyricsDynamicBackground"
-        class="dynamic-background"
+        v-if="settings.lyricsBackground !== false"
+        :class="[
+          'lyrics-background',
+          { 'dynamic-background': settings.lyricsBackground === 'dynamic' },
+        ]"
       >
         <div
           v-show="showLyrics"
@@ -379,19 +382,19 @@ export default {
   display: flex;
 }
 
-.dynamic-background {
-  --contrast-dynamic-background: 75%;
-  --brightness-dynamic-background: 150%;
+.lyrics-background {
+  --contrast-lyrics-background: 75%;
+  --brightness-lyrics-background: 150%;
 }
 
-[data-theme='dark'] .dynamic-background {
-  --contrast-dynamic-background: 125%;
-  --brightness-dynamic-background: 50%;
+[data-theme='dark'] .lyrics-background {
+  --contrast-lyrics-background: 125%;
+  --brightness-lyrics-background: 50%;
 }
 
-.dynamic-background {
-  filter: blur(50px) contrast(var(--contrast-dynamic-background))
-    brightness(var(--brightness-dynamic-background));
+.lyrics-background {
+  filter: blur(50px) contrast(var(--contrast-lyrics-background))
+    brightness(var(--brightness-lyrics-background));
   position: absolute;
   height: 100vh;
   width: 100vw;
@@ -403,7 +406,6 @@ export default {
     opacity: 0.6;
     position: absolute;
     background-size: cover;
-    animation: rotate 150s linear infinite;
   }
 
   .top-right {
@@ -418,6 +420,10 @@ export default {
     animation-direction: reverse;
     animation-delay: 10s;
   }
+}
+
+.dynamic-background > div {
+  animation: rotate 150s linear infinite;
 }
 
 @keyframes rotate {

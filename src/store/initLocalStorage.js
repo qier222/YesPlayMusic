@@ -19,7 +19,7 @@ let localStorage = {
     cacheLimit: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
-    showLyricsDynamicBackground: false,
+    lyricsBackground: false,
     minimizeToTray: false,
     enableDiscordRichPresence: false,
     enableGlobalShortcut: true,
