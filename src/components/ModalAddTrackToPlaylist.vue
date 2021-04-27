@@ -32,6 +32,7 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 import Modal from '@/components/Modal.vue';
 import { userPlaylist } from '@/api/user';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 export default {
   name: 'ModalAddTrackToPlaylist',
@@ -55,6 +56,11 @@ export default {
           key: 'show',
           value,
         });
+        if (value) {
+          disableScrolling();
+        } else {
+          enableScrolling();
+        }
       },
     },
     ownPlaylists() {

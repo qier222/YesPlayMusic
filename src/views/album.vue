@@ -38,7 +38,7 @@
           >,
           {{ albumTime | formatTime('Human') }}
         </div>
-        <div class="description" @click="showFullDescription = true">
+        <div class="description" @click="toggleFullDescription">
           {{ album.description }}
         </div>
         <div class="buttons" style="margin-top: 32px">
@@ -104,7 +104,7 @@
     </div>
     <Modal
       :show="showFullDescription"
-      :close="() => (showFullDescription = false)"
+      :close="toggleFullDescription"
       :show-footer="false"
       :click-outside-hide="true"
       title="专辑介绍"
@@ -131,6 +131,7 @@ import { getAlbum, albumDynamicDetail, likeAAlbum } from '@/api/album';
 import { splitSoundtrackAlbumTitle, splitAlbumTitle } from '@/utils/common';
 import NProgress from 'nprogress';
 import { isAccountLoggedIn } from '@/utils/auth';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -269,6 +270,14 @@ export default {
     },
     openMenu(e) {
       this.$refs.albumMenu.openMenu(e);
+    },
+    toggleFullDescription() {
+      this.showFullDescription = !this.showFullDescription;
+      if (this.showFullDescription) {
+        disableScrolling();
+      } else {
+        enableScrolling();
+      }
     },
   },
 };

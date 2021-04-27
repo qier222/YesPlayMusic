@@ -20,6 +20,9 @@ export function ipcRenderer(vueInstance) {
 
   ipcRenderer.on('changeRouteTo', (event, path) => {
     self.$router.push(path);
+    if (store.state.showLyrics) {
+      store.commit('toggleLyrics');
+    }
   });
 
   ipcRenderer.on('search', () => {

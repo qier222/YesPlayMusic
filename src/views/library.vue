@@ -124,12 +124,8 @@
     <ContextMenu ref="playlistTabMenu">
       <div class="item" @click="changePlaylistFilter('all')"> 全部歌单 </div>
       <hr />
-      <div class="item" @click="changePlaylistFilter('mine')">
-        我创建的歌单
-      </div>
-      <div class="item" @click="changePlaylistFilter('liked')">
-        收藏的歌单
-      </div>
+      <div class="item" @click="changePlaylistFilter('mine')"> 创建的歌单 </div>
+      <div class="item" @click="changePlaylistFilter('liked')">收藏的歌单 </div>
     </ContextMenu>
   </div>
 </template>

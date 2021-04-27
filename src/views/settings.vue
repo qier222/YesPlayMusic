@@ -397,7 +397,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { isLooseLoggedIn, doLogout } from '@/utils/auth';
 import { auth as lastfmAuth } from '@/api/lastfm';
 import { changeAppearance, bytesToSize } from '@/utils/common';
@@ -485,17 +485,16 @@ export default {
     },
     outputDevice: {
       get() {
-        // if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
-        // const isValidDevice = this.allOutputDevices.find(
-        //   device => device.deviceId === this.settings.outputDevice
-        // );
-        // if (
-        //   this.settings.outputDevice === undefined ||
-        //   isValidDevice === undefined
-        // )
-        //   return 'default'; // Default deviceId
-        // return this.settings.outputDevice;
-        return 'default'; // Default deviceId
+        if (this.withoutAudioPrivilege === true) this.getAllOutputDevices();
+        const isValidDevice = this.allOutputDevices.find(
+          device => device.deviceId === this.settings.outputDevice
+        );
+        if (
+          this.settings.outputDevice === undefined ||
+          isValidDevice === undefined
+        )
+          return 'default'; // Default deviceId
+        return this.settings.outputDevice;
       },
       set(deviceId) {
         if (deviceId === this.settings.outputDevice || deviceId === undefined)
@@ -640,6 +639,7 @@ export default {
         config.protocol = value;
         if (value === 'noProxy') {
           ipcRenderer.send('removeProxy');
+          this.showToast('已关闭代理');
         }
         this.$store.commit('updateSettings', {
           key: 'proxyConfig',
@@ -684,6 +684,7 @@ export default {
     this.countDBSize('tracks');
   },
   methods: {
+    ...mapActions(['showToast']),
     getAllOutputDevices() {
       navigator.mediaDevices.enumerateDevices().then(devices => {
         this.allOutputDevices = devices.filter(device => {
@@ -752,6 +753,7 @@ export default {
       } else {
         ipcRenderer.send('setProxy', config);
       }
+      this.showToast('已更新代理设置');
     },
   },
 };
@@ -865,7 +867,7 @@ h3 {
   .title {
     font-size: 16px;
     font-weight: 500;
-    opacity: 0.68;
+    opacity: 0.78;
   }
 }
 

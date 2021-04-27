@@ -49,7 +49,7 @@
           {{ playlist.updateTime | formatDate }} · {{ playlist.trackCount }}
           {{ $t('common.songs') }}
         </div>
-        <div class="description" @click="showFullDescription = true">
+        <div class="description" @click="toggleFullDescription">
           {{ playlist.description }}
         </div>
         <div class="buttons">
@@ -160,7 +160,7 @@
 
     <Modal
       :show="showFullDescription"
-      :close="() => (showFullDescription = false)"
+      :close="toggleFullDescription"
       :show-footer="false"
       :click-outside-hide="true"
       title="歌单介绍"
@@ -200,6 +200,7 @@ import {
 import { getTrackDetail } from '@/api/track';
 import { isAccountLoggedIn } from '@/utils/auth';
 import nativeAlert from '@/utils/nativeAlert';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
@@ -507,6 +508,14 @@ export default {
       this.debounceTimeout = setTimeout(() => {
         this.searchKeyWords = this.inputSearchKeyWords;
       }, 600);
+    },
+    toggleFullDescription() {
+      this.showFullDescription = !this.showFullDescription;
+      if (this.showFullDescription) {
+        disableScrolling();
+      } else {
+        enableScrolling();
+      }
     },
   },
 };
