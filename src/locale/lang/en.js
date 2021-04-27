@@ -156,7 +156,7 @@ export default {
       text: 'Show Lyrics Background',
       off: 'Off',
       on: 'On',
-      dynamic: 'Dynamic',
+      dynamic: 'Dynamic(High GPU usage)',
     },
   },
   contextMenu: {

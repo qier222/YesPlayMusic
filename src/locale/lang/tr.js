@@ -155,7 +155,7 @@ export default {
       text: 'Şarkı Sözleri Arka Planını Göster',
       off: 'kapalı',
       on: 'açık',
-      dynamic: 'dinamik',
+      dynamic: 'dinamik(Yüksek GPU kullanımı)',
     },
   },
   contextMenu: {

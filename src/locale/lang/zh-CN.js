@@ -157,7 +157,7 @@ export default {
       text: '显示歌词背景',
       off: '关闭',
       on: '打开',
-      dynamic: '动态',
+      dynamic: '动态（GPU占用较高）',
     },
   },
   contextMenu: {
