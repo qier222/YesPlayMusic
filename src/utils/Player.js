@@ -47,10 +47,8 @@ export default class {
     // init
     this._init();
 
-    // for debug
-    if (process.env.NODE_ENV === 'development') {
-      window.player = this;
-    }
+    window.yesplaymusic = {};
+    window.yesplaymusic.player = this;
   }
 
   get repeatMode() {
@@ -176,14 +174,6 @@ export default class {
     // TODO: 如果 _progress 在别的地方被改变了，这个定时器会覆盖之前改变的值，是bug
     setInterval(() => {
       this._progress = this._howler === null ? 0 : this._howler.seek();
-    }, 1000);
-
-    // 发送正在播放的信息给主进程
-    setInterval(() => {
-      ipcRenderer.send('playerInfo', {
-        currentTrack: this.currentTrack,
-        progress: this._progress,
-      });
     }, 1000);
   }
   _getNextTrack() {

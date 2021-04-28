@@ -226,7 +226,6 @@ export default {
                 this.dynamicDetail.isSub ? '已保存到音乐库' : '已从音乐库删除'
               );
           }
-          console.log(data);
         })
         .catch(error => {
           this.showToast(`${error.response.data.message || error}`);

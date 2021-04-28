@@ -89,7 +89,16 @@ class Background {
     expressApp.use('/', express.static(__dirname + '/'));
     expressApp.use('/api', expressProxy('http://127.0.0.1:10754'));
     expressApp.use('/player', (req, res) => {
-      res.send(this.store.get('playerInfo'));
+      this.window.webContents
+        .executeJavaScript('window.yesplaymusic.player')
+        .then(result => {
+          res.send({
+            currentTrack: result._isPersonalFM
+              ? result._personalFMTrack
+              : result._currentTrack,
+            progress: result._progress,
+          });
+        });
     });
     this.expressApp = expressApp.listen(27232);
   }

@@ -80,7 +80,7 @@ export default {
         if (e.target.tagName === 'INPUT') return false;
         if (this.$route.name === 'mv') return false;
         e.preventDefault();
-        this.player.play();
+        this.player.playOrPause();
       }
     },
     fetchData() {

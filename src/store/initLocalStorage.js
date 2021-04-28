@@ -1,6 +1,6 @@
 import { playlistCategories } from '@/utils/staticData';
 
-console.log('[debug][initLocalStorage.js]');
+console.debug('[debug][initLocalStorage.js]');
 const enabledPlaylistCategories = playlistCategories
   .filter(c => c.enable)
   .map(c => c.name);

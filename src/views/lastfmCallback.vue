@@ -25,9 +25,7 @@ export default {
       this.done = true;
       return;
     }
-    console.log(token);
     authGetSession(token).then(result => {
-      console.log(result);
       if (!result.data.session) {
         this.message = '连接失败，请重试或联系开发者（无Session）';
         this.done = true;

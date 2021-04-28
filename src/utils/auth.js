@@ -57,6 +57,5 @@ export function setCookies(string) {
   const cookies = string.split(';;');
   cookies.map(cookie => {
     document.cookie = cookie;
-    console.log(cookie);
   });
 }

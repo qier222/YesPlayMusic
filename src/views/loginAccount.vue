@@ -191,7 +191,6 @@ export default {
         this.$router.push({ path: '/library' });
       } else {
         this.processing = false;
-        console.log(data.msg);
         nativeAlert(data.msg ?? data.message ?? '账号或密码错误，请检查');
       }
     },
