@@ -93,6 +93,7 @@
 <script>
 import NProgress from 'nprogress';
 import { loginWithPhone, loginWithEmail } from '@/api/auth';
+import { userPlaylist } from '@/api/user';
 import { setCookies } from '@/utils/auth';
 import md5 from 'crypto-js/md5';
 import { mapMutations } from 'vuex';
@@ -188,7 +189,16 @@ export default {
         setCookies(data.cookie);
         this.updateData({ key: 'user', value: data.profile });
         this.updateData({ key: 'loginMode', value: 'account' });
-        this.$router.push({ path: '/library' });
+        userPlaylist({
+          uid: data.account.id,
+          limit: 1,
+        }).then(data => {
+          this.updateData({
+            key: 'likedSongPlaylistID',
+            value: data.playlist[0].id,
+          });
+          this.$router.push({ path: '/library' });
+        });
       } else {
         this.processing = false;
         nativeAlert(data.msg ?? data.message ?? '账号或密码错误，请检查');
