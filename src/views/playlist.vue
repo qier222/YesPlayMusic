@@ -85,7 +85,7 @@
           <div class="input">
             <input
               v-model.trim="inputSearchKeyWords"
-              v-focus="displaySearchInPlaylist"
+              v-focus
               :placeholder="inputFocus ? '' : $t('playlist.search')"
               @input="inputDebounce()"
               @focus="inputFocus = true"
@@ -147,6 +147,22 @@
           data.user.nickname
         }}{{ $t('library.sLikedSongs') }}
       </h1>
+      <div class="search-box-likepage" @click="searchInPlaylist()">
+        <div class="container" :class="{ active: inputFocus }">
+          <svg-icon icon-class="search" />
+          <div class="input" :style="{ width: searchInputWidth }">
+            <input
+              v-if="displaySearchInPlaylist"
+              v-model.trim="inputSearchKeyWords"
+              v-focus
+              :placeholder="inputFocus ? '' : $t('playlist.search')"
+              @input="inputDebounce()"
+              @focus="inputFocus = true"
+              @blur="inputFocus = false"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <TrackList
@@ -326,11 +342,12 @@ export default {
       tracks: [],
       loadingMore: false,
       lastLoadedTrackIndex: 9,
-      displaySearchInPlaylist: false,
+      displaySearchInPlaylist: false, // 是否显示搜索框
       searchKeyWords: '', // 搜索使用的关键字
       inputSearchKeyWords: '', // 搜索框中正在输入的关键字
       inputFocus: false,
       debounceTimeout: null,
+      searchInputWidth: '0px', // 搜索框宽度
     };
   },
   computed: {
@@ -488,11 +505,13 @@ export default {
       nativeAlert('此功能开发中');
     },
     searchInPlaylist() {
-      this.displaySearchInPlaylist = !this.displaySearchInPlaylist;
+      this.displaySearchInPlaylist =
+        !this.displaySearchInPlaylist || this.isLikeSongsPage;
       if (this.displaySearchInPlaylist == false) {
         this.searchKeyWords = '';
         this.inputSearchKeyWords = '';
       } else {
+        this.searchInputWidth = '172px';
         this.loadMore(500);
       }
     },
@@ -774,6 +793,7 @@ export default {
 .user-info {
   h1 {
     font-size: 42px;
+    position: relative;
     color: var(--color-text);
     .avatar {
       height: 44px;
@@ -841,6 +861,74 @@ export default {
         color: var(--color-text);
       }
     }
+  }
+}
+
+.search-box-likepage {
+  display: flex;
+  position: absolute;
+  right: 12vw;
+  top: 95px;
+  justify-content: flex-end;
+  -webkit-app-region: no-drag;
+
+  .input {
+    transition: all 0.5s;
+  }
+
+  .container {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    background: var(--color-secondary-bg-for-transparent);
+    border-radius: 8px;
+  }
+
+  .svg-icon {
+    height: 15px;
+    width: 15px;
+    color: var(--color-text);
+    opacity: 0.28;
+    margin: {
+      left: 8px;
+      right: 8px;
+    }
+  }
+
+  input {
+    font-size: 16px;
+    border: none;
+    background: transparent;
+    width: 96%;
+    font-weight: 600;
+    margin-top: -1px;
+    color: var(--color-text);
+  }
+
+  .active {
+    background: var(--color-primary-bg-for-transparent);
+    input,
+    .svg-icon {
+      opacity: 1;
+      color: var(--color-primary);
+    }
+  }
+}
+
+[data-theme='dark'] {
+  .search-box-likepage {
+    .active {
+      input,
+      .svg-icon {
+        color: var(--color-text);
+      }
+    }
+  }
+}
+
+@media (max-width: 1336px) {
+  .search-box-likepage {
+    right: 8vw;
   }
 }
 </style>
