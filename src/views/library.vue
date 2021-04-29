@@ -3,7 +3,7 @@
     <h1>
       <img class="avatar" :src="data.user.avatarUrl | resizeImage" />{{
         data.user.nickname
-      }}{{ $t("library.sLibrary") }}
+      }}{{ $t('library.sLibrary') }}
     </h1>
     <div class="section-one">
       <div class="liked-songs" @click="goToLikedSongsList">
@@ -11,17 +11,17 @@
           <p>
             <span
               v-for="(line, index) in pickedLyric"
-              :key="`${line}${index}`"
               v-show="line !== ''"
+              :key="`${line}${index}`"
               >{{ line }}<br
             /></span>
           </p>
         </div>
         <div class="bottom">
           <div class="titles">
-            <div class="title">{{ $t("library.likedSongs") }}</div>
+            <div class="title">{{ $t('library.likedSongs') }}</div>
             <div class="sub-title">
-              {{ likedSongsPlaylist.trackCount }} {{ $t("common.songs") }}
+              {{ liked.songs.length }} {{ $t('common.songs') }}
             </div>
           </div>
           <button @click.stop="playLikedSongs">
@@ -31,174 +31,136 @@
       </div>
       <div class="songs">
         <TrackList
-          :tracks="likedSongs"
-          :type="'tracklist'"
-          :id="likedSongsPlaylist.id"
-          dbclickTrackFunc="playPlaylistByID"
-          :columnNumber="3"
+          :id="liked.playlists.length > 0 ? liked.playlists[0].id : 0"
+          :tracks="liked.songsWithDetails"
+          :column-number="3"
+          type="tracklist"
+          dbclick-track-func="playPlaylistByID"
         />
       </div>
     </div>
 
-    <div class="section-two" id="liked">
+    <div class="section-two">
       <div class="tabs-row">
         <div class="tabs">
           <div
-            class="tab"
+            class="tab dropdown"
             :class="{ active: currentTab === 'playlists' }"
             @click="updateCurrentTab('playlists')"
           >
-            {{ $t("library.playlists") }}
+            <span class="text">{{
+              { all: '全部歌单', mine: '创建的歌单', liked: '收藏的歌单' }[
+                playlistFilter
+              ]
+            }}</span>
+            <span class="icon" @click.stop="openPlaylistTabMenu"
+              ><svg-icon icon-class="dropdown"
+            /></span>
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'albums' }"
             @click="updateCurrentTab('albums')"
           >
-            {{ $t("library.albums") }}
+            {{ $t('library.albums') }}
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'artists' }"
             @click="updateCurrentTab('artists')"
           >
-            {{ $t("library.artists") }}
+            {{ $t('library.artists') }}
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'mvs' }"
             @click="updateCurrentTab('mvs')"
           >
-            {{ $t("library.mvs") }}
+            {{ $t('library.mvs') }}
           </div>
         </div>
         <button
+          v-show="currentTab === 'playlists'"
           class="add-playlist"
           icon="plus"
-          v-show="currentTab === 'playlists'"
           @click="openAddPlaylistModal"
-          ><svg-icon icon-class="plus" />{{ $t("library.newPlayList") }}</button
+          ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}</button
         >
       </div>
 
       <div v-show="currentTab === 'playlists'">
-        <div v-if="playlists.length > 1">
+        <div v-if="liked.playlists.length > 1">
           <CoverRow
-            :items="playlists.slice(1)"
+            :items="filterPlaylists.slice(1)"
             type="playlist"
-            subText="creator"
-            :showPlayButton="true"
+            sub-text="creator"
+            :show-play-button="true"
           />
         </div>
       </div>
 
       <div v-show="currentTab === 'albums'">
         <CoverRow
-          :items="albums"
+          :items="liked.albums"
           type="album"
-          subText="artist"
-          :showPlayButton="true"
+          sub-text="artist"
+          :show-play-button="true"
         />
       </div>
 
       <div v-show="currentTab === 'artists'">
-        <CoverRow :items="artists" type="artist" :showPlayButton="true" />
+        <CoverRow
+          :items="liked.artists"
+          type="artist"
+          :show-play-button="true"
+        />
       </div>
 
       <div v-show="currentTab === 'mvs'">
-        <MvRow :mvs="mvs" />
+        <MvRow :mvs="liked.mvs" />
       </div>
     </div>
+
+    <ContextMenu ref="playlistTabMenu">
+      <div class="item" @click="changePlaylistFilter('all')">全部歌单</div>
+      <hr />
+      <div class="item" @click="changePlaylistFilter('mine')">创建的歌单</div>
+      <div class="item" @click="changePlaylistFilter('liked')">收藏的歌单</div>
+    </ContextMenu>
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
-import { getTrackDetail, getLyric } from "@/api/track";
-import {
-  userDetail,
-  userAccount,
-  userPlaylist,
-  likedAlbums,
-  likedArtists,
-  likedMVs,
-} from "@/api/user";
-import { randomNum, dailyTask } from "@/utils/common";
-import { getPlaylistDetail } from "@/api/playlist";
-import { isAccountLoggedIn } from "@/utils/auth";
-import NProgress from "nprogress";
+import { mapActions, mapMutations, mapState } from 'vuex';
+import { getLyric } from '@/api/track';
+import { randomNum, dailyTask } from '@/utils/common';
+import { isAccountLoggedIn } from '@/utils/auth';
+import NProgress from 'nprogress';
 
-import TrackList from "@/components/TrackList.vue";
-import CoverRow from "@/components/CoverRow.vue";
-import SvgIcon from "@/components/SvgIcon.vue";
-import MvRow from "@/components/MvRow.vue";
+import ContextMenu from '@/components/ContextMenu.vue';
+import TrackList from '@/components/TrackList.vue';
+import CoverRow from '@/components/CoverRow.vue';
+import SvgIcon from '@/components/SvgIcon.vue';
+import MvRow from '@/components/MvRow.vue';
 
 export default {
-  name: "Library",
-  components: { SvgIcon, CoverRow, TrackList, MvRow },
+  name: 'Library',
+  components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
   data() {
     return {
       show: false,
-      playlists: [],
-      hasMorePlaylists: true,
-      likedSongsPlaylist: {
-        id: 0,
-        trackCount: 0,
-      },
       likedSongs: [],
-      likedSongIDs: [],
       lyric: undefined,
-      currentTab: "playlists",
-      albums: [],
-      artists: [],
-      mvs: [],
+      currentTab: 'playlists',
     };
   },
-  created() {
-    NProgress.start();
-    if (isAccountLoggedIn()) {
-      userAccount().then((result) => {
-        this.$store.commit("updateData", {
-          key: "user",
-          value: result.profile,
-        });
-      });
-    } else {
-      userDetail(this.data.user.userId).then((result) => {
-        this.$store.commit("updateData", {
-          key: "user",
-          value: result.profile,
-        });
-      });
-    }
-  },
-  activated() {
-    if (!this.data.likedSongPlaylistID) {
-      userPlaylist({
-        uid: this.data.user.userId,
-        limit: 1,
-      }).then((data) => {
-        this.updateData({
-          key: "likedSongPlaylistID",
-          value: data.playlist[0].id,
-        });
-        this.loadData();
-      });
-    } else {
-      this.loadData();
-    }
-    dailyTask();
-  },
   computed: {
-    ...mapState(["data"]),
-    likedSongsInState() {
-      return this.$store.state.liked.songs;
-    },
+    ...mapState(['data', 'liked']),
     pickedLyric() {
-      if (this.lyric === undefined) return "";
-      let lyric = this.lyric.split("\n");
-      lyric = lyric.filter((l) => {
-        if (l.includes("作词") || l.includes("作曲")) {
+      if (this.lyric === undefined) return '';
+      let lyric = this.lyric.split('\n');
+      lyric = lyric.filter(l => {
+        if (l.includes('作词') || l.includes('作曲')) {
           return false;
         }
         return true;
@@ -208,130 +170,92 @@ export default {
         lineIndex = randomNum(0, lyric.length - 1);
       }
       return [
-        lyric[lineIndex].split("]")[1],
-        lyric[lineIndex + 1].split("]")[1],
-        lyric[lineIndex + 2].split("]")[1],
+        lyric[lineIndex].split(']')[1],
+        lyric[lineIndex + 1].split(']')[1],
+        lyric[lineIndex + 2].split(']')[1],
       ];
     },
+    playlistFilter() {
+      return this.data.libraryPlaylistFilter || 'all';
+    },
+    filterPlaylists() {
+      const playlists = this.liked.playlists;
+      const userId = this.data.user.userId;
+      if (this.playlistFilter === 'mine') {
+        return playlists.filter(p => p.creator.userId === userId);
+      } else if (this.playlistFilter === 'liked') {
+        return playlists.filter(p => p.creator.userId !== userId);
+      }
+      return playlists;
+    },
+  },
+  created() {
+    NProgress.start();
+  },
+  activated() {
+    if (this.liked.songsWithDetails.length > 0) {
+      NProgress.done();
+      this.show = true;
+      this.getRandomLyric();
+    } else {
+      this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
+        NProgress.done();
+        this.show = true;
+        this.getRandomLyric();
+      });
+    }
+    this.$store.dispatch('fetchLikedSongs');
+    this.$store.dispatch('fetchLikedPlaylist');
+    this.$store.dispatch('fetchLikedAlbums');
+    this.$store.dispatch('fetchLikedArtists');
+    this.$store.dispatch('fetchLikedMVs');
+    dailyTask();
   },
   methods: {
-    ...mapActions(["showToast"]),
-    ...mapMutations(["updateModal", "updateData"]),
+    ...mapActions(['showToast']),
+    ...mapMutations(['updateModal', 'updateData']),
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
-        this.playlists[0].id,
-        "first",
+        this.liked.playlists[0].id,
+        'first',
         true
       );
     },
     updateCurrentTab(tab) {
-      if (!isAccountLoggedIn() && tab !== "playlists") {
-        this.showToast("此操作需要登录网易云账号");
+      if (!isAccountLoggedIn() && tab !== 'playlists') {
+        this.showToast('此操作需要登录网易云账号');
         return;
       }
       this.currentTab = tab;
-      document
-        .getElementById("liked")
-        .scrollIntoView({ block: "start", behavior: "smooth" });
-      if (tab === "albums") {
-        if (this.albums.length === 0) this.loadLikedAlbums();
-      } else if (tab === "artists") {
-        if (this.artists.length === 0) this.loadLikedArtists();
-      } else if (tab === "mvs") {
-        if (this.mvs.length === 0) this.loadLikedMVs();
-      }
+      window.scrollTo({ top: 375, behavior: 'smooth' });
     },
     goToLikedSongsList() {
-      this.$router.push({ path: "/library/liked-songs" });
-    },
-    loadData() {
-      if (this.hasMorePlaylists && this.currentTab === "playlists") {
-        this.getUserPlaylists();
-      }
-      if (this.currentTab === "albums") {
-        this.loadLikedAlbums();
-      } else if (this.currentTab === "artists") {
-        this.loadLikedArtists();
-      } else if (this.currentTab === "mvs") {
-        this.loadLikedMVs();
-      }
-      this.getLikedSongs();
-    },
-    getUserPlaylists(replace = false) {
-      userPlaylist({
-        uid: this.data.user.userId,
-        offset: this.playlists.length === 0 ? 0 : this.playlists.length - 1,
-        timestamp: new Date().getTime(),
-      }).then((data) => {
-        if (replace) {
-          this.playlists = data.playlist;
-        } else {
-          this.playlists.push(...data.playlist);
-        }
-        this.hasMorePlaylists = data.more;
-      });
-    },
-    getLikedSongs(getLyric = true) {
-      getPlaylistDetail(this.data.likedSongPlaylistID, true).then((data) => {
-        this.likedSongsPlaylist = data.playlist;
-        if (data.playlist.trackIds.length === 0) {
-          NProgress.done();
-          this.show = true;
-          return;
-        }
-        let TrackIDs = data.playlist.trackIds.slice(0, 12).map((t) => t.id);
-        this.likedSongIDs = TrackIDs;
-        getTrackDetail(this.likedSongIDs.join(",")).then((data) => {
-          this.likedSongs = data.songs;
-          NProgress.done();
-          this.show = true;
-        });
-        if (getLyric) this.getRandomLyric();
-      });
+      this.$router.push({ path: '/library/liked-songs' });
     },
     getRandomLyric() {
       getLyric(
-        this.likedSongIDs[randomNum(0, this.likedSongIDs.length - 1)]
-      ).then((data) => {
+        this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
+      ).then(data => {
         if (data.lrc !== undefined) this.lyric = data.lrc.lyric;
-      });
-    },
-    loadLikedAlbums() {
-      NProgress.start();
-      likedAlbums().then((data) => {
-        this.albums = data.data;
-        NProgress.done();
-      });
-    },
-    loadLikedArtists() {
-      NProgress.start();
-      likedArtists().then((data) => {
-        this.artists = data.data;
-        NProgress.done();
-      });
-    },
-    loadLikedMVs() {
-      NProgress.start();
-      likedMVs().then((data) => {
-        this.mvs = data.data;
-        NProgress.done();
       });
     },
     openAddPlaylistModal() {
       if (!isAccountLoggedIn()) {
-        this.showToast("此操作需要登录网易云账号");
+        this.showToast('此操作需要登录网易云账号');
         return;
       }
       this.updateModal({
-        modalName: "newPlaylistModal",
-        key: "show",
+        modalName: 'newPlaylistModal',
+        key: 'show',
         value: true,
       });
     },
-  },
-  watch: {
-    likedSongsInState() {
-      this.getLikedSongs(false);
+    openPlaylistTabMenu(e) {
+      this.$refs.playlistTabMenu.openMenu(e);
+    },
+    changePlaylistFilter(type) {
+      this.updateData({ key: 'libraryPlaylistFilter', value: type });
+      window.scrollTo({ top: 375, behavior: 'smooth' });
     },
   },
 };
@@ -466,6 +390,25 @@ h1 {
   .tab.active {
     opacity: 0.88;
     background-color: var(--color-secondary-bg);
+  }
+  .tab.dropdown {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    overflow: hidden;
+    .text {
+      padding: 8px 3px 8px 14px;
+    }
+    .icon {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 8px 0 3px;
+      .svg-icon {
+        height: 16px;
+        width: 16px;
+      }
+    }
   }
 }
 

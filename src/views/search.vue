@@ -1,83 +1,83 @@
 <template>
-  <div class="search" v-show="show">
-    <div class="row" v-show="artists.length > 0 || albums.length > 0">
-      <div class="artists" v-show="artists.length > 0">
-        <div class="section-title" v-show="artists.length > 0"
-          >{{ $t("search.artist")
+  <div v-show="show" class="search">
+    <div v-show="artists.length > 0 || albums.length > 0" class="row">
+      <div v-show="artists.length > 0" class="artists">
+        <div v-show="artists.length > 0" class="section-title"
+          >{{ $t('search.artist')
           }}<router-link :to="`/search/${keywords}/artists`">{{
-            $t("home.seeMore")
+            $t('home.seeMore')
           }}</router-link></div
         >
         <CoverRow
           type="artist"
-          :columnNumber="3"
+          :column-number="3"
           :items="artists.slice(0, 3)"
           gap="34px 24px"
         />
       </div>
 
       <div class="albums">
-        <div class="section-title" v-show="albums.length > 0"
-          >{{ $t("search.album")
+        <div v-show="albums.length > 0" class="section-title"
+          >{{ $t('search.album')
           }}<router-link :to="`/search/${keywords}/albums`">{{
-            $t("home.seeMore")
+            $t('home.seeMore')
           }}</router-link></div
         >
         <CoverRow
           type="album"
           :items="albums.slice(0, 3)"
-          subText="artist"
-          :columnNumber="3"
-          subTextFontSize="14px"
+          sub-text="artist"
+          :column-number="3"
+          sub-text-font-size="14px"
           gap="34px 24px"
-          :playButtonSize="26"
+          :play-button-size="26"
         />
       </div>
     </div>
 
-    <div class="tracks" v-show="tracks.length > 0">
+    <div v-show="tracks.length > 0" class="tracks">
       <div class="section-title"
-        >{{ $t("search.song")
+        >{{ $t('search.song')
         }}<router-link :to="`/search/${keywords}/tracks`">{{
-          $t("home.seeMore")
+          $t('home.seeMore')
         }}</router-link></div
       >
       <TrackList :tracks="tracks" type="tracklist" />
     </div>
 
-    <div class="music-videos" v-show="musicVideos.length > 0">
+    <div v-show="musicVideos.length > 0" class="music-videos">
       <div class="section-title"
-        >{{ $t("search.mv")
+        >{{ $t('search.mv')
         }}<router-link :to="`/search/${keywords}/music-videos`">{{
-          $t("home.seeMore")
+          $t('home.seeMore')
         }}</router-link></div
       >
       <MvRow :mvs="musicVideos.slice(0, 5)" />
     </div>
 
-    <div class="playlists" v-show="playlists.length > 0">
+    <div v-show="playlists.length > 0" class="playlists">
       <div class="section-title"
-        >{{ $t("search.playlist")
+        >{{ $t('search.playlist')
         }}<router-link :to="`/search/${keywords}/playlists`">{{
-          $t("home.seeMore")
+          $t('home.seeMore')
         }}</router-link></div
       >
       <CoverRow
         type="playlist"
         :items="playlists.slice(0, 12)"
-        subText="title"
-        :columnNumber="6"
-        subTextFontSize="14px"
+        sub-text="title"
+        :column-number="6"
+        sub-text-font-size="14px"
         gap="34px 24px"
-        :playButtonSize="26"
+        :play-button-size="26"
       />
     </div>
 
-    <div class="no-results" v-show="!haveResult">
+    <div v-show="!haveResult" class="no-results">
       <div
         ><svg-icon icon-class="search" />
         {{
-          keywords.length === 0 ? "输入关键字搜索" : $t("search.noResult")
+          keywords.length === 0 ? '输入关键字搜索' : $t('search.noResult')
         }}</div
       >
     </div>
@@ -85,16 +85,16 @@
 </template>
 
 <script>
-import { getTrackDetail } from "@/api/track";
-import { search } from "@/api/others";
-import NProgress from "nprogress";
+import { getTrackDetail } from '@/api/track';
+import { search } from '@/api/others';
+import NProgress from 'nprogress';
 
-import TrackList from "@/components/TrackList.vue";
-import MvRow from "@/components/MvRow.vue";
-import CoverRow from "@/components/CoverRow.vue";
+import TrackList from '@/components/TrackList.vue';
+import MvRow from '@/components/MvRow.vue';
+import CoverRow from '@/components/CoverRow.vue';
 
 export default {
-  name: "Search",
+  name: 'Search',
   components: {
     TrackList,
     MvRow,
@@ -112,7 +112,7 @@ export default {
   },
   computed: {
     keywords() {
-      return this.$route.params.keywords ?? "";
+      return this.$route.params.keywords ?? '';
     },
     haveResult() {
       return (
@@ -125,12 +125,21 @@ export default {
       );
     },
   },
+  watch: {
+    keywords: function (newKeywords) {
+      if (newKeywords.length === 0) return;
+      this.getData();
+    },
+  },
+  created() {
+    this.getData();
+  },
   methods: {
     playTrackInSearchResult(id) {
-      let track = this.tracks.find((t) => t.id === id);
+      let track = this.tracks.find(t => t.id === id);
       this.$store.state.player.appendTrackToPlayerList(track, true);
     },
-    search(type = "all") {
+    search(type = 'all') {
       const typeTable = {
         all: 1018,
         musicVideos: 1004,
@@ -143,7 +152,7 @@ export default {
         keywords: this.keywords,
         type: typeTable[type],
         limit: 16,
-      }).then((result) => {
+      }).then(result => {
         return { result: result.result, type };
       });
     },
@@ -151,32 +160,32 @@ export default {
       NProgress.start();
       this.show = false;
 
-      const requestAll = (requests) => {
+      const requestAll = requests => {
         const keywords = this.keywords;
-        Promise.all(requests).then((results) => {
+        Promise.all(requests).then(results => {
           if (keywords != this.keywords) return;
-          results.map((result) => {
+          results.map(result => {
             const searchType = result.type;
             if (result.result === undefined) return;
             result = result.result;
             switch (searchType) {
-              case "all":
+              case 'all':
                 this.result = result;
                 break;
-              case "musicVideos":
+              case 'musicVideos':
                 this.musicVideos = result.mvs ?? [];
                 break;
-              case "artists":
+              case 'artists':
                 this.artists = result.artists ?? [];
                 break;
-              case "albums":
+              case 'albums':
                 this.albums = result.albums ?? [];
                 break;
-              case "tracks":
+              case 'tracks':
                 this.tracks = result.songs ?? [];
                 this.getTracksDetail();
                 break;
-              case "playlists":
+              case 'playlists':
                 this.playlists = result.playlists ?? [];
                 break;
             }
@@ -187,30 +196,21 @@ export default {
       };
 
       const requests = [
-        this.search("artists"),
-        this.search("albums"),
-        this.search("tracks"),
+        this.search('artists'),
+        this.search('albums'),
+        this.search('tracks'),
       ];
-      const requests2 = [this.search("musicVideos"), this.search("playlists")];
+      const requests2 = [this.search('musicVideos'), this.search('playlists')];
 
       requestAll(requests);
       requestAll(requests2);
     },
     getTracksDetail() {
-      const trackIDs = this.tracks.map((t) => t.id);
+      const trackIDs = this.tracks.map(t => t.id);
       if (trackIDs.length === 0) return;
-      getTrackDetail(trackIDs.join(",")).then((result) => {
+      getTrackDetail(trackIDs.join(',')).then(result => {
         this.tracks = result.songs;
       });
-    },
-  },
-  created() {
-    this.getData();
-  },
-  watch: {
-    keywords: function (newKeywords) {
-      if (newKeywords.length === 0) return;
-      this.getData();
     },
   },
 };

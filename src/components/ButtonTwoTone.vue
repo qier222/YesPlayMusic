@@ -2,7 +2,7 @@
   <button :style="buttonStyle" :class="color">
     <svg-icon
       v-if="iconClass !== null"
-      :iconClass="iconClass"
+      :icon-class="iconClass"
       :style="{ marginRight: iconButton ? '0px' : '8px' }"
     />
     <slot></slot>
@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: "ButtonTwoTone",
+  name: 'ButtonTwoTone',
   props: {
     iconClass: {
       type: String,
@@ -27,32 +27,32 @@ export default {
     },
     color: {
       type: String,
-      default: "blue",
+      default: 'blue',
     },
     backgroundColor: {
       type: String,
-      default: "",
+      default: '',
     },
     textColor: {
       type: String,
-      default: "",
+      default: '',
     },
     shape: {
       type: String,
-      default: "square",
+      default: 'square',
     },
   },
   computed: {
     buttonStyle() {
       let styles = {
-        borderRadius: this.shape === "round" ? "50%" : "8px",
+        borderRadius: this.shape === 'round' ? '50%' : '8px',
         padding: `8px ${this.horizontalPadding}px`,
         // height: "38px",
-        width: this.shape === "round" ? "38px" : "auto",
+        width: this.shape === 'round' ? '38px' : 'auto',
       };
-      if (this.backgroundColor !== "")
+      if (this.backgroundColor !== '')
         styles.backgroundColor = this.backgroundColor;
-      if (this.textColor !== "") styles.color = this.textColor;
+      if (this.textColor !== '') styles.color = this.textColor;
       return styles;
     },
   },

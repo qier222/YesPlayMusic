@@ -1,25 +1,25 @@
 <template>
-  <div class="home" v-show="show">
-    <div class="index-row" v-if="settings.showPlaylistsByAppleMusic !== false">
+  <div v-show="show" class="home">
+    <div v-if="settings.showPlaylistsByAppleMusic !== false" class="index-row">
       <div class="title"> by Apple Music </div>
       <CoverRow
         :type="'playlist'"
         :items="byAppleMusic"
-        :subText="'appleMusic'"
-        :imageSize="1024"
+        sub-text="appleMusic"
+        :image-size="1024"
       />
     </div>
     <div class="index-row">
       <div class="title">
-        {{ $t("home.recommendPlaylist") }}
+        {{ $t('home.recommendPlaylist') }}
         <router-link to="/explore?category=推荐歌单">{{
-          $t("home.seeMore")
+          $t('home.seeMore')
         }}</router-link>
       </div>
       <CoverRow
         :type="'playlist'"
         :items="recommendPlaylist.items"
-        :subText="'copywriter'"
+        sub-text="copywriter"
       />
     </div>
     <div class="index-row">
@@ -30,51 +30,55 @@
       </div>
     </div>
     <div class="index-row">
-      <div class="title">{{ $t("home.recommendArtist") }}</div>
+      <div class="title">{{ $t('home.recommendArtist') }}</div>
       <CoverRow
         type="artist"
-        :columnNumber="6"
+        :column-number="6"
         :items="recommendArtists.items"
       />
     </div>
     <div class="index-row">
       <div class="title">
-        {{ $t("home.newAlbum") }}
-        <router-link to="/new-album">{{ $t("home.seeMore") }}</router-link>
+        {{ $t('home.newAlbum') }}
+        <router-link to="/new-album">{{ $t('home.seeMore') }}</router-link>
       </div>
-      <CoverRow type="album" :items="newReleasesAlbum.items" subText="artist" />
+      <CoverRow
+        type="album"
+        :items="newReleasesAlbum.items"
+        sub-text="artist"
+      />
     </div>
     <div class="index-row">
       <div class="title">
-        {{ $t("home.charts") }}
+        {{ $t('home.charts') }}
         <router-link to="/explore?category=排行榜">{{
-          $t("home.seeMore")
+          $t('home.seeMore')
         }}</router-link>
       </div>
       <CoverRow
         type="playlist"
         :items="topList.items"
-        :subText="'updateFrequency'"
-        :imageSize="1024"
+        sub-text="updateFrequency"
+        :image-size="1024"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { toplists, recommendPlaylist } from "@/api/playlist";
-import { toplistOfArtists } from "@/api/artist";
-import { byAppleMusic } from "@/utils/staticData";
-import { countDBSize } from "@/utils/db";
-import { newAlbums } from "@/api/album";
-import NProgress from "nprogress";
-import { mapState } from "vuex";
-import CoverRow from "@/components/CoverRow.vue";
-import FMCard from "@/components/FMCard.vue";
-import DailyTracksCard from "@/components/DailyTracksCard.vue";
+import { toplists, recommendPlaylist } from '@/api/playlist';
+import { toplistOfArtists } from '@/api/artist';
+import { byAppleMusic } from '@/utils/staticData';
+import { countDBSize } from '@/utils/db';
+import { newAlbums } from '@/api/album';
+import NProgress from 'nprogress';
+import { mapState } from 'vuex';
+import CoverRow from '@/components/CoverRow.vue';
+import FMCard from '@/components/FMCard.vue';
+import DailyTracksCard from '@/components/DailyTracksCard.vue';
 
 export default {
-  name: "Home",
+  name: 'Home',
   components: { CoverRow, FMCard, DailyTracksCard },
   data() {
     return {
@@ -92,28 +96,31 @@ export default {
     };
   },
   computed: {
-    ...mapState(["settings"]),
+    ...mapState(['settings']),
     byAppleMusic() {
       return byAppleMusic;
     },
+  },
+  activated() {
+    this.loadData();
   },
   methods: {
     loadData() {
       if (!this.show) NProgress.start();
       recommendPlaylist({
         limit: 10,
-      }).then((data) => {
+      }).then(data => {
         this.recommendPlaylist.items = data.result;
         NProgress.done();
         this.show = true;
       });
       newAlbums({
-        area: "EA",
+        area: 'EA',
         limit: 10,
-      }).then((data) => {
+      }).then(data => {
         this.newReleasesAlbum.items = data.albums;
       });
-      toplistOfArtists(2).then((data) => {
+      toplistOfArtists(2).then(data => {
         let indexs = [];
         while (indexs.length < 6) {
           let tmp = ~~(Math.random() * 100);
@@ -124,16 +131,13 @@ export default {
           indexs.includes(index)
         );
       });
-      toplists().then((data) => {
-        this.topList.items = data.list.filter((l) =>
+      toplists().then(data => {
+        this.topList.items = data.list.filter(l =>
           this.topList.ids.includes(l.id)
         );
       });
       countDBSize();
     },
-  },
-  activated() {
-    this.loadData();
   },
 };
 </script>

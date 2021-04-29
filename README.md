@@ -47,7 +47,7 @@ macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
 
 ## ⚙️ 部署至 Vercel
 
-除了下载安装包使用，你还可以将本项目部署到 Vercel 或你的服务器上。下面是部署到 Vercel 的方法
+除了下载安装包使用，你还可以将本项目部署到 Vercel 或你的服务器上。下面是部署到 Vercel 的方法。
 
 1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://neteasecloudmusicapi.vercel.app/#/?id=%e5%ae%89%e8%a3%85)
    。你也可以将 API 部署到 Vercel。
@@ -62,6 +62,40 @@ macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
 
 6. 点击 Environment Variables，填写 Name 为 `VUE_APP_NETEASE_API_URL`，Value 为你刚刚部署的网易云 API 地址，点击 Add。最后点击底部的 Deploy 就可以部署到
    Vercel 了。
+
+## ⚙️ 部署到自己的服务器
+
+除了部署到 Vercel，你还可以部署到自己的服务器上
+
+1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+2. 克隆本仓库
+
+```sh
+git clone https://github.com/qier222/YesPlayMusic.git
+```
+
+3. 安装依赖
+
+```sh
+yarn install
+
+```
+
+4. （可选）使用 Nginx 反向代理 API，将 API 路径映射为 `/api`，如果 API 和网页不在同一个域名下的话（跨域），会有一些 bug。
+
+5. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:3000`，YesPlayMusic 地址为 `http://localhost:8080`。如果你使用了反向代理 API，可以填写 API 地址为 `/api`。
+
+```
+VUE_APP_NETEASE_API_URL=http://localhost:3000
+```
+
+6. 编译打包
+
+```sh
+yarn run build
+```
+
+7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
 ## 👷‍♂️ 打包客户端
 

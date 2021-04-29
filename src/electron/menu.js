@@ -1,8 +1,8 @@
-const { app, Menu } = require("electron");
+const { app, Menu } = require('electron');
 // import { autoUpdater } from "electron-updater"
 // const version = app.getVersion();
 
-const isMac = process.platform === "darwin";
+const isMac = process.platform === 'darwin';
 
 export function createMenu(win) {
   let menu = null;
@@ -12,142 +12,142 @@ export function createMenu(win) {
           {
             label: app.name,
             submenu: [
-              { role: "about" },
-              { type: "separator" },
-              { role: "services" },
-              { type: "separator" },
-              { type: "separator" },
+              { role: 'about' },
+              { type: 'separator' },
+              { role: 'services' },
+              { type: 'separator' },
+              { type: 'separator' },
               {
-                label: "Preferences...",
-                accelerator: (() => (isMac ? "CmdOrCtrl+," : "Ctrl+,"))(),
+                label: 'Preferences...',
+                accelerator: (() => (isMac ? 'CmdOrCtrl+,' : 'Ctrl+,'))(),
                 click: () => {
-                  win.webContents.send("changeRouteTo", "/settings");
+                  win.webContents.send('changeRouteTo', '/settings');
                 },
-                role: "preferences",
+                role: 'preferences',
               },
-              { type: "separator" },
-              { role: "hide" },
-              { role: "hideothers" },
-              { role: "unhide" },
-              { type: "separator" },
-              { role: "quit" },
+              { type: 'separator' },
+              { role: 'hide' },
+              { role: 'hideothers' },
+              { role: 'unhide' },
+              { type: 'separator' },
+              { role: 'quit' },
             ],
           },
         ]
       : []),
     {
-      label: "Edit",
+      label: 'Edit',
       submenu: [
-        { role: "undo" },
-        { role: "redo" },
-        { type: "separator" },
-        { role: "cut" },
-        { role: "copy" },
-        { role: "paste" },
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
         ...(isMac
           ? [
-              { role: "delete" },
-              { role: "selectAll" },
-              { type: "separator" },
+              { role: 'delete' },
+              { role: 'selectAll' },
+              { type: 'separator' },
               {
-                label: "Speech",
-                submenu: [{ role: "startspeaking" }, { role: "stopspeaking" }],
+                label: 'Speech',
+                submenu: [{ role: 'startspeaking' }, { role: 'stopspeaking' }],
               },
             ]
-          : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
+          : [{ role: 'delete' }, { type: 'separator' }, { role: 'selectAll' }]),
         {
-          label: "Search",
-          accelerator: "CmdOrCtrl+F",
+          label: 'Search',
+          accelerator: 'CmdOrCtrl+F',
           click: () => {
-            win.webContents.send("search");
+            win.webContents.send('search');
           },
         },
       ],
     },
     {
-      label: "Controls",
+      label: 'Controls',
       submenu: [
         {
-          label: "Play",
+          label: 'Play',
           click: () => {
-            win.webContents.send("play");
+            win.webContents.send('play');
           },
         },
         {
-          label: "Next",
-          accelerator: "CmdOrCtrl+Right",
+          label: 'Next',
+          accelerator: 'CmdOrCtrl+Right',
           click: () => {
-            win.webContents.send("next");
+            win.webContents.send('next');
           },
         },
         {
-          label: "Previous",
-          accelerator: "CmdOrCtrl+Left",
+          label: 'Previous',
+          accelerator: 'CmdOrCtrl+Left',
           click: () => {
-            win.webContents.send("previous");
+            win.webContents.send('previous');
           },
         },
         {
-          label: "Increase Volume",
-          accelerator: "CmdOrCtrl+Up",
+          label: 'Increase Volume',
+          accelerator: 'CmdOrCtrl+Up',
           click: () => {
-            win.webContents.send("increaseVolume");
+            win.webContents.send('increaseVolume');
           },
         },
         {
-          label: "Decrease Volume",
-          accelerator: "CmdOrCtrl+Down",
+          label: 'Decrease Volume',
+          accelerator: 'CmdOrCtrl+Down',
           click: () => {
-            win.webContents.send("decreaseVolume");
+            win.webContents.send('decreaseVolume');
           },
         },
         {
-          label: "Like",
-          accelerator: "CmdOrCtrl+L",
+          label: 'Like',
+          accelerator: 'CmdOrCtrl+L',
           click: () => {
-            win.webContents.send("like");
+            win.webContents.send('like');
           },
         },
         {
-          label: "Repeat",
-          accelerator: "Alt+R",
+          label: 'Repeat',
+          accelerator: 'Alt+R',
           click: () => {
-            win.webContents.send("repeat");
+            win.webContents.send('repeat');
           },
         },
         {
-          label: "Shuffle",
-          accelerator: "Alt+S",
+          label: 'Shuffle',
+          accelerator: 'Alt+S',
           click: () => {
-            win.webContents.send("shuffle");
+            win.webContents.send('shuffle');
           },
         },
       ],
     },
     {
-      label: "Window",
+      label: 'Window',
       submenu: [
-        { role: "close" },
-        { role: "minimize" },
-        { role: "zoom" },
-        { role: "reload" },
-        { role: "forcereload" },
-        { role: "toggledevtools" },
-        { type: "separator" },
-        { role: "togglefullscreen" },
+        { role: 'close' },
+        { role: 'minimize' },
+        { role: 'zoom' },
+        { role: 'reload' },
+        { role: 'forcereload' },
+        { role: 'toggledevtools' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
         ...(isMac
           ? [
-              { type: "separator" },
-              { role: "front" },
-              { type: "separator" },
+              { type: 'separator' },
+              { role: 'front' },
+              { type: 'separator' },
               {
-                role: "window",
-                id: "window",
-                label: "YesPlayMusic",
-                type: "checkbox",
+                role: 'window',
+                id: 'window',
+                label: 'YesPlayMusic',
+                type: 'checkbox',
                 checked: true,
                 click: () => {
-                  const current = menu.getMenuItemById("window");
+                  const current = menu.getMenuItemById('window');
                   if (current.checked === false) {
                     win.hide();
                   } else {
@@ -156,29 +156,29 @@ export function createMenu(win) {
                 },
               },
             ]
-          : [{ role: "close" }]),
+          : [{ role: 'close' }]),
       ],
     },
     {
-      label: "Help",
+      label: 'Help',
       submenu: [
         {
-          label: "GitHub",
+          label: 'GitHub',
           click: async () => {
-            const { shell } = require("electron");
-            await shell.openExternal("https://github.com/qier222/YesPlayMusic");
+            const { shell } = require('electron');
+            await shell.openExternal('https://github.com/qier222/YesPlayMusic');
           },
         },
         {
-          label: "Electron",
+          label: 'Electron',
           click: async () => {
-            const { shell } = require("electron");
-            await shell.openExternal("https://electronjs.org");
+            const { shell } = require('electron');
+            await shell.openExternal('https://electronjs.org');
           },
         },
         {
-          label: "开发者工具",
-          accelerator: "F12",
+          label: '开发者工具',
+          accelerator: 'F12',
           click: () => {
             win.webContents.openDevTools();
           },

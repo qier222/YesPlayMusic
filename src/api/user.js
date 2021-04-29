@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request';
 
 /**
  * 获取用户详情
@@ -8,10 +8,11 @@ import request from "@/utils/request";
  */
 export function userDetail(uid) {
   return request({
-    url: "/user/detail",
-    method: "get",
+    url: '/user/detail',
+    method: 'get',
     params: {
       uid,
+      timestamp: new Date().getTime(),
     },
   });
 }
@@ -22,8 +23,8 @@ export function userDetail(uid) {
  */
 export function userAccount() {
   return request({
-    url: "/user/account",
-    method: "get",
+    url: '/user/account',
+    method: 'get',
     params: {
       timestamp: new Date().getTime(),
     },
@@ -43,8 +44,8 @@ export function userAccount() {
  */
 export function userPlaylist(params) {
   return request({
-    url: "/user/playlist",
-    method: "get",
+    url: '/user/playlist',
+    method: 'get',
     params,
   });
 }
@@ -57,8 +58,8 @@ export function userPlaylist(params) {
  */
 export function userLikedSongsIDs(uid) {
   return request({
-    url: "/likelist",
-    method: "get",
+    url: '/likelist',
+    method: 'get',
     params: {
       uid,
       timestamp: new Date().getTime(),
@@ -74,8 +75,8 @@ export function userLikedSongsIDs(uid) {
  */
 export function dailySignin(type = 0) {
   return request({
-    url: "/daily_signin",
-    method: "post",
+    url: '/daily_signin',
+    method: 'post',
     params: {
       type,
       timestamp: new Date().getTime(),
@@ -94,8 +95,8 @@ export function dailySignin(type = 0) {
  */
 export function likedAlbums() {
   return request({
-    url: "/album/sublist",
-    method: "get",
+    url: '/album/sublist',
+    method: 'get',
     params: {
       timestamp: new Date().getTime(),
     },
@@ -108,8 +109,8 @@ export function likedAlbums() {
  */
 export function likedArtists() {
   return request({
-    url: "/artist/sublist",
-    method: "get",
+    url: '/artist/sublist',
+    method: 'get',
     params: {
       timestamp: new Date().getTime(),
     },
@@ -122,8 +123,8 @@ export function likedArtists() {
  */
 export function likedMVs() {
   return request({
-    url: "/mv/sublist",
-    method: "get",
+    url: '/mv/sublist',
+    method: 'get',
     params: {
       timestamp: new Date().getTime(),
     },

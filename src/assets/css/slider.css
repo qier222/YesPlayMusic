@@ -89,7 +89,7 @@
 }
 
 .nyancat .vue-slider-dot-handle {
-  background: url("/img/logos/nyancat.gif");
+  background: url('/img/logos/nyancat.gif');
   background-size: 36px;
   width: 36px;
   height: 24px;
@@ -101,7 +101,7 @@
 }
 
 .nyancat-stop .vue-slider-dot-handle {
-  background-image: url("/img/logos/nyancat-stop.png");
+  background-image: url('/img/logos/nyancat-stop.png');
   transition: 300ms;
 }
 
@@ -126,10 +126,10 @@
   display: none;
 }
 
-body[data-theme="dark"] .lyrics-page .vue-slider-process {
+body[data-theme='dark'] .lyrics-page .vue-slider-process {
   background-color: #fafafa;
 }
 
-body[data-theme="dark"] .lyrics-page .vue-slider-dot-handle {
+body[data-theme='dark'] .lyrics-page .vue-slider-dot-handle {
   background-color: #fff;
 }

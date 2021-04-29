@@ -8,12 +8,12 @@
     @mouseleave="hover = false"
   >
     <img
-      :src="imgUrl"
       v-if="!isAlbum"
-      @click="goToAlbum"
+      :src="imgUrl"
       :class="{ hover: focus }"
+      @click="goToAlbum"
     />
-    <div class="no" v-if="isAlbum">
+    <div v-if="isAlbum" class="no">
       <button v-show="focus && track.playable && !isPlaying" @click="playTrack">
         <svg-icon
           icon-class="play"
@@ -34,7 +34,7 @@
       <div class="container">
         <div class="title">
           {{ track.name }}
-          <span class="featured" v-if="isAlbum">
+          <span v-if="isAlbum" class="featured">
             <ArtistsInLine
               :artists="track.ar"
               :exclude="this.$parent.albumObject.artist.name"
@@ -44,7 +44,7 @@
             ><ExplicitSymbol
           /></span>
         </div>
-        <div class="artist" v-if="!isAlbum">
+        <div v-if="!isAlbum" class="artist">
           <span
             v-if="track.mark === 1318912"
             class="explicit-symbol before-artist"
@@ -55,11 +55,11 @@
       </div>
       <div></div>
     </div>
-    <div class="album" v-if="!isTracklist && !isAlbum">
+    <div v-if="!isTracklist && !isAlbum" class="album">
       <router-link :to="`/album/${album.id}`">{{ album.name }}</router-link>
       <div></div>
     </div>
-    <div class="actions" v-if="!isTracklist">
+    <div v-if="!isTracklist" class="actions">
       <button @click="likeThisSong">
         <svg-icon
           icon-class="heart"
@@ -67,22 +67,22 @@
             visibility: focus && !isLiked ? 'visible' : 'hidden',
           }"
         ></svg-icon>
-        <svg-icon icon-class="heart-solid" v-show="isLiked"></svg-icon>
+        <svg-icon v-show="isLiked" icon-class="heart-solid"></svg-icon>
       </button>
     </div>
-    <div class="time" v-if="!isTracklist">
+    <div v-if="!isTracklist" class="time">
       {{ track.dt | formatTime }}
     </div>
   </div>
 </template>
 
 <script>
-import ArtistsInLine from "@/components/ArtistsInLine.vue";
-import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
-import { mapState } from "vuex";
+import ArtistsInLine from '@/components/ArtistsInLine.vue';
+import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
+import { mapState } from 'vuex';
 
 export default {
-  name: "TrackListItem",
+  name: 'TrackListItem',
   components: { ArtistsInLine, ExplicitSymbol },
   props: {
     track: Object,
@@ -95,13 +95,13 @@ export default {
     return { hover: false, trackStyle: {} };
   },
   computed: {
-    ...mapState(["settings"]),
+    ...mapState(['settings']),
     imgUrl() {
       let image =
         this.track?.al?.picUrl ??
         this.track?.album?.picUrl ??
-        "https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg";
-      return image + "?param=224y224";
+        'https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg';
+      return image + '?param=224y224';
     },
     artists() {
       if (this.track.ar !== undefined) return this.track.ar;
@@ -115,13 +115,13 @@ export default {
       return this.$parent.type;
     },
     isAlbum() {
-      return this.type === "album";
+      return this.type === 'album';
     },
     isTracklist() {
-      return this.type === "tracklist";
+      return this.type === 'tracklist';
     },
     isPlaylist() {
-      return this.type === "playlist";
+      return this.type === 'playlist';
     },
     isLiked() {
       return this.$parent.liked.songs.includes(this.track.id);
@@ -131,11 +131,11 @@ export default {
     },
     trackClass() {
       let trackClass = [this.type];
-      if (!this.track.playable && this.settings.showUnavailableSongInGreyStyle)
-        trackClass.push("disable");
+      if (!this.track.playable && this.showUnavailableSongInGreyStyle)
+        trackClass.push('disable');
       if (this.isPlaying && this.highlightPlayingTrack)
-        trackClass.push("playing");
-      if (this.focus) trackClass.push("focus");
+        trackClass.push('playing');
+      if (this.focus) trackClass.push('focus');
       return trackClass;
     },
     isMenuOpened() {
@@ -148,18 +148,20 @@ export default {
       );
     },
     showUnavailableSongInGreyStyle() {
-      return this.$store.state.settings.showUnavailableSongInGreyStyle;
+      return process.env.IS_ELECTRON
+        ? !this.$store.state.settings.enableUnblockNeteaseMusic
+        : true;
     },
   },
   methods: {
     goToAlbum() {
-      this.$router.push({ path: "/album/" + this.track.al.id });
+      this.$router.push({ path: '/album/' + this.track.al.id });
     },
     playTrack() {
       this.$parent.playThisList(this.track.id);
     },
     likeThisSong() {
-      this.$parent.likeASong(this.track.id);
+      this.$parent.likeATrack(this.track.id);
     },
   },
 };

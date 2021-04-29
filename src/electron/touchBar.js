@@ -1,6 +1,6 @@
-const { TouchBar, nativeImage, ipcMain } = require("electron");
+const { TouchBar, nativeImage, ipcMain } = require('electron');
 const { TouchBarButton, TouchBarSpacer } = TouchBar;
-const path = require("path");
+const path = require('path');
 
 export function createTouchBar(window) {
   const renderer = window.webContents;
@@ -11,72 +11,72 @@ export function createTouchBar(window) {
   function getNativeIcon(name) {
     return nativeImage.createFromPath(
       // eslint-disable-next-line no-undef
-      path.join(__static, "img/touchbar/", name)
+      path.join(__static, 'img/touchbar/', name)
     );
   }
 
   const previousPage = new TouchBarButton({
     click: () => {
-      renderer.send("routerGo", "back");
+      renderer.send('routerGo', 'back');
     },
-    icon: getNativeIcon("page_prev.png"),
+    icon: getNativeIcon('page_prev.png'),
   });
 
   const nextPage = new TouchBarButton({
     click: () => {
-      renderer.send("routerGo", "forward");
+      renderer.send('routerGo', 'forward');
     },
-    icon: getNativeIcon("page_next.png"),
+    icon: getNativeIcon('page_next.png'),
   });
 
   const searchButton = new TouchBarButton({
     click: () => {
-      renderer.send("search");
+      renderer.send('search');
     },
-    icon: getNativeIcon("search.png"),
+    icon: getNativeIcon('search.png'),
   });
 
   const playButton = new TouchBarButton({
     click: () => {
-      renderer.send("play");
+      renderer.send('play');
     },
-    icon: getNativeIcon("play.png"),
+    icon: getNativeIcon('play.png'),
   });
 
   const previousTrackButton = new TouchBarButton({
     click: () => {
-      renderer.send("previous");
+      renderer.send('previous');
     },
-    icon: getNativeIcon("backward.png"),
+    icon: getNativeIcon('backward.png'),
   });
 
   const nextTrackButton = new TouchBarButton({
     click: () => {
-      renderer.send("next");
+      renderer.send('next');
     },
-    icon: getNativeIcon("forward.png"),
+    icon: getNativeIcon('forward.png'),
   });
 
   const likeButton = new TouchBarButton({
     click: () => {
-      renderer.send("like");
+      renderer.send('like');
     },
-    icon: getNativeIcon("like.png"),
+    icon: getNativeIcon('like.png'),
   });
 
   const nextUpButton = new TouchBarButton({
     click: () => {
-      renderer.send("nextUp");
+      renderer.send('nextUp');
     },
-    icon: getNativeIcon("next_up.png"),
+    icon: getNativeIcon('next_up.png'),
   });
 
-  ipcMain.on("player", (e, { playing, likedCurrentTrack }) => {
+  ipcMain.on('player', (e, { playing, likedCurrentTrack }) => {
     playButton.icon =
-      playing === true ? getNativeIcon("pause.png") : getNativeIcon("play.png");
+      playing === true ? getNativeIcon('pause.png') : getNativeIcon('play.png');
     likeButton.icon = likedCurrentTrack
-      ? getNativeIcon("like_fill.png")
-      : getNativeIcon("like.png");
+      ? getNativeIcon('like_fill.png')
+      : getNativeIcon('like.png');
   });
 
   const touchBar = new TouchBar({
@@ -84,11 +84,11 @@ export function createTouchBar(window) {
       previousPage,
       nextPage,
       searchButton,
-      new TouchBarSpacer({ size: "flexible" }),
+      new TouchBarSpacer({ size: 'flexible' }),
       previousTrackButton,
       playButton,
       nextTrackButton,
-      new TouchBarSpacer({ size: "flexible" }),
+      new TouchBarSpacer({ size: 'flexible' }),
       likeButton,
       nextUpButton,
     ],

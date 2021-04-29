@@ -1,48 +1,39 @@
 <template>
   <div class="newAlbum">
-    <h1>{{ $t("home.newAlbum") }}</h1>
-
+    <h1>{{ $t('home.newAlbum') }}</h1>
     <div class="playlist-row">
       <div class="playlists">
-        <div class="item" v-for="album in albums" :key="album.id">
-          <Cover
-            :id="album.id"
-            :type="'album'"
-            :url="album.picUrl | resizeImage"
-            :hoverEffect="true"
-            :showBlackShadow="true"
-          />
-
-          <div class="text">
-            <div class="name">{{ album.name }}</div>
-            <div class="info">{{ album.artist.name }}</div>
-          </div>
-        </div>
+        <CoverRow
+          type="album"
+          :items="albums"
+          sub-text="artist"
+          :show-play-button="true"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { newAlbums } from "@/api/album";
-import NProgress from "nprogress";
+import { newAlbums } from '@/api/album';
+import NProgress from 'nprogress';
 
-import Cover from "@/components/Cover.vue";
+import CoverRow from '@/components/CoverRow.vue';
 
 export default {
+  components: {
+    CoverRow,
+  },
   data() {
     return {
       albums: [],
     };
   },
-  components: {
-    Cover,
-  },
   created() {
     newAlbums({
-      area: "EA",
+      area: 'EA',
       limit: 100,
-    }).then((data) => {
+    }).then(data => {
       this.albums = data.albums;
       NProgress.done();
     });
@@ -52,55 +43,7 @@ export default {
 
 <style lang="scss" scoped>
 h1 {
-  span {
-    color: rgba(0, 0, 0, 0.58);
-  }
-}
-
-.playlist-row {
-  margin-top: 36px;
-  &:first-child {
-    margin-top: 0;
-  }
-}
-.playlists {
-  display: flex;
-  flex-wrap: wrap;
-  margin: {
-    right: -12px;
-    left: -12px;
-  }
-  .index-playlist {
-    margin: 12px 12px 24px 12px;
-  }
-}
-
-.item {
-  margin: 12px 12px 24px 12px;
-  .text {
-    width: 208px;
-    margin-top: 8px;
-    .name {
-      font-size: 16px;
-      font-weight: 600;
-      color: rgba(0, 0, 0, 0.88);
-      line-height: 20px;
-
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-    }
-    .info {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.68);
-      line-height: 18px;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-      // margin-top: 4px;
-    }
-  }
+  color: var(--color-text);
+  font-size: 56px;
 }
 </style>

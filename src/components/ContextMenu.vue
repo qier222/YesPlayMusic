@@ -1,12 +1,12 @@
 <template>
-  <div class="context-menu" ref="contextMenu">
+  <div ref="contextMenu" class="context-menu">
     <div
+      v-if="showMenu"
+      ref="menu"
       class="menu"
       tabindex="-1"
-      ref="menu"
-      v-if="showMenu"
-      @blur="closeMenu"
       :style="{ top: top, left: left }"
+      @blur="closeMenu"
       @click="closeMenu"
     >
       <slot></slot>
@@ -15,13 +15,15 @@
 </template>
 
 <script>
+import { disableScrolling, enableScrolling } from '@/utils/ui';
+
 export default {
-  name: "ContextMenu",
+  name: 'ContextMenu',
   data() {
     return {
       showMenu: false,
-      top: "0px",
-      left: "0px",
+      top: '0px',
+      left: '0px',
     };
   },
   methods: {
@@ -31,8 +33,8 @@ export default {
       let largestWidth = window.innerWidth - this.$refs.menu.offsetWidth - 25;
       if (top > largestHeight) top = largestHeight;
       if (left > largestWidth) left = largestWidth;
-      this.top = top + "px";
-      this.left = left + "px";
+      this.top = top + 'px';
+      this.left = left + 'px';
     },
 
     closeMenu() {
@@ -40,6 +42,7 @@ export default {
       if (this.$parent.closeMenu !== undefined) {
         this.$parent.closeMenu();
       }
+      enableScrolling();
     },
 
     openMenu(e) {
@@ -51,6 +54,7 @@ export default {
         }.bind(this)
       );
       e.preventDefault();
+      disableScrolling();
     },
   },
 };
@@ -61,6 +65,7 @@ export default {
   width: 100%;
   height: 100%;
   user-select: none;
+  -webkit-app-region: no-drag;
 }
 
 .menu {
@@ -82,7 +87,7 @@ export default {
   }
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   .menu {
     background: rgba(36, 36, 36, 0.78);
     backdrop-filter: blur(16px) contrast(120%);

@@ -3,26 +3,26 @@
     <div class="section-1">
       <img src="/img/logos/netease-music.png" />
     </div>
-    <div class="title">{{ $t("login.loginText") }}</div>
+    <div class="title">{{ $t('login.loginText') }}</div>
     <div class="section-2">
-      <div class="input-box" v-show="mode === 'phone'">
+      <div v-show="mode === 'phone'" class="input-box">
         <div class="container" :class="{ active: inputFocus === 'phone' }">
           <svg-icon icon-class="mobile" />
           <div class="inputs">
             <input
               id="countryCode"
+              v-model="countryCode"
               :placeholder="
                 inputFocus === 'phone' ? '' : $t('login.countryCode')
               "
-              v-model="countryCode"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
               @keyup.enter="login"
             />
             <input
               id="phoneNumber"
-              :placeholder="inputFocus === 'phone' ? '' : $t('login.phone')"
               v-model="phoneNumber"
+              :placeholder="inputFocus === 'phone' ? '' : $t('login.phone')"
               @focus="inputFocus = 'phone'"
               @blur="inputFocus = ''"
               @keyup.enter="login"
@@ -30,15 +30,15 @@
           </div>
         </div>
       </div>
-      <div class="input-box" v-show="mode === 'email'">
+      <div v-show="mode === 'email'" class="input-box">
         <div class="container" :class="{ active: inputFocus === 'email' }">
           <svg-icon icon-class="mail" />
           <div class="inputs">
             <input
-              type="email"
               id="email"
-              :placeholder="inputFocus === 'email' ? '' : $t('login.email')"
               v-model="email"
+              type="email"
+              :placeholder="inputFocus === 'email' ? '' : $t('login.email')"
               @focus="inputFocus = 'email'"
               @blur="inputFocus = ''"
               @keyup.enter="login"
@@ -51,12 +51,12 @@
           <svg-icon icon-class="lock" />
           <div class="inputs">
             <input
-              type="password"
               id="password"
+              v-model="password"
+              type="password"
               :placeholder="
                 inputFocus === 'password' ? '' : $t('login.password')
               "
-              v-model="password"
               @focus="inputFocus = 'password'"
               @blur="inputFocus = ''"
               @keyup.enter="login"
@@ -66,8 +66,8 @@
       </div>
     </div>
     <div class="confirm">
-      <button @click="login" v-show="!processing">
-        {{ $t("login.login") }}
+      <button v-show="!processing" @click="login">
+        {{ $t('login.login') }}
       </button>
       <button v-show="processing" class="loading" disabled>
         <span></span>
@@ -77,10 +77,10 @@
     </div>
     <div class="other-login">
       <a v-show="mode === 'phone'" @click="mode = 'email'">{{
-        $t("login.loginWithEmail")
+        $t('login.loginWithEmail')
       }}</a>
       <a v-show="mode === 'email'" @click="mode = 'phone'">{{
-        $t("login.loginWithPhone")
+        $t('login.loginWithPhone')
       }}</a>
     </div>
     <div
@@ -91,25 +91,25 @@
 </template>
 
 <script>
-import NProgress from "nprogress";
-import { loginWithPhone, loginWithEmail } from "@/api/auth";
-import { setCookies } from "@/utils/auth";
-import md5 from "crypto-js/md5";
-import { mapMutations } from "vuex";
-import nativeAlert from "@/utils/nativeAlert";
+import NProgress from 'nprogress';
+import { loginWithPhone, loginWithEmail } from '@/api/auth';
+import { setCookies } from '@/utils/auth';
+import md5 from 'crypto-js/md5';
+import { mapMutations } from 'vuex';
+import nativeAlert from '@/utils/nativeAlert';
 
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
       processing: false,
-      mode: "email",
-      countryCode: "+86",
-      phoneNumber: "",
-      email: "",
-      password: "",
-      smsCode: "",
-      inputFocus: "",
+      mode: 'email',
+      countryCode: '+86',
+      phoneNumber: '',
+      email: '',
+      password: '',
+      smsCode: '',
+      inputFocus: '',
     };
   },
   computed: {
@@ -118,20 +118,20 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.mode === "phone") {
-      this.mode = "phone";
+    if (this.$route.query.mode === 'phone') {
+      this.mode = 'phone';
     }
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateData"]),
+    ...mapMutations(['updateData']),
     validatePhone() {
       if (
-        this.countryCode === "" ||
-        this.phone === "" ||
-        this.password === ""
+        this.countryCode === '' ||
+        this.phone === '' ||
+        this.password === ''
       ) {
-        nativeAlert("国家区号或手机号不正确");
+        nativeAlert('国家区号或手机号不正确');
         this.processing = false;
         return false;
       }
@@ -140,27 +140,27 @@ export default {
     validateEmail() {
       const emailReg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (
-        this.email === "" ||
-        this.password === "" ||
+        this.email === '' ||
+        this.password === '' ||
         !emailReg.test(this.email)
       ) {
-        nativeAlert("邮箱不正确");
+        nativeAlert('邮箱不正确');
         return false;
       }
       return true;
     },
     login() {
-      if (this.mode === "phone") {
+      if (this.mode === 'phone') {
         this.processing = this.validatePhone();
         if (!this.processing) return;
         loginWithPhone({
-          countrycode: this.countryCode.replace("+", "").replace(/\s/g, ""),
-          phone: this.phoneNumber.replace(/\s/g, ""),
-          password: "fakePassword",
+          countrycode: this.countryCode.replace('+', '').replace(/\s/g, ''),
+          phone: this.phoneNumber.replace(/\s/g, ''),
+          password: 'fakePassword',
           md5_password: md5(this.password).toString(),
         })
           .then(this.handleLoginResponse)
-          .catch((error) => {
+          .catch(error => {
             this.processing = false;
             nativeAlert(`发生错误，请检查你的账号密码是否正确\n${error}`);
           });
@@ -168,12 +168,12 @@ export default {
         this.processing = this.validateEmail();
         if (!this.processing) return;
         loginWithEmail({
-          email: this.email.replace(/\s/g, ""),
-          password: "fakePassword",
+          email: this.email.replace(/\s/g, ''),
+          password: 'fakePassword',
           md5_password: md5(this.password).toString(),
         })
           .then(this.handleLoginResponse)
-          .catch((error) => {
+          .catch(error => {
             this.processing = false;
             nativeAlert(`发生错误，请检查你的账号密码是否正确\n${error}`);
           });
@@ -186,13 +186,12 @@ export default {
       }
       if (data.code === 200) {
         setCookies(data.cookie);
-        this.updateData({ key: "user", value: data.profile });
-        this.updateData({ key: "loginMode", value: "account" });
-        this.$router.push({ path: "/library" });
+        this.updateData({ key: 'user', value: data.profile });
+        this.updateData({ key: 'loginMode', value: 'account' });
+        this.$router.push({ path: '/library' });
       } else {
         this.processing = false;
-        console.log(data.msg);
-        nativeAlert(data.msg ?? data.message ?? "账号或密码错误，请检查");
+        nativeAlert(data.msg ?? data.message ?? '账号或密码错误，请检查');
       }
     },
   },

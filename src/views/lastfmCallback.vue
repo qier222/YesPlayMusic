@@ -6,36 +6,34 @@
       <img src="/img/logos/lastfm.png" />
     </div>
     <div class="message">{{ message }}</div>
-    <button @click="close" v-show="done"> 完成 </button>
+    <button v-show="done" @click="close"> 完成 </button>
   </div>
 </template>
 
 <script>
-import { authGetSession } from "@/api/lastfm";
+import { authGetSession } from '@/api/lastfm';
 
 export default {
-  name: "lastfmCallback",
+  name: 'LastfmCallback',
   data() {
-    return { message: "请稍等...", done: false };
+    return { message: '请稍等...', done: false };
   },
   created() {
-    const token = new URLSearchParams(window.location.search).get("token");
+    const token = new URLSearchParams(window.location.search).get('token');
     if (!token) {
-      this.message = "连接失败，请重试或联系开发者（无Token）";
+      this.message = '连接失败，请重试或联系开发者（无Token）';
       this.done = true;
       return;
     }
-    console.log(token);
-    authGetSession(token).then((result) => {
-      console.log(result);
+    authGetSession(token).then(result => {
       if (!result.data.session) {
-        this.message = "连接失败，请重试或联系开发者（无Session）";
+        this.message = '连接失败，请重试或联系开发者（无Session）';
         this.done = true;
         return;
       }
-      localStorage.setItem("lastfm", JSON.stringify(result.data.session));
-      this.$store.commit("updateLastfm", result.data.session);
-      this.message = "已成功连接到 Last.fm";
+      localStorage.setItem('lastfm', JSON.stringify(result.data.session));
+      this.$store.commit('updateLastfm', result.data.session);
+      this.message = '已成功连接到 Last.fm';
       this.done = true;
     });
   },

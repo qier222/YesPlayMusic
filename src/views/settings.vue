@@ -1,7 +1,7 @@
 <template>
   <div class="settings">
     <div class="container">
-      <div class="user" v-if="showUserInfo">
+      <div v-if="showUserInfo" class="user">
         <div class="left">
           <img class="avatar" :src="data.user.avatarUrl" />
           <div class="info">
@@ -14,21 +14,21 @@
                 />
                 <span class="text">黑胶VIP</span>
               </span>
-              <span class="text" v-else>{{ data.user.signature }}</span>
+              <span v-else class="text">{{ data.user.signature }}</span>
             </div>
           </div>
         </div>
         <div class="right">
           <button @click="logout">
             <svg-icon icon-class="logout" />
-            {{ $t("settings.logout") }}
+            {{ $t('settings.logout') }}
           </button>
         </div>
       </div>
-      <h2>{{ $t("settings.settings") }}</h2>
+
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.language") }} </div>
+          <div class="title"> {{ $t('settings.language') }} </div>
         </div>
         <div class="right">
           <select v-model="lang">
@@ -40,47 +40,49 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.appearance.text") }} </div>
+          <div class="title"> {{ $t('settings.appearance.text') }} </div>
         </div>
         <div class="right">
           <select v-model="appearance">
-            <option value="auto">{{ $t("settings.appearance.auto") }}</option>
+            <option value="auto">{{ $t('settings.appearance.auto') }}</option>
             <option value="light"
-              >🌞 {{ $t("settings.appearance.light") }}</option
+              >🌞 {{ $t('settings.appearance.light') }}</option
             >
             <option value="dark"
-              >🌚 {{ $t("settings.appearance.dark") }}</option
+              >🌚 {{ $t('settings.appearance.dark') }}</option
             >
           </select>
         </div>
       </div>
+
+      <h3>音质</h3>
       <div class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.musicQuality.text") }} </div>
+          <div class="title"> {{ $t('settings.musicQuality.text') }} </div>
         </div>
         <div class="right">
           <select v-model="musicQuality">
             <option value="128000">
-              {{ $t("settings.musicQuality.low") }} - 128Kbps
+              {{ $t('settings.musicQuality.low') }} - 128Kbps
             </option>
             <option value="192000">
-              {{ $t("settings.musicQuality.medium") }} - 192Kbps
+              {{ $t('settings.musicQuality.medium') }} - 192Kbps
             </option>
             <option value="320000">
-              {{ $t("settings.musicQuality.high") }} - 320Kbps
+              {{ $t('settings.musicQuality.high') }} - 320Kbps
             </option>
             <option value="999000">
-              {{ $t("settings.musicQuality.lossless") }} - FLAC
+              {{ $t('settings.musicQuality.lossless') }} - FLAC
             </option>
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.deviceSelector") }} </div>
+          <div class="title"> {{ $t('settings.deviceSelector') }} </div>
         </div>
         <div class="right">
-          <select v-model="outputDevice" :disabled="withoutAudioPriviledge">
+          <select v-model="outputDevice">
             <option
               v-for="device in allOutputDevices"
               :key="device.deviceId"
@@ -92,32 +94,34 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+
+      <h3>缓存</h3>
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
-            {{ $t("settings.automaticallyCacheSongs") }}
+            {{ $t('settings.automaticallyCacheSongs') }}
           </div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="automatically-cache-songs"
               id="automatically-cache-songs"
               v-model="automaticallyCacheSongs"
+              type="checkbox"
+              name="automatically-cache-songs"
             />
             <label for="automatically-cache-songs"></label>
           </div>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
-          <div class="title"> {{ $t("settings.cacheLimit.text") }} </div>
+          <div class="title"> {{ $t('settings.cacheLimit.text') }} </div>
         </div>
         <div class="right">
           <select v-model="cacheLimit">
             <option :value="false">
-              {{ $t("settings.cacheLimit.none") }}
+              {{ $t('settings.cacheLimit.none') }}
             </option>
             <option :value="512"> 500MB </option>
             <option :value="1024"> 1GB </option>
@@ -126,11 +130,11 @@
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
             {{
-              $t("settings.cacheCount", {
+              $t('settings.cacheCount', {
                 song: tracksCache.length,
                 size: tracksCache.size,
               })
@@ -139,21 +143,23 @@
         </div>
         <div class="right">
           <button @click="clearCache()">
-            {{ $t("settings.clearSongsCache") }}
+            {{ $t('settings.clearSongsCache') }}
           </button>
         </div>
       </div>
+
+      <h3>歌词</h3>
       <div class="item">
         <div class="left">
-          <div class="title">{{ $t("settings.showLyricsTranslation") }}</div>
+          <div class="title">{{ $t('settings.showLyricsTranslation') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-lyrics-translation"
               id="show-lyrics-translation"
               v-model="showLyricsTranslation"
+              type="checkbox"
+              name="show-lyrics-translation"
             />
             <label for="show-lyrics-translation"></label>
           </div>
@@ -161,54 +167,116 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title">{{
-            $t("settings.showLyricsDynamicBackground")
-          }}</div>
+          <div class="title">{{ $t('settings.lyricsBackground.text') }}</div>
         </div>
         <div class="right">
-          <div class="toggle">
-            <input
-              type="checkbox"
-              name="show-lyrics-dynamic-background"
-              id="show-lyrics-dynamic-background"
-              v-model="showLyricsDynamicBackground"
-            />
-            <label for="show-lyrics-dynamic-background"></label>
-          </div>
-        </div>
-      </div>
-      <div class="item">
-        <div class="left">
-          <div class="title"> {{ $t("settings.lyricFontSize.text") }} </div>
-        </div>
-        <div class="right">
-          <select v-model="lyricFontSize">
-            <option value="16">
-              {{ $t("settings.lyricFontSize.small") }} - 16px
+          <select v-model="lyricsBackground">
+            <option :value="false">
+              {{ $t('settings.lyricsBackground.off') }}
             </option>
-            <option value="22">
-              {{ $t("settings.lyricFontSize.medium") }} - 22px
+            <option :value="true">
+              {{ $t('settings.lyricsBackground.on') }}
             </option>
-            <option value="28">
-              {{ $t("settings.lyricFontSize.large") }} - 28px
-            </option>
-            <option value="36">
-              {{ $t("settings.lyricFontSize.xlarge") }} - 36px
+            <option value="dynamic">
+              {{ $t('settings.lyricsBackground.dynamic') }}
             </option>
           </select>
         </div>
       </div>
-      <div class="item" v-if="isElectron && !isMac">
+      <div class="item">
         <div class="left">
-          <div class="title">{{ $t("settings.minimizeToTray") }}</div>
+          <div class="title"> {{ $t('settings.lyricFontSize.text') }} </div>
+        </div>
+        <div class="right">
+          <select v-model="lyricFontSize">
+            <option value="16">
+              {{ $t('settings.lyricFontSize.small') }} - 16px
+            </option>
+            <option value="22">
+              {{ $t('settings.lyricFontSize.medium') }} - 22px
+            </option>
+            <option value="28">
+              {{ $t('settings.lyricFontSize.large') }} - 28px
+            </option>
+            <option value="36">
+              {{ $t('settings.lyricFontSize.xlarge') }} - 36px
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <h3>第三方</h3>
+      <div class="item">
+        <div class="left">
+          <div class="title">
+            {{
+              isLastfmConnected
+                ? `已连接到 Last.fm (${lastfm.name})`
+                : '连接 Last.fm '
+            }}</div
+          >
+        </div>
+        <div class="right">
+          <button v-if="isLastfmConnected" @click="lastfmDisconnect()"
+            >断开连接
+          </button>
+          <button v-else @click="lastfmConnect()"> 授权连接 </button>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"
+            >启用
+            <a
+              href="https://github.com/nondanee/UnblockNeteaseMusic"
+              target="blank"
+              >UnblockNeteaseMusic</a
+            ></div
+          >
         </div>
         <div class="right">
           <div class="toggle">
             <input
+              id="enable-unblock-netease-music"
+              v-model="enableUnblockNeteaseMusic"
               type="checkbox"
-              name="minimize-to-tray"
+              name="enable-unblock-netease-music"
+            />
+            <label for="enable-unblock-netease-music"></label>
+          </div>
+        </div>
+      </div>
+      <div v-if="isElectron" class="item">
+        <div class="left">
+          <div class="title">
+            {{ $t('settings.enableDiscordRichPresence') }}</div
+          >
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-discord-rich-presence"
+              v-model="enableDiscordRichPresence"
+              type="checkbox"
+              name="enable-discord-rich-presence"
+            />
+            <label for="enable-discord-rich-presence"></label>
+          </div>
+        </div>
+      </div>
+
+      <h3>其他</h3>
+      <div v-if="isElectron && !isMac" class="item">
+        <div class="left">
+          <div class="title">{{ $t('settings.minimizeToTray') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
               id="minimize-to-tray"
               v-model="minimizeToTray"
+              type="checkbox"
+              name="minimize-to-tray"
             />
             <label for="minimize-to-tray"></label>
           </div>
@@ -217,33 +285,15 @@
 
       <div class="item">
         <div class="left">
-          <div class="title">
-            {{
-              isLastfmConnected
-                ? `已连接到 Last.fm (${lastfm.name})`
-                : "连接 Last.fm "
-            }}</div
-          >
-        </div>
-        <div class="right">
-          <button @click="lastfmDisconnect()" v-if="isLastfmConnected"
-            >断开连接
-          </button>
-          <button @click="lastfmConnect()" v-else> 授权连接 </button>
-        </div>
-      </div>
-
-      <div class="item">
-        <div class="left">
-          <div class="title"> {{ $t("settings.showLibraryDefault") }}</div>
+          <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-library-default"
               id="show-library-default"
               v-model="showLibraryDefault"
+              type="checkbox"
+              name="show-library-default"
             />
             <label for="show-library-default"></label>
           </div>
@@ -253,68 +303,32 @@
       <div class="item">
         <div class="left">
           <div class="title">
-            {{ $t("settings.showUnavailableSongInGreyStyle") }}</div
+            {{ $t('settings.showPlaylistsByAppleMusic') }}</div
           >
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="show-unavailable-song-grey"
-              id="show-unavailable-song-grey"
-              v-model="showUnavailableSongInGreyStyle"
-            />
-            <label for="show-unavailable-song-grey"></label>
-          </div>
-        </div>
-      </div>
-      <div class="item">
-        <div class="left">
-          <div class="title">
-            {{ $t("settings.showPlaylistsByAppleMusic") }}</div
-          >
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              type="checkbox"
-              name="show-playlists-by-apple-music"
               id="show-playlists-by-apple-music"
               v-model="showPlaylistsByAppleMusic"
+              type="checkbox"
+              name="show-playlists-by-apple-music"
             />
             <label for="show-playlists-by-apple-music"></label>
           </div>
         </div>
       </div>
-      <div class="item" v-if="isElectron">
+      <div v-if="isElectron" class="item">
         <div class="left">
-          <div class="title">
-            {{ $t("settings.enableDiscordRichPresence") }}</div
-          >
+          <div class="title"> {{ $t('settings.enableGlobalShortcut') }}</div>
         </div>
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="enable-discord-rich-presence"
-              id="enable-discord-rich-presence"
-              v-model="enableDiscordRichPresence"
-            />
-            <label for="enable-discord-rich-presence"></label>
-          </div>
-        </div>
-      </div>
-      <div class="item" v-if="isElectron">
-        <div class="left">
-          <div class="title"> {{ $t("settings.enableGlobalShortcut") }}</div>
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              type="checkbox"
-              name="enable-enable-global-shortcut"
               id="enable-enable-global-shortcut"
               v-model="enableGlobalShortcut"
+              type="checkbox"
+              name="enable-enable-global-shortcut"
             />
             <label for="enable-enable-global-shortcut"></label>
           </div>
@@ -327,13 +341,47 @@
         <div class="right">
           <div class="toggle">
             <input
-              type="checkbox"
-              name="nyancat-style"
               id="nyancat-style"
               v-model="nyancatStyle"
+              type="checkbox"
+              name="nyancat-style"
             />
             <label for="nyancat-style"></label>
           </div>
+        </div>
+      </div>
+
+      <div v-if="isElectron">
+        <h3>代理</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title"> 代理协议 </div>
+          </div>
+          <div class="right">
+            <select v-model="proxyProtocol">
+              <option value="noProxy"> 关闭代理 </option>
+              <option value="HTTP"> HTTP 代理 </option>
+              <option value="HTTPS"> HTTPS 代理 </option>
+              <option value="SOCKS"> SOCKS 代理 </option>
+            </select>
+          </div>
+        </div>
+        <div id="proxy-form" :class="{ disabled: proxyProtocol === 'noProxy' }">
+          <input
+            v-model="proxyServer"
+            class="text-input"
+            placeholder="服务器地址"
+            :disabled="proxyProtocol === 'noProxy'"
+          /><input
+            v-model="proxyPort"
+            class="text-input"
+            placeholder="端口"
+            type="number"
+            min="1"
+            max="65535"
+            :disabled="proxyProtocol === 'noProxy'"
+          />
+          <button @click="sendProxyConfig">更新代理</button>
         </div>
       </div>
 
@@ -349,32 +397,36 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { isLooseLoggedIn, doLogout } from "@/utils/auth";
-import { auth as lastfmAuth } from "@/api/lastfm";
-import { changeAppearance, bytesToSize } from "@/utils/common";
-import { countDBSize, clearDB } from "@/utils/db";
-import pkg from "../../package.json";
+import { mapState, mapActions } from 'vuex';
+import { isLooseLoggedIn, doLogout } from '@/utils/auth';
+import { auth as lastfmAuth } from '@/api/lastfm';
+import { changeAppearance, bytesToSize } from '@/utils/common';
+import { countDBSize, clearDB } from '@/utils/db';
+import pkg from '../../package.json';
+
+const electron =
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
+const ipcRenderer =
+  process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
 export default {
-  name: "settings",
+  name: 'Settings',
   data() {
     return {
       tracksCache: {
-        size: "0KB",
+        size: '0KB',
         length: 0,
       },
       allOutputDevices: [
         {
-          deviceId: "default",
-          label: "settings.permissionRequired",
+          deviceId: 'default',
+          label: 'settings.permissionRequired',
         },
       ],
-      withoutAudioPriviledge: true,
     };
   },
   computed: {
-    ...mapState(["player", "settings", "data", "lastfm"]),
+    ...mapState(['player', 'settings', 'data', 'lastfm']),
     isElectron() {
       return process.env.IS_ELECTRON;
     },
@@ -394,17 +446,17 @@ export default {
       },
       set(lang) {
         this.$i18n.locale = lang;
-        this.$store.commit("changeLang", lang);
+        this.$store.commit('changeLang', lang);
       },
     },
     appearance: {
       get() {
-        if (this.settings.appearance === undefined) return "auto";
+        if (this.settings.appearance === undefined) return 'auto';
         return this.settings.appearance;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "appearance",
+        this.$store.commit('updateSettings', {
+          key: 'appearance',
           value,
         });
         changeAppearance(value);
@@ -417,7 +469,7 @@ export default {
       },
       set(value) {
         if (value === this.settings.musicQuality) return;
-        this.$store.commit("changeMusicQuality", value);
+        this.$store.commit('changeMusicQuality', value);
         this.clearCache();
       },
     },
@@ -427,36 +479,35 @@ export default {
         return this.settings.lyricFontSize;
       },
       set(value) {
-        this.$store.commit("changeLyricFontSize", value);
+        this.$store.commit('changeLyricFontSize', value);
       },
     },
     outputDevice: {
       get() {
-        if (this.withoutAudioPriviledge === true) this.getAllOutputDevices();
         const isValidDevice = this.allOutputDevices.find(
-          (device) => device.deviceId === this.settings.outputDevice
+          device => device.deviceId === this.settings.outputDevice
         );
         if (
           this.settings.outputDevice === undefined ||
           isValidDevice === undefined
         )
-          return "default"; // Default deviceId
+          return 'default'; // Default deviceId
         return this.settings.outputDevice;
       },
       set(deviceId) {
         if (deviceId === this.settings.outputDevice || deviceId === undefined)
           return;
-        this.$store.commit("changeOutputDevice", deviceId);
+        this.$store.commit('changeOutputDevice', deviceId);
         this.player.setOutputDevice();
       },
     },
-    showUnavailableSongInGreyStyle: {
+    enableUnblockNeteaseMusic: {
       get() {
-        return this.settings.showUnavailableSongInGreyStyle;
+        return this.settings.enableUnblockNeteaseMusic || true;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showUnavailableSongInGreyStyle",
+        this.$store.commit('updateSettings', {
+          key: 'enableUnblockNeteaseMusic',
           value,
         });
       },
@@ -467,8 +518,8 @@ export default {
         return this.settings.showPlaylistsByAppleMusic;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showPlaylistsByAppleMusic",
+        this.$store.commit('updateSettings', {
+          key: 'showPlaylistsByAppleMusic',
           value,
         });
       },
@@ -479,8 +530,8 @@ export default {
         return this.settings.nyancatStyle;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "nyancatStyle",
+        this.$store.commit('updateSettings', {
+          key: 'nyancatStyle',
           value,
         });
       },
@@ -491,8 +542,8 @@ export default {
         return this.settings.automaticallyCacheSongs;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "automaticallyCacheSongs",
+        this.$store.commit('updateSettings', {
+          key: 'automaticallyCacheSongs',
           value,
         });
         if (value === false) {
@@ -505,19 +556,19 @@ export default {
         return this.settings.showLyricsTranslation;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showLyricsTranslation",
+        this.$store.commit('updateSettings', {
+          key: 'showLyricsTranslation',
           value,
         });
       },
     },
-    showLyricsDynamicBackground: {
+    lyricsBackground: {
       get() {
-        return this.settings.showLyricsDynamicBackground;
+        return this.settings.lyricsBackground || false;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showLyricsDynamicBackground",
+        this.$store.commit('updateSettings', {
+          key: 'lyricsBackground',
           value,
         });
       },
@@ -527,8 +578,8 @@ export default {
         return this.settings.minimizeToTray;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "minimizeToTray",
+        this.$store.commit('updateSettings', {
+          key: 'minimizeToTray',
           value,
         });
       },
@@ -538,8 +589,8 @@ export default {
         return this.settings.enableDiscordRichPresence;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "enableDiscordRichPresence",
+        this.$store.commit('updateSettings', {
+          key: 'enableDiscordRichPresence',
           value,
         });
       },
@@ -549,8 +600,8 @@ export default {
         return this.settings.enableGlobalShortcut;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "enableGlobalShortcut",
+        this.$store.commit('updateSettings', {
+          key: 'enableGlobalShortcut',
           value,
         });
       },
@@ -560,8 +611,8 @@ export default {
         return this.settings.showLibraryDefault || false;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "showLibraryDefault",
+        this.$store.commit('updateSettings', {
+          key: 'showLibraryDefault',
           value,
         });
       },
@@ -571,9 +622,52 @@ export default {
         return this.settings.cacheLimit || false;
       },
       set(value) {
-        this.$store.commit("updateSettings", {
-          key: "cacheLimit",
+        this.$store.commit('updateSettings', {
+          key: 'cacheLimit',
           value,
+        });
+      },
+    },
+    proxyProtocol: {
+      get() {
+        return this.settings.proxyConfig?.protocol || 'noProxy';
+      },
+      set(value) {
+        let config = this.settings.proxyConfig || {};
+        config.protocol = value;
+        if (value === 'noProxy') {
+          ipcRenderer.send('removeProxy');
+          this.showToast('已关闭代理');
+        }
+        this.$store.commit('updateSettings', {
+          key: 'proxyConfig',
+          value: config,
+        });
+      },
+    },
+    proxyServer: {
+      get() {
+        return this.settings.proxyConfig?.server || '';
+      },
+      set(value) {
+        let config = this.settings.proxyConfig || {};
+        config.server = value;
+        this.$store.commit('updateSettings', {
+          key: 'proxyConfig',
+          value: config,
+        });
+      },
+    },
+    proxyPort: {
+      get() {
+        return this.settings.proxyConfig?.port || '';
+      },
+      set(value) {
+        let config = this.settings.proxyConfig || {};
+        config.port = value;
+        this.$store.commit('updateSettings', {
+          key: 'proxyConfig',
+          value: config,
         });
       },
     },
@@ -581,22 +675,31 @@ export default {
       return this.lastfm.key !== undefined;
     },
   },
+  created() {
+    this.countDBSize('tracks');
+    if (process.env.IS_ELECTRON) this.getAllOutputDevices();
+  },
+  activated() {
+    this.countDBSize('tracks');
+    if (process.env.IS_ELECTRON) this.getAllOutputDevices();
+  },
   methods: {
+    ...mapActions(['showToast']),
     getAllOutputDevices() {
-      navigator.mediaDevices.enumerateDevices().then((devices) => {
-        this.allOutputDevices = devices.filter((device) => {
-          return device.kind == "audiooutput";
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        this.allOutputDevices = devices.filter(device => {
+          return device.kind == 'audiooutput';
         });
         if (
           this.allOutputDevices.length > 0 &&
-          this.allOutputDevices[0].label !== ""
+          this.allOutputDevices[0].label !== ''
         ) {
           this.withoutAudioPriviledge = false;
         } else {
           this.allOutputDevices = [
             {
-              deviceId: "default",
-              label: "settings.permissionRequired",
+              deviceId: 'default',
+              label: 'settings.permissionRequired',
             },
           ];
         }
@@ -604,13 +707,13 @@ export default {
     },
     logout() {
       doLogout();
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: 'home' });
     },
     countDBSize() {
-      countDBSize().then((data) => {
+      countDBSize().then(data => {
         if (data === undefined) {
           this.tracksCache = {
-            size: "0KB",
+            size: '0KB',
             length: 0,
           };
           return;
@@ -627,23 +730,31 @@ export default {
     lastfmConnect() {
       lastfmAuth();
       let lastfmChecker = setInterval(() => {
-        const session = localStorage.getItem("lastfm");
+        const session = localStorage.getItem('lastfm');
         if (session) {
-          this.$store.commit("updateLastfm", JSON.parse(session));
+          this.$store.commit('updateLastfm', JSON.parse(session));
           clearInterval(lastfmChecker);
         }
       }, 1000);
     },
     lastfmDisconnect() {
-      localStorage.removeItem("lastfm");
-      this.$store.commit("updateLastfm", {});
+      localStorage.removeItem('lastfm');
+      this.$store.commit('updateLastfm', {});
     },
-  },
-  created() {
-    this.countDBSize("tracks");
-  },
-  activated() {
-    this.countDBSize("tracks");
+    sendProxyConfig() {
+      if (this.proxyProtocol === 'noProxy') return;
+      const config = this.settings.proxyConfig;
+      if (
+        config.server === '' ||
+        !config.port ||
+        config.protocol === 'noProxy'
+      ) {
+        ipcRenderer.send('removeProxy');
+      } else {
+        ipcRenderer.send('setProxy', config);
+      }
+      this.showToast('已更新代理设置');
+    },
   },
 };
 </script>
@@ -663,6 +774,14 @@ h2 {
   color: var(--color-text);
 }
 
+h3 {
+  margin-top: 48px;
+  padding-bottom: 12px;
+  font-size: 26px;
+  color: var(--color-text);
+  border-bottom: 1px solid rgba(128, 128, 128, 0.18);
+}
+
 .user {
   display: flex;
   align-items: center;
@@ -671,6 +790,7 @@ h2 {
   color: var(--color-text);
   padding: 16px 20px;
   border-radius: 16px;
+  margin-bottom: 48px;
   img.avatar {
     border-radius: 50%;
     height: 64px;
@@ -745,40 +865,69 @@ h2 {
   color: var(--color-text);
 
   .title {
-    font-size: 18px;
-    font-weight: 600;
-    opacity: 0.88;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.78;
   }
+}
 
-  select {
-    min-width: 192px;
-    font-weight: 600;
-    border: none;
-    padding: 8px 12px 8px 12px;
-    border-radius: 8px;
-    color: var(--color-text);
-    background: var(--color-secondary-bg);
-    appearance: none;
-    &:focus {
-      outline: none;
-      color: var(--color-primary);
-      background: var(--color-primary-bg);
-    }
+select {
+  min-width: 192px;
+  font-weight: 600;
+  border: none;
+  padding: 8px 12px 8px 12px;
+  border-radius: 8px;
+  color: var(--color-text);
+  background: var(--color-secondary-bg);
+  appearance: none;
+  &:focus {
+    outline: none;
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
   }
+}
 
-  button {
-    color: var(--color-text);
-    background: var(--color-secondary-bg);
-    padding: 8px 12px 8px 12px;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: 0.2s;
-    &:hover {
-      transform: scale(1.06);
-    }
-    &:active {
-      transform: scale(0.94);
-    }
+button {
+  color: var(--color-text);
+  background: var(--color-secondary-bg);
+  padding: 8px 12px 8px 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: 0.2s;
+  &:hover {
+    transform: scale(1.06);
+  }
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+input.text-input {
+  background: var(--color-secondary-bg);
+  border: none;
+  margin-right: 22px;
+  padding: 8px 12px 8px 12px;
+  border-radius: 8px;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 16px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+#proxy-form {
+  display: flex;
+  align-items: center;
+}
+#proxy-form.disabled {
+  opacity: 0.47;
+  button:hover {
+    transform: unset;
   }
 }
 
@@ -829,7 +978,7 @@ h2 {
   border-radius: 8px;
 }
 .toggle input + label:before {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   -webkit-transition: 0.2s cubic-bezier(0.24, 0, 0.5, 1);
@@ -841,7 +990,7 @@ h2 {
   border-radius: 8px;
 }
 .toggle input + label:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   box-shadow: 0 0 0 1px hsla(0, 0%, 0%, 0.02), 0 4px 0px 0 hsla(0, 0%, 0%, 0.01),

@@ -1,6 +1,6 @@
-import store from "@/store";
-import request from "@/utils/request";
-import { mapTrackPlayableStatus } from "@/utils/common";
+import store from '@/store';
+import request from '@/utils/request';
+import { mapTrackPlayableStatus } from '@/utils/common';
 /**
  * 获取音乐 url
  * 说明 : 使用歌单详情接口后 , 能得到的音乐的 id, 但不能得到的音乐 url, 调用此接口, 传入的音乐 id( 可多个 , 用逗号隔开 ), 可以获取对应的音乐的 url,
@@ -13,8 +13,8 @@ export function getMP3(id) {
       ? store.state.settings.musicQuality
       : 320000;
   return request({
-    url: "/song/url",
-    method: "get",
+    url: '/song/url',
+    method: 'get',
     params: {
       id,
       br,
@@ -28,12 +28,12 @@ export function getMP3(id) {
  */
 export function getTrackDetail(ids) {
   return request({
-    url: "/song/detail",
-    method: "get",
+    url: '/song/detail',
+    method: 'get',
     params: {
       ids,
     },
-  }).then((data) => {
+  }).then(data => {
     data.songs = mapTrackPlayableStatus(data.songs, data.privileges);
     return data;
   });
@@ -46,8 +46,8 @@ export function getTrackDetail(ids) {
 
 export function getLyric(id) {
   return request({
-    url: "/lyric",
-    method: "get",
+    url: '/lyric',
+    method: 'get',
     params: {
       id,
     },
@@ -60,8 +60,8 @@ export function getLyric(id) {
  */
 export function topSong(type) {
   return request({
-    url: "/top/song",
-    method: "get",
+    url: '/top/song',
+    method: 'get',
     params: {
       type,
     },
@@ -79,8 +79,8 @@ export function topSong(type) {
 export function likeATrack(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: "/like",
-    method: "get",
+    url: '/like',
+    method: 'get',
     params,
   });
 }
@@ -99,8 +99,8 @@ export function likeATrack(params) {
 export function scrobble(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: "/scrobble",
-    method: "get",
+    url: '/scrobble',
+    method: 'get',
     params,
   });
 }

@@ -1,15 +1,15 @@
 <template>
   <div class="login">
     <div>
-      <div class="title">{{ $t("login.usernameLogin") }}</div>
-      <div class="sestion">
+      <div class="title">{{ $t('login.usernameLogin') }}</div>
+      <div class="section">
         <div class="search-box">
           <div class="container">
             <svg-icon icon-class="search" />
             <div class="input">
               <input
-                :placeholder="$t('login.searchHolder')"
                 v-model="keyword"
+                :placeholder="$t('login.searchHolder')"
                 @keydown.enter="throttleSearch"
               />
             </div>
@@ -17,17 +17,17 @@
         </div>
       </div>
       <div class="sestion">
-        <div class="name" v-show="activeUser.nickname === undefined">
-          {{ $t("login.enterTip") }}
+        <div v-show="activeUser.nickname === undefined" class="name">
+          {{ $t('login.enterTip') }}
         </div>
-        <div class="name" v-show="activeUser.nickname !== undefined">
-          {{ $t("login.choose") }}
+        <div v-show="activeUser.nickname !== undefined" class="name">
+          {{ $t('login.choose') }}
         </div>
         <div class="user-list">
           <div
-            class="user"
             v-for="user in result"
             :key="user.id"
+            class="user"
             :class="{ active: user.nickname === activeUser.nickname }"
             @click="activeUser = user"
           >
@@ -39,32 +39,32 @@
         </div>
       </div>
       <ButtonTwoTone
-        @click.native="confirm"
         v-show="activeUser.nickname !== undefined"
+        @click.native="confirm"
       >
-        {{ $t("login.confirm") }}
+        {{ $t('login.confirm') }}
       </ButtonTwoTone>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
-import NProgress from "nprogress";
-import { search } from "@/api/others";
-import { userPlaylist } from "@/api/user";
-import { throttle } from "@/utils/common";
+import { mapMutations } from 'vuex';
+import NProgress from 'nprogress';
+import { search } from '@/api/others';
+import { userPlaylist } from '@/api/user';
+import { throttle } from '@/utils/common';
 
-import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
+import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
 
 export default {
-  name: "loginUsername",
+  name: 'LoginUsername',
   components: {
     ButtonTwoTone,
   },
   data() {
     return {
-      keyword: "",
+      keyword: '',
       result: [],
       activeUser: {},
     };
@@ -73,26 +73,26 @@ export default {
     NProgress.done();
   },
   methods: {
-    ...mapMutations(["updateData"]),
+    ...mapMutations(['updateData']),
     search() {
       if (!this.keyword) return;
-      search({ keywords: this.keyword, limit: 9, type: 1002 }).then((data) => {
+      search({ keywords: this.keyword, limit: 9, type: 1002 }).then(data => {
         this.result = data.result.userprofiles;
         this.activeUser = this.result[0];
       });
     },
     confirm() {
-      this.updateData({ key: "user", value: this.activeUser });
-      this.updateData({ key: "loginMode", value: "username" });
+      this.updateData({ key: 'user', value: this.activeUser });
+      this.updateData({ key: 'loginMode', value: 'username' });
       userPlaylist({
         uid: this.activeUser.userId,
         limit: 1,
-      }).then((data) => {
+      }).then(data => {
         this.updateData({
-          key: "likedSongPlaylistID",
+          key: 'likedSongPlaylistID',
           value: data.playlist[0].id,
         });
-        this.$router.push({ path: "/library" });
+        this.$router.push({ path: '/library' });
       });
     },
     throttleSearch: throttle(function () {

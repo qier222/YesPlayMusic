@@ -1,21 +1,21 @@
 <template>
-  <div class="album" v-show="show">
+  <div v-show="show" class="album">
     <div class="playlist-info">
       <Cover
-        :imageUrl="album.picUrl | resizeImage(1024)"
-        :showPlayButton="true"
-        :alwaysShowShadow="true"
-        :clickCoverToPlay="true"
-        :fixedSize="288"
-        type="album"
         :id="album.id"
-        :coverHover="false"
-        :playButtonSize="18"
+        :image-url="album.picUrl | resizeImage(1024)"
+        :show-play-button="true"
+        :always-show-shadow="true"
+        :click-cover-to-play="true"
+        :fixed-size="288"
+        type="album"
+        :cover-hover="false"
+        :play-button-size="18"
         @click.right.native="openMenu"
       />
       <div class="info">
         <div class="title" @click.right="openMenu"> {{ title }}</div>
-        <div class="subtitle" v-if="subtitle !== ''" @click.right="openMenu">{{
+        <div v-if="subtitle !== ''" class="subtitle" @click.right="openMenu">{{
           subtitle
         }}</div>
         <div class="artist">
@@ -28,42 +28,42 @@
           <span v-else>Compilation by Various Artists</span>
         </div>
         <div class="date-and-count">
-          <span class="explicit-symbol" v-if="album.mark === 1056768"
+          <span v-if="album.mark === 1056768" class="explicit-symbol"
             ><ExplicitSymbol
           /></span>
           <span :title="album.publishTime | formatDate">{{
             new Date(album.publishTime).getFullYear()
           }}</span>
-          <span> · {{ album.size }} {{ $t("common.songs") }}</span
+          <span> · {{ album.size }} {{ $t('common.songs') }}</span
           >,
-          {{ albumTime | formatTime("Human") }}
+          {{ albumTime | formatTime('Human') }}
         </div>
-        <div class="description" @click="showFullDescription = true">
+        <div class="description" @click="toggleFullDescription">
           {{ album.description }}
         </div>
         <div class="buttons" style="margin-top: 32px">
           <ButtonTwoTone
+            icon-class="play"
             @click.native="playAlbumByID(album.id)"
-            iconClass="play"
           >
-            {{ $t("common.play") }}
+            {{ $t('common.play') }}
           </ButtonTwoTone>
           <ButtonTwoTone
-            :iconClass="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
-            :iconButton="true"
-            :horizontalPadding="0"
+            :icon-class="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
+            :icon-button="true"
+            :horizontal-padding="0"
             :color="dynamicDetail.isSub ? 'blue' : 'grey'"
-            :textColor="dynamicDetail.isSub ? '#335eea' : ''"
-            :backgroundColor="
+            :text-color="dynamicDetail.isSub ? '#335eea' : ''"
+            :background-color="
               dynamicDetail.isSub ? 'var(--color-secondary-bg)' : ''
             "
             @click.native="likeAlbum"
           >
           </ButtonTwoTone>
           <ButtonTwoTone
-            iconClass="more"
-            :iconButton="true"
-            :horizontalPadding="0"
+            icon-class="more"
+            :icon-button="true"
+            :horizontal-padding="0"
             color="grey"
             @click.native="openMenu"
           >
@@ -72,22 +72,22 @@
       </div>
     </div>
     <TrackList
+      :id="album.id"
       :tracks="tracks"
       :type="'album'"
-      :id="album.id"
-      :albumObject="album"
+      :album-object="album"
     />
     <div class="extra-info">
       <div class="album-time"></div>
       <div class="release-date">
-        {{ $t("album.released") }}
-        {{ album.publishTime | formatDate("MMMM D, YYYY") }}
+        {{ $t('album.released') }}
+        {{ album.publishTime | formatDate('MMMM D, YYYY') }}
       </div>
-      <div class="copyright" v-if="album.company !== null">
+      <div v-if="album.company !== null" class="copyright">
         © {{ album.company }}
       </div>
     </div>
-    <div class="more-by" v-if="filteredMoreAlbums.length !== 0">
+    <div v-if="filteredMoreAlbums.length !== 0" class="more-by">
       <div class="section-title">
         More by
         <router-link :to="`/artist/${album.artist.id}`"
@@ -98,15 +98,15 @@
         <CoverRow
           type="album"
           :items="filteredMoreAlbums"
-          subText="albumType+releaseYear"
+          sub-text="albumType+releaseYear"
         />
       </div>
     </div>
     <Modal
       :show="showFullDescription"
-      :close="() => (showFullDescription = false)"
-      :showFooter="false"
-      :clickOutsideHide="true"
+      :close="toggleFullDescription"
+      :show-footer="false"
+      :click-outside-hide="true"
       title="专辑介绍"
     >
       <p class="description-fulltext">
@@ -114,9 +114,9 @@
       </p>
     </Modal>
     <ContextMenu ref="albumMenu">
-      <div class="item">{{ $t("contextMenu.playNext") }}</div>
+      <div class="item">{{ $t('contextMenu.playNext') }}</div>
       <div class="item" @click="likeAlbum(true)">{{
-        dynamicDetail.isSub ? "从音乐库删除" : "保存到音乐库"
+        dynamicDetail.isSub ? '从音乐库删除' : '保存到音乐库'
       }}</div>
       <div class="item">添加到歌单</div>
     </ContextMenu>
@@ -124,24 +124,25 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from "vuex";
-import { getArtistAlbum } from "@/api/artist";
-import { getTrackDetail } from "@/api/track";
-import { getAlbum, albumDynamicDetail, likeAAlbum } from "@/api/album";
-import { splitSoundtrackAlbumTitle, splitAlbumTitle } from "@/utils/common";
-import NProgress from "nprogress";
-import { isAccountLoggedIn } from "@/utils/auth";
+import { mapMutations, mapActions, mapState } from 'vuex';
+import { getArtistAlbum } from '@/api/artist';
+import { getTrackDetail } from '@/api/track';
+import { getAlbum, albumDynamicDetail, likeAAlbum } from '@/api/album';
+import { splitSoundtrackAlbumTitle, splitAlbumTitle } from '@/utils/common';
+import NProgress from 'nprogress';
+import { isAccountLoggedIn } from '@/utils/auth';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 
-import ExplicitSymbol from "@/components/ExplicitSymbol.vue";
-import ButtonTwoTone from "@/components/ButtonTwoTone.vue";
-import ContextMenu from "@/components/ContextMenu.vue";
-import TrackList from "@/components/TrackList.vue";
-import CoverRow from "@/components/CoverRow.vue";
-import Cover from "@/components/Cover.vue";
-import Modal from "@/components/Modal.vue";
+import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
+import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
+import ContextMenu from '@/components/ContextMenu.vue';
+import TrackList from '@/components/TrackList.vue';
+import CoverRow from '@/components/CoverRow.vue';
+import Cover from '@/components/Cover.vue';
+import Modal from '@/components/Modal.vue';
 
 export default {
-  name: "Album",
+  name: 'Album',
   components: {
     Cover,
     ButtonTwoTone,
@@ -151,11 +152,16 @@ export default {
     Modal,
     ContextMenu,
   },
+  beforeRouteUpdate(to, from, next) {
+    NProgress.start();
+    this.loadData(to.params.id);
+    next();
+  },
   data() {
     return {
       album: {
         id: 0,
-        picUrl: "",
+        picUrl: '',
         artist: {
           id: 0,
         },
@@ -165,30 +171,27 @@ export default {
       show: false,
       moreAlbums: [],
       dynamicDetail: {},
-      subtitle: "",
-      title: "",
+      subtitle: '',
+      title: '',
     };
   },
-  created() {
-    this.loadData(this.$route.params.id);
-  },
   computed: {
-    ...mapState(["player", "data"]),
+    ...mapState(['player', 'data']),
     albumTime() {
       let time = 0;
-      this.tracks.map((t) => (time = time + t.dt));
+      this.tracks.map(t => (time = time + t.dt));
       return time;
     },
     filteredMoreAlbums() {
-      let moreAlbums = this.moreAlbums.filter((a) => a.id !== this.album.id);
-      let realAlbums = moreAlbums.filter((a) => a.type === "专辑");
+      let moreAlbums = this.moreAlbums.filter(a => a.id !== this.album.id);
+      let realAlbums = moreAlbums.filter(a => a.type === '专辑');
       let eps = moreAlbums.filter(
-        (a) => a.type === "EP" || (a.type === "EP/Single" && a.size > 1)
+        a => a.type === 'EP' || (a.type === 'EP/Single' && a.size > 1)
       );
       let restItems = moreAlbums.filter(
-        (a) =>
-          realAlbums.find((a1) => a1.id === a.id) === undefined &&
-          eps.find((a1) => a1.id === a.id) === undefined
+        a =>
+          realAlbums.find(a1 => a1.id === a.id) === undefined &&
+          eps.find(a1 => a1.id === a.id) === undefined
       );
       if (realAlbums.length === 0) {
         return [...realAlbums, ...eps, ...restItems].slice(0, 5);
@@ -197,45 +200,52 @@ export default {
       }
     },
   },
+  created() {
+    this.loadData(this.$route.params.id);
+  },
   methods: {
-    ...mapMutations(["appendTrackToPlayerList"]),
-    ...mapActions(["playFirstTrackOnList", "playTrackOnListByID", "showToast"]),
-    playAlbumByID(id, trackID = "first") {
+    ...mapMutations(['appendTrackToPlayerList']),
+    ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID', 'showToast']),
+    playAlbumByID(id, trackID = 'first') {
       this.$store.state.player.playAlbumByID(id, trackID);
     },
     likeAlbum(toast = false) {
       if (!isAccountLoggedIn()) {
-        this.showToast("此操作需要登录网易云账号");
+        this.showToast('此操作需要登录网易云账号');
         return;
       }
       likeAAlbum({
         id: this.album.id,
         t: this.dynamicDetail.isSub ? 0 : 1,
-      }).then((data) => {
-        if (data.code === 200) {
-          this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
-          if (toast === true)
-            this.showToast(
-              this.dynamicDetail.isSub ? "已保存到音乐库" : "已从音乐库删除"
-            );
-        }
-      });
+      })
+        .then(data => {
+          if (data.code === 200) {
+            this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
+            if (toast === true)
+              this.showToast(
+                this.dynamicDetail.isSub ? '已保存到音乐库' : '已从音乐库删除'
+              );
+          }
+        })
+        .catch(error => {
+          this.showToast(`${error.response.data.message || error}`);
+        });
     },
     formatTitle() {
       let splitTitle = splitSoundtrackAlbumTitle(this.album.name);
       let splitTitle2 = splitAlbumTitle(splitTitle.title);
       this.title = splitTitle2.title;
-      if (splitTitle.subtitle !== "" && splitTitle2.subtitle !== "") {
-        this.subtitle = splitTitle.subtitle + " · " + splitTitle2.subtitle;
+      if (splitTitle.subtitle !== '' && splitTitle2.subtitle !== '') {
+        this.subtitle = splitTitle.subtitle + ' · ' + splitTitle2.subtitle;
       } else {
         this.subtitle =
-          splitTitle.subtitle === ""
+          splitTitle.subtitle === ''
             ? splitTitle2.subtitle
             : splitTitle.subtitle;
       }
     },
     loadData(id) {
-      getAlbum(id).then((data) => {
+      getAlbum(id).then(data => {
         this.album = data.album;
         this.tracks = data.songs;
         this.formatTitle();
@@ -243,30 +253,31 @@ export default {
         this.show = true;
 
         // to get explicit mark
-        let trackIDs = this.tracks.map((t) => t.id);
-        getTrackDetail(trackIDs.join(",")).then((data) => {
+        let trackIDs = this.tracks.map(t => t.id);
+        getTrackDetail(trackIDs.join(',')).then(data => {
           this.tracks = data.songs;
         });
 
         // get more album by this artist
-        getArtistAlbum({ id: this.album.artist.id, limit: 100 }).then(
-          (data) => {
-            this.moreAlbums = data.hotAlbums;
-          }
-        );
+        getArtistAlbum({ id: this.album.artist.id, limit: 100 }).then(data => {
+          this.moreAlbums = data.hotAlbums;
+        });
       });
-      albumDynamicDetail(id).then((data) => {
+      albumDynamicDetail(id).then(data => {
         this.dynamicDetail = data;
       });
     },
     openMenu(e) {
       this.$refs.albumMenu.openMenu(e);
     },
-  },
-  beforeRouteUpdate(to, from, next) {
-    NProgress.start();
-    this.loadData(to.params.id);
-    next();
+    toggleFullDescription() {
+      this.showFullDescription = !this.showFullDescription;
+      if (this.showFullDescription) {
+        disableScrolling();
+      } else {
+        enableScrolling();
+      }
+    },
   },
 };
 </script>

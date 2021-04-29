@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import SvgIcon from "@/components/SvgIcon.vue";
+import SvgIcon from '@/components/SvgIcon.vue';
 
 export default {
-  name: "ExplicitSymbol",
+  name: 'ExplicitSymbol',
   components: {
     SvgIcon,
   },
@@ -23,8 +23,8 @@ export default {
   },
   created() {
     this.svgStyle = {
-      height: this.size + "px",
-      width: this.size + "px",
+      height: this.size + 'px',
+      width: this.size + 'px',
     };
   },
 };

@@ -12,17 +12,17 @@
       </div>
       <div class="controls">
         <div class="buttons">
-          <button-icon @click.native="moveToFMTrash" title="不喜欢"
-            ><svg-icon icon-class="thumbs-down" id="thumbs-down"
+          <button-icon title="不喜欢" @click.native="moveToFMTrash"
+            ><svg-icon id="thumbs-down" icon-class="thumbs-down"
           /></button-icon>
           <button-icon
+            :title="$t(isPlaying ? 'player.pause' : 'player.play')"
             class="play"
             @click.native="play"
-            :title="$t(isPlaying ? 'player.pause' : 'player.play')"
           >
-            <svg-icon :iconClass="isPlaying ? 'pause' : 'play'"
+            <svg-icon :icon-class="isPlaying ? 'pause' : 'play'"
           /></button-icon>
-          <button-icon @click.native="next" :title="$t('player.next')"
+          <button-icon :title="$t('player.next')" @click.native="next"
             ><svg-icon icon-class="next" /></button-icon
         ></div>
         <div class="card-name"><svg-icon icon-class="fm" />私人FM</div>
@@ -32,15 +32,15 @@
 </template>
 
 <script>
-import ButtonIcon from "@/components/ButtonIcon.vue";
-import ArtistsInLine from "@/components/ArtistsInLine.vue";
-import { mapState } from "vuex";
+import ButtonIcon from '@/components/ButtonIcon.vue';
+import ArtistsInLine from '@/components/ArtistsInLine.vue';
+import { mapState } from 'vuex';
 
 export default {
-  name: "FMCard",
+  name: 'FMCard',
   components: { ButtonIcon, ArtistsInLine },
   computed: {
-    ...mapState(["player"]),
+    ...mapState(['player']),
     track() {
       return this.player.personalFMTrack;
     },
@@ -60,7 +60,7 @@ export default {
     },
     goToAlbum() {
       if (this.track.album.id === 0) return;
-      this.$router.push({ path: "/album/" + this.track.album.id });
+      this.$router.push({ path: '/album/' + this.track.album.id });
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();

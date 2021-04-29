@@ -1,37 +1,37 @@
 <template>
   <div class="next-tracks">
-    <h1>{{ $t("next.nowPlaying") }}</h1>
+    <h1>{{ $t('next.nowPlaying') }}</h1>
     <TrackList
       :tracks="[currentTrack]"
       type="playlist"
-      dbclickTrackFunc="none"
+      dbclick-track-func="none"
     />
     <h1 v-show="playNextList.length > 0">插队播放</h1>
     <TrackList
+      v-show="playNextList.length > 0"
       :tracks="playNextTracks"
       type="playlist"
-      :highlightPlayingTrack="false"
-      dbclickTrackFunc="playTrackOnListByID"
-      itemKey="id+index"
-      v-show="playNextList.length > 0"
+      :highlight-playing-track="false"
+      dbclick-track-func="playTrackOnListByID"
+      item-key="id+index"
     />
-    <h1>{{ $t("next.nextUp") }}</h1>
+    <h1>{{ $t('next.nextUp') }}</h1>
     <TrackList
       :tracks="filteredTracks"
       type="playlist"
-      :highlightPlayingTrack="false"
-      dbclickTrackFunc="playTrackOnListByID"
+      :highlight-playing-track="false"
+      dbclick-track-func="playTrackOnListByID"
     />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import { getTrackDetail } from "@/api/track";
-import TrackList from "@/components/TrackList.vue";
+import { mapState, mapActions } from 'vuex';
+import { getTrackDetail } from '@/api/track';
+import TrackList from '@/components/TrackList.vue';
 
 export default {
-  name: "Next",
+  name: 'Next',
   components: {
     TrackList,
   },
@@ -41,7 +41,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["player"]),
+    ...mapState(['player']),
     currentTrack() {
       return this.player.currentTrack;
     },
@@ -53,14 +53,14 @@ export default {
         this.player.current + 1,
         this.player.current + 100
       );
-      return this.tracks.filter((t) => trackIDs.includes(t.id));
+      return this.tracks.filter(t => trackIDs.includes(t.id));
     },
     playNextList() {
       return this.player.playNextList;
     },
     playNextTracks() {
-      return this.playNextList.map((tid) => {
-        return this.tracks.find((t) => t.id === tid);
+      return this.playNextList.map(tid => {
+        return this.tracks.find(t => t.id === tid);
       });
     },
   },
@@ -75,8 +75,11 @@ export default {
       this.loadTracks();
     },
   },
+  activated() {
+    this.loadTracks();
+  },
   methods: {
-    ...mapActions(["playTrackOnListByID"]),
+    ...mapActions(['playTrackOnListByID']),
     loadTracks() {
       // 获取播放列表当前歌曲后100首歌
       let trackIDs = this.player.list.slice(
@@ -88,20 +91,17 @@ export default {
       trackIDs.push(...this.playNextList);
 
       // 获取已经加载了的歌曲
-      let loadedTrackIDs = this.tracks.map((t) => t.id);
+      let loadedTrackIDs = this.tracks.map(t => t.id);
 
       if (trackIDs.length > 0) {
-        getTrackDetail(trackIDs.join(",")).then((data) => {
+        getTrackDetail(trackIDs.join(',')).then(data => {
           let newTracks = data.songs.filter(
-            (t) => !loadedTrackIDs.includes(t.id)
+            t => !loadedTrackIDs.includes(t.id)
           );
           this.tracks.push(...newTracks);
         });
       }
     },
-  },
-  activated() {
-    this.loadTracks();
   },
 };
 </script>

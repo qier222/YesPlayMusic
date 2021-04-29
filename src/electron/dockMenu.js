@@ -1,24 +1,24 @@
-const { Menu } = require("electron");
+const { Menu } = require('electron');
 
 export function createDockMenu(win) {
   return Menu.buildFromTemplate([
     {
-      label: "Play",
+      label: 'Play',
       click() {
-        win.webContents.send("play");
+        win.webContents.send('play');
       },
     },
-    { type: "separator" },
+    { type: 'separator' },
     {
-      label: "Next",
+      label: 'Next',
       click() {
-        win.webContents.send("next");
+        win.webContents.send('next');
       },
     },
     {
-      label: "Previous",
+      label: 'Previous',
       click() {
-        win.webContents.send("previous");
+        win.webContents.send('previous');
       },
     },
   ]);

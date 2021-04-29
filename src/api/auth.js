@@ -1,4 +1,4 @@
-import request from "@/utils/request";
+import request from '@/utils/request';
 
 /**
  * 手机登录
@@ -14,8 +14,8 @@ import request from "@/utils/request";
  */
 export function loginWithPhone(params) {
   return request({
-    url: "/login/cellphone",
-    method: "post",
+    url: '/login/cellphone',
+    method: 'post',
     params,
   });
 }
@@ -31,8 +31,8 @@ export function loginWithPhone(params) {
  */
 export function loginWithEmail(params) {
   return request({
-    url: "/login",
-    method: "post",
+    url: '/login',
+    method: 'post',
     params,
   });
 }
@@ -44,8 +44,8 @@ export function loginWithEmail(params) {
  */
 export function refreshCookie() {
   return request({
-    url: "/login/refresh",
-    method: "post",
+    url: '/login/refresh',
+    method: 'post',
   });
 }
 
@@ -55,7 +55,7 @@ export function refreshCookie() {
  */
 export function logout() {
   return request({
-    url: "/logout",
-    method: "post",
+    url: '/logout',
+    method: 'post',
   });
 }

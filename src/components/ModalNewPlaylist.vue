@@ -8,16 +8,16 @@
   >
     <template slot="default">
       <input
+        v-model="title"
         type="text"
         placeholder="歌单标题"
         maxlength="40"
-        v-model="title"
       />
       <div class="checkbox">
         <input
-          type="checkbox"
           id="checkbox-private"
           v-model="privatePlaylist"
+          type="checkbox"
         />
         <label for="checkbox-private">设置为隐私歌单</label>
       </div>
@@ -29,57 +29,64 @@
 </template>
 
 <script>
-import Modal from "@/components/Modal.vue";
-import { mapMutations, mapState } from "vuex";
-import { createPlaylist, addOrRemoveTrackFromPlaylist } from "@/api/playlist";
+import Modal from '@/components/Modal.vue';
+import { mapMutations, mapState, mapActions } from 'vuex';
+import { createPlaylist, addOrRemoveTrackFromPlaylist } from '@/api/playlist';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 export default {
-  name: "ModalNewPlaylist",
+  name: 'ModalNewPlaylist',
   components: {
     Modal,
   },
   data() {
     return {
-      title: "",
+      title: '',
       privatePlaylist: false,
     };
   },
   computed: {
-    ...mapState(["modals"]),
+    ...mapState(['modals']),
     show: {
       get() {
         return this.modals.newPlaylistModal.show;
       },
       set(value) {
         this.updateModal({
-          modalName: "newPlaylistModal",
-          key: "show",
+          modalName: 'newPlaylistModal',
+          key: 'show',
           value,
         });
+        if (value) {
+          disableScrolling();
+        } else {
+          enableScrolling();
+        }
       },
     },
   },
   methods: {
-    ...mapMutations(["updateModal"]),
+    ...mapMutations(['updateModal', 'updateData']),
+    ...mapActions(['showToast', 'fetchLikedPlaylist']),
     close() {
       this.show = false;
-      this.title = "";
+      this.title = '';
       this.privatePlaylist = false;
       this.resetAfterCreateAddTrackID();
     },
     createPlaylist() {
       let params = { name: this.title };
       if (this.private) params.type = 10;
-      createPlaylist(params).then((data) => {
+      createPlaylist(params).then(data => {
         if (data.code === 200) {
           if (this.modals.newPlaylistModal.afterCreateAddTrackID !== 0) {
             addOrRemoveTrackFromPlaylist({
-              op: "add",
+              op: 'add',
               pid: data.id,
               tracks: this.modals.newPlaylistModal.afterCreateAddTrackID,
-            }).then((data) => {
+            }).then(data => {
               if (data.body.code === 200) {
-                this.showToast("已添加到歌单");
+                this.showToast('已添加到歌单');
               } else {
                 this.showToast(data.body.message);
               }
@@ -87,14 +94,16 @@ export default {
             });
           }
           this.close();
-          this.showToast("成功创建歌单");
+          this.showToast('成功创建歌单');
+          this.updateData({ key: 'libraryPlaylistFilter', value: 'mine' });
+          this.fetchLikedPlaylist();
         }
       });
     },
     resetAfterCreateAddTrackID() {
       this.updateModal({
-        modalName: "newPlaylistModal",
-        key: "AfterCreateAddTrackID",
+        modalName: 'newPlaylistModal',
+        key: 'AfterCreateAddTrackID',
         value: 0,
       });
     },
@@ -110,7 +119,7 @@ export default {
     input {
       margin-bottom: 12px;
     }
-    input[type="text"] {
+    input[type='text'] {
       width: calc(100% - 24px);
       flex: 1;
       background: var(--color-secondary-bg-for-transparent);
@@ -125,12 +134,12 @@ export default {
         background: var(--color-primary-bg-for-transparent);
         opacity: 1;
       }
-      [data-theme="light"] &:focus {
+      [data-theme='light'] &:focus {
         color: var(--color-primary);
       }
     }
     .checkbox {
-      input[type="checkbox" i] {
+      input[type='checkbox' i] {
         margin: 3px 3px 3px 4px;
       }
       display: flex;

@@ -1,7 +1,11 @@
+import { disableScrolling, enableScrolling } from '@/utils/ui';
+
 export default {
-  updateLikedSongs(state, trackIDs) {
-    state.liked.songs = trackIDs;
-    state.player.sendSelfToIpcMain();
+  updateLikedXXX(state, { name, data }) {
+    state.liked[name] = data;
+    if (name === 'songs') {
+      state.player.sendSelfToIpcMain();
+    }
   },
   changeLang(state, lang) {
     state.settings.lang = lang;
@@ -23,11 +27,11 @@ export default {
   },
   togglePlaylistCategory(state, name) {
     const index = state.settings.enabledPlaylistCategories.findIndex(
-      (c) => c.name === name
+      c => c === name
     );
     if (index !== -1) {
       state.settings.enabledPlaylistCategories = state.settings.enabledPlaylistCategories.filter(
-        (c) => c.name !== name
+        c => c !== name
       );
     } else {
       state.settings.enabledPlaylistCategories.push(name);
@@ -38,6 +42,12 @@ export default {
   },
   updateModal(state, { modalName, key, value }) {
     state.modals[modalName][key] = value;
+    if (key === 'show') {
+      // 100ms的延迟是为等待右键菜单blur之后再disableScrolling
+      value === true
+        ? setTimeout(() => disableScrolling(), 100)
+        : enableScrolling();
+    }
   },
   toggleLyrics(state) {
     state.showLyrics = !state.showLyrics;

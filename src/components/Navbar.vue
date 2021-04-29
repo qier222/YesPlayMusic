@@ -10,11 +10,11 @@
           ></div>
           <div
             class="button max-restore codicon"
-            @click="windowMaxRestore"
             :class="{
               'codicon-chrome-restore': !isWindowMaximized,
               'codicon-chrome-maximize': isWindowMaximized,
             }"
+            @click="windowMaxRestore"
           ></div>
           <div
             class="button close codicon codicon-chrome-close"
@@ -32,17 +32,17 @@
       </div>
       <div class="navigation-links">
         <router-link to="/" :class="{ active: this.$route.name === 'home' }">{{
-          $t("nav.home")
+          $t('nav.home')
         }}</router-link>
         <router-link
           to="/explore"
           :class="{ active: this.$route.name === 'explore' }"
-          >{{ $t("nav.explore") }}</router-link
+          >{{ $t('nav.explore') }}</router-link
         >
         <router-link
           to="/library"
           :class="{ active: this.$route.name === 'library' }"
-          >{{ $t("nav.library") }}</router-link
+          >{{ $t('nav.library') }}</router-link
         >
       </div>
       <div class="right-part">
@@ -52,8 +52,8 @@
             <div class="input">
               <input
                 ref="searchInput"
-                :placeholder="inputFocus ? '' : $t('nav.search')"
                 v-model="keywords"
+                :placeholder="inputFocus ? '' : $t('nav.search')"
                 @keydown.enter="doSearch"
                 @focus="inputFocus = true"
                 @blur="inputFocus = false"
@@ -68,43 +68,43 @@
     <ContextMenu ref="userProfileMenu">
       <div class="item" @click="toSettings">
         <svg-icon icon-class="settings" />
-        {{ $t("library.userProfileMenu.settings") }}
+        {{ $t('library.userProfileMenu.settings') }}
       </div>
-      <div class="item" @click="toLogin" v-if="!isLooseLoggedIn">
+      <div v-if="!isLooseLoggedIn" class="item" @click="toLogin">
         <svg-icon icon-class="login" />
-        {{ $t("login.login") }}
+        {{ $t('login.login') }}
       </div>
-      <div class="item" @click="logout" v-if="isLooseLoggedIn">
+      <div v-if="isLooseLoggedIn" class="item" @click="logout">
         <svg-icon icon-class="logout" />
-        {{ $t("library.userProfileMenu.logout") }}
+        {{ $t('library.userProfileMenu.logout') }}
       </div>
       <hr />
       <div class="item" @click="toGitHub">
         <svg-icon icon-class="github" />
-        {{ $t("nav.github") }}
+        {{ $t('nav.github') }}
       </div>
     </ContextMenu>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { isLooseLoggedIn, doLogout } from "@/utils/auth";
+import { mapState } from 'vuex';
+import { isLooseLoggedIn, doLogout } from '@/utils/auth';
 
 // import icons for win32 title bar
 // icons by https://github.com/microsoft/vscode-codicons
-import "vscode-codicons/dist/codicon.css";
+import 'vscode-codicons/dist/codicon.css';
 
-import ContextMenu from "@/components/ContextMenu.vue";
-import ButtonIcon from "@/components/ButtonIcon.vue";
+import ContextMenu from '@/components/ContextMenu.vue';
+import ButtonIcon from '@/components/ButtonIcon.vue';
 
 const electron =
-  process.env.IS_ELECTRON === true ? window.require("electron") : null;
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
 export default {
-  name: "Navbar",
+  name: 'Navbar',
   components: {
     ButtonIcon,
     ContextMenu,
@@ -112,44 +112,44 @@ export default {
   data() {
     return {
       inputFocus: false,
-      langs: ["zh-CN", "en", "tr"],
-      keywords: "",
+      langs: ['zh-CN', 'en', 'tr'],
+      keywords: '',
       isWindowMaximized: false,
     };
   },
   computed: {
-    ...mapState(["settings", "data"]),
+    ...mapState(['settings', 'data']),
     isLooseLoggedIn() {
       return isLooseLoggedIn();
     },
     avatarUrl() {
       return this.data?.user?.avatarUrl && this.isLooseLoggedIn
         ? `${this.data?.user?.avatarUrl}?param=512y512`
-        : "http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60";
+        : 'http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60';
     },
   },
   created() {
     if (process.env.IS_ELECTRON === true) {
-      ipcRenderer.on("isMaximized", (event, value) => {
+      ipcRenderer.on('isMaximized', (event, value) => {
         this.isWindowMaximized = value;
       });
     }
   },
   methods: {
     go(where) {
-      if (where === "back") this.$router.go(-1);
+      if (where === 'back') this.$router.go(-1);
       else this.$router.go(1);
     },
     doSearch() {
       if (!this.keywords) return;
       if (
-        this.$route.name === "search" &&
+        this.$route.name === 'search' &&
         this.$route.params.keywords === this.keywords
       ) {
         return;
       }
       this.$router.push({
-        name: "search",
+        name: 'search',
         params: { keywords: this.keywords },
       });
     },
@@ -157,31 +157,31 @@ export default {
       this.$refs.userProfileMenu.openMenu(e);
     },
     logout() {
-      if (!confirm("确定要退出登录吗？")) return;
+      if (!confirm('确定要退出登录吗？')) return;
       doLogout();
-      this.$router.push({ name: "home" });
+      this.$router.push({ name: 'home' });
     },
     toSettings() {
-      this.$router.push({ name: "settings" });
+      this.$router.push({ name: 'settings' });
     },
     toGitHub() {
-      window.open("https://github.com/qier222/YesPlayMusic");
+      window.open('https://github.com/qier222/YesPlayMusic');
     },
     toLogin() {
       if (process.env.IS_ELECTRON === true) {
-        this.$router.push({ name: "loginAccount" });
+        this.$router.push({ name: 'loginAccount' });
       } else {
-        this.$router.push({ name: "login" });
+        this.$router.push({ name: 'login' });
       }
     },
     windowMinimize() {
-      ipcRenderer.send("minimize");
+      ipcRenderer.send('minimize');
     },
     windowMaxRestore() {
-      ipcRenderer.send("maximizeOrUnmaximize");
+      ipcRenderer.send('maximizeOrUnmaximize');
     },
     windowClose() {
-      ipcRenderer.send("close");
+      ipcRenderer.send('close');
     },
   },
 };
@@ -224,7 +224,7 @@ nav {
   display: none;
 }
 
-[data-electron-os="win32"] {
+[data-electron-os='win32'] {
   nav {
     padding-top: 20px;
     -webkit-app-region: no-drag;
@@ -244,7 +244,7 @@ nav {
     .title {
       padding: 8px;
       font-size: 12px;
-      font-family: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei",
+      font-family: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei',
         sans-serif;
     }
     .controls {
@@ -278,7 +278,7 @@ nav {
       }
     }
   }
-  &[data-theme="dark"] .win32-titlebar {
+  &[data-theme='dark'] .win32-titlebar {
     --hover: #191919;
     --active: #333333;
   }
@@ -387,7 +387,7 @@ nav {
   }
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   .search-box {
     .active {
       input,
