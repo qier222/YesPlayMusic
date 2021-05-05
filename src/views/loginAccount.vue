@@ -188,7 +188,9 @@ export default {
         setCookies(data.cookie);
         this.updateData({ key: 'user', value: data.profile });
         this.updateData({ key: 'loginMode', value: 'account' });
-        this.$router.push({ path: '/library' });
+        this.$store.dispatch('fetchLikedPlaylist').then(() => {
+          this.$router.push({ path: '/library' });
+        });
       } else {
         this.processing = false;
         nativeAlert(data.msg ?? data.message ?? '账号或密码错误，请检查');

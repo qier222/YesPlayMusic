@@ -191,29 +191,34 @@ export default {
   },
   created() {
     NProgress.start();
+    this.loadData();
   },
   activated() {
-    if (this.liked.songsWithDetails.length > 0) {
-      NProgress.done();
-      this.show = true;
-      this.getRandomLyric();
-    } else {
-      this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
-        NProgress.done();
-        this.show = true;
-        this.getRandomLyric();
-      });
-    }
-    this.$store.dispatch('fetchLikedSongs');
-    this.$store.dispatch('fetchLikedPlaylist');
-    this.$store.dispatch('fetchLikedAlbums');
-    this.$store.dispatch('fetchLikedArtists');
-    this.$store.dispatch('fetchLikedMVs');
+    this.loadData();
     dailyTask();
   },
   methods: {
     ...mapActions(['showToast']),
     ...mapMutations(['updateModal', 'updateData']),
+    loadData() {
+      if (this.liked.songsWithDetails.length > 0) {
+        NProgress.done();
+        this.show = true;
+        this.$store.dispatch('fetchLikedSongsWithDetails');
+        this.getRandomLyric();
+      } else {
+        this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
+          NProgress.done();
+          this.show = true;
+          this.getRandomLyric();
+        });
+      }
+      this.$store.dispatch('fetchLikedSongs');
+      this.$store.dispatch('fetchLikedPlaylist');
+      this.$store.dispatch('fetchLikedAlbums');
+      this.$store.dispatch('fetchLikedArtists');
+      this.$store.dispatch('fetchLikedMVs');
+    },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
         this.liked.playlists[0].id,

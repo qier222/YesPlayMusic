@@ -98,14 +98,20 @@ export function dailyTask() {
     isAccountLoggedIn() &&
     (lastDate === undefined || lastDate !== dayjs().date())
   ) {
-    console.log('execute dailyTask');
-    store.commit('updateData', {
-      key: 'lastRefreshCookieDate',
-      value: dayjs().date(),
+    console.debug('[debug][common.js] execute dailyTask');
+    refreshCookie().then(() => {
+      console.debug('[debug][common.js] 刷新cookie');
+      store.commit('updateData', {
+        key: 'lastRefreshCookieDate',
+        value: dayjs().date(),
+      });
     });
-    refreshCookie();
-    dailySignin(0);
-    dailySignin(1);
+    dailySignin(0).catch(() => {
+      console.debug('[debug][common.js] 手机端重复签到');
+    });
+    dailySignin(1).catch(() => {
+      console.debug('[debug][common.js] PC端重复签到');
+    });
   }
 }
 
