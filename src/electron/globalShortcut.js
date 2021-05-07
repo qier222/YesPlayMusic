@@ -19,4 +19,7 @@ export function registerGlobalShortcut(win) {
   globalShortcut.register('Alt+CommandOrControl+L', () => {
     win.webContents.send('like');
   });
+  globalShortcut.register('Alt+CommandOrControl+M', () => {
+    win.isVisible() ? win.hide() : win.show();
+  });
 }
