@@ -100,7 +100,7 @@ class Background {
           });
         });
     });
-    this.expressApp = expressApp.listen(27232);
+    this.expressApp = expressApp.listen(27232, '127.0.0.1');
   }
 
   createWindow() {
