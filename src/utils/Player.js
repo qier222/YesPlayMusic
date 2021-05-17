@@ -620,4 +620,11 @@ export default class {
   switchShuffle() {
     this.shuffle = !this.shuffle;
   }
+
+  clearPlayNextList() {
+    this._playNextList = [];
+  }
+  removeTrackFromQueue(index) {
+    this._playNextList.splice(index, 1);
+  }
 }

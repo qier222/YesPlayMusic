@@ -114,7 +114,7 @@
       </p>
     </Modal>
     <ContextMenu ref="albumMenu">
-      <div class="item">{{ $t('contextMenu.playNext') }}</div>
+      <!-- <div class="item">{{ $t('contextMenu.addToQueue') }}</div> -->
       <div class="item" @click="likeAlbum(true)">{{
         dynamicDetail.isSub ? '从音乐库删除' : '保存到音乐库'
       }}</div>

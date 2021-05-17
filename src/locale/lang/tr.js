@@ -160,7 +160,7 @@ export default {
   },
   contextMenu: {
     play: 'Oynat',
-    playNext: 'Sonrakini Oynat',
+    addToQueue: 'Sonrakini Oynat',
     saveToMyLikedSongs: 'Beğendiğim Müziklere Kaydet',
     removeFromMyLikedMüzikler: 'Beğendiğim Müziklerden Kaldır',
   },
