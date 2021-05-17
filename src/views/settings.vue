@@ -503,7 +503,8 @@ export default {
     },
     enableUnblockNeteaseMusic: {
       get() {
-        return this.settings.enableUnblockNeteaseMusic || true;
+        const value = this.settings.enableUnblockNeteaseMusic;
+        return value !== undefined ? value : true;
       },
       set(value) {
         this.$store.commit('updateSettings', {

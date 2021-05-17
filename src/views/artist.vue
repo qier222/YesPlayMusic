@@ -21,7 +21,7 @@
           >
         </div>
         <div class="buttons">
-          <ButtonTwoTone :icon-class="play" @click.native="playPopularSongs()">
+          <ButtonTwoTone icon-class="play" @click.native="playPopularSongs()">
             {{ $t('common.play') }}
           </ButtonTwoTone>
           <ButtonTwoTone color="grey" @click.native="followArtist">

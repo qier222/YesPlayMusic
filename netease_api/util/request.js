@@ -117,7 +117,7 @@ const createRequest = (method, url, data, options) => {
       headers: headers,
       data: queryString.stringify(data),
       httpAgent: new http.Agent({ keepAlive: true }),
-      httpsAgent: new https.Agent({ keepAlive: true }),
+      httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false }),
     }
 
     if (options.crypto === 'eapi') settings.encoding = null

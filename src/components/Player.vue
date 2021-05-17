@@ -11,7 +11,7 @@
       <vue-slider
         v-model="player.progress"
         :min="0"
-        :max="player.currentTrackDuration + 1"
+        :max="player.currentTrackDuration"
         :interval="1"
         :drag-on-click="true"
         :duration="0"
@@ -19,6 +19,7 @@
         :height="2"
         :tooltip-formatter="formatTrackTime"
         :lazy="true"
+        :silent="true"
       ></vue-slider>
     </div>
     <div class="controls">

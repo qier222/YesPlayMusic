@@ -77,7 +77,7 @@
                 <vue-slider
                   v-model="player.progress"
                   :min="0"
-                  :max="player.currentTrackDuration + 1"
+                  :max="player.currentTrackDuration"
                   :interval="1"
                   :drag-on-click="true"
                   :duration="0"
@@ -85,6 +85,7 @@
                   :height="2"
                   :tooltip-formatter="formatTrackTime"
                   :lazy="true"
+                  :silent="true"
                 ></vue-slider>
               </div>
               <span>{{ formatTrackTime(player.currentTrackDuration) }}</span>
@@ -221,17 +222,6 @@ export default {
     bgImageUrl() {
       return this.player.currentTrack?.al?.picUrl + '?param=500y500';
     },
-    progress: {
-      get() {
-        return this.playerRef.progress;
-      },
-      set(value) {
-        this.playerRef.setProgress(value);
-      },
-    },
-    progressMax() {
-      return this.playerRef.progressMax;
-    },
     lyricWithTranslation() {
       let ret = [];
       // 空内容的去除
@@ -267,9 +257,6 @@ export default {
       return {
         fontSize: `${this.$store.state.settings.lyricFontSize || 28}px`,
       };
-    },
-    playerRef() {
-      return this.$parent.$refs.player ? this.$parent.$refs.player : {};
     },
     noLyric() {
       return this.lyric.length == 0;

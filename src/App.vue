@@ -46,7 +46,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['showLyrics', 'showLibraryDefault', 'player']),
+    ...mapState(['showLyrics', 'settings', 'player']),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },
@@ -69,7 +69,7 @@ export default {
     },
   },
   created() {
-    this.showLibraryDefault && this.$router.push('/library');
+    this.settings.showLibraryDefault && this.$router.push('/library');
     if (this.isElectron) ipcRenderer(this);
     window.addEventListener('keydown', this.handleKeydown);
     this.fetchData();

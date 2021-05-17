@@ -24,18 +24,6 @@ const updatePlayer = () => {
   let appVersion = localStorage.getItem('appVersion');
   if (appVersion === `"0.2.5"`) parsedData = {}; // 0.2.6版本重构了player
   const data = {
-    _repeatMode: 'off',
-    _shuffle: false,
-    _list: [],
-    _current: 0,
-    _playlistSource: {},
-    _volume: 1,
-    _volumeBeforeMuted: 1,
-    _currentTrack: {},
-    _playNextList: [],
-    _enabled: false,
-    _shuffledList: [],
-    _shuffledCurrent: 0,
     ...parsedData,
   };
   localStorage.setItem('player', JSON.stringify(data));
