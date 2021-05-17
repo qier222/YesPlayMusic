@@ -362,7 +362,7 @@
               <option value="noProxy"> 关闭代理 </option>
               <option value="HTTP"> HTTP 代理 </option>
               <option value="HTTPS"> HTTPS 代理 </option>
-              <option value="SOCKS"> SOCKS 代理 </option>
+              <!-- <option value="SOCKS"> SOCKS 代理 </option> -->
             </select>
           </div>
         </div>

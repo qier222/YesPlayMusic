@@ -247,6 +247,14 @@ class Background {
       // init ipcMain
       initIpcMain(this.window, this.store);
 
+      // set proxy
+      const proxyRules = this.store.get('proxy');
+      if (proxyRules) {
+        this.window.webContents.session.setProxy({ proxyRules }, result => {
+          console.log('finished setProxy', result);
+        });
+      }
+
       // check for updates
       this.checkForUpdates();
 

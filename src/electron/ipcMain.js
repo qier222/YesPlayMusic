@@ -105,8 +105,8 @@ export function initIpcMain(win, store) {
   });
 
   ipcMain.on('setProxy', (event, config) => {
-    console.log(config);
     const proxyRules = `${config.protocol}://${config.server}:${config.port}`;
+    store.set('proxy', proxyRules);
     win.webContents.session.setProxy(
       {
         proxyRules,
@@ -120,5 +120,6 @@ export function initIpcMain(win, store) {
   ipcMain.on('removeProxy', (event, arg) => {
     console.log('removeProxy');
     win.webContents.session.setProxy({});
+    store.set('proxy', '');
   });
 }

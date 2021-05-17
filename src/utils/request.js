@@ -24,6 +24,12 @@ service.interceptors.request.use(function (config) {
   if (baseURL[0] !== '/' && !process.env.IS_ELECTRON) {
     config.params.cookie = `MUSIC_U=${Cookies.get('MUSIC_U')};`;
   }
+
+  const proxy = JSON.parse(localStorage.getItem('settings')).proxyConfig;
+  if (['HTTP', 'HTTPS'].includes(proxy.protocol)) {
+    config.params.proxy = `${proxy.protocol}://${proxy.server}:${proxy.port}`;
+  }
+
   return config;
 });
 
