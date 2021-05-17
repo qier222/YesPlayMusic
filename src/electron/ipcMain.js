@@ -1,5 +1,5 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-import match from '@njzy/unblockneteasemusic';
+import match from '@revincx/unblockneteasemusic';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 
 const client = require('discord-rich-presence')('818936529484906596');
