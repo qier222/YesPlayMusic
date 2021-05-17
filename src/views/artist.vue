@@ -57,7 +57,36 @@
             </div>
           </div>
         </div>
-        <div></div>
+        <div class="container latest-mv">
+          <div
+            class="cover"
+            @mouseover="mvHover = true"
+            @mouseleave="mvHover = false"
+            @click="goToMv(latestMV.id)"
+          >
+            <img :src="latestMV.coverUrl" />
+            <transition name="fade">
+              <div
+                v-show="mvHover"
+                class="shadow"
+                :style="{
+                  background: 'url(' + latestMV.coverUrl + ')',
+                }"
+              ></div>
+            </transition>
+          </div>
+          <div class="info">
+            <div class="name">
+              <router-link :to="'/mv/' + latestMV.id">{{
+                latestMV.name
+              }}</router-link>
+            </div>
+            <div class="date">
+              {{ latestMV.publishTime | formatDate }}
+            </div>
+            <div class="type"> 最新MV </div>
+          </div>
+        </div>
       </div>
     </div>
     <div id="popularTracks" class="popular-tracks">
@@ -162,6 +191,7 @@ export default {
       mvs: [],
       hasMoreMV: false,
       similarArtists: [],
+      mvHover: false,
     };
   },
   computed: {
@@ -173,6 +203,15 @@ export default {
       return this.albumsData.filter(a =>
         ['EP/Single', 'EP', 'Single'].includes(a.type)
       );
+    },
+    latestMV() {
+      const mv = this.mvs[0];
+      return {
+        id: mv.id || mv.vid,
+        name: mv.name || mv.title,
+        coverUrl: `${mv.imgurl16v9 || mv.cover || mv.coverUrl}?param=464y260`,
+        publishTime: mv.publishTime,
+      };
     },
   },
   created() {
@@ -215,6 +254,9 @@ export default {
         name: 'album',
         params: { id },
       });
+    },
+    goToMv(id) {
+      this.$router.push({ path: '/mv/' + id });
     },
     playPopularSongs(trackID = 'first') {
       let trackIDs = this.popularTracks.map(t => t.id);
@@ -314,6 +356,7 @@ export default {
   }
   .container {
     display: flex;
+    flex: 1;
     align-items: center;
     border-radius: 12px;
   }
@@ -362,6 +405,42 @@ export default {
 .similar-artists {
   .section-title {
     margin-bottom: 24px;
+  }
+}
+
+.latest-mv {
+  .cover {
+    position: relative;
+    transition: transform 0.3s;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  img {
+    border-radius: 0.75em;
+    height: 128px;
+    object-fit: cover;
+    user-select: none;
+  }
+
+  .shadow {
+    position: absolute;
+    top: 6px;
+    height: 100%;
+    width: 100%;
+    filter: blur(16px) opacity(0.4);
+    transform: scale(0.9, 0.9);
+    z-index: -1;
+    background-size: cover;
+    border-radius: 0.75em;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
   }
 }
 </style>
