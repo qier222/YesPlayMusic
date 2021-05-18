@@ -20,6 +20,9 @@
             >{{ artist.mvSize }} {{ $t('artist.videos') }}</a
           >
         </div>
+        <div class="description" @click="toggleFullDescription">
+          {{ artist.briefDesc }}
+        </div>
         <div class="buttons">
           <ButtonTwoTone icon-class="play" @click.native="playPopularSongs()">
             {{ $t('common.play') }}
@@ -140,6 +143,18 @@
         :items="similarArtists.slice(0, 12)"
       />
     </div>
+
+    <Modal
+      :show="showFullDescription"
+      :close="toggleFullDescription"
+      :show-footer="false"
+      :click-outside-hide="true"
+      title="艺术家介绍"
+    >
+      <p class="description-fulltext">
+        {{ artist.briefDesc }}
+      </p>
+    </Modal>
   </div>
 </template>
 
@@ -153,6 +168,7 @@ import {
   similarArtists,
 } from '@/api/artist';
 import { isAccountLoggedIn } from '@/utils/auth';
+import { disableScrolling, enableScrolling } from '@/utils/ui';
 import NProgress from 'nprogress';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -160,10 +176,11 @@ import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
 import Cover from '@/components/Cover.vue';
 import MvRow from '@/components/MvRow.vue';
+import Modal from '@/components/Modal.vue';
 
 export default {
   name: 'Artist',
-  components: { Cover, ButtonTwoTone, TrackList, CoverRow, MvRow },
+  components: { Cover, ButtonTwoTone, TrackList, CoverRow, MvRow, Modal },
   beforeRouteUpdate(to, from, next) {
     NProgress.start();
     this.artist.img1v1Url =
@@ -188,6 +205,7 @@ export default {
         size: '',
       },
       showMorePopTracks: false,
+      showFullDescription: false,
       mvs: [],
       hasMoreMV: false,
       similarArtists: [],
@@ -285,6 +303,14 @@ export default {
         block,
       });
     },
+    toggleFullDescription() {
+      this.showFullDescription = !this.showFullDescription;
+      if (this.showFullDescription) {
+        disableScrolling();
+      } else {
+        enableScrolling();
+      }
+    },
   },
 };
 </script>
@@ -327,6 +353,23 @@ export default {
       .svg-icon {
         margin: 0;
       }
+    }
+  }
+
+  .description {
+    user-select: none;
+    font-size: 14px;
+    opacity: 0.68;
+    margin-top: 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    cursor: pointer;
+    white-space: pre-line;
+    &:hover {
+      transition: opacity 0.3s;
+      opacity: 0.88;
     }
   }
 }
@@ -442,5 +485,14 @@ export default {
   .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
   }
+}
+
+.description-fulltext {
+  font-size: 16px;
+  margin-top: 24px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
 }
 </style>
