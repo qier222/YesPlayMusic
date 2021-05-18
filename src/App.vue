@@ -69,7 +69,6 @@ export default {
     },
   },
   created() {
-    this.settings.showLibraryDefault && this.$router.push('/library');
     if (this.isElectron) ipcRenderer(this);
     window.addEventListener('keydown', this.handleKeydown);
     this.fetchData();

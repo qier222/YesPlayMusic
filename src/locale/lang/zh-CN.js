@@ -45,7 +45,7 @@ export default {
     withAlbums: '张专辑',
     artist: '艺人',
     videos: '个MV',
-    following: '已关注',
+    following: '正在关注',
     follow: '关注',
   },
   album: {

@@ -238,6 +238,7 @@ export default {
       this.$router.push({ path: '/library/liked-songs' });
     },
     getRandomLyric() {
+      if (this.liked.songs.length === 0) return;
       getLyric(
         this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
       ).then(data => {
