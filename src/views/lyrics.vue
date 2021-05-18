@@ -431,6 +431,8 @@ export default {
   align-items: center;
   transition: all 0.5s;
 
+  z-index: 0;
+
   .controls {
     max-width: 54vh;
     margin-top: 24px;
@@ -573,6 +575,7 @@ export default {
   font-weight: 600;
   color: var(--color-text);
   margin-right: 24px;
+  z-index: 0;
 
   .lyrics-container {
     height: 100%;
@@ -589,7 +592,7 @@ export default {
       border-radius: 12px;
 
       &:hover {
-        background: var(--color-secondary-bg);
+        background: var(--color-secondary-bg-for-transparent);
       }
 
       span {
