@@ -21,9 +21,16 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
 import Store from 'electron-store';
+import path from 'path';
+import fs from 'fs';
 
 class Background {
   constructor() {
+    let appDataPath = process.cwd() + '\\data';
+    if (fs.existsSync(appDataPath)) {
+      app.setPath('userData', appDataPath);
+    }
+    
     this.window = null;
     this.tray = null;
     this.store = new Store({
