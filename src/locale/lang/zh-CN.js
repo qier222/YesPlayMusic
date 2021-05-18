@@ -162,7 +162,7 @@ export default {
   },
   contextMenu: {
     play: '播放',
-    playNext: '下一首播放',
+    addToQueue: '添加到队列',
     saveToMyLikedSongs: '添加到我喜欢的音乐',
     removeFromMyLikedSongs: '从喜欢的音乐中删除',
   },

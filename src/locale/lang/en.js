@@ -161,7 +161,7 @@ export default {
   },
   contextMenu: {
     play: 'Play',
-    playNext: 'Play Next',
+    addToQueue: 'Add to queue',
     saveToMyLikedSongs: 'Save to my Liked Songs',
     removeFromMyLikedSongs: 'Remove from my Liked Songs',
   },

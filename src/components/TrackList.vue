@@ -10,7 +10,15 @@
       </div>
       <hr />
       <div class="item" @click="play">{{ $t('contextMenu.play') }}</div>
-      <div class="item" @click="playNext">{{ $t('contextMenu.playNext') }}</div>
+      <div class="item" @click="addToQueue">{{
+        $t('contextMenu.addToQueue')
+      }}</div>
+      <div
+        v-if="extraContextMenuItem.includes('removeTrackFromQueue')"
+        class="item"
+        @click="removeTrackFromQueue"
+        >从队列删除</div
+      >
       <hr />
       <div v-show="!isRightClickedTrackLiked" class="item" @click="like">
         {{ $t('contextMenu.saveToMyLikedSongs') }}
@@ -33,7 +41,7 @@
         :track="track"
         :highlight-playing-track="highlightPlayingTrack"
         @dblclick.native="playThisList(track.id)"
-        @click.right.native="openMenu($event, track)"
+        @click.right.native="openMenu($event, track, index)"
       />
     </div>
   </div>
@@ -74,7 +82,10 @@ export default {
     extraContextMenuItem: {
       type: Array,
       default: () => {
-        return []; // 'removeTrackFromPlaylist'
+        return [
+          // 'removeTrackFromPlaylist'
+          // 'removeTrackFromQueue'
+        ];
       },
     },
     columnNumber: {
@@ -98,11 +109,12 @@ export default {
         ar: [{ name: '' }],
         al: { picUrl: '' },
       },
+      rightClickedTrackIndex: -1,
       listStyles: {},
     };
   },
   computed: {
-    ...mapState(['liked']),
+    ...mapState(['liked', 'player']),
     isRightClickedTrackLiked() {
       return this.liked.songs.includes(this.rightClickedTrack?.id);
     },
@@ -119,8 +131,9 @@ export default {
   methods: {
     ...mapMutations(['updateModal']),
     ...mapActions(['nextTrack', 'showToast', 'likeATrack']),
-    openMenu(e, track) {
+    openMenu(e, track, index = -1) {
       this.rightClickedTrack = track;
+      this.rightClickedTrackIndex = index;
       this.$refs.menu.openMenu(e);
     },
     closeMenu() {
@@ -130,6 +143,7 @@ export default {
         ar: [{ name: '' }],
         al: { picUrl: '' },
       };
+      this.rightClickedTrackIndex = -1;
     },
     playThisList(trackID) {
       if (this.dbclickTrackFunc === 'default') {
@@ -137,50 +151,32 @@ export default {
       } else if (this.dbclickTrackFunc === 'none') {
         // do nothing
       } else if (this.dbclickTrackFunc === 'playTrackOnListByID') {
-        this.$store.state.player.playTrackOnListByID(trackID);
+        this.player.playTrackOnListByID(trackID);
       } else if (this.dbclickTrackFunc === 'playPlaylistByID') {
-        this.$store.state.player.playPlaylistByID(this.id, trackID);
+        this.player.playPlaylistByID(this.id, trackID);
       } else if (this.dbclickTrackFunc === 'playAList') {
         let trackIDs = this.tracks.map(t => t.id);
-        this.$store.state.player.replacePlaylist(
-          trackIDs,
-          this.id,
-          'artist',
-          trackID
-        );
+        this.player.replacePlaylist(trackIDs, this.id, 'artist', trackID);
       } else if (this.dbclickTrackFunc === 'dailyTracks') {
         let trackIDs = this.tracks.map(t => t.id);
-        this.$store.state.player.replacePlaylist(
-          trackIDs,
-          '/daily/songs',
-          'url',
-          trackID
-        );
+        this.player.replacePlaylist(trackIDs, '/daily/songs', 'url', trackID);
       }
     },
     playThisListDefault(trackID) {
       if (this.type === 'playlist') {
-        this.$store.state.player.playPlaylistByID(this.id, trackID);
+        this.player.playPlaylistByID(this.id, trackID);
       } else if (this.type === 'album') {
-        this.$store.state.player.playAlbumByID(this.id, trackID);
+        this.player.playAlbumByID(this.id, trackID);
       } else if (this.type === 'tracklist') {
         let trackIDs = this.tracks.map(t => t.id);
-        this.$store.state.player.replacePlaylist(
-          trackIDs,
-          this.id,
-          'artist',
-          trackID
-        );
+        this.player.replacePlaylist(trackIDs, this.id, 'artist', trackID);
       }
     },
     play() {
-      this.$store.state.player.addTrackToPlayNext(
-        this.rightClickedTrack.id,
-        true
-      );
+      this.player.addTrackToPlayNext(this.rightClickedTrack.id, true);
     },
-    playNext() {
-      this.$store.state.player.addTrackToPlayNext(this.rightClickedTrack.id);
+    addToQueue() {
+      this.player.addTrackToPlayNext(this.rightClickedTrack.id);
     },
     like() {
       this.likeATrack(this.rightClickedTrack.id);
@@ -219,6 +215,11 @@ export default {
           this.$parent.removeTrack(trackID);
         });
       }
+    },
+    removeTrackFromQueue() {
+      this.$store.state.player.removeTrackFromQueue(
+        this.rightClickedTrackIndex
+      );
     },
   },
 };
