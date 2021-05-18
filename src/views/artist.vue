@@ -60,7 +60,7 @@
             </div>
           </div>
         </div>
-        <div class="container latest-mv">
+        <div v-show="latestMV.id" class="container latest-mv">
           <div
             class="cover"
             @mouseover="mvHover = true"
@@ -90,6 +90,7 @@
             <div class="type"> 最新MV </div>
           </div>
         </div>
+        <div v-show="!latestMV.id"></div>
       </div>
     </div>
     <div id="popularTracks" class="popular-tracks">
@@ -223,7 +224,7 @@ export default {
       );
     },
     latestMV() {
-      const mv = this.mvs[0];
+      const mv = this.mvs[0] || {};
       return {
         id: mv.id || mv.vid,
         name: mv.name || mv.title,
