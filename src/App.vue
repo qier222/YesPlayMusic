@@ -174,7 +174,7 @@ export default {
 input {
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
-    WenQuanYi Micro Hei, sans-serif;
+    WenQuanYi Micro Hei, sans-serif, microsoft uighur;
 }
 body {
   background-color: var(--color-body-bg);
