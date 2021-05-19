@@ -283,7 +283,7 @@
         </div>
       </div>
 
-      <div class="item">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
         </div>

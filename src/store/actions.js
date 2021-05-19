@@ -71,6 +71,11 @@ export default {
   fetchLikedSongsWithDetails: ({ state, commit }) => {
     return getPlaylistDetail(state.data.likedSongPlaylistID, true).then(
       result => {
+        if (result.playlist?.trackIds?.length === 0) {
+          return new Promise(resolve => {
+            resolve();
+          });
+        }
         return getTrackDetail(
           result.playlist.trackIds
             .slice(0, 12)

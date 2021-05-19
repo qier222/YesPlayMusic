@@ -431,7 +431,7 @@ export default {
   align-items: center;
   transition: all 0.5s;
 
-  z-index: 0;
+  z-index: 1;
 
   .controls {
     max-width: 54vh;
