@@ -100,6 +100,7 @@ export default {
     pause: 'Durdur',
     mute: 'Sesi kapat',
     nextUp: 'Sıradaki',
+    osdLyrics: 'masaüstü şarkı sözleri',
   },
   modal: {
     close: 'Kapat',

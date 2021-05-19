@@ -4,7 +4,7 @@ import { registerGlobalShortcut } from '@/electron/globalShortcut';
 
 const client = require('discord-rich-presence')('818936529484906596');
 
-export function initIpcMain(win, store) {
+export function initIpcMain(win, lrc, store) {
   ipcMain.on('unblock-music', (event, track) => {
     // 兼容 unblockneteasemusic 所使用的 api 字段
     track.alias = track.alia || [];
@@ -121,5 +121,15 @@ export function initIpcMain(win, store) {
     console.log('removeProxy');
     win.webContents.session.setProxy({});
     store.set('proxy', '');
+  });
+
+  ipcMain.on('resizeOSDLyrics', (event, arg) => {
+    console.log('resizeOSDLyrics');
+    lrc.resizeOSDLyrics(arg);
+  });
+
+  ipcMain.on('toggleOSDLyrics', () => {
+    console.log('toggleOSDLyrics');
+    lrc.toggleOSDLyrics();
   });
 }
