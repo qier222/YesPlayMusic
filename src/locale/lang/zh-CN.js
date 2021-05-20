@@ -45,7 +45,7 @@ export default {
     withAlbums: '张专辑',
     artist: '艺人',
     videos: '个MV',
-    following: '已关注',
+    following: '正在关注',
     follow: '关注',
   },
   album: {
@@ -101,6 +101,7 @@ export default {
     pause: '暂停',
     mute: '静音',
     nextUp: '播放列表',
+    osdLyrics: '桌面歌词',
   },
   modal: {
     close: '关闭',

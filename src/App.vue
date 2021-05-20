@@ -69,7 +69,6 @@ export default {
     },
   },
   created() {
-    this.settings.showLibraryDefault && this.$router.push('/library');
     if (this.isElectron) ipcRenderer(this);
     window.addEventListener('keydown', this.handleKeydown);
     this.fetchData();
@@ -99,7 +98,48 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* url('~@/assets/fonts/Barlow-Medium.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-SemiBold.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-Bold.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-ExtraBold.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-Black.woff2') format('woff2'); */
+
+@font-face {
+  font-family: 'Barlow';
+  font-weight: normal;
+  src: url('~@/assets/fonts/Barlow-Regular.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-weight: medium;
+  src: url('~@/assets/fonts/Barlow-Medium.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-weight: 600;
+  src: url('~@/assets/fonts/Barlow-SemiBold.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-weight: bold;
+  src: url('~@/assets/fonts/Barlow-Bold.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-weight: 800;
+  src: url('~@/assets/fonts/Barlow-ExtraBold.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-ExtraBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Barlow';
+  font-weight: 900;
+  src: url('~@/assets/fonts/Barlow-Black.woff2') format('woff2'),
+    url('~@/assets/fonts/Barlow-Black.ttf') format('truetype');
+}
 
 :root {
   --color-body-bg: #ffffff;
@@ -134,7 +174,7 @@ export default {
 input {
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC,
-    WenQuanYi Micro Hei, sans-serif;
+    WenQuanYi Micro Hei, sans-serif, microsoft uighur;
 }
 body {
   background-color: var(--color-body-bg);

@@ -323,8 +323,8 @@ export default {
   margin-bottom: 26px;
   color: var(--color-text);
   img {
-    height: 192px;
-    width: 192px;
+    height: 248px;
+    width: 248px;
     border-radius: 50%;
     margin-right: 56px;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 16px -8px;
@@ -364,7 +364,7 @@ export default {
     margin-top: 24px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     overflow: hidden;
     cursor: pointer;
     white-space: pre-line;
