@@ -176,7 +176,7 @@ class Background {
       this.osdlyrics.loadURL(
         process.env.WEBPACK_DEV_SERVER_URL + '/osdlyrics.html'
       );
-      // if (!process.env.IS_TEST) this.osdlyrics.webContents.openDevTools();
+      if (!process.env.IS_TEST) this.osdlyrics.webContents.openDevTools();
     } else {
       this.osdlyrics.loadURL('http://localhost:27232/osdlyrics.html');
     }
@@ -214,7 +214,11 @@ class Background {
   }
 
   resizeOSDLyrics(height) {
-    this.osdlyrics.setSize(width, height);
+    const width = this.store.get('osdlyrics.width') || 840;
+    const _height = this.store.get('osdlyrics.height') || 110;
+    if (height !== _height) {
+      this.osdlyrics.setSize(width, height);
+    }
   }
 
   checkForUpdates() {
@@ -348,7 +352,7 @@ class Background {
       initIpcMain(
         this.window,
         {
-          resizeOSDLyrics: () => this.resizeOSDLyrics(),
+          resizeOSDLyrics: (height) => this.resizeOSDLyrics(height),
           toggleOSDLyrics: () => this.toggleOSDLyrics(),
         },
         this.store

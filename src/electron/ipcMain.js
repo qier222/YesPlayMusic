@@ -124,12 +124,10 @@ export function initIpcMain(win, lrc, store) {
   });
 
   ipcMain.on('resizeOSDLyrics', (event, arg) => {
-    console.log('resizeOSDLyrics');
     lrc.resizeOSDLyrics(arg);
   });
 
   ipcMain.on('toggleOSDLyrics', () => {
-    console.log('toggleOSDLyrics');
     lrc.toggleOSDLyrics();
   });
 }

@@ -222,7 +222,9 @@ export default {
     ...mapMutations(['toggleLyrics']),
     ...mapActions(['showToast', 'likeATrack']),
     toggleOSDLyrics() {
-      ipcRenderer.send('toggleOSDLyrics');
+      if (ipcRenderer) {
+        ipcRenderer.send('toggleOSDLyrics');
+      }
     },
     goToNextTracksPage() {
       if (this.player.isPersonalFM) return;
