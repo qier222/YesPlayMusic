@@ -184,7 +184,7 @@
     >
 
     <ContextMenu ref="playlistMenu">
-      <div class="item">{{ $t('contextMenu.playNext') }}</div>
+      <!-- <div class="item">{{ $t('contextMenu.addToQueue') }}</div> -->
       <div class="item" @click="likePlaylist(true)">{{
         playlist.subscribed ? '从音乐库删除' : '保存到音乐库'
       }}</div>

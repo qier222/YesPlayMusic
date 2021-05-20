@@ -25,6 +25,7 @@ import Store from 'electron-store';
 class Background {
   constructor() {
     this.window = null;
+    this.osdlyrics = null;
     this.tray = null;
     this.store = new Store({
       windowWidth: {
@@ -107,6 +108,7 @@ class Background {
     console.log('creating app window');
 
     const appearance = this.store.get('settings.appearance');
+    const showLibraryDefault = this.store.get('settings.showLibraryDefault');
 
     this.window = new BrowserWindow({
       width: this.store.get('window.width') || 1440,
@@ -135,12 +137,85 @@ class Background {
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
       // Load the url of the dev server if in development mode
-      this.window.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+      this.window.loadURL(
+        showLibraryDefault
+          ? `${process.env.WEBPACK_DEV_SERVER_URL}/#/library`
+          : process.env.WEBPACK_DEV_SERVER_URL
+      );
       if (!process.env.IS_TEST) this.window.webContents.openDevTools();
     } else {
       createProtocol('app');
-      this.window.loadURL('http://localhost:27232');
+      this.window.loadURL(
+        showLibraryDefault
+          ? 'http://localhost:27232/#/library'
+          : 'http://localhost:27232'
+      );
     }
+  }
+
+  createOSDWindow() {
+    this.osdlyrics = new BrowserWindow({
+      x: this.store.get('osdlyrics.x-pos') || 0,
+      y: this.store.get('osdlyrics.y-pos') || 0,
+      width: this.store.get('osdlyrics.width') || 840,
+      height: this.store.get('osdlyrics.height') || 110,
+      title: 'OSD Lyrics',
+      transparent: true,
+      frame: false,
+      webPreferences: {
+        webSecurity: false,
+        nodeIntegration: true,
+        enableRemoteModule: true,
+        contextIsolation: false,
+      },
+    });
+    this.osdlyrics.setAlwaysOnTop(true, 'screen');
+
+    if (process.env.WEBPACK_DEV_SERVER_URL) {
+      // Load the url of the dev server if in development mode
+      this.osdlyrics.loadURL(
+        process.env.WEBPACK_DEV_SERVER_URL + '/osdlyrics.html'
+      );
+      if (!process.env.IS_TEST) this.osdlyrics.webContents.openDevTools();
+    } else {
+      this.osdlyrics.loadURL('http://localhost:27232/osdlyrics.html');
+    }
+  }
+
+  initOSDLyrics() {
+    const osdState = this.store.get('osdlyrics.show') || false;
+    if (osdState) {
+      this.showOSDLyrics();
+    }
+  }
+
+  toggleOSDLyrics() {
+    const osdState = this.store.get('osdlyrics.show') || false;
+    if (osdState) {
+      this.hideOSDLyrics();
+    } else {
+      this.showOSDLyrics();
+    }
+  }
+
+  showOSDLyrics() {
+    this.store.set('osdlyrics.show', true);
+    if (!this.osdlyrics) {
+      this.createOSDWindow();
+      this.handleOSDEvents();
+    }
+  }
+
+  hideOSDLyrics() {
+    this.store.set('osdlyrics.show', false);
+    if (this.osdlyrics) {
+      this.osdlyrics.close();
+    }
+  }
+
+  resizeOSDLyrics(height) {
+    const width = this.store.get('osdlyrics.width') || 840;
+    this.osdlyrics.setSize(width, height);
   }
 
   checkForUpdates() {
@@ -167,6 +242,30 @@ class Background {
 
     autoUpdater.on('update-available', info => {
       showNewVersionMessage(info);
+    });
+  }
+
+  handleOSDEvents() {
+    this.osdlyrics.once('ready-to-show', () => {
+      console.log('OSD ready-to-show event');
+      this.osdlyrics.show();
+    });
+
+    this.osdlyrics.on('closed', e => {
+      console.log('OSD close event');
+      this.osdlyrics = null;
+    });
+
+    this.osdlyrics.on('resized', () => {
+      let { height, width } = this.osdlyrics.getBounds();
+      this.store.set('osdlyrics.width', width);
+      this.store.set('osdlyrics.height', height);
+    });
+
+    this.osdlyrics.on('moved', () => {
+      var pos = this.osdlyrics.getPosition();
+      this.store.set('osdlyrics.x-pos', pos[0]);
+      this.store.set('osdlyrics.y-pos', pos[1]);
     });
   }
 
@@ -236,7 +335,7 @@ class Background {
       console.log('app ready event');
 
       // for development
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV === 'development') {
         this.initDevtools();
       }
 
@@ -244,8 +343,17 @@ class Background {
       this.createWindow();
       this.handleWindowEvents();
 
+      this.initOSDLyrics();
+
       // init ipcMain
-      initIpcMain(this.window, this.store);
+      initIpcMain(
+        this.window,
+        {
+          resizeOSDLyrics: height => this.resizeOSDLyrics(height),
+          toggleOSDLyrics: () => this.toggleOSDLyrics(),
+        },
+        this.store
+      );
 
       // set proxy
       const proxyRules = this.store.get('proxy');
@@ -262,7 +370,10 @@ class Background {
       createMenu(this.window);
 
       // create tray
-      if (['win32', 'linux'].includes(process.platform)) {
+      if (
+        ['win32', 'linux'].includes(process.platform) ||
+        process.env.NODE_ENV === 'development'
+      ) {
         this.tray = createTray(this.window);
       }
 

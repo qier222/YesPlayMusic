@@ -25,7 +25,7 @@
     <div class="index-row">
       <div class="title"> For You </div>
       <div class="for-you-row">
-        <DailyTracksCard />
+        <DailyTracksCard ref="DailyTracksCard" />
         <FMCard />
       </div>
     </div>
@@ -137,6 +137,7 @@ export default {
         );
       });
       countDBSize();
+      this.$refs.DailyTracksCard.loadDailyTracks();
     },
   },
 };

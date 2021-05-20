@@ -45,7 +45,7 @@ export default {
     withAlbums: '张专辑',
     artist: '艺人',
     videos: '个MV',
-    following: '已关注',
+    following: '正在关注',
     follow: '关注',
   },
   album: {
@@ -101,6 +101,7 @@ export default {
     pause: '暂停',
     mute: '静音',
     nextUp: '播放列表',
+    osdLyrics: '桌面歌词',
   },
   modal: {
     close: '关闭',
@@ -162,7 +163,7 @@ export default {
   },
   contextMenu: {
     play: '播放',
-    playNext: '下一首播放',
+    addToQueue: '添加到队列',
     saveToMyLikedSongs: '添加到我喜欢的音乐',
     removeFromMyLikedSongs: '从喜欢的音乐中删除',
   },

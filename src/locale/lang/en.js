@@ -100,6 +100,7 @@ export default {
     pause: 'Pause',
     mute: 'Mute',
     nextUp: 'Next Up',
+    osdLyrics: 'OSD Lyrics',
   },
   modal: {
     close: 'Close',
@@ -161,7 +162,7 @@ export default {
   },
   contextMenu: {
     play: 'Play',
-    playNext: 'Play Next',
+    addToQueue: 'Add to queue',
     saveToMyLikedSongs: 'Save to my Liked Songs',
     removeFromMyLikedSongs: 'Remove from my Liked Songs',
   },

@@ -6,7 +6,10 @@
       type="playlist"
       dbclick-track-func="none"
     />
-    <h1 v-show="playNextList.length > 0">插队播放</h1>
+    <h1 v-show="playNextList.length > 0"
+      >插队播放
+      <button @click="player.clearPlayNextList()">清除队列</button>
+    </h1>
     <TrackList
       v-show="playNextList.length > 0"
       :tracks="playNextTracks"
@@ -14,6 +17,7 @@
       :highlight-playing-track="false"
       dbclick-track-func="playTrackOnListByID"
       item-key="id+index"
+      :extra-context-menu-item="['removeTrackFromQueue']"
     />
     <h1>{{ $t('next.nextUp') }}</h1>
     <TrackList
@@ -112,5 +116,26 @@ h1 {
   margin-bottom: 18px;
   cursor: default;
   color: var(--color-text);
+  display: flex;
+  justify-content: space-between;
+  button {
+    color: var(--color-text);
+    border-radius: 8px;
+    padding: 0 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+    opacity: 0.68;
+    font-weight: 500;
+    &:hover {
+      opacity: 1;
+      background: var(--color-secondary-bg);
+    }
+    &:active {
+      opacity: 1;
+      transform: scale(0.92);
+    }
+  }
 }
 </style>
