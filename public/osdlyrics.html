@@ -10,7 +10,8 @@
             text-align: center;
             font-size: 28px;
             user-select: none;
-            margin: 1px;
+            margin: 2px;
+            padding: 0px;
             -webkit-user-select: none;
             -webkit-app-region: drag;
         }
@@ -69,7 +70,7 @@
             if (!ipcRenderer) {
                 return;
             }
-            offsetHeight = document.getElementById('line1').offsetHeight + 2;
+            offsetHeight = document.getElementById('line1').offsetHeight + 4;
             if (offsetHeight == window.innerHeight) {
                 return;
             }
@@ -222,6 +223,7 @@
                     });
         }
         function init_lyrics() {
+            update_window_size();
             update_lyrics();
         }
     </script>
