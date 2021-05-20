@@ -352,7 +352,7 @@ class Background {
       initIpcMain(
         this.window,
         {
-          resizeOSDLyrics: (height) => this.resizeOSDLyrics(height),
+          resizeOSDLyrics: height => this.resizeOSDLyrics(height),
           toggleOSDLyrics: () => this.toggleOSDLyrics(),
         },
         this.store
