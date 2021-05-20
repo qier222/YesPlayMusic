@@ -215,10 +215,7 @@ class Background {
 
   resizeOSDLyrics(height) {
     const width = this.store.get('osdlyrics.width') || 840;
-    const _height = this.store.get('osdlyrics.height') || 110;
-    if (height !== _height) {
-      this.osdlyrics.setSize(width, height);
-    }
+    this.osdlyrics.setSize(width, height);
   }
 
   checkForUpdates() {

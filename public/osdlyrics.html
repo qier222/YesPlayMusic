@@ -10,7 +10,7 @@
             text-align: center;
             font-size: 28px;
             user-select: none;
-            margin: 0px;
+            margin: 1px;
             -webkit-user-select: none;
             -webkit-app-region: drag;
         }
@@ -35,7 +35,6 @@
         current_line = null;
         current_index = 0;
         next_time = 0;
-        old_height = 0;
         function lyric_parser(lrc) {
             lines = lrc
                 .split('\n')
@@ -70,11 +69,11 @@
             if (!ipcRenderer) {
                 return;
             }
-            offsetHeight = document.getElementById('line1').offsetHeight;
-            if (offsetHeight == old_height) {
+            offsetHeight = document.getElementById('line1').offsetHeight + 2;
+            if (offsetHeight == window.innerHeight) {
                 return;
             }
-            old_height = offsetHeight;
+            console.log(offsetHeight + " / " + window.innerHeight);
             ipcRenderer.send('resizeOSDLyrics', offsetHeight);
         }
         function search_line(progress) {
