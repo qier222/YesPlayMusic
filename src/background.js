@@ -367,7 +367,13 @@ class Background {
       this.checkForUpdates();
 
       // create menu
-      createMenu(this.window, { "openDevTools": () => { if (this.osdlyrics) { this.osdlyrics.webContents.openDevTools(); } } });
+      createMenu(this.window, {
+        openDevTools: () => {
+          if (this.osdlyrics) {
+            this.osdlyrics.webContents.openDevTools();
+          }
+        },
+      });
 
       // create tray
       if (
