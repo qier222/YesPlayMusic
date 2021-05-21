@@ -14,6 +14,7 @@
             padding: 0px;
             -webkit-user-select: none;
             -webkit-app-region: drag;
+            background: rgba(0, 0, 0, 0.000);
         }
 
         div {
@@ -25,7 +26,7 @@
     </style>
     <title>OSD Lyrics</title>
     <script>
-        const electron = process && process.versions && process.versions.hasOwnProperty('electron') ? window.require('electron') : null;
+        const electron = (typeof navigator === 'object' && typeof navigator.userAgent === 'string' && navigator.userAgent.indexOf('Electron') >= 0) ? window.require('electron') : null;
         const ipcRenderer = electron ? electron.ipcRenderer : null;
         const player_api = window.location.origin + "/player";
         const lyrics_api = window.location.origin + "/api/lyric?id=";
