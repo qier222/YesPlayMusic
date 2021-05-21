@@ -25,10 +25,10 @@
     </style>
     <title>OSD Lyrics</title>
     <script>
-        const electron =
-            process.env.IS_ELECTRON === "true" ? window.require('electron') : null;
-        const ipcRenderer =
-            process.env.IS_ELECTRON === "true" ? electron.ipcRenderer : null;
+        const electron = process && process.versions && process.versions.hasOwnProperty('electron') ? window.require('electron') : null;
+        const ipcRenderer = electron ? electron.ipcRenderer : null;
+        const player_api = window.location.origin + "/player";
+        const lyrics_api = window.location.origin + "/api/lyric?id=";
         const min_update_interval = 50;
         const max_update_interval = 500;
         song_id = null;
@@ -37,10 +37,13 @@
         current_index = 0;
         next_time = 0;
         function lyric_parser(lrc) {
+            if (!lrc) {
+                return null;
+            }
             lines = lrc
                 .split('\n')
-                .map(x => {
-                    nx = decodeURIComponent(x);
+                .map(nx => {
+                    //nx = decodeURIComponent(x);
                     text = nx.split(']');
                     lrc = text[1];
                     if (!lrc) {
@@ -74,7 +77,6 @@
             if (offsetHeight == window.innerHeight) {
                 return;
             }
-            console.log(offsetHeight + " / " + window.innerHeight);
             ipcRenderer.send('resizeOSDLyrics', offsetHeight);
         }
         function search_line(progress) {
@@ -182,9 +184,10 @@
             update_display();
         }
         function get_lyrics(_song_id) {
-            fetch("http://127.0.0.1:10754/lyric?id=" + _song_id)
+            var url = lyrics_api + _song_id;
+            fetch(url)
                 .then(
-                    ((_lyric) => {
+                    (_lyric) => {
                         _lyric
                             .text()
                             .then(
@@ -192,7 +195,7 @@
                                     result = JSON.parse(text);
                                     if (!result.lrc) {
                                         lyrics = null;
-                                        setTimeout(update_lyrics, max_update_interval);
+                                        update_line(_progress);
                                         return;
                                     }
                                     _lyrics = lyric_parser(result.lrc.lyric);
@@ -201,10 +204,10 @@
                                     current_index = 0;
                                     update_line(_progress);
                                 })
-                    }))
+                    })
         }
         function update_lyrics() {
-            fetch("http://127.0.0.1:27232/player")
+            fetch(player_api)
                 .then(
                     (player) => {
                         player
