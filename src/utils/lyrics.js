@@ -13,7 +13,7 @@ export function parseLyric(lrc) {
   const lyrics = lrc.split('\n');
   const lrcObj = [];
   for (let i = 0; i < lyrics.length; i++) {
-    const lyric = decodeURIComponent(lyrics[i]);
+    const lyric = lyrics[i];
     const timeReg = /\[\d*:\d*((\.|:)\d*)*\]/g;
     const timeRegExpArr = lyric.match(timeReg);
     if (!timeRegExpArr) continue;

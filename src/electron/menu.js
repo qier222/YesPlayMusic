@@ -4,7 +4,7 @@ const { app, Menu } = require('electron');
 
 const isMac = process.platform === 'darwin';
 
-export function createMenu(win) {
+export function createMenu(win, lrc) {
   let menu = null;
   const template = [
     ...(isMac
@@ -181,6 +181,7 @@ export function createMenu(win) {
           accelerator: 'F12',
           click: () => {
             win.webContents.openDevTools();
+            lrc.openDevTools();
           },
         },
       ],

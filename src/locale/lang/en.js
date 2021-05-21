@@ -100,6 +100,7 @@ export default {
     pause: 'Pause',
     mute: 'Mute',
     nextUp: 'Next Up',
+    osdLyrics: 'OSD Lyrics',
   },
   modal: {
     close: 'Close',
