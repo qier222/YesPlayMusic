@@ -26,7 +26,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@revincx/unblockneteasemusic": "^0.25.5",
+    "@revincx/unblockneteasemusic": "^0.25.7",
     "axios": "^0.21.0",
     "change-case": "^4.1.2",
     "core-js": "^3.6.5",
