@@ -43,6 +43,9 @@
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
             ><ExplicitSymbol
           /></span>
+          <span v-if="isTranslate" :title="translate" class="translate">
+            - ({{ translate }})
+          </span>
         </div>
         <div v-if="!isAlbum" class="artist">
           <span
@@ -111,11 +114,25 @@ export default {
     album() {
       return this.track.album || this.track.al;
     },
+    translate() {
+      let t;
+      if (this.track.tns?.length > 0) t = this.track.tns[0];
+      else if (this.track.al.tns?.length > 0) t = this.track.al.tns[0];
+      else t = this.track.alia[0];
+      return t;
+    },
     type() {
       return this.$parent.type;
     },
     isAlbum() {
       return this.type === 'album';
+    },
+    isTranslate() {
+      return (
+        this.track.tns?.length > 0 ||
+        this.track.al.tns?.length > 0 ||
+        this.track.alia?.length > 0
+      );
     },
     isTracklist() {
       return this.type === 'tracklist';
@@ -261,6 +278,9 @@ button {
         font-weight: 500;
         font-size: 14px;
         opacity: 0.72;
+      }
+      .translate {
+        color: #aeaeae;
       }
     }
     .artist {
