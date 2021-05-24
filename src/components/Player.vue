@@ -96,11 +96,8 @@
         <div class="blank"></div>
         <div class="container" @click.stop>
           <button-icon
+            v-if="osdState"
             :title="$t('player.osdlyrics')"
-            :class="{
-              active: osdState,
-              disabled: !osdState,
-            }"
             @click.native="toggleOSDLyrics"
             ><svg-icon icon-class="osd-lyrics"
           /></button-icon>
@@ -215,7 +212,7 @@ export default {
         : '';
     },
     osdState() {
-      return true; //this.$store.osdlyrics.show || false;
+      return Boolean(ipcRenderer);
     },
   },
   methods: {
