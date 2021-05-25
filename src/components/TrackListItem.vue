@@ -44,7 +44,7 @@
             ><ExplicitSymbol
           /></span>
           <span v-if="isTranslate" :title="translate" class="translate">
-            - ({{ translate }})
+            ({{ translate }})
           </span>
         </div>
         <div v-if="!isAlbum" class="artist">
