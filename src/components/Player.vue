@@ -97,7 +97,7 @@
         <div class="container" @click.stop>
           <button-icon
             v-if="osdState"
-            :title="$t('player.osdlyrics')"
+            :title="$t('player.osdLyrics')"
             @click.native="toggleOSDLyrics"
             ><svg-icon icon-class="osd-lyrics"
           /></button-icon>
