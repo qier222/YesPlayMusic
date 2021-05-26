@@ -116,9 +116,14 @@
     <ContextMenu ref="albumMenu">
       <!-- <div class="item">{{ $t('contextMenu.addToQueue') }}</div> -->
       <div class="item" @click="likeAlbum(true)">{{
-        dynamicDetail.isSub ? '从音乐库删除' : '保存到音乐库'
+        dynamicDetail.isSub
+          ? $t('contextMenu.removeFromLibrary')
+          : $t('contextMenu.saveToLibrary')
       }}</div>
-      <div class="item">添加到歌单</div>
+      <div class="item">{{ $t('contextMenu.addToPlaylist') }}</div>
+      <div class="item" @click="copyUrl(album.id)">{{
+        $t('contextMenu.copyUrl')
+      }}</div>
     </ContextMenu>
   </div>
 </template>
@@ -128,6 +133,7 @@ import { mapMutations, mapActions, mapState } from 'vuex';
 import { getArtistAlbum } from '@/api/artist';
 import { getTrackDetail } from '@/api/track';
 import { getAlbum, albumDynamicDetail, likeAAlbum } from '@/api/album';
+import locale from '@/locale';
 import { splitSoundtrackAlbumTitle, splitAlbumTitle } from '@/utils/common';
 import NProgress from 'nprogress';
 import { isAccountLoggedIn } from '@/utils/auth';
@@ -267,9 +273,6 @@ export default {
         this.dynamicDetail = data;
       });
     },
-    openMenu(e) {
-      this.$refs.albumMenu.openMenu(e);
-    },
     toggleFullDescription() {
       this.showFullDescription = !this.showFullDescription;
       if (this.showFullDescription) {
@@ -277,6 +280,19 @@ export default {
       } else {
         enableScrolling();
       }
+    },
+    openMenu(e) {
+      this.$refs.albumMenu.openMenu(e);
+    },
+    copyUrl(id) {
+      let showToast = this.showToast;
+      this.$copyText('https://music.163.com/#/album?id=' + id)
+        .then(function () {
+          showToast(locale.t('toast.copied'));
+        })
+        .catch(error => {
+          showToast(`${locale.t('toast.copyFailed')}${error}`);
+        });
     },
   },
 };
