@@ -133,7 +133,7 @@ export default {
       text: 'Lyric Font Size',
       small: 'Small',
       medium: 'Medium',
-      large: 'Large(Default)',
+      large: 'Large (Default)',
       xlarge: 'X-Large',
     },
     deviceSelector: 'Audio Output Device',
@@ -157,7 +157,7 @@ export default {
       text: 'Show Lyrics Background',
       off: 'Off',
       on: 'On',
-      dynamic: 'Dynamic(High GPU usage)',
+      dynamic: 'Dynamic (High GPU usage)',
     },
   },
   contextMenu: {
@@ -165,9 +165,15 @@ export default {
     addToQueue: 'Add to queue',
     saveToMyLikedSongs: 'Save to my Liked Songs',
     removeFromMyLikedSongs: 'Remove from my Liked Songs',
+    saveToLibrary: 'Save to library',
+    removeFromLibrary: 'Remove from library',
+    addToPlaylist: 'Add to playlist',
+    copyUrl: 'Copy URL',
   },
   toast: {
     savedToMyLikedSongs: 'Saved to my Liked Songs',
     removedFromMyLikedSongs: 'Removed from my Liked Songs',
+    copied: 'Copied',
+    copyFailed: 'Copy failed: ',
   },
 };

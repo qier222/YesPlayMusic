@@ -31,6 +31,14 @@
             <span v-if="artist.followed">{{ $t('artist.following') }}</span>
             <span v-else>{{ $t('artist.follow') }}</span>
           </ButtonTwoTone>
+          <ButtonTwoTone
+            icon-class="more"
+            :icon-button="true"
+            :horizontal-padding="0"
+            color="grey"
+            @click.native="openMenu"
+          >
+          </ButtonTwoTone>
         </div>
       </div>
     </div>
@@ -156,6 +164,12 @@
         {{ artist.briefDesc }}
       </p>
     </Modal>
+
+    <ContextMenu ref="artistMenu">
+      <div class="item" @click="copyUrl(artist.id)">{{
+        $t('contextMenu.copyUrl')
+      }}</div>
+    </ContextMenu>
   </div>
 </template>
 
@@ -168,11 +182,13 @@ import {
   followAArtist,
   similarArtists,
 } from '@/api/artist';
+import locale from '@/locale';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
 import NProgress from 'nprogress';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
+import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
 import Cover from '@/components/Cover.vue';
@@ -181,7 +197,15 @@ import Modal from '@/components/Modal.vue';
 
 export default {
   name: 'Artist',
-  components: { Cover, ButtonTwoTone, TrackList, CoverRow, MvRow, Modal },
+  components: {
+    Cover,
+    ButtonTwoTone,
+    TrackList,
+    CoverRow,
+    MvRow,
+    Modal,
+    ContextMenu,
+  },
   beforeRouteUpdate(to, from, next) {
     NProgress.start();
     this.artist.img1v1Url =
@@ -247,7 +271,7 @@ export default {
   },
   methods: {
     ...mapMutations(['appendTrackToPlayerList']),
-    ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID']),
+    ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID', 'showToast']),
     loadData(id, next = undefined) {
       getArtist(id).then(data => {
         this.artist = data.artist;
@@ -311,6 +335,19 @@ export default {
       } else {
         enableScrolling();
       }
+    },
+    openMenu(e) {
+      this.$refs.artistMenu.openMenu(e);
+    },
+    copyUrl(id) {
+      let showToast = this.showToast;
+      this.$copyText('https://music.163.com/#/artist?id=' + id)
+        .then(function () {
+          showToast(locale.t('toast.copied'));
+        })
+        .catch(error => {
+          showToast(`${locale.t('toast.copyFailed')}${error}`);
+        });
     },
   },
 };
