@@ -30,6 +30,7 @@
 
 <script>
 import Modal from '@/components/Modal.vue';
+import locale from '@/locale';
 import { mapMutations, mapState, mapActions } from 'vuex';
 import { createPlaylist, addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
@@ -86,7 +87,7 @@ export default {
               tracks: this.modals.newPlaylistModal.afterCreateAddTrackID,
             }).then(data => {
               if (data.body.code === 200) {
-                this.showToast('已添加到歌单');
+                this.showToast(locale.t('toast.savedToPlaylist'));
               } else {
                 this.showToast(data.body.message);
               }

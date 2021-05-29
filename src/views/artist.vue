@@ -312,7 +312,7 @@ export default {
     },
     followArtist() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       followAArtist({

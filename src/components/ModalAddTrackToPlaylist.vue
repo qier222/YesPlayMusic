@@ -30,6 +30,7 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Modal from '@/components/Modal.vue';
+import locale from '@/locale';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
 
@@ -84,7 +85,7 @@ export default {
       }).then(data => {
         if (data.body.code === 200) {
           this.show = false;
-          this.showToast('已添加到歌单');
+          this.showToast(locale.t('toast.savedToPlaylist'));
         } else {
           this.showToast(data.body.message);
         }

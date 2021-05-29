@@ -35,6 +35,7 @@
 import { mvDetail, mvUrl, simiMv, likeAMV } from '@/api/mv';
 import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
+import locale from '@/locale';
 import '@/assets/css/plyr.css';
 import Plyr from 'plyr';
 
@@ -116,7 +117,7 @@ export default {
     },
     likeMV() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       likeAMV({
