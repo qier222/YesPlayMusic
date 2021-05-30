@@ -168,12 +168,16 @@ export default {
     saveToLibrary: 'Save to library',
     removeFromLibrary: 'Remove from library',
     addToPlaylist: 'Add to playlist',
+    searchInPlaylist: 'Search in playlist',
     copyUrl: 'Copy URL',
   },
   toast: {
+    savedToPlaylist: 'Saved to playlist',
+    removedFromPlaylist: 'Removed from playlist',
     savedToMyLikedSongs: 'Saved to my Liked Songs',
     removedFromMyLikedSongs: 'Removed from my Liked Songs',
     copied: 'Copied',
     copyFailed: 'Copy failed: ',
+    needToLogin: 'Need to log into netease account',
   },
 };

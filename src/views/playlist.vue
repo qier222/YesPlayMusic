@@ -186,9 +186,13 @@
     <ContextMenu ref="playlistMenu">
       <!-- <div class="item">{{ $t('contextMenu.addToQueue') }}</div> -->
       <div class="item" @click="likePlaylist(true)">{{
-        playlist.subscribed ? '从音乐库删除' : '保存到音乐库'
+        playlist.subscribed
+          ? $t('contextMenu.removeFromLibrary')
+          : $t('contextMenu.saveToLibrary')
       }}</div>
-      <div class="item" @click="searchInPlaylist()">歌单内搜索</div>
+      <div class="item" @click="searchInPlaylist()">{{
+        $t('contextMenu.searchInPlaylist')
+      }}</div>
       <div
         v-if="playlist.creator.userId === data.user.userId"
         class="item"
@@ -216,6 +220,7 @@ import {
 import { getTrackDetail } from '@/api/track';
 import { isAccountLoggedIn } from '@/utils/auth';
 import nativeAlert from '@/utils/nativeAlert';
+import locale from '@/locale';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -409,7 +414,7 @@ export default {
     },
     likePlaylist(toast = false) {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       subscribePlaylist({
@@ -486,7 +491,7 @@ export default {
     },
     deletePlaylist() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       let confirmation = confirm(`确定要删除歌单 ${this.playlist.name}？`);
@@ -517,7 +522,7 @@ export default {
     },
     removeTrack(trackID) {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       this.tracks = this.tracks.filter(t => t.id !== trackID);

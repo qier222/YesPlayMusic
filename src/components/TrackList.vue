@@ -32,7 +32,9 @@
         @click="removeTrackFromPlaylist"
         >从歌单中删除</div
       >
-      <div class="item" @click="addTrackToPlaylist">添加到歌单</div>
+      <div class="item" @click="addTrackToPlaylist">{{
+        $t('contextMenu.addToPlaylist')
+      }}</div>
     </ContextMenu>
     <div :style="listStyles">
       <TrackListItem
@@ -54,6 +56,7 @@ import { isAccountLoggedIn } from '@/utils/auth';
 
 import TrackListItem from '@/components/TrackListItem.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
+import locale from '@/locale';
 
 export default {
   name: 'TrackList',
@@ -183,7 +186,7 @@ export default {
     },
     addTrackToPlaylist() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       this.updateModal({
@@ -199,7 +202,7 @@ export default {
     },
     removeTrackFromPlaylist() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       if (confirm(`确定要从歌单删除 ${this.rightClickedTrack.name}？`)) {
@@ -210,7 +213,9 @@ export default {
           tracks: trackID,
         }).then(data => {
           this.showToast(
-            data.body.code === 200 ? '已从歌单中删除' : data.body.message
+            data.body.code === 200
+              ? locale.t('toast.removedFromPlaylist')
+              : data.body.message
           );
           this.$parent.removeTrack(trackID);
         });

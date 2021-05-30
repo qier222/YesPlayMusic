@@ -169,12 +169,16 @@ export default {
     saveToLibrary: '保存到音乐库',
     removeFromLibrary: '从音乐库删除',
     addToPlaylist: '添加到歌单',
+    searchInPlaylist: '歌单内搜索',
     copyUrl: '复制链接',
   },
   toast: {
+    savedToPlaylist: '已添加到歌单',
+    removedFromPlaylist: '已从歌单中删除',
     savedToMyLikedSongs: '已添加到我喜欢的音乐',
     removedFromMyLikedSongs: '已从喜欢的音乐中删除',
     copied: '已复制',
     copyFailed: '复制失败：',
+    needToLogin: '此操作需要登录网易云帐号',
   },
 };
