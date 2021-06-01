@@ -171,6 +171,9 @@ export default {
     addToPlaylist: '添加到歌单',
     searchInPlaylist: '歌单内搜索',
     copyUrl: '复制链接',
+    allPlaylists: '全部歌单',
+    minePlaylists: '创建的歌单',
+    likedPlaylists: '收藏的歌单',
   },
   toast: {
     savedToPlaylist: '已添加到歌单',
