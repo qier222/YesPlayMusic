@@ -171,7 +171,7 @@ export default {
     searchInPlaylist: 'Search in playlist',
     copyUrl: 'Copy URL',
     allPlaylists: 'All Playlists',
-    minePlaylists: 'Mine Playlists',
+    minePlaylists: 'My Playlists',
     likedPlaylists: 'Liked Playlists',
   },
   toast: {
