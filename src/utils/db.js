@@ -5,9 +5,9 @@ import store from '@/store';
 
 const db = new Dexie('yesplaymusic');
 
-db.version(2)
+db.version(3)
   .stores({
-    trackSources: '&id',
+    trackSources: '&id, createTime',
   })
   .upgrade(tx =>
     tx
