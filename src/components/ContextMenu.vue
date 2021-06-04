@@ -65,7 +65,6 @@ export default {
   width: 100%;
   height: 100%;
   user-select: none;
-  -webkit-app-region: no-drag;
 }
 
 .menu {
@@ -81,6 +80,7 @@ export default {
   box-sizing: border-box;
   padding: 6px;
   z-index: 1000;
+  -webkit-app-region: no-drag;
 
   &:focus {
     outline: none;

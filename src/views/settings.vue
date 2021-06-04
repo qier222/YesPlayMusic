@@ -223,7 +223,7 @@
           <button v-else @click="lastfmConnect()"> 授权连接 </button>
         </div>
       </div>
-      <div class="item">
+      <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"
             >启用
@@ -318,22 +318,6 @@
           </div>
         </div>
       </div>
-      <div v-if="isElectron" class="item">
-        <div class="left">
-          <div class="title"> {{ $t('settings.enableGlobalShortcut') }}</div>
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              id="enable-enable-global-shortcut"
-              v-model="enableGlobalShortcut"
-              type="checkbox"
-              name="enable-enable-global-shortcut"
-            />
-            <label for="enable-enable-global-shortcut"></label>
-          </div>
-        </div>
-      </div>
       <div class="item">
         <div class="left">
           <div class="title" style="transform: scaleX(-1)">🐈️ 🏳️‍🌈</div>
@@ -382,6 +366,26 @@
             :disabled="proxyProtocol === 'noProxy'"
           />
           <button @click="sendProxyConfig">更新代理</button>
+        </div>
+      </div>
+
+      <div v-if="isElectron">
+        <h3>快捷键</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title"> {{ $t('settings.enableGlobalShortcut') }}</div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="enable-enable-global-shortcut"
+                v-model="enableGlobalShortcut"
+                type="checkbox"
+                name="enable-enable-global-shortcut"
+              />
+              <label for="enable-enable-global-shortcut"></label>
+            </div>
+          </div>
         </div>
       </div>
 
