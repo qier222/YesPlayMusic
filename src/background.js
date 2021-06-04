@@ -110,7 +110,7 @@ class Background {
     const appearance = this.store.get('settings.appearance');
     const showLibraryDefault = this.store.get('settings.showLibraryDefault');
 
-    this.window = new BrowserWindow({
+    const options = {
       width: this.store.get('window.width') || 1440,
       height: this.store.get('window.height') || 840,
       minWidth: 1080,
@@ -118,6 +118,7 @@ class Background {
       titleBarStyle: 'hiddenInset',
       frame: process.platform !== 'win32',
       title: 'YesPlayMusic',
+      show: false,
       webPreferences: {
         webSecurity: false,
         nodeIntegration: true,
@@ -130,7 +131,14 @@ class Background {
         appearance === 'dark'
           ? '#222'
           : '#fff',
-    });
+    };
+
+    if (this.store.get('window.x') && this.store.get('window.y')) {
+      options.x = this.store.get('window.x');
+      options.y = this.store.get('window.y');
+    }
+
+    this.window = new BrowserWindow(options);
 
     // hide menu bar on Microsoft Windows and Linux
     this.window.setMenuBarVisibility(false);
@@ -288,9 +296,12 @@ class Background {
       }
     });
 
-    this.window.on('resize', () => {
-      let { height, width } = this.window.getBounds();
-      this.store.set('window', { height, width });
+    this.window.on('resized', () => {
+      this.store.set('window', this.window.getBounds());
+    });
+
+    this.window.on('moved', () => {
+      this.store.set('window', this.window.getBounds());
     });
 
     this.window.on('minimize', () => {
@@ -341,6 +352,9 @@ class Background {
 
       // create window
       this.createWindow();
+      this.window.once('ready-to-show', () => {
+        this.window.show();
+      });
       this.handleWindowEvents();
 
       this.initOSDLyrics();
