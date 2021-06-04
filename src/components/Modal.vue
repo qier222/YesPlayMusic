@@ -1,20 +1,22 @@
 <template>
-  <div v-show="show" class="shade" @click="clickOutside">
-    <div class="modal" :style="modalStyles" @click.stop>
-      <div class="header">
-        <div class="title">{{ title }}</div>
-        <button class="close" @click="close"
-          ><svg-icon icon-class="x"
-        /></button>
-      </div>
-      <div class="content"><slot></slot></div>
-      <div v-if="showFooter" class="footer">
-        <!-- <button>取消</button>
-        <button class="primary">确定</button> -->
-        <slot name="footer"></slot>
+  <transition name="slide-fade">
+    <div v-show="show" class="shade" @click="clickOutside">
+      <div class="modal" :style="modalStyles" @click.stop>
+        <div class="header">
+          <div class="title">{{ title }}</div>
+          <button class="close" @click="close"
+            ><svg-icon icon-class="x"
+          /></button>
+        </div>
+        <div class="content"><slot></slot></div>
+        <div v-if="showFooter" class="footer">
+          <!-- <button>取消</button>
+          <button class="primary">确定</button> -->
+          <slot name="footer"></slot>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -58,6 +60,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+  opacity: 0;
+}
+
 .shade {
   background: rgba(255, 255, 255, 0.58);
   position: fixed;
