@@ -196,7 +196,7 @@ export function addOrRemoveTrackFromPlaylist(params) {
 export function dailyRecommendTracks() {
   return request({
     url: '/recommend/songs',
-    method: 'post',
+    method: 'get',
     params: { timestamp: new Date().getTime() },
   }).then(result => {
     result.data.dailySongs = mapTrackPlayableStatus(

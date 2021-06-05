@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cache = require('../../netease_api/util/apicache').middleware;
 const fileUpload = require('express-fileupload');
 import routes from '../../netease_api/routes';
+const clc = require('cli-color');
 
 export function startNeteaseMusicApi() {
   // Integrate API
@@ -53,6 +54,10 @@ export function startNeteaseMusicApi() {
   const host = process.env.HOST || '127.0.0.1';
 
   app.server = app.listen(port, host, () => {
-    console.log(`server running @ http://${host ? host : 'localhost'}:${port}`);
+    console.log(
+      `${clc.redBright('[NetEase API]')} server running @ http://${
+        host ? host : 'localhost'
+      }:${port}`
+    );
   });
 }
