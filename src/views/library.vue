@@ -153,7 +153,7 @@
       @change="uploadSongToCloudDisk"
     />
 
-    <ContextMenu>
+    <ContextMenu ref="playlistTabMenu">
       <div class="item" @click="changePlaylistFilter('all')">{{
         $t('contextMenu.allPlaylists')
       }}</div>

@@ -151,7 +151,6 @@ export default {
   fetchCloudDisk: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
     return cloudDisk().then(result => {
-      console.log(result);
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'cloudDisk',
