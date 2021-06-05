@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show">
+  <div v-show="show" ref="library">
     <h1>
       <img class="avatar" :src="data.user.avatarUrl | resizeImage" />{{
         data.user.nickname
@@ -123,7 +123,7 @@
       </div>
     </div>
 
-    <ContextMenu ref="playlistTabMenu">
+    <ContextMenu>
       <div class="item" @click="changePlaylistFilter('all')">{{
         $t('contextMenu.allPlaylists')
       }}</div>
@@ -241,7 +241,7 @@ export default {
         return;
       }
       this.currentTab = tab;
-      window.scrollTo({ top: 375, behavior: 'smooth' });
+      this.$parent.$refs.main.scrollTo({ top: 375, behavior: 'smooth' });
     },
     goToLikedSongsList() {
       this.$router.push({ path: '/library/liked-songs' });

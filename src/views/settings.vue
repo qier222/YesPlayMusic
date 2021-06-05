@@ -1,5 +1,5 @@
 <template>
-  <div class="settings">
+  <div class="settings-page">
     <div class="container">
       <div v-if="showUserInfo" class="user">
         <div class="left">
@@ -765,9 +765,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.settings {
+.settings-page {
   display: flex;
   justify-content: center;
+  margin-top: 32px;
 }
 .container {
   margin-top: 24px;

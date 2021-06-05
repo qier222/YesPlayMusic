@@ -1,92 +1,94 @@
 <template>
   <div class="login">
-    <div class="section-1">
-      <img src="/img/logos/netease-music.png" />
-    </div>
-    <div class="title">{{ $t('login.loginText') }}</div>
-    <div class="section-2">
-      <div v-show="mode === 'phone'" class="input-box">
-        <div class="container" :class="{ active: inputFocus === 'phone' }">
-          <svg-icon icon-class="mobile" />
-          <div class="inputs">
-            <input
-              id="countryCode"
-              v-model="countryCode"
-              :placeholder="
-                inputFocus === 'phone' ? '' : $t('login.countryCode')
-              "
-              @focus="inputFocus = 'phone'"
-              @blur="inputFocus = ''"
-              @keyup.enter="login"
-            />
-            <input
-              id="phoneNumber"
-              v-model="phoneNumber"
-              :placeholder="inputFocus === 'phone' ? '' : $t('login.phone')"
-              @focus="inputFocus = 'phone'"
-              @blur="inputFocus = ''"
-              @keyup.enter="login"
-            />
+    <div class="login-container">
+      <div class="section-1">
+        <img src="/img/logos/netease-music.png" />
+      </div>
+      <div class="title">{{ $t('login.loginText') }}</div>
+      <div class="section-2">
+        <div v-show="mode === 'phone'" class="input-box">
+          <div class="container" :class="{ active: inputFocus === 'phone' }">
+            <svg-icon icon-class="mobile" />
+            <div class="inputs">
+              <input
+                id="countryCode"
+                v-model="countryCode"
+                :placeholder="
+                  inputFocus === 'phone' ? '' : $t('login.countryCode')
+                "
+                @focus="inputFocus = 'phone'"
+                @blur="inputFocus = ''"
+                @keyup.enter="login"
+              />
+              <input
+                id="phoneNumber"
+                v-model="phoneNumber"
+                :placeholder="inputFocus === 'phone' ? '' : $t('login.phone')"
+                @focus="inputFocus = 'phone'"
+                @blur="inputFocus = ''"
+                @keyup.enter="login"
+              />
+            </div>
+          </div>
+        </div>
+        <div v-show="mode === 'email'" class="input-box">
+          <div class="container" :class="{ active: inputFocus === 'email' }">
+            <svg-icon icon-class="mail" />
+            <div class="inputs">
+              <input
+                id="email"
+                v-model="email"
+                type="email"
+                :placeholder="inputFocus === 'email' ? '' : $t('login.email')"
+                @focus="inputFocus = 'email'"
+                @blur="inputFocus = ''"
+                @keyup.enter="login"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="input-box">
+          <div class="container" :class="{ active: inputFocus === 'password' }">
+            <svg-icon icon-class="lock" />
+            <div class="inputs">
+              <input
+                id="password"
+                v-model="password"
+                type="password"
+                :placeholder="
+                  inputFocus === 'password' ? '' : $t('login.password')
+                "
+                @focus="inputFocus = 'password'"
+                @blur="inputFocus = ''"
+                @keyup.enter="login"
+              />
+            </div>
           </div>
         </div>
       </div>
-      <div v-show="mode === 'email'" class="input-box">
-        <div class="container" :class="{ active: inputFocus === 'email' }">
-          <svg-icon icon-class="mail" />
-          <div class="inputs">
-            <input
-              id="email"
-              v-model="email"
-              type="email"
-              :placeholder="inputFocus === 'email' ? '' : $t('login.email')"
-              @focus="inputFocus = 'email'"
-              @blur="inputFocus = ''"
-              @keyup.enter="login"
-            />
-          </div>
-        </div>
+      <div class="confirm">
+        <button v-show="!processing" @click="login">
+          {{ $t('login.login') }}
+        </button>
+        <button v-show="processing" class="loading" disabled>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
-      <div class="input-box">
-        <div class="container" :class="{ active: inputFocus === 'password' }">
-          <svg-icon icon-class="lock" />
-          <div class="inputs">
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              :placeholder="
-                inputFocus === 'password' ? '' : $t('login.password')
-              "
-              @focus="inputFocus = 'password'"
-              @blur="inputFocus = ''"
-              @keyup.enter="login"
-            />
-          </div>
-        </div>
+      <div class="other-login">
+        <a v-show="mode === 'phone'" @click="mode = 'email'">{{
+          $t('login.loginWithEmail')
+        }}</a>
+        <a v-show="mode === 'email'" @click="mode = 'phone'">{{
+          $t('login.loginWithPhone')
+        }}</a>
       </div>
+      <div
+        class="notice"
+        v-html="isElectron ? $t('login.noticeElectron') : $t('login.notice')"
+      ></div>
     </div>
-    <div class="confirm">
-      <button v-show="!processing" @click="login">
-        {{ $t('login.login') }}
-      </button>
-      <button v-show="processing" class="loading" disabled>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-    <div class="other-login">
-      <a v-show="mode === 'phone'" @click="mode = 'email'">{{
-        $t('login.loginWithEmail')
-      }}</a>
-      <a v-show="mode === 'email'" @click="mode = 'phone'">{{
-        $t('login.loginWithPhone')
-      }}</a>
-    </div>
-    <div
-      class="notice"
-      v-html="isElectron ? $t('login.noticeElectron') : $t('login.notice')"
-    ></div>
   </div>
 </template>
 
@@ -206,7 +208,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 192px);
+  margin-top: 32px;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .title {
@@ -223,6 +232,7 @@ export default {
   img {
     height: 64px;
     margin: 20px;
+    user-select: none;
   }
 }
 

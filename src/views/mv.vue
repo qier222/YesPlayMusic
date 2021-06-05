@@ -1,5 +1,5 @@
 <template>
-  <div class="mv">
+  <div class="mv-page">
     <div class="current-video">
       <div class="video">
         <video ref="videoPlayer" class="plyr"></video>
@@ -136,8 +136,9 @@ export default {
   --plyr-control-radius: 8px;
 }
 
-.mv {
+.mv-page {
   width: 100%;
+  margin-top: 32px;
 }
 .current-video {
   width: 100%;
@@ -176,6 +177,7 @@ export default {
     font-weight: 600;
     color: var(--color-text);
     opacity: 0.88;
+    margin-bottom: 12px;
   }
 }
 

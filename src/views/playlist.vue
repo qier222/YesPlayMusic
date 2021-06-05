@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show">
+  <div v-show="show" class="playlist">
     <div
       v-if="specialPlaylistInfo === undefined && !isLikeSongsPage"
       class="playlist-info"
@@ -174,6 +174,16 @@
       "
     />
 
+    <div class="load-more">
+      <ButtonTwoTone
+        v-show="hasMore"
+        color="grey"
+        :loading="loadingMore"
+        @click.native="loadMore(100)"
+        >{{ $t('explore.loadMore') }}</ButtonTwoTone
+      >
+    </div>
+
     <Modal
       :show="showFullDescription"
       :close="toggleFullDescription"
@@ -346,6 +356,7 @@ export default {
       showFullDescription: false,
       tracks: [],
       loadingMore: false,
+      hasMore: false,
       lastLoadedTrackIndex: 9,
       displaySearchInPlaylist: false, // 是否显示搜索框
       searchKeyWords: '', // 搜索使用的关键字
@@ -397,9 +408,6 @@ export default {
       this.loadData(this.$route.params.id);
     }
   },
-  destroyed() {
-    window.removeEventListener('scroll', this.handleScroll, true);
-  },
   methods: {
     ...mapMutations(['appendTrackToPlayerList']),
     ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID', 'showToast']),
@@ -443,9 +451,6 @@ export default {
           if (next !== undefined) next();
           this.show = true;
           this.lastLoadedTrackIndex = data.playlist.tracks.length - 1;
-          if (this.playlist.trackCount > this.tracks.length) {
-            window.addEventListener('scroll', this.handleScroll, true);
-          }
           return data;
         })
         .then(() => {
@@ -455,36 +460,26 @@ export default {
           }
         });
     },
-    loadMore(loadNum = 50) {
+    loadMore(loadNum = 100) {
       let trackIDs = this.playlist.trackIds.filter((t, index) => {
         if (
           index > this.lastLoadedTrackIndex &&
           index <= this.lastLoadedTrackIndex + loadNum
-        )
+        ) {
           return t;
+        }
       });
       trackIDs = trackIDs.map(t => t.id);
       getTrackDetail(trackIDs.join(',')).then(data => {
         this.tracks.push(...data.songs);
         this.lastLoadedTrackIndex += trackIDs.length;
         this.loadingMore = false;
+        if (this.lastLoadedTrackIndex + 1 === this.playlist.trackIds.length) {
+          this.hasMore = false;
+        } else {
+          this.hasMore = true;
+        }
       });
-    },
-    handleScroll(e) {
-      let dom = document.querySelector('html');
-      let scrollHeight = Math.max(dom.scrollHeight, dom.scrollHeight);
-      let scrollTop = e.target.scrollingElement.scrollTop;
-      let clientHeight =
-        dom.innerHeight || Math.min(dom.clientHeight, dom.clientHeight);
-      if (clientHeight + scrollTop + 200 >= scrollHeight) {
-        if (
-          this.lastLoadedTrackIndex + 1 === this.playlist.trackIds.length ||
-          this.loadingMore
-        )
-          return;
-        this.loadingMore = true;
-        this.loadMore();
-      }
     },
     openMenu(e) {
       this.$refs.playlistMenu.openMenu(e);
@@ -546,6 +541,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.playlist {
+  margin-top: 32px;
+}
 .playlist-info {
   display: flex;
   margin-bottom: 72px;
@@ -935,5 +933,11 @@ export default {
   .search-box-likepage {
     right: 8vw;
   }
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
 }
 </style>

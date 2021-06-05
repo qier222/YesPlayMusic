@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show" class="artist">
+  <div v-show="show" class="artist-page">
     <div class="artist-info">
       <div class="head">
         <img :src="artist.img1v1Url | resizeImage(1024)" />
@@ -354,6 +354,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.artist-page {
+  margin-top: 32px;
+}
+
 .artist-info {
   display: flex;
   align-items: center;
