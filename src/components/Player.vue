@@ -240,6 +240,8 @@ export default {
         this.$router.push({ path: '/library/liked-songs' });
       } else if (this.player.playlistSource.type === 'url') {
         this.$router.push({ path: this.player.playlistSource.id });
+      } else if (this.player.playlistSource.type === 'cloudDisk') {
+        this.$router.push({ path: '/library' });
       } else {
         this.$router.push({
           path:

@@ -13,7 +13,7 @@
       :class="{ hover: focus }"
       @click="goToAlbum"
     />
-    <div v-if="isAlbum" class="no">
+    <div v-if="showOrderNumber" class="no">
       <button v-show="focus && track.playable && !isPlaying" @click="playTrack">
         <svg-icon
           icon-class="play"
@@ -37,7 +37,7 @@
           <span v-if="isAlbum" class="featured">
             <ArtistsInLine
               :artists="track.ar"
-              :exclude="this.$parent.albumObject.artist.name"
+              :exclude="$parent.albumObject.artist.name"
               prefix="-"
           /></span>
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
@@ -58,11 +58,13 @@
       </div>
       <div></div>
     </div>
-    <div v-if="!isTracklist && !isAlbum" class="album">
+
+    <div v-if="showAlbumName" class="album">
       <router-link :to="`/album/${album.id}`">{{ album.name }}</router-link>
       <div></div>
     </div>
-    <div v-if="!isTracklist" class="actions">
+
+    <div v-if="showLikeButton" class="actions">
       <button @click="likeThisSong">
         <svg-icon
           icon-class="heart"
@@ -73,7 +75,7 @@
         <svg-icon v-show="isLiked" icon-class="heart-solid"></svg-icon>
       </button>
     </div>
-    <div v-if="!isTracklist" class="time">
+    <div v-if="showTrackTime" class="time">
       {{ track.dt | formatTime }}
     </div>
   </div>
@@ -87,18 +89,26 @@ import { mapState } from 'vuex';
 export default {
   name: 'TrackListItem',
   components: { ArtistsInLine, ExplicitSymbol },
+
   props: {
-    track: Object,
+    trackProp: Object,
     highlightPlayingTrack: {
       type: Boolean,
       default: true,
     },
   },
+
   data() {
     return { hover: false, trackStyle: {} };
   },
+
   computed: {
     ...mapState(['settings']),
+    track() {
+      return this.type === 'cloudDisk'
+        ? this.trackProp.simpleSong
+        : this.trackProp;
+    },
     imgUrl() {
       let image =
         this.track?.al?.picUrl ??
@@ -112,7 +122,7 @@ export default {
       return [];
     },
     album() {
-      return this.track.album || this.track.al;
+      return this.track.album || this.track.al || this.track?.simpleSong?.al;
     },
     translate() {
       let t;
@@ -134,17 +144,14 @@ export default {
         this.track.alia?.length > 0
       );
     },
-    isTracklist() {
-      return this.type === 'tracklist';
-    },
     isPlaylist() {
       return this.type === 'playlist';
     },
     isLiked() {
-      return this.$parent.liked.songs.includes(this.track.id);
+      return this.$parent.liked.songs.includes(this.track?.id);
     },
     isPlaying() {
-      return this.$store.state.player.currentTrack.id === this.track.id;
+      return this.$store.state.player.currentTrack.id === this.track?.id;
     },
     trackClass() {
       let trackClass = [this.type];
@@ -169,7 +176,20 @@ export default {
         ? !this.$store.state.settings.enableUnblockNeteaseMusic
         : true;
     },
+    showLikeButton() {
+      return this.type !== 'tracklist' && this.type !== 'cloudDisk';
+    },
+    showOrderNumber() {
+      return this.type === 'album';
+    },
+    showAlbumName() {
+      return this.type !== 'album' && this.type !== 'tracklist';
+    },
+    showTrackTime() {
+      return this.type !== 'tracklist';
+    },
   },
+
   methods: {
     goToAlbum() {
       this.$router.push({ path: '/album/' + this.track.al.id });

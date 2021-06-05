@@ -9,6 +9,7 @@ import {
   likedAlbums,
   likedArtists,
   likedMVs,
+  cloudDisk,
 } from '@/api/user';
 
 export default {
@@ -142,6 +143,18 @@ export default {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'mvs',
+          data: result.data,
+        });
+      }
+    });
+  },
+  fetchCloudDisk: ({ commit }) => {
+    if (!isAccountLoggedIn()) return;
+    return cloudDisk().then(result => {
+      console.log(result);
+      if (result.data) {
+        commit('updateLikedXXX', {
+          name: 'cloudDisk',
           data: result.data,
         });
       }

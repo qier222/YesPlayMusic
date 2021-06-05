@@ -130,3 +130,69 @@ export function likedMVs() {
     },
   });
 }
+
+/**
+ * 上传歌曲到云盘（需要登录）
+ */
+export function uploadSong(file) {
+  let formData = new FormData();
+  formData.append('songFile', file);
+  return request({
+    url: '/cloud',
+    method: 'post',
+    params: {
+      timestamp: new Date().getTime(),
+    },
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+}
+
+/**
+ * 获取云盘歌曲（需要登录）
+ * 说明 : 登录后调用此接口 , 可获取云盘数据 , 获取的数据没有对应 url, 需要再调用一 次 /song/url 获取 url
+ * - limit : 返回数量 , 默认为 200
+ * - offset : 偏移数量，用于分页 , 如 :( 页数 -1)*200, 其中 200 为 limit 的值 , 默认为 0
+ * @param {Object} params
+ * @param {number} params.limit
+ * @param {number=} params.offset
+ */
+export function cloudDisk(params = {}) {
+  params.timestamp = new Date().getTime();
+  return request({
+    url: '/user/cloud',
+    method: 'get',
+    params,
+  });
+}
+
+/**
+ * 获取云盘歌曲详情（需要登录）
+ */
+export function cloudDiskTrackDetail(id) {
+  return request({
+    url: '/user/cloud/detail',
+    method: 'get',
+    params: {
+      timestamp: new Date().getTime(),
+      id,
+    },
+  });
+}
+
+/**
+ * 删除云盘歌曲（需要登录）
+ * @param {Array} id
+ */
+export function cloudDiskTrackDelete(id) {
+  return request({
+    url: '/user/cloud/del',
+    method: 'get',
+    params: {
+      timestamp: new Date().getTime(),
+      id,
+    },
+  });
+}

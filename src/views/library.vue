@@ -80,14 +80,26 @@
           >
             {{ $t('library.mvs') }}
           </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'cloudDisk' }"
+            @click="updateCurrentTab('cloudDisk')"
+          >
+            云盘
+          </div>
         </div>
         <button
           v-show="currentTab === 'playlists'"
-          class="add-playlist"
-          icon="plus"
+          class="tab-button"
           @click="openAddPlaylistModal"
-          ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}</button
-        >
+          ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}
+        </button>
+        <button
+          v-show="currentTab === 'cloudDisk'"
+          class="tab-button"
+          @click="selectUploadFiles"
+          ><svg-icon icon-class="arrow-up-alt" /> 上传歌曲
+        </button>
       </div>
 
       <div v-show="currentTab === 'playlists'">
@@ -121,7 +133,25 @@
       <div v-show="currentTab === 'mvs'">
         <MvRow :mvs="liked.mvs" />
       </div>
+
+      <div v-show="currentTab === 'cloudDisk'">
+        <TrackList
+          :id="-8"
+          :tracks="liked.cloudDisk"
+          :column-number="3"
+          type="cloudDisk"
+          dbclick-track-func="playCloudDisk"
+          :extra-context-menu-item="['removeTrackFromCloudDisk']"
+        />
+      </div>
     </div>
+
+    <input
+      ref="cloudDiskUploadInput"
+      type="file"
+      style="display: none"
+      @change="uploadSongToCloudDisk"
+    />
 
     <ContextMenu>
       <div class="item" @click="changePlaylistFilter('all')">{{
@@ -140,9 +170,10 @@
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
-import { getLyric } from '@/api/track';
 import { randomNum, dailyTask } from '@/utils/common';
 import { isAccountLoggedIn } from '@/utils/auth';
+import { uploadSong } from '@/api/user';
+import { getLyric } from '@/api/track';
 import NProgress from 'nprogress';
 import locale from '@/locale';
 
@@ -227,6 +258,7 @@ export default {
       this.$store.dispatch('fetchLikedAlbums');
       this.$store.dispatch('fetchLikedArtists');
       this.$store.dispatch('fetchLikedMVs');
+      this.$store.dispatch('fetchCloudDisk');
     },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
@@ -271,6 +303,22 @@ export default {
     changePlaylistFilter(type) {
       this.updateData({ key: 'libraryPlaylistFilter', value: type });
       window.scrollTo({ top: 375, behavior: 'smooth' });
+    },
+    selectUploadFiles() {
+      this.$refs.cloudDiskUploadInput.click();
+    },
+    uploadSongToCloudDisk(e) {
+      const files = e.target.files;
+      uploadSong(files[0]).then(result => {
+        if (result.code === 200) {
+          let newCloudDisk = this.liked.cloudDisk;
+          newCloudDisk.unshift(result.privateCloud);
+          this.$store.commit('updateLikedXXX', {
+            name: 'cloudDisk',
+            data: newCloudDisk,
+          });
+        }
+      });
     },
   },
 };
@@ -427,7 +475,7 @@ h1 {
   }
 }
 
-button.add-playlist {
+button.tab-button {
   color: var(--color-text);
   border-radius: 8px;
   padding: 0 14px;
