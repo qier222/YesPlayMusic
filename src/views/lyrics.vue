@@ -3,18 +3,16 @@
     <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
       <div
         v-if="settings.lyricsBackground !== false"
-        :class="[
-          'lyrics-background',
-          { 'dynamic-background': settings.lyricsBackground === 'dynamic' },
-        ]"
+        class="lyrics-background"
+        :class="{
+          'dynamic-background': settings.lyricsBackground === 'dynamic',
+        }"
       >
         <div
-          v-show="showLyrics"
           class="top-right"
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
         />
         <div
-          v-show="showLyrics"
           class="bottom-left"
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
         />
@@ -367,6 +365,7 @@ export default {
   z-index: 200;
   background: var(--color-body-bg);
   display: flex;
+  clip: rect(auto, auto, auto, auto);
 }
 
 .lyrics-background {
@@ -657,6 +656,15 @@ export default {
     transition: all 0.5s;
     transform: translateX(27vh);
     margin-right: 0;
+  }
+}
+
+@media (max-aspect-ratio: 10/9) {
+  .left-side {
+    display: none;
+  }
+  .right-side .lyrics-container {
+    max-width: 100%;
   }
 }
 
