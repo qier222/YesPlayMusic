@@ -177,6 +177,7 @@
             <option :value="true">
               {{ $t('settings.lyricsBackground.on') }}
             </option>
+            <option value="blur"> 模糊封面 </option>
             <option value="dynamic">
               {{ $t('settings.lyricsBackground.dynamic') }}
             </option>

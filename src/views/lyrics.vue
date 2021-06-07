@@ -1,8 +1,15 @@
 <template>
   <transition name="slide-up">
-    <div class="lyrics-page" :class="{ 'no-lyric': noLyric }">
+    <div
+      class="lyrics-page"
+      :class="{ 'no-lyric': noLyric }"
+      :data-theme="theme"
+    >
       <div
-        v-if="settings.lyricsBackground !== false"
+        v-if="
+          (settings.lyricsBackground === 'blue') |
+            (settings.lyricsBackground === 'dynamic')
+        "
         class="lyrics-background"
         :class="{
           'dynamic-background': settings.lyricsBackground === 'dynamic',
@@ -17,6 +24,12 @@
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
         />
       </div>
+      <div
+        v-if="settings.lyricsBackground === true"
+        class="gradient-background"
+        :style="{ background }"
+      ></div>
+
       <div class="left-side">
         <div>
           <div class="cover">
@@ -193,6 +206,8 @@ import { getLyric } from '@/api/track';
 import { lyricParser } from '@/utils/lyrics';
 import { disableScrolling, enableScrolling } from '@/utils/ui';
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import * as Vibrant from 'node-vibrant';
+import Color from 'color';
 
 export default {
   name: 'Lyrics',
@@ -207,6 +222,7 @@ export default {
       tlyric: [],
       highlightLyricIndex: -1,
       minimize: true,
+      background: '',
     };
   },
   computed: {
@@ -267,10 +283,14 @@ export default {
     album() {
       return this.currentTrack?.al || { id: 0, name: 'unknown' };
     },
+    theme() {
+      return this.settings.lyricsBackground === true ? 'dark' : 'auto';
+    },
   },
   watch: {
     currentTrack() {
       this.getLyric();
+      this.getCoverColor();
     },
     showLyrics(show) {
       if (show) {
@@ -284,6 +304,7 @@ export default {
   },
   created() {
     this.getLyric();
+    this.getCoverColor();
   },
   destroyed() {
     clearInterval(this.lyricsInterval);
@@ -350,6 +371,24 @@ export default {
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
+    },
+    getCoverColor() {
+      if (this.settings.lyricsBackground !== true) return;
+      const cover = this.currentTrack.al?.picUrl + '?param=1024y1024';
+      Vibrant.from(cover, { colorCount: 1 })
+        .getPalette()
+        .then(palette => {
+          const color = Color.rgb(palette.DarkMuted._rgb)
+            .darken(0.1)
+            .rgb()
+            .string();
+          const color2 = Color.rgb(palette.DarkMuted._rgb)
+            .lighten(0.28)
+            .rotate(-30)
+            .rgb()
+            .string();
+          this.background = `linear-gradient(to top left, ${color}, ${color2})`;
+        });
     },
   },
 };
@@ -419,6 +458,12 @@ export default {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.gradient-background {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
 }
 
 .left-side {

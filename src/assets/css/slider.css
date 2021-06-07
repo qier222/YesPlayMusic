@@ -133,3 +133,12 @@ body[data-theme='dark'] .lyrics-page .vue-slider-process {
 body[data-theme='dark'] .lyrics-page .vue-slider-dot-handle {
   background-color: #fff;
 }
+
+.lyrics-page[data-theme='dark'] .vue-slider-rail {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.lyrics-page[data-theme='dark'] .vue-slider-process,
+.lyrics-page[data-theme='dark'] .vue-slider-dot-handle {
+  background-color: #fff;
+}
