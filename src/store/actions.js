@@ -10,6 +10,7 @@ import {
   likedArtists,
   likedMVs,
   cloudDisk,
+  userAccount,
 } from '@/api/user';
 
 export default {
@@ -156,6 +157,14 @@ export default {
           name: 'cloudDisk',
           data: result.data,
         });
+      }
+    });
+  },
+  fetchUserProfile: ({ commit }) => {
+    if (!isAccountLoggedIn()) return;
+    return userAccount().then(result => {
+      if (result.code === 200) {
+        commit('updateData', { key: 'user', value: result.profile });
       }
     });
   },

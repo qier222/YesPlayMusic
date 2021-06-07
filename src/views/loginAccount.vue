@@ -31,6 +31,7 @@
             </div>
           </div>
         </div>
+
         <div v-show="mode === 'email'" class="input-box">
           <div class="container" :class="{ active: inputFocus === 'email' }">
             <svg-icon icon-class="mail" />
@@ -47,7 +48,7 @@
             </div>
           </div>
         </div>
-        <div class="input-box">
+        <div v-show="mode !== 'qrCode'" class="input-box">
           <div class="container" :class="{ active: inputFocus === 'password' }">
             <svg-icon icon-class="lock" />
             <div class="inputs">
@@ -65,8 +66,17 @@
             </div>
           </div>
         </div>
+
+        <div v-show="mode == 'qrCode'">
+          <div v-show="qrCodeImage" class="qr-code-container">
+            <img :src="qrCodeImage" />
+          </div>
+          <div class="qr-code-info">
+            {{ qrCodeInformation }}
+          </div>
+        </div>
       </div>
-      <div class="confirm">
+      <div v-show="mode !== 'qrCode'" class="confirm">
         <button v-show="!processing" @click="login">
           {{ $t('login.login') }}
         </button>
@@ -77,14 +87,18 @@
         </button>
       </div>
       <div class="other-login">
-        <a v-show="mode === 'phone'" @click="mode = 'email'">{{
+        <a v-show="mode !== 'email'" @click="mode = 'email'">{{
           $t('login.loginWithEmail')
         }}</a>
-        <a v-show="mode === 'email'" @click="mode = 'phone'">{{
+        <span v-show="mode === 'qrCode'">|</span>
+        <a v-show="mode !== 'phone'" @click="mode = 'phone'">{{
           $t('login.loginWithPhone')
         }}</a>
+        <span v-show="mode !== 'qrCode'">|</span>
+        <a v-show="mode !== 'qrCode'" @click="mode = 'qrCode'"> 二维码登录 </a>
       </div>
       <div
+        v-show="mode !== 'qrCode'"
         class="notice"
         v-html="isElectron ? $t('login.noticeElectron') : $t('login.notice')"
       ></div>
@@ -93,25 +107,35 @@
 </template>
 
 <script>
-import NProgress from 'nprogress';
-import { loginWithPhone, loginWithEmail } from '@/api/auth';
-import { setCookies } from '@/utils/auth';
+import QRCode from 'qrcode';
 import md5 from 'crypto-js/md5';
+import NProgress from 'nprogress';
 import { mapMutations } from 'vuex';
+import { setCookies } from '@/utils/auth';
 import nativeAlert from '@/utils/nativeAlert';
+import {
+  loginWithPhone,
+  loginWithEmail,
+  loginQrCodeKey,
+  loginQrCodeCheck,
+} from '@/api/auth';
 
 export default {
   name: 'Login',
   data() {
     return {
       processing: false,
-      mode: 'email',
+      mode: 'qrCode',
       countryCode: '+86',
       phoneNumber: '',
       email: '',
       password: '',
       smsCode: '',
       inputFocus: '',
+      qrCodeKey: '',
+      qrCodeImage: '',
+      qrCodeCheckInterval: null,
+      qrCodeInformation: '打开网易云音乐APP扫码登录',
     };
   },
   computed: {
@@ -120,10 +144,13 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.mode === 'phone') {
-      this.mode = 'phone';
+    if (['phone', 'email', 'qrCode'].includes(this.$route.query.mode)) {
+      this.mode = this.$route.query.mode;
     }
-    NProgress.done();
+    this.getQrCodeKey();
+  },
+  beforeDestroy() {
+    clearInterval(this.qrCodeCheckInterval);
   },
   methods: {
     ...mapMutations(['updateData']),
@@ -188,15 +215,63 @@ export default {
       }
       if (data.code === 200) {
         setCookies(data.cookie);
-        this.updateData({ key: 'user', value: data.profile });
         this.updateData({ key: 'loginMode', value: 'account' });
-        this.$store.dispatch('fetchLikedPlaylist').then(() => {
-          this.$router.push({ path: '/library' });
+        this.$store.dispatch('fetchUserProfile').then(() => {
+          this.$store.dispatch('fetchLikedPlaylist').then(() => {
+            this.$router.push({ path: '/library' });
+          });
         });
       } else {
         this.processing = false;
         nativeAlert(data.msg ?? data.message ?? '账号或密码错误，请检查');
       }
+    },
+    getQrCodeKey() {
+      return loginQrCodeKey().then(result => {
+        if (result.code === 200) {
+          this.qrCodeKey = result.data.unikey;
+          QRCode.toDataURL(
+            `https://music.163.com/login?codekey=${this.qrCodeKey}`,
+            {
+              width: 192,
+              margin: 0,
+              color: {
+                dark: '#335eea',
+                light: '#00000000',
+              },
+            }
+          )
+            .then(url => {
+              this.qrCodeImage = url;
+            })
+            .catch(err => {
+              console.error(err);
+            })
+            .finally(() => {
+              NProgress.done();
+            });
+        }
+        this.checkQrCodeLogin();
+      });
+    },
+    checkQrCodeLogin() {
+      this.qrCodeCheckInterval = setInterval(() => {
+        if (this.qrCodeKey === '') return;
+        loginQrCodeCheck(this.qrCodeKey).then(result => {
+          if (result.code === 800) {
+            this.getQrCodeKey(); // 重新生成QrCode
+            this.qrCodeInformation = '二维码已失效，请重新扫码';
+          } else if (result.code === 802) {
+            this.qrCodeInformation = '扫描成功，请在手机上确认登录';
+          } else if (result.code === 803) {
+            clearInterval(this.qrCodeCheckInterval);
+            this.qrCodeInformation = '登录成功，请稍等...';
+            result.code = 200;
+            console.log(result);
+            this.handleLoginResponse(result);
+          }
+        });
+      }, 1000);
     },
   },
 };
@@ -327,11 +402,11 @@ export default {
 
 .other-login {
   margin-top: 24px;
+  font-size: 13px;
+  color: var(--color-text);
+  opacity: 0.68;
   a {
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--color-text);
-    opacity: 0.68;
+    padding: 0 8px;
   }
 }
 
@@ -379,5 +454,16 @@ button.loading {
 
 .loading span:nth-child(3) {
   animation-delay: 0.4s;
+}
+
+.qr-code-container {
+  background-color: var(--color-primary-bg);
+  padding: 24px 24px 21px 24px;
+  border-radius: 1.25rem;
+  margin-bottom: 12px;
+}
+.qr-code-info {
+  text-align: center;
+  margin-bottom: 28px;
 }
 </style>
