@@ -206,6 +206,11 @@ export default {
       }
     },
   },
+  watch: {
+    album: function () {
+      this.$parent.$refs.main.scrollTo({ top: 0 });
+    },
+  },
   created() {
     this.loadData(this.$route.params.id);
   },

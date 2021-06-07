@@ -261,18 +261,19 @@ export default {
     this.loadData(this.$route.params.id);
   },
   activated() {
-    if (this.show) {
-      if (this.artist.id.toString() !== this.$route.params.id) {
-        this.show = false;
-        NProgress.start();
-        this.loadData(this.$route.params.id);
-      }
+    if (this.artist?.id?.toString() !== this.$route.params.id) {
+      this.loadData(this.$route.params.id);
+    } else {
+      this.$parent.$refs.scrollbar.restorePosition();
     }
   },
   methods: {
     ...mapMutations(['appendTrackToPlayerList']),
     ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID', 'showToast']),
     loadData(id, next = undefined) {
+      NProgress.start();
+      this.show = false;
+      this.$parent.$refs.main.scrollTo({ top: 0 });
       getArtist(id).then(data => {
         this.artist = data.artist;
         this.popularTracks = data.hotSongs;

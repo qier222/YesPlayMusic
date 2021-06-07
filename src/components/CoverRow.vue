@@ -111,7 +111,7 @@ export default {
         }
       }
       let img = item.img1v1Url || item.picUrl || item.coverImgUrl;
-      return `${img}?param=512y512`;
+      return `${img?.replace('http://', 'https://')}?param=512y512`;
     },
   },
 };

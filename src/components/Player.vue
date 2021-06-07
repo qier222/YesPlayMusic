@@ -104,7 +104,7 @@
           <button-icon
             :title="$t('player.nextUp')"
             :class="{
-              active: this.$route.name === 'next',
+              active: $route.name === 'next',
               disabled: player.isPersonalFM,
             }"
             @click.native="goToNextTracksPage"
@@ -154,7 +154,7 @@
                 :interval="0.01"
                 :drag-on-click="true"
                 :duration="0"
-                :tooltip="`none`"
+                tooltip="none"
                 :dot-size="12"
               ></vue-slider>
             </div>
@@ -164,7 +164,7 @@
             class="lyrics-button"
             title="歌词"
             style="margin-left: 12px"
-            @click.native.stop="toggleLyrics"
+            @click.native="toggleLyrics"
             ><svg-icon icon-class="arrow-up"
           /></button-icon>
         </div>

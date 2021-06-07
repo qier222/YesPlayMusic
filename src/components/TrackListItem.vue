@@ -127,7 +127,6 @@ export default {
     translate() {
       let t;
       if (this.track?.tns?.length > 0) t = this.track.tns[0];
-      else if (this.track.al?.tns?.length > 0) t = this.track.al.tns[0];
       else t = this.track.alia[0];
       return t;
     },
@@ -138,11 +137,7 @@ export default {
       return this.type === 'album';
     },
     isTranslate() {
-      return (
-        this.track?.tns?.length > 0 ||
-        this.track.al?.tns?.length > 0 ||
-        this.track.alia?.length > 0
-      );
+      return this.track?.tns?.length > 0 || this.track.alia?.length > 0;
     },
     isPlaylist() {
       return this.type === 'playlist';
@@ -301,6 +296,7 @@ button {
       }
       .translate {
         color: #aeaeae;
+        margin-left: 4px;
       }
     }
     .artist {
@@ -401,7 +397,8 @@ button {
   color: var(--color-primary);
   .title,
   .album,
-  .time {
+  .time,
+  .title-and-artist .translate {
     color: var(--color-primary);
   }
   .title .featured,

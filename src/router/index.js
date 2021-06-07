@@ -14,6 +14,7 @@ const routes = [
     component: () => import('@/views/home.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -47,6 +48,7 @@ const routes = [
     component: () => import('@/views/artist.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -68,6 +70,7 @@ const routes = [
     component: () => import('@/views/next.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -94,6 +97,7 @@ const routes = [
     component: () => import('@/views/explore.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -103,6 +107,7 @@ const routes = [
     meta: {
       requireLogin: true,
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -132,16 +137,8 @@ const routes = [
     component: () => import('@/views/lastfmCallback.vue'),
   },
 ];
-const router = new VueRouter({
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { x: 0, y: 0 };
-    }
-  },
-});
+
+const router = new VueRouter({ routes });
 
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {

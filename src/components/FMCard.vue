@@ -1,5 +1,6 @@
 <template>
   <div class="fm" :style="{ background }" data-theme="dark">
+    <img :src="nextTrackCover" style="display: none" />
     <img
       class="cover"
       :src="track.album && track.album.picUrl | resizeImage(512)"
@@ -57,6 +58,12 @@ export default {
     artists() {
       return this.track.artists || this.track.ar || [];
     },
+    nextTrackCover() {
+      return `${this.player._personalFMNextTrack?.album?.picUrl.replace(
+        'http://',
+        'https://'
+      )}?param=512y512`;
+    },
   },
   created() {
     this.getColor();
@@ -76,9 +83,13 @@ export default {
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
+      this.getColor();
     },
     getColor() {
-      const cover = `${this.player.personalFMTrack.album.picUrl}?param=512y512`;
+      const cover = `${this.player.personalFMTrack.album.picUrl.replace(
+        'http://',
+        'https://'
+      )}?param=512y512`;
       Vibrant.from(cover, { colorCount: 1 })
         .getPalette()
         .then(palette => {
@@ -104,9 +115,11 @@ export default {
   background: var(--color-secondary-bg);
   border-radius: 1rem;
   display: flex;
+  height: 198px;
+  box-sizing: border-box;
 }
 .cover {
-  height: 164px;
+  height: 100%;
   clip-path: border-box;
   border-radius: 0.75rem;
   margin-right: 1.2rem;

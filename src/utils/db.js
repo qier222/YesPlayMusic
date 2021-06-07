@@ -53,6 +53,13 @@ async function deleteExcessCache() {
 export function cacheTrackSource(trackInfo, url, bitRate, from = 'netease') {
   const name = trackInfo.name;
   const artist = trackInfo.ar[0]?.name || trackInfo.artists[0]?.name;
+  let cover = trackInfo.al.picUrl;
+  if (cover.slice(0, 5) !== 'https') {
+    cover = 'https' + cover.slice(4);
+  }
+  axios.get(`${cover}?param=512y512`);
+  axios.get(`${cover}?param=224y224`);
+  axios.get(`${cover}?param=1024y1024`);
   return axios
     .get(url, {
       responseType: 'arraybuffer',

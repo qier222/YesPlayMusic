@@ -231,6 +231,7 @@ class Background {
   }
 
   checkForUpdates() {
+    if (process.env.NODE_ENV === 'development') return;
     log('checkForUpdates');
     autoUpdater.checkForUpdatesAndNotify();
 

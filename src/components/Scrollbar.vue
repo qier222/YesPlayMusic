@@ -35,6 +35,9 @@ export default {
       hideTimer: null,
       isOnDrag: false,
       onDragClientY: 0,
+      positions: {
+        home: { scrollTop: 0, params: {} },
+      },
     };
   },
   computed: {
@@ -73,6 +76,11 @@ export default {
 
       if (!this.show && clintHeight !== thumbHeight) this.show = true;
       this.setScrollbarHideTimeout();
+
+      const route = this.$route;
+      if (route.meta.savePosition) {
+        this.positions[route.name] = { scrollTop, params: route.params };
+      }
     },
     handleMouseenter() {
       this.active = true;
@@ -120,6 +128,17 @@ export default {
         if (!this.active) this.show = false;
         this.hideTimer = null;
       }, 4000);
+    },
+    restorePosition() {
+      const route = this.$route;
+      if (
+        !route.meta.savePosition ||
+        this.positions[route.name] === undefined ||
+        this.main === undefined
+      ) {
+        return;
+      }
+      this.main.scrollTo({ top: this.positions[route.name].scrollTop });
     },
   },
 };

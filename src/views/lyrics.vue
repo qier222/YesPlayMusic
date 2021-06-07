@@ -218,7 +218,7 @@ export default {
       return this.player.currentTrack?.al?.picUrl + '?param=1024y1024';
     },
     bgImageUrl() {
-      return this.player.currentTrack?.al?.picUrl + '?param=500y500';
+      return this.player.currentTrack?.al?.picUrl + '?param=512y512';
     },
     lyricWithTranslation() {
       let ret = [];

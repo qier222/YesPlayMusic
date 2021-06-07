@@ -267,7 +267,6 @@ export default {
             clearInterval(this.qrCodeCheckInterval);
             this.qrCodeInformation = '登录成功，请稍等...';
             result.code = 200;
-            console.log(result);
             this.handleLoginResponse(result);
           }
         });
@@ -463,6 +462,7 @@ button.loading {
   margin-bottom: 12px;
 }
 .qr-code-info {
+  color: var(--color-text);
   text-align: center;
   margin-bottom: 28px;
 }
