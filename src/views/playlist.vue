@@ -407,6 +407,9 @@ export default {
     } else {
       this.loadData(this.$route.params.id);
     }
+    setTimeout(() => {
+      if (!this.show) NProgress.start();
+    }, 1000);
   },
   methods: {
     ...mapMutations(['appendTrackToPlayerList']),

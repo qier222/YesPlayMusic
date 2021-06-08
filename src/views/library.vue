@@ -230,7 +230,9 @@ export default {
     },
   },
   created() {
-    NProgress.start();
+    setTimeout(() => {
+      if (!this.show) NProgress.start();
+    }, 1000);
     this.loadData();
   },
   activated() {

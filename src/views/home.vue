@@ -110,7 +110,9 @@ export default {
   },
   methods: {
     loadData() {
-      if (!this.show) NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       recommendPlaylist({
         limit: 10,
       }).then(data => {

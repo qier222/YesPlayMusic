@@ -35,7 +35,9 @@ export default {
   },
   created() {
     if (this.dailyTracks.length === 0) {
-      NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       this.loadDailyTracks();
     } else {
       this.show = true;

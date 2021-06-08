@@ -159,12 +159,13 @@ export default {
     ContextMenu,
   },
   beforeRouteUpdate(to, from, next) {
-    NProgress.start();
+    this.show = false;
     this.loadData(to.params.id);
     next();
   },
   data() {
     return {
+      show: false,
       album: {
         id: 0,
         picUrl: '',
@@ -174,7 +175,6 @@ export default {
       },
       tracks: [],
       showFullDescription: false,
-      show: false,
       moreAlbums: [],
       dynamicDetail: {},
       subtitle: '',
@@ -204,11 +204,6 @@ export default {
       } else {
         return [...realAlbums, ...restItems].slice(0, 5);
       }
-    },
-  },
-  watch: {
-    album: function () {
-      this.$parent.$refs.main.scrollTo({ top: 0 });
     },
   },
   created() {
@@ -256,6 +251,9 @@ export default {
       }
     },
     loadData(id) {
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       getAlbum(id).then(data => {
         this.album = data.album;
         this.tracks = data.songs;

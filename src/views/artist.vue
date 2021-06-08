@@ -207,7 +207,6 @@ export default {
     ContextMenu,
   },
   beforeRouteUpdate(to, from, next) {
-    NProgress.start();
     this.artist.img1v1Url =
       'https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg';
     this.loadData(to.params.id, next);
@@ -257,9 +256,6 @@ export default {
       };
     },
   },
-  created() {
-    this.loadData(this.$route.params.id);
-  },
   activated() {
     if (this.artist?.id?.toString() !== this.$route.params.id) {
       this.loadData(this.$route.params.id);
@@ -271,7 +267,9 @@ export default {
     ...mapMutations(['appendTrackToPlayerList']),
     ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID', 'showToast']),
     loadData(id, next = undefined) {
-      NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       this.show = false;
       this.$parent.$refs.main.scrollTo({ top: 0 });
       getArtist(id).then(data => {

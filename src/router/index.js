@@ -1,10 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import NProgress from 'nprogress';
-import '@/assets/css/nprogress.css';
 import { isLooseLoggedIn, isAccountLoggedIn } from '@/utils/auth';
-
-NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
 
 Vue.use(VueRouter);
 const routes = [
@@ -166,15 +162,6 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     next();
-  }
-});
-
-router.afterEach(to => {
-  if (
-    to.matched.some(record => !record.meta.keepAlive) &&
-    !['settings', 'dailySongs', 'lastfmCallback'].includes(to.name)
-  ) {
-    NProgress.start();
   }
 });
 

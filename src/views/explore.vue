@@ -86,7 +86,6 @@ export default {
     SvgIcon,
   },
   beforeRouteUpdate(to, from, next) {
-    NProgress.start();
     this.showLoadMoreButton = false;
     this.hasMore = true;
     this.playlists = [];
@@ -122,7 +121,9 @@ export default {
   methods: {
     ...mapMutations(['togglePlaylistCategory']),
     loadData() {
-      if (!this.show) NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       this.activeCategory =
         this.$route.query.category === undefined
           ? '全部'
