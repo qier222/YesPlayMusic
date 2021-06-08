@@ -378,15 +378,9 @@ export default {
       Vibrant.from(cover, { colorCount: 1 })
         .getPalette()
         .then(palette => {
-          const color = Color.rgb(palette.DarkMuted._rgb)
-            .darken(0.1)
-            .rgb()
-            .string();
-          const color2 = Color.rgb(palette.DarkMuted._rgb)
-            .lighten(0.28)
-            .rotate(-30)
-            .rgb()
-            .string();
+          const orignColor = Color.rgb(palette.DarkMuted._rgb);
+          const color = orignColor.darken(0.1).rgb().string();
+          const color2 = orignColor.lighten(0.28).rotate(-30).rgb().string();
           this.background = `linear-gradient(to top left, ${color}, ${color2})`;
         });
     },

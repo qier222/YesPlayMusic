@@ -54,6 +54,20 @@
           </select>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title"> 音乐语种偏好 </div>
+        </div>
+        <div class="right">
+          <select v-model="musicLanguage">
+            <option value="all">无偏好</option>
+            <option value="zh">华语</option>
+            <option value="ea">欧美</option>
+            <option value="jp">日语</option>
+            <option value="kr">韩语</option>
+          </select>
+        </div>
+      </div>
 
       <h3>音质</h3>
       <div class="item">
@@ -452,6 +466,17 @@ export default {
       set(lang) {
         this.$i18n.locale = lang;
         this.$store.commit('changeLang', lang);
+      },
+    },
+    musicLanguage: {
+      get() {
+        return this.settings.musicLanguage ?? 'all';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'musicLanguage',
+          value,
+        });
       },
     },
     appearance: {

@@ -9,6 +9,7 @@ let localStorage = {
   player: {},
   settings: {
     lang: null,
+    musicLanguage: 'all',
     appearance: 'auto',
     musicQuality: 320000,
     lyricFontSize: 28,

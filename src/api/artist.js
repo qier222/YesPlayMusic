@@ -50,12 +50,14 @@ export function getArtistAlbum(params) {
  * @param {number=} type
  */
 export function toplistOfArtists(type = null) {
+  let params = {};
+  if (type) {
+    params.type = type;
+  }
   return request({
     url: '/toplist/artist',
     method: 'get',
-    params: {
-      type,
-    },
+    params,
   });
 }
 /**
