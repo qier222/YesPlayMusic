@@ -7,7 +7,7 @@
     >
       <div
         v-if="
-          (settings.lyricsBackground === 'blue') |
+          (settings.lyricsBackground === 'blur') |
             (settings.lyricsBackground === 'dynamic')
         "
         class="lyrics-background"
