@@ -1,4 +1,6 @@
 import { disableScrolling, enableScrolling } from '@/utils/ui';
+import shortcuts from '@/utils/shortcuts';
+import cloneDeep from 'lodash/cloneDeep';
 
 export default {
   updateLikedXXX(state, { name, data }) {
@@ -57,5 +59,16 @@ export default {
   },
   updateLastfm(state, session) {
     state.lastfm = session;
+  },
+  updateShortcut(state, { id, type, shortcut }) {
+    let newShortcut = state.settings.shortcuts.find(s => s.id === id);
+    newShortcut[type] = shortcut;
+    state.settings.shortcuts = state.settings.shortcuts.map(s => {
+      if (s.id !== id) return s;
+      return newShortcut;
+    });
+  },
+  restoreDefaultShortcuts(state) {
+    state.settings.shortcuts = cloneDeep(shortcuts);
   },
 };

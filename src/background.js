@@ -366,14 +366,10 @@ class Background {
       this.initOSDLyrics();
 
       // init ipcMain
-      initIpcMain(
-        this.window,
-        {
-          resizeOSDLyrics: height => this.resizeOSDLyrics(height),
-          toggleOSDLyrics: () => this.toggleOSDLyrics(),
-        },
-        this.store
-      );
+      initIpcMain(this.window, this.store, {
+        resizeOSDLyrics: height => this.resizeOSDLyrics(height),
+        toggleOSDLyrics: () => this.toggleOSDLyrics(),
+      });
 
       // set proxy
       const proxyRules = this.store.get('proxy');
@@ -387,13 +383,7 @@ class Background {
       this.checkForUpdates();
 
       // create menu
-      createMenu(this.window, {
-        openDevTools: () => {
-          if (this.osdlyrics) {
-            this.osdlyrics.webContents.openDevTools();
-          }
-        },
-      });
+      createMenu(this.window, this.store);
 
       // create tray
       if (
@@ -411,7 +401,7 @@ class Background {
 
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut')) {
-        registerGlobalShortcut(this.window);
+        registerGlobalShortcut(this.window, this.store);
       }
     });
 

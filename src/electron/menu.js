@@ -1,10 +1,16 @@
+import defaultShortcuts from '@/utils/shortcuts';
 const { app, Menu } = require('electron');
 // import { autoUpdater } from "electron-updater"
 // const version = app.getVersion();
 
 const isMac = process.platform === 'darwin';
 
-export function createMenu(win, lrc) {
+export function createMenu(win, store, lrc) {
+  let shortcuts = store.get('settings.shortcuts');
+  if (shortcuts === undefined) {
+    shortcuts = defaultShortcuts;
+  }
+
   let menu = null;
   const template = [
     ...(isMac
@@ -19,7 +25,7 @@ export function createMenu(win, lrc) {
               { type: 'separator' },
               {
                 label: 'Preferences...',
-                accelerator: (() => (isMac ? 'CmdOrCtrl+,' : 'Ctrl+,'))(),
+                accelerator: 'CmdOrCtrl+,',
                 click: () => {
                   win.webContents.send('changeRouteTo', '/settings');
                 },
@@ -69,41 +75,42 @@ export function createMenu(win, lrc) {
       submenu: [
         {
           label: 'Play',
+          accelerator: shortcuts.find(s => s.id === 'play').shortcut,
           click: () => {
             win.webContents.send('play');
           },
         },
         {
           label: 'Next',
-          accelerator: 'CmdOrCtrl+Right',
+          accelerator: shortcuts.find(s => s.id === 'next').shortcut,
           click: () => {
             win.webContents.send('next');
           },
         },
         {
           label: 'Previous',
-          accelerator: 'CmdOrCtrl+Left',
+          accelerator: shortcuts.find(s => s.id === 'previous').shortcut,
           click: () => {
             win.webContents.send('previous');
           },
         },
         {
           label: 'Increase Volume',
-          accelerator: 'CmdOrCtrl+Up',
+          accelerator: shortcuts.find(s => s.id === 'increaseVolume').shortcut,
           click: () => {
             win.webContents.send('increaseVolume');
           },
         },
         {
           label: 'Decrease Volume',
-          accelerator: 'CmdOrCtrl+Down',
+          accelerator: shortcuts.find(s => s.id === 'decreaseVolume').shortcut,
           click: () => {
             win.webContents.send('decreaseVolume');
           },
         },
         {
           label: 'Like',
-          accelerator: 'CmdOrCtrl+L',
+          accelerator: shortcuts.find(s => s.id === 'like').shortcut,
           click: () => {
             win.webContents.send('like');
           },
@@ -208,6 +215,7 @@ export function createMenu(win, lrc) {
   //     ],
   //   });
   // }
+
   menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }

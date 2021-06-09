@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-page">
+  <div class="settings-page" @click="clickOutside">
     <div class="container">
       <div v-if="showUserInfo" class="user">
         <div class="left">
@@ -141,6 +141,7 @@
             <option :value="1024"> 1GB </option>
             <option :value="2048"> 2GB </option>
             <option :value="4096"> 4GB </option>
+            <option :value="8192"> 8GB </option>
           </select>
         </div>
       </div>
@@ -402,6 +403,69 @@
             </div>
           </div>
         </div>
+        <div
+          id="shortcut-table"
+          :class="{ 'global-disabled': !enableGlobalShortcut }"
+          tabindex="0"
+          @keydown="handleShortcutKeydown"
+        >
+          <div class="row row-head">
+            <div class="col">功能</div>
+            <div class="col">快捷键</div>
+            <div class="col">全局快捷键</div>
+          </div>
+          <div
+            v-for="shortcut in settings.shortcuts"
+            :key="shortcut.id"
+            class="row"
+          >
+            <div class="col">{{ shortcut.name }}</div>
+            <div class="col">
+              <div
+                class="keyboard-input"
+                :class="{
+                  active:
+                    shortcutInput.id === shortcut.id &&
+                    shortcutInput.type === 'shortcut',
+                }"
+                @click.stop="readyToRecordShortcut(shortcut.id, 'shortcut')"
+              >
+                {{
+                  shortcutInput.id === shortcut.id &&
+                  shortcutInput.type === 'shortcut' &&
+                  recordedShortcutComputed !== ''
+                    ? formatShortcut(recordedShortcutComputed)
+                    : formatShortcut(shortcut.shortcut)
+                }}
+              </div>
+            </div>
+            <div class="col">
+              <div
+                class="keyboard-input"
+                :class="{
+                  active:
+                    shortcutInput.id === shortcut.id &&
+                    shortcutInput.type === 'globalShortcut',
+                }"
+                @click.stop="
+                  readyToRecordShortcut(shortcut.id, 'globalShortcut')
+                "
+                >{{
+                  shortcutInput.id === shortcut.id &&
+                  shortcutInput.type === 'globalShortcut' &&
+                  recordedShortcutComputed !== ''
+                    ? formatShortcut(recordedShortcutComputed)
+                    : formatShortcut(shortcut.globalShortcut)
+                }}</div
+              >
+            </div>
+          </div>
+          <button
+            class="restore-default-shortcut"
+            @click="restoreDefaultShortcuts"
+            >恢复默认快捷键</button
+          >
+        </div>
       </div>
 
       <div class="footer">
@@ -428,6 +492,8 @@ const electron =
 const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
 
+const validShortcutCodes = ['=', '-', '~', '[', ']', ';', "'", ',', '.', '/'];
+
 export default {
   name: 'Settings',
   data() {
@@ -442,6 +508,12 @@ export default {
           label: 'settings.permissionRequired',
         },
       ],
+      shortcutInput: {
+        id: '',
+        type: '',
+        recording: false,
+      },
+      recordedShortcut: [],
     };
   },
   computed: {
@@ -457,6 +529,51 @@ export default {
     },
     showUserInfo() {
       return isLooseLoggedIn() && this.data.user.nickname;
+    },
+    recordedShortcutComputed() {
+      let shortcut = [];
+      this.recordedShortcut.map(e => {
+        if (e.keyCode >= 65 && e.keyCode <= 90) {
+          // A-Z
+          shortcut.push(e.code.replace('Key', ''));
+        } else if (e.key === 'Meta') {
+          // ⌘ Command on macOS
+          shortcut.push('Command');
+        } else if (['Alt', 'Control', 'Shift'].includes(e.key)) {
+          shortcut.push(e.key);
+        } else if (e.keyCode >= 48 && e.keyCode <= 57) {
+          // 0-9
+          shortcut.push(e.code.replace('Digit', ''));
+        } else if (e.keyCode >= 112 && e.keyCode <= 123) {
+          // F1-F12
+          shortcut.push(e.code);
+        } else if (
+          ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)
+        ) {
+          // Arrows
+          shortcut.push(e.code.replace('Arrow', ''));
+        } else if (validShortcutCodes.includes(e.key)) {
+          shortcut.push(e.key);
+        }
+      });
+      const sortTable = {
+        Control: 1,
+        Shift: 2,
+        Alt: 3,
+        Command: 4,
+      };
+      shortcut = shortcut.sort((a, b) => {
+        if (!sortTable[a] || !sortTable[b]) return 0;
+        if (sortTable[a] - sortTable[b] <= -1) {
+          return -1;
+        } else if (sortTable[a] - sortTable[b] >= 1) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      shortcut = shortcut.join('+');
+      return shortcut;
     },
 
     lang: {
@@ -786,6 +903,77 @@ export default {
       }
       this.showToast('已更新代理设置');
     },
+    clickOutside() {
+      this.exitRecordShortcut();
+    },
+    formatShortcut(shortcut) {
+      shortcut = shortcut
+        .replaceAll('+', ' + ')
+        .replace('Up', '↑')
+        .replace('Down', '↓')
+        .replace('Right', '→')
+        .replace('Left', '←');
+      if (this.settings.lang === 'zh-CN') {
+        shortcut = shortcut.replace('Space', '空格');
+      }
+      if (process.platform === 'darwin') {
+        return shortcut
+          .replace('CommandOrControl', '⌘')
+          .replace('Command', '⌘')
+          .replace('Alt', '⌥')
+          .replace('Control', '⌃')
+          .replace('Shift', '⇧');
+      }
+      return shortcut.replace('CommandOrControl', 'Ctrl');
+    },
+    readyToRecordShortcut(id, type) {
+      this.shortcutInput = { id, type, recording: true };
+      this.recordedShortcut = [];
+      ipcRenderer.send('switchGlobalShortcutStatusTemporary', 'disable');
+    },
+    handleShortcutKeydown(e) {
+      if (this.shortcutInput.recording === false) return;
+      e.preventDefault();
+      if (this.recordedShortcut.find(s => s.keyCode === e.keyCode)) return;
+      this.recordedShortcut.push(e);
+      if (
+        (e.keyCode >= 65 && e.keyCode <= 90) || // A-Z
+        (e.keyCode >= 48 && e.keyCode <= 57) || // 0-9
+        (e.keyCode >= 112 && e.keyCode <= 123) || // F1-F12
+        ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key) || // Arrows
+        validShortcutCodes.includes(e.key)
+      ) {
+        this.saveShortcut();
+      }
+    },
+    handleShortcutKeyup(e) {
+      if (this.recordedShortcut.find(s => s.keyCode === e.keyCode)) {
+        this.recordedShortcut = this.recordedShortcut.filter(
+          s => s.keyCode !== e.keyCode
+        );
+      }
+    },
+    saveShortcut() {
+      const { id, type } = this.shortcutInput;
+      const payload = {
+        id,
+        type,
+        shortcut: this.recordedShortcutComputed,
+      };
+      this.$store.commit('updateShortcut', payload);
+      ipcRenderer.send('updateShortcut', payload);
+      this.showToast('快捷键已保存');
+      this.recordedShortcut = [];
+    },
+    exitRecordShortcut() {
+      this.shortcutInput = { id: '', type: '', recording: false };
+      this.recordedShortcut = [];
+      ipcRenderer.send('switchGlobalShortcutStatusTemporary', 'enable');
+    },
+    restoreDefaultShortcuts() {
+      this.$store.commit('restoreDefaultShortcuts');
+      ipcRenderer.send('restoreDefaultShortcuts');
+    },
   },
 };
 </script>
@@ -960,6 +1148,59 @@ input[type='number'] {
   opacity: 0.47;
   button:hover {
     transform: unset;
+  }
+}
+
+#shortcut-table {
+  font-size: 14px;
+  /* border: 1px solid black; */
+  user-select: none;
+  color: var(--color-text);
+  .row {
+    display: flex;
+  }
+  .row.row-head {
+    opacity: 0.58;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .col {
+    min-width: 192px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    /* border: 1px solid red; */
+    &:first-of-type {
+      padding-left: 0;
+      min-width: 128px;
+    }
+  }
+  .keyboard-input {
+    font-weight: 600;
+    background-color: var(--color-secondary-bg);
+    padding: 8px 12px 8px 12px;
+    border-radius: 0.5rem;
+    min-width: 146px;
+    min-height: 34px;
+    box-sizing: border-box;
+    &.active {
+      color: var(--color-primary);
+      background-color: var(--color-primary-bg);
+    }
+  }
+  .restore-default-shortcut {
+    margin-top: 12px;
+  }
+  &.global-disabled {
+    .row .col:last-child {
+      opacity: 0.48;
+    }
+    .row.row-head .col:last-child {
+      opacity: 1;
+    }
+  }
+  &:focus {
+    outline: none;
   }
 }
 

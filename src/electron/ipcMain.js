@@ -1,10 +1,18 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
 import match from '@revincx/unblockneteasemusic';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
+import cloneDeep from 'lodash/cloneDeep';
+import shortcuts from '@/utils/shortcuts';
+import { createMenu } from './menu';
+
+const clc = require('cli-color');
+const log = text => {
+  console.log(`${clc.blueBright('[ipcMain.js]')} ${text}`);
+};
 
 const client = require('discord-rich-presence')('818936529484906596');
 
-export function initIpcMain(win, lrc, store) {
+export function initIpcMain(win, store, lrc) {
   ipcMain.on('unblock-music', (event, track) => {
     // 兼容 unblockneteasemusic 所使用的 api 字段
     track.alias = track.alia || [];
@@ -23,7 +31,7 @@ export function initIpcMain(win, lrc, store) {
         event.returnValue = res;
       })
       .catch(err => {
-        console.log('unblock music error: ', err);
+        log('unblock music error: ', err);
         event.returnValue = null;
       });
   });
@@ -53,7 +61,7 @@ export function initIpcMain(win, lrc, store) {
         }
       })
       .catch(err => {
-        console.log(err);
+        log(err);
       });
   });
 
@@ -69,13 +77,10 @@ export function initIpcMain(win, lrc, store) {
 
   ipcMain.on('settings', (event, options) => {
     store.set('settings', options);
-    const isRegisterShortcut = globalShortcut.isRegistered(
-      'Alt+CommandOrControl+P'
-    );
     if (options.enableGlobalShortcut) {
-      !isRegisterShortcut && registerGlobalShortcut(win);
+      registerGlobalShortcut(win, store);
     } else {
-      isRegisterShortcut && globalShortcut.unregisterAll();
+      globalShortcut.unregisterAll();
     }
   });
 
@@ -112,13 +117,13 @@ export function initIpcMain(win, lrc, store) {
         proxyRules,
       },
       () => {
-        console.log('finished setProxy');
+        log('finished setProxy');
       }
     );
   });
 
   ipcMain.on('removeProxy', (event, arg) => {
-    console.log('removeProxy');
+    log('removeProxy');
     win.webContents.session.setProxy({});
     store.set('proxy', '');
   });
@@ -129,5 +134,34 @@ export function initIpcMain(win, lrc, store) {
 
   ipcMain.on('toggleOSDLyrics', () => {
     lrc.toggleOSDLyrics();
+  });
+
+  ipcMain.on('switchGlobalShortcutStatusTemporary', (e, status) => {
+    if (status === 'disable') {
+      globalShortcut.unregisterAll();
+    } else {
+      registerGlobalShortcut(win, store);
+    }
+  });
+
+  ipcMain.on('updateShortcut', (e, { id, type, shortcut }) => {
+    log('updateShortcut');
+    let shortcuts = store.get('settings.shortcuts');
+    let newShortcut = shortcuts.find(s => s.id === id);
+    newShortcut[type] = shortcut;
+    store.set('settings.shortcuts', shortcuts);
+
+    createMenu(win, store);
+    globalShortcut.unregisterAll();
+    registerGlobalShortcut(win, store);
+  });
+
+  ipcMain.on('restoreDefaultShortcuts', () => {
+    log('restoreDefaultShortcuts');
+    store.set('settings.shortcuts', cloneDeep(shortcuts));
+
+    createMenu(win, store);
+    globalShortcut.unregisterAll();
+    registerGlobalShortcut(win, store);
   });
 }

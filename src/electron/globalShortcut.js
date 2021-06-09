@@ -1,25 +1,58 @@
+import defaultShortcuts from '@/utils/shortcuts';
 const { globalShortcut } = require('electron');
 
-export function registerGlobalShortcut(win) {
-  globalShortcut.register('Alt+CommandOrControl+P', () => {
-    win.webContents.send('play');
-  });
-  globalShortcut.register('Alt+CommandOrControl+Right', () => {
-    win.webContents.send('next');
-  });
-  globalShortcut.register('Alt+CommandOrControl+Left', () => {
-    win.webContents.send('previous');
-  });
-  globalShortcut.register('Alt+CommandOrControl+Up', () => {
-    win.webContents.send('increaseVolume');
-  });
-  globalShortcut.register('Alt+CommandOrControl+Down', () => {
-    win.webContents.send('decreaseVolume');
-  });
-  globalShortcut.register('Alt+CommandOrControl+L', () => {
-    win.webContents.send('like');
-  });
-  globalShortcut.register('Alt+CommandOrControl+M', () => {
-    win.isVisible() ? win.hide() : win.show();
-  });
+const clc = require('cli-color');
+const log = text => {
+  console.log(`${clc.blueBright('[globalShortcut.js]')} ${text}`);
+};
+
+export function registerGlobalShortcut(win, store) {
+  log('registerGlobalShortcut');
+  let shortcuts = store.get('settings.shortcuts');
+  if (shortcuts === undefined) {
+    shortcuts = defaultShortcuts;
+  }
+
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'play').globalShortcut,
+    () => {
+      win.webContents.send('play');
+    }
+  );
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'next').globalShortcut,
+    () => {
+      win.webContents.send('next');
+    }
+  );
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'previous').globalShortcut,
+    () => {
+      win.webContents.send('previous');
+    }
+  );
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'increaseVolume').globalShortcut,
+    () => {
+      win.webContents.send('increaseVolume');
+    }
+  );
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'decreaseVolume').globalShortcut,
+    () => {
+      win.webContents.send('decreaseVolume');
+    }
+  );
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'like').globalShortcut,
+    () => {
+      win.webContents.send('like');
+    }
+  );
+  globalShortcut.register(
+    shortcuts.find(s => s.id === 'minimize').globalShortcut,
+    () => {
+      win.isVisible() ? win.hide() : win.show();
+    }
+  );
 }
