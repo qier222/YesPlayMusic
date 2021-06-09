@@ -184,7 +184,6 @@ import {
 } from '@/api/artist';
 import locale from '@/locale';
 import { isAccountLoggedIn } from '@/utils/auth';
-import { disableScrolling, enableScrolling } from '@/utils/ui';
 import NProgress from 'nprogress';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -330,9 +329,9 @@ export default {
     toggleFullDescription() {
       this.showFullDescription = !this.showFullDescription;
       if (this.showFullDescription) {
-        disableScrolling();
+        this.$store.commit('enableScrolling', false);
       } else {
-        enableScrolling();
+        this.$store.commit('enableScrolling', true);
       }
     },
     openMenu(e) {

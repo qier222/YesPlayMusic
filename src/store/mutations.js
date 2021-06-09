@@ -1,4 +1,3 @@
-import { disableScrolling, enableScrolling } from '@/utils/ui';
 import shortcuts from '@/utils/shortcuts';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -47,8 +46,8 @@ export default {
     if (key === 'show') {
       // 100ms的延迟是为等待右键菜单blur之后再disableScrolling
       value === true
-        ? setTimeout(() => disableScrolling(), 100)
-        : enableScrolling();
+        ? setTimeout(() => (state.enableScrolling = false), 100)
+        : (state.enableScrolling = true);
     }
   },
   toggleLyrics(state) {
@@ -70,5 +69,8 @@ export default {
   },
   restoreDefaultShortcuts(state) {
     state.settings.shortcuts = cloneDeep(shortcuts);
+  },
+  enableScrolling(state, status = null) {
+    state.enableScrolling = status ? status : !state.enableScrolling;
   },
 };

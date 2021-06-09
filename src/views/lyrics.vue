@@ -204,7 +204,6 @@ import VueSlider from 'vue-slider-component';
 import { formatTrackTime } from '@/utils/common';
 import { getLyric } from '@/api/track';
 import { lyricParser } from '@/utils/lyrics';
-import { disableScrolling, enableScrolling } from '@/utils/ui';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import * as Vibrant from 'node-vibrant';
 import Color from 'color';
@@ -295,10 +294,10 @@ export default {
     showLyrics(show) {
       if (show) {
         this.setLyricsInterval();
-        disableScrolling();
+        this.$store.commit('enableScrolling', false);
       } else {
         clearInterval(this.lyricsInterval);
-        enableScrolling();
+        this.$store.commit('enableScrolling', true);
       }
     },
   },

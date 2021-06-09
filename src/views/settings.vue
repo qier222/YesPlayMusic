@@ -445,7 +445,8 @@
                 :class="{
                   active:
                     shortcutInput.id === shortcut.id &&
-                    shortcutInput.type === 'globalShortcut',
+                    shortcutInput.type === 'globalShortcut' &&
+                    enableGlobalShortcut,
                 }"
                 @click.stop="
                   readyToRecordShortcut(shortcut.id, 'globalShortcut')
@@ -927,6 +928,9 @@ export default {
       return shortcut.replace('CommandOrControl', 'Ctrl');
     },
     readyToRecordShortcut(id, type) {
+      if (type === 'globalShortcut' && this.enableGlobalShortcut === false) {
+        return;
+      }
       this.shortcutInput = { id, type, recording: true };
       this.recordedShortcut = [];
       ipcRenderer.send('switchGlobalShortcutStatusTemporary', 'disable');

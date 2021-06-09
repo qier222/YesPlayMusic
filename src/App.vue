@@ -2,7 +2,11 @@
   <div id="app" :class="{ 'user-select-none': userSelectNone }">
     <Scrollbar v-show="!showLyrics" ref="scrollbar" />
     <Navbar v-show="showNavbar" ref="navbar" />
-    <main ref="main" @scroll="handleScroll">
+    <main
+      ref="main"
+      :style="{ overflow: enableScrolling ? 'auto' : 'hidden' }"
+      @scroll="handleScroll"
+    >
       <keep-alive>
         <router-view v-if="$route.meta.keepAlive"></router-view>
       </keep-alive>
@@ -50,7 +54,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['showLyrics', 'settings', 'player']),
+    ...mapState(['showLyrics', 'settings', 'player', 'enableScrolling']),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },

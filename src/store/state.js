@@ -12,6 +12,7 @@ updateApp();
 
 export default {
   showLyrics: false,
+  enableScrolling: true,
   liked: {
     songs: [],
     songsWithDetails: [], // 只有前12首

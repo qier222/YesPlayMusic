@@ -137,7 +137,7 @@ export function getLyricFromCache(id) {
 
 export function cacheAlbum(id, album) {
   db.album.put({
-    id,
+    id: Number(id),
     album,
     updateTime: new Date().getTime(),
   });
