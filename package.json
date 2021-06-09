@@ -1,6 +1,6 @@
 {
   "name": "yesplaymusic",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "private": true,
   "description": "A third party music player for Netease Music",
   "author": "hawtim<hawtimzhang@gmail.com>",
@@ -47,6 +47,8 @@
     "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",
     "express": "^4.17.1",
+    "md5": "^2.3.0",
+    "music-metadata": "^7.5.3",
     "express-fileupload": "^1.2.0",
     "express-http-proxy": "^1.6.2",
     "extract-zip": "^2.0.1",

@@ -23,6 +23,10 @@ const updateSetting = () => {
     });
   }
 
+  if (localStorage.getItem('appVersion') === '"0.3.9"') {
+    settings.lyricsBackground = true;
+  }
+
   localStorage.setItem('settings', JSON.stringify(settings));
 };
 
