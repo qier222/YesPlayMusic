@@ -20,20 +20,20 @@
 ## ✨ 特性
 
 - ✅ 使用 Vue.js 全家桶开发
-- 🔴 网易云账号登录
+- 🔴 网易云账号登录（扫码/手机/邮箱登录）
 - 📺 支持 MV 播放
 - 📃 支持歌词显示
-- 📻 支持私人 FM
+- 📻 支持私人 FM / 每日推荐歌曲
 - 🚫🤝 无任何社交功能
 - 🌎️ 海外用户可直接播放（需要登录网易云账号）
-- 🔐 支持 [UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic)（[使用revincx修复的npm包](https://github.com/revincx/UnblockNeteaseMusic)），自动使用 QQ/酷狗/酷我音源替换变灰歌曲链接 （网页版不支持）
-- ⏭️ 支持 MediaSession API，可以使用系统快捷键操作上一首下一首
+- 🔐 支持 [UnblockNeteaseMusic](https://github.com/nondanee/UnblockNeteaseMusic)（[使用 revincx 修复的 npm 包](https://github.com/revincx/UnblockNeteaseMusic)），自动使用 QQ/酷狗/酷我音源替换变灰歌曲链接 （网页版不支持）
 - ✔️ 每日自动签到（手机端和电脑端同时签到）
 - 🌚 Light/Dark Mode 自动切换
 - 👆 支持 Touch Bar
 - 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
-- 🙉 支持显示歌曲和专辑的 Explicit 标志
 - 🟥 支持 Last.fm Scrobble
+- ☁️ 支持音乐云盘
+- ⌨️ 自定义快捷键和全局快捷键
 - 🛠 更多特性开发中
 
 ## 📦️ 安装
@@ -172,12 +172,14 @@ API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryif
 
 ## 🖼️ 截图
 
-[![artist][artist-screenshot]](https://music.qier222.com)
-[![album][album-screenshot]](https://music.qier222.com)
-[![playlist][playlist-screenshot]](https://music.qier222.com)
-[![explore][explore-screenshot]](https://music.qier222.com)
-[![search][search-screenshot]](https://music.qier222.com)
-[![home][home-screenshot]](https://music.qier222.com)
+![lyrics][lyrics-screenshot]
+![library-dark][library-dark-screenshot]
+![album][album-screenshot]
+![home-2][home-2-screenshot]
+![artist][artist-screenshot]
+![search][search-screenshot]
+![home][home-screenshot]
+![explore][explore-screenshot]
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
@@ -186,6 +188,8 @@ API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryif
 [artist-screenshot]: images/artist.png
 [explore-screenshot]: images/explore.png
 [home-screenshot]: images/home.png
+[home-2-screenshot]: images/home-2.png
+[lyrics-screenshot]: images/lyrics.png
 [library-screenshot]: images/library.png
-[playlist-screenshot]: images/playlist.png
+[library-dark-screenshot]: images/library-dark.png
 [search-screenshot]: images/search.png
