@@ -129,7 +129,7 @@ export default {
   },
   fetchLikedArtists: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return likedArtists().then(result => {
+    return likedArtists({ limit: 2000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'artists',
@@ -140,7 +140,7 @@ export default {
   },
   fetchLikedMVs: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return likedMVs().then(result => {
+    return likedMVs({ limit: 2000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'mvs',
