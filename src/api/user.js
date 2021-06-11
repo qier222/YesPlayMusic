@@ -87,17 +87,18 @@ export function dailySignin(type = 0) {
 /**
  * 获取收藏的专辑（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的专辑
- * - limit : 返回数量 , 默认为 30
- * - offset : 偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ * - limit : 返回数量 , 默认为 25
+ * - offset : 偏移数量，用于分页 , 如 :( 页数 -1)*25, 其中 25 为 limit 的值 , 默认为 0
  * @param {Object} params
  * @param {number} params.limit
  * @param {number=} params.offset
  */
-export function likedAlbums() {
+export function likedAlbums(params) {
   return request({
     url: '/album/sublist',
     method: 'get',
     params: {
+      limit: params.limit,
       timestamp: new Date().getTime(),
     },
   });
@@ -107,11 +108,12 @@ export function likedAlbums() {
  * 获取收藏的歌手（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的歌手
  */
-export function likedArtists() {
+export function likedArtists(params) {
   return request({
     url: '/artist/sublist',
     method: 'get',
     params: {
+      limit: params.limit,
       timestamp: new Date().getTime(),
     },
   });
@@ -121,11 +123,12 @@ export function likedArtists() {
  * 获取收藏的MV（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的MV
  */
-export function likedMVs() {
+export function likedMVs(params) {
   return request({
     url: '/mv/sublist',
     method: 'get',
     params: {
+      limit: params.limit,
       timestamp: new Date().getTime(),
     },
   });
