@@ -59,6 +59,12 @@
                 @blur="inputFocus = false"
               />
             </div>
+            <transition name="fade">
+              <NavbarSearchList
+                v-show="inputFocus && keywords.length !== 0"
+                :keywords="keywords"
+              />
+            </transition>
           </div>
         </div>
         <img class="avatar" :src="avatarUrl" @click="showUserProfileMenu" />
@@ -97,6 +103,7 @@ import 'vscode-codicons/dist/codicon.css';
 
 import ContextMenu from '@/components/ContextMenu.vue';
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import NavbarSearchList from '@/components/NavbarSearchList.vue';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -108,6 +115,7 @@ export default {
   components: {
     ButtonIcon,
     ContextMenu,
+    NavbarSearchList,
   },
   data() {
     return {
@@ -420,5 +428,13 @@ nav {
     display: none;
     -webkit-app-region: no-drag;
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

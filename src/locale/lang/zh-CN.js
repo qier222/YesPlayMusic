@@ -8,6 +8,8 @@ export default {
     explore: '发现',
     library: '音乐库',
     search: '搜索',
+    'search-loading': '搜索中',
+    'search-not-found': '😢 没有找到歌曲',
     github: 'GitHub 仓库',
   },
   home: {
