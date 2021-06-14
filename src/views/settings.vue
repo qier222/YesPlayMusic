@@ -35,6 +35,7 @@
             <option value="en">🇬🇧 English</option>
             <option value="tr">🇹🇷 Türkçe</option>
             <option value="zh-CN">🇨🇳 简体中文</option>
+            <option value="zh-TW">ᴛᴡ 繁體中文</option>
           </select>
         </div>
       </div>
@@ -916,6 +917,8 @@ export default {
         .replace('Left', '←');
       if (this.settings.lang === 'zh-CN') {
         shortcut = shortcut.replace('Space', '空格');
+      } else if (this.settings.lang === 'zh-TW') {
+        shortcut = shortcut.replace('Space', '空白鍵');
       }
       if (process.platform === 'darwin') {
         return shortcut

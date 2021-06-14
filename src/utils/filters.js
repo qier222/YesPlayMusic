@@ -19,8 +19,21 @@ Vue.filter('formatTime', (Milliseconds, format = 'HH:MM:SS') => {
       ? `${hours}:${mins.padStart(2, '0')}:${seconds}`
       : `${mins}:${seconds}`;
   } else if (format === 'Human') {
-    const hoursUnit = locale.locale === 'zh-CN' ? '小时' : 'hr';
-    const minitesUnit = locale.locale === 'zh-CN' ? '分钟' : 'min';
+    let hoursUnit, minitesUnit;
+    switch (locale.locale) {
+      case 'zh-CN':
+        hoursUnit = '小时';
+        minitesUnit = '分钟';
+        break;
+      case 'zh-TW':
+        hoursUnit = '小時';
+        minitesUnit = '分鐘';
+        break;
+      default:
+        hoursUnit = 'hr';
+        minitesUnit = 'min';
+        break;
+    }
     return hours !== '0'
       ? `${hours} ${hoursUnit} ${mins} ${minitesUnit}`
       : `${mins} ${minitesUnit}`;
@@ -30,6 +43,7 @@ Vue.filter('formatTime', (Milliseconds, format = 'HH:MM:SS') => {
 Vue.filter('formatDate', (timestamp, format = 'MMM D, YYYY') => {
   if (!timestamp) return '';
   if (locale.locale === 'zh-CN') format = 'YYYY年MM月DD日';
+  else if (locale.locale === 'zh-TW') format = 'YYYY年MM月DD日';
   return dayjs(timestamp).format(format);
 });
 
@@ -66,6 +80,17 @@ Vue.filter('formatPlayCount', count => {
     }
     if (count > 10000) {
       return `${Math.floor((count / 10000) * 100) / 100}万`; // 2.3 万
+    }
+    return count;
+  } else if (locale.locale === 'zh-TW') {
+    if (count > 100000000) {
+      return `${Math.floor((count / 100000000) * 100) / 100}億`; // 2.32 億
+    }
+    if (count > 100000) {
+      return `${Math.floor((count / 10000) * 10) / 10}萬`; // 232.1 萬
+    }
+    if (count > 10000) {
+      return `${Math.floor((count / 10000) * 100) / 100}萬`; // 2.3 萬
     }
     return count;
   } else {
