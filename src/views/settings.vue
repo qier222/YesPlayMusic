@@ -182,6 +182,22 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title">{{ $t('settings.enableFhj') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-fhj"
+              v-model="enableFhj"
+              type="checkbox"
+              name="enable-fhj"
+            />
+            <label for="enable-fhj"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title">{{ $t('settings.lyricsBackground.text') }}</div>
         </div>
         <div class="right">
@@ -707,6 +723,17 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'showLyricsTranslation',
+          value,
+        });
+      },
+    },
+    enableFhj: {
+      get() {
+        return this.settings.enableFhj;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'enableFhj',
           value,
         });
       },

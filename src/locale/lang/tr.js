@@ -147,6 +147,7 @@ export default {
     clearSongsCache: 'Müzik çerezlerini temizle',
     cacheCount: 'Çerezlenen {song} Müzikler ({size})',
     showLyricsTranslation: 'Müzik sözlerinin çevirilerini göster',
+    enableFhj: 'Enable Zhconvert lyrics traditionalization',
     minimizeToTray: 'Küçült',
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
     enableDiscordRichPresence: 'Discord gösterimini aktifleştir',

@@ -147,6 +147,7 @@ export default {
     clearSongsCache: 'Clear Songs Cache',
     cacheCount: 'Cached {song} songs ({size})',
     showLyricsTranslation: 'Show lyrics translation',
+    enableFhj: 'Enable Zhconvert lyrics traditionalization',
     minimizeToTray: 'Minimize to tray',
     showPlaylistsByAppleMusic: 'Show playlists by Apple Music',
     enableDiscordRichPresence: 'Enable Discord Rich Presence',
