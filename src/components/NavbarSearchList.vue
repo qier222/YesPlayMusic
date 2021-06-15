@@ -63,6 +63,9 @@ export default {
   },
   methods: {
     fetchSongs: debounce(async function () {
+      this.searchSongs = Array.from(Array(30), () => {
+        return {};
+      });
       const data = await search({ keywords: this.keywords });
       const songs = data?.result?.songs;
       if (!songs) {

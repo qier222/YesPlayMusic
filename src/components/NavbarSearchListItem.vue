@@ -5,7 +5,11 @@
       <svg-icon icon-class="play"></svg-icon>
     </div>
     <div class="song-item-info" @click="goToAlbum">
-      <div class="song-item-title">{{ track.name }}</div>
+      <div
+        class="song-item-title"
+        :style="track.name ? '' : 'background:#7a7a7b;'"
+        >{{ track.name }}</div
+      >
       <ArtistsInLine :artists="artists" class="song-item-singer" />
     </div>
   </div>
@@ -74,7 +78,10 @@ export default {
   margin-left: 0.5rem;
   flex: 1;
   word-break: break-all;
+  height: 100%;
   .song-item-title {
+    height: 20px;
+    border-radius: 3px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
