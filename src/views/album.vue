@@ -107,7 +107,7 @@
       :close="toggleFullDescription"
       :show-footer="false"
       :click-outside-hide="true"
-      title="专辑介绍"
+      :title="$t('album.albumDesc')"
     >
       <p class="description-fulltext">
         {{ album.description }}

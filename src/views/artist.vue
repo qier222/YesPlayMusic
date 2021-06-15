@@ -95,7 +95,7 @@
             <div class="date">
               {{ latestMV.publishTime | formatDate }}
             </div>
-            <div class="type"> 最新MV </div>
+            <div class="type">{{ $t('artist.latestMV') }}</div>
           </div>
         </div>
         <div v-show="!latestMV.id"></div>
@@ -144,7 +144,7 @@
     </div>
 
     <div v-if="similarArtists.length !== 0" class="similar-artists">
-      <div class="section-title">相似艺人</div>
+      <div class="section-title">{{ $t('artist.similarArtists') }}</div>
       <CoverRow
         type="artist"
         :column-number="6"
@@ -158,7 +158,7 @@
       :close="toggleFullDescription"
       :show-footer="false"
       :click-outside-hide="true"
-      title="艺术家介绍"
+      :title="$t('artist.artistDesc')"
     >
       <p class="description-fulltext">
         {{ artist.briefDesc }}

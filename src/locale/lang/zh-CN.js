@@ -37,6 +37,7 @@ export default {
   },
   artist: {
     latestRelease: '最新发布',
+    latestMV: '最新 MV',
     popularSongs: '热门歌曲',
     showMore: '显示更多',
     showLess: '收起',
@@ -47,9 +48,12 @@ export default {
     videos: '个 MV',
     following: '正在关注',
     follow: '关注',
+    similarArtists: '相似艺人',
+    artistDesc: '艺术家介绍',
   },
   album: {
     released: '发行于',
+    albumDesc: '专辑介绍',
   },
   playlist: {
     playlist: '歌单',
