@@ -112,7 +112,7 @@ export default {
   data() {
     return {
       inputFocus: false,
-      langs: ['zh-CN', 'en', 'tr'],
+      langs: ['zh-CN', 'zh-TW', 'en', 'tr'],
       keywords: '',
       isWindowMaximized: false,
     };
