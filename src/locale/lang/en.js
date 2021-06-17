@@ -40,6 +40,7 @@ export default {
   },
   artist: {
     latestRelease: 'Latest Releases',
+    latestMV: 'Latest MV',
     popularSongs: 'Popular Songs',
     showMore: 'SHOW MORE',
     showLess: 'SHOW LESS',
@@ -50,9 +51,12 @@ export default {
     videos: 'Music Videos',
     following: 'Following',
     follow: 'Follow',
+    similarArtists: 'Similar Artists',
+    artistDesc: 'Artist Description',
   },
   album: {
     released: 'Released',
+    albumDesc: 'Album Description',
   },
   playlist: {
     playlist: 'Playlists',
