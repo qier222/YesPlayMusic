@@ -116,9 +116,15 @@ export default {
       document.removeEventListener('mousemove', this.handleDragMove);
       document.removeEventListener('mouseup', this.handleDragEnd);
     },
-    handleClick() {
+    handleClick(e) {
+      let scrollTop;
+      if (e.clientY < this.top + 84) {
+        scrollTop = -256;
+      } else {
+        scrollTop = 256;
+      }
       this.main.scrollBy({
-        top: 256,
+        top: scrollTop,
         behavior: 'smooth',
       });
     },
