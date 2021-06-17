@@ -85,6 +85,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import { getTrackDetail } from '@/api/track';
 import { search } from '@/api/others';
 import NProgress from 'nprogress';
@@ -135,11 +136,13 @@ export default {
     this.getData();
   },
   methods: {
+    ...mapActions(['showToast']),
     playTrackInSearchResult(id) {
       let track = this.tracks.find(t => t.id === id);
       this.$store.state.player.appendTrackToPlayerList(track, true);
     },
     search(type = 'all') {
+      let showToast = this.showToast;
       const typeTable = {
         all: 1018,
         musicVideos: 1004,
@@ -152,9 +155,13 @@ export default {
         keywords: this.keywords,
         type: typeTable[type],
         limit: 16,
-      }).then(result => {
-        return { result: result.result, type };
-      });
+      })
+        .then(result => {
+          return { result: result.result, type };
+        })
+        .catch(err => {
+          showToast(err.response.data.msg || err.response.data.message);
+        });
     },
     getData() {
       setTimeout(() => {
