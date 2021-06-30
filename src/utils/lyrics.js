@@ -1,5 +1,7 @@
 // copy from https://github.com/sl1673495/vue-netease-music/blob/master/src/utils/lrcparse.js
 
+import axios from 'axios';
+
 export function lyricParser(lrc) {
   return {
     lyric: parseLyric(lrc?.lrc?.lyric || ''),
@@ -30,4 +32,13 @@ export function parseLyric(lrc) {
     }
   }
   return lrcObj;
+}
+
+export async function fhj(lrc) {
+  const resp = await axios
+    .post('https://api.zhconvert.org/convert', {
+      text: lrc,
+      converter: 'Taiwan',
+    });
+  return resp.data.data.text;
 }

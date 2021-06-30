@@ -203,7 +203,7 @@ import { mapState, mapMutations, mapActions } from 'vuex';
 import VueSlider from 'vue-slider-component';
 import { formatTrackTime } from '@/utils/common';
 import { getLyric } from '@/api/track';
-import { lyricParser } from '@/utils/lyrics';
+import { lyricParser, fhj } from '@/utils/lyrics';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import * as Vibrant from 'node-vibrant';
 import Color from 'color';
@@ -313,12 +313,16 @@ export default {
     ...mapActions(['likeATrack']),
     getLyric() {
       if (!this.currentTrack.id) return;
-      return getLyric(this.currentTrack.id).then(data => {
+      return getLyric(this.currentTrack.id).then(async data => {
         if (!data?.lrc?.lyric) {
           this.lyric = [];
           this.tlyric = [];
           return false;
         } else {
+          const enableFhj = this.$store.state.settings.enableFhj;
+          if (enableFhj && data?.tlyric?.lyric) {
+            data.tlyric.lyric = await fhj(data.tlyric.lyric);
+          }
           let { lyric, tlyric } = lyricParser(data);
           this.lyric = lyric;
           this.tlyric = tlyric;
