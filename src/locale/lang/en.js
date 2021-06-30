@@ -8,6 +8,8 @@ export default {
     explore: 'Explore',
     library: 'Library',
     search: 'Search',
+    'search-loading': 'Searching',
+    'search-not-found': 'Not Found',
     github: 'GitHub Repo',
   },
   footer: {
