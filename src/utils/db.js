@@ -52,7 +52,10 @@ async function deleteExcessCache() {
 
 export function cacheTrackSource(trackInfo, url, bitRate, from = 'netease') {
   const name = trackInfo.name;
-  const artist = trackInfo.ar[0]?.name || trackInfo.artists[0]?.name;
+  const artist =
+    (trackInfo.ar && trackInfo.ar[0]?.name) ||
+    (trackInfo.artists && trackInfo.artists[0]?.name) ||
+    'Unknown';
   let cover = trackInfo.al.picUrl;
   if (cover.slice(0, 5) !== 'https') {
     cover = 'https' + cover.slice(4);
