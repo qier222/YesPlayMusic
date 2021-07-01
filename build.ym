@@ -1,0 +1,144 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
+name: Build / Release
+
+on: [push, pull_request]
+
+jobs:
+
+  release:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+
+      matrix:
+
+        os: [macos-latest, windows-latest, ubuntu-16.04]
+
+    steps:
+
+      - name: Check out Git repository
+
+        uses: actions/checkout@v2
+
+      - name: Install Node.js, NPM and Yarn
+
+        uses: actions/setup-node@v1
+
+        with:
+
+          node-version: 14.16.0
+
+      - name: Install RPM & Pacman (on Ubuntu)
+
+        if: runner.os == 'Linux'
+
+        run: |
+
+          sudo apt-get update &&
+
+          sudo apt-get install --no-install-recommends -y rpm &&
+
+          sudo apt-get install --no-install-recommends -y bsdtar &&
+
+          sudo apt-get install --no-install-recommends -y libopenjp2-tools
+
+      - name: Install Snapcraft (on Ubuntu)
+
+        uses: samuelmeuli/action-snapcraft@v1
+
+        if: startsWith(matrix.os, 'ubuntu')
+
+        with:
+
+          snapcraft_token: ${{ secrets.snapcraft_token }}
+
+      - name: Build/release Electron app
+
+        uses: samuelmeuli/action-electron-builder@v1.6.0
+
+        env:
+
+          VUE_APP_ELECTRON_API_URL: /api
+
+          VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
+
+          VUE_APP_LASTFM_API_KEY: 09c55292403d961aa517ff7f5e8a3d9c
+
+          VUE_APP_LASTFM_API_SHARED_SECRET: 307c9fda32b3904e53654baff215cb67
+
+        with:
+
+          # GitHub token, automatically provided to the action
+
+          # (No need to define this secret in the repo settings)
+
+          github_token: ${{ secrets.github_token }}
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+
+          # release the app after building
+
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+
+          use_vue_cli: true
+
+      - uses: actions/upload-artifact@v2
+
+        with:
+
+          name: YesPlayMusic-mac
+
+          path: dist_electron/*-universal.dmg
+
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v2
+
+        with:
+
+          name: YesPlayMusic-win
+
+          path: dist_electron/*Setup*.exe
+
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v2
+
+        with:
+
+          name: YesPlayMusic-linux
+
+          path: dist_electron/*.AppImage
+
+          if-no-files-found: ignore
