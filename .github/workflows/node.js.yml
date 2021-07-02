@@ -27,5 +27,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: cp .env.example .env && npm i yarn -g && yarn
-    - run: yarn electron:build --linux deb:armv7l
+    - run: yarn electron:build --linux deb:arm64
     
