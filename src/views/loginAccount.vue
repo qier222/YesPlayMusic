@@ -267,6 +267,9 @@ export default {
             clearInterval(this.qrCodeCheckInterval);
             this.qrCodeInformation = '登录成功，请稍等...';
             result.code = 200;
+            result.cookie = result.cookie.split(';;');
+            result.cookie =
+              result.cookie[0] + ';;' + result.cookie[1].split(';').shift();
             this.handleLoginResponse(result);
           }
         });
