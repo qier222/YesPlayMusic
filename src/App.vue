@@ -32,6 +32,7 @@ import Navbar from './components/Navbar.vue';
 import Player from './components/Player.vue';
 import Toast from './components/Toast.vue';
 import { ipcRenderer } from './electron/ipcRenderer';
+import { taskBarForRenderer } from './electron/windowsTaskbar';
 import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
 import { mapState } from 'vuex';
@@ -77,7 +78,10 @@ export default {
     },
   },
   created() {
-    if (this.isElectron) ipcRenderer(this);
+    if (this.isElectron) {
+      taskBarForRenderer(this);
+      ipcRenderer(this);
+    }
     window.addEventListener('keydown', this.handleKeydown);
     this.fetchData();
   },

@@ -351,6 +351,24 @@
           </div>
         </div>
       </div>
+      <div v-if="isElectron && isWindows" class="item">
+        <div class="left">
+          <div class="title">
+            {{ $t('settings.enableWindowsTaskbarProgress') }}
+          </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-windows-taskbar-progress"
+              v-model="enableWindowsTaskbarProgress"
+              type="checkbox"
+              name="enable-windows-taskbar-progress"
+            />
+            <label for="enable-windows-taskbar-progress"></label>
+          </div>
+        </div>
+      </div>
 
       <div v-if="isElectron">
         <h3>代理</h3>
@@ -526,6 +544,10 @@ export default {
     isMac() {
       return /macintosh|mac os x/i.test(navigator.userAgent);
     },
+    isWindows() {
+      console.log('isWindows');
+      return /windows/i.test(navigator.userAgent.toLowerCase());
+    },
     version() {
       return pkg.version;
     },
@@ -682,6 +704,19 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'nyancatStyle',
+          value,
+        });
+      },
+    },
+    enableWindowsTaskbarProgress: {
+      get() {
+        if (this.settings.enableWindowsTaskbarProgress === undefined)
+          return false;
+        return this.settings.enableWindowsTaskbarProgress;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'enableWindowsTaskbarProgress',
           value,
         });
       },

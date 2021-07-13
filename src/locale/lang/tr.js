@@ -149,6 +149,7 @@ export default {
     showLyricsTranslation: 'Müzik sözlerinin çevirilerini göster',
     minimizeToTray: 'Küçült',
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
+    enableWindowsTaskbarProgress: 'Görev çubuğu ilerlemesini etkinleştir',
     enableDiscordRichPresence: 'Discord gösterimini aktifleştir',
     showLibraryDefault: 'Kitaplık Varsayılanını göster',
     lyricsBackground: {

@@ -16,6 +16,7 @@ import { createTray } from '@/electron/tray';
 import { createTouchBar } from './electron/touchBar';
 import { createDockMenu } from './electron/dockMenu';
 import { registerGlobalShortcut } from './electron/globalShortcut';
+import { taskBarForMain } from './electron/windowsTaskbar';
 import { autoUpdater } from 'electron-updater';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import express from 'express';
@@ -298,11 +299,17 @@ class Background {
         this.tray = createTray(this.window);
       }
 
-      // create dock menu for macOS
-      app.dock.setMenu(createDockMenu(this.window));
+      if (['win32'].includes(process.platform)) {
+        taskBarForMain(this.window);
+      }
 
-      // create touch bar
-      this.window.setTouchBar(createTouchBar(this.window));
+      if (['macos'].includes(process.platform)) {
+        // create dock menu for macOS
+        app.dock.setMenu(createDockMenu(this.window));
+
+        // create touch bar
+        this.window.setTouchBar(createTouchBar(this.window));
+      }
 
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut')) {
