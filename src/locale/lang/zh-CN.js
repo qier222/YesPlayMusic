@@ -154,6 +154,7 @@ export default {
     showLyricsTranslation: '显示歌词翻译',
     minimizeToTray: '最小化到托盘',
     showPlaylistsByAppleMusic: '首页显示来自 Apple Music 的歌单',
+    enableWindowsTaskbarProgress: '启用任务栏进度条',
     enableDiscordRichPresence: '启用 Discord Rich Presence',
     enableGlobalShortcut: '启用全局快捷键',
     showLibraryDefault: '启动后显示音乐库',

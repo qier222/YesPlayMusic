@@ -20,6 +20,7 @@ let localStorage = {
     automaticallyCacheSongs: false,
     cacheLimit: false,
     nyancatStyle: false,
+    enableWindowsTaskbarProgress: true,
     showLyricsTranslation: true,
     lyricsBackground: true,
     minimizeToTray: false,
