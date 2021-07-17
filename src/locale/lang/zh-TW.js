@@ -150,7 +150,7 @@ export default {
     showLyricsTranslation: '顯示歌詞翻譯',
     minimizeToTray: '最小化到系統列',
     showPlaylistsByAppleMusic: '首頁顯示來自 Apple Music 的歌單',
-    enableWindowsTaskbarProgress: '啓用任務欄進度條',
+    enableWindowsTaskbarProgress: '啓用工作列監視進度',
     enableDiscordRichPresence: '啟用 Discord Rich Presence',
     enableGlobalShortcut: '啟用全域快捷鍵',
     showLibraryDefault: '啟動後顯示音樂庫',
