@@ -9,6 +9,7 @@ import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
+import { getDjProgramDetail } from '@/api/dj';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -299,23 +300,50 @@ export default class {
     if (autoplay && this._currentTrack.name) {
       this._scrobble(this.currentTrack, this._howler?.seek());
     }
-    return getTrackDetail(id).then(data => {
-      let track = data.songs[0];
-      this._currentTrack = track;
-      this._updateMediaSessionMetaData(track);
-      return this._getAudioSource(track).then(source => {
-        if (source) {
-          this._playAudioSource(source, autoplay);
-          this._cacheNextTrack();
-          return source;
-        } else {
-          store.dispatch('showToast', `无法播放 ${track.name}`);
-          ifUnplayableThen === 'playNextTrack'
-            ? this.playNextTrack()
-            : this.playPrevTrack();
-        }
+    if (this._playlistSource.type === 'dj') {
+      let programId = this._playlistSource.id[id] || id;
+      return getDjProgramDetail(programId).then(data => {
+        data = data.program;
+        let track = {
+          al: { ...data.radio, picUrl: data.coverUrl },
+          ar: data.mainSong.artists,
+          dt: data.mainSong.duration,
+          ...data.mainSong,
+        };
+        this._currentTrack = track;
+        this._updateMediaSessionMetaData(track);
+        return this._getAudioSource(track).then(source => {
+          if (source) {
+            this._playAudioSource(source, autoplay);
+            this._cacheNextTrack();
+            return source;
+          } else {
+            store.dispatch('showToast', `无法播放 ${track.name}`);
+            ifUnplayableThen === 'playNextTrack'
+              ? this.playNextTrack()
+              : this.playPrevTrack();
+          }
+        });
       });
-    });
+    } else {
+      return getTrackDetail(id).then(data => {
+        let track = data.songs[0];
+        this._currentTrack = track;
+        this._updateMediaSessionMetaData(track);
+        return this._getAudioSource(track).then(source => {
+          if (source) {
+            this._playAudioSource(source, autoplay);
+            this._cacheNextTrack();
+            return source;
+          } else {
+            store.dispatch('showToast', `无法播放 ${track.name}`);
+            ifUnplayableThen === 'playNextTrack'
+              ? this.playNextTrack()
+              : this.playPrevTrack();
+          }
+        });
+      });
+    }
   }
   _cacheNextTrack() {
     let nextTrackID = this._isPersonalFM
@@ -323,10 +351,18 @@ export default class {
       : this._getNextTrack()[0];
     if (!nextTrackID) return;
     if (this._personalFMTrack.id == nextTrackID) return;
-    getTrackDetail(nextTrackID).then(data => {
-      let track = data.songs[0];
-      this._getAudioSource(track);
-    });
+    if (this._playlistSource.type === 'dj') {
+      let programId = this._playlistSource.id[nextTrackID] || nextTrackID;
+      getDjProgramDetail(programId).then(data => {
+        let track = data.program.mainSong;
+        this._getAudioSource(track);
+      });
+    } else {
+      getTrackDetail(nextTrackID).then(data => {
+        let track = data.songs[0];
+        this._getAudioSource(track);
+      });
+    }
   }
   _loadSelfFromLocalStorage() {
     const player = JSON.parse(localStorage.getItem('player'));
