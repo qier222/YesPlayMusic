@@ -135,6 +135,21 @@ export function likedMVs(params) {
 }
 
 /**
+ * 获取收藏的电台（需要登录）
+ * 说明 : 调用此接口可获取到用户收藏的电台
+ */
+export function likedDJs(params) {
+  return request({
+    url: '/dj/sublist',
+    method: 'get',
+    params: {
+      limit: params.limit,
+      timestamp: new Date().getTime(),
+    },
+  });
+}
+
+/**
  * 上传歌曲到云盘（需要登录）
  */
 export function uploadSong(file) {

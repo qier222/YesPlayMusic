@@ -61,6 +61,11 @@ const routes = [
     component: () => import('@/views/mv.vue'),
   },
   {
+    path: '/dj/:id',
+    name: 'dj',
+    component: () => import('@/views/dj.vue'),
+  },
+  {
     path: '/next',
     name: 'next',
     component: () => import('@/views/next.vue'),

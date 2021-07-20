@@ -19,9 +19,11 @@
         @click="removeTrackFromQueue"
         >从队列删除</div
       >
-      <hr v-show="type !== 'cloudDisk'" />
+      <hr v-show="type !== 'cloudDisk' && type !== 'dj'" />
       <div
-        v-show="!isRightClickedTrackLiked && type !== 'cloudDisk'"
+        v-show="
+          !isRightClickedTrackLiked && type !== 'cloudDisk' && type !== 'dj'
+        "
         class="item"
         @click="like"
       >
@@ -41,7 +43,7 @@
         >从歌单中删除</div
       >
       <div
-        v-show="type !== 'cloudDisk'"
+        v-show="type !== 'cloudDisk' && type !== 'dj'"
         class="item"
         @click="addTrackToPlaylist"
         >{{ $t('contextMenu.addToPlaylist') }}</div
@@ -60,7 +62,9 @@
         :key="itemKey === 'id' ? track.id : `${track.id}${index}`"
         :track-prop="track"
         :highlight-playing-track="highlightPlayingTrack"
-        @dblclick.native="playThisList(track.id || track.songId)"
+        @dblclick.native="
+          playThisList(track.mainTrackId || track.id || track.songId)
+        "
         @click.right.native="openMenu($event, track, index)"
       />
     </div>
@@ -93,7 +97,7 @@ export default {
     type: {
       type: String,
       default: 'tracklist',
-    }, // tracklist | album | playlist | cloudDisk
+    }, // tracklist | album | playlist | cloudDisk | dj
     id: {
       type: Number,
       default: 0,
@@ -207,6 +211,13 @@ export default {
       } else if (this.dbclickTrackFunc === 'playCloudDisk') {
         let trackIDs = this.tracks.map(t => t.id || t.songId);
         this.player.replacePlaylist(trackIDs, this.id, 'cloudDisk', trackID);
+      } else if (this.dbclickTrackFunc === 'playDjPrograms') {
+        let programMap = {};
+        let trackIDs = this.tracks.map(t => {
+          programMap[t.mainTrackId] = t.id;
+          return t.mainTrackId;
+        });
+        this.player.replacePlaylist(trackIDs, programMap, 'dj', trackID);
       }
     },
     playThisListDefault(trackID) {

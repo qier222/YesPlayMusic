@@ -105,13 +105,18 @@ export default {
   computed: {
     ...mapState(['settings']),
     track() {
-      return this.type === 'cloudDisk'
-        ? this.trackProp.simpleSong
-        : this.trackProp;
+      if (this.type === 'cloudDisk') {
+        return this.trackProp.simpleSong;
+      } else if (this.type === 'dj') {
+        return this.trackProp.mainSong;
+      } else {
+        return this.trackProp;
+      }
     },
     imgUrl() {
       let image =
         this.track?.al?.picUrl ??
+        this.trackProp.coverUrl ??
         this.track?.album?.picUrl ??
         'https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg';
       return image + '?param=224y224';
@@ -172,7 +177,11 @@ export default {
         : true;
     },
     showLikeButton() {
-      return this.type !== 'tracklist' && this.type !== 'cloudDisk';
+      return (
+        this.type !== 'tracklist' &&
+        this.type !== 'cloudDisk' &&
+        this.type !== 'dj'
+      );
     },
     showOrderNumber() {
       return this.type === 'album';

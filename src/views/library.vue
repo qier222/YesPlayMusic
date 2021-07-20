@@ -87,6 +87,13 @@
           >
             云盘
           </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'djs' }"
+            @click="updateCurrentTab('djs')"
+          >
+            电台
+          </div>
         </div>
         <button
           v-show="currentTab === 'playlists'"
@@ -143,6 +150,10 @@
           dbclick-track-func="playCloudDisk"
           :extra-context-menu-item="['removeTrackFromCloudDisk']"
         />
+      </div>
+
+      <div v-show="currentTab === 'djs'">
+        <CoverRow :items="liked.djs" type="dj" :show-play-button="true" />
       </div>
     </div>
 
@@ -262,6 +273,7 @@ export default {
       this.$store.dispatch('fetchLikedArtists');
       this.$store.dispatch('fetchLikedMVs');
       this.$store.dispatch('fetchCloudDisk');
+      this.$store.dispatch('fetchLikedDJs');
     },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
