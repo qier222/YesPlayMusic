@@ -1,0 +1,28 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.17.4 
+          name: build
+          run : sudo npm i yarn -g && yarn install && yarn electron:build-linux arm64 deb
+ 
+     uses: actions/upload-artifact@v2
+        with:
+          name: YesPlayMusic-linux
+          path: dist_electron/*.deb
+          if-no-files-found: ignore
