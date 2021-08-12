@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: 14.17.4 [12.x, 14.x, 16.x]
+        node-version: 14.x [12.x, 14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -29,4 +29,9 @@ jobs:
     - run: sudo npm i yarn -g
     - run: yarn install
     - run: yarn electron:build-linux arm64 deb
+    - uses: actions/upload-artifact@v2
+        with:
+          name: YesPlayMusic-linux
+          path: dist_electron/*.deb
+          if-no-files-found: ignore 
 
