@@ -29,9 +29,4 @@ jobs:
     - run: sudo npm i yarn -g
     - run: yarn install
     - run: yarn electron:build-linux arm64 deb
-    - uses: actions/upload-artifact@v2
-        with:
-          name: YesPlayMusic-linux
-          path: dist_electron/*.deb
-          if-no-files-found: ignore 
-
+   
