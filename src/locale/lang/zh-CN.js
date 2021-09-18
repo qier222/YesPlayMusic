@@ -152,7 +152,6 @@ export default {
     clearSongsCache: '清除歌曲缓存',
     cacheCount: '已缓存 {song} 首 ({size})',
     showLyricsTranslation: '显示歌词翻译',
-    minimizeToTray: '最小化到托盘',
     showPlaylistsByAppleMusic: '首页显示来自 Apple Music 的歌单',
     enableDiscordRichPresence: '启用 Discord Rich Presence',
     enableGlobalShortcut: '启用全局快捷键',
@@ -162,6 +161,13 @@ export default {
       off: '关闭',
       on: '打开',
       dynamic: '动态（GPU 占用较高）',
+    },
+    closeAppOption: {
+      text: '关闭主面板时...',
+      ask: '询问',
+      exit: '退出',
+      minimize: '最小化',
+      minimizeToTray: '最小化到托盘',
     },
   },
   contextMenu: {

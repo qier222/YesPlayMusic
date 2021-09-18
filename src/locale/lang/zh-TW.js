@@ -159,6 +159,13 @@ export default {
       on: '開啟',
       dynamic: '動態（GPU 占用較高）',
     },
+    closeAppOption: {
+      text: '關閉主面板時...',
+      ask: '詢問',
+      exit: '退出',
+      minimize: '最小化',
+      minimizeToTray: '最小化到系統列',
+    },
   },
   contextMenu: {
     play: '播放',
