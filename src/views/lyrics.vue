@@ -633,7 +633,7 @@ export default {
         display: flex;
         justify-content: right;
         flex-direction: row-reverse;
-        margin-top: 8px;
+        padding-top: 8px;
       }
 
       .volume-control {
