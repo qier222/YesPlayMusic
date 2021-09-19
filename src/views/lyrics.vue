@@ -101,64 +101,7 @@
               </div>
               <span>{{ formatTrackTime(player.currentTrackDuration) }}</span>
             </div>
-            <div class="media-controls">
-              <button-icon
-                v-show="!player.isPersonalFM"
-                :title="
-                  player.repeatMode === 'one'
-                    ? $t('player.repeatTrack')
-                    : $t('player.repeat')
-                "
-                :class="{ active: player.repeatMode !== 'off' }"
-                @click.native="player.switchRepeatMode"
-              >
-                <svg-icon
-                  v-show="player.repeatMode !== 'one'"
-                  icon-class="repeat"
-                />
-                <svg-icon
-                  v-show="player.repeatMode === 'one'"
-                  icon-class="repeat-1"
-                />
-              </button-icon>
-              <div class="middle">
-                <button-icon
-                  v-show="!player.isPersonalFM"
-                  :title="$t('player.previous')"
-                  @click.native="player.playPrevTrack"
-                >
-                  <svg-icon icon-class="previous" />
-                </button-icon>
-                <button-icon
-                  v-show="player.isPersonalFM"
-                  title="不喜欢"
-                  @click.native="player.moveToFMTrash"
-                >
-                  <svg-icon icon-class="thumbs-down" />
-                </button-icon>
-                <button-icon
-                  id="play"
-                  :title="$t(player.playing ? 'player.pause' : 'player.play')"
-                  @click.native="player.playOrPause"
-                >
-                  <svg-icon :icon-class="player.playing ? 'pause' : 'play'" />
-                </button-icon>
-                <button-icon
-                  :title="$t('player.next')"
-                  @click.native="player.playNextTrack"
-                >
-                  <svg-icon icon-class="next" />
-                </button-icon>
-              </div>
-              <button-icon
-                v-show="!player.isPersonalFM"
-                :title="$t('player.shuffle')"
-                :class="{ active: player.shuffle }"
-                @click.native="player.switchShuffle"
-              >
-                <svg-icon icon-class="shuffle" />
-              </button-icon>
-            </div>
+            <MediaControls style="margin-top: 18px" />
           </div>
         </div>
       </div>
@@ -185,6 +128,49 @@
             ></div>
           </div>
         </transition>
+
+        <div class="media-controls-container">
+          <div class="controls">
+            <div class="heart-btn">
+              <button-icon
+                :title="$t('player.like')"
+                @click.native="likeATrack(player.currentTrack.id)"
+              >
+                <svg-icon
+                  :icon-class="
+                    player.isCurrentTrackLiked ? 'heart-solid' : 'heart'
+                  "
+                />
+              </button-icon>
+            </div>
+            <MediaControls style="padding-top: 8px" />
+            <div class="volume-control">
+              <button-icon
+                :title="$t('player.mute')"
+                @click.native="player.mute"
+              >
+                <svg-icon v-show="volume > 0.5" icon-class="volume" />
+                <svg-icon v-show="volume === 0" icon-class="volume-mute" />
+                <svg-icon
+                  v-show="volume <= 0.5 && volume !== 0"
+                  icon-class="volume-half"
+                />
+              </button-icon>
+              <div class="volume-bar">
+                <vue-slider
+                  v-model="volume"
+                  :min="0"
+                  :max="1"
+                  :interval="0.01"
+                  :drag-on-click="true"
+                  :duration="0"
+                  tooltip="none"
+                  :dot-size="12"
+                ></vue-slider>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="close-button" @click="toggleLyrics">
         <button>
@@ -205,6 +191,7 @@ import { formatTrackTime } from '@/utils/common';
 import { getLyric } from '@/api/track';
 import { lyricParser } from '@/utils/lyrics';
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import MediaControls from '@/components/MediaControls';
 import * as Vibrant from 'node-vibrant';
 import Color from 'color';
 
@@ -213,6 +200,7 @@ export default {
   components: {
     VueSlider,
     ButtonIcon,
+    MediaControls,
   },
   data() {
     return {
@@ -284,6 +272,14 @@ export default {
     },
     theme() {
       return this.settings.lyricsBackground === true ? 'dark' : 'auto';
+    },
+    volume: {
+      get() {
+        return this.player.volume;
+      },
+      set(value) {
+        this.player.volume = value;
+      },
     },
   },
   watch: {
@@ -533,49 +529,6 @@ export default {
         min-width: 28px;
       }
     }
-
-    .media-controls {
-      display: flex;
-      justify-content: center;
-      margin-top: 18px;
-      align-items: center;
-
-      button {
-        margin: 0;
-      }
-
-      .svg-icon {
-        opacity: 0.38;
-        height: 14px;
-        width: 14px;
-      }
-
-      .active .svg-icon {
-        opacity: 0.88;
-      }
-
-      .middle {
-        padding: 0 16px;
-        display: flex;
-        align-items: center;
-
-        button {
-          margin: 0 8px;
-        }
-
-        button#play .svg-icon {
-          height: 28px;
-          width: 28px;
-          padding: 2px;
-        }
-
-        .svg-icon {
-          opacity: 0.88;
-          height: 22px;
-          width: 22px;
-        }
-      }
-    }
   }
 }
 
@@ -659,6 +612,42 @@ export default {
   .lyrics-container .line:last-child {
     margin-bottom: calc(50vh - 128px);
   }
+
+  .media-controls-container {
+    display: none;
+    z-index: 300;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 64px;
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 0 5vw;
+
+      .heart-btn {
+        display: flex;
+        justify-content: right;
+        flex-direction: row-reverse;
+        margin-top: 8px;
+      }
+
+      .volume-control {
+        height: 48px;
+        display: flex;
+        align-items: center;
+        padding-top: 8px;
+
+        .volume-bar {
+          width: 84px;
+        }
+      }
+    }
+  }
 }
 
 .close-button {
@@ -701,8 +690,15 @@ export default {
   .left-side {
     display: none;
   }
-  .right-side .lyrics-container {
-    max-width: 100%;
+  .right-side {
+    .lyrics-container {
+      max-width: 100%;
+      max-height: calc(100% - 64px);
+    }
+
+    .media-controls-container {
+      display: flex;
+    }
   }
 }
 
