@@ -153,6 +153,7 @@ export default {
     showLyricsTranslation: 'Show lyrics translation',
     minimizeToTray: 'Minimize to tray',
     showPlaylistsByAppleMusic: 'Show playlists by Apple Music',
+    enableWindowsTaskbarProgress: 'Enable taskbar progress',
     enableDiscordRichPresence: 'Enable Discord Rich Presence',
     enableGlobalShortcut: 'Enable Global Shortcut',
     showLibraryDefault: 'Show library default',
