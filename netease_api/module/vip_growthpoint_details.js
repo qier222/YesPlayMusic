@@ -1,15 +1,13 @@
-// 推荐新歌
+// 会员成长值领取记录
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    limit: query.limit || 20,
+    offset: query.offset || 0,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/vipnewcenter/app/level/growth/details`,
     data,
     {
       crypto: 'weapi',

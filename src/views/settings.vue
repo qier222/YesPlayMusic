@@ -285,18 +285,23 @@
       <h3>其他</h3>
       <div v-if="isElectron && !isMac" class="item">
         <div class="left">
-          <div class="title">{{ $t('settings.minimizeToTray') }}</div>
+          <div class="title"> {{ $t('settings.closeAppOption.text') }} </div>
         </div>
         <div class="right">
-          <div class="toggle">
-            <input
-              id="minimize-to-tray"
-              v-model="minimizeToTray"
-              type="checkbox"
-              name="minimize-to-tray"
-            />
-            <label for="minimize-to-tray"></label>
-          </div>
+          <select v-model="closeAppOption">
+            <option value="ask">
+              {{ $t('settings.closeAppOption.ask') }}
+            </option>
+            <option value="exit">
+              {{ $t('settings.closeAppOption.exit') }}
+            </option>
+            <option value="minimize">
+              {{ $t('settings.closeAppOption.minimize') }}
+            </option>
+            <option value="minimizeToTray">
+              {{ $t('settings.closeAppOption.minimizeToTray') }}
+            </option>
+          </select>
         </div>
       </div>
 
@@ -723,13 +728,13 @@ export default {
         });
       },
     },
-    minimizeToTray: {
+    closeAppOption: {
       get() {
-        return this.settings.minimizeToTray;
+        return this.settings.closeAppOption;
       },
       set(value) {
         this.$store.commit('updateSettings', {
-          key: 'minimizeToTray',
+          key: 'closeAppOption',
           value,
         });
       },
@@ -973,6 +978,7 @@ export default {
       this.recordedShortcut = [];
     },
     exitRecordShortcut() {
+      if (this.shortcutInput.recording === false) return;
       this.shortcutInput = { id: '', type: '', recording: false };
       this.recordedShortcut = [];
       ipcRenderer.send('switchGlobalShortcutStatusTemporary', 'enable');

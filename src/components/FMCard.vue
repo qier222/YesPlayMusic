@@ -86,6 +86,7 @@ export default {
       this.getColor();
     },
     getColor() {
+      if (!this.player.personalFMTrack?.album?.picUrl) return;
       const cover = `${this.player.personalFMTrack.album.picUrl.replace(
         'http://',
         'https://'

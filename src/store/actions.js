@@ -38,22 +38,26 @@ export default {
     }
     let like = true;
     if (state.liked.songs.includes(id)) like = false;
-    likeATrack({ id, like }).then(() => {
-      if (like === false) {
-        commit('updateLikedXXX', {
-          name: 'songs',
-          data: state.liked.songs.filter(d => d !== id),
-        });
-      } else {
-        let newLikeSongs = state.liked.songs;
-        newLikeSongs.push(id);
-        commit('updateLikedXXX', {
-          name: 'songs',
-          data: newLikeSongs,
-        });
-      }
-      dispatch('fetchLikedSongsWithDetails');
-    });
+    likeATrack({ id, like })
+      .then(() => {
+        if (like === false) {
+          commit('updateLikedXXX', {
+            name: 'songs',
+            data: state.liked.songs.filter(d => d !== id),
+          });
+        } else {
+          let newLikeSongs = state.liked.songs;
+          newLikeSongs.push(id);
+          commit('updateLikedXXX', {
+            name: 'songs',
+            data: newLikeSongs,
+          });
+        }
+        dispatch('fetchLikedSongsWithDetails');
+      })
+      .catch(() => {
+        dispatch('showToast', '操作失败，专辑下架或版权锁定');
+      });
   },
   fetchLikedSongs: ({ state, commit }) => {
     if (!isLooseLoggedIn()) return;
@@ -140,7 +144,7 @@ export default {
   },
   fetchLikedMVs: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return likedMVs({ limit: 2000 }).then(result => {
+    return likedMVs({ limit: 1000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'mvs',

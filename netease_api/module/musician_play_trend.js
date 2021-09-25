@@ -1,15 +1,13 @@
-// 推荐新歌
+// 音乐人歌曲播放趋势
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    startTime: query.startTime,
+    endTime: query.endTime,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/creator/musician/play/count/statistic/data/trend/get`,
     data,
     {
       crypto: 'weapi',

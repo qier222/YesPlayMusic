@@ -4,9 +4,6 @@
 // !需要登录或者匿名登录，非登录返回 []
 const config = require('../util/config.json')
 module.exports = (query, request) => {
-  if (typeof query.cookie === 'string') {
-    query.cookie = cookieToJson(query.cookie)
-  }
   if (!('MUSIC_U' in query.cookie))
     query.cookie.MUSIC_A = config.anonymous_token
   const data = {}

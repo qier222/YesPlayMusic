@@ -1,15 +1,16 @@
-// 推荐新歌
-
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
+  query.cookie.os = 'ios'
+  query.cookie.appver = '8.1.20'
   const data = {
-    type: 'recommend',
+    compose_reminder: 'true',
+    compose_hot_comment: 'true',
     limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    user_id: query.uid,
+    time: query.time || 0,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/api/comment/user/comment/history`,
     data,
     {
       crypto: 'weapi',

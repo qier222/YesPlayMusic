@@ -39,30 +39,21 @@ export function initIpcMain(win, store) {
   ipcMain.on('close', e => {
     if (process.platform == 'darwin') {
       win.hide();
+      exitAsk(e);
+      return;
     }
-    e.preventDefault(); //阻止默认行为
-    dialog
-      .showMessageBox({
-        type: 'info',
-        title: 'Information',
-        cancelId: 2,
-        defaultId: 0,
-        message: '确定要关闭吗？',
-        buttons: ['最小化', '直接退出'],
-      })
-      .then(result => {
-        if (result.response == 0) {
-          e.preventDefault(); //阻止默认行为
-          win.minimize(); //调用 最小化实例方法
-        } else if (result.response == 1) {
-          win = null;
-          //app.quit();
-          app.exit(); //exit()直接关闭客户端，不会执行quit();
-        }
-      })
-      .catch(err => {
-        log(err);
-      });
+
+    let closeOpt = store.get('settings.closeAppOption');
+    if (closeOpt === 'exit') {
+      win = null;
+      //app.quit();
+      app.exit(); //exit()直接关闭客户端，不会执行quit();
+    } else if (closeOpt === 'minimize' || closeOpt === 'minimizeToTray') {
+      e.preventDefault(); //阻止默认行为
+      win.minimize(); //调用 最小化实例方法
+    } else {
+      exitAsk(e);
+    }
   });
 
   ipcMain.on('minimize', () => {
@@ -80,6 +71,7 @@ export function initIpcMain(win, store) {
     if (options.enableGlobalShortcut) {
       registerGlobalShortcut(win, store);
     } else {
+      log('unregister global shortcut');
       globalShortcut.unregisterAll();
     }
   });
@@ -129,6 +121,7 @@ export function initIpcMain(win, store) {
   });
 
   ipcMain.on('switchGlobalShortcutStatusTemporary', (e, status) => {
+    log('switchGlobalShortcutStatusTemporary');
     if (status === 'disable') {
       globalShortcut.unregisterAll();
     } else {
@@ -156,4 +149,30 @@ export function initIpcMain(win, store) {
     globalShortcut.unregisterAll();
     registerGlobalShortcut(win, store);
   });
+
+  const exitAsk = e => {
+    e.preventDefault(); //阻止默认行为
+    dialog
+      .showMessageBox({
+        type: 'info',
+        title: 'Information',
+        cancelId: 2,
+        defaultId: 0,
+        message: '确定要关闭吗？',
+        buttons: ['最小化', '直接退出'],
+      })
+      .then(result => {
+        if (result.response == 0) {
+          e.preventDefault(); //阻止默认行为
+          win.minimize(); //调用 最小化实例方法
+        } else if (result.response == 1) {
+          win = null;
+          //app.quit();
+          app.exit(); //exit()直接关闭客户端，不会执行quit();
+        }
+      })
+      .catch(err => {
+        log(err);
+      });
+  };
 }

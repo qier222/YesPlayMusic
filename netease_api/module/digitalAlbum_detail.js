@@ -1,15 +1,12 @@
-// 推荐新歌
+// 数字专辑详情
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    id: query.id,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/vipmall/albumproduct/detail`,
     data,
     {
       crypto: 'weapi',

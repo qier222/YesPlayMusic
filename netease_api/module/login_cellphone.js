@@ -7,9 +7,11 @@ module.exports = async (query, request) => {
   const data = {
     phone: query.phone,
     countrycode: query.countrycode || '86',
-    password:
-      query.md5_password ||
-      crypto.createHash('md5').update(query.password).digest('hex'),
+    captcha: query.captcha,
+    [query.captcha ? 'captcha' : 'password']: query.captcha
+      ? query.captcha
+      : query.md5_password ||
+        crypto.createHash('md5').update(query.password).digest('hex'),
     rememberLogin: 'true',
   }
   let result = await request(

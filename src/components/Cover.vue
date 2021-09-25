@@ -101,6 +101,7 @@ img {
   width: 100%;
   user-select: none;
   aspect-ratio: 1 / 1;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .cover-hover {

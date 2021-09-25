@@ -1,15 +1,13 @@
-// 推荐新歌
+// 领取云豆
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    userMissionId: query.id,
+    period: query.period,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/nmusician/workbench/mission/reward/obtain/new`,
     data,
     {
       crypto: 'weapi',
