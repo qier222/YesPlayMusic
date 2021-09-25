@@ -6,8 +6,8 @@ import shortcuts from '@/utils/shortcuts';
 import { createMenu } from './menu';
 
 const clc = require('cli-color');
-const log = text => {
-  console.log(`${clc.blueBright('[ipcMain.js]')} ${text}`);
+const log = (text, ...args) => {
+  console.log(`${clc.blueBright('[ipcMain.js]')} ${text}`, ...args);
 };
 
 const client = require('discord-rich-presence')('818936529484906596');
@@ -146,6 +146,17 @@ export function initIpcMain(win, store) {
     createMenu(win, store);
     globalShortcut.unregisterAll();
     registerGlobalShortcut(win, store);
+  });
+  
+  
+  ipcMain.on('setTaskbarProgress', (e, payloadStr) => {
+    const payload = JSON.parse(payloadStr);
+
+    const option = {};
+    if (!payload.playing) {
+      option.mode = 'paused'; // 暂停
+    }
+    win.setProgressBar(payload.progress, option);
   });
 
   const exitAsk = e => {
