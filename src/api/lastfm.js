@@ -22,9 +22,10 @@ const sign = params => {
 };
 
 export function auth() {
-  window.open(
-    `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${baseUrl}/#/lastfm/callback`
-  );
+  const url = process.env.IS_ELECTRON
+    ? `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${baseUrl}/#/lastfm/callback`
+    : `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${baseUrl}/lastfm/callback`;
+  window.open(url);
 }
 
 export function authGetSession(token) {
