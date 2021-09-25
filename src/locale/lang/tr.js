@@ -147,7 +147,6 @@ export default {
     clearSongsCache: 'Müzik çerezlerini temizle',
     cacheCount: 'Çerezlenen {song} Müzikler ({size})',
     showLyricsTranslation: 'Müzik sözlerinin çevirilerini göster',
-    minimizeToTray: 'Küçült',
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
     enableDiscordRichPresence: 'Discord gösterimini aktifleştir',
     showLibraryDefault: 'Kitaplık Varsayılanını göster',
@@ -156,6 +155,13 @@ export default {
       off: 'kapalı',
       on: 'açık',
       dynamic: 'dinamik(Yüksek GPU kullanımı)',
+    },
+    closeAppOption: {
+      text: 'Close App...',
+      ask: 'Ask',
+      exit: 'Exit',
+      minimize: 'Minimize',
+      minimizeToTray: 'Küçült',
     },
   },
   contextMenu: {

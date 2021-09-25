@@ -201,14 +201,15 @@ class Background {
 
     this.window.on('close', e => {
       log('windows close event');
-      if (this.willQuitApp) {
+      let closeOpt = this.store.get('settings.closeAppOption');
+      if (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) {
         /* the user tried to quit the app */
         this.window = null;
         app.quit();
       } else {
         /* the user only tried to close the window */
         e.preventDefault();
-        this.window.hide();
+        this.window.minimize();
       }
     });
 
@@ -223,7 +224,7 @@ class Background {
     this.window.on('minimize', () => {
       if (
         ['win32', 'linux'].includes(process.platform) &&
-        this.store.get('settings.minimizeToTray')
+        this.store.get('settings.closeAppOption') === 'minimizeToTray'
       ) {
         this.window.hide();
       }
