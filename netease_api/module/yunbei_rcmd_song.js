@@ -1,15 +1,15 @@
-// 推荐新歌
+// 云贝推歌
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    songId: query.id,
+    reason: query.reason || '好歌献给你',
+    scene: '',
+    fromUserId: -1,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/yunbei/rcmd/song/submit`,
     data,
     {
       crypto: 'weapi',

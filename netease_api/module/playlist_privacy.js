@@ -1,21 +1,20 @@
-// 推荐新歌
+// 公开隐私歌单
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    id: query.id,
+    privacy: 0,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://interface.music.163.com/eapi/playlist/update/privacy`,
     data,
     {
-      crypto: 'weapi',
+      crypto: 'eapi',
       cookie: query.cookie,
       proxy: query.proxy,
       realIP: query.realIP,
+      url: '/api/playlist/update/privacy',
     },
   )
 }

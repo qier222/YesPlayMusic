@@ -1,15 +1,10 @@
-// 推荐新歌
+// 音乐人签到
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
-  const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
-  }
+  const data = {}
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/creator/user/access`,
     data,
     {
       crypto: 'weapi',

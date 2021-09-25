@@ -1,15 +1,12 @@
-// 推荐新歌
+// 将mlog id转为video id
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
   const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
+    mlogId: query.id,
   }
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/mlog/video/convert/id`,
     data,
     {
       crypto: 'weapi',

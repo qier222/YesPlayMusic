@@ -1,15 +1,10 @@
-// 推荐新歌
+// 音乐人数据概况
 
 module.exports = (query, request) => {
-  query.cookie.os = 'pc'
-  const data = {
-    type: 'recommend',
-    limit: query.limit || 10,
-    areaId: query.areaId || 0,
-  }
+  const data = {}
   return request(
     'POST',
-    `https://music.163.com/api/personalized/newsong`,
+    `https://music.163.com/weapi/creator/musician/statistic/data/overview/get`,
     data,
     {
       crypto: 'weapi',

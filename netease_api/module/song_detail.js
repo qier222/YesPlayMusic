@@ -5,7 +5,7 @@ module.exports = (query, request) => {
   const data = {
     c: '[' + query.ids.map((id) => '{"id":' + id + '}').join(',') + ']',
   }
-  return request('POST', `https://music.163.com/weapi/v3/song/detail`, data, {
+  return request('POST', `https://music.163.com/api/v3/song/detail`, data, {
     crypto: 'weapi',
     cookie: query.cookie,
     proxy: query.proxy,
