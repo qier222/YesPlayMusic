@@ -311,7 +311,7 @@ class Background {
       this.window.setTouchBar(createTouchBar(this.window));
 
       // register global shortcuts
-      if (this.store.get('settings.enableGlobalShortcut')) {
+      if (this.store.get('settings.enableGlobalShortcut') !== false) {
         registerGlobalShortcut(this.window, this.store);
       }
     });

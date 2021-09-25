@@ -978,6 +978,7 @@ export default {
       this.recordedShortcut = [];
     },
     exitRecordShortcut() {
+      if (this.shortcutInput.recording === false) return;
       this.shortcutInput = { id: '', type: '', recording: false };
       this.recordedShortcut = [];
       ipcRenderer.send('switchGlobalShortcutStatusTemporary', 'enable');

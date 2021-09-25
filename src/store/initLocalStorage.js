@@ -24,7 +24,7 @@ let localStorage = {
     lyricsBackground: true,
     closeAppOption: 'ask',
     enableDiscordRichPresence: false,
-    enableGlobalShortcut: false,
+    enableGlobalShortcut: true,
     showLibraryDefault: false,
     enabledPlaylistCategories,
     proxyConfig: {

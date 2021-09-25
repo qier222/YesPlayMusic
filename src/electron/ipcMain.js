@@ -71,6 +71,7 @@ export function initIpcMain(win, store) {
     if (options.enableGlobalShortcut) {
       registerGlobalShortcut(win, store);
     } else {
+      log('unregister global shortcut');
       globalShortcut.unregisterAll();
     }
   });
@@ -120,6 +121,7 @@ export function initIpcMain(win, store) {
   });
 
   ipcMain.on('switchGlobalShortcutStatusTemporary', (e, status) => {
+    log('switchGlobalShortcutStatusTemporary');
     if (status === 'disable') {
       globalShortcut.unregisterAll();
     } else {
