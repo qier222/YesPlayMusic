@@ -5,7 +5,7 @@ import store from '@/store';
 export function doLogout() {
   logout();
   // 网易云的接口会自动移除该 cookies
-  // Cookies.remove("MUSIC_U");
+  Cookies.remove('MUSIC_U');
   // 更新状态仓库中的用户信息
   store.commit('updateData', { key: 'user', value: {} });
   // 更新状态仓库中的登录状态

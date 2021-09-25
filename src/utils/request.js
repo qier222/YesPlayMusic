@@ -25,6 +25,10 @@ service.interceptors.request.use(function (config) {
     config.params.cookie = `MUSIC_U=${Cookies.get('MUSIC_U')};`;
   }
 
+  if (!process.env.IS_ELECTRON) {
+    config.params.realIP = '211.161.244.70';
+  }
+
   const proxy = JSON.parse(localStorage.getItem('settings')).proxyConfig;
   if (['HTTP', 'HTTPS'].includes(proxy.protocol)) {
     config.params.proxy = `${proxy.protocol}://${proxy.server}:${proxy.port}`;
