@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div class="latest-release">
+    <div v-if="latestRelease !== undefined" class="latest-release">
       <div class="section-title">{{ $t('artist.latestRelease') }}</div>
       <div class="release">
         <div class="container">
