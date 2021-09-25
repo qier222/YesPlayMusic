@@ -134,7 +134,10 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({ routes });
+const router = new VueRouter({
+  mode: process.env.IS_ELECTRON ? 'hash' : 'history',
+  routes,
+});
 
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {

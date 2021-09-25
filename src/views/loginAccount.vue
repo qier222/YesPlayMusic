@@ -87,15 +87,17 @@
         </button>
       </div>
       <div class="other-login">
-        <a v-show="mode !== 'email'" @click="mode = 'email'">{{
+        <a v-show="mode !== 'email'" @click="changeMode('email')">{{
           $t('login.loginWithEmail')
         }}</a>
         <span v-show="mode === 'qrCode'">|</span>
-        <a v-show="mode !== 'phone'" @click="mode = 'phone'">{{
+        <a v-show="mode !== 'phone'" @click="changeMode('phone')">{{
           $t('login.loginWithPhone')
         }}</a>
         <span v-show="mode !== 'qrCode'">|</span>
-        <a v-show="mode !== 'qrCode'" @click="mode = 'qrCode'"> 二维码登录 </a>
+        <a v-show="mode !== 'qrCode'" @click="changeMode('qrCode')">
+          二维码登录
+        </a>
       </div>
       <div
         v-show="mode !== 'qrCode'"
@@ -263,14 +265,25 @@ export default {
             this.qrCodeInformation = '二维码已失效，请重新扫码';
           } else if (result.code === 802) {
             this.qrCodeInformation = '扫描成功，请在手机上确认登录';
+          } else if (result.code === 801) {
+            this.qrCodeInformation = '打开网易云音乐APP扫码登录';
           } else if (result.code === 803) {
             clearInterval(this.qrCodeCheckInterval);
             this.qrCodeInformation = '登录成功，请稍等...';
             result.code = 200;
+            result.cookie = result.cookie.replace('HTTPOnly', '');
             this.handleLoginResponse(result);
           }
         });
       }, 1000);
+    },
+    changeMode(mode) {
+      this.mode = mode;
+      if (mode === 'qrCode') {
+        this.checkQrCodeLogin();
+      } else {
+        clearInterval(this.qrCodeCheckInterval);
+      }
     },
   },
 };
