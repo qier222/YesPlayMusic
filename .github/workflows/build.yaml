@@ -1,12 +1,11 @@
-name: Build / Release
+name: Release
 
 on:
   push:
     branches:
-      - 'master'
-  pull_request:
-    branches:
-      - '!deploy'
+      - master
+    tags:
+      - v*
 
 jobs:
   release:
