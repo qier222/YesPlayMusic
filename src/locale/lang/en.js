@@ -25,6 +25,8 @@ export default {
     likedSongs: 'Liked Songs',
     sLikedSongs: "'s Liked Songs",
     playlists: 'Playlists',
+    minePlaylists: 'My Playlists',
+    likedPlaylists: 'Liked Playlists',
     albums: 'Albums',
     artists: 'Artists',
     mvs: 'MVs',
@@ -173,9 +175,6 @@ export default {
     addToPlaylist: 'Add to playlist',
     searchInPlaylist: 'Search in playlist',
     copyUrl: 'Copy URL',
-    allPlaylists: 'All Playlists',
-    minePlaylists: 'My Playlists',
-    likedPlaylists: 'Liked Playlists',
   },
   toast: {
     savedToPlaylist: 'Saved to playlist',

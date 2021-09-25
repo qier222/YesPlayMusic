@@ -22,6 +22,8 @@ export default {
     likedSongs: '我喜歡的音樂',
     sLikedSongs: '喜歡的音樂',
     playlists: '歌單',
+    minePlaylists: '我的歌單',
+    likedPlaylists: '收藏的歌單',
     albums: '專輯',
     artists: '藝人',
     mvs: 'MV',
@@ -170,9 +172,6 @@ export default {
     addToPlaylist: '新增至歌單',
     searchInPlaylist: '歌單內搜尋',
     copyUrl: '複製超連結',
-    allPlaylists: '全部歌單',
-    minePlaylists: '我建立的歌單',
-    likedPlaylists: '收藏的歌單',
   },
   toast: {
     savedToPlaylist: '已新增至歌單',

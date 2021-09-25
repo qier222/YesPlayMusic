@@ -22,6 +22,8 @@ export default {
     likedSongs: '我喜欢的音乐',
     sLikedSongs: '喜欢的音乐',
     playlists: '歌单',
+    minePlaylists: '我的歌单',
+    likedPlaylists: '收藏的歌单',
     albums: '专辑',
     artists: '艺人',
     mvs: 'MV',
@@ -174,9 +176,6 @@ export default {
     addToPlaylist: '添加到歌单',
     searchInPlaylist: '歌单内搜索',
     copyUrl: '复制链接',
-    allPlaylists: '全部歌单',
-    minePlaylists: '创建的歌单',
-    likedPlaylists: '收藏的歌单',
   },
   toast: {
     savedToPlaylist: '已添加到歌单',

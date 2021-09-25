@@ -44,20 +44,18 @@
       <div class="tabs-row">
         <div class="tabs">
           <div
-            class="tab dropdown"
-            :class="{ active: currentTab === 'playlists' }"
-            @click="updateCurrentTab('playlists')"
+            class="tab"
+            :class="{ active: currentTab === 'minePlaylists' }"
+            @click="updateCurrentTab('minePlaylists')"
           >
-            <span class="text">{{
-              {
-                all: $t('contextMenu.allPlaylists'),
-                mine: $t('contextMenu.minePlaylists'),
-                liked: $t('contextMenu.likedPlaylists'),
-              }[playlistFilter]
-            }}</span>
-            <span class="icon" @click.stop="openPlaylistTabMenu"
-              ><svg-icon icon-class="dropdown"
-            /></span>
+            {{ $t('library.minePlaylists') }}
+          </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'likedPlaylists' }"
+            @click="updateCurrentTab('likedPlaylists')"
+          >
+            {{ $t('library.likedPlaylists') }}
           </div>
           <div
             class="tab"
@@ -89,7 +87,7 @@
           </div>
         </div>
         <button
-          v-show="currentTab === 'playlists'"
+          v-show="currentTab === 'minePlaylists'"
           class="tab-button"
           @click="openAddPlaylistModal"
           ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}
@@ -102,15 +100,22 @@
         </button>
       </div>
 
-      <div v-show="currentTab === 'playlists'">
-        <div v-if="liked.playlists.length > 1">
-          <CoverRow
-            :items="filterPlaylists.slice(1)"
-            type="playlist"
-            sub-text="creator"
-            :show-play-button="true"
-          />
-        </div>
+      <div v-show="currentTab === 'minePlaylists'">
+        <CoverRow
+          :items="minePlaylists.slice(1)"
+          type="playlist"
+          sub-text="creator"
+          :show-play-button="true"
+        />
+      </div>
+
+      <div v-show="currentTab === 'likedPlaylists'">
+        <CoverRow
+          :items="likedPlaylists"
+          type="playlist"
+          sub-text="creator"
+          :show-play-button="true"
+        />
       </div>
 
       <div v-show="currentTab === 'albums'">
@@ -152,19 +157,6 @@
       style="display: none"
       @change="uploadSongToCloudDisk"
     />
-
-    <ContextMenu ref="playlistTabMenu">
-      <div class="item" @click="changePlaylistFilter('all')">{{
-        $t('contextMenu.allPlaylists')
-      }}</div>
-      <hr />
-      <div class="item" @click="changePlaylistFilter('mine')">{{
-        $t('contextMenu.minePlaylists')
-      }}</div>
-      <div class="item" @click="changePlaylistFilter('liked')">{{
-        $t('contextMenu.likedPlaylists')
-      }}</div>
-    </ContextMenu>
   </div>
 </template>
 
@@ -177,7 +169,6 @@ import { getLyric } from '@/api/track';
 import NProgress from 'nprogress';
 import locale from '@/locale';
 
-import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
@@ -185,13 +176,13 @@ import MvRow from '@/components/MvRow.vue';
 
 export default {
   name: 'Library',
-  components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
+  components: { SvgIcon, CoverRow, TrackList, MvRow },
   data() {
     return {
       show: false,
       likedSongs: [],
       lyric: undefined,
-      currentTab: 'playlists',
+      currentTab: 'minePlaylists',
     };
   },
   computed: {
@@ -218,15 +209,13 @@ export default {
     playlistFilter() {
       return this.data.libraryPlaylistFilter || 'all';
     },
-    filterPlaylists() {
-      const playlists = this.liked.playlists;
+    minePlaylists() {
       const userId = this.data.user.userId;
-      if (this.playlistFilter === 'mine') {
-        return playlists.filter(p => p.creator.userId === userId);
-      } else if (this.playlistFilter === 'liked') {
-        return playlists.filter(p => p.creator.userId !== userId);
-      }
-      return playlists;
+      return this.liked.playlists.filter(p => p.creator.userId === userId);
+    },
+    likedPlaylists() {
+      const userId = this.data.user.userId;
+      return this.liked.playlists.filter(p => p.creator.userId !== userId);
     },
   },
   created() {
