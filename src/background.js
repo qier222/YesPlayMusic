@@ -207,7 +207,10 @@ class Background {
     this.window.on('close', e => {
       log('window close event');
       let closeOpt = this.store.get('settings.closeAppOption');
-      if (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) {
+      if (
+        (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) ||
+        !closeOpt
+      ) {
         /* the user tried to quit the app */
         this.window = null;
         app.quit();
