@@ -14,19 +14,22 @@ export function createTray(win) {
     //setContextMenu破坏了预期的click行为
     //在linux下，鼠标左右键都会呼出contextMenu
     //所以此处单独为linux添加一个 显示主面板 选项
-    ...(process.platform === 'linux' ? [{
-      label: '显示主面板',
-      icon: nativeImage.createFromPath(
-        path.join(__static, 'img/icons/menu.png')
-      ),
-      click: () => {
-        win.show();
-      },
-    },
-    {
-      type: 'separator',
-    },
-  ] : []),
+    ...(process.platform === 'linux'
+      ? [
+          {
+            label: '显示主面板',
+            icon: nativeImage.createFromPath(
+              path.join(__static, 'img/icons/menu.png')
+            ),
+            click: () => {
+              win.show();
+            },
+          },
+          {
+            type: 'separator',
+          },
+        ]
+      : []),
     {
       label: '播放/暂停',
       icon: nativeImage.createFromPath(
