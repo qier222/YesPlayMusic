@@ -11,6 +11,22 @@ export function createTray(win) {
     });
 
   let contextMenu = Menu.buildFromTemplate([
+    //setContextMenu破坏了预期的click行为
+    //在linux下，鼠标左右键都会呼出contextMenu
+    //所以此处单独为linux添加一个 显示主面板 选项
+    ...(process.platform === 'linux' ? [{
+      label: '显示主面板',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/menu.png')
+      ),
+      click: () => {
+        win.show();
+      },
+    },
+    {
+      type: 'separator',
+    },
+  ] : []),
     {
       label: '播放/暂停',
       icon: nativeImage.createFromPath(
@@ -80,22 +96,6 @@ export function createTray(win) {
     //click在默认行为下会弹出一个contextMenu，里面的唯一选项才会调用click事件
     //setContextMenu应该是目前唯一能在linux下使用托盘菜单api
     //但是无法区分鼠标左右键
-
-    //setContextMenu破坏了预期的click行为
-    //在linux下，最小化到托盘的行为貌似与最小化一致
-    //所以此处添加一个显示主面板的按钮
-    contextMenu.insert(0, {
-      label: '显示主面板',
-      icon: nativeImage.createFromPath(
-        path.join(__static, 'img/icons/menu.png')
-      ),
-      click: () => {
-        win.show();
-      },
-    });
-    contextMenu.insert(1, {
-      type: 'separator',
-    });
 
     tray.setContextMenu(contextMenu);
   } else {
