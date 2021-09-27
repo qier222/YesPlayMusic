@@ -18,9 +18,6 @@ export function createTray(win) {
       ? [
           {
             label: '显示主面板',
-            icon: nativeImage.createFromPath(
-              path.join(__static, 'img/icons/menu.png')
-            ),
             click: () => {
               win.show();
             },
