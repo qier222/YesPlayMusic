@@ -43,7 +43,7 @@ class Background {
     });
     this.neteaseMusicAPI = null;
     this.expressApp = null;
-    this.willQuitApp = isMac ? false : true;
+    this.willQuitApp = !isMac;
 
     this.init();
   }
@@ -208,8 +208,8 @@ class Background {
       log('window close event');
       let closeOpt = this.store.get('settings.closeAppOption');
       if (
-        (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) ||
-        !closeOpt
+        this.willQuitApp &&
+        (closeOpt === 'exit' || closeOpt === 'ask' || !closeOpt)
       ) {
         /* the user tried to quit the app */
         this.window = null;
