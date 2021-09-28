@@ -193,11 +193,10 @@ export function initIpcMain(win, store) {
       })
       .then(result => {
         if (result.checkboxChecked && result.response !== 2) {
-          store.set(
-            'settings.closeAppOption',
+          win.webContents.send(
+            'rememberCloseAppOption',
             result.response === 0 ? 'minimizeToTray' : 'exit'
           );
-          console.log(store.get('settings.closeAppOption'));
         }
 
         if (result.response === 0) {

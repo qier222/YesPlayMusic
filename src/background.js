@@ -217,7 +217,6 @@ class Background {
         }
       } else {
         let closeOpt = this.store.get('settings.closeAppOption');
-        log(closeOpt);
         if (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) {
           this.window = null;
           app.quit();
