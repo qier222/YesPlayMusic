@@ -166,7 +166,6 @@ export default {
       text: '关闭主面板时...',
       ask: '询问',
       exit: '退出',
-      minimize: '最小化',
       minimizeToTray: '最小化到托盘',
     },
   },
