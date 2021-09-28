@@ -37,22 +37,25 @@ export function initIpcMain(win, store) {
   });
 
   ipcMain.on('close', e => {
-    if (process.platform == 'darwin') {
+    if (process.platform === 'darwin') {
       win.hide();
       exitAsk(e);
-      return;
-    }
-
-    let closeOpt = store.get('settings.closeAppOption');
-    if (closeOpt === 'exit') {
-      win = null;
-      //app.quit();
-      app.exit(); //exit()直接关闭客户端，不会执行quit();
-    } else if (closeOpt === 'minimize' || closeOpt === 'minimizeToTray') {
-      e.preventDefault(); //阻止默认行为
-      win.minimize(); //调用 最小化实例方法
     } else {
-      exitAsk(e);
+      let closeOpt = store.get('settings.closeAppOption');
+      console.log(closeOpt);
+      if (closeOpt === 'exit') {
+        win = null;
+        //app.quit();
+        app.exit(); //exit()直接关闭客户端，不会执行quit();
+      } else if (closeOpt === 'minimize') {
+        e.preventDefault(); //阻止默认行为
+        win.minimize(); //调用 最小化实例方法
+      } else if (closeOpt === 'minimizeToTray') {
+        e.preventDefault();
+        win.hide();
+      } else {
+        exitAskWithoutMac(e);
+      }
     }
   });
 
@@ -166,6 +169,41 @@ export function initIpcMain(win, store) {
           e.preventDefault(); //阻止默认行为
           win.minimize(); //调用 最小化实例方法
         } else if (result.response == 1) {
+          win = null;
+          //app.quit();
+          app.exit(); //exit()直接关闭客户端，不会执行quit();
+        }
+      })
+      .catch(err => {
+        log(err);
+      });
+  };
+
+  const exitAskWithoutMac = e => {
+    e.preventDefault(); //阻止默认行为
+    dialog
+      .showMessageBox({
+        type: 'info',
+        title: 'Information',
+        cancelId: 2,
+        defaultId: 0,
+        message: '确定要关闭吗？',
+        buttons: ['最小化到托盘', '直接退出'],
+        checkboxLabel: '记住我的选择',
+      })
+      .then(result => {
+        if (result.checkboxChecked && result.response !== 2) {
+          store.set(
+            'settings.closeAppOption',
+            result.response === 0 ? 'minimizeToTray' : 'exit'
+          );
+          console.log(store.get('settings.closeAppOption'));
+        }
+
+        if (result.response === 0) {
+          e.preventDefault(); //阻止默认行为
+          win.hide(); //调用 最小化实例方法
+        } else if (result.response === 1) {
           win = null;
           //app.quit();
           app.exit(); //exit()直接关闭客户端，不会执行quit();

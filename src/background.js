@@ -206,18 +206,25 @@ class Background {
 
     this.window.on('close', e => {
       log('window close event');
-      let closeOpt = this.store.get('settings.closeAppOption');
-      if (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) {
-        /* the user tried to quit the app */
-        this.window = null;
-        app.quit();
-      } else if (!this.willQuitApp && isMac) {
-        e.preventDefault();
-        this.window.hide();
+
+      if (isMac) {
+        if (this.willQuitApp) {
+          this.window = null;
+          app.quit();
+        } else {
+          e.preventDefault();
+          this.window.hide();
+        }
       } else {
-        /* the user only tried to close the window */
-        e.preventDefault();
-        this.window.minimize();
+        let closeOpt = this.store.get('settings.closeAppOption');
+        log(closeOpt);
+        if (this.willQuitApp && (closeOpt === 'exit' || closeOpt === 'ask')) {
+          this.window = null;
+          app.quit();
+        } else {
+          e.preventDefault();
+          this.window.hide();
+        }
       }
     });
 
@@ -227,15 +234,6 @@ class Background {
 
     this.window.on('moved', () => {
       this.store.set('window', this.window.getBounds());
-    });
-
-    this.window.on('minimize', () => {
-      if (
-        !isMac &&
-        this.store.get('settings.closeAppOption') === 'minimizeToTray'
-      ) {
-        this.window.hide();
-      }
     });
 
     this.window.webContents.on('new-window', function (e, url) {
