@@ -2,12 +2,11 @@
   "trailingComma": "es5",
   "tabWidth": 2,
   "useTabs": false,
-  "semi": true,
-  "singleQuote": true,
-  "jsxSingleQuote": true,
+  "semi": false,
   "jsxBracketSameLine": false,
   "arrowParens": "avoid",
   "endOfLine": "lf",
   "bracketSpacing": true,
-  "htmlWhitespaceSensitivity": "strict"
+  "htmlWhitespaceSensitivity": "strict",
+  "singleQuote": true
 }
