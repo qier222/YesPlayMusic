@@ -295,9 +295,6 @@
             <option value="exit">
               {{ $t('settings.closeAppOption.exit') }}
             </option>
-            <option value="minimize">
-              {{ $t('settings.closeAppOption.minimize') }}
-            </option>
             <option value="minimizeToTray">
               {{ $t('settings.closeAppOption.minimizeToTray') }}
             </option>
