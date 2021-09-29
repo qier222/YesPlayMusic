@@ -42,14 +42,10 @@ export function initIpcMain(win, store) {
       exitAsk(e);
     } else {
       let closeOpt = store.get('settings.closeAppOption');
-      console.log(closeOpt);
       if (closeOpt === 'exit') {
         win = null;
         //app.quit();
         app.exit(); //exit()直接关闭客户端，不会执行quit();
-      } else if (closeOpt === 'minimize') {
-        e.preventDefault(); //阻止默认行为
-        win.minimize(); //调用 最小化实例方法
       } else if (closeOpt === 'minimizeToTray') {
         e.preventDefault();
         win.hide();
