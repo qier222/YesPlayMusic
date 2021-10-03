@@ -710,6 +710,7 @@ export default {
   }
   .right-side .lyrics-container {
     max-width: 100%;
+    padding-left: 0px;
   }
 
   .controls {
