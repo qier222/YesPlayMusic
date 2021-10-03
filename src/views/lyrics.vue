@@ -584,6 +584,8 @@ export default {
 
   .cover-container {
     position: relative;
+    display: flex;
+    justify-content: center;
   }
 
   img {
