@@ -203,4 +203,14 @@ footer {
   gap: 24px;
   margin-bottom: 78px;
 }
+
+@media (max-aspect-ratio: 9/13) {
+  .for-you-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 78px;
+  }
+}
 </style>

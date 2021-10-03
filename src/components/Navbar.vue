@@ -23,10 +23,10 @@
         </div>
       </div>
       <div class="navigation-buttons">
-        <button-icon @click.native="go('back')"
+        <button-icon class="back-button" @click.native="go('back')"
           ><svg-icon icon-class="arrow-left"
         /></button-icon>
-        <button-icon @click.native="go('forward')"
+        <button-icon class="forward-button" @click.native="go('forward')"
           ><svg-icon icon-class="arrow-right"
         /></button-icon>
       </div>
@@ -196,21 +196,27 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 64px;
+
   padding: {
     right: 10vw;
     left: 10vw;
+    top: 1vh;
+    bottom: 1vh;
   }
   backdrop-filter: saturate(180%) blur(20px);
 
   background-color: var(--color-navbar-bg);
   z-index: 100;
   -webkit-app-region: drag;
+
+  .svg-icon {
+    color: var(--color-text);
+  }
 }
 
 @media (max-width: 1336px) {
   nav {
-    padding: 0 5vw;
+    padding: 16px 5vw;
   }
 }
 
@@ -419,6 +425,28 @@ nav {
   .search-button {
     display: none;
     -webkit-app-region: no-drag;
+  }
+}
+
+@media (max-aspect-ratio: 9/13) {
+  nav {
+    flex-wrap: wrap;
+  }
+  .right-part {
+    justify-content: center;
+  }
+  //.forward-button {
+  //  display: none;
+  //}
+  button {
+    padding: 2px;
+  }
+  .navigation-links a {
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+  .right-part {
+    width: 100vw;
   }
 }
 </style>

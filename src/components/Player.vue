@@ -180,9 +180,9 @@
         </div>
       </div>
     </div>
-    <div class="controls-mobile" @click.native="toggleLyrics">
+    <div class="controls-mobile">
       <div class="playing">
-        <div class="container" @click.stop>
+        <div class="container">
           <img
             :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
           />
