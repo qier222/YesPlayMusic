@@ -275,7 +275,7 @@ export default {
 
 .controls {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr auto;
   height: 100%;
   padding: {
     right: 10vw;
@@ -411,6 +411,25 @@ export default {
   }
   &:active {
     transform: unset;
+  }
+}
+
+@media (max-aspect-ratio: 9/13) {
+  .playing {
+    .like-button {
+      display: none;
+    }
+  }
+  .middle-control-buttons {
+    .blank {
+      display: none;
+    }
+    .container {
+      justify-content: right;
+    }
+  }
+  .right-control-buttons {
+    display: none;
   }
 }
 </style>

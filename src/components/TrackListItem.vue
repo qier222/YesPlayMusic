@@ -412,4 +412,18 @@ button {
     opacity: 0.78;
   }
 }
+
+@media (max-aspect-ratio: 9/10) {
+  .track {
+    .album {
+      display: none;
+    }
+  }
+}
+
+@media (max-aspect-ratio: 9/13) {
+  .actions {
+    display: none;
+  }
+}
 </style>
