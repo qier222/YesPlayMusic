@@ -125,16 +125,16 @@ export default {
       return this.track.album || this.track.al || this.track?.simpleSong?.al;
     },
     subTitle() {
-      let tns = undefined;
+      let tn = undefined;
       if (this.track.tns?.length > 0 && this.track.name !== this.track.tns[0]) {
-        tns = this.track.tns[0];
+        tn = this.track.tns[0];
       }
 
       //优先显示alia
       if (this.$store.state.settings.subTitleDefault) {
-        return this.track.alia?.length > 0 ? this.track.alia[0] : tns;
+        return this.track.alia?.length > 0 ? this.track.alia[0] : tn;
       } else {
-        return tns === undefined ? this.track.alia[0] : tns;
+        return tn === undefined ? this.track.alia[0] : tn;
       }
     },
     type() {
