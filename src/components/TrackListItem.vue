@@ -126,13 +126,16 @@ export default {
     },
     subTitle() {
       let tn = undefined;
-      if (this.track.tns?.length > 0 && this.track.name !== this.track.tns[0]) {
+      if (
+        this.track?.tns?.length > 0 &&
+        this.track.name !== this.track.tns[0]
+      ) {
         tn = this.track.tns[0];
       }
 
       //优先显示alia
       if (this.$store.state.settings.subTitleDefault) {
-        return this.track.alia?.length > 0 ? this.track.alia[0] : tn;
+        return this.track?.alia?.length > 0 ? this.track.alia[0] : tn;
       } else {
         return tn === undefined ? this.track.alia[0] : tn;
       }
@@ -145,7 +148,8 @@ export default {
     },
     isSubTitle() {
       return (
-        (this.track.tns?.length > 0 && this.track.name !== this.track.tns[0]) ||
+        (this.track?.tns?.length > 0 &&
+          this.track.name !== this.track.tns[0]) ||
         this.track.alia?.length > 0
       );
     },
