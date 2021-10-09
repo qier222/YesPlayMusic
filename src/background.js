@@ -29,7 +29,7 @@ const log = text => {
 const closeOnLinux = (e, win, store) => {
   e.preventDefault();
   let closeOpt = store.get('settings.closeAppOption');
-  
+
   if (closeOpt === 'ask') {
     dialog
       .showMessageBox({
@@ -250,8 +250,7 @@ class Background {
 
       if (isLinux) {
         closeOnLinux(e, this.window, this.store);
-      }
-      else if (isMac) {
+      } else if (isMac) {
         if (this.willQuitApp) {
           this.window = null;
           app.quit();
