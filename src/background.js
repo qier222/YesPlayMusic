@@ -27,8 +27,10 @@ const log = text => {
 };
 
 const closeOnLinux = (e, win, store) => {
-  e.preventDefault();
   let closeOpt = store.get('settings.closeAppOption');
+  if (closeOpt !== 'exit') {
+    e.preventDefault();
+  }
 
   if (closeOpt === 'ask') {
     dialog
