@@ -57,7 +57,7 @@
                     @click.native="toggleLyrics"
                     >{{ artist.name }}
                   </router-link>
-                  <span v-if="currentTrack.al.id !== 0">
+                  <span v-if="album.id !== 0">
                     -
                     <router-link
                       :to="`/album/${album.id}`"
