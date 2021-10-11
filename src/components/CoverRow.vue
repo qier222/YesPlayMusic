@@ -53,7 +53,10 @@ export default {
     subText: { type: String, default: 'null' },
     subTextFontSize: { type: String, default: '16px' },
     showPlayCount: { type: Boolean, default: false },
-    columnNumber: { type: Number, default: 5 },
+    columnNumber: {
+      type: Number,
+      default: window.innerWidth > 700 ? 5 : 3,
+    },
     gap: { type: String, default: '44px 24px' },
     playButtonSize: { type: Number, default: 22 },
   },
