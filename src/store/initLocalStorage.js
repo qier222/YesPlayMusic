@@ -26,6 +26,7 @@ let localStorage = {
     enableDiscordRichPresence: false,
     enableGlobalShortcut: true,
     showLibraryDefault: false,
+    subTitleDefault: false,
     enabledPlaylistCategories,
     proxyConfig: {
       protocol: 'noProxy',
