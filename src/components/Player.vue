@@ -10,6 +10,7 @@
     >
       <vue-slider
         v-model="player.progress"
+        class="progress"
         :min="0"
         :max="player.currentTrackDuration"
         :interval="1"
@@ -20,6 +21,21 @@
         :tooltip-formatter="formatTrackTime"
         :lazy="true"
         :silent="true"
+      ></vue-slider>
+      <vue-slider
+        v-model="player.progress"
+        class="progress-mobile"
+        :min="0"
+        :max="player.currentTrackDuration"
+        :interval="1"
+        :drag-on-click="true"
+        :duration="0"
+        :dot-size="0"
+        :height="2"
+        :tooltip-formatter="formatTrackTime"
+        :lazy="true"
+        :silent="true"
+        :disabled="true"
       ></vue-slider>
     </div>
     <div class="controls">
@@ -172,6 +188,49 @@
         </div>
       </div>
     </div>
+    <div class="controls-mobile">
+      <div class="playing">
+        <div class="container">
+          <img
+            :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
+          />
+          <div class="track-info" :title="audioSource">
+            <div class="name">
+              {{ currentTrack.name }}
+            </div>
+            <div class="artist">
+              <span v-for="(ar, index) in currentTrack.ar" :key="ar.id">
+                <span :class="ar.id !== 0 ? 'ar' : ''"> {{ ar.name }} </span
+                ><span v-if="index !== currentTrack.ar.length - 1">, </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="blank"></div>
+      <div class="control-buttons">
+        <div class="container" @click.stop>
+          <button-icon
+            v-show="player.isPersonalFM"
+            title="不喜欢"
+            @click.native="player.moveToFMTrash"
+            ><svg-icon icon-class="thumbs-down"
+          /></button-icon>
+          <button-icon
+            class="play"
+            :title="$t(player.playing ? 'player.pause' : 'player.play')"
+            @click.native="player.playOrPause"
+          >
+            <svg-icon :icon-class="player.playing ? 'pause' : 'play'"
+          /></button-icon>
+          <button-icon
+            :title="$t('player.next')"
+            @click.native="player.playNextTrack"
+            ><svg-icon icon-class="next"
+          /></button-icon>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -280,7 +339,7 @@ export default {
 
 .controls {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr auto;
   height: 100%;
   padding: {
     right: 10vw;
@@ -294,29 +353,61 @@ export default {
   }
 }
 
-.blank {
-  flex-grow: 1;
-}
+.controls-mobile {
+  display: none;
+  padding: 0 3vw;
 
-.playing {
-  display: flex;
-}
-
-.playing .container {
-  display: flex;
-  align-items: center;
-  img {
-    height: 46px;
-    border-radius: 5px;
-    box-shadow: 0 6px 8px -2px rgba(0, 0, 0, 0.16);
-    cursor: pointer;
-    user-select: none;
-  }
-  .track-info {
-    height: 46px;
-    margin-left: 12px;
+  .playing {
     display: flex;
-    flex-direction: column;
+  }
+
+  .playing .container {
+    display: flex;
+    align-items: center;
+    img {
+      height: 46px;
+      border-radius: 5px;
+      box-shadow: 0 6px 8px -2px rgba(0, 0, 0, 0.16);
+      user-select: none;
+    }
+    .track-info {
+      height: 46px;
+      margin-left: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .name {
+        font-weight: 600;
+        font-size: 16px;
+        opacity: 0.88;
+        color: var(--color-text);
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        word-break: break-all;
+      }
+      .artist {
+        font-size: 12px;
+        opacity: 0.58;
+        color: var(--color-text);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        word-break: break-all;
+      }
+    }
+  }
+
+  .control-buttons {
+    display: flex;
+  }
+
+  .control-buttons .container {
+    flex: 1;
+    display: flex;
     justify-content: center;
     .name {
       font-weight: 600;
@@ -336,78 +427,133 @@ export default {
         text-decoration: underline;
       }
     }
-    .artist {
-      font-size: 12px;
-      opacity: 0.58;
-      color: var(--color-text);
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 1;
-      overflow: hidden;
-      word-break: break-all;
-      span.ar {
-        cursor: pointer;
-        &:hover {
-          text-decoration: underline;
-        }
+    .play {
+      height: 42px;
+      width: 42px;
+      .svg-icon {
+        width: 24px;
+        height: 24px;
       }
     }
   }
 }
 
-.middle-control-buttons {
-  display: flex;
+.blank {
+  flex-grow: 1;
 }
 
-.middle-control-buttons .container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0 8px;
-  .button-icon {
-    margin: 0 8px;
+.controls {
+  .playing {
+    display: flex;
   }
-  .play {
-    height: 42px;
-    width: 42px;
-    .svg-icon {
-      width: 24px;
-      height: 24px;
-    }
-  }
-}
 
-.right-control-buttons {
-  display: flex;
-}
-
-.right-control-buttons .container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  .expand {
-    margin-left: 24px;
-    .svg-icon {
-      height: 24px;
-      width: 24px;
-    }
-  }
-  .active .svg-icon {
-    color: var(--color-primary);
-  }
-  .volume-control {
-    margin-left: 4px;
+  .playing .container {
     display: flex;
     align-items: center;
-    .volume-bar {
-      width: 84px;
+    img {
+      height: 46px;
+      border-radius: 5px;
+      box-shadow: 0 6px 8px -2px rgba(0, 0, 0, 0.16);
+      cursor: pointer;
+      user-select: none;
+    }
+    .track-info {
+      height: 46px;
+      margin-left: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .name {
+        font-weight: 600;
+        font-size: 16px;
+        opacity: 0.88;
+        color: var(--color-text);
+        margin-bottom: 4px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        word-break: break-all;
+      }
+      .has-list {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .artist {
+        font-size: 12px;
+        opacity: 0.58;
+        color: var(--color-text);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        word-break: break-all;
+        span.ar {
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
     }
   }
-}
 
-.like-button {
-  margin-left: 16px;
+  .middle-control-buttons {
+    display: flex;
+  }
+
+  .middle-control-buttons .container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 8px;
+    .button-icon {
+      margin: 0 8px;
+    }
+    .play {
+      height: 42px;
+      width: 42px;
+      .svg-icon {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .right-control-buttons {
+    display: flex;
+  }
+
+  .right-control-buttons .container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .expand {
+      margin-left: 24px;
+      .svg-icon {
+        height: 24px;
+        width: 24px;
+      }
+    }
+    .active .svg-icon {
+      color: var(--color-primary);
+    }
+    .volume-control {
+      margin-left: 4px;
+      display: flex;
+      align-items: center;
+      .volume-bar {
+        width: 84px;
+      }
+    }
+  }
+
+  .like-button {
+    margin-left: 16px;
+  }
 }
 
 .button-icon.disabled {
@@ -418,6 +564,24 @@ export default {
   }
   &:active {
     transform: unset;
+  }
+}
+.progress-mobile {
+  display: none;
+}
+
+@media (max-aspect-ratio: 9/13) {
+  .controls {
+    display: none;
+  }
+  .controls-mobile {
+    display: flex;
+  }
+  .progress {
+    display: none;
+  }
+  .progress-mobile {
+    display: block;
   }
 }
 </style>

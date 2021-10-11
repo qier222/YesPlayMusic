@@ -632,6 +632,8 @@ export default {
 
   .cover-container {
     position: relative;
+    display: flex;
+    justify-content: center;
   }
 
   img {
@@ -762,17 +764,40 @@ export default {
 .lyrics-page.no-lyric {
   .left-side {
     transition: all 0.5s;
-    transform: translateX(27vh);
     margin-right: 0;
+    justify-content: center;
+  }
+  .right-side {
+    display: none;
   }
 }
 
 @media (max-aspect-ratio: 10/9) {
-  .left-side {
-    display: none;
+  .lyrics-page:not(.no-lyric) {
+    .left-side {
+      display: none;
+    }
   }
   .right-side .lyrics-container {
     max-width: 100%;
+    padding-left: 0px;
+  }
+
+  .controls {
+    max-width: 54vw;
+    margin-top: 24px;
+  }
+
+  .cover {
+    img {
+      width: 54vw;
+      height: 54vw;
+    }
+
+    .shadow {
+      height: 54vw;
+      width: 54vw;
+    }
   }
 }
 

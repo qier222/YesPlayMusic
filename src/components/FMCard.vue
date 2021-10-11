@@ -130,6 +130,11 @@ export default {
   cursor: pointer;
   user-select: none;
 }
+@media (max-aspect-ratio: 9/13) {
+  .cover {
+    height: 25vw;
+  }
+}
 .right-part {
   display: flex;
   flex-direction: column;
