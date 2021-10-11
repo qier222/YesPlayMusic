@@ -57,13 +57,15 @@
                     @click.native="toggleLyrics"
                     >{{ artist.name }}
                   </router-link>
-                  -
-                  <router-link
-                    :to="`/album/${album.id}`"
-                    :title="album.name"
-                    @click.native="toggleLyrics"
-                    >{{ album.name }}
-                  </router-link>
+                  <span v-if="album.id !== 0">
+                    -
+                    <router-link
+                      :to="`/album/${album.id}`"
+                      :title="album.name"
+                      @click.native="toggleLyrics"
+                      >{{ album.name }}
+                    </router-link>
+                  </span>
                 </div>
               </div>
               <div class="buttons">
