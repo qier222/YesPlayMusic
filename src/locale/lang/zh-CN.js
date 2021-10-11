@@ -156,6 +156,7 @@ export default {
     enableDiscordRichPresence: '启用 Discord Rich Presence',
     enableGlobalShortcut: '启用全局快捷键',
     showLibraryDefault: '启动后显示音乐库',
+    subTitleDefault: '副标题使用别名',
     lyricsBackground: {
       text: '显示歌词背景',
       off: '关闭',

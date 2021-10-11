@@ -43,8 +43,8 @@
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
             ><ExplicitSymbol
           /></span>
-          <span v-if="isTranslate" :title="translate" class="translate">
-            ({{ translate }})
+          <span v-if="isSubTitle" :title="subTitle" class="subTitle">
+            ({{ subTitle }})
           </span>
         </div>
         <div v-if="!isAlbum" class="artist">
@@ -124,11 +124,21 @@ export default {
     album() {
       return this.track.album || this.track.al || this.track?.simpleSong?.al;
     },
-    translate() {
-      let t;
-      if (this.track?.tns?.length > 0) t = this.track.tns[0];
-      else t = this.track.alia[0];
-      return t;
+    subTitle() {
+      let tn = undefined;
+      if (
+        this.track?.tns?.length > 0 &&
+        this.track.name !== this.track.tns[0]
+      ) {
+        tn = this.track.tns[0];
+      }
+
+      //优先显示alia
+      if (this.$store.state.settings.subTitleDefault) {
+        return this.track?.alia?.length > 0 ? this.track.alia[0] : tn;
+      } else {
+        return tn === undefined ? this.track.alia[0] : tn;
+      }
     },
     type() {
       return this.$parent.type;
@@ -136,8 +146,12 @@ export default {
     isAlbum() {
       return this.type === 'album';
     },
-    isTranslate() {
-      return this.track?.tns?.length > 0 || this.track.alia?.length > 0;
+    isSubTitle() {
+      return (
+        (this.track?.tns?.length > 0 &&
+          this.track.name !== this.track.tns[0]) ||
+        this.track.alia?.length > 0
+      );
     },
     isPlaylist() {
       return this.type === 'playlist';
@@ -294,7 +308,7 @@ button {
         font-size: 14px;
         opacity: 0.72;
       }
-      .translate {
+      .subTitle {
         color: #aeaeae;
         margin-left: 4px;
       }
@@ -398,7 +412,7 @@ button {
   .title,
   .album,
   .time,
-  .title-and-artist .translate {
+  .title-and-artist .subTitle {
     color: var(--color-primary);
   }
   .title .featured,

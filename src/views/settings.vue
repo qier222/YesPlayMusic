@@ -337,6 +337,24 @@
           </div>
         </div>
       </div>
+
+      <div class="item">
+        <div class="left">
+          <div class="title">{{ $t('settings.subTitleDefault') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="sub-title-default"
+              v-model="subTitleDefault"
+              type="checkbox"
+              name="sub-title-default"
+            />
+            <label for="sub-title-default"></label>
+          </div>
+        </div>
+      </div>
+
       <div class="item">
         <div class="left">
           <div class="title" style="transform: scaleX(-1)">🐈️ 🏳️‍🌈</div>
@@ -743,6 +761,17 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'enableDiscordRichPresence',
+          value,
+        });
+      },
+    },
+    subTitleDefault: {
+      get() {
+        return this.settings.subTitleDefault;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'subTitleDefault',
           value,
         });
       },

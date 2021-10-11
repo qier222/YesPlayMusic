@@ -155,6 +155,7 @@ export default {
     enableDiscordRichPresence: 'Enable Discord Rich Presence',
     enableGlobalShortcut: 'Enable Global Shortcut',
     showLibraryDefault: 'Show library default',
+    subTitleDefault: 'Sub title alia default',
     lyricsBackground: {
       text: 'Show Lyrics Background',
       off: 'Off',
