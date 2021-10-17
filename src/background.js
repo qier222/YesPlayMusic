@@ -86,7 +86,7 @@ class Background {
     });
     this.neteaseMusicAPI = null;
     this.expressApp = null;
-    this.willQuitApp = isMac ? false : true;
+    this.willQuitApp = !isMac;
 
     this.init();
   }
@@ -95,7 +95,21 @@ class Background {
     log('initializing');
 
     // Make sure the app is singleton.
-    if (!app.requestSingleInstanceLock()) return app.quit();
+    if (isMac) {
+      if (!app.requestSingleInstanceLock()) return app.quit();
+    } else {
+      if (!app.requestSingleInstanceLock()) {
+        return app.quit();
+      } else {
+        app.on('second-instance', (e, cl, wd) => {
+          if (this.window) {
+            this.window.show();
+            if (this.window.isMinimized()) this.window.restore();
+            this.window.focus();
+          }
+        });
+      }
+    }
 
     // start netease music api
     this.neteaseMusicAPI = startNeteaseMusicApi();
