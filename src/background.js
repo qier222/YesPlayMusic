@@ -392,7 +392,9 @@ class Background {
       app.on('second-instance', (e, cl, wd) => {
         if (this.window) {
           this.window.show();
-          if (this.window.isMinimized()) this.window.restore();
+          if (this.window.isMinimized()) {
+            this.window.restore();
+          }
           this.window.focus();
         }
       });
