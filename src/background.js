@@ -95,21 +95,7 @@ class Background {
     log('initializing');
 
     // Make sure the app is singleton.
-    if (isMac) {
-      if (!app.requestSingleInstanceLock()) return app.quit();
-    } else {
-      if (!app.requestSingleInstanceLock()) {
-        return app.quit();
-      } else {
-        app.on('second-instance', (e, cl, wd) => {
-          if (this.window) {
-            this.window.show();
-            if (this.window.isMinimized()) this.window.restore();
-            this.window.focus();
-          }
-        });
-      }
-    }
+    if (!app.requestSingleInstanceLock()) return app.quit();
 
     // start netease music api
     this.neteaseMusicAPI = startNeteaseMusicApi();
@@ -401,6 +387,16 @@ class Background {
       // unregister all global shortcuts
       globalShortcut.unregisterAll();
     });
+
+    if (!isMac) {
+      app.on('second-instance', (e, cl, wd) => {
+        if (this.window) {
+          this.window.show();
+          if (this.window.isMinimized()) this.window.restore();
+          this.window.focus();
+        }
+      });
+    }
   }
 }
 
