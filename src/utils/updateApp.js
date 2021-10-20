@@ -8,6 +8,25 @@ const updateSetting = () => {
     ...parsedSettings,
   };
 
+  if (
+    settings.shortcuts.length !== initLocalStorage.settings.shortcuts.length
+  ) {
+    // 当新增 shortcuts 时
+    const oldShortcutsId = settings.shortcuts.map(s => s.id);
+    const newShortcutsId = initLocalStorage.settings.shortcuts.filter(
+      s => oldShortcutsId.includes(s.id) === false
+    );
+    newShortcutsId.map(id => {
+      settings.shortcuts.push(
+        initLocalStorage.settings.shortcuts.find(s => s.id === id)
+      );
+    });
+  }
+
+  if (localStorage.getItem('appVersion') === '"0.3.9"') {
+    settings.lyricsBackground = true;
+  }
+
   localStorage.setItem('settings', JSON.stringify(settings));
 };
 
@@ -24,18 +43,6 @@ const updatePlayer = () => {
   let appVersion = localStorage.getItem('appVersion');
   if (appVersion === `"0.2.5"`) parsedData = {}; // 0.2.6版本重构了player
   const data = {
-    _repeatMode: 'off',
-    _shuffle: false,
-    _list: [],
-    _current: 0,
-    _playlistSource: {},
-    _volume: 1,
-    _volumeBeforeMuted: 1,
-    _currentTrack: {},
-    _playNextList: [],
-    _enabled: false,
-    _shuffledList: [],
-    _shuffledCurrent: 0,
     ...parsedData,
   };
   localStorage.setItem('player', JSON.stringify(data));

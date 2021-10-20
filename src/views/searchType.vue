@@ -1,7 +1,7 @@
 <template>
   <div v-show="show" class="search">
     <h1>
-      <span>{{ $t('search.searchFor') }}{{ typeNameTable[type] }}</span> "{{
+      <span>{{ $t('search.searchFor') }} {{ typeNameTable[type] }}</span> "{{
         keywords
       }}"
     </h1>
@@ -42,6 +42,7 @@
 <script>
 import { getTrackDetail } from '@/api/track';
 import { search } from '@/api/others';
+import locale from '@/locale';
 import { camelCase } from 'change-case';
 import NProgress from 'nprogress';
 
@@ -70,11 +71,11 @@ export default {
     },
     typeNameTable() {
       return {
-        musicVideos: 'MV',
-        tracks: '歌曲',
-        albums: '专辑',
-        artists: '艺人',
-        playlists: '歌单',
+        musicVideos: locale.t('search.mv'),
+        tracks: locale.t('search.song'),
+        albums: locale.t('search.album'),
+        artists: locale.t('search.artist'),
+        playlists: locale.t('search.playlist'),
       };
     },
   },
@@ -138,7 +139,7 @@ export default {
 
 <style lang="scss" scoped>
 h1 {
-  margin-top: -10px;
+  margin-top: 32px;
   margin-bottom: 28px;
   color: var(--color-text);
   span {

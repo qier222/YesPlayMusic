@@ -1,6 +1,11 @@
-name: Build / Release
+name: Release
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
 
 jobs:
   release:
@@ -8,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-16.04]
+        os: [macos-latest, windows-latest, ubuntu-18.04]
 
     steps:
       - name: Check out Git repository

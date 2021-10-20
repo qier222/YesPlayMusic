@@ -76,4 +76,11 @@ export function ipcRenderer(vueInstance) {
   ipcRenderer.on('nextUp', () => {
     self.$refs.player.goToNextTracksPage();
   });
+
+  ipcRenderer.on('rememberCloseAppOption', (event, value) => {
+    store.commit('updateSettings', {
+      key: 'closeAppOption',
+      value,
+    });
+  });
 }

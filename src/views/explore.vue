@@ -1,5 +1,5 @@
 <template>
-  <div class="explore">
+  <div class="explore-page">
     <h1>{{ $t('explore.explore') }}</h1>
     <div class="buttons">
       <div
@@ -86,7 +86,6 @@ export default {
     SvgIcon,
   },
   beforeRouteUpdate(to, from, next) {
-    NProgress.start();
     this.showLoadMoreButton = false;
     this.hasMore = true;
     this.playlists = [];
@@ -117,11 +116,14 @@ export default {
   },
   activated() {
     this.loadData();
+    this.$parent.$refs.scrollbar.restorePosition();
   },
   methods: {
     ...mapMutations(['togglePlaylistCategory']),
     loadData() {
-      if (!this.show) NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       this.activeCategory =
         this.$route.query.category === undefined
           ? '全部'

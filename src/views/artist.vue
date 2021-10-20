@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show" class="artist">
+  <div v-show="show" class="artist-page">
     <div class="artist-info">
       <div class="head">
         <img :src="artist.img1v1Url | resizeImage(1024)" />
@@ -20,18 +20,29 @@
             >{{ artist.mvSize }} {{ $t('artist.videos') }}</a
           >
         </div>
+        <div class="description" @click="toggleFullDescription">
+          {{ artist.briefDesc }}
+        </div>
         <div class="buttons">
-          <ButtonTwoTone :icon-class="play" @click.native="playPopularSongs()">
+          <ButtonTwoTone icon-class="play" @click.native="playPopularSongs()">
             {{ $t('common.play') }}
           </ButtonTwoTone>
           <ButtonTwoTone color="grey" @click.native="followArtist">
             <span v-if="artist.followed">{{ $t('artist.following') }}</span>
             <span v-else>{{ $t('artist.follow') }}</span>
           </ButtonTwoTone>
+          <ButtonTwoTone
+            icon-class="more"
+            :icon-button="true"
+            :horizontal-padding="0"
+            color="grey"
+            @click.native="openMenu"
+          >
+          </ButtonTwoTone>
         </div>
       </div>
     </div>
-    <div class="latest-release">
+    <div v-if="latestRelease !== undefined" class="latest-release">
       <div class="section-title">{{ $t('artist.latestRelease') }}</div>
       <div class="release">
         <div class="container">
@@ -57,7 +68,37 @@
             </div>
           </div>
         </div>
-        <div></div>
+        <div v-show="latestMV.id" class="container latest-mv">
+          <div
+            class="cover"
+            @mouseover="mvHover = true"
+            @mouseleave="mvHover = false"
+            @click="goToMv(latestMV.id)"
+          >
+            <img :src="latestMV.coverUrl" />
+            <transition name="fade">
+              <div
+                v-show="mvHover"
+                class="shadow"
+                :style="{
+                  background: 'url(' + latestMV.coverUrl + ')',
+                }"
+              ></div>
+            </transition>
+          </div>
+          <div class="info">
+            <div class="name">
+              <router-link :to="'/mv/' + latestMV.id">{{
+                latestMV.name
+              }}</router-link>
+            </div>
+            <div class="date">
+              {{ latestMV.publishTime | formatDate }}
+            </div>
+            <div class="type">{{ $t('artist.latestMV') }}</div>
+          </div>
+        </div>
+        <div v-show="!latestMV.id"></div>
       </div>
     </div>
     <div id="popularTracks" class="popular-tracks">
@@ -103,7 +144,7 @@
     </div>
 
     <div v-if="similarArtists.length !== 0" class="similar-artists">
-      <div class="section-title">相似艺人</div>
+      <div class="section-title">{{ $t('artist.similarArtists') }}</div>
       <CoverRow
         type="artist"
         :column-number="6"
@@ -111,6 +152,24 @@
         :items="similarArtists.slice(0, 12)"
       />
     </div>
+
+    <Modal
+      :show="showFullDescription"
+      :close="toggleFullDescription"
+      :show-footer="false"
+      :click-outside-hide="true"
+      :title="$t('artist.artistDesc')"
+    >
+      <p class="description-fulltext">
+        {{ artist.briefDesc }}
+      </p>
+    </Modal>
+
+    <ContextMenu ref="artistMenu">
+      <div class="item" @click="copyUrl(artist.id)">{{
+        $t('contextMenu.copyUrl')
+      }}</div>
+    </ContextMenu>
   </div>
 </template>
 
@@ -123,20 +182,30 @@ import {
   followAArtist,
   similarArtists,
 } from '@/api/artist';
+import locale from '@/locale';
 import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
+import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
 import Cover from '@/components/Cover.vue';
 import MvRow from '@/components/MvRow.vue';
+import Modal from '@/components/Modal.vue';
 
 export default {
   name: 'Artist',
-  components: { Cover, ButtonTwoTone, TrackList, CoverRow, MvRow },
+  components: {
+    Cover,
+    ButtonTwoTone,
+    TrackList,
+    CoverRow,
+    MvRow,
+    Modal,
+    ContextMenu,
+  },
   beforeRouteUpdate(to, from, next) {
-    NProgress.start();
     this.artist.img1v1Url =
       'https://p1.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg';
     this.loadData(to.params.id, next);
@@ -159,9 +228,11 @@ export default {
         size: '',
       },
       showMorePopTracks: false,
+      showFullDescription: false,
       mvs: [],
       hasMoreMV: false,
       similarArtists: [],
+      mvHover: false,
     };
   },
   computed: {
@@ -174,23 +245,32 @@ export default {
         ['EP/Single', 'EP', 'Single'].includes(a.type)
       );
     },
-  },
-  created() {
-    this.loadData(this.$route.params.id);
+    latestMV() {
+      const mv = this.mvs[0] || {};
+      return {
+        id: mv.id || mv.vid,
+        name: mv.name || mv.title,
+        coverUrl: `${mv.imgurl16v9 || mv.cover || mv.coverUrl}?param=464y260`,
+        publishTime: mv.publishTime,
+      };
+    },
   },
   activated() {
-    if (this.show) {
-      if (this.artist.id.toString() !== this.$route.params.id) {
-        this.show = false;
-        NProgress.start();
-        this.loadData(this.$route.params.id);
-      }
+    if (this.artist?.id?.toString() !== this.$route.params.id) {
+      this.loadData(this.$route.params.id);
+    } else {
+      this.$parent.$refs.scrollbar.restorePosition();
     }
   },
   methods: {
     ...mapMutations(['appendTrackToPlayerList']),
-    ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID']),
+    ...mapActions(['playFirstTrackOnList', 'playTrackOnListByID', 'showToast']),
     loadData(id, next = undefined) {
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
+      this.show = false;
+      this.$parent.$refs.main.scrollTo({ top: 0 });
       getArtist(id).then(data => {
         this.artist = data.artist;
         this.popularTracks = data.hotSongs;
@@ -216,6 +296,9 @@ export default {
         params: { id },
       });
     },
+    goToMv(id) {
+      this.$router.push({ path: '/mv/' + id });
+    },
     playPopularSongs(trackID = 'first') {
       let trackIDs = this.popularTracks.map(t => t.id);
       this.$store.state.player.replacePlaylist(
@@ -227,7 +310,7 @@ export default {
     },
     followArtist() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       followAArtist({
@@ -243,19 +326,44 @@ export default {
         block,
       });
     },
+    toggleFullDescription() {
+      this.showFullDescription = !this.showFullDescription;
+      if (this.showFullDescription) {
+        this.$store.commit('enableScrolling', false);
+      } else {
+        this.$store.commit('enableScrolling', true);
+      }
+    },
+    openMenu(e) {
+      this.$refs.artistMenu.openMenu(e);
+    },
+    copyUrl(id) {
+      let showToast = this.showToast;
+      this.$copyText('https://music.163.com/#/artist?id=' + id)
+        .then(function () {
+          showToast(locale.t('toast.copied'));
+        })
+        .catch(error => {
+          showToast(`${locale.t('toast.copyFailed')}${error}`);
+        });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.artist-page {
+  margin-top: 32px;
+}
+
 .artist-info {
   display: flex;
   align-items: center;
   margin-bottom: 26px;
   color: var(--color-text);
   img {
-    height: 192px;
-    width: 192px;
+    height: 248px;
+    width: 248px;
     border-radius: 50%;
     margin-right: 56px;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 16px -8px;
@@ -287,6 +395,23 @@ export default {
       }
     }
   }
+
+  .description {
+    user-select: none;
+    font-size: 14px;
+    opacity: 0.68;
+    margin-top: 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    cursor: pointer;
+    white-space: pre-line;
+    &:hover {
+      transition: opacity 0.3s;
+      opacity: 0.88;
+    }
+  }
 }
 
 .section-title {
@@ -314,6 +439,7 @@ export default {
   }
   .container {
     display: flex;
+    flex: 1;
     align-items: center;
     border-radius: 12px;
   }
@@ -363,5 +489,50 @@ export default {
   .section-title {
     margin-bottom: 24px;
   }
+}
+
+.latest-mv {
+  .cover {
+    position: relative;
+    transition: transform 0.3s;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  img {
+    border-radius: 0.75em;
+    height: 128px;
+    object-fit: cover;
+    user-select: none;
+  }
+
+  .shadow {
+    position: absolute;
+    top: 6px;
+    height: 100%;
+    width: 100%;
+    filter: blur(16px) opacity(0.4);
+    transform: scale(0.9, 0.9);
+    z-index: -1;
+    background-size: cover;
+    border-radius: 0.75em;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+}
+
+.description-fulltext {
+  font-size: 16px;
+  margin-top: 24px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
 }
 </style>

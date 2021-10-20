@@ -1,4 +1,5 @@
-import { disableScrolling, enableScrolling } from '@/utils/ui';
+import shortcuts from '@/utils/shortcuts';
+import cloneDeep from 'lodash/cloneDeep';
 
 export default {
   updateLikedXXX(state, { name, data }) {
@@ -45,8 +46,8 @@ export default {
     if (key === 'show') {
       // 100ms的延迟是为等待右键菜单blur之后再disableScrolling
       value === true
-        ? setTimeout(() => disableScrolling(), 100)
-        : enableScrolling();
+        ? setTimeout(() => (state.enableScrolling = false), 100)
+        : (state.enableScrolling = true);
     }
   },
   toggleLyrics(state) {
@@ -57,5 +58,19 @@ export default {
   },
   updateLastfm(state, session) {
     state.lastfm = session;
+  },
+  updateShortcut(state, { id, type, shortcut }) {
+    let newShortcut = state.settings.shortcuts.find(s => s.id === id);
+    newShortcut[type] = shortcut;
+    state.settings.shortcuts = state.settings.shortcuts.map(s => {
+      if (s.id !== id) return s;
+      return newShortcut;
+    });
+  },
+  restoreDefaultShortcuts(state) {
+    state.settings.shortcuts = cloneDeep(shortcuts);
+  },
+  enableScrolling(state, status = null) {
+    state.enableScrolling = status ? status : !state.enableScrolling;
   },
 };

@@ -37,6 +37,7 @@ export function isTrackPlayable(track) {
 }
 
 export function mapTrackPlayableStatus(tracks, privileges = []) {
+  if (tracks?.length === undefined) return tracks;
   return tracks.map(t => {
     const privilege = privileges.find(item => item.id === t.id) || {};
     if (t.privilege) {
@@ -98,14 +99,20 @@ export function dailyTask() {
     isAccountLoggedIn() &&
     (lastDate === undefined || lastDate !== dayjs().date())
   ) {
-    console.log('execute dailyTask');
-    store.commit('updateData', {
-      key: 'lastRefreshCookieDate',
-      value: dayjs().date(),
+    console.debug('[debug][common.js] execute dailyTask');
+    refreshCookie().then(() => {
+      console.debug('[debug][common.js] 刷新cookie');
+      store.commit('updateData', {
+        key: 'lastRefreshCookieDate',
+        value: dayjs().date(),
+      });
     });
-    refreshCookie();
-    dailySignin(0);
-    dailySignin(1);
+    dailySignin(0).catch(() => {
+      console.debug('[debug][common.js] 手机端重复签到');
+    });
+    dailySignin(1).catch(() => {
+      console.debug('[debug][common.js] PC端重复签到');
+    });
   }
 }
 

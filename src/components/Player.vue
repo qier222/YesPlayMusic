@@ -11,7 +11,7 @@
       <vue-slider
         v-model="player.progress"
         :min="0"
-        :max="player.currentTrackDuration + 1"
+        :max="player.currentTrackDuration"
         :interval="1"
         :drag-on-click="true"
         :duration="0"
@@ -19,6 +19,7 @@
         :height="2"
         :tooltip-formatter="formatTrackTime"
         :lazy="true"
+        :silent="true"
       ></vue-slider>
     </div>
     <div class="controls">
@@ -36,9 +37,9 @@
               <span
                 v-for="(ar, index) in currentTrack.ar"
                 :key="ar.id"
-                @click="goToArtist(ar.id)"
+                @click="ar.id !== 0 && goToArtist(ar.id)"
               >
-                <span class="ar">{{ ar.name }}</span
+                <span :class="ar.id !== 0 ? 'ar' : ''"> {{ ar.name }} </span
                 ><span v-if="index !== currentTrack.ar.length - 1">, </span>
               </span>
             </div>
@@ -97,7 +98,7 @@
           <button-icon
             :title="$t('player.nextUp')"
             :class="{
-              active: this.$route.name === 'next',
+              active: $route.name === 'next',
               disabled: player.isPersonalFM,
             }"
             @click.native="goToNextTracksPage"
@@ -147,7 +148,7 @@
                 :interval="0.01"
                 :drag-on-click="true"
                 :duration="0"
-                :tooltip="`none`"
+                tooltip="none"
                 :dot-size="12"
               ></vue-slider>
             </div>
@@ -157,7 +158,7 @@
             class="lyrics-button"
             title="歌词"
             style="margin-left: 12px"
-            @click.native.stop="toggleLyrics"
+            @click.native="toggleLyrics"
             ><svg-icon icon-class="arrow-up"
           /></button-icon>
         </div>
@@ -221,6 +222,8 @@ export default {
         this.$router.push({ path: '/library/liked-songs' });
       } else if (this.player.playlistSource.type === 'url') {
         this.$router.push({ path: this.player.playlistSource.id });
+      } else if (this.player.playlistSource.type === 'cloudDisk') {
+        this.$router.push({ path: '/library' });
       } else {
         this.$router.push({
           path:

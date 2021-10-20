@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show">
+  <div v-show="show" ref="library">
     <h1>
       <img class="avatar" :src="data.user.avatarUrl | resizeImage" />{{
         data.user.nickname
@@ -49,9 +49,11 @@
             @click="updateCurrentTab('playlists')"
           >
             <span class="text">{{
-              { all: '全部歌单', mine: '创建的歌单', liked: '收藏的歌单' }[
-                playlistFilter
-              ]
+              {
+                all: $t('contextMenu.allPlaylists'),
+                mine: $t('contextMenu.minePlaylists'),
+                liked: $t('contextMenu.likedPlaylists'),
+              }[playlistFilter]
             }}</span>
             <span class="icon" @click.stop="openPlaylistTabMenu"
               ><svg-icon icon-class="dropdown"
@@ -78,14 +80,26 @@
           >
             {{ $t('library.mvs') }}
           </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'cloudDisk' }"
+            @click="updateCurrentTab('cloudDisk')"
+          >
+            云盘
+          </div>
         </div>
         <button
           v-show="currentTab === 'playlists'"
-          class="add-playlist"
-          icon="plus"
+          class="tab-button"
           @click="openAddPlaylistModal"
-          ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}</button
-        >
+          ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}
+        </button>
+        <button
+          v-show="currentTab === 'cloudDisk'"
+          class="tab-button"
+          @click="selectUploadFiles"
+          ><svg-icon icon-class="arrow-up-alt" /> 上传歌曲
+        </button>
       </div>
 
       <div v-show="currentTab === 'playlists'">
@@ -119,23 +133,49 @@
       <div v-show="currentTab === 'mvs'">
         <MvRow :mvs="liked.mvs" />
       </div>
+
+      <div v-show="currentTab === 'cloudDisk'">
+        <TrackList
+          :id="-8"
+          :tracks="liked.cloudDisk"
+          :column-number="3"
+          type="cloudDisk"
+          dbclick-track-func="playCloudDisk"
+          :extra-context-menu-item="['removeTrackFromCloudDisk']"
+        />
+      </div>
     </div>
 
+    <input
+      ref="cloudDiskUploadInput"
+      type="file"
+      style="display: none"
+      @change="uploadSongToCloudDisk"
+    />
+
     <ContextMenu ref="playlistTabMenu">
-      <div class="item" @click="changePlaylistFilter('all')">全部歌单</div>
+      <div class="item" @click="changePlaylistFilter('all')">{{
+        $t('contextMenu.allPlaylists')
+      }}</div>
       <hr />
-      <div class="item" @click="changePlaylistFilter('mine')">创建的歌单</div>
-      <div class="item" @click="changePlaylistFilter('liked')">收藏的歌单</div>
+      <div class="item" @click="changePlaylistFilter('mine')">{{
+        $t('contextMenu.minePlaylists')
+      }}</div>
+      <div class="item" @click="changePlaylistFilter('liked')">{{
+        $t('contextMenu.likedPlaylists')
+      }}</div>
     </ContextMenu>
   </div>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
-import { getLyric } from '@/api/track';
 import { randomNum, dailyTask } from '@/utils/common';
 import { isAccountLoggedIn } from '@/utils/auth';
+import { uploadSong } from '@/api/user';
+import { getLyric } from '@/api/track';
 import NProgress from 'nprogress';
+import locale from '@/locale';
 
 import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
@@ -190,30 +230,39 @@ export default {
     },
   },
   created() {
-    NProgress.start();
+    setTimeout(() => {
+      if (!this.show) NProgress.start();
+    }, 1000);
+    this.loadData();
   },
   activated() {
-    if (this.liked.songsWithDetails.length > 0) {
-      NProgress.done();
-      this.show = true;
-      this.getRandomLyric();
-    } else {
-      this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
-        NProgress.done();
-        this.show = true;
-        this.getRandomLyric();
-      });
-    }
-    this.$store.dispatch('fetchLikedSongs');
-    this.$store.dispatch('fetchLikedPlaylist');
-    this.$store.dispatch('fetchLikedAlbums');
-    this.$store.dispatch('fetchLikedArtists');
-    this.$store.dispatch('fetchLikedMVs');
+    this.$parent.$refs.scrollbar.restorePosition();
+    this.loadData();
     dailyTask();
   },
   methods: {
     ...mapActions(['showToast']),
     ...mapMutations(['updateModal', 'updateData']),
+    loadData() {
+      if (this.liked.songsWithDetails.length > 0) {
+        NProgress.done();
+        this.show = true;
+        this.$store.dispatch('fetchLikedSongsWithDetails');
+        this.getRandomLyric();
+      } else {
+        this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
+          NProgress.done();
+          this.show = true;
+          this.getRandomLyric();
+        });
+      }
+      this.$store.dispatch('fetchLikedSongs');
+      this.$store.dispatch('fetchLikedPlaylist');
+      this.$store.dispatch('fetchLikedAlbums');
+      this.$store.dispatch('fetchLikedArtists');
+      this.$store.dispatch('fetchLikedMVs');
+      this.$store.dispatch('fetchCloudDisk');
+    },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
         this.liked.playlists[0].id,
@@ -223,16 +272,17 @@ export default {
     },
     updateCurrentTab(tab) {
       if (!isAccountLoggedIn() && tab !== 'playlists') {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       this.currentTab = tab;
-      window.scrollTo({ top: 375, behavior: 'smooth' });
+      this.$parent.$refs.main.scrollTo({ top: 375, behavior: 'smooth' });
     },
     goToLikedSongsList() {
       this.$router.push({ path: '/library/liked-songs' });
     },
     getRandomLyric() {
+      if (this.liked.songs.length === 0) return;
       getLyric(
         this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
       ).then(data => {
@@ -241,7 +291,7 @@ export default {
     },
     openAddPlaylistModal() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       this.updateModal({
@@ -256,6 +306,22 @@ export default {
     changePlaylistFilter(type) {
       this.updateData({ key: 'libraryPlaylistFilter', value: type });
       window.scrollTo({ top: 375, behavior: 'smooth' });
+    },
+    selectUploadFiles() {
+      this.$refs.cloudDiskUploadInput.click();
+    },
+    uploadSongToCloudDisk(e) {
+      const files = e.target.files;
+      uploadSong(files[0]).then(result => {
+        if (result.code === 200) {
+          let newCloudDisk = this.liked.cloudDisk;
+          newCloudDisk.unshift(result.privateCloud);
+          this.$store.commit('updateLikedXXX', {
+            name: 'cloudDisk',
+            data: newCloudDisk,
+          });
+        }
+      });
     },
   },
 };
@@ -412,7 +478,7 @@ h1 {
   }
 }
 
-button.add-playlist {
+button.tab-button {
   color: var(--color-text);
   border-radius: 8px;
   padding: 0 14px;

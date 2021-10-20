@@ -1,6 +1,14 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-import match from '@njzy/unblockneteasemusic';
+import match from '@revincx/unblockneteasemusic';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
+import cloneDeep from 'lodash/cloneDeep';
+import shortcuts from '@/utils/shortcuts';
+import { createMenu } from './menu';
+
+const clc = require('cli-color');
+const log = text => {
+  console.log(`${clc.blueBright('[ipcMain.js]')} ${text}`);
+};
 
 const client = require('discord-rich-presence')('818936529484906596');
 
@@ -23,38 +31,28 @@ export function initIpcMain(win, store) {
         event.returnValue = res;
       })
       .catch(err => {
-        console.log('unblock music error: ', err);
+        log('unblock music error: ', err);
         event.returnValue = null;
       });
   });
 
   ipcMain.on('close', e => {
-    if (process.platform == 'darwin') {
+    if (process.platform === 'darwin') {
       win.hide();
+      exitAsk(e);
+    } else {
+      let closeOpt = store.get('settings.closeAppOption');
+      if (closeOpt === 'exit') {
+        win = null;
+        //app.quit();
+        app.exit(); //exit()直接关闭客户端，不会执行quit();
+      } else if (closeOpt === 'minimizeToTray') {
+        e.preventDefault();
+        win.hide();
+      } else {
+        exitAskWithoutMac(e);
+      }
     }
-    e.preventDefault(); //阻止默认行为
-    dialog
-      .showMessageBox({
-        type: 'info',
-        title: 'Information',
-        cancelId: 2,
-        defaultId: 0,
-        message: '确定要关闭吗？',
-        buttons: ['最小化', '直接退出'],
-      })
-      .then(result => {
-        if (result.response == 0) {
-          e.preventDefault(); //阻止默认行为
-          win.minimize(); //调用 最小化实例方法
-        } else if (result.response == 1) {
-          win = null;
-          //app.quit();
-          app.exit(); //exit()直接关闭客户端，不会执行quit();
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
   });
 
   ipcMain.on('minimize', () => {
@@ -69,13 +67,11 @@ export function initIpcMain(win, store) {
 
   ipcMain.on('settings', (event, options) => {
     store.set('settings', options);
-    const isRegisterShortcut = globalShortcut.isRegistered(
-      'Alt+CommandOrControl+P'
-    );
     if (options.enableGlobalShortcut) {
-      !isRegisterShortcut && registerGlobalShortcut(win);
+      registerGlobalShortcut(win, store);
     } else {
-      isRegisterShortcut && globalShortcut.unregisterAll();
+      log('unregister global shortcut');
+      globalShortcut.unregisterAll();
     }
   });
 
@@ -105,20 +101,111 @@ export function initIpcMain(win, store) {
   });
 
   ipcMain.on('setProxy', (event, config) => {
-    console.log(config);
     const proxyRules = `${config.protocol}://${config.server}:${config.port}`;
+    store.set('proxy', proxyRules);
     win.webContents.session.setProxy(
       {
         proxyRules,
       },
       () => {
-        console.log('finished setProxy');
+        log('finished setProxy');
       }
     );
   });
 
   ipcMain.on('removeProxy', (event, arg) => {
-    console.log('removeProxy');
+    log('removeProxy');
     win.webContents.session.setProxy({});
+    store.set('proxy', '');
   });
+
+  ipcMain.on('switchGlobalShortcutStatusTemporary', (e, status) => {
+    log('switchGlobalShortcutStatusTemporary');
+    if (status === 'disable') {
+      globalShortcut.unregisterAll();
+    } else {
+      registerGlobalShortcut(win, store);
+    }
+  });
+
+  ipcMain.on('updateShortcut', (e, { id, type, shortcut }) => {
+    log('updateShortcut');
+    let shortcuts = store.get('settings.shortcuts');
+    let newShortcut = shortcuts.find(s => s.id === id);
+    newShortcut[type] = shortcut;
+    store.set('settings.shortcuts', shortcuts);
+
+    createMenu(win, store);
+    globalShortcut.unregisterAll();
+    registerGlobalShortcut(win, store);
+  });
+
+  ipcMain.on('restoreDefaultShortcuts', () => {
+    log('restoreDefaultShortcuts');
+    store.set('settings.shortcuts', cloneDeep(shortcuts));
+
+    createMenu(win, store);
+    globalShortcut.unregisterAll();
+    registerGlobalShortcut(win, store);
+  });
+
+  const exitAsk = e => {
+    e.preventDefault(); //阻止默认行为
+    dialog
+      .showMessageBox({
+        type: 'info',
+        title: 'Information',
+        cancelId: 2,
+        defaultId: 0,
+        message: '确定要关闭吗？',
+        buttons: ['最小化', '直接退出'],
+      })
+      .then(result => {
+        if (result.response == 0) {
+          e.preventDefault(); //阻止默认行为
+          win.minimize(); //调用 最小化实例方法
+        } else if (result.response == 1) {
+          win = null;
+          //app.quit();
+          app.exit(); //exit()直接关闭客户端，不会执行quit();
+        }
+      })
+      .catch(err => {
+        log(err);
+      });
+  };
+
+  const exitAskWithoutMac = e => {
+    e.preventDefault(); //阻止默认行为
+    dialog
+      .showMessageBox({
+        type: 'info',
+        title: 'Information',
+        cancelId: 2,
+        defaultId: 0,
+        message: '确定要关闭吗？',
+        buttons: ['最小化到托盘', '直接退出'],
+        checkboxLabel: '记住我的选择',
+      })
+      .then(result => {
+        if (result.checkboxChecked && result.response !== 2) {
+          win.webContents.send(
+            'rememberCloseAppOption',
+            result.response === 0 ? 'minimizeToTray' : 'exit'
+          );
+        }
+
+        if (result.response === 0) {
+          e.preventDefault(); //阻止默认行为
+          win.hide(); //调用 最小化实例方法
+        } else if (result.response === 1) {
+          win = null;
+          //app.quit();
+          app.exit(); //exit()直接关闭客户端，不会执行quit();
+        }
+      })
+      .catch(err => {
+        log(err);
+      });
+  };
 }

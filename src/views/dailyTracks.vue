@@ -21,7 +21,7 @@ import { dailyRecommendTracks } from '@/api/playlist';
 import TrackList from '@/components/TrackList.vue';
 
 export default {
-  name: 'dailyTracks',
+  name: 'DailyTracks',
   components: {
     TrackList,
   },
@@ -35,11 +35,14 @@ export default {
   },
   created() {
     if (this.dailyTracks.length === 0) {
-      NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       this.loadDailyTracks();
     } else {
       this.show = true;
     }
+    this.$parent.$refs.main.scrollTo(0, 0);
   },
   methods: {
     ...mapMutations(['updateDailyTracks']),

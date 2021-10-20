@@ -9,6 +9,8 @@ import {
   likedAlbums,
   likedArtists,
   likedMVs,
+  cloudDisk,
+  userAccount,
 } from '@/api/user';
 
 export default {
@@ -36,22 +38,26 @@ export default {
     }
     let like = true;
     if (state.liked.songs.includes(id)) like = false;
-    likeATrack({ id, like }).then(() => {
-      if (like === false) {
-        commit('updateLikedXXX', {
-          name: 'songs',
-          data: state.liked.songs.filter(d => d !== id),
-        });
-      } else {
-        let newLikeSongs = state.liked.songs;
-        newLikeSongs.push(id);
-        commit('updateLikedXXX', {
-          name: 'songs',
-          data: newLikeSongs,
-        });
-      }
-      dispatch('fetchLikedSongsWithDetails');
-    });
+    likeATrack({ id, like })
+      .then(() => {
+        if (like === false) {
+          commit('updateLikedXXX', {
+            name: 'songs',
+            data: state.liked.songs.filter(d => d !== id),
+          });
+        } else {
+          let newLikeSongs = state.liked.songs;
+          newLikeSongs.push(id);
+          commit('updateLikedXXX', {
+            name: 'songs',
+            data: newLikeSongs,
+          });
+        }
+        dispatch('fetchLikedSongsWithDetails');
+      })
+      .catch(() => {
+        dispatch('showToast', '操作失败，专辑下架或版权锁定');
+      });
   },
   fetchLikedSongs: ({ state, commit }) => {
     if (!isLooseLoggedIn()) return;
@@ -71,6 +77,11 @@ export default {
   fetchLikedSongsWithDetails: ({ state, commit }) => {
     return getPlaylistDetail(state.data.likedSongPlaylistID, true).then(
       result => {
+        if (result.playlist?.trackIds?.length === 0) {
+          return new Promise(resolve => {
+            resolve();
+          });
+        }
         return getTrackDetail(
           result.playlist.trackIds
             .slice(0, 12)
@@ -98,6 +109,11 @@ export default {
             name: 'playlists',
             data: result.playlist,
           });
+          // 更新用户”喜欢的歌曲“歌单ID
+          commit('updateData', {
+            key: 'likedSongPlaylistID',
+            value: result.playlist[0].id,
+          });
         }
       });
     } else {
@@ -117,7 +133,7 @@ export default {
   },
   fetchLikedArtists: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return likedArtists().then(result => {
+    return likedArtists({ limit: 2000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'artists',
@@ -128,12 +144,31 @@ export default {
   },
   fetchLikedMVs: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return likedMVs().then(result => {
+    return likedMVs({ limit: 1000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'mvs',
           data: result.data,
         });
+      }
+    });
+  },
+  fetchCloudDisk: ({ commit }) => {
+    if (!isAccountLoggedIn()) return;
+    return cloudDisk().then(result => {
+      if (result.data) {
+        commit('updateLikedXXX', {
+          name: 'cloudDisk',
+          data: result.data,
+        });
+      }
+    });
+  },
+  fetchUserProfile: ({ commit }) => {
+    if (!isAccountLoggedIn()) return;
+    return userAccount().then(result => {
+      if (result.code === 200) {
+        commit('updateData', { key: 'user', value: result.profile });
       }
     });
   },

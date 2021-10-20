@@ -1,10 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import NProgress from 'nprogress';
-import '@/assets/css/nprogress.css';
 import { isLooseLoggedIn, isAccountLoggedIn } from '@/utils/auth';
-
-NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
 
 Vue.use(VueRouter);
 const routes = [
@@ -14,6 +10,7 @@ const routes = [
     component: () => import('@/views/home.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -47,6 +44,7 @@ const routes = [
     component: () => import('@/views/artist.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -68,6 +66,7 @@ const routes = [
     component: () => import('@/views/next.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -94,6 +93,7 @@ const routes = [
     component: () => import('@/views/explore.vue'),
     meta: {
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -103,6 +103,7 @@ const routes = [
     meta: {
       requireLogin: true,
       keepAlive: true,
+      savePosition: true,
     },
   },
   {
@@ -132,15 +133,10 @@ const routes = [
     component: () => import('@/views/lastfmCallback.vue'),
   },
 ];
+
 const router = new VueRouter({
+  mode: process.env.IS_ELECTRON ? 'hash' : 'history',
   routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { x: 0, y: 0 };
-    }
-  },
 });
 
 const originalPush = VueRouter.prototype.push;
@@ -169,15 +165,6 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     next();
-  }
-});
-
-router.afterEach(to => {
-  if (
-    to.matched.some(record => !record.meta.keepAlive) &&
-    !['settings', 'dailySongs', 'lastfmCallback'].includes(to.name)
-  ) {
-    NProgress.start();
   }
 });
 

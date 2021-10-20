@@ -1,5 +1,5 @@
 <template>
-  <div class="mv">
+  <div class="mv-page">
     <div class="current-video">
       <div class="video">
         <video ref="videoPlayer" class="plyr"></video>
@@ -35,6 +35,7 @@
 import { mvDetail, mvUrl, simiMv, likeAMV } from '@/api/mv';
 import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
+import locale from '@/locale';
 import '@/assets/css/plyr.css';
 import Plyr from 'plyr';
 
@@ -116,7 +117,7 @@ export default {
     },
     likeMV() {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       likeAMV({
@@ -135,8 +136,9 @@ export default {
   --plyr-control-radius: 8px;
 }
 
-.mv {
+.mv-page {
   width: 100%;
+  margin-top: 32px;
 }
 .current-video {
   width: 100%;
@@ -175,6 +177,7 @@ export default {
     font-weight: 600;
     color: var(--color-text);
     opacity: 0.88;
+    margin-bottom: 12px;
   }
 }
 

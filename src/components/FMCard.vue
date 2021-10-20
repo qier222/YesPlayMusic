@@ -1,5 +1,6 @@
 <template>
-  <div class="fm">
+  <div class="fm" :style="{ background }" data-theme="dark">
+    <img :src="nextTrackCover" style="display: none" />
     <img
       class="cover"
       :src="track.album && track.album.picUrl | resizeImage(512)"
@@ -35,10 +36,17 @@
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import ArtistsInLine from '@/components/ArtistsInLine.vue';
 import { mapState } from 'vuex';
+import * as Vibrant from 'node-vibrant';
+import Color from 'color';
 
 export default {
   name: 'FMCard',
   components: { ButtonIcon, ArtistsInLine },
+  data() {
+    return {
+      background: '',
+    };
+  },
   computed: {
     ...mapState(['player']),
     track() {
@@ -50,6 +58,16 @@ export default {
     artists() {
       return this.track.artists || this.track.ar || [];
     },
+    nextTrackCover() {
+      return `${this.player._personalFMNextTrack?.album?.picUrl.replace(
+        'http://',
+        'https://'
+      )}?param=512y512`;
+    },
+  },
+  created() {
+    this.getColor();
+    window.ok = this.getColor;
   },
   methods: {
     play() {
@@ -57,6 +75,7 @@ export default {
     },
     next() {
       this.player.playNextTrack(true);
+      this.getColor();
     },
     goToAlbum() {
       if (this.track.album.id === 0) return;
@@ -64,6 +83,28 @@ export default {
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
+      this.getColor();
+    },
+    getColor() {
+      if (!this.player.personalFMTrack?.album?.picUrl) return;
+      const cover = `${this.player.personalFMTrack.album.picUrl.replace(
+        'http://',
+        'https://'
+      )}?param=512y512`;
+      Vibrant.from(cover, { colorCount: 1 })
+        .getPalette()
+        .then(palette => {
+          const color = Color.rgb(palette.Vibrant._rgb)
+            .darken(0.1)
+            .rgb()
+            .string();
+          const color2 = Color.rgb(palette.Vibrant._rgb)
+            .lighten(0.28)
+            .rotate(-30)
+            .rgb()
+            .string();
+          this.background = `linear-gradient(to top left, ${color}, ${color2})`;
+        });
     },
   },
 };
@@ -75,13 +116,14 @@ export default {
   background: var(--color-secondary-bg);
   border-radius: 1rem;
   display: flex;
+  height: 198px;
+  box-sizing: border-box;
 }
 .cover {
-  height: 164px;
+  height: 100%;
   clip-path: border-box;
   border-radius: 0.75rem;
   margin-right: 1.2rem;
-  border: 1px solid rgb(243, 243, 243);
   cursor: pointer;
   user-select: none;
 }

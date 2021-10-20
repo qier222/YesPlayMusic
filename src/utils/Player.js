@@ -147,18 +147,11 @@ export default class {
       // 恢复当前播放歌曲
       this._replaceCurrentTrack(this._currentTrack.id, false).then(() => {
         this._howler?.seek(localStorage.getItem('playerCurrentTrackTime') ?? 0);
-        setInterval(
-          () =>
-            localStorage.setItem(
-              'playerCurrentTrackTime',
-              this._howler?.seek()
-            ),
-          1000
-        );
       }); // update audio source and init howler
       this._initMediaSession();
-      this._setIntervals();
     }
+
+    this._setIntervals();
 
     // 初始化私人FM
     if (this._personalFMTrack.id === 0 || this._personalFMNextTrack.id === 0) {
@@ -173,7 +166,9 @@ export default class {
     // 同步播放进度
     // TODO: 如果 _progress 在别的地方被改变了，这个定时器会覆盖之前改变的值，是bug
     setInterval(() => {
-      this._progress = this._howler === null ? 0 : this._howler.seek();
+      if (this._howler === null) return;
+      this._progress = this._howler.seek();
+      localStorage.setItem('playerCurrentTrackTime', this._progress);
     }, 1000);
   }
   _getNextTrack() {
@@ -327,6 +322,7 @@ export default class {
       ? this._personalFMNextTrack.id
       : this._getNextTrack()[0];
     if (!nextTrackID) return;
+    if (this._personalFMTrack.id == nextTrackID) return;
     getTrackDetail(nextTrackID).then(data => {
       let track = data.songs[0];
       this._getAudioSource(track);
@@ -411,6 +407,7 @@ export default class {
   _loadPersonalFMNextTrack() {
     return personalFM().then(result => {
       this._personalFMNextTrack = result.data[0];
+      this._cacheNextTrack(); // cache next track
       return this._personalFMNextTrack;
     });
   }
@@ -619,5 +616,12 @@ export default class {
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
+  }
+
+  clearPlayNextList() {
+    this._playNextList = [];
+  }
+  removeTrackFromQueue(index) {
+    this._playNextList.splice(index, 1);
   }
 }

@@ -31,17 +31,17 @@
         /></button-icon>
       </div>
       <div class="navigation-links">
-        <router-link to="/" :class="{ active: this.$route.name === 'home' }">{{
+        <router-link to="/" :class="{ active: $route.name === 'home' }">{{
           $t('nav.home')
         }}</router-link>
         <router-link
           to="/explore"
-          :class="{ active: this.$route.name === 'explore' }"
+          :class="{ active: $route.name === 'explore' }"
           >{{ $t('nav.explore') }}</router-link
         >
         <router-link
           to="/library"
-          :class="{ active: this.$route.name === 'library' }"
+          :class="{ active: $route.name === 'library' }"
           >{{ $t('nav.library') }}</router-link
         >
       </div>
@@ -112,7 +112,7 @@ export default {
   data() {
     return {
       inputFocus: false,
-      langs: ['zh-CN', 'en', 'tr'],
+      langs: ['zh-CN', 'zh-TW', 'en', 'tr'],
       keywords: '',
       isWindowMaximized: false,
     };

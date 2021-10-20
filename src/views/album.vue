@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show" class="album">
+  <div v-show="show" class="album-page">
     <div class="playlist-info">
       <Cover
         :id="album.id"
@@ -71,12 +71,25 @@
         </div>
       </div>
     </div>
-    <TrackList
-      :id="album.id"
-      :tracks="tracks"
-      :type="'album'"
-      :album-object="album"
-    />
+    <div v-if="Object.keys(tracksByDisc).length !== 1">
+      <div v-for="(disc, cd) in tracksByDisc" :key="cd">
+        <h2>Disc {{ cd }}</h2>
+        <TrackList
+          :id="album.id"
+          :tracks="disc"
+          :type="'album'"
+          :album-object="album"
+        />
+      </div>
+    </div>
+    <div v-else>
+      <TrackList
+        :id="album.id"
+        :tracks="tracks"
+        :type="'album'"
+        :album-object="album"
+      />
+    </div>
     <div class="extra-info">
       <div class="album-time"></div>
       <div class="release-date">
@@ -107,18 +120,23 @@
       :close="toggleFullDescription"
       :show-footer="false"
       :click-outside-hide="true"
-      title="专辑介绍"
+      :title="$t('album.albumDesc')"
     >
       <p class="description-fulltext">
         {{ album.description }}
       </p>
     </Modal>
     <ContextMenu ref="albumMenu">
-      <div class="item">{{ $t('contextMenu.playNext') }}</div>
+      <!-- <div class="item">{{ $t('contextMenu.addToQueue') }}</div> -->
       <div class="item" @click="likeAlbum(true)">{{
-        dynamicDetail.isSub ? '从音乐库删除' : '保存到音乐库'
+        dynamicDetail.isSub
+          ? $t('contextMenu.removeFromLibrary')
+          : $t('contextMenu.saveToLibrary')
       }}</div>
-      <div class="item">添加到歌单</div>
+      <div class="item">{{ $t('contextMenu.addToPlaylist') }}</div>
+      <div class="item" @click="copyUrl(album.id)">{{
+        $t('contextMenu.copyUrl')
+      }}</div>
     </ContextMenu>
   </div>
 </template>
@@ -128,10 +146,11 @@ import { mapMutations, mapActions, mapState } from 'vuex';
 import { getArtistAlbum } from '@/api/artist';
 import { getTrackDetail } from '@/api/track';
 import { getAlbum, albumDynamicDetail, likeAAlbum } from '@/api/album';
+import locale from '@/locale';
 import { splitSoundtrackAlbumTitle, splitAlbumTitle } from '@/utils/common';
 import NProgress from 'nprogress';
 import { isAccountLoggedIn } from '@/utils/auth';
-import { disableScrolling, enableScrolling } from '@/utils/ui';
+import { groupBy } from 'lodash';
 
 import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -153,12 +172,13 @@ export default {
     ContextMenu,
   },
   beforeRouteUpdate(to, from, next) {
-    NProgress.start();
+    this.show = false;
     this.loadData(to.params.id);
     next();
   },
   data() {
     return {
+      show: false,
       album: {
         id: 0,
         picUrl: '',
@@ -168,7 +188,6 @@ export default {
       },
       tracks: [],
       showFullDescription: false,
-      show: false,
       moreAlbums: [],
       dynamicDetail: {},
       subtitle: '',
@@ -199,6 +218,9 @@ export default {
         return [...realAlbums, ...restItems].slice(0, 5);
       }
     },
+    tracksByDisc() {
+      return groupBy(this.tracks, 'cd');
+    },
   },
   created() {
     this.loadData(this.$route.params.id);
@@ -211,7 +233,7 @@ export default {
     },
     likeAlbum(toast = false) {
       if (!isAccountLoggedIn()) {
-        this.showToast('此操作需要登录网易云账号');
+        this.showToast(locale.t('toast.needToLogin'));
         return;
       }
       likeAAlbum({
@@ -245,6 +267,9 @@ export default {
       }
     },
     loadData(id) {
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       getAlbum(id).then(data => {
         this.album = data.album;
         this.tracks = data.songs;
@@ -267,22 +292,35 @@ export default {
         this.dynamicDetail = data;
       });
     },
-    openMenu(e) {
-      this.$refs.albumMenu.openMenu(e);
-    },
     toggleFullDescription() {
       this.showFullDescription = !this.showFullDescription;
       if (this.showFullDescription) {
-        disableScrolling();
+        this.$store.commit('enableScrolling', false);
       } else {
-        enableScrolling();
+        this.$store.commit('enableScrolling', true);
       }
+    },
+    openMenu(e) {
+      this.$refs.albumMenu.openMenu(e);
+    },
+    copyUrl(id) {
+      let showToast = this.showToast;
+      this.$copyText('https://music.163.com/#/album?id=' + id)
+        .then(function () {
+          showToast(locale.t('toast.copied'));
+        })
+        .catch(error => {
+          showToast(`${locale.t('toast.copyFailed')}${error}`);
+        });
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.album-page {
+  margin-top: 32px;
+}
 .playlist-info {
   display: flex;
   width: 78vw;

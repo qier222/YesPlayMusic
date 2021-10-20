@@ -29,10 +29,15 @@ if ([undefined, null].includes(store.state.settings.lang)) {
   const defaultLang = 'en';
   const langMapper = new Map()
     .set('zh', 'zh-CN')
+    .set('zh-TW', 'zh-TW')
     .set('en', 'en')
     .set('tr', 'tr');
   store.state.settings.lang =
-    langMapper.get(navigator.language.slice(0, 2)) || defaultLang;
+    langMapper.get(
+      langMapper.has(navigator.language)
+        ? navigator.language
+        : navigator.language.slice(0, 2)
+    ) || defaultLang;
   localStorage.setItem('settings', JSON.stringify(store.state.settings));
 }
 

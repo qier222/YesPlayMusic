@@ -1,5 +1,5 @@
 <template>
-  <div v-show="show" class="search">
+  <div v-show="show" class="search-page">
     <div v-show="artists.length > 0 || albums.length > 0" class="row">
       <div v-show="artists.length > 0" class="artists">
         <div v-show="artists.length > 0" class="section-title"
@@ -85,6 +85,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import { getTrackDetail } from '@/api/track';
 import { search } from '@/api/others';
 import NProgress from 'nprogress';
@@ -135,11 +136,13 @@ export default {
     this.getData();
   },
   methods: {
+    ...mapActions(['showToast']),
     playTrackInSearchResult(id) {
       let track = this.tracks.find(t => t.id === id);
       this.$store.state.player.appendTrackToPlayerList(track, true);
     },
     search(type = 'all') {
+      let showToast = this.showToast;
       const typeTable = {
         all: 1018,
         musicVideos: 1004,
@@ -152,12 +155,18 @@ export default {
         keywords: this.keywords,
         type: typeTable[type],
         limit: 16,
-      }).then(result => {
-        return { result: result.result, type };
-      });
+      })
+        .then(result => {
+          return { result: result.result, type };
+        })
+        .catch(err => {
+          showToast(err.response.data.msg || err.response.data.message);
+        });
     },
     getData() {
-      NProgress.start();
+      setTimeout(() => {
+        if (!this.show) NProgress.start();
+      }, 1000);
       this.show = false;
 
       const requestAll = requests => {
@@ -237,7 +246,7 @@ export default {
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 98px;
+  margin-top: 32px;
 
   .artists {
     flex: 1;
