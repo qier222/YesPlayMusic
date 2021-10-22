@@ -35,7 +35,7 @@
             <option value="en">🇬🇧 English</option>
             <option value="tr">🇹🇷 Türkçe</option>
             <option value="zh-CN">🇨🇳 简体中文</option>
-            <option value="zh-TW">ᴛᴡ 繁體中文</option>
+            <option value="zh-TW">繁體中文</option>
           </select>
         </div>
       </div>
