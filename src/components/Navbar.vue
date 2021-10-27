@@ -53,6 +53,7 @@
               <input
                 ref="searchInput"
                 v-model="keywords"
+                type="search"
                 :placeholder="inputFocus ? '' : $t('nav.search')"
                 @keydown.enter="doSearch"
                 @focus="inputFocus = true"

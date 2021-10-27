@@ -100,7 +100,7 @@ export default {
     if (!isLooseLoggedIn()) return;
     if (isAccountLoggedIn()) {
       return userPlaylist({
-        uid: state.data.user.userId,
+        uid: state.data.user?.userId,
         limit: 2000, // 最多只加载2000个歌单（等有用户反馈问题再修）
         timestamp: new Date().getTime(),
       }).then(result => {
