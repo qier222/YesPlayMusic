@@ -60,7 +60,9 @@
     </div>
 
     <div v-if="showAlbumName" class="album">
-      <router-link :to="`/album/${album.id}`">{{ album.name }}</router-link>
+      <router-link v-if="album && album.id" :to="`/album/${album.id}`">{{
+        album.name
+      }}</router-link>
       <div></div>
     </div>
 
@@ -85,6 +87,7 @@
 import ArtistsInLine from '@/components/ArtistsInLine.vue';
 import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
 import { mapState } from 'vuex';
+import { isNil } from 'lodash';
 
 export default {
   name: 'TrackListItem',
@@ -117,8 +120,9 @@ export default {
       return image + '?param=224y224';
     },
     artists() {
-      if (this.track.ar !== undefined) return this.track.ar;
-      if (this.track.artists !== undefined) return this.track.artists;
+      const { ar, artists } = this.track;
+      if (!isNil(ar)) return ar;
+      if (!isNil(artists)) return artists;
       return [];
     },
     album() {
