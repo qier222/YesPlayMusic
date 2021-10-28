@@ -176,6 +176,7 @@ import '@/assets/css/slider.css';
 
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import VueSlider from 'vue-slider-component';
+import { goToListSource, hasListSource } from '@/utils/playList';
 
 export default {
   name: 'Player',
@@ -221,24 +222,10 @@ export default {
       return `${min}:${sec}`;
     },
     hasList() {
-      return !this.player.isPersonalFM && this.player.playlistSource.id !== 0;
+      return hasListSource();
     },
     goToList() {
-      if (this.player.playlistSource.id === this.data.likedSongPlaylistID) {
-        this.$router.push({ path: '/library/liked-songs' });
-      } else if (this.player.playlistSource.type === 'url') {
-        this.$router.push({ path: this.player.playlistSource.id });
-      } else if (this.player.playlistSource.type === 'cloudDisk') {
-        this.$router.push({ path: '/library' });
-      } else {
-        this.$router.push({
-          path:
-            '/' +
-            this.player.playlistSource.type +
-            '/' +
-            this.player.playlistSource.id,
-        });
-      }
+      goToListSource();
     },
     goToAlbum() {
       if (this.player.currentTrack.al.id === 0) return;

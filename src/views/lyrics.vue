@@ -46,11 +46,8 @@
               <div class="track-info">
                 <div class="title" :title="currentTrack.name">
                   <router-link
-                    v-if="
-                      !this.player.isPersonalFM &&
-                      this.player.playlistSource.id !== 0
-                    "
-                    :to="`/${player.playlistSource.type}/${player.playlistSource.id}`"
+                    v-if="hasList()"
+                    :to="`${getListPath()}`"
                     @click.native="toggleLyrics"
                     >{{ currentTrack.name }}
                   </router-link>
@@ -216,6 +213,7 @@ import { lyricParser } from '@/utils/lyrics';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import * as Vibrant from 'node-vibrant';
 import Color from 'color';
+import { hasListSource, getListSourcePath } from '@/utils/playList';
 
 export default {
   name: 'Lyrics',
@@ -391,6 +389,12 @@ export default {
           const color2 = orignColor.lighten(0.28).rotate(-30).rgb().string();
           this.background = `linear-gradient(to top left, ${color}, ${color2})`;
         });
+    },
+    hasList() {
+      return hasListSource();
+    },
+    getListPath() {
+      return getListSourcePath();
     },
   },
 };
