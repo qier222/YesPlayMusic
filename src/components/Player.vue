@@ -30,7 +30,10 @@
             @click="goToAlbum"
           />
           <div class="track-info" :title="audioSource">
-            <div class="name" @click="goToList">
+            <div
+              :class="['name', hasList() && 'hasList']"
+              @click="hasList() && goToList()"
+            >
               {{ currentTrack.name }}
             </div>
             <div class="artist">
@@ -39,7 +42,7 @@
                 :key="ar.id"
                 @click="ar.id !== 0 && goToArtist(ar.id)"
               >
-                <span :class="ar.id !== 0 ? 'ar' : ''"> {{ ar.name }} </span
+                <span :class="ar.id !== 0 && 'ar'"> {{ ar.name }} </span
                 ><span v-if="index !== currentTrack.ar.length - 1">, </span>
               </span>
             </div>
@@ -217,6 +220,9 @@ export default {
       let sec = (~~(value % 60)).toString().padStart(2, '0');
       return `${min}:${sec}`;
     },
+    hasList() {
+      return !this.player.isPersonalFM && this.player.playlistSource.id !== 0;
+    },
     goToList() {
       if (this.player.playlistSource.id === this.data.likedSongPlaylistID) {
         this.$router.push({ path: '/library/liked-songs' });
@@ -319,12 +325,14 @@ export default {
       opacity: 0.88;
       color: var(--color-text);
       margin-bottom: 4px;
-      cursor: pointer;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
       word-break: break-all;
+    }
+    .hasList {
+      cursor: pointer;
       &:hover {
         text-decoration: underline;
       }

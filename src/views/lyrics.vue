@@ -46,10 +46,17 @@
               <div class="track-info">
                 <div class="title" :title="currentTrack.name">
                   <router-link
+                    v-if="
+                      !this.player.isPersonalFM &&
+                      this.player.playlistSource.id !== 0
+                    "
                     :to="`/${player.playlistSource.type}/${player.playlistSource.id}`"
                     @click.native="toggleLyrics"
                     >{{ currentTrack.name }}
                   </router-link>
+                  <span v-else>
+                    {{ currentTrack.name }}
+                  </span>
                 </div>
                 <div class="subtitle">
                   <router-link
