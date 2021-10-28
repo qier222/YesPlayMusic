@@ -30,16 +30,19 @@
             @click="goToAlbum"
           />
           <div class="track-info" :title="audioSource">
-            <div class="name" @click="goToList">
+            <div
+              :class="['name', { hasList: hasList() }]"
+              @click="hasList() && goToList()"
+            >
               {{ currentTrack.name }}
             </div>
             <div class="artist">
               <span
                 v-for="(ar, index) in currentTrack.ar"
                 :key="ar.id"
-                @click="ar.id !== 0 && goToArtist(ar.id)"
+                @click="ar.id && goToArtist(ar.id)"
               >
-                <span :class="ar.id !== 0 ? 'ar' : ''"> {{ ar.name }} </span
+                <span :class="{ ar: ar.id }"> {{ ar.name }} </span
                 ><span v-if="index !== currentTrack.ar.length - 1">, </span>
               </span>
             </div>
@@ -173,6 +176,7 @@ import '@/assets/css/slider.css';
 
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import VueSlider from 'vue-slider-component';
+import { goToListSource, hasListSource } from '@/utils/playList';
 
 export default {
   name: 'Player',
@@ -217,22 +221,11 @@ export default {
       let sec = (~~(value % 60)).toString().padStart(2, '0');
       return `${min}:${sec}`;
     },
+    hasList() {
+      return hasListSource();
+    },
     goToList() {
-      if (this.player.playlistSource.id === this.data.likedSongPlaylistID) {
-        this.$router.push({ path: '/library/liked-songs' });
-      } else if (this.player.playlistSource.type === 'url') {
-        this.$router.push({ path: this.player.playlistSource.id });
-      } else if (this.player.playlistSource.type === 'cloudDisk') {
-        this.$router.push({ path: '/library' });
-      } else {
-        this.$router.push({
-          path:
-            '/' +
-            this.player.playlistSource.type +
-            '/' +
-            this.player.playlistSource.id,
-        });
-      }
+      goToListSource();
     },
     goToAlbum() {
       if (this.player.currentTrack.al.id === 0) return;
@@ -319,12 +312,14 @@ export default {
       opacity: 0.88;
       color: var(--color-text);
       margin-bottom: 4px;
-      cursor: pointer;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
       word-break: break-all;
+    }
+    .hasList {
+      cursor: pointer;
       &:hover {
         text-decoration: underline;
       }
