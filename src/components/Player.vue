@@ -31,7 +31,7 @@
           />
           <div class="track-info" :title="audioSource">
             <div
-              :class="['name', hasList() && 'hasList']"
+              :class="['name', { hasList: hasList() }]"
               @click="hasList() && goToList()"
             >
               {{ currentTrack.name }}
@@ -40,9 +40,9 @@
               <span
                 v-for="(ar, index) in currentTrack.ar"
                 :key="ar.id"
-                @click="ar.id !== 0 && goToArtist(ar.id)"
+                @click="ar.id && goToArtist(ar.id)"
               >
-                <span :class="ar.id !== 0 && 'ar'"> {{ ar.name }} </span
+                <span :class="{ ar: ar.id }"> {{ ar.name }} </span
                 ><span v-if="index !== currentTrack.ar.length - 1">, </span>
               </span>
             </div>
