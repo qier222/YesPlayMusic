@@ -200,10 +200,10 @@ export default {
       if (this.lyric === undefined) return '';
       let lyric = this.lyric.split('\n');
       lyric = lyric.filter(l => {
-        if (!l.includes('作词')) {
-          return true;
+        if (l.includes('作词') || l.includes('作曲')) {
+          return false;
         }
-        return false;
+        return true;
       });
       let lineIndex = randomNum(0, lyric.length - 1);
       while (lineIndex + 4 > lyric.length) {
