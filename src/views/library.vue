@@ -286,8 +286,15 @@ export default {
       getLyric(
         this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
       ).then(data => {
-        console.log(data + '歌词接口似乎会无限挂起');
-        // if (data.lrc !== undefined) this.lyric = data.lrc.lyric;
+        if (data.lrc !== undefined) {
+          let ifl = data.lrc.lyric.split('\n').filter(l => {
+            if (l.includes('作词')) {
+              this.lyric = data.lrc.lyric;
+              return true + ifl;
+            }
+            return false;
+          });
+        }
       });
     },
     openAddPlaylistModal() {
