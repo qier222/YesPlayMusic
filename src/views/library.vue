@@ -289,6 +289,9 @@ export default {
         if (data.lrc !== undefined) {
           let ifl = data.lrc.lyric.split('\n').filter(l => {
             if (l.includes('作词')) {
+              if (l.includes('纯音乐，请欣赏') || l.includes('作词 : 无')) {
+                return false;
+              }
               this.lyric = data.lrc.lyric;
               return true + ifl;
             }
