@@ -117,7 +117,7 @@ const createRequest = (method, url, data, options) => {
       headers: headers,
       data: queryString.stringify(data),
       httpAgent: new http.Agent({ keepAlive: true }),
-      httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false }),
+      httpsAgent: new https.Agent({ keepAlive: true }),
     }
 
     if (options.crypto === 'eapi') settings.encoding = null
@@ -127,7 +127,7 @@ const createRequest = (method, url, data, options) => {
         settings.httpAgent = new PacProxyAgent(options.proxy)
         settings.httpsAgent = new PacProxyAgent(options.proxy)
       } else {
-        var purl = qs.parse(options.proxy)
+        const purl = qs.parse(options.proxy)
         if (purl.hostname) {
           const agent = tunnel.httpsOverHttp({
             proxy: {
@@ -142,6 +142,8 @@ const createRequest = (method, url, data, options) => {
           console.error('代理配置无效,不使用代理')
         }
       }
+    } else {
+      settings.proxy = false
     }
     if (options.crypto === 'eapi') {
       settings = {
@@ -172,13 +174,19 @@ const createRequest = (method, url, data, options) => {
           }
         } catch (e) {
           // console.log(e)
-          answer.body = body
+          try {
+            answer.body = JSON.parse(body.toString())
+          } catch (err) {
+            // console.log(err)
+            // can't decrypt and can't parse directly
+            answer.body = body
+          }
           answer.status = res.status
         }
 
         answer.status =
           100 < answer.status && answer.status < 600 ? answer.status : 400
-        if (answer.status == 200) resolve(answer)
+        if (answer.status === 200) resolve(answer)
         else reject(answer)
       })
       .catch((err) => {
