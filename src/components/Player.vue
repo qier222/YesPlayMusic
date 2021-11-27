@@ -31,7 +31,7 @@
           />
           <div class="track-info" :title="audioSource">
             <div
-              :class="['name', { hasList: hasList() }]"
+              :class="['name', { 'has-list': hasList() }]"
               @click="hasList() && goToList()"
             >
               {{ currentTrack.name }}
@@ -318,7 +318,7 @@ export default {
       overflow: hidden;
       word-break: break-all;
     }
-    .hasList {
+    .has-list {
       cursor: pointer;
       &:hover {
         text-decoration: underline;
