@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录</title>
+</head>
+
+<body>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.min.js"></script>
+  <script>
+    const phone = '' // 这里填手机号
+    const password = '' // 这里填密码
+    const fileUpdateTime = {}
+    if (!phone || !password) {
+      const msg = '请设置你的手机号码和密码'
+      alert(msg)
+      throw new Error(msg)
+    }
+
+    async function login() {
+      const res = await axios({
+        url: `/login/cellphone`,
+        method: 'post',
+        data: {
+          phone: phone,
+          password: password,
+        },
+      })
+      return res.data.cookie
+    }
+    async function main() {
+      const cookieToken = await login()
+      const res = await axios({
+        url: `/login/status`,
+        method: 'post',
+        data: {
+          cookie: cookieToken,
+        },
+      })
+    }
+    main()
+  </script>
+</body>
+
+</html>
