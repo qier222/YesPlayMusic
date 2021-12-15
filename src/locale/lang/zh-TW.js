@@ -177,6 +177,7 @@ export default {
     addToPlaylist: '新增至歌單',
     searchInPlaylist: '歌單內搜尋',
     copyUrl: '複製超連結',
+    openInBrowser: '在瀏覽器中打開',
     allPlaylists: '全部歌單',
     minePlaylists: '我建立的歌單',
     likedPlaylists: '收藏的歌單',
