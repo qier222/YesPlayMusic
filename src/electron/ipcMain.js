@@ -64,7 +64,9 @@ export function initIpcMain(win, store) {
 
     try {
       const matchedAudio = await Promise.race([
-        match(track.id, ['qq', 'kuwo', 'migu', 'bilibili'], track),
+        // TODO: tell users to install yt-dlp.
+        // we passed "null" to source, to let UNM choose the default source.
+        match(track.id, null, track),
         timeoutPromise,
       ]);
 
