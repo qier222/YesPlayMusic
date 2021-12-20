@@ -57,14 +57,14 @@ export default {
     search: '搜尋歌單內音樂',
   },
   login: {
-    accessToAll: '可存取全部數據',
-    loginText: '登入網易雲帳號',
-    search: '搜尋網易雲帳號',
-    readonly: '只能讀取帳號公開數據',
+    accessToAll: '可存取全部資料',
+    loginText: '登入網易雲帳戶',
+    search: '搜尋網易雲帳戶',
+    readonly: '只能讀取帳戶公開資料',
     usernameLogin: '使用者名稱登入',
     searchHolder: '請輸入您的網易雲使用者名稱',
     enterTip: '按 Enter 搜尋',
-    choose: '在選單中選擇你的帳號',
+    choose: '在選單中選擇你的帳戶',
     confirm: '確認',
     countryCode: '國際區碼',
     phone: '手機號碼',
@@ -73,15 +73,15 @@ export default {
     login: '登入',
     loginWithEmail: '信箱登入',
     loginWithPhone: '手機號碼登入',
-    notice: `YesPlayMusic 承諾不會保存您的任何帳號資訊到雲端。<br />
+    notice: `YesPlayMusic 承諾不會保存您的任何帳戶資訊到雲端。<br />
         您的密碼會在本地進行 MD5 加密後再傳輸到網易雲 API。<br />
-        YesPlayMusic 並非網易雲官方網站，輸入帳號資訊前請慎重考慮。 您也可以前往
+        YesPlayMusic 並非網易雲官方網站，輸入帳戶資訊前請慎重考慮。 您也可以前往
         <a href="https://github.com/qier222/YesPlayMusic"
           >YesPlayMusic 的 GitHub 原始碼 Repo</a
         >
         自行編譯並使用自託管的網易雲 API。`,
     noticeElectron: `您的密碼會在本地進行 MD5 加密後再傳輸到網易雲 API。<br />
-        YesPlayMusic 不會傳輸你的帳號數據到任何非網易雲音樂官方的伺服器。<br />`,
+        YesPlayMusic 不會傳輸你的帳戶資料到任何非網易雲音樂官方的伺服器。<br />`,
   },
   mv: {
     moreVideo: '更多影片',
@@ -148,7 +148,7 @@ export default {
     clearSongsCache: '清除歌曲快取',
     cacheCount: '已快取 {song} 首 ({size})',
     showLyricsTranslation: '顯示歌詞翻譯',
-    minimizeToTray: '最小化到系統列',
+    minimizeToTray: '最小化到工作列角落',
     showPlaylistsByAppleMusic: '首頁顯示來自 Apple Music 的歌單',
     enableDiscordRichPresence: '啟用 Discord Rich Presence',
     enableGlobalShortcut: '啟用全域快捷鍵',
@@ -164,7 +164,7 @@ export default {
       text: '關閉主面板時...',
       ask: '詢問',
       exit: '退出',
-      minimizeToTray: '最小化到系統列',
+      minimizeToTray: '最小化到工作列角落',
     },
   },
   contextMenu: {
@@ -176,7 +176,8 @@ export default {
     removeFromLibrary: '從音樂庫刪除',
     addToPlaylist: '新增至歌單',
     searchInPlaylist: '歌單內搜尋',
-    copyUrl: '複製超連結',
+    openInBrowser: '在瀏覽器中打開',
+    copyUrl: '複製連結',
     allPlaylists: '全部歌單',
     minePlaylists: '我建立的歌單',
     likedPlaylists: '收藏的歌單',
@@ -188,6 +189,6 @@ export default {
     removedFromMyLikedSongs: '已從喜歡的音樂中刪除',
     copied: '已複製',
     copyFailed: '複製失敗：',
-    needToLogin: '此動作需要登入網易雲帳號',
+    needToLogin: '此動作需要登入網易雲帳戶',
   },
 };

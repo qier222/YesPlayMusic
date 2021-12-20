@@ -1,5 +1,5 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-import match from '@revincx/unblockneteasemusic';
+import match from '@unblockneteasemusic/server';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
 import shortcuts from '@/utils/shortcuts';
@@ -12,28 +12,79 @@ const log = text => {
 
 const client = require('discord-rich-presence')('818936529484906596');
 
+/**
+ * Make data a Buffer.
+ *
+ * @param {?} data The data to convert.
+ * @returns {import("buffer").Buffer} The converted data.
+ */
+function toBuffer(data) {
+  if (data instanceof Buffer) {
+    return data;
+  } else {
+    return Buffer.from(data);
+  }
+}
+
+/**
+ * Get the file URI from bilivideo.
+ *
+ * @param {string} url The URL to fetch.
+ * @returns {Promise<string>} The file URI.
+ */
+async function getBiliVideoFile(url) {
+  const axios = await import('axios').then(m => m.default);
+  const response = await axios.get(url, {
+    headers: {
+      Referer: 'https://www.bilibili.com/',
+      'User-Agent': 'okhttp/3.4.1',
+    },
+    responseType: 'arraybuffer',
+  });
+
+  const buffer = toBuffer(response.data);
+  const encodedData = buffer.toString('base64');
+
+  return `data:application/octet-stream;base64,${encodedData}`;
+}
+
 export function initIpcMain(win, store) {
-  ipcMain.on('unblock-music', (event, track) => {
+  ipcMain.handle('unblock-music', async (_, track) => {
     // 兼容 unblockneteasemusic 所使用的 api 字段
     track.alias = track.alia || [];
     track.duration = track.dt || 0;
     track.album = track.al || [];
     track.artists = track.ar || [];
 
-    const matchPromise = match(track.id, ['qq', 'kuwo', 'migu'], track);
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => {
         reject('timeout');
-      }, 3000);
+      }, 5000);
     });
-    Promise.race([matchPromise, timeoutPromise])
-      .then(res => {
-        event.returnValue = res;
-      })
-      .catch(err => {
-        log('unblock music error: ', err);
-        event.returnValue = null;
-      });
+
+    try {
+      const matchedAudio = await Promise.race([
+        // TODO: tell users to install yt-dlp.
+        // we passed "null" to source, to let UNM choose the default source.
+        match(track.id, null, track),
+        timeoutPromise,
+      ]);
+
+      if (!matchedAudio || !matchedAudio.url) {
+        throw new Error('no such a song found');
+      }
+
+      // bilibili's audio file needs some special treatment
+      if (matchedAudio.url.includes('bilivideo.com')) {
+        matchedAudio.url = await getBiliVideoFile(matchedAudio.url);
+      }
+
+      return matchedAudio;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
+      log(`UnblockNeteaseMusic failed: ${errorMessage}`);
+      return null;
+    }
   });
 
   ipcMain.on('close', e => {

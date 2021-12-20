@@ -179,6 +179,7 @@ export default {
     addToPlaylist: 'Add to playlist',
     searchInPlaylist: 'Search in playlist',
     copyUrl: 'Copy URL',
+    openInBrowser: 'Open in Browser',
     allPlaylists: 'All Playlists',
     minePlaylists: 'My Playlists',
     likedPlaylists: 'Liked Playlists',
