@@ -26,7 +26,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@revincx/unblockneteasemusic": "^0.25.7",
+    "@unblockneteasemusic/server": "v0.27.0-rc.4",
     "axios": "^0.21.0",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",
@@ -74,6 +74,7 @@
     "vuex": "^3.4.0"
   },
   "devDependencies": {
+    "@types/node": "^17.0.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",
