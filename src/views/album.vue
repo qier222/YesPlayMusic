@@ -137,6 +137,9 @@
       <div class="item" @click="copyUrl(album.id)">{{
         $t('contextMenu.copyUrl')
       }}</div>
+      <div class="item" @click="openInBrowser(album.id)">{{
+        $t('contextMenu.openInBrowser')
+      }}</div>
     </ContextMenu>
   </div>
 </template>
@@ -305,13 +308,17 @@ export default {
     },
     copyUrl(id) {
       let showToast = this.showToast;
-      this.$copyText('https://music.163.com/#/album?id=' + id)
+      this.$copyText(`https://music.163.com/#/album?id=${id}`)
         .then(function () {
           showToast(locale.t('toast.copied'));
         })
         .catch(error => {
           showToast(`${locale.t('toast.copyFailed')}${error}`);
         });
+    },
+    openInBrowser(id) {
+      const url = `https://music.163.com/#/album?id=${id}`;
+      window.open(url);
     },
   },
 };

@@ -180,6 +180,7 @@ export default {
     addToPlaylist: '添加到歌单',
     searchInPlaylist: '歌单内搜索',
     copyUrl: '复制链接',
+    openInBrowser: '在浏览器中打开',
     allPlaylists: '全部歌单',
     minePlaylists: '创建的歌单',
     likedPlaylists: '收藏的歌单',
