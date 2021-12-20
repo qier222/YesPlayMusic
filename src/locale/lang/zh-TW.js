@@ -176,6 +176,7 @@ export default {
     removeFromLibrary: '從音樂庫刪除',
     addToPlaylist: '新增至歌單',
     searchInPlaylist: '歌單內搜尋',
+    openInBrowser: '在瀏覽器中打開',
     copyUrl: '複製連結',
     allPlaylists: '全部歌單',
     minePlaylists: '我建立的歌單',
