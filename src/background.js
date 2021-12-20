@@ -347,10 +347,12 @@ class Background {
       }
 
       // create dock menu for macOS
-      app.dock.setMenu(createDockMenu(this.window));
+      const createdDockMenu = createDockMenu(this.window);
+      if (createDockMenu && app.dock) app.dock.setMenu(createdDockMenu);
 
       // create touch bar
-      this.window.setTouchBar(createTouchBar(this.window));
+      const createdTouchBar = createTouchBar(this.window);
+      if (createdTouchBar) this.window.setTouchBar(createdTouchBar);
 
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut') !== false) {
