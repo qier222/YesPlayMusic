@@ -43,7 +43,7 @@
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
             ><ExplicitSymbol
           /></span>
-          <span v-if="isSubTitle" :title="subTitle" class="subTitle">
+          <span v-if="isSubTitle" :title="subTitle" class="sub-title">
             ({{ subTitle }})
           </span>
         </div>
@@ -312,7 +312,7 @@ button {
         font-size: 14px;
         opacity: 0.72;
       }
-      .subTitle {
+      .sub-title {
         color: #aeaeae;
         margin-left: 4px;
       }
@@ -416,7 +416,7 @@ button {
   .title,
   .album,
   .time,
-  .title-and-artist .subTitle {
+  .title-and-artist .sub-title {
     color: var(--color-primary);
   }
   .title .featured,
