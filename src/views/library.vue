@@ -200,8 +200,11 @@ export default {
       if (this.lyric === undefined) return '';
       let lyric = this.lyric.split('\n');
       lyric = lyric.filter(l => {
-        if (l.includes('作词') || l.includes('作曲')) {
-          return false;
+        if (l.includes('纯音乐，请欣赏')) {
+          if (l.includes('作词') || l.includes('作曲')) {
+            return false;
+          }
+          return true;
         }
         return true;
       });
