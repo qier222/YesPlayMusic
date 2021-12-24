@@ -245,7 +245,7 @@
           <div class="title"
             >启用
             <a
-              href="https://github.com/nondanee/UnblockNeteaseMusic"
+              href="https://github.com/UnblockNeteaseMusic/server"
               target="blank"
               >UnblockNeteaseMusic</a
             ></div
