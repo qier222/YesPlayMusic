@@ -73,7 +73,7 @@
     </div>
     <div v-if="Object.keys(tracksByDisc).length !== 1">
       <div v-for="(disc, cd) in tracksByDisc" :key="cd">
-        <h2>Disc {{ cd }}</h2>
+        <h2 class="disc">Disc {{ cd }}</h2>
         <TrackList
           :id="album.id"
           :tracks="disc"
@@ -384,6 +384,9 @@ export default {
       }
     }
   }
+}
+.disc {
+  color: var(--color-text);
 }
 
 .explicit-symbol {

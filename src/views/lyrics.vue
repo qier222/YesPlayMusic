@@ -641,6 +641,7 @@ export default {
     max-width: 460px;
     overflow-y: auto;
     transition: 0.5s;
+    scrollbar-width: none; // firefox
 
     .line {
       padding: 18px;

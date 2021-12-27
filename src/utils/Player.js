@@ -38,6 +38,14 @@ export default class {
     this._personalFMTrack = { id: 0 }; // 私人FM当前歌曲
     this._personalFMNextTrack = { id: 0 }; // 私人FM下一首歌曲信息（为了快速加载下一首）
 
+    /**
+     * The blob records for cleanup.
+     *
+     * @private
+     * @type {string[]}
+     */
+    this.createdBlobRecords = [];
+
     // howler (https://github.com/goldfire/howler.js)
     this._howler = null;
     Object.defineProperty(this, '_howler', {
@@ -247,7 +255,21 @@ export default class {
   _getAudioSourceFromCache(id) {
     return getTrackSource(id).then(t => {
       if (!t) return null;
+
+      // Create a new object URL.
       const source = URL.createObjectURL(new Blob([t.source]));
+
+      // Clean up the previous object URLs since we've created a new one.
+      // Revoke object URLs can release the memory taken by a Blob,
+      // which occupied a large proportion of memory.
+      for (const url in this.createdBlobRecords) {
+        URL.revokeObjectURL(url);
+      }
+
+      // Then, we replace the createBlobRecords with new one with
+      // our newly created object URL.
+      this.createdBlobRecords = [source];
+
       return source;
     });
   }
