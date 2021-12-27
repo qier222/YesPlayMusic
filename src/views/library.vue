@@ -281,13 +281,10 @@ export default {
         this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
       ).then(data => {
         if (data.lrc !== undefined) {
-          var promise = data.lrc.lyric.split('\n').filter(l => {
-            if (l.includes('纯音乐，请欣赏')) {
-              return true;
-            }
-            return false;
-          });
-          if (promise.length === 0) {
+          const isInstrumental = data.lrc.lyric
+            .split('\n')
+            .filter(l => l.includes('纯音乐，请欣赏'));
+          if (isInstrumental.length === 0) {
             this.lyric = data.lrc.lyric;
           }
         }
