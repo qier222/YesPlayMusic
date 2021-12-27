@@ -30,7 +30,7 @@ export default {
   border-radius: 8px;
   box-sizing: border-box;
   padding: 6px 12px;
-  z-index: 100;
+  z-index: 1010;
 }
 
 [data-theme='dark'] {
