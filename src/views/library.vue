@@ -240,7 +240,6 @@ export default {
   },
   activated() {
     this.$parent.$refs.scrollbar.restorePosition();
-    this.loadData();
     dailyTask();
   },
   methods: {
@@ -251,14 +250,14 @@ export default {
         NProgress.done();
         this.show = true;
         this.$store.dispatch('fetchLikedSongsWithDetails');
-        this.getRandomLyric();
       } else {
         this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
           NProgress.done();
           this.show = true;
-          this.getRandomLyric();
         });
       }
+      this.getRandomLyric();
+
       this.$store.dispatch('fetchLikedSongs');
       this.$store.dispatch('fetchLikedPlaylist');
       this.$store.dispatch('fetchLikedAlbums');
