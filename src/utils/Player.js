@@ -299,7 +299,11 @@ export default class {
     ) {
       return null;
     }
-    const source = await ipcRenderer.invoke('unblock-music', track);
+    const source = await ipcRenderer.invoke(
+      'unblock-music',
+      track,
+      store.state.settings.unmSource
+    );
     if (store.state.settings.automaticallyCacheSongs && source?.url) {
       // TODO: 将unblockMusic字样换成真正的来源（比如酷我咪咕等）
       cacheTrackSource(track, source.url, 128000, 'unblockMusic');

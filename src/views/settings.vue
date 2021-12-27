@@ -222,6 +222,58 @@
         </div>
       </div>
 
+      <section v-if="isElectron" class="unm-configuration">
+        <h3>UnblockNeteaseMusic 设定</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title"
+              >启用
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server"
+                target="blank"
+                >UnblockNeteaseMusic</a
+              ></div
+            >
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="enable-unblock-netease-music"
+                v-model="enableUnblockNeteaseMusic"
+                type="checkbox"
+                name="enable-unblock-netease-music"
+              />
+              <label for="enable-unblock-netease-music"></label>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title"> 备选音源 </div>
+            <div class="description">
+              音源的具体代号
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server#音源清单"
+                target="_blank"
+              >
+                可以点此到 UNM 的说明页面查询 </a
+              ><br />
+              多个音源请用 <code>,</code> 逗号分隔。<br />
+              留空则使用 UNM 内置的默认值。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              id="unm-source"
+              v-model="unmSource"
+              class="text-input"
+              placeholder="例 bilibili, kuwo"
+            />
+            <label for="unm-source"></label>
+          </div>
+        </div>
+      </section>
+
       <h3>第三方</h3>
       <div class="item">
         <div class="left">
@@ -238,29 +290,6 @@
             >断开连接
           </button>
           <button v-else @click="lastfmConnect()"> 授权连接 </button>
-        </div>
-      </div>
-      <div v-if="isElectron" class="item">
-        <div class="left">
-          <div class="title"
-            >启用
-            <a
-              href="https://github.com/UnblockNeteaseMusic/server"
-              target="blank"
-              >UnblockNeteaseMusic</a
-            ></div
-          >
-        </div>
-        <div class="right">
-          <div class="toggle">
-            <input
-              id="enable-unblock-netease-music"
-              v-model="enableUnblockNeteaseMusic"
-              type="checkbox"
-              name="enable-unblock-netease-music"
-            />
-            <label for="enable-unblock-netease-music"></label>
-          </div>
         </div>
       </div>
       <div v-if="isElectron" class="item">
@@ -852,6 +881,21 @@ export default {
         });
       },
     },
+    unmSource: {
+      /**
+       * @returns {string}
+       */
+      get() {
+        return this.settings.unmSource || '';
+      },
+      /** @param {string?} value */
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmSource',
+          value: value.length ? value : null,
+        });
+      },
+    },
     isLastfmConnected() {
       return this.lastfm.key !== undefined;
     },
@@ -1127,6 +1171,12 @@ h3 {
     font-size: 16px;
     font-weight: 500;
     opacity: 0.78;
+  }
+
+  .description {
+    font-size: 14px;
+    margin-top: 0.5em;
+    opacity: 0.7;
   }
 }
 
