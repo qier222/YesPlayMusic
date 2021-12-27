@@ -48,8 +48,18 @@ async function getBiliVideoFile(url) {
   return `data:application/octet-stream;base64,${encodedData}`;
 }
 
+/**
+ * Parse the source string (`a, b`) to source list `['a', 'b']`.
+ *
+ * @param {string} sourceString The source string.
+ * @returns {string[]} The source list.
+ */
+function parseSourceStringToList(sourceString) {
+  return sourceString.split(',').map(s => s.trim());
+}
+
 export function initIpcMain(win, store) {
-  ipcMain.handle('unblock-music', async (_, track) => {
+  ipcMain.handle('unblock-music', async (_, track, source) => {
     // 兼容 unblockneteasemusic 所使用的 api 字段
     track.alias = track.alia || [];
     track.duration = track.dt || 0;
@@ -62,11 +72,15 @@ export function initIpcMain(win, store) {
       }, 5000);
     });
 
+    const sourceList =
+      typeof source === 'string' ? parseSourceStringToList(source) : null;
+    log(`[UNM] using source: ${sourceList || '<default>'}`);
+
     try {
       const matchedAudio = await Promise.race([
         // TODO: tell users to install yt-dlp.
         // we passed "null" to source, to let UNM choose the default source.
-        match(track.id, null, track),
+        match(track.id, sourceList, track),
         timeoutPromise,
       ]);
 
