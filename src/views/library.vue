@@ -216,7 +216,9 @@ export default {
       // Returns [] if we got no lyrics.
       if (!lyric) return [];
 
-      const lyricLine = lyric.split('\n');
+      const lyricLine = lyric
+        .split('\n')
+        .filter(line => !line.includes('作词') && !line.includes('作曲'));
 
       // Pick 3 or fewer lyrics based on the lyric lines.
       const lyricsToPick = Math.min(lyricLine.length, 3);
