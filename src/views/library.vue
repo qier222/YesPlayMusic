@@ -199,15 +199,6 @@ export default {
     pickedLyric() {
       if (this.lyric === undefined) return '';
       let lyric = this.lyric.split('\n');
-      lyric = lyric.filter(l => {
-        if (l.includes('纯音乐，请欣赏')) {
-          if (l.includes('作词') || l.includes('作曲')) {
-            return false;
-          }
-          return true;
-        }
-        return true;
-      });
       let lineIndex = randomNum(0, lyric.length - 1);
       while (lineIndex + 4 > lyric.length) {
         lineIndex = randomNum(0, lyric.length - 1);
@@ -290,16 +281,12 @@ export default {
         this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
       ).then(data => {
         if (data.lrc !== undefined) {
-          let ifl = data.lrc.lyric.split('\n').filter(l => {
-            if (l.includes('作词')) {
-              if (l.includes('纯音乐，请欣赏') || l.includes('作词 : 无')) {
-                return false;
-              }
-              this.lyric = data.lrc.lyric;
-              return true + ifl;
-            }
-            return false;
-          });
+          const isInstrumental = data.lrc.lyric
+            .split('\n')
+            .filter(l => l.includes('纯音乐，请欣赏'));
+          if (isInstrumental.length === 0) {
+            this.lyric = data.lrc.lyric;
+          }
         }
       });
     },
