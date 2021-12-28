@@ -183,6 +183,16 @@ import CoverRow from '@/components/CoverRow.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 import MvRow from '@/components/MvRow.vue';
 
+/**
+ * Pick the lyric part from a string formed in `[timecode] lyric`.
+ *
+ * @param {string} rawLyric The raw lyric string formed in `[timecode] lyric`
+ * @returns {string} The lyric part
+ */
+function extractLyricPart(rawLyric) {
+  return rawLyric.split(']')[1].trim();
+}
+
 export default {
   name: 'Library',
   components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
@@ -196,18 +206,29 @@ export default {
   },
   computed: {
     ...mapState(['data', 'liked']),
+    /**
+     * @returns {string[]}
+     */
     pickedLyric() {
-      if (this.lyric === undefined) return '';
-      let lyric = this.lyric.split('\n');
-      let lineIndex = randomNum(0, lyric.length - 1);
-      while (lineIndex + 4 > lyric.length) {
-        lineIndex = randomNum(0, lyric.length - 1);
-      }
-      return [
-        lyric[lineIndex].split(']')[1],
-        lyric[lineIndex + 1].split(']')[1],
-        lyric[lineIndex + 2].split(']')[1],
-      ];
+      /** @type {string?} */
+      const lyric = this.lyric;
+
+      // Returns [] if we got no lyrics.
+      if (!lyric) return [];
+
+      const lyricLine = lyric.split('\n');
+
+      // Pick 3 or fewer lyrics based on the lyric lines.
+      const lyricsToPick = Math.min(lyricLine.length, 3);
+
+      // The upperbound of the lyric line to pick
+      const randomUpperBound = lyricLine.length - lyricsToPick;
+      const startLyricLineIndex = randomNum(0, randomUpperBound - 1);
+
+      // Pick lyric lines to render.
+      return lyricLine
+        .slice(startLyricLineIndex, startLyricLineIndex + lyricsToPick)
+        .map(extractLyricPart);
     },
     playlistFilter() {
       return this.data.libraryPlaylistFilter || 'all';
