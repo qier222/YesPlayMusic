@@ -210,19 +210,6 @@ export default {
      * @returns {string[]}
      */
     pickedLyric() {
-<<<<<<< HEAD
-      if (this.lyric === undefined) return '';
-      let lyric = this.lyric.split('\n');
-      let lineIndex = randomNum(0, lyric.length - 1);
-      while (lineIndex + 4 > lyric.length) {
-        lineIndex = randomNum(0, lyric.length - 1);
-      }
-      return [
-        lyric[lineIndex].split(']')[1],
-        lyric[lineIndex + 1].split(']')[1],
-        lyric[lineIndex + 2].split(']')[1],
-      ];
-=======
       /** @type {string?} */
       const lyric = this.lyric;
 
@@ -244,7 +231,6 @@ export default {
       return lyricLine
         .slice(startLyricLineIndex, startLyricLineIndex + lyricsToPick)
         .map(extractLyricPart);
->>>>>>> d15381020552cbd0faa1c6447367687ea0b99657
     },
     playlistFilter() {
       return this.data.libraryPlaylistFilter || 'all';
