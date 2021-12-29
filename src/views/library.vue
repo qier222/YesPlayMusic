@@ -183,6 +183,16 @@ import CoverRow from '@/components/CoverRow.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 import MvRow from '@/components/MvRow.vue';
 
+/**
+ * Pick the lyric part from a string formed in `[timecode] lyric`.
+ *
+ * @param {string} rawLyric The raw lyric string formed in `[timecode] lyric`
+ * @returns {string} The lyric part
+ */
+function extractLyricPart(rawLyric) {
+  return rawLyric.split(']')[1].trim();
+}
+
 export default {
   name: 'Library',
   components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
@@ -196,7 +206,11 @@ export default {
   },
   computed: {
     ...mapState(['data', 'liked']),
+    /**
+     * @returns {string[]}
+     */
     pickedLyric() {
+<<<<<<< HEAD
       if (this.lyric === undefined) return '';
       let lyric = this.lyric.split('\n');
       let lineIndex = randomNum(0, lyric.length - 1);
@@ -208,6 +222,29 @@ export default {
         lyric[lineIndex + 1].split(']')[1],
         lyric[lineIndex + 2].split(']')[1],
       ];
+=======
+      /** @type {string?} */
+      const lyric = this.lyric;
+
+      // Returns [] if we got no lyrics.
+      if (!lyric) return [];
+
+      const lyricLine = lyric
+        .split('\n')
+        .filter(line => !line.includes('作词') && !line.includes('作曲'));
+
+      // Pick 3 or fewer lyrics based on the lyric lines.
+      const lyricsToPick = Math.min(lyricLine.length, 3);
+
+      // The upperbound of the lyric line to pick
+      const randomUpperBound = lyricLine.length - lyricsToPick;
+      const startLyricLineIndex = randomNum(0, randomUpperBound - 1);
+
+      // Pick lyric lines to render.
+      return lyricLine
+        .slice(startLyricLineIndex, startLyricLineIndex + lyricsToPick)
+        .map(extractLyricPart);
+>>>>>>> d15381020552cbd0faa1c6447367687ea0b99657
     },
     playlistFilter() {
       return this.data.libraryPlaylistFilter || 'all';
@@ -280,13 +317,10 @@ export default {
         this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
       ).then(data => {
         if (data.lrc !== undefined) {
-          var promise = data.lrc.lyric.split('\n').filter(l => {
-            if (l.includes('纯音乐，请欣赏')) {
-              return true;
-            }
-            return false;
-          });
-          if (promise.length === 0) {
+          const isInstrumental = data.lrc.lyric
+            .split('\n')
+            .filter(l => l.includes('纯音乐，请欣赏'));
+          if (isInstrumental.length === 0) {
             this.lyric = data.lrc.lyric;
           }
         }
