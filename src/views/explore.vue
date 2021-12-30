@@ -132,7 +132,7 @@ export default {
     },
     goToCategory(Category) {
       this.showCatOptions = false;
-      this.$router.push({ path: '/explore?category=' + Category });
+      this.$router.push({ name: 'explore', query: { category: Category } });
     },
     updatePlaylist(playlists) {
       this.playlists.push(...playlists);
