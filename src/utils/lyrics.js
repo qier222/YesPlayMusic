@@ -29,5 +29,6 @@ export function parseLyric(lrc) {
       }
     }
   }
+  lrcObj.sort((a, b) => a.time - b.time);
   return lrcObj;
 }
