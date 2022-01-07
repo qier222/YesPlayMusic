@@ -25,6 +25,7 @@ const table = {
   '/artist/sublist': require('../module/artist_sublist'),
   '/login/refresh': require('../module/login_refresh'),
   '/user/playlist': require('../module/user_playlist'),
+  '/user/record': require('../module/user_record'),
   '/album/sublist': require('../module/album_sublist'),
   '/artist/album': require('../module/artist_album'),
   '/personalized': require('../module/personalized'),

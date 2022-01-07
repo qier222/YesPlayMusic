@@ -87,6 +87,13 @@
           >
             云盘
           </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'playHistory' }"
+            @click="updateCurrentTab('playHistory')"
+          >
+            听歌排行
+          </div>
         </div>
         <button
           v-show="currentTab === 'playlists'"
@@ -142,6 +149,20 @@
           type="cloudDisk"
           dbclick-track-func="playCloudDisk"
           :extra-context-menu-item="['removeTrackFromCloudDisk']"
+        />
+      </div>
+
+      <div v-show="currentTab === 'playHistory'">
+        <button class="playHistory-button" @click="playHistoryMode = 'week'">
+          最近一周
+        </button>
+        <button class="playHistory-button" @click="playHistoryMode = 'all'">
+          所有時間
+        </button>
+        <TrackList
+          :tracks="playHistoryList"
+          :column-number="1"
+          type="tracklist"
         />
       </div>
     </div>
@@ -202,6 +223,7 @@ export default {
       likedSongs: [],
       lyric: undefined,
       currentTab: 'playlists',
+      playHistoryMode: 'week',
     };
   },
   computed: {
@@ -245,6 +267,14 @@ export default {
       }
       return playlists;
     },
+    playHistoryList() {
+      if (this.show && this.playHistoryMode === 'week') {
+        return this.liked.playHistory.weekData;
+      } else if (this.show && this.playHistoryMode === 'all') {
+        return this.liked.playHistory.allData;
+      }
+      return [];
+    },
   },
   created() {
     setTimeout(() => {
@@ -279,6 +309,7 @@ export default {
       this.$store.dispatch('fetchLikedArtists');
       this.$store.dispatch('fetchLikedMVs');
       this.$store.dispatch('fetchCloudDisk');
+      this.$store.dispatch('fetchPlayHistory');
     },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
@@ -524,6 +555,19 @@ button.tab-button {
   &:active {
     opacity: 1;
     transform: scale(0.92);
+  }
+}
+
+button.playHistory-button {
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.2s;
+  opacity: 0.68;
+  font-weight: 500;
+  &:hover {
+    opacity: 1;
+    background: var(--color-secondary-bg);
   }
 }
 </style>

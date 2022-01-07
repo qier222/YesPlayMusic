@@ -80,6 +80,8 @@
     <div v-if="showTrackTime" class="time">
       {{ track.dt | formatTime }}
     </div>
+
+    <div v-if="track.playCount" class="count"> {{ track.playCount }}</div>
   </div>
 </template>
 
@@ -349,7 +351,8 @@ button {
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
-  .time {
+  .time,
+  .count {
     font-size: 16px;
     width: 50px;
     cursor: default;
