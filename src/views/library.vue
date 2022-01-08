@@ -211,7 +211,7 @@ import MvRow from '@/components/MvRow.vue';
  * @returns {string} The lyric part
  */
 function extractLyricPart(rawLyric) {
-  return rawLyric.split(']')[1].trim();
+  return rawLyric.split(']').pop().trim();
 }
 
 export default {
