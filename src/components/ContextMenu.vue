@@ -27,7 +27,7 @@ export default {
   methods: {
     setMenu(top, left) {
       let largestHeight =
-        window.innerHeight - this.$refs.menu.offsetHeight - 25;
+        window.innerHeight - this.$refs.menu.offsetHeight - 64;
       let largestWidth = window.innerWidth - this.$refs.menu.offsetWidth - 25;
       if (top > largestHeight) top = largestHeight;
       if (left > largestWidth) left = largestWidth;
