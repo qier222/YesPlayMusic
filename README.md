@@ -113,6 +113,28 @@ yarn run build
 
 7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
+## ⚙️ Docker 部署
+
+1. 构建 Docker Image
+
+```sh
+docker build -t yesplaymusic .
+```
+
+2. 启动 Docker Container
+
+```sh
+docker run -d --name YesPlayMusic -p 80:80 yesplaymusic
+```
+
+3. Docker Compose 启动
+
+```sh
+docker-compose up -d
+```
+
+YesPlayMusic 地址为 `http://localhost`
+
 ## 👷‍♂️ 打包客户端
 
 如果在 Release 页面没有找到适合你的设备的安装包的话，你可以根据下面的步骤来打包自己的客户端。

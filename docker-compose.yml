@@ -1,0 +1,9 @@
+services:
+  YesPlayMusic:
+    build:
+      context: .
+    image: yesplaymusic
+    container_name: YesPlayMusic
+    ports:
+      - 80:80
+    restart: always
