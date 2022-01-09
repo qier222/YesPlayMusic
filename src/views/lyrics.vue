@@ -215,10 +215,6 @@ import * as Vibrant from 'node-vibrant';
 import Color from 'color';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
 
-function filterLyric(lyric) {
-  return lyric.content !== '作曲 : 无' && lyric.content !== '作词 : 无';
-}
-
 export default {
   name: 'Lyrics',
   components: {
@@ -331,7 +327,9 @@ export default {
           return false;
         } else {
           let { lyric, tlyric } = lyricParser(data);
-          lyric = lyric.filter(filterLyric);
+          lyric = lyric.filter(
+            l => l.content !== '作曲 : 无' && l.content !== '作词 : 无'
+          );
           let includeAM =
             lyric.length <= 10 &&
             lyric.map(l => l.content).includes('纯音乐，请欣赏');
