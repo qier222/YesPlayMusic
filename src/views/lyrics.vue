@@ -327,9 +327,15 @@ export default {
           return false;
         } else {
           let { lyric, tlyric } = lyricParser(data);
-          this.lyric = lyric;
-          this.tlyric = tlyric;
-          return true;
+          if (lyric.length === 1 && lyric[0].content === '纯音乐，请欣赏') {
+            this.lyric = [];
+            this.tlyric = [];
+            return false;
+          } else {
+            this.lyric = lyric;
+            this.tlyric = tlyric;
+            return true;
+          }
         }
       });
     },
