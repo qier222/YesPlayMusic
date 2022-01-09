@@ -24,7 +24,7 @@
               {{ liked.songs.length }} {{ $t('common.songs') }}
             </div>
           </div>
-          <button @click.stop="playLikedSongs">
+          <button @click.stop="openPlayModeTabMenu">
             <svg-icon icon-class="play" />
           </button>
         </div>
@@ -186,6 +186,14 @@
         $t('contextMenu.likedPlaylists')
       }}</div>
     </ContextMenu>
+
+    <ContextMenu ref="playModeTabMenu">
+      <div class="item" @click="playLikedSongs">{{
+        $t('library.likedSongs')
+      }}</div>
+      <hr />
+      <div class="item" @click="playIntelligenceList"> 心动模式 </div>
+    </ContextMenu>
   </div>
 </template>
 
@@ -318,6 +326,13 @@ export default {
         true
       );
     },
+    playIntelligenceList() {
+      this.$store.state.player.playIntelligenceListById(
+        this.liked.playlists[0].id,
+        'first',
+        true
+      );
+    },
     updateCurrentTab(tab) {
       if (!isAccountLoggedIn() && tab !== 'playlists') {
         this.showToast(locale.t('toast.needToLogin'));
@@ -357,6 +372,9 @@ export default {
     },
     openPlaylistTabMenu(e) {
       this.$refs.playlistTabMenu.openMenu(e);
+    },
+    openPlayModeTabMenu(e) {
+      this.$refs.playModeTabMenu.openMenu(e);
     },
     changePlaylistFilter(type) {
       this.updateData({ key: 'libraryPlaylistFilter', value: type });

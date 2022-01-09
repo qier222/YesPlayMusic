@@ -3,7 +3,7 @@ import shuffle from 'lodash/shuffle';
 import { Howler, Howl } from 'howler';
 import { cacheTrackSource, getTrackSource } from '@/utils/db';
 import { getAlbum } from '@/api/album';
-import { getPlaylistDetail } from '@/api/playlist';
+import { getPlaylistDetail, intelligencePlaylist } from '@/api/playlist';
 import { getArtist } from '@/api/artist';
 import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
@@ -605,6 +605,18 @@ export default class {
       this._current = this._list.findIndex(t => t === id);
     }
     this._replaceCurrentTrack(id);
+  }
+  playIntelligenceListById(id, trackID = 'first', noCache = false) {
+    getPlaylistDetail(id, noCache).then(data => {
+      const randomId = Math.floor(
+        Math.random() * (data.playlist.trackIds.length + 1)
+      );
+      const songId = data.playlist.trackIds[randomId].id;
+      intelligencePlaylist({ id: songId, pid: id }).then(result => {
+        let trackIDs = result.data.map(t => t.id);
+        this.replacePlaylist(trackIDs, id, 'playlist', trackID);
+      });
+    });
   }
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);

@@ -17,6 +17,7 @@ const table = {
   '/playlist/delete': require('../module/playlist_delete'),
   '/playlist/create': require('../module/playlist_create'),
   '/playlist/tracks': require('../module/playlist_tracks'),
+  '/playmode/intelligence/list': require('../module/playmode_intelligence_list'),
   '/recommend/songs': require('../module/recommend_songs'),
   '/login/qr/create': require('../module/login_qr_create'),
   '/login/qr/check': require('../module/login_qr_check'),
