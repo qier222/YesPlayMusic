@@ -328,14 +328,16 @@ export default {
         } else {
           let { lyric, tlyric } = lyricParser(data);
           lyric = lyric.filter(
-            l => l.content !== '作曲 : 无' && l.content !== '作词 : 无'
+            l => !/^作(词|曲)\s*(:|：)\s*无$/.exec(l.content)
           );
           let includeAM =
             lyric.length <= 10 &&
             lyric.map(l => l.content).includes('纯音乐，请欣赏');
           if (includeAM) {
-            let s = '作曲 : ' + this.currentTrack?.ar[0]?.name;
-            lyric = lyric.filter(l => l.content !== s);
+            let r = new RegExp(
+              `^作曲\\s*(:|：)\\s*${this.currentTrack?.ar[0]?.name}$`
+            );
+            lyric = lyric.filter(l => !r.exec(l.content));
           }
           if (lyric.length === 1 && includeAM) {
             this.lyric = [];
