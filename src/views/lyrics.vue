@@ -335,7 +335,7 @@ export default {
             lyric.map(l => l.content).includes('纯音乐，请欣赏');
           if (includeAM) {
             let r = new RegExp(
-              `^作曲\\s*(:|：)\\s*${this.currentTrack?.ar[0]?.name}$`
+              `^作(词|曲)\\s*(:|：)\\s*${this.currentTrack?.ar[0]?.name}$`
             );
             lyric = lyric.filter(l => !r.exec(l.content));
           }
