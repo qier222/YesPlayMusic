@@ -1,10 +1,11 @@
-FROM node:lts-alpine as build
+FROM node:16.13.1-alpine as build
 ENV VUE_APP_NETEASE_API_URL=/api
 WORKDIR /app
 COPY . .
+RUN apk add --no-cache python3 make g++
 RUN yarn && yarn build
 
-FROM nginx:alpine as app
+FROM nginx:1.20.2-alpine as app
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY --from=build /app/netease_api /usr/src/netease_api
 WORKDIR /usr/src/netease_api
