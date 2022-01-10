@@ -467,10 +467,16 @@ export default class {
   appendTrack(trackID) {
     this.list.append(trackID);
   }
-  playNextTrack(isFM = false) {
+  async playNextTrack(isFM = false) {
     if (this._isPersonalFM || isFM === true) {
       this._isPersonalFM = true;
-      this._personalFMTrack = this._personalFMNextTrack;
+      if (!this._personalFMNextTrack) {
+        let result = await personalFM();
+        this._personalFMTrack = result.data[0];
+        this._personalFMNextTrack = result.data[1];
+      } else {
+        this._personalFMTrack = this._personalFMNextTrack;
+      }
       this._replaceCurrentTrack(this._personalFMTrack.id);
       this._loadPersonalFMNextTrack();
       return true;
