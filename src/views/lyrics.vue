@@ -334,10 +334,16 @@ export default {
             lyric.length <= 10 &&
             lyric.map(l => l.content).includes('纯音乐，请欣赏');
           if (includeAM) {
-            let r = new RegExp(
-              `^作(词|曲)\\s*(:|：)\\s*${this.currentTrack?.ar[0]?.name}$`
-            );
-            lyric = lyric.filter(l => !r.exec(l.content));
+            try {
+              let r = new RegExp(
+                `^作(词|曲)\\s*(:|：)\\s*${this.currentTrack?.ar[0]?.name}$`
+              );
+              lyric = lyric.filter(l => !r.exec(l.content));
+            } catch {
+              console.log(
+                `can not match author ${this.currentTrack?.ar[0]?.name}, skip`
+              );
+            }
           }
           if (lyric.length === 1 && includeAM) {
             this.lyric = [];
