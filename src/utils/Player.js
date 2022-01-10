@@ -474,11 +474,12 @@ export default class {
         let result = await personalFM();
         this._personalFMTrack = result.data[0];
         this._personalFMNextTrack = result.data[1];
+        this._replaceCurrentTrack(this._personalFMTrack.id);
       } else {
         this._personalFMTrack = this._personalFMNextTrack;
+        this._replaceCurrentTrack(this._personalFMTrack.id);
+        this._loadPersonalFMNextTrack();
       }
-      this._replaceCurrentTrack(this._personalFMTrack.id);
-      this._loadPersonalFMNextTrack();
       return true;
     }
     // TODO: 切换歌曲时增加加载中的状态
