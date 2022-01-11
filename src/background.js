@@ -329,12 +329,12 @@ class Background {
 
       // create tray
       if (isCreateTray) {
-        this.trayEmitter = new EventEmitter();
-        this.tray = createTray(this.window, this.trayEmitter);
+        this.trayEventEmitter = new EventEmitter();
+        this.tray = createTray(this.window, this.trayEventEmitter);
       }
 
       // init ipcMain
-      initIpcMain(this.window, this.store, this.trayEmitter);
+      initIpcMain(this.window, this.store, this.trayEventEmitter);
 
       // set proxy
       const proxyRules = this.store.get('proxy');
