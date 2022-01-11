@@ -661,10 +661,11 @@ export default class {
       this.playOrPause();
     }
   }
-  moveToFMTrash() {
+  async moveToFMTrash() {
     this._isPersonalFM = true;
-    this.playNextTrack();
-    fmTrash(this._personalFMTrack.id);
+    let id = this._personalFMTrack.id;
+    await this.playNextFMTrack();
+    fmTrash(id);
   }
 
   sendSelfToIpcMain() {
