@@ -25,7 +25,11 @@ export function parseLyric(lrc) {
       const ms = Number(t.match(/\d*\]/i)[0].slice(0, 2)) / 100;
       const time = min * 60 + sec + ms;
       if (content !== '') {
-        lrcObj.push({ time: time, rawTime: timeRegExpArr[0], content });
+        lrcObj.push({
+          time: time,
+          rawTime: timeRegExpArr[0],
+          content: content.trim(),
+        });
       }
     }
   }

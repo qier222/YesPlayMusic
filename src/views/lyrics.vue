@@ -327,7 +327,23 @@ export default {
           return false;
         } else {
           let { lyric, tlyric } = lyricParser(data);
-          if (lyric.length === 1 && lyric[0].content === '纯音乐，请欣赏') {
+          lyric = lyric.filter(
+            l => !/^作(词|曲)\s*(:|：)\s*无$/.exec(l.content)
+          );
+          let includeAM =
+            lyric.length <= 10 &&
+            lyric.map(l => l.content).includes('纯音乐，请欣赏');
+          if (includeAM) {
+            let reg = /^作(词|曲)\s*(:|：)\s*/;
+            let author = this.currentTrack?.ar[0]?.name;
+            lyric = lyric.filter(l => {
+              let regExpArr = l.content.match(reg);
+              return (
+                !regExpArr || l.content.replace(regExpArr[0], '') !== author
+              );
+            });
+          }
+          if (lyric.length === 1 && includeAM) {
             this.lyric = [];
             this.tlyric = [];
             return false;
