@@ -14,6 +14,11 @@ const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
+const excludeSaveKey = [
+  '_playing',
+  '_personalFMLoading',
+  '_personalFMNextLoading',
+];
 
 export default class {
   constructor() {
@@ -359,7 +364,7 @@ export default class {
   }
   _cacheNextTrack() {
     let nextTrackID = this._isPersonalFM
-      ? this._personalFMNextTrack.id
+      ? this._personalFMNextTrack?.id ?? 0
       : this._getNextTrack()[0];
     if (!nextTrackID) return;
     if (this._personalFMTrack.id == nextTrackID) return;
@@ -520,16 +525,10 @@ export default class {
     this._isPersonalFM = true;
     if (!this._personalFMNextTrack) {
       this._personalFMLoading = true;
-      let result = await Promise.race([
-        personalFM(),
-        new Promise((_, reject) => {
-          setTimeout(() => {
-            reject('timeout');
-          }, 10000);
-        }),
-      ]);
+      let result = await personalFM().catch(() => null);
       this._personalFMLoading = false;
       if (!result || !result.data) {
+        store.dispatch('showToast', 'personal fm timeout');
         return false;
       }
       // 这里只能拿到一条数据
@@ -556,7 +555,7 @@ export default class {
   saveSelfToLocalStorage() {
     let player = {};
     for (let [key, value] of Object.entries(this)) {
-      if (key === '_playing') continue;
+      if (excludeSaveKey.includes(key)) continue;
       player[key] = value;
     }
 
