@@ -14,7 +14,7 @@ const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
-const excludeSaveKey = [
+const excludeSaveKeys = [
   '_playing',
   '_personalFMLoading',
   '_personalFMNextLoading',
@@ -555,7 +555,7 @@ export default class {
   saveSelfToLocalStorage() {
     let player = {};
     for (let [key, value] of Object.entries(this)) {
-      if (excludeSaveKey.includes(key)) continue;
+      if (excludeSaveKeys.includes(key)) continue;
       player[key] = value;
     }
 
