@@ -386,6 +386,23 @@
 
       <div class="item">
         <div class="left">
+          <div class="title">{{ $t('settings.enableReversedMode') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-reversed-mode"
+              v-model="enableReversedMode"
+              type="checkbox"
+              name="enable-reversed-mode"
+            />
+            <label for="enable-reversed-mode"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="left">
           <div class="title" style="transform: scaleX(-1)">🐈️ 🏳️‍🌈</div>
         </div>
         <div class="right">
@@ -803,6 +820,21 @@ export default {
           key: 'subTitleDefault',
           value,
         });
+      },
+    },
+    enableReversedMode: {
+      get() {
+        if (this.settings.enableReversedMode === undefined) return false;
+        return this.settings.enableReversedMode;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'enableReversedMode',
+          value,
+        });
+        if (value === false) {
+          this.$store.state.player.reversed = false;
+        }
       },
     },
     enableGlobalShortcut: {

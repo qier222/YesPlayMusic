@@ -97,6 +97,7 @@ export default {
     repeat: '循環播放',
     repeatTrack: '單曲循環',
     shuffle: '隨機播放',
+    reversed: '倒序播放',
     play: '播放',
     pause: '暫停',
     mute: '靜音',
@@ -154,6 +155,7 @@ export default {
     enableGlobalShortcut: '啟用全域快捷鍵',
     showLibraryDefault: '啟動後顯示音樂庫',
     subTitleDefault: '副標題使用別名',
+    enableReversedMode: '啟用倒序播放功能 (實驗性功能)',
     lyricsBackground: {
       text: '顯示歌詞背景',
       off: '關閉',

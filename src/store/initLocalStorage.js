@@ -19,6 +19,7 @@ let localStorage = {
     enableUnblockNeteaseMusic: true,
     automaticallyCacheSongs: true,
     cacheLimit: 8192,
+    enableReversedMode: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
     lyricsBackground: true,

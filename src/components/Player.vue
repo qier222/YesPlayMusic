@@ -134,6 +134,13 @@
             @click.native="player.switchShuffle"
             ><svg-icon icon-class="shuffle"
           /></button-icon>
+          <button-icon
+            v-if="settings.enableReversedMode"
+            :class="{ active: player.reversed, disabled: player.isPersonalFM }"
+            :title="$t('player.reversed')"
+            @click.native="player.switchReversed"
+            ><svg-icon icon-class="sort-up"
+          /></button-icon>
           <div class="volume-control">
             <button-icon :title="$t('player.mute')" @click.native="player.mute">
               <svg-icon v-show="volume > 0.5" icon-class="volume" />
