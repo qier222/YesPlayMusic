@@ -74,8 +74,11 @@ export default {
       this.player.playPersonalFM();
     },
     next() {
-      this.player.playNextTrack(true);
-      this.getColor();
+      this.player.playNextFMTrack().then(result => {
+        if (result) {
+          this.getColor();
+        }
+      });
     },
     goToAlbum() {
       if (this.track.album.id === 0) return;

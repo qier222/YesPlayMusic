@@ -25,6 +25,7 @@ export default class {
     this._shuffle = false; // true | false
     this._volume = 1; // 0 to 1
     this._volumeBeforeMuted = 1; // 用于保存静音前的音量
+    this._fmLoading = false; // 是否正在私人FM中加载新的track
 
     // 播放信息
     this._list = []; // 播放列表
@@ -467,20 +468,7 @@ export default class {
   appendTrack(trackID) {
     this.list.append(trackID);
   }
-  async playNextTrack(isFM = false) {
-    if (this._isPersonalFM || isFM === true) {
-      this._isPersonalFM = true;
-      if (!this._personalFMNextTrack) {
-        let result = await personalFM();
-        // 这里只能拿到一条数据
-        this._personalFMTrack = result.data[0];
-      } else {
-        this._personalFMTrack = this._personalFMNextTrack;
-      }
-      this._replaceCurrentTrack(this._personalFMTrack.id);
-      this._loadPersonalFMNextTrack();
-      return true;
-    }
+  playNextTrack() {
     // TODO: 切换歌曲时增加加载中的状态
     const [trackID, index] = this._getNextTrack();
     if (trackID === undefined) {
@@ -490,6 +478,40 @@ export default class {
     }
     this.current = index;
     this._replaceCurrentTrack(trackID);
+    return true;
+  }
+  async playNextFMTrack() {
+    if (this._fmLoading) {
+      return false;
+    }
+
+    this._isPersonalFM = true;
+    if (!this._personalFMNextTrack) {
+      this._fmLoading = true;
+      let result = await Promise.race([
+        personalFM(),
+        new Promise((_, reject) => {
+          setTimeout(() => {
+            reject('timeout');
+          }, 5000);
+        }),
+      ]);
+      this._fmLoading = false;
+      if (!result || !result.data) {
+        return false;
+      }
+      // 这里只能拿到一条数据
+      this._personalFMTrack = result.data[0];
+    } else {
+      if (this._personalFMNextTrack.id === this._personalFMTrack.id) {
+        return false;
+      }
+      this._personalFMTrack = this._personalFMNextTrack;
+    }
+    if (this._isPersonalFM) {
+      this._replaceCurrentTrack(this._personalFMTrack.id);
+    }
+    this._loadPersonalFMNextTrack();
     return true;
   }
   playPrevTrack() {

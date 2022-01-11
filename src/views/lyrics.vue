@@ -151,7 +151,7 @@
                 </button-icon>
                 <button-icon
                   :title="$t('player.next')"
-                  @click.native="player.playNextTrack"
+                  @click.native="playNextTrack"
                 >
                   <svg-icon icon-class="next" />
                 </button-icon>
@@ -318,6 +318,13 @@ export default {
   methods: {
     ...mapMutations(['toggleLyrics']),
     ...mapActions(['likeATrack']),
+    playNextTrack() {
+      if (this.player.isPersonalFM) {
+        this.player.playNextFMTrack();
+      } else {
+        this.player.playNextTrack();
+      }
+    },
     getLyric() {
       if (!this.currentTrack.id) return;
       return getLyric(this.currentTrack.id).then(data => {
