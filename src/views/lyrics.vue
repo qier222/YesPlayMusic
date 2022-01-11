@@ -682,12 +682,15 @@ export default {
       &:hover {
         background: var(--color-secondary-bg-for-transparent);
       }
+      &:active {
+        transform: scale(0.95);
+      }
 
       span {
         opacity: 0.28;
         cursor: default;
         font-size: 1em;
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
 
       span.translation {
