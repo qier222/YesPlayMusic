@@ -14,15 +14,13 @@
       @click="goToAlbum"
     />
     <div v-if="showOrderNumber" class="no">
-      <button v-show="focus && track.playable && !isPlaying" @click="playTrack">
+      <button v-show="focus && playable && !isPlaying" @click="playTrack">
         <svg-icon
           icon-class="play"
           style="height: 14px; width: 14px"
         ></svg-icon>
       </button>
-      <span v-show="(!focus || !track.playable) && !isPlaying">{{
-        track.no
-      }}</span>
+      <span v-show="(!focus || !playable) && !isPlaying">{{ track.no }}</span>
       <button v-show="isPlaying">
         <svg-icon
           icon-class="volume"
@@ -114,6 +112,9 @@ export default {
         ? this.trackProp.simpleSong
         : this.trackProp;
     },
+    playable() {
+      return this.track?.privilege?.pl > 0 || this.track?.playable;
+    },
     imgUrl() {
       let image =
         this.track?.al?.picUrl ??
@@ -170,7 +171,7 @@ export default {
     },
     trackClass() {
       let trackClass = [this.type];
-      if (!this.track.playable && this.showUnavailableSongInGreyStyle)
+      if (!this.playable && this.showUnavailableSongInGreyStyle)
         trackClass.push('disable');
       if (this.isPlaying && this.highlightPlayingTrack)
         trackClass.push('playing');
