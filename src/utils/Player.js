@@ -25,7 +25,8 @@ export default class {
     this._shuffle = false; // true | false
     this._volume = 1; // 0 to 1
     this._volumeBeforeMuted = 1; // 用于保存静音前的音量
-    this._fmLoading = false; // 是否正在私人FM中加载新的track
+    this._personalFMLoading = false; // 是否正在私人FM中加载新的track
+    this._personalFMNextLoading = false; // 是否正在缓存私人FM的下一首歌曲
 
     // 播放信息
     this._list = []; // 播放列表
@@ -163,7 +164,11 @@ export default class {
     this._setIntervals();
 
     // 初始化私人FM
-    if (this._personalFMTrack.id === 0 || this._personalFMNextTrack.id === 0) {
+    if (
+      this._personalFMTrack.id === 0 ||
+      this._personalFMNextTrack.id === 0 ||
+      this._personalFMTrack.id === this._personalFMNextTrack.id
+    ) {
       personalFM().then(result => {
         this._personalFMTrack = result.data[0];
         this._personalFMNextTrack = result.data[1];
@@ -339,9 +344,15 @@ export default class {
           return source;
         } else {
           store.dispatch('showToast', `无法播放 ${track.name}`);
-          ifUnplayableThen === 'playNextTrack'
-            ? this.playNextTrack()
-            : this.playPrevTrack();
+          if (ifUnplayableThen === 'playNextTrack') {
+            if (this.isPersonalFM) {
+              this.playNextFMTrack();
+            } else {
+              this.playNextTrack();
+            }
+          } else {
+            this.playPrevTrack();
+          }
         }
       });
     });
@@ -376,7 +387,11 @@ export default class {
         this.playPrevTrack();
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
-        this.playNextTrack();
+        if (this.isPersonalFM) {
+          this.playNextFMTrack();
+        } else {
+          this.playNextTrack();
+        }
       });
       navigator.mediaSession.setActionHandler('stop', () => {
         this.pause();
@@ -429,16 +444,33 @@ export default class {
     this._scrobble(this._currentTrack, 0, true);
     if (!this.isPersonalFM && this.repeatMode === 'one') {
       this._replaceCurrentTrack(this._currentTrack.id);
+    } else if (this.isPersonalFM) {
+      this.playNextFMTrack();
     } else {
       this.playNextTrack();
     }
   }
   _loadPersonalFMNextTrack() {
-    return personalFM().then(result => {
-      this._personalFMNextTrack = result.data[0];
-      this._cacheNextTrack(); // cache next track
-      return this._personalFMNextTrack;
-    });
+    if (this._personalFMNextLoading) {
+      return [false, undefined];
+    }
+    this._personalFMNextLoading = true;
+    return personalFM()
+      .then(result => {
+        if (!result || !result.data) {
+          this._personalFMNextTrack = undefined;
+        } else {
+          this._personalFMNextTrack = result.data[0];
+          this._cacheNextTrack(); // cache next track
+        }
+        this._personalFMNextLoading = false;
+        return [true, this._personalFMNextTrack];
+      })
+      .catch(() => {
+        this._personalFMNextTrack = undefined;
+        this._personalFMNextLoading = false;
+        return [false, this._personalFMNextTrack];
+      });
   }
   _playDiscordPresence(track, seekTime = 0) {
     if (
@@ -481,22 +513,22 @@ export default class {
     return true;
   }
   async playNextFMTrack() {
-    if (this._fmLoading) {
+    if (this._personalFMLoading) {
       return false;
     }
 
     this._isPersonalFM = true;
     if (!this._personalFMNextTrack) {
-      this._fmLoading = true;
+      this._personalFMLoading = true;
       let result = await Promise.race([
         personalFM(),
         new Promise((_, reject) => {
           setTimeout(() => {
             reject('timeout');
-          }, 5000);
+          }, 10000);
         }),
       ]);
-      this._fmLoading = false;
+      this._personalFMLoading = false;
       if (!result || !result.data) {
         return false;
       }
@@ -648,7 +680,13 @@ export default class {
   }
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);
-    if (playNow) this.playNextTrack();
+    if (playNow) {
+      if (this.isPersonalFM) {
+        this.playNextFMTrack();
+      } else {
+        this.playNextTrack();
+      }
+    }
   }
   playPersonalFM() {
     this._isPersonalFM = true;
