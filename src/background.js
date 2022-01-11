@@ -8,6 +8,13 @@ import {
   globalShortcut,
   nativeTheme,
 } from 'electron';
+import {
+  isWindows,
+  isMac,
+  isLinux,
+  isDevelopment,
+  isCreateTray,
+} from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { startNeteaseMusicApi } from './electron/services';
 import { initIpcMain } from './electron/ipcMain.js';
@@ -18,6 +25,7 @@ import { createDockMenu } from './electron/dockMenu';
 import { registerGlobalShortcut } from './electron/globalShortcut';
 import { autoUpdater } from 'electron-updater';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import { EventEmitter } from 'events';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
 import Store from 'electron-store';
@@ -68,11 +76,6 @@ const closeOnLinux = (e, win, store) => {
     win.hide();
   }
 };
-
-const isWindows = process.platform === 'win32';
-const isMac = process.platform === 'darwin';
-const isLinux = process.platform === 'linux';
-const isDevelopment = process.env.NODE_ENV === 'development';
 
 class Background {
   constructor() {
@@ -324,8 +327,14 @@ class Background {
       });
       this.handleWindowEvents();
 
+      // create tray
+      if (isCreateTray) {
+        this.trayEmitter = new EventEmitter();
+        this.tray = createTray(this.window, this.trayEmitter);
+      }
+
       // init ipcMain
-      initIpcMain(this.window, this.store);
+      initIpcMain(this.window, this.store, this.trayEmitter);
 
       // set proxy
       const proxyRules = this.store.get('proxy');
@@ -340,11 +349,6 @@ class Background {
 
       // create menu
       createMenu(this.window, this.store);
-
-      // create tray
-      if (isWindows || isLinux || isDevelopment) {
-        this.tray = createTray(this.window);
-      }
 
       // create dock menu for macOS
       const createdDockMenu = createDockMenu(this.window);

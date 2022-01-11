@@ -1,8 +1,9 @@
 /* global __static */
 import path from 'path';
 import { app, nativeImage, Tray, Menu } from 'electron';
+import { isLinux } from '@/utils/platform';
 
-export function createTray(win) {
+export function createTray(win, eventEmitter) {
   let icon = nativeImage
     .createFromPath(path.join(__static, 'img/icons/menu@88.png'))
     .resize({
@@ -14,7 +15,7 @@ export function createTray(win) {
     //setContextMenu破坏了预期的click行为
     //在linux下，鼠标左右键都会呼出contextMenu
     //所以此处单独为linux添加一个 显示主面板 选项
-    ...(process.platform === 'linux'
+    ...(isLinux
       ? [
           {
             label: '显示主面板',
@@ -109,5 +110,12 @@ export function createTray(win) {
     });
   }
 
+  handleEvents(tray, eventEmitter);
+
   return tray;
+}
+
+function handleEvents(tray, event) {
+  event.on('updateTooltip', title => tray.setToolTip(title));
+  //TODO: 支持切换颜色模式时切换托盘菜单的icon图标
 }

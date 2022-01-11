@@ -20,6 +20,13 @@ const excludeSaveKeys = [
   '_personalFMNextLoading',
 ];
 
+function setTitle(track) {
+  document.title = track
+    ? `${track.name} · ${track.ar[0].name} - YesPlayMusic`
+    : 'YesPlayMusic';
+  ipcRenderer.send('updateTrayTooltip', document.title);
+}
+
 export default class {
   constructor() {
     // 播放器状态
@@ -255,7 +262,7 @@ export default class {
     if (autoplay) {
       this.play();
       if (this._currentTrack.name) {
-        document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+        setTitle(this._currentTrack);
       }
     }
     this.setOutputDevice();
@@ -565,7 +572,7 @@ export default class {
   pause() {
     this._howler?.pause();
     this._playing = false;
-    document.title = 'YesPlayMusic';
+    setTitle(null);
     this._pauseDiscordPresence(this._currentTrack);
   }
   play() {
@@ -573,7 +580,7 @@ export default class {
     this._howler?.play();
     this._playing = true;
     if (this._currentTrack.name) {
-      document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+      setTitle(this._currentTrack);
     }
     this._playDiscordPresence(this._currentTrack, this.seek());
     if (store.state.lastfm.key !== undefined) {
