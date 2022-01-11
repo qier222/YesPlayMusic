@@ -664,8 +664,9 @@ export default class {
   async moveToFMTrash() {
     this._isPersonalFM = true;
     let id = this._personalFMTrack.id;
-    await this.playNextFMTrack();
-    fmTrash(id);
+    if (await this.playNextFMTrack()) {
+      fmTrash(id);
+    }
   }
 
   sendSelfToIpcMain() {
