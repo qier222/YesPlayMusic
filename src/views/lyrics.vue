@@ -403,14 +403,6 @@ export default {
         }
       }, 50);
     },
-    formatLine(line) {
-      if (line.contents[1]) {
-        return `<span>${line.contents[0]}</span><br/><span class="">${line.contents[1]}</span>`;
-      } else if (line.contents[0] !== undefined) {
-        return `<span>${line.contents[0]}</span>`;
-      }
-      return 'unknown';
-    },
     moveToFMTrash() {
       this.player.moveToFMTrash();
     },
