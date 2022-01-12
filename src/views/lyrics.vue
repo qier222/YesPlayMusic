@@ -59,8 +59,8 @@
                   <router-link
                     :to="`/artist/${artist.id}`"
                     @click.native="toggleLyrics"
-                    >{{ artist.name }}
-                  </router-link>
+                    >{{ artist.name }}</router-link
+                  >
                   <span v-if="album.id !== 0">
                     -
                     <router-link
