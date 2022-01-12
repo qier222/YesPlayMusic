@@ -668,7 +668,7 @@ export default {
     .line {
       margin: 2px 0;
       padding: 12px 18px;
-      transition: 0.2s;
+      transition: 0.5s;
       border-radius: 12px;
 
       &:hover {
@@ -682,7 +682,7 @@ export default {
         opacity: 0.28;
         cursor: default;
         font-size: 1em;
-        transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
 
       span.translation {
