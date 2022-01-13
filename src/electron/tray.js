@@ -1,6 +1,6 @@
 /* global __static */
 import path from 'path';
-import { app, nativeImage, Tray, Menu, MenuItem } from 'electron';
+import { app, nativeImage, Tray, Menu } from 'electron';
 import { isLinux } from '@/utils/platform';
 
 function createMenuTemplate(win) {
@@ -13,6 +13,16 @@ function createMenuTemplate(win) {
       click: () => {
         win.webContents.send('play');
       },
+    },
+    {
+      label: '暂停',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/pause.png')
+      ),
+      click: () => {
+        win.webContents.send('play');
+      },
+      visible: false,
     },
     {
       label: '上一首',
@@ -80,7 +90,6 @@ class YPMTrayLinuxImpl {
     this.template = undefined;
     this.initTemplate();
     this.contextMenu = Menu.buildFromTemplate(this.template);
-    this.addPauseToContextMenu();
 
     this.tray.setContextMenu(this.contextMenu);
     this.handleEvents();
@@ -100,20 +109,6 @@ class YPMTrayLinuxImpl {
         type: 'separator',
       },
     ].concat(createMenuTemplate(this.win));
-  }
-
-  addPauseToContextMenu() {
-    this.contextMenu.insert(
-      3,
-      new MenuItem({
-        label: '暂停',
-        icon: this.template[2].icon,
-        click: () => {
-          this.win.webContents.send('play');
-        },
-        visible: false,
-      })
-    );
   }
 
   handleEvents() {
@@ -138,22 +133,7 @@ class YPMTrayWindowsImpl {
     this.isPlaying = false;
     this.curDisplayPlaying = false;
 
-    this.addPauseToContextMenu();
     this.handleEvents();
-  }
-
-  addPauseToContextMenu() {
-    this.contextMenu.insert(
-      1,
-      new MenuItem({
-        label: '暂停',
-        icon: this.template[0].icon,
-        click: () => {
-          this.win.webContents.send('play');
-        },
-        visible: false,
-      })
-    );
   }
 
   handleEvents() {
