@@ -80,7 +80,7 @@ const closeOnLinux = (e, win, store) => {
 class Background {
   constructor() {
     this.window = null;
-    this.tray = null;
+    this.ypmTrayImpl = null;
     this.store = new Store({
       windowWidth: {
         width: { type: 'number', default: 1440 },
@@ -330,7 +330,7 @@ class Background {
       // create tray
       if (isCreateTray) {
         this.trayEventEmitter = new EventEmitter();
-        this.tray = createTray(this.window, this.trayEventEmitter);
+        this.ypmTrayImpl = createTray(this.window, this.trayEventEmitter);
       }
 
       // init ipcMain

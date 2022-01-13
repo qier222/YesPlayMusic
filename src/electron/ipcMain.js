@@ -279,5 +279,8 @@ export function initIpcMain(win, store, trayEventEmitter) {
     ipcMain.on('updateTrayTooltip', (_, title) => {
       trayEventEmitter.emit('updateTooltip', title);
     });
+    ipcMain.on('updateTrayPlayState', (_, isPlaying) => {
+      trayEventEmitter.emit('updatePlayState', isPlaying);
+    });
   }
 }

@@ -9,6 +9,7 @@ import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
+import { isCreateTray } from '@/utils/platform';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -24,7 +25,9 @@ function setTitle(track) {
   document.title = track
     ? `${track.name} · ${track.ar[0].name} - YesPlayMusic`
     : 'YesPlayMusic';
-  ipcRenderer.send('updateTrayTooltip', document.title);
+  if (isCreateTray) {
+    ipcRenderer.send('updateTrayTooltip', document.title);
+  }
 }
 
 export default class {
@@ -186,6 +189,12 @@ export default class {
         this._personalFMNextTrack = result.data[1];
         return this._personalFMTrack;
       });
+    }
+  }
+  _setPlaying(isPlaying) {
+    this._playing = isPlaying;
+    if (isCreateTray) {
+      ipcRenderer.send('updateTrayPlayState', this._playing);
     }
   }
   _setIntervals() {
@@ -517,7 +526,7 @@ export default class {
     const [trackID, index] = this._getNextTrack();
     if (trackID === undefined) {
       this._howler?.stop();
-      this._playing = false;
+      this._setPlaying(false);
       return false;
     }
     this.current = index;
@@ -571,14 +580,14 @@ export default class {
 
   pause() {
     this._howler?.pause();
-    this._playing = false;
+    this._setPlaying(false);
     setTitle(null);
     this._pauseDiscordPresence(this._currentTrack);
   }
   play() {
     if (this._howler?.playing()) return;
     this._howler?.play();
-    this._playing = true;
+    this._setPlaying(true);
     if (this._currentTrack.name) {
       setTitle(this._currentTrack);
     }

@@ -1,35 +1,12 @@
 /* global __static */
 import path from 'path';
-import { app, nativeImage, Tray, Menu } from 'electron';
+import { app, nativeImage, Tray, Menu, MenuItem } from 'electron';
 import { isLinux } from '@/utils/platform';
 
-export function createTray(win, eventEmitter) {
-  let icon = nativeImage
-    .createFromPath(path.join(__static, 'img/icons/menu@88.png'))
-    .resize({
-      height: 20,
-      width: 20,
-    });
-
-  let contextMenu = Menu.buildFromTemplate([
-    //setContextMenu破坏了预期的click行为
-    //在linux下，鼠标左右键都会呼出contextMenu
-    //所以此处单独为linux添加一个 显示主面板 选项
-    ...(isLinux
-      ? [
-          {
-            label: '显示主面板',
-            click: () => {
-              win.show();
-            },
-          },
-          {
-            type: 'separator',
-          },
-        ]
-      : []),
+function createMenuTemplate(win) {
+  return [
     {
-      label: '播放/暂停',
+      label: '播放',
       icon: nativeImage.createFromPath(
         path.join(__static, 'img/icons/play.png')
       ),
@@ -87,35 +64,131 @@ export function createTray(win, eventEmitter) {
         app.exit();
       },
     },
-  ]);
+  ];
+}
+
+// linux下托盘的实现方式比较迷惑
+// right-click无法在linux下使用
+// click在默认行为下会弹出一个contextMenu，里面的唯一选项才会调用click事件
+// setContextMenu应该是目前唯一能在linux下使用托盘菜单api
+// 但是无法区分鼠标左右键
+class YPMTrayLinuxImpl {
+  constructor(tray, win, emitter) {
+    this.tray = tray;
+    this.win = win;
+    this.emitter = emitter;
+    this.template = undefined;
+    this.initTemplate();
+    this.contextMenu = Menu.buildFromTemplate(this.template);
+    this.addPauseToContextMenu();
+
+    this.handleEvents();
+  }
+
+  initTemplate() {
+    //在linux下，鼠标左右键都会呼出contextMenu
+    //所以此处单独为linux添加一个 显示主面板 选项
+    this.template = [
+      {
+        label: '显示主面板',
+        click: () => {
+          this.win.show();
+        },
+      },
+      {
+        type: 'separator',
+      },
+    ].concat(createMenuTemplate(this.win));
+  }
+
+  addPauseToContextMenu() {
+    this.contextMenu.insert(
+      3,
+      new MenuItem({
+        label: '暂停',
+        icon: this.template[2].icon,
+        click: () => {
+          this.win.webContents.send('play');
+        },
+        visible: false,
+      })
+    );
+  }
+
+  handleEvents() {
+    this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
+    this.emitter.on('updatePlayState', isPlaying => {
+      let items = this.contextMenu.items;
+      items[isPlaying ? 2 : 3].visible = false;
+      items[isPlaying ? 3 : 2].visible = true;
+    });
+  }
+}
+
+class YPMTrayWindowsImpl {
+  constructor(tray, win, emitter) {
+    this.tray = tray;
+    this.win = win;
+    this.emitter = emitter;
+    this.template = createMenuTemplate(win);
+    this.contextMenu = Menu.buildFromTemplate(this.template);
+
+    this.isPlaying = false;
+    this.curDisplayPlaying = false;
+
+    this.addPauseToContextMenu();
+    this.handleEvents();
+  }
+
+  addPauseToContextMenu() {
+    this.contextMenu.insert(
+      1,
+      new MenuItem({
+        label: '暂停',
+        icon: this.template[0].icon,
+        click: () => {
+          this.win.webContents.send('play');
+        },
+        visible: false,
+      })
+    );
+  }
+
+  handleEvents() {
+    this.tray.on('click', () => {
+      this.win.show();
+    });
+
+    this.tray.on('right-click', () => {
+      if (this.isPlaying !== this.curDisplayPlaying) {
+        this.curDisplayPlaying = this.isPlaying;
+        let items = this.contextMenu.items;
+        items[this.isPlaying ? 0 : 1].visible = false;
+        items[this.isPlaying ? 1 : 0].visible = true;
+      }
+      this.tray.popUpContextMenu(this.contextMenu);
+    });
+
+    this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
+    this.emitter.on(
+      'updatePlayState',
+      isPlaying => (this.isPlaying = isPlaying)
+    );
+  }
+}
+
+export function createTray(win, eventEmitter) {
+  let icon = nativeImage
+    .createFromPath(path.join(__static, 'img/icons/menu@88.png'))
+    .resize({
+      height: 20,
+      width: 20,
+    });
+
   let tray = new Tray(icon);
   tray.setToolTip('YesPlayMusic');
 
-  if (process.platform === 'linux') {
-    //linux下托盘的实现方式比较迷惑
-    //right-click无法在linux下使用
-    //click在默认行为下会弹出一个contextMenu，里面的唯一选项才会调用click事件
-    //setContextMenu应该是目前唯一能在linux下使用托盘菜单api
-    //但是无法区分鼠标左右键
-
-    tray.setContextMenu(contextMenu);
-  } else {
-    //windows and macos
-    tray.on('click', () => {
-      win.show();
-    });
-
-    tray.on('right-click', () => {
-      tray.popUpContextMenu(contextMenu);
-    });
-  }
-
-  handleEvents(tray, eventEmitter);
-
-  return tray;
-}
-
-function handleEvents(tray, event) {
-  event.on('updateTooltip', title => tray.setToolTip(title));
-  //TODO: 支持切换颜色模式时切换托盘菜单的icon图标
+  return isLinux
+    ? new YPMTrayLinuxImpl(tray, win, eventEmitter)
+    : new YPMTrayWindowsImpl(tray, win, eventEmitter);
 }
