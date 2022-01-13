@@ -82,6 +82,7 @@ class YPMTrayLinuxImpl {
     this.contextMenu = Menu.buildFromTemplate(this.template);
     this.addPauseToContextMenu();
 
+    this.tray.setContextMenu(this.contextMenu);
     this.handleEvents();
   }
 
@@ -121,6 +122,7 @@ class YPMTrayLinuxImpl {
       let items = this.contextMenu.items;
       items[isPlaying ? 2 : 3].visible = false;
       items[isPlaying ? 3 : 2].visible = true;
+      this.tray.setContextMenu(this.contextMenu);
     });
   }
 }
