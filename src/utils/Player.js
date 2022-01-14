@@ -542,10 +542,8 @@ export default class {
         }
         if (result.data?.length > 0) {
           break;
-        } else {
-          await delay(1000);
-          continue;
         }
+        await delay(1000);
       }
       this._personalFMLoading = false;
 
