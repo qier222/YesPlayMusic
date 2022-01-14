@@ -532,8 +532,8 @@ export default class {
     if (!this._personalFMNextTrack) {
       this._personalFMLoading = true;
       let result = null;
-      let retryCount = 0;
-      for (; retryCount < 5; retryCount++) {
+      let retryCount = 5;
+      for (; retryCount >= 0; retryCount--) {
         result = await personalFM().catch(() => null);
         if (!result) {
           this._personalFMLoading = false;
@@ -542,12 +542,13 @@ export default class {
         }
         if (result.data?.length > 0) {
           break;
+        } else if (retryCount > 0) {
+          await delay(1000);
         }
-        await delay(1000);
       }
       this._personalFMLoading = false;
 
-      if (retryCount === 5) {
+      if (retryCount < 0) {
         let content = '获取私人FM数据时重试次数过多，请手动切换下一首';
         store.dispatch('showToast', content);
         console.log(content);
