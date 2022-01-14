@@ -136,6 +136,7 @@ class YPMTrayLinuxImpl {
     this.emitter.on('updateLikeState', isLiked => {
       this.contextMenu.getMenuItemById('like').visible = !isLiked;
       this.contextMenu.getMenuItemById('unlike').visible = isLiked;
+      this.tray.setContextMenu(this.contextMenu);
     });
   }
 }
