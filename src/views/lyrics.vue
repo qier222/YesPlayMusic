@@ -59,8 +59,8 @@
                   <router-link
                     :to="`/artist/${artist.id}`"
                     @click.native="toggleLyrics"
-                    >{{ artist.name }}
-                  </router-link>
+                    >{{ artist.name }}</router-link
+                  >
                   <span v-if="album.id !== 0">
                     -
                     <router-link
@@ -187,8 +187,18 @@
               }"
               @click="clickLyricLine(line.time)"
               @dblclick="clickLyricLine(line.time, true)"
-              ><span v-html="formatLine(line)"></span
-            ></div>
+            >
+              <span v-if="line.contents[0]">{{ line.contents[0] }}</span>
+              <br />
+              <span
+                v-if="
+                  line.contents[1] &&
+                  $store.state.settings.showLyricsTranslation
+                "
+                class="translation"
+                >{{ line.contents[1] }}</span
+              >
+            </div>
           </div>
         </transition>
       </div>
@@ -399,16 +409,6 @@ export default {
             });
         }
       }, 50);
-    },
-    formatLine(line) {
-      const showLyricsTranslation = this.$store.state.settings
-        .showLyricsTranslation;
-      if (showLyricsTranslation && line.contents[1]) {
-        return `<span>${line.contents[0]}<br/>${line.contents[1]}</span>`;
-      } else if (line.contents[0] !== undefined) {
-        return `<span>${line.contents[0]}</span>`;
-      }
-      return 'unknown';
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
@@ -673,17 +673,28 @@ export default {
     scrollbar-width: none; // firefox
 
     .line {
-      padding: 18px;
-      transition: 0.2s;
+      margin: 2px 0;
+      padding: 12px 18px;
+      transition: 0.5s;
       border-radius: 12px;
 
       &:hover {
         background: var(--color-secondary-bg-for-transparent);
       }
+      &:active {
+        transform: scale(0.95);
+      }
 
       span {
         opacity: 0.28;
         cursor: default;
+        font-size: 1em;
+        transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      span.translation {
+        opacity: 0.2;
+        font-size: 0.95em;
       }
     }
 
@@ -691,9 +702,19 @@ export default {
       background: unset;
     }
 
+    .translation {
+      margin-top: 0.1em;
+    }
+
     .highlight span {
       opacity: 0.98;
-      transition: 0.5s;
+      display: inline-block;
+      font-size: 1.25em;
+    }
+
+    .highlight span.translation {
+      opacity: 0.65;
+      font-size: 1.1em;
     }
   }
 
@@ -752,6 +773,12 @@ export default {
   }
   .right-side .lyrics-container {
     max-width: 100%;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .right-side .lyrics-container {
+    max-width: 600px;
   }
 }
 

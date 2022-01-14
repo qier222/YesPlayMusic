@@ -28,6 +28,7 @@ export default class {
     this._enabled = false; // 是否启用Player
     this._repeatMode = 'off'; // off | on | one
     this._shuffle = false; // true | false
+    this._reversed = false;
     this._volume = 1; // 0 to 1
     this._volumeBeforeMuted = 1; // 用于保存静音前的音量
     this._personalFMLoading = false; // 是否正在私人FM中加载新的track
@@ -90,6 +91,18 @@ export default class {
     if (shuffle) {
       this._shuffleTheList();
     }
+  }
+  get reversed() {
+    return this._reversed;
+  }
+  set reversed(reversed) {
+    if (this._isPersonalFM) return;
+    if (reversed !== true && reversed !== false) {
+      console.warn('reversed: invalid args, must be Boolean');
+      return;
+    }
+    console.log('changing reversed to:', reversed);
+    this._reversed = reversed;
   }
   get volume() {
     return this._volume;
@@ -191,27 +204,43 @@ export default class {
     }, 1000);
   }
   _getNextTrack() {
+    const next = this._reversed ? this.current - 1 : this.current + 1;
+
     if (this._playNextList.length > 0) {
       let trackID = this._playNextList.shift();
       return [trackID, this.current];
     }
 
-    // 当歌曲是列表最后一首 && 循环模式开启
-    if (this.list.length === this.current + 1 && this.repeatMode === 'on') {
-      return [this.list[0], 0];
+    // 循环模式开启，则重新播放当前模式下的相对的下一首
+    if (this.repeatMode === 'on') {
+      if (this._reversed && this.current === 0) {
+        // 倒序模式，当前歌曲是第一首，则重新播放列表最后一首
+        return [this.list[this.list.length - 1], this.list.length - 1];
+      } else if (this.list.length === this.current + 1) {
+        // 正序模式，当前歌曲是最后一首，则重新播放第一首
+        return [this.list[0], 0];
+      }
     }
 
     // 返回 [trackID, index]
-    return [this.list[this.current + 1], this.current + 1];
+    return [this.list[next], next];
   }
   _getPrevTrack() {
-    // 当歌曲是列表第一首 && 循环模式开启
-    if (this.current === 0 && this.repeatMode === 'on') {
-      return [this.list[this.list.length - 1], this.list.length - 1];
+    const next = this._reversed ? this.current + 1 : this.current - 1;
+
+    // 循环模式开启，则重新播放当前模式下的相对的下一首
+    if (this.repeatMode === 'on') {
+      if (this._reversed && this.current === 0) {
+        // 倒序模式，当前歌曲是最后一首，则重新播放列表第一首
+        return [this.list[0], 0];
+      } else if (this.list.length === this.current + 1) {
+        // 正序模式，当前歌曲是第一首，则重新播放列表最后一首
+        return [this.list[this.list.length - 1], this.list.length - 1];
+      }
     }
 
     // 返回 [trackID, index]
-    return [this.list[this.current - 1], this.current - 1];
+    return [this.list[next], next];
   }
   async _shuffleTheList(firstTrackID = this._currentTrack.id) {
     let list = this._list.filter(tid => tid !== firstTrackID);
@@ -725,6 +754,9 @@ export default class {
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
+  }
+  switchReversed() {
+    this.reversed = !this.reversed;
   }
 
   clearPlayNextList() {
