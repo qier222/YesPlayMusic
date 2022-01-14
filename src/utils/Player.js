@@ -724,10 +724,14 @@ export default class {
 
   sendSelfToIpcMain() {
     if (process.env.IS_ELECTRON !== true) return false;
+    let liked = store.state.liked.songs.includes(this.currentTrack.id);
     ipcRenderer.send('player', {
       playing: this.playing,
-      likedCurrentTrack: store.state.liked.songs.includes(this.currentTrack.id),
+      likedCurrentTrack: liked,
     });
+    if (isCreateTray) {
+      ipcRenderer.send('updateTrayLikeState', liked);
+    }
   }
 
   switchRepeatMode() {

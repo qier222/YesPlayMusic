@@ -13,6 +13,7 @@ function createMenuTemplate(win) {
       click: () => {
         win.webContents.send('play');
       },
+      id: 'play',
     },
     {
       label: '暂停',
@@ -22,6 +23,7 @@ function createMenuTemplate(win) {
       click: () => {
         win.webContents.send('play');
       },
+      id: 'pause',
       visible: false,
     },
     {
@@ -63,6 +65,19 @@ function createMenuTemplate(win) {
       click: () => {
         win.webContents.send('like');
       },
+      id: 'like',
+    },
+    {
+      label: '取消喜欢',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/unlike.png')
+      ),
+      accelerator: 'CmdOrCtrl+L',
+      click: () => {
+        win.webContents.send('like');
+      },
+      id: 'unlike',
+      visible: false,
     },
     {
       label: '退出',
@@ -114,10 +129,13 @@ class YPMTrayLinuxImpl {
   handleEvents() {
     this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
     this.emitter.on('updatePlayState', isPlaying => {
-      let items = this.contextMenu.items;
-      items[isPlaying ? 2 : 3].visible = false;
-      items[isPlaying ? 3 : 2].visible = true;
+      this.contextMenu.getMenuItemById('play').visible = !isPlaying;
+      this.contextMenu.getMenuItemById('pause').visible = isPlaying;
       this.tray.setContextMenu(this.contextMenu);
+    });
+    this.emitter.on('updateLikeState', isLiked => {
+      this.contextMenu.getMenuItemById('like').visible = !isLiked;
+      this.contextMenu.getMenuItemById('unlike').visible = isLiked;
     });
   }
 }
@@ -133,6 +151,9 @@ class YPMTrayWindowsImpl {
     this.isPlaying = false;
     this.curDisplayPlaying = false;
 
+    this.isLiked = false;
+    this.curDisplayLiked = false;
+
     this.handleEvents();
   }
 
@@ -144,10 +165,16 @@ class YPMTrayWindowsImpl {
     this.tray.on('right-click', () => {
       if (this.isPlaying !== this.curDisplayPlaying) {
         this.curDisplayPlaying = this.isPlaying;
-        let items = this.contextMenu.items;
-        items[this.isPlaying ? 0 : 1].visible = false;
-        items[this.isPlaying ? 1 : 0].visible = true;
+        this.contextMenu.getMenuItemById('play').visible = !this.isPlaying;
+        this.contextMenu.getMenuItemById('pause').visible = this.isPlaying;
       }
+
+      if (this.isLiked !== this.curDisplayLiked) {
+        this.curDisplayLiked = this.isLiked;
+        this.contextMenu.getMenuItemById('like').visible = !this.isLiked;
+        this.contextMenu.getMenuItemById('unlike').visible = this.isLiked;
+      }
+
       this.tray.popUpContextMenu(this.contextMenu);
     });
 
@@ -156,6 +183,7 @@ class YPMTrayWindowsImpl {
       'updatePlayState',
       isPlaying => (this.isPlaying = isPlaying)
     );
+    this.emitter.on('updateLikeState', isLiked => (this.isLiked = isLiked));
   }
 }
 
