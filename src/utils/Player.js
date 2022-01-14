@@ -30,6 +30,12 @@ function setTitle(track) {
   }
 }
 
+function setTrayLikeState(isLiked) {
+  if (isCreateTray) {
+    ipcRenderer.send('updateTrayLikeState', isLiked);
+  }
+}
+
 export default class {
   constructor() {
     // 播放器状态
@@ -273,6 +279,7 @@ export default class {
       if (this._currentTrack.name) {
         setTitle(this._currentTrack);
       }
+      setTrayLikeState(store.state.liked.songs.includes(this.currentTrack.id));
     }
     this.setOutputDevice();
     this._howler.once('end', () => {
@@ -729,9 +736,7 @@ export default class {
       playing: this.playing,
       likedCurrentTrack: liked,
     });
-    if (isCreateTray) {
-      ipcRenderer.send('updateTrayLikeState', liked);
-    }
+    setTrayLikeState(liked);
   }
 
   switchRepeatMode() {
