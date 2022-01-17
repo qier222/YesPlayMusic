@@ -5,6 +5,9 @@
       :icon-class="iconClass"
       :style="{ marginRight: iconButton ? '0px' : '8px' }"
     />
+    <div v-if="loading" class="loading-overlay">
+      <svg-icon icon-class="loading" />
+    </div>
     <slot></slot>
   </button>
 </template>
@@ -41,6 +44,10 @@ export default {
       type: String,
       default: 'square',
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     buttonStyle() {
@@ -49,6 +56,7 @@ export default {
         padding: `8px ${this.horizontalPadding}px`,
         // height: "38px",
         width: this.shape === 'round' ? '38px' : 'auto',
+        pointerEvents: this.loading ? 'none' : 'auto',
       };
       if (this.backgroundColor !== '')
         styles.backgroundColor = this.backgroundColor;
@@ -61,6 +69,7 @@ export default {
 
 <style lang="scss" scoped>
 button {
+  position: relative;
   height: 40px;
   min-width: 40px;
   display: flex;
@@ -74,6 +83,7 @@ button {
   margin-right: 12px;
   transition: 0.2s;
   user-select: none;
+  overflow: hidden;
   .svg-icon {
     width: 16px;
     height: 16px;
@@ -92,5 +102,23 @@ button.grey {
 }
 button.transparent {
   background-color: transparent;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .svg-icon {
+    width: 24px;
+    height: 24px;
+  }
 }
 </style>

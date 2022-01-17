@@ -457,12 +457,12 @@ export default {
         })
         .then(() => {
           if (this.playlist.trackCount > this.tracks.length) {
-            this.loadingMore = true;
             this.loadMore();
           }
         });
     },
     loadMore(loadNum = 100) {
+      this.loadingMore = true;
       let trackIDs = this.playlist.trackIds.filter((t, index) => {
         if (
           index > this.lastLoadedTrackIndex &&
