@@ -28,11 +28,16 @@ export function parseLyric(lrc) {
         lrcObj.push({
           time: time,
           rawTime: timeRegExpArr[0],
-          content: content.trim(),
+          content: trimContent(content),
         });
       }
     }
   }
   lrcObj.sort((a, b) => a.time - b.time);
   return lrcObj;
+}
+
+function trimContent(content) {
+  let t = content.trim();
+  return t.length < 1 ? content : t;
 }
