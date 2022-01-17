@@ -156,7 +156,8 @@ export default {
   },
   fetchCloudDisk: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return cloudDisk().then(result => {
+    // FIXME: #1242
+    return cloudDisk({ limit: 1000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'cloudDisk',
