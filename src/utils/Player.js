@@ -15,6 +15,12 @@ const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
+const delay = ms =>
+  new Promise(resolve => {
+    setTimeout(() => {
+      resolve('');
+    }, ms);
+  });
 const excludeSaveKeys = [
   '_playing',
   '_personalFMLoading',
@@ -577,10 +583,27 @@ export default class {
     this._isPersonalFM = true;
     if (!this._personalFMNextTrack) {
       this._personalFMLoading = true;
-      let result = await personalFM().catch(() => null);
+      let result = null;
+      let retryCount = 5;
+      for (; retryCount >= 0; retryCount--) {
+        result = await personalFM().catch(() => null);
+        if (!result) {
+          this._personalFMLoading = false;
+          store.dispatch('showToast', 'personal fm timeout');
+          return false;
+        }
+        if (result.data?.length > 0) {
+          break;
+        } else if (retryCount > 0) {
+          await delay(1000);
+        }
+      }
       this._personalFMLoading = false;
-      if (!result || !result.data) {
-        store.dispatch('showToast', 'personal fm timeout');
+
+      if (retryCount < 0) {
+        let content = '获取私人FM数据时重试次数过多，请手动切换下一首';
+        store.dispatch('showToast', content);
+        console.log(content);
         return false;
       }
       // 这里只能拿到一条数据
