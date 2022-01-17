@@ -9,6 +9,7 @@ import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
+import { isCreateTray } from '@/utils/platform';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -19,6 +20,21 @@ const excludeSaveKeys = [
   '_personalFMLoading',
   '_personalFMNextLoading',
 ];
+
+function setTitle(track) {
+  document.title = track
+    ? `${track.name} · ${track.ar[0].name} - YesPlayMusic`
+    : 'YesPlayMusic';
+  if (isCreateTray) {
+    ipcRenderer.send('updateTrayTooltip', document.title);
+  }
+}
+
+function setTrayLikeState(isLiked) {
+  if (isCreateTray) {
+    ipcRenderer.send('updateTrayLikeState', isLiked);
+  }
+}
 
 export default class {
   constructor() {
@@ -194,6 +210,12 @@ export default class {
       });
     }
   }
+  _setPlaying(isPlaying) {
+    this._playing = isPlaying;
+    if (isCreateTray) {
+      ipcRenderer.send('updateTrayPlayState', this._playing);
+    }
+  }
   _setIntervals() {
     // 同步播放进度
     // TODO: 如果 _progress 在别的地方被改变了，这个定时器会覆盖之前改变的值，是bug
@@ -284,8 +306,9 @@ export default class {
     if (autoplay) {
       this.play();
       if (this._currentTrack.name) {
-        document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+        setTitle(this._currentTrack);
       }
+      setTrayLikeState(store.state.liked.songs.includes(this.currentTrack.id));
     }
     this.setOutputDevice();
     this._howler.once('end', () => {
@@ -539,7 +562,7 @@ export default class {
     const [trackID, index] = this._getNextTrack();
     if (trackID === undefined) {
       this._howler?.stop();
-      this._playing = false;
+      this._setPlaying(false);
       return false;
     }
     this.current = index;
@@ -593,16 +616,16 @@ export default class {
 
   pause() {
     this._howler?.pause();
-    this._playing = false;
-    document.title = 'YesPlayMusic';
+    this._setPlaying(false);
+    setTitle(null);
     this._pauseDiscordPresence(this._currentTrack);
   }
   play() {
     if (this._howler?.playing()) return;
     this._howler?.play();
-    this._playing = true;
+    this._setPlaying(true);
     if (this._currentTrack.name) {
-      document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+      setTitle(this._currentTrack);
     }
     this._playDiscordPresence(this._currentTrack, this.seek());
     if (store.state.lastfm.key !== undefined) {
@@ -737,10 +760,12 @@ export default class {
 
   sendSelfToIpcMain() {
     if (process.env.IS_ELECTRON !== true) return false;
+    let liked = store.state.liked.songs.includes(this.currentTrack.id);
     ipcRenderer.send('player', {
       playing: this.playing,
-      likedCurrentTrack: store.state.liked.songs.includes(this.currentTrack.id),
+      likedCurrentTrack: liked,
     });
+    setTrayLikeState(liked);
   }
 
   switchRepeatMode() {
