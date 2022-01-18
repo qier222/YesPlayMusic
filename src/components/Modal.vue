@@ -33,7 +33,7 @@ export default {
     },
     width: {
       type: String,
-      default: '50vw',
+      default: '300px',
     },
     clickOutsideHide: {
       type: Boolean,
@@ -78,7 +78,7 @@ export default {
   backdrop-filter: blur(12px) opacity(1);
   padding: 24px 0;
   border-radius: 12px;
-  width: 50vw;
+  width: 300px;
   margin: auto 0;
   font-size: 14px;
   z-index: 100;

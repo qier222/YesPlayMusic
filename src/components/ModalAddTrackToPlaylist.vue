@@ -5,7 +5,6 @@
     :close="close"
     :show-footer="false"
     title="添加到歌单"
-    width="25vw"
   >
     <template slot="default">
       <div class="new-playlist-button" @click="newPlaylist"

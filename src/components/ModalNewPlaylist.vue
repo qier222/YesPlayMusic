@@ -4,7 +4,6 @@
     :show="show"
     :close="close"
     title="新建歌单"
-    width="25vw"
   >
     <template slot="default">
       <input
