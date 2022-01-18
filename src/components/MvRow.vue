@@ -113,11 +113,11 @@ export default {
   }
 }
 
-@media (max-width: 550px) {
-  .mv-row {
-    --col-num: 1;
-  }
-}
+// @media (max-width: 550px) {
+//   .mv-row {
+//     --col-num: 1;
+//   }
+// }
 
 .mv {
   color: var(--color-text);

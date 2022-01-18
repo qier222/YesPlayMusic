@@ -570,7 +570,7 @@ export default {
   display: none;
 }
 
-@media (max-aspect-ratio: 9/13) {
+@media (max-width: 700px) {
   .controls {
     display: none;
   }

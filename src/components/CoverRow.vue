@@ -4,7 +4,7 @@
       v-for="item in items"
       :key="item.id"
       class="item"
-      :class="{ artist: type === 'artist' }"
+      :class="{ artist: type === 'artist', scroll: !fitOnScreen }"
     >
       <Cover
         :id="item.id"
@@ -55,15 +55,20 @@ export default {
     showPlayCount: { type: Boolean, default: false },
     columnNumber: {
       type: Number,
-      default: window.innerWidth > 700 ? 5 : 3,
+      default: 10,
     },
-    gap: { type: String, default: '44px 24px' },
+    gap: { type: String, default: '20px 24px' },
     playButtonSize: { type: Number, default: 22 },
+    fitOnScreen: { type: Boolean, default: false },
   },
   computed: {
     rowStyles() {
       return {
-        'grid-template-columns': `repeat(${this.columnNumber}, 1fr)`,
+        'grid-template-columns': `repeat(${
+          this.items.length > this.columnNumber
+            ? this.columnNumber
+            : this.items.length
+        }, 1fr)`,
         gap: this.gap,
       };
     },
@@ -123,6 +128,23 @@ export default {
 <style lang="scss" scoped>
 .cover-row {
   display: grid;
+  overflow-x: scroll;
+  overflow-y: clip;
+}
+
+@media (max-width: 1336px) {
+  .cover-row {
+    margin: 0 -5vw;
+    padding: 0 5vw;
+  }
+}
+
+.cover-row::-webkit-scrollbar {
+  display: none;
+}
+
+.item.scroll {
+  min-width: 120px;
 }
 
 .item {

@@ -1,74 +1,84 @@
 <template>
   <div v-show="show" class="album-page">
     <div class="playlist-info">
-      <Cover
-        :id="album.id"
-        :image-url="album.picUrl | resizeImage(1024)"
-        :show-play-button="true"
-        :always-show-shadow="true"
-        :click-cover-to-play="true"
-        :fixed-size="288"
-        type="album"
-        :cover-hover="false"
-        :play-button-size="18"
-        @click.right.native="openMenu"
-      />
-      <div class="info">
-        <div class="title" @click.right="openMenu"> {{ title }}</div>
-        <div v-if="subtitle !== ''" class="subtitle" @click.right="openMenu">{{
-          subtitle
-        }}</div>
-        <div class="artist">
-          <span v-if="album.artist.id !== 104700">
-            <span>{{ album.type | formatAlbumType(album) }} by </span
-            ><router-link :to="`/artist/${album.artist.id}`">{{
-              album.artist.name
-            }}</router-link></span
+      <div class="info-container">
+        <Cover
+          :id="album.id"
+          :image-url="album.picUrl | resizeImage(1024)"
+          :show-play-button="true"
+          :always-show-shadow="true"
+          :click-cover-to-play="true"
+          :fixed-size="140"
+          type="album"
+          :cover-hover="false"
+          :play-button-size="18"
+          @click.right.native="openMenu"
+        />
+        <div class="info">
+          <div class="title" @click.right="openMenu"> {{ title }}</div>
+          <div
+            v-if="subtitle !== ''"
+            class="subtitle"
+            @click.right="openMenu"
+            >{{ subtitle }}</div
           >
-          <span v-else>Compilation by Various Artists</span>
+          <div class="artist">
+            <span v-if="album.artist.id !== 104700">
+              <span>{{ album.type | formatAlbumType(album) }} by </span
+              ><router-link :to="`/artist/${album.artist.id}`">{{
+                album.artist.name
+              }}</router-link></span
+            >
+            <span v-else>Compilation by Various Artists</span>
+          </div>
+          <div class="date-and-count">
+            <span v-if="album.mark === 1056768" class="explicit-symbol"
+              ><ExplicitSymbol
+            /></span>
+            <span :title="album.publishTime | formatDate">{{
+              new Date(album.publishTime).getFullYear()
+            }}</span>
+            <span> · {{ album.size }} {{ $t('common.songs') }}</span
+            >,
+            {{ albumTime | formatTime('Human') }}
+          </div>
         </div>
-        <div class="date-and-count">
-          <span v-if="album.mark === 1056768" class="explicit-symbol"
-            ><ExplicitSymbol
-          /></span>
-          <span :title="album.publishTime | formatDate">{{
-            new Date(album.publishTime).getFullYear()
-          }}</span>
-          <span> · {{ album.size }} {{ $t('common.songs') }}</span
-          >,
-          {{ albumTime | formatTime('Human') }}
-        </div>
-        <div class="description" @click="toggleFullDescription">
-          {{ album.description }}
-        </div>
-        <div class="buttons" style="margin-top: 32px">
-          <ButtonTwoTone
-            icon-class="play"
-            @click.native="playAlbumByID(album.id)"
-          >
-            {{ $t('common.play') }}
-          </ButtonTwoTone>
-          <ButtonTwoTone
-            :icon-class="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
-            :icon-button="true"
-            :horizontal-padding="0"
-            :color="dynamicDetail.isSub ? 'blue' : 'grey'"
-            :text-color="dynamicDetail.isSub ? '#335eea' : ''"
-            :background-color="
-              dynamicDetail.isSub ? 'var(--color-secondary-bg)' : ''
-            "
-            @click.native="likeAlbum"
-          >
-          </ButtonTwoTone>
-          <ButtonTwoTone
-            icon-class="more"
-            :icon-button="true"
-            :horizontal-padding="0"
-            color="grey"
-            @click.native="openMenu"
-          >
-          </ButtonTwoTone>
-        </div>
+      </div>
+      <div
+        v-if="album.description"
+        class="description"
+        @click="toggleFullDescription"
+      >
+        {{ album.description }}
+      </div>
+      <div class="buttons" style="margin-top: 32px">
+        <ButtonTwoTone
+          icon-class="play"
+          class="play-button"
+          @click.native="playAlbumByID(album.id)"
+        >
+          {{ $t('common.play') }}
+        </ButtonTwoTone>
+        <ButtonTwoTone
+          :icon-class="dynamicDetail.isSub ? 'heart-solid' : 'heart'"
+          :icon-button="true"
+          :horizontal-padding="0"
+          :color="dynamicDetail.isSub ? 'blue' : 'grey'"
+          :text-color="dynamicDetail.isSub ? '#335eea' : ''"
+          :background-color="
+            dynamicDetail.isSub ? 'var(--color-secondary-bg)' : ''
+          "
+          @click.native="likeAlbum"
+        >
+        </ButtonTwoTone>
+        <ButtonTwoTone
+          icon-class="more"
+          :icon-button="true"
+          :horizontal-padding="0"
+          color="grey"
+          @click.native="openMenu"
+        >
+        </ButtonTwoTone>
       </div>
     </div>
     <div v-if="Object.keys(tracksByDisc).length !== 1">
@@ -330,58 +340,69 @@ export default {
 }
 .playlist-info {
   display: flex;
-  width: 78vw;
-  margin-bottom: 72px;
-  .info {
+  margin-bottom: 48px;
+  position: relative;
+  flex-direction: column;
+  .info-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-    margin-left: 56px;
-    color: var(--color-text);
-    .title {
-      font-size: 56px;
-      font-weight: 700;
-    }
-    .subtitle {
-      font-size: 22px;
-      font-weight: 600;
-    }
-    .artist {
-      font-size: 18px;
-      opacity: 0.88;
-      margin-top: 24px;
-      a {
+    align-items: center;
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      margin-left: 12px;
+      color: var(--color-text);
+      .title {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .subtitle {
+        font-size: 22px;
         font-weight: 600;
       }
-    }
-    .date-and-count {
-      font-size: 14px;
-      opacity: 0.68;
-      margin-top: 2px;
-    }
-    .description {
-      user-select: none;
-      font-size: 14px;
-      opacity: 0.68;
-      margin-top: 24px;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      overflow: hidden;
-      cursor: pointer;
-      white-space: pre-line;
-      &:hover {
-        transition: opacity 0.3s;
+      .artist {
+        font-size: 18px;
         opacity: 0.88;
+        margin-top: 24px;
+        a {
+          font-weight: 600;
+        }
+      }
+      .date-and-count {
+        font-size: 14px;
+        opacity: 0.68;
+        margin-top: 2px;
       }
     }
-    .buttons {
-      margin-top: 32px;
-      display: flex;
-      button {
-        margin-right: 16px;
-      }
+  }
+
+  .description {
+    color: var(--color-text);
+
+    user-select: none;
+    font-size: 14px;
+    opacity: 0.68;
+    margin-top: 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    cursor: pointer;
+    white-space: pre-line;
+    &:hover {
+      transition: opacity 0.3s;
+      opacity: 0.88;
+    }
+  }
+  .buttons {
+    margin-top: 32px;
+    display: flex;
+    button {
+      margin-right: 16px;
+    }
+    .play-button {
+      flex: 1;
     }
   }
 }

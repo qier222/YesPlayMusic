@@ -44,6 +44,6 @@ export default {
 <style lang="scss" scoped>
 h1 {
   color: var(--color-text);
-  font-size: 56px;
+  font-size: 40px;
 }
 </style>

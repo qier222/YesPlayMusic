@@ -130,7 +130,7 @@ export default {
   cursor: pointer;
   user-select: none;
 }
-@media (max-aspect-ratio: 9/13) {
+@media (max-width: 700px) {
   .cover {
     height: 25vw;
   }

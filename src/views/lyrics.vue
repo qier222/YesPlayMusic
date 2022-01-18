@@ -1,10 +1,7 @@
 <template>
   <transition name="slide-up">
-    <div
-      class="lyrics-page"
-      :class="{ 'no-lyric': noLyric }"
-      :data-theme="theme"
-    >
+    <div class="lyrics-page" :class="{ 'no-lyric': true }" :data-theme="theme">
+      <!-- HACK, implement lyrics properly -->
       <div
         v-if="
           (settings.lyricsBackground === 'blur') |
@@ -185,7 +182,7 @@
               :class="{
                 highlight: highlightLyricIndex === index,
               }"
-              @click="clickLyricLine(line.time)"
+              @click="clickLyricLine(line.time, true)"
               @dblclick="clickLyricLine(line.time, true)"
             >
               <span v-if="line.contents[0]">{{ line.contents[0] }}</span>
@@ -529,7 +526,7 @@ export default {
       font-weight: 600;
       opacity: 0.88;
       display: -webkit-box;
-      -webkit-box-orient: vertical;
+      // -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
     }
@@ -772,7 +769,7 @@ export default {
   }
 }
 
-@media (max-aspect-ratio: 10/9) {
+@media (max-width: 700px) {
   .lyrics-page:not(.no-lyric) {
     .left-side {
       display: none;
@@ -783,11 +780,12 @@ export default {
     padding-left: 0px;
   }
 
-  .controls {
-    max-width: 54vw;
-    margin-top: 24px;
+  .left-side {
+    .controls {
+      max-width: 90vw;
+      margin-top: 24px;
+    }
   }
-
   .cover {
     img {
       width: 54vw;

@@ -59,8 +59,8 @@ export default {
 
 <style lang="scss" scoped>
 .special-playlist {
-  margin-top: 192px;
-  margin-bottom: 128px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   border-radius: 1.25em;
   text-align: center;
 
@@ -85,7 +85,7 @@ export default {
   }
 
   .title {
-    font-size: 84px;
+    font-size: 40px;
     line-height: 1.05;
     font-weight: 700;
     text-transform: uppercase;

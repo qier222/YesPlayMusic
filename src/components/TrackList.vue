@@ -60,7 +60,7 @@
         :key="itemKey === 'id' ? track.id : `${track.id}${index}`"
         :track-prop="track"
         :highlight-playing-track="highlightPlayingTrack"
-        @dblclick.native="playThisList(track.id || track.songId)"
+        @click.native="playThisList(track.id || track.songId)"
         @click.right.native="openMenu($event, track, index)"
       />
     </div>
@@ -124,7 +124,7 @@ export default {
     },
     columnNumber: {
       type: Number,
-      default: 4,
+      default: 2,
     },
     highlightPlayingTrack: {
       type: Boolean,

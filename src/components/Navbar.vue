@@ -29,21 +29,25 @@
         <button-icon class="forward-button" @click.native="go('forward')"
           ><svg-icon icon-class="arrow-right"
         /></button-icon>
-      </div>
-      <div class="navigation-links">
-        <router-link to="/" :class="{ active: $route.name === 'home' }">{{
-          $t('nav.home')
-        }}</router-link>
-        <router-link
-          to="/explore"
-          :class="{ active: $route.name === 'explore' }"
-          >{{ $t('nav.explore') }}</router-link
-        >
-        <router-link
-          to="/library"
-          :class="{ active: $route.name === 'library' }"
-          >{{ $t('nav.library') }}</router-link
-        >
+        <button-icon class="home-button">
+          <router-link to="/" :class="{ active: $route.name === 'home' }">
+            <svg-icon icon-class="home" />
+          </router-link>
+        </button-icon>
+        <button-icon class="explore-button">
+          <router-link
+            to="/explore"
+            :class="{ active: $route.name === 'explore' }"
+            ><svg-icon icon-class="compass"
+          /></router-link>
+        </button-icon>
+        <button-icon class="library-button">
+          <router-link
+            to="/library"
+            :class="{ active: $route.name === 'library' }"
+            ><svg-icon icon-class="file-audio"
+          /></router-link>
+        </button-icon>
       </div>
       <div class="right-part">
         <div class="search-box">
@@ -360,12 +364,12 @@ nav {
     height: 32px;
     background: var(--color-secondary-bg-for-transparent);
     border-radius: 8px;
-    width: 200px;
+    // width: 200px;
   }
 
   .svg-icon {
-    height: 15px;
-    width: 15px;
+    height: 24px;
+    width: 24px;
     color: var(--color-text);
     opacity: 0.28;
     margin: {
@@ -429,25 +433,20 @@ nav {
   }
 }
 
-@media (max-aspect-ratio: 9/13) {
-  nav {
-    flex-wrap: wrap;
-  }
+@media (max-width: 700px) {
   .right-part {
     justify-content: center;
+    margin-left: 8px;
   }
-  //.forward-button {
-  //  display: none;
-  //}
+  .forward-button {
+    display: none;
+  }
   button {
     padding: 2px;
   }
   .navigation-links a {
     margin-left: 2px;
     margin-right: 2px;
-  }
-  .right-part {
-    width: 100vw;
   }
 }
 </style>

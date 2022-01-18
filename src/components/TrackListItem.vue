@@ -443,7 +443,7 @@ button {
   }
 }
 
-@media (max-aspect-ratio: 9/13) {
+@media (max-width: 700px) {
   .actions {
     display: none;
   }

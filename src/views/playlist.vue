@@ -4,97 +4,104 @@
       v-if="specialPlaylistInfo === undefined && !isLikeSongsPage"
       class="playlist-info"
     >
-      <Cover
-        :id="playlist.id"
-        :image-url="playlist.coverImgUrl | resizeImage(1024)"
-        :show-play-button="true"
-        :always-show-shadow="true"
-        :click-cover-to-play="true"
-        :fixed-size="288"
-        type="playlist"
-        :cover-hover="false"
-        :play-button-size="18"
-        @click.right.native="openMenu"
-      />
-      <div class="info">
-        <div class="title" @click.right="openMenu"
-          ><span v-if="playlist.privacy === 10" class="lock-icon">
-            <svg-icon icon-class="lock" /></span
-          >{{ playlist.name }}</div
-        >
-        <div class="artist">
-          Playlist by
-          <span
-            v-if="
-              [
-                5277771961,
-                5277965913,
-                5277969451,
-                5277778542,
-                5278068783,
-              ].includes(playlist.id)
-            "
-            style="font-weight: 600"
-            >Apple Music</span
+      <div class="info-container">
+        <Cover
+          :id="playlist.id"
+          :image-url="playlist.coverImgUrl | resizeImage(1024)"
+          :show-play-button="true"
+          :always-show-shadow="true"
+          :click-cover-to-play="true"
+          :fixed-size="160"
+          type="playlist"
+          :cover-hover="false"
+          :play-button-size="18"
+          @click.right.native="openMenu"
+        />
+        <div class="info">
+          <div class="title" @click.right="openMenu"
+            ><span v-if="playlist.privacy === 10" class="lock-icon">
+              <svg-icon icon-class="lock" /></span
+            >{{ playlist.name }}</div
           >
-          <a
-            v-else
-            :href="`https://music.163.com/#/user/home?id=${playlist.creator.userId}`"
-            target="blank"
-            >{{ playlist.creator.nickname }}</a
-          >
+          <div class="artist">
+            Playlist by
+            <span
+              v-if="
+                [
+                  5277771961,
+                  5277965913,
+                  5277969451,
+                  5277778542,
+                  5278068783,
+                ].includes(playlist.id)
+              "
+              style="font-weight: 600"
+              >Apple Music</span
+            >
+            <a
+              v-else
+              :href="`https://music.163.com/#/user/home?id=${playlist.creator.userId}`"
+              target="blank"
+              >{{ playlist.creator.nickname }}</a
+            >
+          </div>
+          <div class="date-and-count">
+            {{ $t('playlist.updatedAt') }}
+            {{ playlist.updateTime | formatDate }} · {{ playlist.trackCount }}
+            {{ $t('common.songs') }}
+          </div>
         </div>
-        <div class="date-and-count">
-          {{ $t('playlist.updatedAt') }}
-          {{ playlist.updateTime | formatDate }} · {{ playlist.trackCount }}
-          {{ $t('common.songs') }}
-        </div>
-        <div class="description" @click="toggleFullDescription">
-          {{ playlist.description }}
-        </div>
-        <div class="buttons">
-          <ButtonTwoTone icon-class="play" @click.native="playPlaylistByID()">
-            {{ $t('common.play') }}
-          </ButtonTwoTone>
-          <ButtonTwoTone
-            v-if="playlist.creator.userId !== data.user.userId"
-            :icon-class="playlist.subscribed ? 'heart-solid' : 'heart'"
-            :icon-button="true"
-            :horizontal-padding="0"
-            :color="playlist.subscribed ? 'blue' : 'grey'"
-            :text-color="playlist.subscribed ? '#335eea' : ''"
-            :background-color="
-              playlist.subscribed ? 'var(--color-secondary-bg)' : ''
-            "
-            @click.native="likePlaylist"
-          >
-          </ButtonTwoTone>
-          <ButtonTwoTone
-            icon-class="more"
-            :icon-button="true"
-            :horizontal-padding="0"
-            color="grey"
-            @click.native="openMenu"
-          >
-          </ButtonTwoTone>
-        </div>
-      </div>
-      <div v-if="displaySearchInPlaylist" class="search-box">
-        <div class="container" :class="{ active: inputFocus }">
-          <svg-icon icon-class="search" />
-          <div class="input">
-            <input
-              v-model.trim="inputSearchKeyWords"
-              v-focus
-              :placeholder="inputFocus ? '' : $t('playlist.search')"
-              @input="inputDebounce()"
-              @focus="inputFocus = true"
-              @blur="inputFocus = false"
-            />
+        <div v-if="displaySearchInPlaylist" class="search-box">
+          <div class="container" :class="{ active: inputFocus }">
+            <svg-icon icon-class="search" />
+            <div class="input">
+              <input
+                v-model.trim="inputSearchKeyWords"
+                v-focus
+                :placeholder="inputFocus ? '' : $t('playlist.search')"
+                @input="inputDebounce()"
+                @focus="inputFocus = true"
+                @blur="inputFocus = false"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <div class="description" @click="toggleFullDescription">
+        {{ playlist.description }}
+      </div>
+      <div class="buttons">
+        <ButtonTwoTone
+          class="play-button"
+          icon-class="play"
+          @click.native="playPlaylistByID()"
+        >
+          {{ $t('common.play') }}
+        </ButtonTwoTone>
+        <ButtonTwoTone
+          v-if="playlist.creator.userId !== data.user.userId"
+          :icon-class="playlist.subscribed ? 'heart-solid' : 'heart'"
+          :icon-button="true"
+          :horizontal-padding="0"
+          :color="playlist.subscribed ? 'blue' : 'grey'"
+          :text-color="playlist.subscribed ? '#335eea' : ''"
+          :background-color="
+            playlist.subscribed ? 'var(--color-secondary-bg)' : ''
+          "
+          @click.native="likePlaylist"
+        >
+        </ButtonTwoTone>
+        <ButtonTwoTone
+          icon-class="more"
+          :icon-button="true"
+          :horizontal-padding="0"
+          color="grey"
+          @click.native="openMenu"
+        >
+        </ButtonTwoTone>
+      </div>
     </div>
+
     <div v-if="specialPlaylistInfo !== undefined" class="special-playlist">
       <div
         class="title"
@@ -550,67 +557,75 @@ export default {
   display: flex;
   margin-bottom: 72px;
   position: relative;
-  .info {
+  flex-direction: column;
+  .info-container {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-    margin-left: 56px;
-    .title {
-      font-size: 36px;
-      font-weight: 700;
-      color: var(--color-text);
-
-      .lock-icon {
-        opacity: 0.28;
+    align-items: center;
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      margin-left: 12px;
+      .title {
+        font-size: 20px;
+        font-weight: 700;
         color: var(--color-text);
-        margin-right: 8px;
-        .svg-icon {
-          height: 26px;
-          width: 26px;
+
+        .lock-icon {
+          opacity: 0.28;
+          color: var(--color-text);
+          margin-right: 8px;
+          .svg-icon {
+            height: 26px;
+            width: 26px;
+          }
         }
       }
-    }
-    .artist {
-      font-size: 18px;
-      opacity: 0.88;
-      color: var(--color-text);
-      margin-top: 24px;
-    }
-    .date-and-count {
-      font-size: 14px;
-      opacity: 0.68;
-      color: var(--color-text);
-      margin-top: 2px;
-    }
-    .description {
-      font-size: 14px;
-      opacity: 0.68;
-      color: var(--color-text);
-      margin-top: 24px;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      overflow: hidden;
-      cursor: pointer;
-      &:hover {
-        transition: opacity 0.3s;
+      .artist {
+        font-size: 18px;
         opacity: 0.88;
+        color: var(--color-text);
+        margin-top: 24px;
+      }
+      .date-and-count {
+        font-size: 14px;
+        opacity: 0.68;
+        color: var(--color-text);
+        margin-top: 2px;
       }
     }
-    .buttons {
-      margin-top: 32px;
-      display: flex;
-      button {
-        margin-right: 16px;
-      }
+  }
+  .description {
+    font-size: 14px;
+    opacity: 0.68;
+    color: var(--color-text);
+    margin-top: 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    cursor: pointer;
+    &:hover {
+      transition: opacity 0.3s;
+      opacity: 0.88;
+    }
+  }
+  .buttons {
+    margin-top: 32px;
+    display: flex;
+    button {
+      margin-right: 16px;
+    }
+    .play-button {
+      flex: 1;
     }
   }
 }
 
 .special-playlist {
-  margin-top: 192px;
-  margin-bottom: 128px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   border-radius: 1.25em;
   text-align: center;
 
@@ -635,7 +650,7 @@ export default {
   }
 
   .title {
-    font-size: 84px;
+    font-size: 40px;
     line-height: 1.05;
     font-weight: 700;
     text-transform: uppercase;
@@ -660,7 +675,7 @@ export default {
   .subtitle {
     font-size: 18px;
     letter-spacing: 1px;
-    margin: 28px 0 54px 0;
+    margin: 28px 0 34px 0;
     animation-duration: 0.8s;
     animation-name: letterSpacing1;
     text-transform: uppercase;

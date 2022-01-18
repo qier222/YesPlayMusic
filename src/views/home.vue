@@ -10,6 +10,7 @@
         :items="byAppleMusic"
         sub-text="appleMusic"
         :image-size="1024"
+        :column-number="5"
       />
     </div>
     <div class="index-row">
@@ -204,7 +205,7 @@ footer {
   margin-bottom: 78px;
 }
 
-@media (max-aspect-ratio: 9/13) {
+@media (max-width: 700px) {
   .for-you-row {
     display: grid;
     grid-template-columns: 1fr;

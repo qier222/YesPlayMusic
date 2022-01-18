@@ -7,7 +7,7 @@
     </h1>
     <div class="section-one">
       <div class="liked-songs" @click="goToLikedSongsList">
-        <div class="top">
+        <!-- <div class="top">
           <p>
             <span
               v-for="(line, index) in pickedLyric"
@@ -16,7 +16,7 @@
               >{{ line }}<br
             /></span>
           </p>
-        </div>
+        </div> -->
         <div class="bottom">
           <div class="titles">
             <div class="title">{{ $t('library.likedSongs') }}</div>
@@ -32,8 +32,8 @@
       <div class="songs">
         <TrackList
           :id="liked.playlists.length > 0 ? liked.playlists[0].id : 0"
-          :tracks="liked.songsWithDetails"
-          :column-number="3"
+          :tracks="liked.songsWithDetails.slice(0, 8)"
+          :column-number="2"
           type="tracklist"
           dbclick-track-func="playPlaylistByID"
         />
@@ -43,22 +43,6 @@
     <div class="section-two">
       <div class="tabs-row">
         <div class="tabs">
-          <div
-            class="tab dropdown"
-            :class="{ active: currentTab === 'playlists' }"
-            @click="updateCurrentTab('playlists')"
-          >
-            <span class="text">{{
-              {
-                all: $t('contextMenu.allPlaylists'),
-                mine: $t('contextMenu.minePlaylists'),
-                liked: $t('contextMenu.likedPlaylists'),
-              }[playlistFilter]
-            }}</span>
-            <span class="icon" @click.stop="openPlaylistTabMenu"
-              ><svg-icon icon-class="dropdown"
-            /></span>
-          </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'albums' }"
@@ -116,6 +100,8 @@
             type="playlist"
             sub-text="creator"
             :show-play-button="true"
+            :column-number="3"
+            :fit-on-screen="true"
           />
         </div>
       </div>
@@ -126,6 +112,8 @@
           type="album"
           sub-text="artist"
           :show-play-button="true"
+          :column-number="3"
+          :fit-on-screen="true"
         />
       </div>
 
@@ -134,6 +122,8 @@
           :items="liked.artists"
           type="artist"
           :show-play-button="true"
+          :column-number="3"
+          :fit-on-screen="true"
         />
       </div>
 
@@ -145,10 +135,11 @@
         <TrackList
           :id="-8"
           :tracks="liked.cloudDisk"
-          :column-number="3"
           type="cloudDisk"
           dbclick-track-func="playCloudDisk"
           :extra-context-menu-item="['removeTrackFromCloudDisk']"
+          :column-number="2"
+          :fit-on-screen="true"
         />
       </div>
 
@@ -401,8 +392,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.line-break {
+  width: 100%;
+}
 h1 {
-  font-size: 42px;
+  font-size: 30px;
   color: var(--color-text);
   display: flex;
   align-items: center;
@@ -418,10 +412,9 @@ h1 {
 .section-one {
   display: flex;
   margin-top: 24px;
+  flex-direction: column;
   .songs {
-    flex: 7;
     margin-top: 8px;
-    margin-left: 36px;
     overflow: hidden;
   }
 }
@@ -483,21 +476,21 @@ h1 {
     }
   }
 
-  .top {
+  .songs {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
-    font-size: 14px;
-    opacity: 0.88;
+    // font-size: 14px;
+    // opacity: 0.88;
     color: var(--color-primary);
-    p {
-      margin-top: 2px;
-    }
+    // p {
+    // margin-top: 2px;
+    // }
   }
 }
 
 .section-two {
-  margin-top: 54px;
+  margin-top: 40px;
   min-height: calc(100vh - 182px);
 }
 
@@ -510,12 +503,12 @@ h1 {
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  font-size: 18px;
+  font-size: 14px;
   color: var(--color-text);
   .tab {
     font-weight: 600;
-    padding: 8px 14px;
-    margin-right: 14px;
+    padding: 4px 7px;
+    margin-right: 7px;
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
@@ -536,7 +529,7 @@ h1 {
     padding: 0;
     overflow: hidden;
     .text {
-      padding: 8px 3px 8px 14px;
+      padding: 4px 7px;
     }
     .icon {
       height: 100%;
@@ -552,9 +545,10 @@ h1 {
 }
 
 button.tab-button {
+  width: 150px;
   color: var(--color-text);
   border-radius: 8px;
-  padding: 0 14px;
+  padding: 0 8px;
   display: flex;
   justify-content: center;
   align-items: center;

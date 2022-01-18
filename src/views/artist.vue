@@ -1,47 +1,54 @@
 <template>
   <div v-show="show" class="artist-page">
     <div class="artist-info">
-      <div class="head">
-        <img :src="artist.img1v1Url | resizeImage(1024)" />
+      <div class="info-container">
+        <div class="head">
+          <img :src="artist.img1v1Url | resizeImage(1024)" />
+        </div>
+        <div>
+          <div class="name">{{ artist.name }}</div>
+          <div class="artist">{{ $t('artist.artist') }}</div>
+          <div class="statistics">
+            <a @click="scrollTo('popularTracks')"
+              >{{ artist.musicSize }} {{ $t('common.songs') }}</a
+            >
+            ·
+            <a @click="scrollTo('seeMore', 'start')"
+              >{{ artist.albumSize }} {{ $t('artist.withAlbums') }}</a
+            >
+            ·
+            <a @click="scrollTo('mvs')"
+              >{{ artist.mvSize }} {{ $t('artist.videos') }}</a
+            >
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="name">{{ artist.name }}</div>
-        <div class="artist">{{ $t('artist.artist') }}</div>
-        <div class="statistics">
-          <a @click="scrollTo('popularTracks')"
-            >{{ artist.musicSize }} {{ $t('common.songs') }}</a
-          >
-          ·
-          <a @click="scrollTo('seeMore', 'start')"
-            >{{ artist.albumSize }} {{ $t('artist.withAlbums') }}</a
-          >
-          ·
-          <a @click="scrollTo('mvs')"
-            >{{ artist.mvSize }} {{ $t('artist.videos') }}</a
-          >
-        </div>
-        <div class="description" @click="toggleFullDescription">
-          {{ artist.briefDesc }}
-        </div>
-        <div class="buttons">
-          <ButtonTwoTone icon-class="play" @click.native="playPopularSongs()">
-            {{ $t('common.play') }}
-          </ButtonTwoTone>
-          <ButtonTwoTone color="grey" @click.native="followArtist">
-            <span v-if="artist.followed">{{ $t('artist.following') }}</span>
-            <span v-else>{{ $t('artist.follow') }}</span>
-          </ButtonTwoTone>
-          <ButtonTwoTone
-            icon-class="more"
-            :icon-button="true"
-            :horizontal-padding="0"
-            color="grey"
-            @click.native="openMenu"
-          >
-          </ButtonTwoTone>
-        </div>
+      <div class="description" @click="toggleFullDescription">
+        {{ artist.briefDesc }}
+      </div>
+      <div class="buttons">
+        <ButtonTwoTone
+          class="play-button"
+          icon-class="play"
+          @click.native="playPopularSongs()"
+        >
+          {{ $t('common.play') }}
+        </ButtonTwoTone>
+        <ButtonTwoTone color="grey" @click.native="followArtist">
+          <span v-if="artist.followed">{{ $t('artist.following') }}</span>
+          <span v-else>{{ $t('artist.follow') }}</span>
+        </ButtonTwoTone>
+        <ButtonTwoTone
+          icon-class="more"
+          :icon-button="true"
+          :horizontal-padding="0"
+          color="grey"
+          @click.native="openMenu"
+        >
+        </ButtonTwoTone>
       </div>
     </div>
+    <!--
     <div v-if="latestRelease !== undefined" class="latest-release">
       <div class="section-title">{{ $t('artist.latestRelease') }}</div>
       <div class="release">
@@ -50,7 +57,7 @@
             :id="latestRelease.id"
             :image-url="latestRelease.picUrl | resizeImage"
             type="album"
-            :fixed-size="128"
+            :fixed-size="100"
             :play-button-size="30"
           />
           <div class="info">
@@ -101,19 +108,14 @@
         <div v-show="!latestMV.id"></div>
       </div>
     </div>
+    -->
     <div id="popularTracks" class="popular-tracks">
       <div class="section-title">{{ $t('artist.popularSongs') }}</div>
       <TrackList
-        :tracks="popularTracks.slice(0, showMorePopTracks ? 24 : 12)"
+        :tracks="popularTracks.slice(0, 6)"
         :type="'tracklist'"
+        :column-number="1"
       />
-
-      <div id="seeMore" class="show-more">
-        <button @click="showMorePopTracks = !showMorePopTracks">
-          <span v-show="!showMorePopTracks">{{ $t('artist.showMore') }}</span>
-          <span v-show="showMorePopTracks">{{ $t('artist.showLess') }}</span>
-        </button>
-      </div>
     </div>
     <div v-if="albums.length !== 0" id="albums" class="albums">
       <div class="section-title">{{ $t('artist.albums') }}</div>
@@ -122,6 +124,8 @@
         :items="albums"
         :sub-text="'releaseYear'"
         :show-play-button="true"
+        :column-number="3"
+        :fit-on-screen="true"
       />
     </div>
     <div v-if="mvs.length !== 0" id="mvs" class="mvs">
@@ -140,6 +144,8 @@
         :items="eps"
         :sub-text="'albumType+releaseYear'"
         :show-play-button="true"
+        :column-number="3"
+        :fit-on-screen="true"
       />
     </div>
 
@@ -149,7 +155,7 @@
         type="artist"
         :column-number="6"
         gap="36px 28px"
-        :items="similarArtists.slice(0, 12)"
+        :items="similarArtists.slice(0, 6)"
       />
     </div>
 
@@ -193,14 +199,14 @@ import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
-import Cover from '@/components/Cover.vue';
+// import Cover from '@/components/Cover.vue';
 import MvRow from '@/components/MvRow.vue';
 import Modal from '@/components/Modal.vue';
 
 export default {
   name: 'Artist',
   components: {
-    Cover,
+    // Cover,
     ButtonTwoTone,
     TrackList,
     CoverRow,
@@ -365,31 +371,37 @@ export default {
 
 .artist-info {
   display: flex;
-  align-items: center;
+  position: relative;
+  flex-direction: column;
   margin-bottom: 26px;
   color: var(--color-text);
-  img {
-    height: 248px;
-    width: 248px;
-    border-radius: 50%;
-    margin-right: 56px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 16px -8px;
-  }
-  .name {
-    font-size: 56px;
-    font-weight: 700;
-  }
 
-  .artist {
-    font-size: 18px;
-    opacity: 0.88;
-    margin-top: 24px;
-  }
+  .info-container {
+    display: flex;
+    align-items: center;
+    img {
+      height: 140px;
+      width: 140px;
+      border-radius: 50%;
+      margin-right: 12px;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 16px -8px;
+    }
+    .name {
+      font-size: 20px;
+      font-weight: 700;
+    }
 
-  .statistics {
-    font-size: 14px;
-    opacity: 0.68;
-    margin-top: 2px;
+    .artist {
+      font-size: 18px;
+      opacity: 0.88;
+      margin-top: 24px;
+    }
+
+    .statistics {
+      font-size: 14px;
+      opacity: 0.68;
+      margin-top: 2px;
+    }
   }
 
   .buttons {
@@ -400,6 +412,9 @@ export default {
       .svg-icon {
         margin: 0;
       }
+    }
+    .play-button {
+      flex: 1;
     }
   }
 
@@ -427,7 +442,7 @@ export default {
   opacity: 0.88;
   color: var(--color-text);
   margin-bottom: 16px;
-  padding-top: 46px;
+  padding-top: 16px;
 
   display: flex;
   justify-content: space-between;
@@ -443,6 +458,10 @@ export default {
   color: var(--color-text);
   .release {
     display: flex;
+    flex-direction: column;
+    & > div {
+      margin-bottom: 12px;
+    }
   }
   .container {
     display: flex;

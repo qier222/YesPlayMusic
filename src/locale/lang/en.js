@@ -14,9 +14,9 @@ export default {
     settings: 'Settings',
   },
   home: {
-    recommendPlaylist: 'Recommended Playlists',
-    recommendArtist: 'Recommended Artists',
-    newAlbum: 'Latest Albums',
+    recommendPlaylist: 'Recommended',
+    recommendArtist: 'Artists',
+    newAlbum: 'Latest',
     seeMore: 'SEE MORE',
     charts: 'Charts',
   },
