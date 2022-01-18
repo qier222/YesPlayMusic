@@ -1,6 +1,11 @@
 <br />
+<h1>Fork</h1>
+<p>提升了移动可用性，没有太考虑大屏使用</p>
+<p>TODO: 底部控制，更多sandwitch menu，歌词，艺人</p>
+
+<h1>Original</h1>
 <p align="center">
-  <a href="https://music.qier222.com" target="blank">
+  <a href="https://music.ynng.ca" target="blank">
     <img src="images/logo.png" alt="Logo" width="156" height="156">
   </a>
   <h2 align="center" style="font-weight: 600">YesPlayMusic</h2>
@@ -8,7 +13,7 @@
   <p align="center">
     高颜值的第三方网易云播放器
     <br />
-    <a href="https://music.qier222.com" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="https://music.ynng.ca" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     <a href="#%EF%B8%8F-安装" target="blank"><strong>📦️ 下载安装包</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     <a href="https://t.me/yesplaymusic" target="blank"><strong>💬 加入交流群</strong></a>
     <br />
