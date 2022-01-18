@@ -245,8 +245,8 @@ button {
 .track {
   display: flex;
   align-items: center;
-  padding: 8px;
-  border-radius: 12px;
+  padding: 2px;
+  border-radius: 8px;
   user-select: none;
 
   .no {
@@ -255,7 +255,7 @@ button {
     align-items: center;
     border-radius: 8px;
     margin: 0 20px 0 10px;
-    width: 12px;
+    width: 8px;
     color: var(--color-text);
     cursor: default;
     span {
@@ -279,10 +279,10 @@ button {
   }
 
   img {
-    border-radius: 8px;
+    border-radius: 5px;
     height: 46px;
     width: 46px;
-    margin-right: 20px;
+    margin-right: 10px;
     border: 1px solid rgba(0, 0, 0, 0.04);
     cursor: pointer;
   }
@@ -299,8 +299,8 @@ button {
       flex-direction: column;
     }
     .title {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 500;
       color: var(--color-text);
       cursor: default;
       padding-right: 16px;

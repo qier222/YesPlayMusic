@@ -44,6 +44,22 @@
       <div class="tabs-row">
         <div class="tabs">
           <div
+            class="tab dropdown"
+            :class="{ active: currentTab === 'playlists' }"
+            @click="updateCurrentTab('playlists')"
+          >
+            <span class="text">{{
+              {
+                all: $t('contextMenu.allPlaylists'),
+                mine: $t('contextMenu.minePlaylists'),
+                liked: $t('contextMenu.likedPlaylists'),
+              }[playlistFilter]
+            }}</span>
+            <span class="icon" @click.stop="openPlaylistTabMenu"
+              ><svg-icon icon-class="dropdown"
+            /></span>
+          </div>
+          <div
             class="tab"
             :class="{ active: currentTab === 'albums' }"
             @click="updateCurrentTab('albums')"
@@ -79,6 +95,9 @@
             听歌排行
           </div>
         </div>
+      </div>
+
+      <div class="buttons-row">
         <button
           v-show="currentTab === 'playlists'"
           class="tab-button"
@@ -90,6 +109,22 @@
           class="tab-button"
           @click="selectUploadFiles"
           ><svg-icon icon-class="arrow-up-alt" /> 上传歌曲
+        </button>
+        <button
+          v-show="currentTab === 'playHistory'"
+          class="tab-button playHistory-button"
+          :class="{ active: playHistoryMode === 'week' }"
+          @click="playHistoryMode = 'week'"
+        >
+          最近一周
+        </button>
+        <button
+          v-show="currentTab === 'playHistory'"
+          class="tab-button playHistory-button"
+          :class="{ active: playHistoryMode === 'all' }"
+          @click="playHistoryMode = 'all'"
+        >
+          所有時間
         </button>
       </div>
 
@@ -144,12 +179,6 @@
       </div>
 
       <div v-show="currentTab === 'playHistory'">
-        <button class="playHistory-button" @click="playHistoryMode = 'week'">
-          最近一周
-        </button>
-        <button class="playHistory-button" @click="playHistoryMode = 'all'">
-          所有時間
-        </button>
         <TrackList
           :tracks="playHistoryList"
           :column-number="1"
@@ -500,15 +529,28 @@ h1 {
   margin-bottom: 24px;
 }
 
+.buttons-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+  margin-top: -18px;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
 .tabs {
   display: flex;
-  flex-wrap: wrap;
+  overflow-x: scroll;
+
   font-size: 14px;
   color: var(--color-text);
   .tab {
+    min-width: fit-content;
     font-weight: 600;
     padding: 4px 7px;
-    margin-right: 7px;
+    margin-right: 6px;
     border-radius: 8px;
     cursor: pointer;
     user-select: none;
@@ -520,8 +562,9 @@ h1 {
     }
   }
   .tab.active {
-    opacity: 0.88;
-    background-color: var(--color-secondary-bg);
+    opacity: 0.95;
+    color: var(--color-primary);
+    background-color: var(--color-primary-bg);
   }
   .tab.dropdown {
     display: flex;
@@ -548,7 +591,7 @@ button.tab-button {
   width: 150px;
   color: var(--color-text);
   border-radius: 8px;
-  padding: 0 8px;
+  padding: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -568,18 +611,17 @@ button.tab-button {
     opacity: 1;
     transform: scale(0.92);
   }
+  &.active {
+    opacity: 1;
+    color: var(--color-primary);
+    background: var(--color-primary-bg);
+  }
 }
 
-button.playHistory-button {
-  color: var(--color-text);
-  border-radius: 8px;
-  padding: 10px;
-  transition: 0.2s;
-  opacity: 0.68;
-  font-weight: 500;
-  &:hover {
-    opacity: 1;
-    background: var(--color-secondary-bg);
+@media (max-width: 1336px) {
+  .tabs {
+    margin: 0 -5vw;
+    padding: 0 5vw;
   }
 }
 </style>
