@@ -159,6 +159,7 @@ export default {
     showLibraryDefault: '启动后显示音乐库',
     subTitleDefault: '副标题使用别名',
     enableReversedMode: '启用倒序播放功能 (实验性功能)',
+    enableCustomTitlebar: '启用自定义标题栏',
     lyricsBackground: {
       text: '显示歌词背景',
       off: '关闭',

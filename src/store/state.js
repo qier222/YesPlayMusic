@@ -13,6 +13,7 @@ updateApp();
 export default {
   showLyrics: false,
   enableScrolling: true,
+  title: 'YesPlayMusic',
   liked: {
     songs: [],
     songsWithDetails: [], // 只有前12首

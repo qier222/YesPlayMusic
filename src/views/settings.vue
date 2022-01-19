@@ -331,6 +331,23 @@
         </div>
       </div>
 
+      <div v-if="isElectron && isLinux" class="item">
+        <div class="left">
+          <div class="title"> {{ $t('settings.enableCustomTitlebar') }} </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-custom-titlebar"
+              v-model="enableCustomTitlebar"
+              type="checkbox"
+              name="enable-custom-titlebar"
+            />
+            <label for="enable-custom-titlebar"></label>
+          </div>
+        </div>
+      </div>
+
       <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
@@ -591,6 +608,9 @@ export default {
     },
     isMac() {
       return /macintosh|mac os x/i.test(navigator.userAgent);
+    },
+    isLinux() {
+      return process.platform === 'linux';
     },
     version() {
       return pkg.version;
@@ -925,6 +945,17 @@ export default {
         this.$store.commit('updateSettings', {
           key: 'unmSource',
           value: value.length ? value : null,
+        });
+      },
+    },
+    enableCustomTitlebar: {
+      get() {
+        return this.settings.linuxEnableCustomTitlebar;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'linuxEnableCustomTitlebar',
+          value,
         });
       },
     },

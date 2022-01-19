@@ -150,7 +150,9 @@ export default {
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
     enableDiscordRichPresence: 'Discord gösterimini aktifleştir',
     showLibraryDefault: 'Kitaplık Varsayılanını göster',
-    subTitleDefault: 'Sub title alia default',
+    subTitleDefault: 'Show Alias for Subtitle by default',
+    enableReversedMode: 'Enable Reversed Mode (Experimental)',
+    enableCustomTitlebar: 'Enable custom title bar',
     lyricsBackground: {
       text: 'Şarkı Sözleri Arka Planını Göster',
       off: 'kapalı',

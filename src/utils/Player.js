@@ -10,6 +10,7 @@ import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
 import { isCreateTray } from '@/utils/platform';
+import mutations from '@/store/mutations';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -34,6 +35,7 @@ function setTitle(track) {
   if (isCreateTray) {
     ipcRenderer.send('updateTrayTooltip', document.title);
   }
+  mutations.updateTitle(store.state, document.title);
 }
 
 function setTrayLikeState(isLiked) {
