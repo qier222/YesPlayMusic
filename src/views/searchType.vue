@@ -7,7 +7,12 @@
     </h1>
 
     <div v-if="type === 'artists'">
-      <CoverRow type="artist" :items="result" :column-number="6" />
+      <CoverRow
+        type="artist"
+        :items="result"
+        :column-number="3"
+        :fit-on-screen="true"
+      />
     </div>
     <div v-if="type === 'albums'">
       <CoverRow
@@ -15,6 +20,8 @@
         :items="result"
         sub-text="artist"
         sub-text-font-size="14px"
+        :column-number="3"
+        :fit-on-screen="true"
       />
     </div>
     <div v-if="type === 'tracks'">
@@ -28,7 +35,13 @@
       <MvRow :mvs="result" />
     </div>
     <div v-if="type === 'playlists'">
-      <CoverRow type="playlist" :items="result" sub-text="title" />
+      <CoverRow
+        type="playlist"
+        :items="result"
+        sub-text="title"
+        :column-number="3"
+        :fit-on-screen="true"
+      />
     </div>
 
     <div class="load-more">

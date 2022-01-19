@@ -1,38 +1,36 @@
 <template>
   <div v-show="show" class="search-page">
-    <div v-show="artists.length > 0 || albums.length > 0" class="row">
-      <div v-show="artists.length > 0" class="artists">
-        <div v-show="artists.length > 0" class="section-title"
-          >{{ $t('search.artist')
-          }}<router-link :to="`/search/${keywords}/artists`">{{
-            $t('home.seeMore')
-          }}</router-link></div
-        >
-        <CoverRow
-          type="artist"
-          :column-number="3"
-          :items="artists.slice(0, 3)"
-          gap="34px 24px"
-        />
-      </div>
+    <div v-show="artists.length > 0" class="artists">
+      <div v-show="artists.length > 0" class="section-title"
+        >{{ $t('search.artist')
+        }}<router-link :to="`/search/${keywords}/artists`">{{
+          $t('home.seeMore')
+        }}</router-link></div
+      >
+      <CoverRow
+        type="artist"
+        :column-number="10"
+        :items="artists.slice(0, 10)"
+        gap="34px 24px"
+      />
+    </div>
 
-      <div class="albums">
-        <div v-show="albums.length > 0" class="section-title"
-          >{{ $t('search.album')
-          }}<router-link :to="`/search/${keywords}/albums`">{{
-            $t('home.seeMore')
-          }}</router-link></div
-        >
-        <CoverRow
-          type="album"
-          :items="albums.slice(0, 3)"
-          sub-text="artist"
-          :column-number="3"
-          sub-text-font-size="14px"
-          gap="34px 24px"
-          :play-button-size="26"
-        />
-      </div>
+    <div class="albums">
+      <div v-show="albums.length > 0" class="section-title"
+        >{{ $t('search.album')
+        }}<router-link :to="`/search/${keywords}/albums`">{{
+          $t('home.seeMore')
+        }}</router-link></div
+      >
+      <CoverRow
+        type="album"
+        :items="albums.slice(0, 10)"
+        sub-text="artist"
+        :column-number="10"
+        sub-text-font-size="14px"
+        gap="34px 24px"
+        :play-button-size="26"
+      />
     </div>
 
     <div v-show="tracks.length > 0" class="tracks">
@@ -42,17 +40,7 @@
           $t('home.seeMore')
         }}</router-link></div
       >
-      <TrackList :tracks="tracks" type="tracklist" />
-    </div>
-
-    <div v-show="musicVideos.length > 0" class="music-videos">
-      <div class="section-title"
-        >{{ $t('search.mv')
-        }}<router-link :to="`/search/${keywords}/music-videos`">{{
-          $t('home.seeMore')
-        }}</router-link></div
-      >
-      <MvRow :mvs="musicVideos.slice(0, 5)" />
+      <TrackList :tracks="tracks" type="tracklist" :column-number="1" />
     </div>
 
     <div v-show="playlists.length > 0" class="playlists">
@@ -66,11 +54,21 @@
         type="playlist"
         :items="playlists.slice(0, 12)"
         sub-text="title"
-        :column-number="6"
+        :column-number="12"
         sub-text-font-size="14px"
         gap="34px 24px"
         :play-button-size="26"
       />
+    </div>
+
+    <div v-show="musicVideos.length > 0" class="music-videos">
+      <div class="section-title"
+        >{{ $t('search.mv')
+        }}<router-link :to="`/search/${keywords}/music-videos`">{{
+          $t('home.seeMore')
+        }}</router-link></div
+      >
+      <MvRow :mvs="musicVideos.slice(0, 5)" />
     </div>
 
     <div v-show="!haveResult" class="no-results">
@@ -243,24 +241,12 @@ export default {
   }
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 32px;
-
-  .artists {
-    flex: 1;
-    margin-right: 8rem;
-  }
-  .albums {
-    flex: 1;
-  }
-}
-
 .tracks,
 .music-videos,
-.playlists {
-  margin-top: 46px;
+.playlists,
+.albums,
+.artists {
+  margin-top: 23px;
 }
 
 .no-results {
