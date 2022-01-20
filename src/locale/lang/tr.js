@@ -152,7 +152,7 @@ export default {
     showLibraryDefault: 'Kitaplık Varsayılanını göster',
     subTitleDefault: 'Show Alias for Subtitle by default',
     enableReversedMode: 'Enable Reversed Mode (Experimental)',
-    enableCustomTitlebar: 'Enable custom title bar (Need restrat)',
+    enableCustomTitlebar: 'Enable custom title bar (Need restart)',
     lyricsBackground: {
       text: 'Şarkı Sözleri Arka Planını Göster',
       off: 'kapalı',
