@@ -8,7 +8,7 @@ COPY . .
 RUN yarn build
 
 FROM nginx:1.20.2-alpine as app
-RUN RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv \
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv \
     && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main nodejs npm yarn
 
 COPY --from=build /app/dist /usr/share/nginx/html
