@@ -1,18 +1,21 @@
 FROM node:16.13.1-alpine as build
 ENV VUE_APP_NETEASE_API_URL=/api
 WORKDIR /app
-COPY . .
 RUN apk add --no-cache python3 make g++
-RUN yarn && yarn build
+COPY package.json yarn.lock ./
+RUN yarn install
+COPY . .
+RUN yarn build
 
 FROM nginx:1.20.2-alpine as app
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv \
+    && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main nodejs npm yarn
+
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY --from=build /app/netease_api /usr/src/netease_api
 WORKDIR /usr/src/netease_api
 
-RUN apk add --no-cache --repository http://nl.alpinelinux.org/alpine/edge/main libuv \
-    && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main nodejs=16.13.1-r1 npm=8.3.0-r0 \
-    && npm install
+RUN yarn install
 
 RUN echo $'server { \n\
   gzip on;\n\
