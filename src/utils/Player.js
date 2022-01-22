@@ -308,6 +308,9 @@ export default class {
       src: [source],
       html5: true,
       format: ['mp3', 'flac'],
+      onend: () => {
+        this._nextTrackCallback();
+      },
     });
     if (autoplay) {
       this.play();
@@ -317,9 +320,6 @@ export default class {
       setTrayLikeState(store.state.liked.songs.includes(this.currentTrack.id));
     }
     this.setOutputDevice();
-    this._howler.once('end', () => {
-      this._nextTrackCallback();
-    });
   }
   _getAudioSourceFromCache(id) {
     return getTrackSource(id).then(t => {
