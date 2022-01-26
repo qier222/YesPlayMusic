@@ -110,7 +110,7 @@ module.exports = {
           target: [
             {
               target: 'AppImage',
-              arch: ['x64', 'arm64'],
+              arch: ['x64'],
             },
             {
               target: 'tar.gz',
@@ -122,11 +122,11 @@ module.exports = {
             },
             {
               target: 'rpm',
-              arch: ['x64', 'arm64'],
+              arch: ['x64'],
             },
             {
               target: 'snap',
-              arch: ['x64', 'arm64'],
+              arch: ['x64'],
             },
             {
               target: 'pacman',
