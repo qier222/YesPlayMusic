@@ -9,32 +9,37 @@ export function lyricParser(lrc) {
   };
 }
 
-export function parseLyric(lrc) {
-  const lyrics = lrc.split('\n');
-  const lrcObj = [];
-  for (let i = 0; i < lyrics.length; i++) {
-    const lyric = lyrics[i];
-    const timeReg = /\[\d*:\d*((\.|:)\d*)*\]/g;
-    const timeRegExpArr = lyric.match(timeReg);
-    if (!timeRegExpArr) continue;
-    const content = lyric.replace(timeReg, '');
-    for (let k = 0, h = timeRegExpArr.length; k < h; k++) {
-      const t = timeRegExpArr[k];
-      const min = Number(String(t.match(/\[\d*/i)).slice(1));
-      const sec = Number(String(t.match(/:\d*/i)).slice(1));
-      const ms = Number(t.match(/\d*\]/i)[0].slice(0, 2)) / 100;
-      const time = min * 60 + sec + ms;
-      if (content !== '') {
-        lrcObj.push({
-          time: time,
-          rawTime: timeRegExpArr[0],
+const extractTimeRegex = /^(?<rawTime>\[(?<min>\d+):(?<sec>\d+)(?:\.|:)(?<ms>\d+)\])\s*(?<content>(.+|))$/;
+
+function parseLyric(lrc) {
+  const lyrics = lrc.trim().split('\n');
+
+  const parsedLyrics = lyrics
+    .filter(lyric => lyric.length) // filter the lyric line which is empty
+    .map((/** @type {string} */ line) => {
+      try {
+        const extractedLyric = extractTimeRegex.exec(line);
+
+        // If this line is not a lyric.
+        if (!extractedLyric) throw 'This line is not a lyric.';
+
+        // Otherwise, we extract the lyric part.
+        const { rawTime, min, sec, ms, content } = extractedLyric.groups;
+        const time = Number(min) * 60 + Number(sec) + 0.01 * Number(ms);
+
+        return {
+          time,
+          rawTime,
           content: trimContent(content),
-        });
+        };
+      } catch (e) {
+        console.warn(`Failed to extract "${line}". ${e}`);
       }
-    }
-  }
-  lrcObj.sort((a, b) => a.time - b.time);
-  return lrcObj;
+    })
+    .filter(response => !!response) // remove "undefined" entries
+    .sort((a, b) => a.time - b.time);
+
+  return parsedLyrics;
 }
 
 function trimContent(content) {
