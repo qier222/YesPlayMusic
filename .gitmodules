@@ -1,0 +1,3 @@
+[submodule "netease_api"]
+	path = netease_api
+	url = https://github.com/Binaryify/NeteaseCloudMusicApi

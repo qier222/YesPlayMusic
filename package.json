@@ -20,13 +20,15 @@
     "postuninstall": "electron-builder install-app-deps",
     "prettier": "npx prettier --write ./src ./script",
     "netease_api:run": "cd ./netease_api && npm run start",
-    "netease_api:pull": "node script/pull.js",
+    "netease_api:init": "git submodule init && git submodule update",
+    "netease_api:pull": "cd ./netease_api && git pull",
     "netease_api:install": "cd ./netease_api && npm install",
-    "netease_api:setup": "npm run netease_api:pull && npm run netease_api:install"
+    "netease_api:setup": "yarn netease_api:init && yarn netease_api:pull && yarn netease_api:install"
   },
   "main": "background.js",
   "dependencies": {
     "@unblockneteasemusic/server": "v0.27.0-rc.4",
+    "NeteaseCloudMusicApi": "file:./netease_api/",
     "axios": "^0.21.0",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",
@@ -92,7 +94,8 @@
     "vue-template-compiler": "^2.6.11"
   },
   "resolutions": {
-    "icon-gen": "3.0.0"
+    "icon-gen": "3.0.0",
+    "degenerator": "2.2.0"
   },
   "eslintConfig": {
     "root": true,

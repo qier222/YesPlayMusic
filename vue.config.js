@@ -164,7 +164,7 @@ module.exports = {
       },
       // 主入口文件
       // mainProcessFile: 'src/main.js',
-      mainProcessWatch: ['../netease_api/routes.js'],
+      // mainProcessWatch: ['../netease_api/routes.js'],
       // mainProcessArgs: []
     },
   },

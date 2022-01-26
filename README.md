@@ -87,7 +87,7 @@ macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
 2. 克隆本仓库
 
 ```sh
-git clone https://github.com/qier222/YesPlayMusic.git
+git clone --recursive https://github.com/qier222/YesPlayMusic.git
 ```
 
 3. 安装依赖
@@ -142,7 +142,7 @@ YesPlayMusic 地址为 `http://localhost`
 1. 打包 Electron 需要用到 Node.js 和 Yarn。可前往 [Node.js 官网](https://nodejs.org/zh-cn/) 下载安装包。安装 Node.js
    后可在终端里执行 `npm install -g yarn` 来安装 Yarn。
 
-2. 使用 `git clone https://github.com/qier222/YesPlayMusic.git` 克隆本仓库到本地。
+2. 使用 `git clone --recursive https://github.com/qier222/YesPlayMusic.git` 克隆本仓库到本地。
 
 3. 使用 `yarn install` 安装项目依赖。
 
