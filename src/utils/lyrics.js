@@ -1,5 +1,3 @@
-// copy from https://github.com/sl1673495/vue-netease-music/blob/master/src/utils/lrcparse.js
-
 export function lyricParser(lrc) {
   return {
     lyric: parseLyric(lrc?.lrc?.lyric || ''),
