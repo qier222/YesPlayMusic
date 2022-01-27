@@ -5,8 +5,8 @@ export function createMpris(window) {
   const renderer = window.webContents;
 
   const player = Player({
-    name: 'hellow',
-    identity: 'Hello',
+    name: 'yesplaymusic',
+    identity: 'YesPlayMusic media palyer',
   });
 
   player.on('next', () => renderer.send('next'));
