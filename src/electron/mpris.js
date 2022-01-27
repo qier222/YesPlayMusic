@@ -11,7 +11,8 @@ export function createMpris(window) {
 
   player.on('next', () => renderer.send('next'));
   player.on('previous', () => renderer.send('previous'));
-  player.on('playpause', () => renderer.send('play'));
+  player.on('play', () => renderer.send('play'));
+  player.on('pause', () => renderer.send('play'));
   player.on('quit', () => app.exit());
 
   ipcMain.on('player', (e, { playing }) => {
