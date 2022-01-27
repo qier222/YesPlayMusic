@@ -478,7 +478,7 @@ export default class {
       return;
     }
     let artists = track.ar.map(a => a.name);
-    navigator.mediaSession.metadata = new window.MediaMetadata({
+    const metadata = {
       title: track.name,
       artist: artists.join(','),
       album: track.al.name,
@@ -489,7 +489,10 @@ export default class {
           sizes: '512x512',
         },
       ],
-    });
+    };
+
+    navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+    ipcRenderer.send('metadata', metadata);
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {

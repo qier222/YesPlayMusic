@@ -56,6 +56,7 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
+    "mpris-service": "^2.1.2",
     "music-metadata": "^7.5.3",
     "node-vibrant": "^3.1.6",
     "nprogress": "^0.2.0",
@@ -73,7 +74,8 @@
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.4.3",
     "vue-slider-component": "^3.2.5",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "x11": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.0",
