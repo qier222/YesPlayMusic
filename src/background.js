@@ -116,10 +116,12 @@ class Background {
     this.handleAppEvents();
 
     // disable chromium mpris
-    app.commandLine.appendSwitch(
-      'disable-features',
-      'HardwareMediaKeyHandling,MediaSessionService'
-    );
+    if (isLinux) {
+      app.commandLine.appendSwitch(
+        'disable-features',
+        'HardwareMediaKeyHandling,MediaSessionService'
+      );
+    }
   }
 
   async initDevtools() {
