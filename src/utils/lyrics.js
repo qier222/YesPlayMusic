@@ -13,10 +13,7 @@ const extractLrcRegex = /^(?<lyricTimestamps>(?:\[.+?]\s*)+)(?<content>.+)$/gm;
 const extractTimestampRegex = /\[(?<min>\d+):(?<sec>\d+)(?:\.|:)(?<ms>\d+)\]/g;
 
 /**
- * @typedef {{time: number, rawTime: string}} ParsedTimestamp
- */
-/**
- * @typedef {{content: string} & ParsedTimestamp} ParsedLyric
+ * @typedef {{time: number, rawTime: string, content: string}} ParsedLyric
  */
 
 /**
@@ -28,7 +25,7 @@ const extractTimestampRegex = /\[(?<min>\d+):(?<sec>\d+)(?:\.|:)(?<ms>\d+)\]/g;
  */
 function parseLyric(lrc) {
   /**
-   * We use a binary tree to store a list of parsed lyric and its timestamp.
+   * A sorted list of parsed lyric and its timestamp.
    *
    * @type {ParsedLyric[]}
    * @see binarySearch
@@ -61,8 +58,6 @@ function parseLyric(lrc) {
   };
 
   for (const line of lrc.trim().matchAll(extractLrcRegex)) {
-    /** @type {ParsedTimestamp[]} */
-    const timestamps = [];
     const { lyricTimestamps, content } = line.groups;
 
     for (const timestamp of lyricTimestamps.matchAll(extractTimestampRegex)) {
@@ -70,16 +65,10 @@ function parseLyric(lrc) {
       const rawTime = timestamp[0];
       const time = Number(min) * 60 + Number(sec) + 0.001 * Number(ms);
 
-      timestamps.push({ time, rawTime });
+      /** @type {ParsedLyric} */
+      const parsedLyric = { rawTime, time, content: trimContent(content) };
+      parsedLyrics.splice(binarySearch(parsedLyric), 0, parsedLyric);
     }
-
-    const parsedLyric = timestamps.map(timestamp => ({
-      ...timestamp,
-      content: trimContent(content),
-    }));
-    parsedLyric.forEach(lyric =>
-      parsedLyrics.splice(binarySearch(lyric), 0, lyric)
-    );
   }
 
   return parsedLyrics;
