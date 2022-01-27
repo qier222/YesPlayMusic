@@ -7,38 +7,76 @@ export function lyricParser(lrc) {
   };
 }
 
-const extractTimeRegex = /^(?<rawTime>\[(?<min>\d+):(?<sec>\d+)(?:\.|:)(?<ms>\d+)\])\s*(?<content>.+)$/;
+// regexr.com/6e52n
+const extractLrcRegex = /^(?<lyricTimestamps>(?:\[.+?\])+)(?!\[)(?<content>.+)$/gm;
+const extractTimestampRegex = /\[(?<min>\d+):(?<sec>\d+)(?:\.|:)(?<ms>\d+)\]/g;
 
+/**
+ * @typedef {{time: number, rawTime: string, content: string}} ParsedLyric
+ */
+
+/**
+ * Parse the lyric string.
+ *
+ * @param {string} lrc The `lrc` input.
+ * @returns {ParsedLyric[]} The parsed lyric.
+ * @example parseLyric("[00:00.00] Hello, World!\n[00:00.10] Test\n");
+ */
 function parseLyric(lrc) {
-  const lyrics = lrc.trim().split('\n');
+  /**
+   * A sorted list of parsed lyric and its timestamp.
+   *
+   * @type {ParsedLyric[]}
+   * @see binarySearch
+   */
+  const parsedLyrics = [];
 
-  const parsedLyrics = lyrics
-    .map((/** @type {string} */ line) => {
-      try {
-        const extractedLyric = extractTimeRegex.exec(line);
+  /**
+   * Find the appropriate index to push our parsed lyric.
+   * @param {ParsedLyric} lyric
+   */
+  const binarySearch = lyric => {
+    let time = lyric.time;
 
-        // If this line is not a lyric.
-        if (!extractedLyric) throw 'This line is not a valid lyric.';
+    let low = 0;
+    let high = parsedLyrics.length - 1;
 
-        // Otherwise, we extract the lyric part.
-        const { rawTime, min, sec, ms, content } = extractedLyric.groups;
-        const time = Number(min) * 60 + Number(sec) + 0.01 * Number(ms);
-
-        return {
-          time,
-          rawTime,
-          content: trimContent(content),
-        };
-      } catch (e) {
-        console.debug(`lyrics.js: Failed to extract "${line}". ${e}`);
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      const midTime = parsedLyrics[mid].time;
+      if (midTime === time) {
+        return mid;
+      } else if (midTime < time) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
       }
-    })
-    .filter(response => !!response) // remove "undefined" entries
-    .sort((a, b) => a.time - b.time);
+    }
+
+    return low;
+  };
+
+  for (const line of lrc.trim().matchAll(extractLrcRegex)) {
+    const { lyricTimestamps, content } = line.groups;
+
+    for (const timestamp of lyricTimestamps.matchAll(extractTimestampRegex)) {
+      const { min, sec, ms } = timestamp.groups;
+      const rawTime = timestamp[0];
+      const time = Number(min) * 60 + Number(sec) + 0.001 * Number(ms);
+
+      /** @type {ParsedLyric} */
+      const parsedLyric = { rawTime, time, content: trimContent(content) };
+      parsedLyrics.splice(binarySearch(parsedLyric), 0, parsedLyric);
+    }
+  }
 
   return parsedLyrics;
 }
 
+/**
+ * @param {string} content
+ * @returns {string}
+ */
 function trimContent(content) {
   let t = content.trim();
   return t.length < 1 ? content : t;
