@@ -9,7 +9,8 @@ export function lyricParser(lrc) {
   };
 }
 
-const extractLrcRegex = /^(?<lyricTimestamps>(?:\[.+?]\s*)+)(?<content>.+)$/gm;
+// regexr.com/6e52n
+const extractLrcRegex = /^(?<lyricTimestamps>(?:\[.+?\])+)(?!\[)(?<content>.+)$/gm;
 const extractTimestampRegex = /\[(?<min>\d+):(?<sec>\d+)(?:\.|:)(?<ms>\d+)\]/g;
 
 /**
