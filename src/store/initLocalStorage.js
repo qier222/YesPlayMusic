@@ -28,6 +28,7 @@ let localStorage = {
     enableGlobalShortcut: true,
     showLibraryDefault: false,
     subTitleDefault: false,
+    linuxEnableCustomTitlebar: false,
     enabledPlaylistCategories,
     proxyConfig: {
       protocol: 'noProxy',
