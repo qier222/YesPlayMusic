@@ -805,9 +805,11 @@ export default class {
     } else {
       this.repeatMode = 'on';
     }
+    ipcRenderer.send('switchRepeatMode', this.repeatMode);
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
+    ipcRenderer.send('switchShuffle', this.shuffle);
   }
   switchReversed() {
     this.reversed = !this.reversed;
