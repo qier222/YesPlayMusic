@@ -495,7 +495,7 @@ export default class {
     };
 
     navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
-    ipcRenderer.send('metadata', metadata);
+    if (ipcRenderer) ipcRenderer.send('metadata', metadata);
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {
