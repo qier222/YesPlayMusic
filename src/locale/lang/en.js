@@ -158,6 +158,7 @@ export default {
     showLibraryDefault: 'Show Library after App Launched',
     subTitleDefault: 'Show Alias for Subtitle by default',
     enableReversedMode: 'Enable Reversed Mode (Experimental)',
+    enableCustomTitlebar: 'Enable custom title bar (Need restart)',
     lyricsBackground: {
       text: 'Show Lyrics Background',
       off: 'Off',
