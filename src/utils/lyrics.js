@@ -63,7 +63,7 @@ function parseLyric(lrc) {
       const { min, sec, ms } = timestamp.groups;
       const rawTime = timestamp[0];
       const time =
-        Number(min) * 60 + Number(sec) +  Number(ms ?? 0) * 0.001;
+        Number(min) * 60 + Number(sec) + Number(ms ?? 0) * 0.001;
 
       /** @type {ParsedLyric} */
       const parsedLyric = { rawTime, time, content: trimContent(content) };
