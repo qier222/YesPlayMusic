@@ -229,6 +229,7 @@ export default class {
       if (this._howler === null) return;
       this._progress = this._howler.seek();
       localStorage.setItem('playerCurrentTrackTime', this._progress);
+      ipcRenderer.send('playerCurrentTrackTime', this._progress);
     }, 1000);
   }
   _getNextTrack() {
@@ -489,6 +490,8 @@ export default class {
           sizes: '512x512',
         },
       ],
+      length: this.currentTrackDuration,
+      trackId: this.current,
     };
 
     navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
