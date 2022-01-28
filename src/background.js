@@ -29,6 +29,7 @@ import { EventEmitter } from 'events';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
 import Store from 'electron-store';
+import { createMpris } from '@/electron/mpris';
 const clc = require('cli-color');
 const log = text => {
   console.log(`${clc.blueBright('[background.js]')} ${text}`);
@@ -113,6 +114,14 @@ class Background {
 
     // handle app events
     this.handleAppEvents();
+
+    // disable chromium mpris
+    if (isLinux) {
+      app.commandLine.appendSwitch(
+        'disable-features',
+        'HardwareMediaKeyHandling,MediaSessionService'
+      );
+    }
   }
 
   async initDevtools() {
@@ -362,6 +371,9 @@ class Background {
       if (this.store.get('settings.enableGlobalShortcut') !== false) {
         registerGlobalShortcut(this.window, this.store);
       }
+
+      // create mpris
+      if (isLinux) createMpris(this.window);
     });
 
     app.on('activate', () => {

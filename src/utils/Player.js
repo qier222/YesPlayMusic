@@ -229,6 +229,7 @@ export default class {
       if (this._howler === null) return;
       this._progress = this._howler.seek();
       localStorage.setItem('playerCurrentTrackTime', this._progress);
+      ipcRenderer.send('playerCurrentTrackTime', this._progress);
     }, 1000);
   }
   _getNextTrack() {
@@ -478,7 +479,7 @@ export default class {
       return;
     }
     let artists = track.ar.map(a => a.name);
-    navigator.mediaSession.metadata = new window.MediaMetadata({
+    const metadata = {
       title: track.name,
       artist: artists.join(','),
       album: track.al.name,
@@ -489,7 +490,12 @@ export default class {
           sizes: '512x512',
         },
       ],
-    });
+      length: this.currentTrackDuration,
+      trackId: this.current,
+    };
+
+    navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+    ipcRenderer.send('metadata', metadata);
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {
@@ -799,9 +805,11 @@ export default class {
     } else {
       this.repeatMode = 'on';
     }
+    ipcRenderer.send('switchRepeatMode', this.repeatMode);
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
+    ipcRenderer.send('switchShuffle', this.shuffle);
   }
   switchReversed() {
     this.reversed = !this.reversed;
