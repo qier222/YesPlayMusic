@@ -35,9 +35,9 @@ RUN echo $'server { \n\
   }' > /etc/nginx/conf.d/default.conf
 
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv \
-  && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main nodejs npm
+  && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main nodejs npm \
+  && npm i -g NeteaseCloudMusicApi
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-RUN npx NeteaseCloudMusicApi
-CMD nginx ; exec node app.js
+CMD nginx ; exec npx NeteaseCloudMusicApi
