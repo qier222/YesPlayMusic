@@ -180,7 +180,10 @@ class Background {
       minWidth: 1080,
       minHeight: 720,
       titleBarStyle: 'hiddenInset',
-      frame: !isWindows,
+      frame: !(
+        isWindows ||
+        (isLinux && this.store.get('settings.linuxEnableCustomTitlebar'))
+      ),
       title: 'YesPlayMusic',
       show: false,
       webPreferences: {

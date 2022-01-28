@@ -156,6 +156,7 @@ export default {
     showLibraryDefault: '啟動後顯示音樂庫',
     subTitleDefault: '副標題使用別名',
     enableReversedMode: '啟用倒序播放功能 (實驗性功能)',
+    enableCustomTitlebar: '啓用自定義標題欄 (重啟後生效)',
     lyricsBackground: {
       text: '顯示歌詞背景',
       off: '關閉',
