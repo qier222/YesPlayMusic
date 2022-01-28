@@ -6,7 +6,7 @@ export function createMpris(window) {
 
   const player = Player({
     name: 'yesplaymusic',
-    identity: 'YesPlayMusic media player',
+    identity: 'YesPlayMusic',
   });
 
   player.on('next', () => renderer.send('next'));
@@ -18,8 +18,6 @@ export function createMpris(window) {
   player.on('position', args =>
     renderer.send('setPosition', args.position / 1000 / 1000)
   );
-  player.on('loopStatus', () => renderer.send('repeat'));
-  player.on('shuffle', () => renderer.send('shuffle'));
 
   ipcMain.on('player', (e, { playing }) => {
     player.playbackStatus = playing
@@ -40,23 +38,5 @@ export function createMpris(window) {
 
   ipcMain.on('playerCurrentTrackTime', (e, position) => {
     player.getPosition = () => position * 1000 * 1000;
-  });
-
-  ipcMain.on('switchRepeatMode', (e, mode) => {
-    switch (mode) {
-      case 'off':
-        player.loopStatus = Player.LOOP_STATUS_NONE;
-        break;
-      case 'one':
-        player.loopStatus = Player.LOOP_STATUS_TRACK;
-        break;
-      case 'on':
-        player.loopStatus = Player.LOOP_STATUS_PLAYLIST;
-        break;
-    }
-  });
-
-  ipcMain.on('switchShuffle', (e, shuffle) => {
-    player.shuffle = shuffle;
   });
 }
