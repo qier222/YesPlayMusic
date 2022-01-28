@@ -37,6 +37,6 @@ export function createMpris(window) {
   });
 
   ipcMain.on('playerCurrentTrackTime', (e, position) => {
-    player.seeked(position * 1000 * 1000);
+    player.getPosition = () => position * 1000 * 1000;
   });
 }
