@@ -14,6 +14,7 @@ import {
   isLinux,
   isDevelopment,
   isCreateTray,
+  isCreateMpris,
 } from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { startNeteaseMusicApi } from './electron/services';
@@ -116,7 +117,7 @@ class Background {
     this.handleAppEvents();
 
     // disable chromium mpris
-    if (isLinux) {
+    if (isCreateMpris) {
       app.commandLine.appendSwitch(
         'disable-features',
         'HardwareMediaKeyHandling,MediaSessionService'
@@ -373,7 +374,9 @@ class Background {
       }
 
       // create mpris
-      if (isLinux) createMpris(this.window);
+      if (isCreateMpris) {
+        createMpris(this.window);
+      }
     });
 
     app.on('activate', () => {
