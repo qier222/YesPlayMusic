@@ -9,7 +9,7 @@ import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
-import { isCreateTray } from '@/utils/platform';
+import { isCreateMpris, isCreateTray } from '@/utils/platform';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -229,6 +229,9 @@ export default class {
       if (this._howler === null) return;
       this._progress = this._howler.seek();
       localStorage.setItem('playerCurrentTrackTime', this._progress);
+      if (isCreateMpris) {
+        ipcRenderer.send('playerCurrentTrackTime', this._progress);
+      }
     }, 1000);
   }
   _getNextTrack() {
@@ -478,7 +481,7 @@ export default class {
       return;
     }
     let artists = track.ar.map(a => a.name);
-    navigator.mediaSession.metadata = new window.MediaMetadata({
+    const metadata = {
       title: track.name,
       artist: artists.join(','),
       album: track.al.name,
@@ -489,7 +492,14 @@ export default class {
           sizes: '512x512',
         },
       ],
-    });
+      length: this.currentTrackDuration,
+      trackId: this.current,
+    };
+
+    navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+    if (isCreateMpris) {
+      ipcRenderer.send('metadata', metadata);
+    }
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {
@@ -799,9 +809,15 @@ export default class {
     } else {
       this.repeatMode = 'on';
     }
+    if (isCreateMpris) {
+      ipcRenderer.send('switchRepeatMode', this.repeatMode);
+    }
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
+    if (isCreateMpris) {
+      ipcRenderer.send('switchShuffle', this.shuffle);
+    }
   }
   switchReversed() {
     this.reversed = !this.reversed;

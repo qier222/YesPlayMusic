@@ -14,6 +14,7 @@ import {
   isLinux,
   isDevelopment,
   isCreateTray,
+  isCreateMpris,
 } from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { startNeteaseMusicApi } from './electron/services';
@@ -29,6 +30,7 @@ import { EventEmitter } from 'events';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
 import Store from 'electron-store';
+import { createMpris } from '@/electron/mpris';
 const clc = require('cli-color');
 const log = text => {
   console.log(`${clc.blueBright('[background.js]')} ${text}`);
@@ -113,6 +115,14 @@ class Background {
 
     // handle app events
     this.handleAppEvents();
+
+    // disable chromium mpris
+    if (isCreateMpris) {
+      app.commandLine.appendSwitch(
+        'disable-features',
+        'HardwareMediaKeyHandling,MediaSessionService'
+      );
+    }
   }
 
   async initDevtools() {
@@ -361,6 +371,11 @@ class Background {
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut') !== false) {
         registerGlobalShortcut(this.window, this.store);
+      }
+
+      // create mpris
+      if (isCreateMpris) {
+        createMpris(this.window);
       }
     });
 

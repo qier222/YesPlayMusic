@@ -87,4 +87,8 @@ export function ipcRenderer(vueInstance) {
       value,
     });
   });
+
+  ipcRenderer.on('setPosition', (event, position) => {
+    player._howler.seek(position);
+  });
 }
