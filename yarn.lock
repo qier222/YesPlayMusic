@@ -2136,9 +2136,10 @@
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
-NeteaseCloudMusicApi@pan93412/NeteaseCloudMusicApi#refactor/dynamic-to-main:
-  version "4.5.0"
-  resolved "https://codeload.github.com/pan93412/NeteaseCloudMusicApi/tar.gz/b02d4d5e046179aac8608246d3569f3e0f42b90b"
+NeteaseCloudMusicApi@^4.5.2:
+  version "4.5.2"
+  resolved "https://registry.yarnpkg.com/NeteaseCloudMusicApi/-/NeteaseCloudMusicApi-4.5.2.tgz#979ebab4350550fea865e469997be6893e6ec4bb"
+  integrity sha512-o945M2KQBHTqSvLoGvrJYTKHQTB4YJHUyhsupO+xJI3AebJhdx22fFh5rFcZPn/N3K6wDGxdRd4uNwyzYtuVbA==
   dependencies:
     axios "^0.24.0"
     express "^4.17.1"
