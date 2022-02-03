@@ -57,10 +57,14 @@
                 </div>
                 <div class="subtitle">
                   <router-link
+                    v-if="artist.id !== 0"
                     :to="`/artist/${artist.id}`"
                     @click.native="toggleLyrics"
-                    >{{ artist.name }}</router-link
-                  >
+                    >{{ artist.name }}
+                  </router-link>
+                  <span v-else>
+                    {{ artist.name }}
+                  </span>
                   <span v-if="album.id !== 0">
                     -
                     <router-link
