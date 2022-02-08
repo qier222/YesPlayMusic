@@ -220,6 +220,16 @@ class Background {
       }
     })
 
+    app.on('second-instance', () => {
+      if (!isMac && this.window) {
+        this.window.show()
+        if (this.window.isMaximized()) {
+          this.window.restore()
+        }
+        this.window.focus()
+      }
+    })
+
     app.on('before-quit', () => {
       this.willQuitApp = true
     })
