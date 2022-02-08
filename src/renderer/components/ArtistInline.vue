@@ -14,10 +14,12 @@ const props = defineProps({
   <div class="flex truncate">
     <span
       v-for="(artist, index) in artists"
-      @click="router.push({ name: 'artist', params: { id: artist.id } })"
+      @click="artist.id && router.push({ name: 'artist', params: { id: artist.id } })"
     >
-      <span class="hover:underline">{{ artist.name }}</span
-      >{{ index < artists.length - 1 ? ', ' : '' }}&nbsp;
+      <span :class="{'hover:underline cursor-pointer': artist.id}">
+        {{ artist.name }}
+      </span>
+      {{ index < artists.length - 1 ? ', ' : '' }}&nbsp;
     </span>
   </div>
 </template>
