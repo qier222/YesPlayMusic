@@ -39,7 +39,7 @@ export const storage = {
  * @param  {string='default'} format - 格式化字符串，参考 dayjs
  */
 export function formatDate(
-  timestamp: number,
+  timestamp?: number,
   locale: 'en' | 'zh-TW' | 'zh-CN' = 'en',
   format: string = 'default'
 ): string {
