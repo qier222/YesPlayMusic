@@ -97,6 +97,7 @@ declare interface Track {
   pop: number
   pst: number
   publishTime: number
+  tns?: string[]
   resourceState: boolean
   rt: string
   rtUrl: string | null

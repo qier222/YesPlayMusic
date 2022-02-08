@@ -47,6 +47,21 @@ const fullWidth = computed(() => {
   return props.layout !== 'grid'
 })
 
+const subTitle = computed(() => {
+  if (props.layout === 'grid') {
+    return undefined;
+  }
+
+  let tn = props.track?.tns?.at(0);
+  let alia = props.track?.alia?.at(0);
+  if (tn || alia) {
+    return tn !== props.track?.name ? tn : alia;
+  }
+
+  //TODO: 设置优先使用alia
+  return undefined;
+})
+
 // Highlight the playing track
 const player = usePlayer()
 const isHighlight = computed(() => {
@@ -141,8 +156,17 @@ const router = useRouter()
             'text-black': !isHighlight,
             'text-brand-500': isHighlight,
           }"
-          >{{ track.name }}</div
-        >
+          >
+          {{ track.name }}
+          <span
+            v-if="subTitle !== undefined"
+            class="ml-1"
+            :class="{'text-gray-400': !isHighlight}"
+            :title="subTitle"
+          >
+          ({{ subTitle }})
+          </span>
+        </div>
         <Skeleton
           v-else
           :class="{
@@ -178,7 +202,7 @@ const router = useRouter()
     >
       <span
         @click="router.push({ name: 'album', params: { id: track.al.id } })"
-        class="decoration-2 hover:underline"
+        class="decoration-2 hover:underline cursor-pointer"
         :class="{
           'decoration-gray-600': !isHighlight,
         }"
