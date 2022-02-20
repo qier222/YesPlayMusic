@@ -1,9 +1,12 @@
+const webpack = require('webpack');
 const path = require('path');
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
 module.exports = {
+  // 生产环境打包不输出 map
+  productionSourceMap: false,
   devServer: {
     disableHostCheck: true,
     port: process.env.DEV_SERVER_PORT || 8080,
@@ -53,6 +56,13 @@ module.exports = {
         symbolId: 'icon-[name]',
       })
       .end();
+    // LimitChunkCountPlugin 可以通过合并块来对块进行后期处理。用以解决 chunk 包太多的问题
+    config.plugin('chunkPlugin').use(webpack.optimize.LimitChunkCountPlugin, [
+      {
+        maxChunks: 3,
+        minChunkSize: 10_000,
+      },
+    ]);
   },
   // 添加插件的配置
   pluginOptions: {
