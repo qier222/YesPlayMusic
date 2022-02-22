@@ -1,6 +1,6 @@
 {
   "name": "yesplaymusic",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "private": true,
   "description": "A third party music player for Netease Music",
   "author": "qier222<qier222@outlook.com>",
@@ -18,15 +18,13 @@
     "electron:publish": "vue-cli-service electron:build -mwl -p always",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "prettier": "npx prettier --write ./src ./script",
-    "netease_api:run": "cd ./netease_api && npm run start",
-    "netease_api:pull": "node script/pull.js",
-    "netease_api:install": "cd ./netease_api && npm install",
-    "netease_api:setup": "npm run netease_api:pull && npm run netease_api:install"
+    "prettier": "npx prettier --write ./src",
+    "netease_api:run": "npx NeteaseCloudMusicApi"
   },
   "main": "background.js",
   "dependencies": {
     "@unblockneteasemusic/server": "v0.27.0-rc.4",
+    "NeteaseCloudMusicApi": "^4.5.2",
     "axios": "^0.21.0",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",
@@ -36,7 +34,7 @@
     "dayjs": "^1.8.36",
     "dexie": "^3.0.3",
     "discord-rich-presence": "^0.0.8",
-    "electron": "~13.0.1",
+    "electron": "^13.6.7",
     "electron-builder": "^22.10.5",
     "electron-context-menu": "^2.3.0",
     "electron-debug": "^3.1.0",
@@ -52,8 +50,10 @@
     "extract-zip": "^2.0.1",
     "howler": "^2.2.3",
     "js-cookie": "^2.2.1",
+    "jsbi": "^4.1.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
+    "mpris-service": "^2.1.2",
     "music-metadata": "^7.5.3",
     "node-vibrant": "^3.1.6",
     "nprogress": "^0.2.0",
@@ -71,7 +71,8 @@
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.4.3",
     "vue-slider-component": "^3.2.5",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "x11": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.0",
@@ -90,6 +91,10 @@
     "sass-loader": "^10.0.2",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-template-compiler": "^2.6.11"
+  },
+  "resolutions": {
+    "icon-gen": "3.0.0",
+    "degenerator": "2.2.0"
   },
   "eslintConfig": {
     "root": true,

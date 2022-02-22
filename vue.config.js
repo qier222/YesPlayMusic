@@ -114,11 +114,11 @@ module.exports = {
             },
             {
               target: 'tar.gz',
-              arch: ['x64'],
+              arch: ['x64', 'arm64'],
             },
             {
               target: 'deb',
-              arch: ['x64', 'armv7l'],
+              arch: ['x64', 'armv7l', 'arm64'],
             },
             {
               target: 'rpm',
@@ -151,6 +151,10 @@ module.exports = {
           args[0]['IS_ELECTRON'] = true;
           return args;
         });
+        config.resolve.alias.set(
+          'jsbi',
+          path.join(__dirname, 'node_modules/jsbi/dist/jsbi-cjs.js')
+        );
       },
       // 渲染线程的配置文件
       chainWebpackRendererProcess: config => {
@@ -164,7 +168,6 @@ module.exports = {
       },
       // 主入口文件
       // mainProcessFile: 'src/main.js',
-      mainProcessWatch: ['../netease_api/routes.js'],
       // mainProcessArgs: []
     },
   },
