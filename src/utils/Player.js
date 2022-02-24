@@ -34,6 +34,7 @@ function setTitle(track) {
   if (isCreateTray) {
     ipcRenderer.send('updateTrayTooltip', document.title);
   }
+  store.commit('updateTitle', document.title);
 }
 
 function setTrayLikeState(isLiked) {
