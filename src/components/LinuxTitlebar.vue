@@ -114,7 +114,8 @@ export default {
       }
       &.close {
         &:hover {
-          background: rgba(232, 17, 35, 0.9);
+          background: #c42c1b;
+          color: rgba(255, 255, 255, 0.8);
         }
         &:active {
           background: #f1707a;
