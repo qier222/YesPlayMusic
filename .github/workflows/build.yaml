@@ -26,6 +26,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
+          cache: 'yarn'
 
       - name: Install RPM & Pacman (on Ubuntu)
         if: runner.os == 'Linux'
