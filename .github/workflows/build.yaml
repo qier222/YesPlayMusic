@@ -23,9 +23,10 @@ jobs:
           submodules: "recursive"
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'yarn'
 
       - name: Install RPM & Pacman (on Ubuntu)
         if: runner.os == 'Linux'
