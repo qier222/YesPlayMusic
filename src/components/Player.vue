@@ -97,6 +97,11 @@
         <div class="blank"></div>
         <div class="container" @click.stop>
           <button-icon
+            :title="$t('contextMenu.addToPlaylist')"
+            @click.native="addTrackToPlaylist"
+            ><svg-icon icon-class="plus"
+          /></button-icon>
+          <button-icon
             :title="$t('player.nextUp')"
             :class="{
               active: $route.name === 'next',
@@ -182,6 +187,7 @@ import '@/assets/css/slider.css';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import VueSlider from 'vue-slider-component';
 import { goToListSource, hasListSource } from '@/utils/playList';
+import { isAccountLoggedIn } from '@/utils/auth';
 
 export default {
   name: 'Player',
@@ -212,7 +218,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['toggleLyrics']),
+    ...mapMutations(['toggleLyrics', 'updateModal']),
     ...mapActions(['showToast', 'likeATrack']),
     playNextTrack() {
       if (this.player.isPersonalFM) {
@@ -220,6 +226,22 @@ export default {
       } else {
         this.player.playNextTrack();
       }
+    },
+    addTrackToPlaylist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast('此操作需要登录网易云账号');
+        return;
+      }
+      this.updateModal({
+        modalName: 'addTrackToPlaylistModal',
+        key: 'show',
+        value: true,
+      });
+      this.updateModal({
+        modalName: 'addTrackToPlaylistModal',
+        key: 'selectedTrackID',
+        value: this.currentTrack.id,
+      });
     },
     goToNextTracksPage() {
       if (this.player.isPersonalFM) return;
