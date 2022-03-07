@@ -25,7 +25,7 @@ export default {
     albums: '專輯',
     artists: '藝人',
     mvs: 'MV',
-    cloudDisk: '雲盤',
+    cloudDisk: '雲端硬碟',
     newPlayList: '新增歌單',
     uploadSongs: '上傳音樂',
     playHistory: {
