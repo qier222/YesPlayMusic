@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-      - "ci/*"
     tags:
       - v*
+  workflow_dispatch:
 
 jobs:
   release:
