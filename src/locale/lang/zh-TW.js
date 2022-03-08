@@ -25,7 +25,14 @@ export default {
     albums: '專輯',
     artists: '藝人',
     mvs: 'MV',
+    cloudDisk: '雲端硬碟',
     newPlayList: '新增歌單',
+    uploadSongs: '上傳音樂',
+    playHistory: {
+      title: '聽歌排行',
+      week: '最近一周',
+      all: '所有時間',
+    },
     userProfileMenu: {
       settings: '設定',
       logout: '登出',
@@ -184,6 +191,7 @@ export default {
     allPlaylists: '全部歌單',
     minePlaylists: '我建立的歌單',
     likedPlaylists: '收藏的歌單',
+    cardiacMode: '心動模式',
   },
   toast: {
     savedToPlaylist: '已新增至歌單',

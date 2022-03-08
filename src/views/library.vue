@@ -85,14 +85,14 @@
             :class="{ active: currentTab === 'cloudDisk' }"
             @click="updateCurrentTab('cloudDisk')"
           >
-            云盘
+            {{ $t('library.cloudDisk') }}
           </div>
           <div
             class="tab"
             :class="{ active: currentTab === 'playHistory' }"
             @click="updateCurrentTab('playHistory')"
           >
-            听歌排行
+            {{ $t('library.playHistory.title') }}
           </div>
         </div>
         <button
@@ -105,7 +105,7 @@
           v-show="currentTab === 'cloudDisk'"
           class="tab-button"
           @click="selectUploadFiles"
-          ><svg-icon icon-class="arrow-up-alt" /> 上传歌曲
+          ><svg-icon icon-class="arrow-up-alt" />{{ $t('library.uploadSongs') }}
         </button>
       </div>
 
@@ -154,10 +154,10 @@
 
       <div v-show="currentTab === 'playHistory'">
         <button class="playHistory-button" @click="playHistoryMode = 'week'">
-          最近一周
+          {{ $t('library.playHistory.week') }}
         </button>
         <button class="playHistory-button" @click="playHistoryMode = 'all'">
-          所有時間
+          {{ $t('library.playHistory.all') }}
         </button>
         <TrackList
           :tracks="playHistoryList"
@@ -192,7 +192,9 @@
         $t('library.likedSongs')
       }}</div>
       <hr />
-      <div class="item" @click="playIntelligenceList"> 心动模式 </div>
+      <div class="item" @click="playIntelligenceList">{{
+        $t('contextMenu.cardiacMode')
+      }}</div>
     </ContextMenu>
   </div>
 </template>

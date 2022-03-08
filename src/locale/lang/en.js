@@ -28,7 +28,14 @@ export default {
     albums: 'Albums',
     artists: 'Artists',
     mvs: 'MVs',
+    cloudDisk: 'Cloud Disk',
     newPlayList: 'New Playlist',
+    uploadSongs: 'Upload Songs',
+    playHistory: {
+      title: 'Play History',
+      week: 'Latest Week',
+      all: 'All Time',
+    },
     userProfileMenu: {
       settings: 'Settings',
       logout: 'Logout',
@@ -186,6 +193,7 @@ export default {
     allPlaylists: 'All Playlists',
     minePlaylists: 'My Playlists',
     likedPlaylists: 'Liked Playlists',
+    cardiacMode: 'Cardiac Mode',
   },
   toast: {
     savedToPlaylist: 'Saved to playlist',
