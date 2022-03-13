@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Main(inspector)",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "${workspaceFolder}/dist/main/index.cjs",
+      ],
+      "env": {
+        "DEBUG": "true",
+      },
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Main(vite)",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "runtimeArgs": [
+        "${workspaceFolder}/dist/main/index.cjs",
+      ],
+      "env": {
+        "VITE_DEV_SERVER_HOST": "127.0.0.1",
+        "VITE_DEV_SERVER_PORT": "3344",
+      },
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "sourceMaps": true
+    },
+  ]
+}

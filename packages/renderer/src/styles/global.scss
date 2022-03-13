@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@mixin line-clamp($lines: 1) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+  -webkit-line-clamp: $lines;
+}
+
+@layer components {
+  .app-region-drag {
+    -webkit-app-region: drag;
+  }
+
+  .app-region-no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  .no-drag {
+    -webkit-user-drag: none;
+  }
+
+  .btn-pressed-animation {
+    @apply transition-transform duration-300;
+    &:active {
+      @apply scale-95;
+    }
+  }
+  .btn-hover-animation {
+    @apply relative transform;
+    &::after {
+      @apply absolute top-0 left-0 z-[-1] h-full w-full scale-[0.92] rounded-lg opacity-0 transition-all duration-300;
+      content: '';
+    }
+
+    &:hover::after {
+      @apply scale-100 opacity-100;
+    }
+  }
+  .line-clamp-1 {
+    @include line-clamp(1);
+  }
+  .line-clamp-2 {
+    @include line-clamp(2);
+  }
+  .line-clamp-3 {
+    @include line-clamp(3);
+  }
+}
+
+@font-face {
+  font-family: Barlow;
+  font-weight: normal;
+  src: url('/fonts/Barlow-Regular.woff2') format('woff2'),
+    url('/fonts/Barlow-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: Barlow;
+  font-weight: medium;
+  src: url('/fonts/Barlow-Medium.woff2') format('woff2'),
+    url('/fonts/Barlow-Medium.ttf') format('truetype');
+}
+@font-face {
+  font-family: Barlow;
+  font-weight: 600;
+  src: url('/fonts/Barlow-SemiBold.woff2') format('woff2'),
+    url('/fonts/Barlow-SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: Barlow;
+  font-weight: bold;
+  src: url('/fonts/Barlow-Bold.woff2') format('woff2'),
+    url('/fonts/Barlow-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: Barlow;
+  font-weight: 800;
+  src: url('/fonts/Barlow-ExtraBold.woff2') format('woff2'),
+    url('/fonts/Barlow-ExtraBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: Barlow;
+  font-weight: 900;
+  src: url('/fonts/Barlow-Black.woff2') format('woff2'),
+    url('/fonts/Barlow-Black.ttf') format('truetype');
+}
+
+body,
+input {
+  font-family: 'Barlow', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei,
+    Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, microsoft uighur,
+    sans-serif;
+}
+
+body {
+}
+
+html {
+}
+
+button,
+input {
+  @apply outline-none;
+}
+
+a,
+button {
+  cursor: default;
+}

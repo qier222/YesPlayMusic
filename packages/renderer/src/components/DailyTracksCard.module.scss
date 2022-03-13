@@ -1,0 +1,13 @@
+@keyframes move {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animation {
+  animation: move 38s infinite;
+  animation-direction: alternate;
+}

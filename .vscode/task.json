@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "debug",
+      "problemMatcher": [],
+      "label": "npm: debug",
+      "detail": "cross-env-shell NODE_ENV=debug \"npm run typecheck && node scripts/build.mjs && vite ./packages/renderer\"",
+      "group": "build"
+    }
+  ]
+}
