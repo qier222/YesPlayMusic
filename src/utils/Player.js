@@ -11,6 +11,8 @@ import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
 import { isCreateMpris, isCreateTray } from '@/utils/platform';
 
+const PLAY_PAUSE_FADE_DURATION = 200;
+
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
@@ -649,28 +651,38 @@ export default class {
   }
 
   pause() {
-    this._howler?.pause();
-    this._setPlaying(false);
-    setTitle(null);
-    this._pauseDiscordPresence(this._currentTrack);
+    this._howler?.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
+
+    this._howler?.once('fade', () => {
+      this._howler?.pause();
+      this._setPlaying(false);
+      setTitle(null);
+      this._pauseDiscordPresence(this._currentTrack);
+    });
   }
   play() {
     if (this._howler?.playing()) return;
+
     this._howler?.play();
-    this._setPlaying(true);
-    if (this._currentTrack.name) {
-      setTitle(this._currentTrack);
-    }
-    this._playDiscordPresence(this._currentTrack, this.seek());
-    if (store.state.lastfm.key !== undefined) {
-      trackUpdateNowPlaying({
-        artist: this.currentTrack.ar[0].name,
-        track: this.currentTrack.name,
-        album: this.currentTrack.al.name,
-        trackNumber: this.currentTrack.no,
-        duration: ~~(this.currentTrack.dt / 1000),
-      });
-    }
+
+    this._howler?.once('play', () => {
+      this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
+
+      this._setPlaying(true);
+      if (this._currentTrack.name) {
+        setTitle(this._currentTrack);
+      }
+      this._playDiscordPresence(this._currentTrack, this.seek());
+      if (store.state.lastfm.key !== undefined) {
+        trackUpdateNowPlaying({
+          artist: this.currentTrack.ar[0].name,
+          track: this.currentTrack.name,
+          album: this.currentTrack.al.name,
+          trackNumber: this.currentTrack.no,
+          duration: ~~(this.currentTrack.dt / 1000),
+        });
+      }
+    });
   }
   playOrPause() {
     if (this._howler?.playing()) {
