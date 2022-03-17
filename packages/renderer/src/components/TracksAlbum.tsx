@@ -34,7 +34,7 @@ const PlayOrPauseButtonInTrack = memo(
         )}
       >
         <SvgIcon
-          className="h-3.5 w-3.5 text-brand-500"
+          className='h-3.5 w-3.5 text-brand-500'
           name={isPlaying && isHighlight ? 'pause' : 'play'}
         />
       </div>
@@ -76,10 +76,10 @@ const Track = memo(
         )}
       >
         {/* Track name and number */}
-        <div className="col-span-6 grid grid-cols-[2rem_auto] pr-8">
+        <div className='col-span-6 grid grid-cols-[2rem_auto] pr-8'>
           {/* Track number */}
           {isSkeleton ? (
-            <Skeleton className="h-6.5 w-6.5 -translate-x-1"></Skeleton>
+            <Skeleton className='h-6.5 w-6.5 -translate-x-1'></Skeleton>
           ) : (
             !isHighlight && (
               <div
@@ -103,9 +103,9 @@ const Track = memo(
           )}
 
           {/* Track name */}
-          <div className="flex">
+          <div className='flex'>
             {isSkeleton ? (
-              <Skeleton className="text-lg">
+              <Skeleton className='text-lg'>
                 PLACEHOLDER123456789012345
               </Skeleton>
             ) : (
@@ -132,7 +132,7 @@ const Track = memo(
         </div>
 
         {/* Artists */}
-        <div className="col-span-4 flex items-center">
+        <div className='col-span-4 flex items-center'>
           {isSkeleton ? (
             <Skeleton>PLACEHOLDER1234</Skeleton>
           ) : (
@@ -148,7 +148,7 @@ const Track = memo(
         </div>
 
         {/* Actions & Track duration */}
-        <div className="col-span-2 flex items-center justify-end">
+        <div className='col-span-2 flex items-center justify-end'>
           {/* Like button */}
           {!isSkeleton && (
             <button
@@ -162,7 +162,7 @@ const Track = memo(
             >
               <SvgIcon
                 name={isLiked ? 'heart' : 'heart-outline'}
-                className="h-4 w-4 "
+                className='h-4 w-4 '
               />
             </button>
           )}
@@ -221,15 +221,15 @@ const TracksAlbum = ({
   )
 
   return (
-    <div className="grid w-full">
+    <div className='grid w-full'>
       {/* Tracks table header */}
-      <div className="mx-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        <div className="col-span-6 grid grid-cols-[2rem_auto]">
+      <div className='mx-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500'>
+        <div className='col-span-6 grid grid-cols-[2rem_auto]'>
           <div>#</div>
           <div>TITLE</div>
         </div>
-        <div className="col-span-4">ARTIST</div>
-        <div className="col-span-2 justify-self-end">TIME</div>
+        <div className='col-span-4'>ARTIST</div>
+        <div className='col-span-2 justify-self-end'>TIME</div>
       </div>
 
       {/* Tracks */}

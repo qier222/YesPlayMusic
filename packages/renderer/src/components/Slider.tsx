@@ -122,18 +122,18 @@ const Slider = ({
 
   return (
     <div
-      className="group flex h-2 -translate-y-[3px] items-center"
+      className='group flex h-2 -translate-y-[3px] items-center'
       ref={sliderRef}
       onClick={handleClick}
     >
       {/* Track */}
-      <div className="absolute h-[2px] w-full bg-gray-500 bg-opacity-10"></div>
+      <div className='absolute h-[2px] w-full bg-gray-500 bg-opacity-10'></div>
 
       {/* Passed track */}
       <div
         className={classNames(
           'absolute h-[2px] group-hover:bg-brand-500',
-          isDragging ? 'bg-brand-500' : 'bg-gray-500 dark:bg-gray-400'
+          isDragging ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-400'
         )}
         style={usedTrackStyle}
       ></div>
@@ -148,7 +148,7 @@ const Slider = ({
         onClick={e => e.stopPropagation()}
         onPointerDown={handlePointerDown}
       >
-        <div className="absolute h-2 w-2 rounded-full bg-brand-500"></div>
+        <div className='absolute h-2 w-2 rounded-full bg-brand-500'></div>
       </div>
     </div>
   )

@@ -29,39 +29,39 @@ const PlayingTrack = () => {
   return (
     <Fragment>
       {track && (
-        <div className="flex items-center gap-3">
+        <div className='flex items-center gap-3'>
           {track?.al?.picUrl && (
             <img
               onClick={toAlbum}
-              className="aspect-square h-full rounded-md shadow-md"
+              className='aspect-square h-full rounded-md shadow-md'
               src={resizeImage(track?.al?.picUrl ?? '', 'sm')}
             />
           )}
           {!track?.al?.picUrl && (
             <div
               onClick={toAlbum}
-              className="flex aspect-square h-full items-center justify-center rounded-md bg-black/[.04] shadow-sm"
+              className='flex aspect-square h-full items-center justify-center rounded-md bg-black/[.04] shadow-sm'
             >
-              <SvgIcon className="h-6 w-6 text-gray-300" name="music-note" />
+              <SvgIcon className='h-6 w-6 text-gray-300' name='music-note' />
             </div>
           )}
 
-          <div className="flex flex-col justify-center leading-tight">
+          <div className='flex flex-col justify-center leading-tight'>
             <div
               onClick={toTrackListSource}
-              className="line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-300"
+              className='line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-300'
             >
               {track?.name}
             </div>
-            <div className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+            <div className='mt-0.5 text-xs text-gray-500 dark:text-gray-400'>
               <ArtistInline artists={track?.ar ?? []} />
             </div>
           </div>
 
           <IconButton onClick={() => toast('Work in progress')}>
             <SvgIcon
-              className="h-4 w-4 text-black dark:text-white"
-              name="heart-outline"
+              className='h-4 w-4 text-black dark:text-white'
+              name='heart-outline'
             />
           </IconButton>
         </div>
@@ -76,22 +76,22 @@ const MediaControls = () => {
   const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
   return (
-    <div className="flex items-center justify-center gap-2 text-black dark:text-white">
+    <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
       <IconButton onClick={() => track && player.prevTrack()} disabled={!track}>
-        <SvgIcon className="h-4 w-4" name="previous" />
+        <SvgIcon className='h-4 w-4' name='previous' />
       </IconButton>
       <IconButton
         onClick={() => track && player.playOrPause()}
         disabled={!track}
-        className="rounded-2xl"
+        className='rounded-2xl'
       >
         <SvgIcon
-          className="h-[1.5rem] w-[1.5rem] "
+          className='h-[1.5rem] w-[1.5rem] '
           name={state === PlayerState.PLAYING ? 'pause' : 'play'}
         />
       </IconButton>
       <IconButton onClick={() => track && player.nextTrack()} disabled={!track}>
-        <SvgIcon className="h-4 w-4" name="next" />
+        <SvgIcon className='h-4 w-4' name='next' />
       </IconButton>
     </div>
   )
@@ -99,21 +99,21 @@ const MediaControls = () => {
 
 const Others = () => {
   return (
-    <div className="flex items-center justify-end gap-2 pr-2 text-black dark:text-white">
+    <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className="h-4 w-4" name="playlist" />
+        <SvgIcon className='h-4 w-4' name='playlist' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className="h-4 w-4" name="repeat" />
+        <SvgIcon className='h-4 w-4' name='repeat' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className="h-4 w-4" name="shuffle" />
+        <SvgIcon className='h-4 w-4' name='shuffle' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className="h-4 w-4" name="volume" />
+        <SvgIcon className='h-4 w-4' name='volume' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className="h-4 w-4" name="chevron-up" />
+        <SvgIcon className='h-4 w-4' name='chevron-up' />
       </IconButton>
     </div>
   )
@@ -128,7 +128,7 @@ const Progress = () => {
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
 
   return (
-    <div className="absolute w-screen">
+    <div className='absolute w-screen'>
       {track && (
         <Slider
           min={0}
@@ -141,7 +141,7 @@ const Progress = () => {
         />
       )}
       {!track && (
-        <div className="absolute h-[2px] w-full bg-gray-500 bg-opacity-10"></div>
+        <div className='absolute h-[2px] w-full bg-gray-500 bg-opacity-10'></div>
       )}
     </div>
   )
@@ -149,7 +149,7 @@ const Progress = () => {
 
 const Player = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 grid h-16 grid-cols-3 grid-rows-1 bg-white bg-opacity-[.86] py-2.5 px-5 backdrop-blur-xl backdrop-saturate-[1.8] dark:bg-[#222] dark:bg-opacity-[.86]">
+    <div className='fixed bottom-0 left-0 right-0 grid h-16 grid-cols-3 grid-rows-1 bg-white bg-opacity-[.86] py-2.5 px-5 backdrop-blur-xl backdrop-saturate-[1.8] dark:bg-[#222] dark:bg-opacity-[.86]'>
       <Progress />
 
       <PlayingTrack />

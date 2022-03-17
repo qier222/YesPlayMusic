@@ -9,13 +9,13 @@ import Main from './components/Main'
 const App = () => {
   return (
     <QueryClientProvider client={reactQueryClient}>
-      <div id="layout" className="grid select-none grid-cols-[16rem_auto]">
+      <div id='layout' className='grid select-none grid-cols-[16rem_auto]'>
         <Sidebar />
         <Main />
         <Player />
       </div>
 
-      <Toaster position="bottom-center" containerStyle={{ bottom: '5rem' }} />
+      <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />
 
       {/* Devtool */}
       <ReactQueryDevtools

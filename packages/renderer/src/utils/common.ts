@@ -102,3 +102,9 @@ export function formatDuration(
 export function sleep(time: number) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
+
+export function scrollToTop(smooth = false) {
+  const main = document.getElementById('mainContainer')
+  if (!main) return
+  main.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
+}
