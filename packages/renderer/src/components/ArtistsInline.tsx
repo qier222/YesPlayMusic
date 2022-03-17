@@ -11,7 +11,9 @@ const ArtistInline = ({
     <div className={classNames('flex truncate', className)}>
       {artists.map((artist, index) => (
         <span key={artist.id}>
-          <span className="hover:underline">{artist.name}</span>
+          <span className={classNames({ 'hover:underline': artist.id })}>
+            {artist.name}
+          </span>
           {index < artists.length - 1 ? ', ' : ''}&nbsp;
         </span>
       ))}
