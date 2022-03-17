@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@trivago/prettier-plugin-sort-imports': ^3.2.0
+  '@types/cookie-parser': ^1.4.2
   '@types/express': ^4.17.13
   '@types/howler': ^2.2.6
   '@types/js-cookie': ^3.0.1
@@ -74,6 +75,7 @@ dependencies:
 
 devDependencies:
   '@trivago/prettier-plugin-sort-imports': 3.2.0_prettier@2.5.1
+  '@types/cookie-parser': 1.4.2
   '@types/express': 4.17.13
   '@types/howler': 2.2.6
   '@types/js-cookie': 3.0.1
@@ -686,6 +688,12 @@ packages:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
       '@types/node': 14.18.10
+    dev: true
+
+  /@types/cookie-parser/1.4.2:
+    resolution: {integrity: sha512-uwcY8m6SDQqciHsqcKDGbo10GdasYsPCYkH3hVegj9qAah6pX5HivOnOuI3WYmyQMnOATV39zv/Ybs0bC/6iVg==}
+    dependencies:
+      '@types/express': 4.17.13
     dev: true
 
   /@types/debug/4.1.7:
