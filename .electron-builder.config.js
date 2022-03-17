@@ -55,7 +55,7 @@ module.exports = {
     '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}',
     '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
-    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}',
+    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
     '!**/node_modules/realm/react-native/**/*',
   ],
 }

@@ -4,7 +4,6 @@ import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import pkg from '../../package.json'
-import esm2cjs from '../../scripts/vite-plugin-esm2cjs'
 
 dotenv.config({
   path: path.resolve(process.cwd(), '.env'),
