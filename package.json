@@ -11,7 +11,7 @@
   "main": "dist/main/index.cjs",
   "scripts": {
     "dev": "node scripts/watch.mjs",
-    "build": "npm run typecheck && node scripts/build.mjs && electron-builder --config .electron-builder.config.js",
+    "build": "npm run typecheck && node scripts/build.mjs && electron-builder --config .electron-builder.config.js --dir",
     "typecheck": "tsc --noEmit --project packages/renderer/tsconfig.json",
     "debug": "cross-env-shell NODE_ENV=debug \"npm run typecheck && node scripts/build.mjs && vite ./packages/renderer\"",
     "eslint": "eslint --ext .ts,.js ./",
@@ -26,11 +26,12 @@
     "cookie-parser": "^1.4.6",
     "electron-log": "^4.4.6",
     "electron-store": "^8.0.1",
-    "express": "^4.17.3",
-    "realm": "^10.13.0"
+    "realm": "^10.13.0",
+    "express": "^4.17.3"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+    "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
     "@types/howler": "^2.2.6",
     "@types/js-cookie": "^3.0.1",

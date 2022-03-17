@@ -189,7 +189,7 @@ const LoginWithEmail = () => {
     <Fragment>
       <EmailInput {...{ email, setEmail }} />
       <PasswordInput {...{ password, setPassword }} />
-      <LoginButton />
+      <LoginButton onClick={() => toast('Work in progress')} disabled={true} />
     </Fragment>
   )
 }

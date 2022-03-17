@@ -44,7 +44,7 @@ export class Player {
   repeatMode: RepeatMode = RepeatMode.OFF
 
   constructor() {
-    window.player = this
+    //
   }
 
   /**

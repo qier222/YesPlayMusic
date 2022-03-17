@@ -115,7 +115,11 @@ const Header = memo(
                 PLAY
               </Button>
 
-              <Button color={ButtonColor.Gray} isSkelton={isLoading}>
+              <Button
+                color={ButtonColor.Gray}
+                isSkelton={isLoading}
+                onClick={() => toast('Work in progress')}
+              >
                 <SvgIcon name="heart" className="h-4 w-4" />
               </Button>
 
@@ -123,6 +127,7 @@ const Header = memo(
                 color={ButtonColor.Gray}
                 iconColor={ButtonColor.Gray}
                 isSkelton={isLoading}
+                onClick={() => toast('Work in progress')}
               >
                 <SvgIcon name="more" className="h-4 w-4" />
               </Button>

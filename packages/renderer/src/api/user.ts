@@ -12,7 +12,7 @@ export enum UserApiNames {
  * - uid : 用户 id
  * @param {number} uid
  */
-export function userDetail(uid) {
+export function userDetail(uid: number) {
   return request({
     url: '/user/detail',
     method: 'get',
@@ -160,68 +160,68 @@ export function dailySignin(type = 0) {
  * @param {number} params.limit
  * @param {number=} params.offset
  */
-export function likedAlbums(params) {
-  return request({
-    url: '/album/sublist',
-    method: 'get',
-    params: {
-      limit: params.limit,
-      timestamp: new Date().getTime(),
-    },
-  })
-}
+// export function likedAlbums(params) {
+//   return request({
+//     url: '/album/sublist',
+//     method: 'get',
+//     params: {
+//       limit: params.limit,
+//       timestamp: new Date().getTime(),
+//     },
+//   })
+// }
 
 /**
  * 获取收藏的歌手（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的歌手
  */
-export function likedArtists(params) {
-  return request({
-    url: '/artist/sublist',
-    method: 'get',
-    params: {
-      limit: params.limit,
-      timestamp: new Date().getTime(),
-    },
-  })
-}
+// export function likedArtists(params) {
+//   return request({
+//     url: '/artist/sublist',
+//     method: 'get',
+//     params: {
+//       limit: params.limit,
+//       timestamp: new Date().getTime(),
+//     },
+//   })
+// }
 
 /**
  * 获取收藏的MV（需要登录）
  * 说明 : 调用此接口可获取到用户收藏的MV
  */
-export function likedMVs(params) {
-  return request({
-    url: '/mv/sublist',
-    method: 'get',
-    params: {
-      limit: params.limit,
-      timestamp: new Date().getTime(),
-    },
-  })
-}
+// export function likedMVs(params) {
+//   return request({
+//     url: '/mv/sublist',
+//     method: 'get',
+//     params: {
+//       limit: params.limit,
+//       timestamp: new Date().getTime(),
+//     },
+//   })
+// }
 
 /**
  * 上传歌曲到云盘（需要登录）
  */
-export function uploadSong(file) {
-  let formData = new FormData()
-  formData.append('songFile', file)
-  return request({
-    url: '/cloud',
-    method: 'post',
-    params: {
-      timestamp: new Date().getTime(),
-    },
-    data: formData,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    timeout: 200000,
-  }).catch(error => {
-    alert(`上传失败，Error: ${error}`)
-  })
-}
+// export function uploadSong(file) {
+//   let formData = new FormData()
+//   formData.append('songFile', file)
+//   return request({
+//     url: '/cloud',
+//     method: 'post',
+//     params: {
+//       timestamp: new Date().getTime(),
+//     },
+//     data: formData,
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//     timeout: 200000,
+//   }).catch(error => {
+//     alert(`上传失败，Error: ${error}`)
+//   })
+// }
 
 /**
  * 获取云盘歌曲（需要登录）
@@ -232,40 +232,40 @@ export function uploadSong(file) {
  * @param {number} params.limit
  * @param {number=} params.offset
  */
-export function cloudDisk(params = {}) {
-  params.timestamp = new Date().getTime()
-  return request({
-    url: '/user/cloud',
-    method: 'get',
-    params,
-  })
-}
+// export function cloudDisk(params = {}) {
+//   params.timestamp = new Date().getTime()
+//   return request({
+//     url: '/user/cloud',
+//     method: 'get',
+//     params,
+//   })
+// }
 
 /**
  * 获取云盘歌曲详情（需要登录）
  */
-export function cloudDiskTrackDetail(id) {
-  return request({
-    url: '/user/cloud/detail',
-    method: 'get',
-    params: {
-      timestamp: new Date().getTime(),
-      id,
-    },
-  })
-}
+// export function cloudDiskTrackDetail(id) {
+//   return request({
+//     url: '/user/cloud/detail',
+//     method: 'get',
+//     params: {
+//       timestamp: new Date().getTime(),
+//       id,
+//     },
+//   })
+// }
 
 /**
  * 删除云盘歌曲（需要登录）
  * @param {Array} id
  */
-export function cloudDiskTrackDelete(id) {
-  return request({
-    url: '/user/cloud/del',
-    method: 'get',
-    params: {
-      timestamp: new Date().getTime(),
-      id,
-    },
-  })
-}
+// export function cloudDiskTrackDelete(id) {
+//   return request({
+//     url: '/user/cloud/del',
+//     method: 'get',
+//     params: {
+//       timestamp: new Date().getTime(),
+//       id,
+//     },
+//   })
+// }

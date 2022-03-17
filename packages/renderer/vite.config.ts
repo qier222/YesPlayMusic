@@ -3,13 +3,12 @@ import dotenv from 'dotenv'
 import { builtinModules } from 'module'
 import path, { join } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
-import { Plugin, defineConfig } from 'vite'
+import { defineConfig, Plugin } from 'vite'
 import resolve from 'vite-plugin-resolve'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') })
-
-console.log(join(__dirname, '../../.eslintrc.js'))
 
 /**
  * @see https://vitejs.dev/config/
@@ -60,6 +59,16 @@ export default defineConfig({
   build: {
     sourcemap: process.env.NODE_ENV === 'debug',
     outDir: '../../dist/renderer',
+    rollupOptions: {
+      plugins: [
+        visualizer({
+          filename: './bundle-stats-renderer.html',
+          gzipSize: true,
+          projectRoot: 'packages/renderer',
+          template: 'treemap',
+        }),
+      ],
+    },
   },
   resolve: {
     alias: {

@@ -36,9 +36,9 @@ const useScroll = (
 
   useEffect(() => {
     if (!ref) return
-    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-      if (!e.currentTarget && !e.target) return
-      const target = e.currentTarget || e.target
+    const handleScroll = (e: Event) => {
+      if (!e.target) return
+      const target = e.target as HTMLElement
 
       const arrivedState: ArrivedState = {
         left: target.scrollLeft <= 0 + (offset?.left || 0),

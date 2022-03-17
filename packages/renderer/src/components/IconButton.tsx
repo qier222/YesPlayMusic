@@ -18,7 +18,7 @@ const IconButton = ({
         className,
         'relative transform cursor-default p-2 transition duration-200',
         !disabled &&
-          'btn-pressed-animation btn-hover-animation after:bg-black/[.06]',
+          'btn-pressed-animation btn-hover-animation after:bg-black/[.06] dark:after:bg-white/10',
         disabled && 'opacity-30'
       )}
     >

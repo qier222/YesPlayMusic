@@ -9,7 +9,7 @@ export enum TrackApiNames {
 export interface FetchTracksParams {
   ids: number[]
 }
-interface FetchTracksResponse {
+export interface FetchTracksResponse {
   code: number
   songs: Track[]
   privileges: {

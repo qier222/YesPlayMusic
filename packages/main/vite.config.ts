@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import { builtinModules } from 'module'
 import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import pkg from '../../package.json'
 import esm2cjs from '../../scripts/vite-plugin-esm2cjs'
@@ -26,6 +27,13 @@ export default defineConfig({
         'electron',
         ...builtinModules,
         ...Object.keys(pkg.dependencies || {}),
+      ],
+      plugins: [
+        visualizer({
+          filename: './bundle-stats-main.html',
+          gzipSize: true,
+          projectRoot: 'packages/main',
+        }),
       ],
     },
   },

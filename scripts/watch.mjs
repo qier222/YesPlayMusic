@@ -86,9 +86,14 @@ const color = (hex, text) => {
 
 // bootstrap
 logPrefix(color('#eab308', '[vite] '))
+console.log('building renderer')
 const server = await createServer({
   configFile: 'packages/renderer/vite.config.ts',
 })
 await server.listen()
+
+console.log('building preload')
 await watchPreload(server)
+
+console.log('building main')
 await watchMain(server)

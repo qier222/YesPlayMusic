@@ -52,7 +52,7 @@ const PrimaryTabs = () => {
         </NavLink>
       ))}
 
-      <div className="mx-5 my-2 h-px bg-black opacity-5 dark:bg-white dark:opacity-20"></div>
+      <div className="mx-5 my-2 h-px bg-black opacity-5 dark:bg-white dark:opacity-10"></div>
     </div>
   )
 }
@@ -65,7 +65,7 @@ const Playlists = () => {
   })
 
   return (
-    <div className="overflow-auto pb-[4.6rem]">
+    <div className="mb-16 overflow-auto pb-2">
       {playlists?.playlist?.map(playlist => (
         <NavLink
           key={playlist.id}
@@ -89,7 +89,7 @@ const Sidebar = () => {
   return (
     <div
       id="sidebar"
-      className="grid h-screen max-w-sm grid-rows-[12rem_auto] border-r border-gray-300/10 bg-gray-50 bg-opacity-[.85] dark:bg-black dark:bg-opacity-70"
+      className="grid h-screen max-w-sm grid-rows-[12rem_auto] border-r border-gray-300/10 bg-gray-50 bg-opacity-[.85] dark:border-gray-500/10 dark:bg-gray-900 dark:bg-opacity-80"
     >
       <PrimaryTabs />
       <Playlists />

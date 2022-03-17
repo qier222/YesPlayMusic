@@ -3,6 +3,7 @@ import { builtinModules } from 'module'
 import path from 'path'
 import { defineConfig } from 'vite'
 import pkg from '../../package.json'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 dotenv.config({
   path: path.resolve(process.cwd(), '.env'),
@@ -24,6 +25,13 @@ export default defineConfig({
         'electron',
         ...builtinModules,
         ...Object.keys(pkg.dependencies || {}),
+      ],
+      plugins: [
+        visualizer({
+          filename: './bundle-stats-preload.html',
+          gzipSize: true,
+          projectRoot: 'packages/preload',
+        }),
       ],
     },
   },

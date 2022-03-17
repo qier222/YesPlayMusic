@@ -86,3 +86,6 @@ release
 dist-ssr
 *.local
 .vscode/settings.json
+bundle-stats-main.html
+bundle-stats-preload.html
+bundle-stats-renderer.html

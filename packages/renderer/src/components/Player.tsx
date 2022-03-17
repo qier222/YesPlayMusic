@@ -49,7 +49,7 @@ const PlayingTrack = () => {
           <div className="flex flex-col justify-center leading-tight">
             <div
               onClick={toTrackListSource}
-              className="line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 hover:underline dark:text-white"
+              className="line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-300"
             >
               {track?.name}
             </div>
@@ -58,7 +58,7 @@ const PlayingTrack = () => {
             </div>
           </div>
 
-          <IconButton>
+          <IconButton onClick={() => toast('Work in progress')}>
             <SvgIcon
               className="h-4 w-4 text-black dark:text-white"
               name="heart-outline"
@@ -100,19 +100,19 @@ const MediaControls = () => {
 const Others = () => {
   return (
     <div className="flex items-center justify-end gap-2 pr-2 text-black dark:text-white">
-      <IconButton>
+      <IconButton onClick={() => toast('Work in progress')}>
         <SvgIcon className="h-4 w-4" name="playlist" />
       </IconButton>
-      <IconButton>
+      <IconButton onClick={() => toast('Work in progress')}>
         <SvgIcon className="h-4 w-4" name="repeat" />
       </IconButton>
-      <IconButton>
+      <IconButton onClick={() => toast('Work in progress')}>
         <SvgIcon className="h-4 w-4" name="shuffle" />
       </IconButton>
-      <IconButton>
+      <IconButton onClick={() => toast('Work in progress')}>
         <SvgIcon className="h-4 w-4" name="volume" />
       </IconButton>
-      <IconButton>
+      <IconButton onClick={() => toast('Work in progress')}>
         <SvgIcon className="h-4 w-4" name="chevron-up" />
       </IconButton>
     </div>
@@ -149,7 +149,7 @@ const Progress = () => {
 
 const Player = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 grid h-16 grid-cols-3 grid-rows-1 bg-white bg-opacity-[.86] py-2.5 px-5 backdrop-blur-xl backdrop-saturate-[1.8] dark:bg-[#222]">
+    <div className="fixed bottom-0 left-0 right-0 grid h-16 grid-cols-3 grid-rows-1 bg-white bg-opacity-[.86] py-2.5 px-5 backdrop-blur-xl backdrop-saturate-[1.8] dark:bg-[#222] dark:bg-opacity-[.86]">
       <Progress />
 
       <PlayingTrack />

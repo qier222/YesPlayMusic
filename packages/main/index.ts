@@ -4,16 +4,12 @@ import {
   app,
   shell,
 } from 'electron'
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
-} from 'electron-devtools-installer'
 import Store from 'electron-store'
 import { release } from 'os'
 import { join } from 'path'
-import Realm from 'realm'
 import logger from './logger'
 import './server'
+import './database'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -104,6 +100,12 @@ app.whenReady().then(async () => {
 
   // Install devtool extension
   if (isDev) {
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS,
+      REDUX_DEVTOOLS,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+    } = require('electron-devtools-installer')
     installExtension(REACT_DEVELOPER_TOOLS.id).catch(err =>
       console.log('An error occurred: ', err)
     )

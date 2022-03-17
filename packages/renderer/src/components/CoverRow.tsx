@@ -38,11 +38,14 @@ const getSubtitleText = (
   subtitle: Subtitle
 ) => {
   const nickname = 'creator' in item ? item.creator.nickname : 'someone'
+  const artist = 'artist' in item ? item.artist.name : 'unknown'
+  const copywriter = 'copywriter' in item ? item.copywriter : 'unknown'
   const releaseYear =
-    'publishTime' in item
-      ? formatDate(item.publishTime ?? 0, 'en', 'YYYY')
-      : 'unknown'
-  const types = {
+    ('publishTime' in item &&
+      formatDate(item.publishTime ?? 0, 'en', 'YYYY')) ||
+    'unknown'
+
+  const type = {
     playlist: 'playlist',
     album: 'Album',
     专辑: 'Album',
@@ -50,16 +53,17 @@ const getSubtitleText = (
     'EP/Single': 'EP',
     EP: 'EP',
     unknown: 'unknown',
-  }
-  const type = 'type' in item ? item.type || 'unknown' : 'unknown'
-  const artist = 'artist' in item ? item.artist.name : 'unknown'
+    精选集: 'Collection',
+  }[('type' in item && typeof item.type !== 'number' && item.type) || 'unknown']
 
   const table = {
     [Subtitle.CREATOR]: `by ${nickname}`,
-    [Subtitle.TYPE_RELEASE_YEAR]: `${types[type]} · ${releaseYear}`,
+    [Subtitle.TYPE_RELEASE_YEAR]: `${type} · ${releaseYear}`,
     [Subtitle.ARTIST]: artist,
+    [Subtitle.COPYWRITER]: copywriter,
   }
-  return table[subtitle] ?? item[subtitle]
+
+  return table[subtitle]
 }
 
 const getImageUrl = (item: Album | Playlist | Artist) => {
@@ -162,7 +166,7 @@ const CoverRow = ({
                       )}
                       <span
                         onClick={() => goTo(item.id)}
-                        className="decoration-gray-600 decoration-2 hover:underline dark:text-white"
+                        className="decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-200"
                       >
                         {item.name}
                       </span>

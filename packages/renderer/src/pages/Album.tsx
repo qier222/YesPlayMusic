@@ -9,7 +9,52 @@ import TracksAlbum from '@/components/TracksAlbum'
 import useAlbum from '@/hooks/useAlbum'
 import useArtistAlbums from '@/hooks/useArtistAlbums'
 import { player } from '@/store'
+import { State as PlayerState } from '@/utils/player'
 import { formatDate, formatDuration, resizeImage } from '@/utils/common'
+
+const PlayButton = ({
+  album,
+  handlePlay,
+  isLoading,
+}: {
+  album: Album | undefined
+  isLoading: boolean
+  handlePlay: () => void
+}) => {
+  const playerSnapshot = useSnapshot(player)
+  const isPlaying = useMemo(
+    () => playerSnapshot.state === PlayerState.PLAYING,
+    [playerSnapshot.state]
+  )
+  const isThisAlbumPlaying = useMemo(
+    () =>
+      playerSnapshot.trackListSource?.type === 'album' &&
+      playerSnapshot.trackListSource?.id === album?.id,
+    [playerSnapshot.trackListSource, album?.id]
+  )
+
+  const wrappedHandlePlay = () => {
+    if (isPlaying && isThisAlbumPlaying) {
+      player.pause()
+      return
+    }
+    if (!isPlaying && isThisAlbumPlaying) {
+      player.play()
+      return
+    }
+    handlePlay()
+  }
+
+  return (
+    <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
+      <SvgIcon
+        name={isPlaying && isThisAlbumPlaying ? 'pause' : 'play'}
+        className="mr-2 h-4 w-4"
+      />
+      {isPlaying && isThisAlbumPlaying ? '暂停' : '播放'}
+    </Button>
+  )
+}
 
 const Header = ({
   album,
@@ -37,11 +82,11 @@ const Header = ({
           <Fragment>
             <img
               src={coverUrl}
-              className="absolute top-[-50%] w-full blur-[100px]"
+              className="absolute -top-full w-full blur-[100px]"
             />
             <img
               src={coverUrl}
-              className="absolute top-[-50%] w-full blur-[100px]"
+              className="absolute -top-full w-full blur-[100px]"
             />
           </Fragment>
         )}
@@ -81,17 +126,18 @@ const Header = ({
         {/* Info */}
         <div className="z-10 flex h-full flex-col justify-between">
           {/*  Name */}
-          {!isLoading && (
+          {isLoading ? (
+            <Skeleton className="w-3/4 text-6xl">PLACEHOLDER</Skeleton>
+          ) : (
             <div className="text-6xl font-bold dark:text-white">
               {album?.name}
             </div>
           )}
-          {isLoading && (
-            <Skeleton className="w-3/4 text-6xl">PLACEHOLDER</Skeleton>
-          )}
 
           {/*  Artist */}
-          {!isLoading && (
+          {isLoading ? (
+            <Skeleton className="mt-5 w-64 text-lg">PLACEHOLDER</Skeleton>
+          ) : (
             <div className="mt-5 text-lg font-medium text-gray-800 dark:text-gray-300">
               Album by{' '}
               <NavLink
@@ -102,43 +148,39 @@ const Header = ({
               </NavLink>
             </div>
           )}
-          {isLoading && (
-            <Skeleton className="mt-5 w-64 text-lg">PLACEHOLDER</Skeleton>
-          )}
 
           {/* Release date & track count & album duration */}
-          {!isLoading && (
+          {isLoading ? (
+            <Skeleton className="w-72 translate-y-px text-sm">
+              PLACEHOLDER
+            </Skeleton>
+          ) : (
             <div className="text-sm font-thin text-gray-500 dark:text-gray-400">
               {dayjs(album?.publishTime || 0).year()} · {album?.size} Songs,{' '}
               {albumDuration}
             </div>
           )}
-          {isLoading && (
-            <Skeleton className="w-72 translate-y-px text-sm">
-              PLACEHOLDER
-            </Skeleton>
-          )}
 
           {/* Description */}
-          {!isLoading && (
+          {isLoading ? (
+            <Skeleton className="mt-5 min-h-[2.5rem] w-1/2 text-sm">
+              PLACEHOLDER
+            </Skeleton>
+          ) : (
             <div className="line-clamp-2 mt-5 min-h-[2.5rem] text-sm text-gray-500 dark:text-gray-400">
               {album?.description}
             </div>
           )}
-          {isLoading && (
-            <Skeleton className="mt-5 min-h-[2.5rem] w-1/2 text-sm">
-              PLACEHOLDER
-            </Skeleton>
-          )}
 
           {/*  Buttons */}
           <div className="mt-5 flex gap-4">
-            <Button onClick={() => handlePlay()} isSkelton={isLoading}>
-              <SvgIcon name="play" className="mr-2 h-4 w-4" />
-              PLAY
-            </Button>
+            <PlayButton {...{ album, handlePlay, isLoading }} />
 
-            <Button color={ButtonColor.Gray} isSkelton={isLoading}>
+            <Button
+              color={ButtonColor.Gray}
+              isSkelton={isLoading}
+              onClick={() => toast('Work in progress')}
+            >
               <SvgIcon name="heart" className="h-4 w-4" />
             </Button>
 
@@ -146,6 +188,7 @@ const Header = ({
               color={ButtonColor.Gray}
               iconColor={ButtonColor.Gray}
               isSkelton={isLoading}
+              onClick={() => toast('Work in progress')}
             >
               <SvgIcon name="more" className="h-4 w-4" />
             </Button>
