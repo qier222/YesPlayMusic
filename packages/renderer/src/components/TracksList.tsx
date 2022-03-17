@@ -31,8 +31,8 @@ const Track = memo(
         className={classNames(
           'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl dark:after:bg-white/[.08]',
           'grid-cols-12 p-2 pr-4',
-          !isSkeleton && !isPlaying && 'btn-hover-animation after:bg-gray-100',
-          !isSkeleton && isPlaying && 'bg-brand-100'
+          !isSkeleton && !isPlaying && 'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]',
+          !isSkeleton && isPlaying && 'bg-brand-100 dark:bg-gray-800'
         )}
       >
         {/* Track info */}
@@ -54,10 +54,21 @@ const Track = memo(
             {isSkeleton ? (
               <Skeleton className="text-lg">PLACEHOLDER12345</Skeleton>
             ) : (
-              <div className="line-clamp-1 break-all text-lg font-semibold dark:text-white">
+              <div
+                className={classNames(
+                  "line-clamp-1 break-all text-lg font-semibold",
+                  isPlaying ? "text-brand-500" : "text-black dark:text-white"
+                )}
+              >
                 <span>{track.name}</span>
                 {subTitle && (
-                  <span className="ml-1 text-gray-400" title={subTitle}>
+                  <span
+                    title={subTitle}
+                    className={classNames(
+                      "ml-1",
+                      isPlaying ? "text-brand-500/[.8]" : "text-gray-400"
+                    )}
+                  >
                     ({subTitle})
                   </span>
                 )}
@@ -83,7 +94,7 @@ const Track = memo(
               <NavLink
                 to={`/album/${track.al.id}`}
                 onMouseOver={() => prefetchAlbum({ id: track.al.id })}
-                className="hover:underline"
+                className={classNames("hover:underline", isPlaying && "text-brand-500")}
               >
                 {track.al.name}
               </NavLink>
@@ -115,7 +126,12 @@ const Track = memo(
           {isSkeleton ? (
             <Skeleton>0:00</Skeleton>
           ) : (
-            <div className="min-w-[2.5rem] text-right text-gray-600 dark:text-gray-400">
+            <div
+              className={classNames(
+                "min-w-[2.5rem] text-right",
+                isPlaying ? "text-brand-500" : "text-gray-600 dark:text-gray-400"
+              )}
+            >
               {formatDuration(track.dt, 'en', 'hh:mm:ss')}
             </div>
           )}
