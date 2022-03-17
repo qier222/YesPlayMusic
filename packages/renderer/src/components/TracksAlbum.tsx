@@ -49,12 +49,14 @@ const Track = memo(
     isLiked = false,
     isSkeleton = false,
     isHighlight = false,
+    subTitle = undefined,
     onClick,
   }: {
     track: Track
     isLiked?: boolean
     isSkeleton?: boolean
     isHighlight?: boolean
+    subTitle?: string
     onClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
   }) => {
     if (enableRenderLog)
@@ -113,7 +115,12 @@ const Track = memo(
                   isHighlight ? 'text-brand-500' : 'text-black dark:text-white'
                 )}
               >
-                {track.name}
+                <span>{track.name}</span>
+                {subTitle && (
+                  <span className='ml-1 text-gray-400' title={subTitle}>
+                    ({subTitle})
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -238,6 +245,7 @@ const TracksAlbum = ({
               isLiked={userLikedSongs?.ids?.includes(track.id) ?? false}
               isSkeleton={false}
               isHighlight={track.id === playingTrack?.id}
+              subTitle={track.tns?.at(0) ?? track.alia?.at(0)}
             />
           ))}
     </div>

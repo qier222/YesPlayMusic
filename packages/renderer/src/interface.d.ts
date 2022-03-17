@@ -111,6 +111,7 @@ declare interface Track {
   tagPicList: null
   v: number
   version: number
+  tns: (string | null)[]
 }
 declare interface Artist {
   alias: unknown[]
