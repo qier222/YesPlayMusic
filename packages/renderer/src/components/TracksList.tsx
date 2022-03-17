@@ -75,7 +75,12 @@ const Track = memo(
               </div>
             )}
 
-            <div className='text-sm text-gray-600 dark:text-gray-400'>
+            <div
+              className={classNames(
+                'text-sm',
+                isPlaying ? 'text-brand-500' : 'text-gray-600 dark:text-gray-400'
+              )}
+            >
               {isSkeleton ? (
                 <Skeleton className='w-2/3 translate-y-px'>PLACE</Skeleton>
               ) : (
@@ -94,7 +99,10 @@ const Track = memo(
               <NavLink
                 to={`/album/${track.al.id}`}
                 onMouseOver={() => prefetchAlbum({ id: track.al.id })}
-                className={classNames('hover:underline', isPlaying && 'text-brand-500')}
+                className={classNames(
+                  'hover:underline', 
+                  isPlaying && 'text-brand-500'
+                )}
               >
                 {track.al.name}
               </NavLink>
