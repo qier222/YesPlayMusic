@@ -3,6 +3,7 @@ import SvgIcon from '@/components/SvgIcon'
 import { prefetchPlaylist } from '@/hooks/usePlaylist'
 import useUser from '@/hooks/useUser'
 import useUserPlaylists from '@/hooks/useUserPlaylists'
+import { scrollToTop } from '@/utils/common'
 
 interface Tab {
   name: string
@@ -34,9 +35,10 @@ const primaryTabs: PrimaryTab[] = [
 const PrimaryTabs = () => {
   return (
     <div>
-      <div className="app-region-drag h-14"></div>
+      <div className='app-region-drag h-14'></div>
       {primaryTabs.map(tab => (
         <NavLink
+          onClick={() => scrollToTop()}
           key={tab.route}
           to={tab.route}
           className={({ isActive }: { isActive: boolean }) =>
@@ -47,12 +49,12 @@ const PrimaryTabs = () => {
             )
           }
         >
-          <SvgIcon className="mr-3 h-6 w-6" name={tab.icon} />
-          <span className="font-semibold">{tab.name}</span>
+          <SvgIcon className='mr-3 h-6 w-6' name={tab.icon} />
+          <span className='font-semibold'>{tab.name}</span>
         </NavLink>
       ))}
 
-      <div className="mx-5 my-2 h-px bg-black opacity-5 dark:bg-white dark:opacity-10"></div>
+      <div className='mx-5 my-2 h-px bg-black opacity-5 dark:bg-white dark:opacity-10'></div>
     </div>
   )
 }
@@ -65,10 +67,11 @@ const Playlists = () => {
   })
 
   return (
-    <div className="mb-16 overflow-auto pb-2">
+    <div className='mb-16 overflow-auto pb-2'>
       {playlists?.playlist?.map(playlist => (
         <NavLink
           key={playlist.id}
+          onClick={() => scrollToTop()}
           to={`/playlist/${playlist.id}`}
           onMouseOver={() => prefetchPlaylist({ id: playlist.id })}
           className={({ isActive }: { isActive: boolean }) =>
@@ -78,7 +81,7 @@ const Playlists = () => {
             )
           }
         >
-          <span className="line-clamp-1">{playlist.name}</span>
+          <span className='line-clamp-1'>{playlist.name}</span>
         </NavLink>
       ))}
     </div>
@@ -88,8 +91,8 @@ const Playlists = () => {
 const Sidebar = () => {
   return (
     <div
-      id="sidebar"
-      className="grid h-screen max-w-sm grid-rows-[12rem_auto] border-r border-gray-300/10 bg-gray-50 bg-opacity-[.85] dark:border-gray-500/10 dark:bg-gray-900 dark:bg-opacity-80"
+      id='sidebar'
+      className='grid h-screen max-w-sm grid-rows-[12rem_auto] border-r border-gray-300/10 bg-gray-50 bg-opacity-[.85] dark:border-gray-500/10 dark:bg-gray-900 dark:bg-opacity-80'
     >
       <PrimaryTabs />
       <Playlists />

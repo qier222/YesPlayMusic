@@ -9,6 +9,7 @@ module.exports = {
   bracketSpacing: true,
   htmlWhitespaceSensitivity: 'strict',
   singleQuote: true,
+  jsxSingleQuote: true,
 
   // Tailwind CSS
   plugins: [require('prettier-plugin-tailwindcss')],

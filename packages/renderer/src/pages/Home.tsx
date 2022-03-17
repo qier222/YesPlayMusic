@@ -14,15 +14,15 @@ export default function Home() {
   return (
     <div>
       <CoverRow
-        title="Good Morning"
+        title='Good Morning'
         playlists={recommendedPlaylists?.result.slice(0, 10) ?? []}
         isSkeleton={isLoadingRecommendedPlaylists}
       />
 
-      <div className="mt-10 mb-4 text-[28px] font-bold text-black dark:text-white">
+      <div className='mt-10 mb-4 text-[28px] font-bold text-black dark:text-white'>
         For You
       </div>
-      <div className="grid grid-cols-2 gap-6">
+      <div className='grid grid-cols-2 gap-6'>
         <DailyTracksCard />
         <FMCard />
       </div>

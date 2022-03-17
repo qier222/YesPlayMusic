@@ -14,14 +14,14 @@ const NavigationButtons = () => {
     if (action === ACTION.FORWARD) navigate(1)
   }
   return (
-    <div className="flex gap-1">
+    <div className='flex gap-1'>
       {[ACTION.BACK, ACTION.FORWARD].map(action => (
         <div
           onClick={() => handleNavigate(action)}
           key={action}
-          className="app-region-no-drag btn-hover-animation rounded-lg p-3 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200"
+          className='app-region-no-drag btn-hover-animation rounded-lg p-3 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'
         >
-          <SvgIcon className="h-4 w-4" name={action} />
+          <SvgIcon className='h-4 w-4' name={action} />
         </div>
       ))}
     </div>
@@ -30,15 +30,15 @@ const NavigationButtons = () => {
 
 const SearchBox = () => {
   return (
-    <div className="app-region-no-drag group flex w-[16rem] cursor-text items-center rounded-full bg-gray-500 bg-opacity-5 px-3 transition duration-300 hover:bg-opacity-10 dark:bg-gray-300 dark:bg-opacity-5">
+    <div className='app-region-no-drag group flex w-[16rem] cursor-text items-center rounded-full bg-gray-500 bg-opacity-5 px-3 transition duration-300 hover:bg-opacity-10 dark:bg-gray-300 dark:bg-opacity-5'>
       <SvgIcon
-        className="mr-2 h-4 w-4 text-gray-500 transition duration-300 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200"
-        name="search"
+        className='mr-2 h-4 w-4 text-gray-500 transition duration-300 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200'
+        name='search'
       />
       <input
-        type="text"
-        className="w-full bg-transparent placeholder:text-gray-500 dark:text-white dark:placeholder:text-gray-400"
-        placeholder="Search"
+        type='text'
+        className='w-full bg-transparent placeholder:text-gray-500 dark:text-white dark:placeholder:text-gray-400'
+        placeholder='Search'
       />
     </div>
   )
@@ -46,8 +46,8 @@ const SearchBox = () => {
 
 const Settings = () => {
   return (
-    <div className="app-region-no-drag btn-hover-animation rounded-lg p-2.5 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200">
-      <SvgIcon className="h-5 w-5" name="settings" />
+    <div className='app-region-no-drag btn-hover-animation rounded-lg p-2.5 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'>
+      <SvgIcon className='h-5 w-5' name='settings' />
     </div>
   )
 }
@@ -59,7 +59,7 @@ const Avatar = () => {
     <img
       src={user?.profile?.avatarUrl}
       onClick={() => navigate('/login')}
-      className="app-region-no-drag h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700"
+      className='app-region-no-drag h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700'
     />
   )
 }
@@ -83,12 +83,12 @@ const Topbar = () => {
           'bg-white bg-opacity-[.86] backdrop-blur-xl backdrop-saturate-[1.8] dark:bg-[#222] dark:bg-opacity-[.86]'
       )}
     >
-      <div className="flex gap-2">
+      <div className='flex gap-2'>
         <NavigationButtons />
         <SearchBox />
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className='flex items-center gap-3'>
         <Settings />
         <Avatar />
       </div>

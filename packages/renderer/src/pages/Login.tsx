@@ -21,13 +21,13 @@ const EmailInput = ({
   setEmail: (email: string) => void
 }) => {
   return (
-    <div className="w-full">
-      <div className="mb-1 text-sm font-medium text-gray-700">Email</div>
+    <div className='w-full'>
+      <div className='mb-1 text-sm font-medium text-gray-700'>Email</div>
       <input
         value={email}
         onChange={e => setEmail(e.target.value)}
-        className="w-full rounded-md border border-gray-300 px-2 py-2"
-        type="email"
+        className='w-full rounded-md border border-gray-300 px-2 py-2'
+        type='email'
       />
     </div>
   )
@@ -45,9 +45,9 @@ const PhoneInput = ({
   setPhone: (phone: string) => void
 }) => {
   return (
-    <div className="w-full">
-      <div className="mb-1 text-sm font-medium text-gray-700">Phone</div>
-      <div className="flex w-full">
+    <div className='w-full'>
+      <div className='mb-1 text-sm font-medium text-gray-700'>Phone</div>
+      <div className='flex w-full'>
         <input
           className={classNames(
             'rounded-md rounded-r-none border border-r-0 border-gray-300 px-3 py-2',
@@ -55,14 +55,14 @@ const PhoneInput = ({
             countryCode.length == 4 && 'w-16',
             countryCode.length >= 5 && 'w-20'
           )}
-          type="text"
-          placeholder="+86"
+          type='text'
+          placeholder='+86'
           value={countryCode}
           onChange={e => setCountryCode(e.target.value)}
         />
         <input
-          className="flex-grow rounded-md rounded-l-none border border-gray-300 px-3 py-2"
-          type="text"
+          className='flex-grow rounded-md rounded-l-none border border-gray-300 px-3 py-2'
+          type='text'
           value={phone}
           onChange={e => setPhone(e.target.value)}
         />
@@ -80,22 +80,22 @@ const PasswordInput = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false)
   return (
-    <div className="mt-3 flex w-full flex-col">
-      <div className="mb-1 text-sm font-medium text-gray-700">Password</div>
-      <div className="flex w-full">
+    <div className='mt-3 flex w-full flex-col'>
+      <div className='mb-1 text-sm font-medium text-gray-700'>Password</div>
+      <div className='flex w-full'>
         <input
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="w-full rounded-md rounded-r-none border border-r-0 border-gray-300 px-2 py-2"
+          className='w-full rounded-md rounded-r-none border border-r-0 border-gray-300 px-2 py-2'
           type={showPassword ? 'text' : 'password'}
         />
-        <div className="flex items-center justify-center rounded-md rounded-l-none border border-l-0 border-gray-300 pr-1">
+        <div className='flex items-center justify-center rounded-md rounded-l-none border border-l-0 border-gray-300 pr-1'>
           <button
             onClick={() => setShowPassword(!showPassword)}
-            className="cursor-default rounded p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600"
+            className='cursor-default rounded p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600'
           >
             <SvgIcon
-              className="h-5 w-5"
+              className='h-5 w-5'
               name={showPassword ? 'eye-off' : 'eye'}
             />
           </button>
@@ -153,21 +153,21 @@ const OtherLoginMethods = ({
   ]
   return (
     <Fragment>
-      <div className="mt-8 mb-4 flex w-full items-center">
-        <span className="h-px flex-grow bg-gray-300"></span>
-        <span className="mx-2 text-sm text-gray-400">or</span>
-        <span className="h-px flex-grow bg-gray-300"></span>
+      <div className='mt-8 mb-4 flex w-full items-center'>
+        <span className='h-px flex-grow bg-gray-300'></span>
+        <span className='mx-2 text-sm text-gray-400'>or</span>
+        <span className='h-px flex-grow bg-gray-300'></span>
       </div>
-      <div className="flex gap-3">
+      <div className='flex gap-3'>
         {otherLoginMethods.map(
           ({ id, name }) =>
             method !== id && (
               <button
                 key={id}
                 onClick={() => setMethod(id)}
-                className="flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800"
+                className='flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800'
               >
-                <SvgIcon className="mr-2 h-5 w-5" name={id} />
+                <SvgIcon className='mr-2 h-5 w-5' name={id} />
                 <span>{name}</span>
               </button>
             )
@@ -274,11 +274,11 @@ const LoginWithQRCode = () => {
   }, [qrCodeUrl])
   const qrCodeMessage = 'test'
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="rounded-3xl border p-6">
-        <img src={qrCodeImage} alt="QR Code" className="no-drag" />
+    <div className='flex flex-col items-center justify-center'>
+      <div className='rounded-3xl border p-6'>
+        <img src={qrCodeImage} alt='QR Code' className='no-drag' />
       </div>
-      <div className="mt-4 text-sm text-gray-500">{qrCodeMessage}</div>
+      <div className='mt-4 text-sm text-gray-500'>{qrCodeMessage}</div>
     </div>
   )
 }
@@ -287,8 +287,8 @@ export default function Login() {
   const [method, setMethod] = useState<Method>(Method.PHONE)
 
   return (
-    <div className="grid h-full place-content-center">
-      <div className="w-80">
+    <div className='grid h-full place-content-center'>
+      <div className='w-80'>
         {method === Method.EMAIL && <LoginWithEmail />}
         {method === Method.PHONE && <LoginWithPhone />}
         {method === Method.QRCODE && <LoginWithQRCode />}

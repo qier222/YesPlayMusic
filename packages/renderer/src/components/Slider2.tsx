@@ -27,7 +27,7 @@ const Slider = () => {
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
-      <div className="absolute h-[2px] w-full bg-gray-500 bg-opacity-10"></div>
+      <div className='absolute h-[2px] w-full bg-gray-500 bg-opacity-10'></div>
       <div
         className={classNames(
           'absolute h-[2px]',
@@ -43,16 +43,16 @@ const Slider = () => {
         )}
         style={thumbStyle}
       >
-        <div className="absolute h-2 w-2 rounded-full bg-brand-500"></div>
+        <div className='absolute h-2 w-2 rounded-full bg-brand-500'></div>
       </div>
 
       <input
-        type="range"
-        min="0"
-        max="100"
+        type='range'
+        min='0'
+        max='100'
         value={value}
         onChange={e => setValue(Number(e.target.value))}
-        className="absolute h-[2px] w-full appearance-none opacity-0"
+        className='absolute h-[2px] w-full appearance-none opacity-0'
       />
     </div>
   )

@@ -20,12 +20,12 @@ const Title = ({
   seeMoreLink: string
 }) => {
   return (
-    <div className="flex items-baseline justify-between">
-      <div className="my-4 text-[28px] font-bold text-black dark:text-white">
+    <div className='flex items-baseline justify-between'>
+      <div className='my-4 text-[28px] font-bold text-black dark:text-white'>
         {title}
       </div>
       {seeMoreLink && (
-        <div className="text-13px font-semibold text-gray-600 hover:underline">
+        <div className='text-13px font-semibold text-gray-600 hover:underline'>
           See More
         </div>
       )}
@@ -83,6 +83,8 @@ const CoverRow = ({
   seeMoreLink,
   isSkeleton,
   className,
+  rows = 2,
+  navigateCallback, // Callback function when click on the cover/title
 }: {
   title?: string
   albums?: Album[]
@@ -92,13 +94,15 @@ const CoverRow = ({
   seeMoreLink?: string
   isSkeleton?: boolean
   className?: string
+  rows?: number
+  navigateCallback?: () => void
 }) => {
   const renderItems = useMemo(() => {
     if (isSkeleton) {
-      return new Array(10).fill({}) as Array<Album | Playlist | Artist>
+      return new Array(rows * 5).fill({}) as Array<Album | Playlist | Artist>
     }
     return albums ?? playlists ?? artists ?? []
-  }, [albums, artists, isSkeleton, playlists])
+  }, [albums, artists, isSkeleton, playlists, rows])
 
   const navigate = useNavigate()
   const goTo = (id: number) => {
@@ -106,6 +110,7 @@ const CoverRow = ({
     if (albums) navigate(`/album/${id}`)
     if (playlists) navigate(`/playlist/${id}`)
     if (artists) navigate(`/artist/${id}`)
+    if (navigateCallback) navigateCallback()
   }
 
   const prefetch = (id: number) => {
@@ -129,12 +134,12 @@ const CoverRow = ({
           <div
             key={item.id ?? index}
             onMouseOver={() => prefetch(item.id)}
-            className="grid gap-x-[24px] gap-y-7"
+            className='grid gap-x-[24px] gap-y-7'
           >
             <div>
               {/*  Cover  */}
               {isSkeleton ? (
-                <Skeleton className="box-content aspect-square w-full rounded-xl border border-black border-opacity-0" />
+                <Skeleton className='box-content aspect-square w-full rounded-xl border border-black border-opacity-0' />
               ) : (
                 <Cover
                   onClick={() => goTo(item.id)}
@@ -143,30 +148,30 @@ const CoverRow = ({
               )}
 
               {/* Info */}
-              <div className="mt-2">
-                <div className="font-semibold">
+              <div className='mt-2'>
+                <div className='font-semibold'>
                   {/*  Name */}
                   {isSkeleton ? (
-                    <div className="flex w-full -translate-y-px flex-col">
-                      <Skeleton className="w-full leading-tight">
+                    <div className='flex w-full -translate-y-px flex-col'>
+                      <Skeleton className='w-full leading-tight'>
                         PLACEHOLDER
                       </Skeleton>
-                      <Skeleton className="w-1/3 translate-y-px leading-tight">
+                      <Skeleton className='w-1/3 translate-y-px leading-tight'>
                         PLACEHOLDER
                       </Skeleton>
                     </div>
                   ) : (
-                    <span className="line-clamp-2 leading-tight ">
+                    <span className='line-clamp-2 leading-tight '>
                       {/* Playlist private icon */}
                       {(item as Playlist).privacy && (
                         <SvgIcon
-                          name="lock"
-                          className="mr-1 mb-1 inline-block h-3 w-3 text-gray-300"
+                          name='lock'
+                          className='mr-1 mb-1 inline-block h-3 w-3 text-gray-300'
                         />
                       )}
                       <span
                         onClick={() => goTo(item.id)}
-                        className="decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-200"
+                        className='decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-200'
                       >
                         {item.name}
                       </span>
@@ -176,11 +181,11 @@ const CoverRow = ({
 
                 {/* Subtitle */}
                 {isSkeleton ? (
-                  <Skeleton className="w-3/5 translate-y-px text-[12px]">
+                  <Skeleton className='w-3/5 translate-y-px text-[12px]'>
                     PLACEHOLDER
                   </Skeleton>
                 ) : (
-                  <div className="flex text-[12px] text-gray-500 dark:text-gray-400">
+                  <div className='flex text-[12px] text-gray-500 dark:text-gray-400'>
                     <span>{getSubtitleText(item, subtitle)}</span>
                   </div>
                 )}

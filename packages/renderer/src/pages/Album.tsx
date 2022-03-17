@@ -10,7 +10,12 @@ import useAlbum from '@/hooks/useAlbum'
 import useArtistAlbums from '@/hooks/useArtistAlbums'
 import { player } from '@/store'
 import { State as PlayerState } from '@/utils/player'
-import { formatDate, formatDuration, resizeImage } from '@/utils/common'
+import {
+  formatDate,
+  formatDuration,
+  resizeImage,
+  scrollToTop,
+} from '@/utils/common'
 
 const PlayButton = ({
   album,
@@ -49,7 +54,7 @@ const PlayButton = ({
     <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
       <SvgIcon
         name={isPlaying && isThisAlbumPlaying ? 'pause' : 'play'}
-        className="mr-2 h-4 w-4"
+        className='mr-2 h-4 w-4'
       />
       {isPlaying && isThisAlbumPlaying ? '暂停' : '播放'}
     </Button>
@@ -77,29 +82,29 @@ const Header = ({
   return (
     <Fragment>
       {/* Header background */}
-      <div className="absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden">
+      <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
         {coverUrl && !isCoverError && (
           <Fragment>
             <img
               src={coverUrl}
-              className="absolute -top-full w-full blur-[100px]"
+              className='absolute -top-full w-full blur-[100px]'
             />
             <img
               src={coverUrl}
-              className="absolute -top-full w-full blur-[100px]"
+              className='absolute -top-full w-full blur-[100px]'
             />
           </Fragment>
         )}
-        <div className="absolute top-0 h-full w-full bg-gradient-to-b from-white/[.84] to-white dark:from-black/[.5] dark:to-[#1d1d1d]"></div>
+        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.84] to-white dark:from-black/[.5] dark:to-[#1d1d1d]'></div>
       </div>
 
-      <div className="grid grid-cols-[17rem_auto] items-center gap-9">
+      <div className='grid grid-cols-[17rem_auto] items-center gap-9'>
         {/*  Cover */}
-        <div className="relative z-0 aspect-square self-start">
+        <div className='relative z-0 aspect-square self-start'>
           {/* Neon shadow */}
           {!isLoading && coverUrl && !isCoverError && (
             <div
-              className="absolute top-3.5 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] rounded-2xl bg-cover opacity-40 blur-lg filter"
+              className='absolute top-3.5 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] rounded-2xl bg-cover opacity-40 blur-lg filter'
               style={{
                 backgroundImage: `url("${coverUrl}")`,
               }}
@@ -108,41 +113,41 @@ const Header = ({
 
           {!isLoading && isCoverError ? (
             // Fallback cover
-            <div className="flex h-full w-full items-center justify-center rounded-2xl border border-black border-opacity-5 bg-gray-100 text-gray-300">
-              <SvgIcon name="music-note" className="h-1/2 w-1/2" />
+            <div className='flex h-full w-full items-center justify-center rounded-2xl border border-black border-opacity-5 bg-gray-100 text-gray-300'>
+              <SvgIcon name='music-note' className='h-1/2 w-1/2' />
             </div>
           ) : (
             coverUrl && (
               <img
                 src={coverUrl}
-                className="rounded-2xl border border-b-0 border-black border-opacity-5 dark:border-white dark:border-opacity-5"
+                className='rounded-2xl border border-b-0 border-black border-opacity-5 dark:border-white dark:border-opacity-5'
                 onError={() => setCoverError(true)}
               />
             )
           )}
-          {isLoading && <Skeleton className="h-full w-full rounded-2xl" />}
+          {isLoading && <Skeleton className='h-full w-full rounded-2xl' />}
         </div>
 
         {/* Info */}
-        <div className="z-10 flex h-full flex-col justify-between">
+        <div className='z-10 flex h-full flex-col justify-between'>
           {/*  Name */}
           {isLoading ? (
-            <Skeleton className="w-3/4 text-6xl">PLACEHOLDER</Skeleton>
+            <Skeleton className='w-3/4 text-6xl'>PLACEHOLDER</Skeleton>
           ) : (
-            <div className="text-6xl font-bold dark:text-white">
+            <div className='text-6xl font-bold dark:text-white'>
               {album?.name}
             </div>
           )}
 
           {/*  Artist */}
           {isLoading ? (
-            <Skeleton className="mt-5 w-64 text-lg">PLACEHOLDER</Skeleton>
+            <Skeleton className='mt-5 w-64 text-lg'>PLACEHOLDER</Skeleton>
           ) : (
-            <div className="mt-5 text-lg font-medium text-gray-800 dark:text-gray-300">
+            <div className='mt-5 text-lg font-medium text-gray-800 dark:text-gray-300'>
               Album by{' '}
               <NavLink
                 to={`/artist/${album?.artist.name}`}
-                className="cursor-default font-semibold hover:underline"
+                className='cursor-default font-semibold hover:underline'
               >
                 {album?.artist.name}
               </NavLink>
@@ -151,11 +156,11 @@ const Header = ({
 
           {/* Release date & track count & album duration */}
           {isLoading ? (
-            <Skeleton className="w-72 translate-y-px text-sm">
+            <Skeleton className='w-72 translate-y-px text-sm'>
               PLACEHOLDER
             </Skeleton>
           ) : (
-            <div className="text-sm font-thin text-gray-500 dark:text-gray-400">
+            <div className='text-sm font-thin text-gray-500 dark:text-gray-400'>
               {dayjs(album?.publishTime || 0).year()} · {album?.size} Songs,{' '}
               {albumDuration}
             </div>
@@ -163,17 +168,17 @@ const Header = ({
 
           {/* Description */}
           {isLoading ? (
-            <Skeleton className="mt-5 min-h-[2.5rem] w-1/2 text-sm">
+            <Skeleton className='mt-5 min-h-[2.5rem] w-1/2 text-sm'>
               PLACEHOLDER
             </Skeleton>
           ) : (
-            <div className="line-clamp-2 mt-5 min-h-[2.5rem] text-sm text-gray-500 dark:text-gray-400">
+            <div className='line-clamp-2 mt-5 min-h-[2.5rem] text-sm text-gray-500 dark:text-gray-400'>
               {album?.description}
             </div>
           )}
 
           {/*  Buttons */}
-          <div className="mt-5 flex gap-4">
+          <div className='mt-5 flex gap-4'>
             <PlayButton {...{ album, handlePlay, isLoading }} />
 
             <Button
@@ -181,7 +186,7 @@ const Header = ({
               isSkelton={isLoading}
               onClick={() => toast('Work in progress')}
             >
-              <SvgIcon name="heart" className="h-4 w-4" />
+              <SvgIcon name='heart' className='h-4 w-4' />
             </Button>
 
             <Button
@@ -190,7 +195,7 @@ const Header = ({
               isSkelton={isLoading}
               onClick={() => toast('Work in progress')}
             >
-              <SvgIcon name="more" className="h-4 w-4" />
+              <SvgIcon name='more' className='h-4 w-4' />
             </Button>
           </div>
         </div>
@@ -208,7 +213,6 @@ const MoreAlbum = ({ album }: { album: Album | undefined }) => {
 
   const filteredAlbums = useMemo((): Album[] => {
     if (!albums) return []
-    const albumID = album?.id
     const allReleases = albums?.hotAlbums || []
     const filteredAlbums = allReleases.filter(
       album =>
@@ -218,19 +222,18 @@ const MoreAlbum = ({ album }: { album: Album | undefined }) => {
 
     const qualifiedAlbums = [...filteredAlbums, ...singles]
 
+    const formatName = (name: string) =>
+      name.toLowerCase().replace(/(\s|deluxe|edition|\(|\))/g, '')
+
     const uniqueAlbums: Album[] = []
     qualifiedAlbums.forEach(a => {
       // 去除当前页面的专辑
-      if (Number(a.id) === Number(albumID) || album?.name === a.name) return
+      if (formatName(a.name) === formatName(album?.name ?? '')) return
 
       // 去除重复的专辑(包含 deluxe edition 的专辑会视为重复)
       if (
         uniqueAlbums.findIndex(aa => {
-          return (
-            a.name === aa.name ||
-            a.name.toLowerCase().replace(/(\s|deluxe|edition|\(|\))/g, '') ===
-              aa.name.toLowerCase().replace(/(\s|deluxe|edition|\(|\))/g, '')
-          )
+          return formatName(a.name) === formatName(aa.name)
         }) !== -1
       ) {
         return
@@ -248,25 +251,27 @@ const MoreAlbum = ({ album }: { album: Album | undefined }) => {
     })
 
     return uniqueAlbums.slice(0, 5)
-  }, [album?.id, album?.name, albums])
+  }, [album?.name, albums])
 
   return (
     <div>
-      <div className="my-5 h-px w-full bg-gray-100 dark:bg-gray-800"></div>
-      <div className="pl-px text-[1.375rem] font-semibold text-gray-800 dark:text-gray-100">
+      <div className='my-5 h-px w-full bg-gray-100 dark:bg-gray-800'></div>
+      <div className='pl-px text-[1.375rem] font-semibold text-gray-800 dark:text-gray-100'>
         More by{' '}
         <NavLink
           to={`/artist/${album?.artist?.id}`}
-          className="cursor-default hover:underline"
+          className='cursor-default hover:underline'
         >
           {album?.artist.name}
         </NavLink>
       </div>
-      <div className="mt-3">
+      <div className='mt-3'>
         <CoverRow
           albums={filteredAlbums}
           subtitle={Subtitle.TYPE_RELEASE_YEAR}
           isSkeleton={isLoading}
+          rows={1}
+          navigateCallback={scrollToTop}
         />
       </div>
     </div>
@@ -289,7 +294,7 @@ const Album = () => {
   }
 
   return (
-    <div className="mt-10">
+    <div className='mt-10'>
       <Header
         album={album?.album}
         isLoading={isLoading}
@@ -301,10 +306,10 @@ const Album = () => {
         isSkeleton={isLoading}
       />
       {album?.album && (
-        <div className="mt-5 text-xs text-gray-400">
+        <div className='mt-5 text-xs text-gray-400'>
           <div> Released {formatDate(album.album.publishTime || 0, 'en')} </div>
           {album.album.company && (
-            <div className="mt-[2px]">© {album.album.company} </div>
+            <div className='mt-[2px]'>© {album.album.company} </div>
           )}
         </div>
       )}

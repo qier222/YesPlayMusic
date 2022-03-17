@@ -33,32 +33,32 @@ const Track = memo(
         )}
       >
         {/* Track info */}
-        <div className="col-span-6 grid grid-cols-[4.2rem_auto] pr-8">
+        <div className='col-span-6 grid grid-cols-[4.2rem_auto] pr-8'>
           {/* Cover */}
           <div>
             {isSkeleton ? (
-              <Skeleton className="mr-4 h-12 w-12 rounded-md border border-gray-100 dark:border-gray-800" />
+              <Skeleton className='mr-4 h-12 w-12 rounded-md border border-gray-100 dark:border-gray-800' />
             ) : (
               <img
                 src={resizeImage(track.al.picUrl, 'xs')}
-                className="box-content h-12 w-12 rounded-md border border-black border-opacity-[.03]"
+                className='box-content h-12 w-12 rounded-md border border-black border-opacity-[.03]'
               />
             )}
           </div>
 
           {/* Track name & Artists */}
-          <div className="flex flex-col justify-center">
+          <div className='flex flex-col justify-center'>
             {isSkeleton ? (
-              <Skeleton className="text-lg">PLACEHOLDER12345</Skeleton>
+              <Skeleton className='text-lg'>PLACEHOLDER12345</Skeleton>
             ) : (
-              <div className="line-clamp-1 break-all text-lg font-semibold dark:text-white">
+              <div className='line-clamp-1 break-all text-lg font-semibold dark:text-white'>
                 {track.name}
               </div>
             )}
 
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className='text-sm text-gray-600 dark:text-gray-400'>
               {isSkeleton ? (
-                <Skeleton className="w-2/3 translate-y-px">PLACE</Skeleton>
+                <Skeleton className='w-2/3 translate-y-px'>PLACE</Skeleton>
               ) : (
                 <ArtistInline artists={track.ar} />
               )}
@@ -67,7 +67,7 @@ const Track = memo(
         </div>
 
         {/* Album name */}
-        <div className="col-span-4 flex items-center text-gray-600 dark:text-gray-400">
+        <div className='col-span-4 flex items-center text-gray-600 dark:text-gray-400'>
           {isSkeleton ? (
             <Skeleton>PLACEHOLDER1234567890</Skeleton>
           ) : (
@@ -75,17 +75,17 @@ const Track = memo(
               <NavLink
                 to={`/album/${track.al.id}`}
                 onMouseOver={() => prefetchAlbum({ id: track.al.id })}
-                className="hover:underline"
+                className='hover:underline'
               >
                 {track.al.name}
               </NavLink>
-              <span className="flex-grow"></span>
+              <span className='flex-grow'></span>
             </Fragment>
           )}
         </div>
 
         {/* Actions & Track duration */}
-        <div className="col-span-2 flex items-center justify-end">
+        <div className='col-span-2 flex items-center justify-end'>
           {/* Like button */}
           {!isSkeleton && (
             <button
@@ -98,7 +98,7 @@ const Track = memo(
             >
               <SvgIcon
                 name={isLiked ? 'heart' : 'heart-outline'}
-                className="h-4 w-4 "
+                className='h-4 w-4 '
               />
             </button>
           )}
@@ -107,7 +107,7 @@ const Track = memo(
           {isSkeleton ? (
             <Skeleton>0:00</Skeleton>
           ) : (
-            <div className="min-w-[2.5rem] text-right text-gray-600 dark:text-gray-400">
+            <div className='min-w-[2.5rem] text-right text-gray-600 dark:text-gray-400'>
               {formatDuration(track.dt, 'en', 'hh:mm:ss')}
             </div>
           )}
@@ -146,16 +146,16 @@ const TracksList = memo(
     return (
       <Fragment>
         {/* Tracks table header */}
-        <div className="ml-2 mr-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500">
-          <div className="col-span-6 grid grid-cols-[4.2rem_auto]">
+        <div className='ml-2 mr-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500'>
+          <div className='col-span-6 grid grid-cols-[4.2rem_auto]'>
             <div></div>
             <div>TITLE</div>
           </div>
-          <div className="col-span-4">ALBUM</div>
-          <div className="col-span-2 justify-self-end">TIME</div>
+          <div className='col-span-4'>ALBUM</div>
+          <div className='col-span-2 justify-self-end'>TIME</div>
         </div>
 
-        <div className="grid w-full gap-1">
+        <div className='grid w-full gap-1'>
           {/* Tracks */}
           {!isSkeleton &&
             tracks.map(track => (
