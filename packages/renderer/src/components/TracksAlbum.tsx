@@ -117,7 +117,12 @@ const Track = memo(
               >
                 <span>{track.name}</span>
                 {subtitle && (
-                  <span className='ml-1 text-gray-400' title={subtitle}>
+                  <span
+                    title={subtitle}
+                    className={classNames(
+                      'ml-1',
+                      isHighlight ? 'text-brand-500/[.8]' : 'text-gray-400'
+                    )}>
                     ({subtitle})
                   </span>
                 )}
