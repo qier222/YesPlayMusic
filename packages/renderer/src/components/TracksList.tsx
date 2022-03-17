@@ -56,8 +56,8 @@ const Track = memo(
             ) : (
               <div
                 className={classNames(
-                  "line-clamp-1 break-all text-lg font-semibold",
-                  isPlaying ? "text-brand-500" : "text-black dark:text-white"
+                  'line-clamp-1 break-all text-lg font-semibold',
+                  isPlaying ? 'text-brand-500' : 'text-black dark:text-white'
                 )}
               >
                 <span>{track.name}</span>
@@ -65,8 +65,8 @@ const Track = memo(
                   <span
                     title={subtitle}
                     className={classNames(
-                      "ml-1",
-                      isPlaying ? "text-brand-500/[.8]" : "text-gray-400"
+                      'ml-1',
+                      isPlaying ? 'text-brand-500/[.8]' : 'text-gray-400'
                     )}
                   >
                     ({subtitle})
@@ -128,8 +128,8 @@ const Track = memo(
           ) : (
             <div
               className={classNames(
-                "min-w-[2.5rem] text-right",
-                isPlaying ? "text-brand-500" : "text-gray-600 dark:text-gray-400"
+                'min-w-[2.5rem] text-right',
+                isPlaying ? 'text-brand-500' : 'text-gray-600 dark:text-gray-400'
               )}
             >
               {formatDuration(track.dt, 'en', 'hh:mm:ss')}
