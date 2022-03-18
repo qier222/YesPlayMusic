@@ -51,6 +51,31 @@
   }
 }
 
+@layer utilities {
+  .no-scrollbar {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .playlists-scrollbar {
+    &::-webkit-scrollbar {
+      @apply w-1.5;
+    }
+    &::-webkit-scrollbar-track {
+      @apply mb-0.5;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply rounded-lg bg-gray-300 dark:bg-gray-400;
+      &:active {
+        @apply bg-gray-400 dark:bg-gray-500;
+      }
+    }
+  }
+}
+
 @font-face {
   font-family: Barlow;
   font-weight: normal;

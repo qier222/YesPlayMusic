@@ -67,7 +67,7 @@ const Playlists = () => {
   })
 
   return (
-    <div className='mb-16 overflow-auto pb-2'>
+    <div className='mb-16 overflow-auto pb-2 playlists-scrollbar'>
       {playlists?.playlist?.map(playlist => (
         <NavLink
           key={playlist.id}
