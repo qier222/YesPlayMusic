@@ -7,6 +7,7 @@ import { prefetchAlbum } from '@/hooks/useAlbum'
 import useUser from '@/hooks/useUser'
 import useUserLikedSongsIDs from '@/hooks/useUserLikedSongsIDs'
 import { formatDuration, resizeImage } from '@/utils/common'
+import { player } from '@/store'
 
 const Track = memo(
   ({
@@ -14,12 +15,14 @@ const Track = memo(
     isLiked = false,
     isSkeleton = false,
     isPlaying = false,
+    subtitle = undefined,
     onClick,
   }: {
     track: Track
     isLiked?: boolean
     isSkeleton?: boolean
     isPlaying?: boolean
+    subtitle?: string
     onClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
   }) => {
     return (
@@ -28,8 +31,8 @@ const Track = memo(
         className={classNames(
           'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl dark:after:bg-white/[.08]',
           'grid-cols-12 p-2 pr-4',
-          !isSkeleton && !isPlaying && 'btn-hover-animation after:bg-gray-100',
-          !isSkeleton && isPlaying && 'bg-brand-100'
+          !isSkeleton && !isPlaying && 'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]',
+          !isSkeleton && isPlaying && 'bg-brand-100 dark:bg-gray-800'
         )}
       >
         {/* Track info */}
@@ -51,12 +54,33 @@ const Track = memo(
             {isSkeleton ? (
               <Skeleton className='text-lg'>PLACEHOLDER12345</Skeleton>
             ) : (
-              <div className='line-clamp-1 break-all text-lg font-semibold dark:text-white'>
-                {track.name}
+              <div
+                className={classNames(
+                  'line-clamp-1 break-all text-lg font-semibold',
+                  isPlaying ? 'text-brand-500' : 'text-black dark:text-white'
+                )}
+              >
+                <span>{track.name}</span>
+                {subtitle && (
+                  <span
+                    title={subtitle}
+                    className={classNames(
+                      'ml-1',
+                      isPlaying ? 'text-brand-500/[.8]' : 'text-gray-400'
+                    )}
+                  >
+                    ({subtitle})
+                  </span>
+                )}
               </div>
             )}
 
-            <div className='text-sm text-gray-600 dark:text-gray-400'>
+            <div
+              className={classNames(
+                'text-sm',
+                isPlaying ? 'text-brand-500' : 'text-gray-600 dark:text-gray-400'
+              )}
+            >
               {isSkeleton ? (
                 <Skeleton className='w-2/3 translate-y-px'>PLACE</Skeleton>
               ) : (
@@ -75,7 +99,10 @@ const Track = memo(
               <NavLink
                 to={`/album/${track.al.id}`}
                 onMouseOver={() => prefetchAlbum({ id: track.al.id })}
-                className='hover:underline'
+                className={classNames(
+                  'hover:underline', 
+                  isPlaying && 'text-brand-500'
+                )}
               >
                 {track.al.name}
               </NavLink>
@@ -107,7 +134,12 @@ const Track = memo(
           {isSkeleton ? (
             <Skeleton>0:00</Skeleton>
           ) : (
-            <div className='min-w-[2.5rem] text-right text-gray-600 dark:text-gray-400'>
+            <div
+              className={classNames(
+                'min-w-[2.5rem] text-right',
+                isPlaying ? 'text-brand-500' : 'text-gray-600 dark:text-gray-400'
+              )}
+            >
               {formatDuration(track.dt, 'en', 'hh:mm:ss')}
             </div>
           )}
@@ -143,6 +175,12 @@ const TracksList = memo(
       if (e.detail === 2) onTrackDoubleClick?.(trackID)
     }
 
+    const playerSnapshot = useSnapshot(player)
+    const playingTrack = useMemo(
+      () => playerSnapshot.track,
+      [playerSnapshot.track]
+    )
+
     return (
       <Fragment>
         {/* Tracks table header */}
@@ -157,25 +195,26 @@ const TracksList = memo(
 
         <div className='grid w-full gap-1'>
           {/* Tracks */}
-          {!isSkeleton &&
-            tracks.map(track => (
-              <Track
-                onClick={handleClick}
-                key={track.id}
-                track={track}
-                isLiked={userLikedSongs?.ids?.includes(track.id) ?? false}
-                isSkeleton={false}
-              />
-            ))}
-          {isSkeleton &&
-            skeletonTracks.map((track, index) => (
-              <Track
-                key={index}
-                track={track}
-                onClick={() => null}
-                isSkeleton={true}
-              />
-            ))}
+          {isSkeleton
+            ? skeletonTracks.map((track, index) => (
+                <Track
+                  key={index}
+                  track={track}
+                  onClick={() => null}
+                  isSkeleton={true}
+                />
+              ))
+            : tracks.map(track => (
+                <Track
+                  onClick={handleClick}
+                  key={track.id}
+                  track={track}
+                  isLiked={userLikedSongs?.ids?.includes(track.id) ?? false}
+                  isSkeleton={false}
+                  isPlaying={track.id === playingTrack?.id}
+                  subtitle={track.tns?.at(0) ?? track.alia?.at(0)}
+                />
+              ))}
         </div>
       </Fragment>
     )
