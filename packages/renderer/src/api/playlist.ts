@@ -10,7 +10,7 @@ export interface FetchPlaylistParams {
   id: number
   s?: number // 歌单最近的 s 个收藏者
 }
-interface FetchPlaylistResponse {
+export interface FetchPlaylistResponse {
   code: number
   playlist: Playlist
   privileges: unknown // TODO: unknown type

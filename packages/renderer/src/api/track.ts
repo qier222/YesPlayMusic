@@ -33,7 +33,7 @@ export interface FetchAudioSourceParams {
   id: number
   br?: number // bitrate, default 999000，320000 = 320kbps
 }
-interface FetchAudioSourceResponse {
+export interface FetchAudioSourceResponse {
   code: number
   data: {
     br: number

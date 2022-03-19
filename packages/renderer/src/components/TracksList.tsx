@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom'
 import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
 import SvgIcon from '@/components/SvgIcon'
-import { prefetchAlbum } from '@/hooks/useAlbum'
 import useUser from '@/hooks/useUser'
 import useUserLikedSongsIDs from '@/hooks/useUserLikedSongsIDs'
 import { formatDuration, resizeImage } from '@/utils/common'
@@ -31,8 +30,10 @@ const Track = memo(
         className={classNames(
           'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl dark:after:bg-white/[.08]',
           'grid-cols-12 p-2 pr-4',
-          !isSkeleton && !isPlaying && 'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]',
-          !isSkeleton && isPlaying && 'bg-brand-100 dark:bg-gray-800'
+          !isSkeleton &&
+            !isPlaying &&
+            'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]',
+          !isSkeleton && isPlaying && 'bg-brand-50 dark:bg-gray-800'
         )}
       >
         {/* Track info */}
@@ -78,7 +79,9 @@ const Track = memo(
             <div
               className={classNames(
                 'text-sm',
-                isPlaying ? 'text-brand-500' : 'text-gray-600 dark:text-gray-400'
+                isPlaying
+                  ? 'text-brand-500'
+                  : 'text-gray-600 dark:text-gray-400'
               )}
             >
               {isSkeleton ? (
@@ -98,9 +101,8 @@ const Track = memo(
             <Fragment>
               <NavLink
                 to={`/album/${track.al.id}`}
-                onMouseOver={() => prefetchAlbum({ id: track.al.id })}
                 className={classNames(
-                  'hover:underline', 
+                  'hover:underline',
                   isPlaying && 'text-brand-500'
                 )}
               >
@@ -137,7 +139,9 @@ const Track = memo(
             <div
               className={classNames(
                 'min-w-[2.5rem] text-right',
-                isPlaying ? 'text-brand-500' : 'text-gray-600 dark:text-gray-400'
+                isPlaying
+                  ? 'text-brand-500'
+                  : 'text-gray-600 dark:text-gray-400'
               )}
             >
               {formatDuration(track.dt, 'en', 'hh:mm:ss')}

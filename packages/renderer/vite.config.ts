@@ -84,6 +84,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => path.replace(/^\/netease/, ''),
       },
+      '/yesplaymusic/': {
+        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT}/yesplaymusic`,
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/yesplaymusic/, ''),
+      },
     },
   },
 })

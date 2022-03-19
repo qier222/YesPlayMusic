@@ -71,7 +71,7 @@ const Track = memo(
           !isSkeleton && {
             'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]':
               !isHighlight,
-            'bg-brand-100 dark:bg-gray-800': isHighlight,
+            'bg-brand-50 dark:bg-gray-800': isHighlight,
           }
         )}
       >
@@ -122,7 +122,8 @@ const Track = memo(
                     className={classNames(
                       'ml-1',
                       isHighlight ? 'text-brand-500/[.8]' : 'text-gray-400'
-                    )}>
+                    )}
+                  >
                     ({subtitle})
                   </span>
                 )}

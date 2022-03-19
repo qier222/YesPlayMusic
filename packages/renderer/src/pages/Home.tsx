@@ -7,9 +7,16 @@ export default function Home() {
   const {
     data: recommendedPlaylists,
     isLoading: isLoadingRecommendedPlaylists,
-  } = useQuery(PlaylistApiNames.FETCH_RECOMMENDED_PLAYLISTS, () => {
-    return fetchRecommendedPlaylists({})
-  })
+  } = useQuery(
+    PlaylistApiNames.FETCH_RECOMMENDED_PLAYLISTS,
+    () => {
+      return fetchRecommendedPlaylists({})
+    },
+    {
+      placeholderData: () =>
+        window.ipcRenderer.sendSync('getApiCacheSync', { api: 'personalized' }),
+    }
+  )
 
   return (
     <div>

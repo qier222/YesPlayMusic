@@ -3,6 +3,7 @@ import {
   fetchAudioSourceWithReactQuery,
   fetchTracksWithReactQuery,
 } from '@/hooks/useTracks'
+import { cacheAudio } from '@/api/yesplaymusic'
 
 type TrackID = number
 enum TrackListSourceType {
@@ -19,9 +20,10 @@ export enum Mode {
 }
 export enum State {
   INITIALIZING = 'initializing',
+  READY = 'ready',
   PLAYING = 'playing',
   PAUSED = 'paused',
-  LOADED = 'loaded',
+  LOADING = 'loading',
 }
 export enum RepeatMode {
   OFF = 'off',
@@ -107,8 +109,7 @@ export class Player {
 
   private _setupProgressInterval() {
     this._progressInterval = setInterval(() => {
-      this._progress = _howler.seek()
-      console.log(this.progress)
+      if (this.state === State.PLAYING) this._progress = _howler.seek()
     }, 1000)
   }
 
@@ -116,6 +117,7 @@ export class Player {
    * Fetch track details from Netease based on this.trackID
    */
   private async _fetchTrack(trackID: TrackID) {
+    this.state = State.LOADING
     const response = await fetchTracksWithReactQuery({ ids: [trackID] })
     if (response.songs.length) {
       return response.songs[0]
@@ -161,6 +163,8 @@ export class Player {
     })
     _howler = howler
     this.play()
+    this.state = State.PLAYING
+    _howler.once('load', () => this._cacheAudio(this.trackID, audio))
 
     if (!this._progressInterval) {
       this._setupProgressInterval()
@@ -177,6 +181,11 @@ export class Player {
     }
   }
 
+  private _cacheAudio(id: number, audio: string) {
+    if (audio.includes('yesplaymusic')) return
+    cacheAudio(id, audio)
+  }
+
   /**
    * Play current track
    * @param {boolean} fade fade in
@@ -184,6 +193,7 @@ export class Player {
   play() {
     _howler.play()
     this.state = State.PLAYING
+    this._progress = _howler.seek()
   }
 
   /**

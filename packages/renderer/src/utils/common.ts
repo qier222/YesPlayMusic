@@ -20,7 +20,10 @@ export function resizeImage(
   if (!Object.keys(sizeMap).includes(size)) {
     console.error(`Invalid cover size: ${size}`)
   }
-  return `${url}?param=${sizeMap[size]}y${sizeMap[size]}`
+  return `${url}?param=${sizeMap[size]}y${sizeMap[size]}`.replace(
+    'http://',
+    'https://'
+  )
 }
 
 export const storage = {

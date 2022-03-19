@@ -8,7 +8,7 @@ export enum AlbumApiNames {
 export interface FetchAlbumParams {
   id: number
 }
-interface FetchAlbumResponse {
+export interface FetchAlbumResponse {
   code: number
   resourceState: boolean
   album: Album

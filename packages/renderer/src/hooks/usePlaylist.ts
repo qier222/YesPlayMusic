@@ -1,6 +1,6 @@
 import { fetchPlaylist } from '@/api/playlist'
 import { PlaylistApiNames } from '@/api/playlist'
-import type { FetchPlaylistParams } from '@/api/playlist'
+import type { FetchPlaylistParams, FetchPlaylistResponse } from '@/api/playlist'
 import reactQueryClient from '@/utils/reactQueryClient'
 
 const fetch = (params: FetchPlaylistParams, noCache?: boolean) => {
@@ -16,7 +16,14 @@ export default function usePlaylist(
     () => fetch(params, noCache),
     {
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
-      staleTime: 3600000,
+      staleTime: 60 * 60 * 1000, // 1 hour
+      placeholderData: (): FetchPlaylistResponse | undefined =>
+        window.ipcRenderer.sendSync('getApiCacheSync', {
+          api: 'playlist/detail',
+          query: {
+            id: params.id,
+          },
+        }),
     }
   )
 }

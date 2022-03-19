@@ -81,6 +81,7 @@ typings/
 # ----
 dist
 **/.tmp
+/tmp
 release
 .DS_Store
 dist-ssr

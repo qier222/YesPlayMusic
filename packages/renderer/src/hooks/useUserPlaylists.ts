@@ -1,4 +1,7 @@
-import type { FetchUserPlaylistsParams } from '@/api/user'
+import type {
+  FetchUserPlaylistsParams,
+  FetchUserPlaylistsResponse,
+} from '@/api/user'
 import { UserApiNames, fetchUserPlaylists } from '@/api/user'
 
 export default function useUserPlaylists(params: FetchUserPlaylistsParams) {
@@ -14,6 +17,13 @@ export default function useUserPlaylists(params: FetchUserPlaylistsParams) {
         params.uid !== 0 &&
         params.offset !== undefined
       ),
+      placeholderData: (): FetchUserPlaylistsResponse =>
+        window.ipcRenderer.sendSync('getApiCacheSync', {
+          api: 'user/playlist',
+          query: {
+            uid: params.uid,
+          },
+        }),
     }
   )
 }

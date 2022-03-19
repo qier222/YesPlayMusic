@@ -14,9 +14,4 @@ module.exports = {
   // Tailwind CSS
   plugins: [require('prettier-plugin-tailwindcss')],
   tailwindConfig: './tailwind.config.js',
-
-  // Sort import order
-  importOrder: ['^@/(.*)$', '^[./]'],
-  importOrderSeparation: false,
-  importOrderSortSpecifiers: true,
 }

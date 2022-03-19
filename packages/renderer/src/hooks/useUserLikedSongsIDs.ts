@@ -1,4 +1,7 @@
-import type { FetchUserLikedSongsIDsParams } from '@/api/user'
+import type {
+  FetchUserLikedSongsIDsParams,
+  FetchUserLikedSongsIDsResponse,
+} from '@/api/user'
 import { UserApiNames, fetchUserLikedSongsIDs } from '@/api/user'
 
 export default function useUserLikedSongsIDs(
@@ -10,6 +13,13 @@ export default function useUserLikedSongsIDs(
     {
       enabled: !!(params.uid && params.uid !== 0),
       refetchOnWindowFocus: true,
+      placeholderData: (): FetchUserLikedSongsIDsResponse | undefined =>
+        window.ipcRenderer.sendSync('getApiCacheSync', {
+          api: 'likelist',
+          query: {
+            uid: params.uid,
+          },
+        }),
     }
   )
 }

@@ -1,5 +1,9 @@
 import { TrackApiNames, fetchAudioSource, fetchTracks } from '@/api/track'
-import type { FetchAudioSourceParams, FetchTracksParams } from '@/api/track'
+import type {
+  FetchAudioSourceParams,
+  FetchTracksParams,
+  FetchTracksResponse,
+} from '@/api/track'
 import reactQueryClient from '@/utils/reactQueryClient'
 
 export default function useTracks(params: FetchTracksParams) {
@@ -12,6 +16,13 @@ export default function useTracks(params: FetchTracksParams) {
       enabled: params.ids.length !== 0,
       refetchInterval: false,
       staleTime: Infinity,
+      initialData: (): FetchTracksResponse | undefined =>
+        window.ipcRenderer.sendSync('getApiCacheSync', {
+          api: 'song/detail',
+          query: {
+            ids: params.ids.join(','),
+          },
+        }),
     }
   )
 }
@@ -37,7 +48,7 @@ export function fetchAudioSourceWithReactQuery(params: FetchAudioSourceParams) {
     },
     {
       retry: 3,
-      staleTime: 1200000,
+      staleTime: 0, // TODO: Web版1小时缓存
     }
   )
 }

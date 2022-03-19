@@ -97,7 +97,7 @@ export interface FetchUserPlaylistsParams {
   offset: number
   limit?: number // default 30
 }
-interface FetchUserPlaylistsResponse {
+export interface FetchUserPlaylistsResponse {
   code: number
   more: false
   version: string
@@ -116,7 +116,7 @@ export function fetchUserPlaylists(
 export interface FetchUserLikedSongsIDsParams {
   uid: number
 }
-interface FetchUserLikedSongsIDsResponse {
+export interface FetchUserLikedSongsIDsResponse {
   code: number
   checkPoint: number
   ids: number[]

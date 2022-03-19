@@ -3,7 +3,7 @@ import Skeleton from '@/components/Skeleton'
 import SvgIcon from '@/components/SvgIcon'
 import { prefetchAlbum } from '@/hooks/useAlbum'
 import { prefetchPlaylist } from '@/hooks/usePlaylist'
-import { formatDate, resizeImage } from '@/utils/common'
+import { formatDate, resizeImage, scrollToTop } from '@/utils/common'
 
 export enum Subtitle {
   COPYWRITER = 'copywriter',
@@ -111,6 +111,7 @@ const CoverRow = ({
     if (playlists) navigate(`/playlist/${id}`)
     if (artists) navigate(`/artist/${id}`)
     if (navigateCallback) navigateCallback()
+    scrollToTop()
   }
 
   const prefetch = (id: number) => {

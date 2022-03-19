@@ -87,7 +87,11 @@ const MediaControls = () => {
       >
         <SvgIcon
           className='h-[1.5rem] w-[1.5rem] '
-          name={state === PlayerState.PLAYING ? 'pause' : 'play'}
+          name={
+            [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
+              ? 'pause'
+              : 'play'
+          }
         />
       </IconButton>
       <IconButton onClick={() => track && player.nextTrack()} disabled={!track}>
@@ -125,6 +129,7 @@ const Progress = () => {
     () => playerSnapshot.progress,
     [playerSnapshot.progress]
   )
+  const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
 
   return (
@@ -133,7 +138,11 @@ const Progress = () => {
         <Slider
           min={0}
           max={(track.dt ?? 0) / 1000}
-          value={progress}
+          value={
+            state === PlayerState.PLAYING || state === PlayerState.PAUSED
+              ? progress
+              : 0
+          }
           onChange={value => {
             player.progress = value
           }}

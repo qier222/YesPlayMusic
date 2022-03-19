@@ -9,7 +9,7 @@ export enum ArtistApiNames {
 export interface FetchArtistParams {
   id: number
 }
-interface FetchArtistResponse {
+export interface FetchArtistResponse {
   code: number
   more: boolean
   artist: Artist
@@ -34,7 +34,7 @@ export interface FetchArtistAlbumsParams {
   limit?: number // default: 50
   offset?: number // default: 0
 }
-interface FetchArtistAlbumsResponse {
+export interface FetchArtistAlbumsResponse {
   code: number
   hotAlbums: Album[]
   more: boolean

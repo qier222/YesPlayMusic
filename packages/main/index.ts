@@ -1,3 +1,4 @@
+import './preload' // must be first
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -6,7 +7,7 @@ import {
 } from 'electron'
 import Store from 'electron-store'
 import { release } from 'os'
-import { join } from 'path'
+import path, { join } from 'path'
 import logger from './logger'
 import './server'
 import './database'
@@ -96,6 +97,7 @@ async function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  logger.info('[index] app ready')
   createWindow()
 
   // Install devtool extension
@@ -107,10 +109,10 @@ app.whenReady().then(async () => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
     } = require('electron-devtools-installer')
     installExtension(REACT_DEVELOPER_TOOLS.id).catch(err =>
-      console.log('An error occurred: ', err)
+      logger.info('An error occurred: ', err)
     )
     installExtension(REDUX_DEVTOOLS.id).catch(err =>
-      console.log('An error occurred: ', err)
+      logger.info('An error occurred: ', err)
     )
   }
 })

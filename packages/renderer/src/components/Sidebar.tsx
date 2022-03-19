@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom'
 import SvgIcon from '@/components/SvgIcon'
-import { prefetchPlaylist } from '@/hooks/usePlaylist'
 import useUser from '@/hooks/useUser'
 import useUserPlaylists from '@/hooks/useUserPlaylists'
 import { scrollToTop } from '@/utils/common'
+import { prefetchPlaylist } from '@/hooks/usePlaylist'
 
 interface Tab {
   name: string
@@ -70,10 +70,10 @@ const Playlists = () => {
     <div className='mb-16 overflow-auto pb-2'>
       {playlists?.playlist?.map(playlist => (
         <NavLink
+          onMouseOver={() => prefetchPlaylist({ id: playlist.id })}
           key={playlist.id}
           onClick={() => scrollToTop()}
           to={`/playlist/${playlist.id}`}
-          onMouseOver={() => prefetchPlaylist({ id: playlist.id })}
           className={({ isActive }: { isActive: boolean }) =>
             classNames(
               'btn-hover-animation line-clamp-1 my-px mx-3 flex cursor-default items-center rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20',
