@@ -24,7 +24,7 @@ const DailyTracksCard = () => {
 
       {/* Play button */}
       <button className='btn-pressed-animation absolute right-6 bottom-6 grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-        <SvgIcon name='play' className='ml-1 h-4 w-4' />
+        <SvgIcon name='play-fill' className='ml-0.5 h-6 w-6' />
       </button>
     </div>
   )

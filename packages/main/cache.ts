@@ -35,6 +35,7 @@ export async function setCache(api: string, data: any, query: any) {
     }
     case 'album': {
       if (!data.album) return
+      data.album.songs = (data as FetchTracksResponse).songs
       db.set(ModelNames.ALBUM, Number(data.album.id), data)
       break
     }

@@ -54,7 +54,7 @@ const PlayButton = ({
     <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
       <SvgIcon
         name={isPlaying && isThisAlbumPlaying ? 'pause' : 'play'}
-        className='mr-2 h-4 w-4'
+        className='mr-1 -ml-1 h-6 w-6'
       />
       {isPlaying && isThisAlbumPlaying ? '暂停' : '播放'}
     </Button>
@@ -74,7 +74,7 @@ const Header = ({
 
   const albumDuration = useMemo(() => {
     const duration = album?.songs?.reduce((acc, cur) => acc + cur.dt, 0) || 0
-    return formatDuration(duration, 'en', 'hh[hr] mm[min]')
+    return formatDuration(duration, 'zh-CN', 'hh[hr] mm[min]')
   }, [album?.songs])
 
   const [isCoverError, setCoverError] = useState(false)
@@ -160,8 +160,8 @@ const Header = ({
               PLACEHOLDER
             </Skeleton>
           ) : (
-            <div className='text-sm font-thin text-gray-500 dark:text-gray-400'>
-              {dayjs(album?.publishTime || 0).year()} · {album?.size} Songs,{' '}
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
+              {dayjs(album?.publishTime || 0).year()} · {album?.size} 首歌,{' '}
               {albumDuration}
             </div>
           )}
@@ -183,10 +183,11 @@ const Header = ({
 
             <Button
               color={ButtonColor.Gray}
+              iconColor={ButtonColor.Gray}
               isSkelton={isLoading}
               onClick={() => toast('Work in progress')}
             >
-              <SvgIcon name='heart' className='h-4 w-4' />
+              <SvgIcon name='heart-outline' className='h-6 w-6' />
             </Button>
 
             <Button
@@ -195,7 +196,7 @@ const Header = ({
               isSkelton={isLoading}
               onClick={() => toast('Work in progress')}
             >
-              <SvgIcon name='more' className='h-4 w-4' />
+              <SvgIcon name='more' className='h-6 w-6' />
             </Button>
           </div>
         </div>

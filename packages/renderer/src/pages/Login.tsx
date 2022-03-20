@@ -46,11 +46,13 @@ const PhoneInput = ({
 }) => {
   return (
     <div className='w-full'>
-      <div className='mb-1 text-sm font-medium text-gray-700'>Phone</div>
+      <div className='mb-1 text-sm font-medium text-gray-700 dark:text-gray-300'>
+        Phone
+      </div>
       <div className='flex w-full'>
         <input
           className={classNames(
-            'rounded-md rounded-r-none border border-r-0 border-gray-300 px-3 py-2',
+            'rounded-md rounded-r-none border border-r-0 border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white',
             countryCode.length <= 3 && 'w-14',
             countryCode.length == 4 && 'w-16',
             countryCode.length >= 5 && 'w-20'
@@ -61,7 +63,7 @@ const PhoneInput = ({
           onChange={e => setCountryCode(e.target.value)}
         />
         <input
-          className='flex-grow rounded-md rounded-l-none border border-gray-300 px-3 py-2'
+          className='flex-grow rounded-md rounded-l-none border border-gray-300 px-3 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white'
           type='text'
           value={phone}
           onChange={e => setPhone(e.target.value)}
@@ -81,18 +83,20 @@ const PasswordInput = ({
   const [showPassword, setShowPassword] = useState(false)
   return (
     <div className='mt-3 flex w-full flex-col'>
-      <div className='mb-1 text-sm font-medium text-gray-700'>Password</div>
+      <div className='mb-1 text-sm font-medium text-gray-700  dark:text-gray-300'>
+        Password
+      </div>
       <div className='flex w-full'>
         <input
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className='w-full rounded-md rounded-r-none border border-r-0 border-gray-300 px-2 py-2'
+          className='w-full rounded-md rounded-r-none border border-r-0 border-gray-300 px-2 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white'
           type={showPassword ? 'text' : 'password'}
         />
-        <div className='flex items-center justify-center rounded-md rounded-l-none border border-l-0 border-gray-300 pr-1'>
+        <div className='flex items-center justify-center rounded-md rounded-l-none border border-l-0 border-gray-300 pr-1 dark:border-gray-600 dark:bg-gray-700'>
           <button
             onClick={() => setShowPassword(!showPassword)}
-            className='cursor-default rounded p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600'
+            className='dark:hover-text-white cursor-default  rounded p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white'
           >
             <SvgIcon
               className='h-5 w-5'
@@ -118,8 +122,10 @@ const LoginButton = ({
       onClick={onClick}
       className={classNames(
         'my-2 mt-6 flex w-full cursor-default items-center justify-center rounded-lg  py-2 text-lg font-semibold  transition duration-200',
-        !disabled && 'bg-brand-100 text-brand-500',
-        disabled && 'bg-brand-100 text-brand-300'
+        !disabled &&
+          'bg-brand-100 text-brand-500 dark:bg-brand-600 dark:text-white',
+        disabled &&
+          'bg-brand-100 text-brand-300 dark:bg-brand-700 dark:text-white/50'
       )}
     >
       Login
@@ -154,9 +160,9 @@ const OtherLoginMethods = ({
   return (
     <Fragment>
       <div className='mt-8 mb-4 flex w-full items-center'>
-        <span className='h-px flex-grow bg-gray-300'></span>
-        <span className='mx-2 text-sm text-gray-400'>or</span>
-        <span className='h-px flex-grow bg-gray-300'></span>
+        <span className='h-px flex-grow bg-gray-300 dark:bg-gray-700'></span>
+        <span className='mx-2 text-sm text-gray-400 '>or</span>
+        <span className='h-px flex-grow bg-gray-300 dark:bg-gray-700'></span>
       </div>
       <div className='flex gap-3'>
         {otherLoginMethods.map(
@@ -165,7 +171,7 @@ const OtherLoginMethods = ({
               <button
                 key={id}
                 onClick={() => setMethod(id)}
-                className='flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800'
+                className='flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 dark:hover:text-gray-100'
               >
                 <SvgIcon className='mr-2 h-5 w-5' name={id} />
                 <span>{name}</span>
@@ -275,10 +281,12 @@ const LoginWithQRCode = () => {
   const qrCodeMessage = 'test'
   return (
     <div className='flex flex-col items-center justify-center'>
-      <div className='rounded-3xl border p-6'>
+      <div className='rounded-3xl border p-6 dark:border-gray-700'>
         <img src={qrCodeImage} alt='QR Code' className='no-drag' />
       </div>
-      <div className='mt-4 text-sm text-gray-500'>{qrCodeMessage}</div>
+      <div className='mt-4 text-sm text-gray-500 dark:text-gray-200'>
+        {qrCodeMessage}
+      </div>
     </div>
   )
 }

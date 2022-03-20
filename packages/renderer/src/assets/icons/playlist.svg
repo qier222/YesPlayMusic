@@ -1,1 +1,6 @@
-<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="list-music" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="svg-inline--fa fa-list-music fa-w-16 fa-9x"><path fill="currentColor" d="M16 256h256a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16zm0-128h256a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16H16A16 16 0 0 0 0 80v32a16 16 0 0 0 16 16zm128 192H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM470.94 1.33l-96.53 28.51A32 32 0 0 0 352 60.34V360a148.76 148.76 0 0 0-48-8c-61.86 0-112 35.82-112 80s50.14 80 112 80 112-35.82 112-80V148.15l73-21.39a32 32 0 0 0 23-30.71V32a32 32 0 0 0-41.06-30.67z" class=""></path></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 16.5C18 17.8807 16.8807 19 15.5 19C14.1193 19 13 17.8807 13 16.5C13 15.1193 14.1193 14 15.5 14C16.8807 14 18 15.1193 18 16.5Z" stroke="currentColor" stroke-width="2"/>
+<path d="M18.2572 5.49711L20.9021 4.43917C21.4828 4.20687 22.1351 4.54037 22.2868 5.14719C22.4097 5.63869 22.1577 6.14671 21.692 6.34628L19.6061 7.24025C19.2384 7.39783 19 7.75937 19 8.1594V16.5L17 15V7.35407C17 6.53626 17.4979 5.80084 18.2572 5.49711Z" fill="currentColor"/>
+<path d="M5 6H14M5 10H14M5 14H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M5 18H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>

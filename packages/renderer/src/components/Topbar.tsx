@@ -19,9 +19,9 @@ const NavigationButtons = () => {
         <div
           onClick={() => handleNavigate(action)}
           key={action}
-          className='app-region-no-drag btn-hover-animation rounded-lg p-3 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'
+          className='app-region-no-drag btn-hover-animation rounded-lg p-2 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'
         >
-          <SvgIcon className='h-4 w-4' name={action} />
+          <SvgIcon className='h-5 w-5' name={action} />
         </div>
       ))}
     </div>
@@ -32,13 +32,13 @@ const SearchBox = () => {
   return (
     <div className='app-region-no-drag group flex w-[16rem] cursor-text items-center rounded-full bg-gray-500 bg-opacity-5 px-3 transition duration-300 hover:bg-opacity-10 dark:bg-gray-300 dark:bg-opacity-5'>
       <SvgIcon
-        className='mr-2 h-4 w-4 text-gray-500 transition duration-300 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200'
+        className='mr-2 h-5 w-5 text-gray-500 transition duration-300 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200'
         name='search'
       />
       <input
         type='text'
         className='w-full bg-transparent placeholder:text-gray-500 dark:text-white dark:placeholder:text-gray-400'
-        placeholder='Search'
+        placeholder='搜索'
       />
     </div>
   )
@@ -47,7 +47,7 @@ const SearchBox = () => {
 const Settings = () => {
   return (
     <div className='app-region-no-drag btn-hover-animation rounded-lg p-2.5 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'>
-      <SvgIcon className='h-5 w-5' name='settings' />
+      <SvgIcon className='h-[1.125rem] w-[1.125rem]' name='settings' />
     </div>
   )
 }

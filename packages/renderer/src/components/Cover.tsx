@@ -45,7 +45,7 @@ const Cover = ({
       {/* Play button */}
       <div className='absolute top-0 hidden h-full w-full place-content-center group-hover:grid'>
         <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-          <SvgIcon className='ml-1 h-4 w-4' name='play' />
+          <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
         </button>
       </div>
     </div>

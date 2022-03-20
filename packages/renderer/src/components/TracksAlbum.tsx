@@ -29,12 +29,12 @@ const PlayOrPauseButtonInTrack = memo(
       <div
         onClick={onClick}
         className={classNames(
-          'self-center',
+          'btn-pressed-animation -ml-1 self-center',
           !isHighlight && 'hidden group-hover:block'
         )}
       >
         <SvgIcon
-          className='h-3.5 w-3.5 text-brand-500'
+          className='h-5 w-5 text-brand-500'
           name={isPlaying && isHighlight ? 'pause' : 'play'}
         />
       </div>
@@ -69,7 +69,7 @@ const Track = memo(
           'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl',
           'grid-cols-12 py-2.5 px-4',
           !isSkeleton && {
-            'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]':
+            'btn-hover-animation after:bg-gray-100 dark:after:bg-white/10':
               !isHighlight,
             'bg-brand-50 dark:bg-gray-800': isHighlight,
           }
@@ -163,7 +163,7 @@ const Track = memo(
             >
               <SvgIcon
                 name={isLiked ? 'heart' : 'heart-outline'}
-                className='h-4 w-4 '
+                className='h-5 w-5'
               />
             </button>
           )}

@@ -60,7 +60,7 @@ const PlayingTrack = () => {
 
           <IconButton onClick={() => toast('Work in progress')}>
             <SvgIcon
-              className='h-4 w-4 text-black dark:text-white'
+              className='h-6 w-6 text-black dark:text-white'
               name='heart-outline'
             />
           </IconButton>
@@ -78,15 +78,15 @@ const MediaControls = () => {
   return (
     <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
       <IconButton onClick={() => track && player.prevTrack()} disabled={!track}>
-        <SvgIcon className='h-4 w-4' name='previous' />
+        <SvgIcon className='h-6 w-6' name='previous' />
       </IconButton>
       <IconButton
         onClick={() => track && player.playOrPause()}
         disabled={!track}
-        className='rounded-2xl'
+        className='after:rounded-xl'
       >
         <SvgIcon
-          className='h-[1.5rem] w-[1.5rem] '
+          className='h-7 w-7'
           name={
             [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
               ? 'pause'
@@ -95,7 +95,7 @@ const MediaControls = () => {
         />
       </IconButton>
       <IconButton onClick={() => track && player.nextTrack()} disabled={!track}>
-        <SvgIcon className='h-4 w-4' name='next' />
+        <SvgIcon className='h-6 w-6' name='next' />
       </IconButton>
     </div>
   )
@@ -105,19 +105,19 @@ const Others = () => {
   return (
     <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className='h-4 w-4' name='playlist' />
+        <SvgIcon className='h-6 w-6' name='playlist' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className='h-4 w-4' name='repeat' />
+        <SvgIcon className='h-6 w-6' name='repeat' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className='h-4 w-4' name='shuffle' />
+        <SvgIcon className='h-6 w-6' name='shuffle' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className='h-4 w-4' name='volume' />
+        <SvgIcon className='h-6 w-6' name='volume' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
-        <SvgIcon className='h-4 w-4' name='chevron-up' />
+        <SvgIcon className='h-6 w-6' name='lyrics' />
       </IconButton>
     </div>
   )

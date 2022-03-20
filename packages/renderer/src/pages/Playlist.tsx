@@ -33,7 +33,7 @@ const Header = memo(
           <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.84] to-white dark:from-black/[.5] dark:to-[#1d1d1d]'></div>
         </div>
 
-        <div className='grid grid-cols-[16rem_auto] items-center gap-9'>
+        <div className='grid grid-cols-[17rem_auto] items-center gap-9'>
           {/*  Cover */}
           <div className='relative z-0 aspect-square self-start'>
             {!isLoading && (
@@ -84,10 +84,9 @@ const Header = memo(
 
             {/* <!-- Playlist last update time & track count --> */}
             {!isLoading && (
-              <div className='text-sm font-thin text-gray-500 dark:text-gray-400'>
-                Updated at
-                {formatDate(playlist?.updateTime || 0, 'en')} ·
-                {playlist?.trackCount} Songs
+              <div className='text-sm text-gray-500 dark:text-gray-400'>
+                更新于 {formatDate(playlist?.updateTime || 0, 'zh-CN')} ·{' '}
+                {playlist?.trackCount} 首歌
               </div>
             )}
             {isLoading && (
@@ -111,16 +110,8 @@ const Header = memo(
             {/* <!-- Buttons --> */}
             <div className='mt-5 flex gap-4'>
               <Button onClick={() => handlePlay()} isSkelton={isLoading}>
-                <SvgIcon name='play' className='mr-2 h-4 w-4' />
-                PLAY
-              </Button>
-
-              <Button
-                color={ButtonColor.Gray}
-                isSkelton={isLoading}
-                onClick={() => toast('Work in progress')}
-              >
-                <SvgIcon name='heart' className='h-4 w-4' />
+                <SvgIcon name='play' className='-ml-1 mr-1 h-6 w-6' />
+                播放
               </Button>
 
               <Button
@@ -129,7 +120,16 @@ const Header = memo(
                 isSkelton={isLoading}
                 onClick={() => toast('Work in progress')}
               >
-                <SvgIcon name='more' className='h-4 w-4' />
+                <SvgIcon name='heart-outline' className='h-6 w-6' />
+              </Button>
+
+              <Button
+                color={ButtonColor.Gray}
+                iconColor={ButtonColor.Gray}
+                isSkelton={isLoading}
+                onClick={() => toast('Work in progress')}
+              >
+                <SvgIcon name='more' className='h-6 w-6' />
               </Button>
             </div>
           </div>

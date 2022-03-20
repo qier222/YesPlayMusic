@@ -3,6 +3,7 @@ import request from '@/utils/request'
 export enum PlaylistApiNames {
   FETCH_PLAYLIST = 'fetchPlaylist',
   FETCH_RECOMMENDED_PLAYLISTS = 'fetchRecommendedPlaylists',
+  FETCH_DAILY_RECOMMEND_PLAYLISTS = 'fetchDailyRecommendPlaylists',
 }
 
 // 歌单详情
@@ -53,5 +54,19 @@ export function fetchRecommendedPlaylists(
     url: '/personalized',
     method: 'get',
     params,
+  })
+}
+
+// 每日推荐歌单（需要登录）
+export interface FetchDailyRecommendPlaylistsResponse {
+  code: number
+  featureFirst: boolean
+  haveRcmdSongs: boolean
+  recommend: Playlist[]
+}
+export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlaylistsResponse> {
+  return request({
+    url: '/recommend/resource',
+    method: 'get',
   })
 }

@@ -1,1 +1,3 @@
-<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="step-forward" class="svg-inline--fa fa-step-forward fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M384 44v424c0 6.6-5.4 12-12 12h-48c-6.6 0-12-5.4-12-12V291.6l-195.5 181C95.9 489.7 64 475.4 64 448V64c0-27.4 31.9-41.7 52.5-24.6L312 219.3V44c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12z"></path></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17 5V19M16.0239 12.7809L8.6247 18.7002C7.96993 19.2241 7 18.7579 7 17.9194V6.08062C7 5.24212 7.96993 4.77595 8.6247 5.29976L16.0239 11.2191C16.5243 11.6195 16.5243 12.3805 16.0239 12.7809Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>

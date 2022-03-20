@@ -16,7 +16,7 @@ export default function usePlaylist(
     () => fetch(params, noCache),
     {
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
-      staleTime: 60 * 60 * 1000, // 1 hour
+      refetchOnWindowFocus: true,
       placeholderData: (): FetchPlaylistResponse | undefined =>
         window.ipcRenderer.sendSync('getApiCacheSync', {
           api: 'playlist/detail',
@@ -29,7 +29,6 @@ export default function usePlaylist(
 }
 
 export async function prefetchPlaylist(params: FetchPlaylistParams) {
-  console.log('prefetchAlbum', params)
   await reactQueryClient.prefetchQuery(
     [PlaylistApiNames.FETCH_PLAYLIST, params],
     () => fetch(params),

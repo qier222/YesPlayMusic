@@ -21,9 +21,9 @@ const primaryTabs: PrimaryTab[] = [
     route: '/',
   },
   {
-    name: 'Explore',
-    icon: 'compass',
-    route: '/explore',
+    name: 'Podcast',
+    icon: 'podcast',
+    route: '/podcast',
   },
   {
     name: 'Library',

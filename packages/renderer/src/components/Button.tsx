@@ -23,19 +23,12 @@ const Button = ({
   iconColor?: Color
   isSkelton?: boolean
 }) => {
-  const shape =
-    Array.isArray(children) && children.length === 1
-      ? Shape.Square
-      : Shape.Default
-
   return (
     <button
       onClick={onClick}
       className={classNames(
-        'btn-pressed-animation flex cursor-default items-center rounded-lg text-lg font-semibold',
+        'btn-pressed-animation flex cursor-default items-center rounded-lg  px-4 py-1.5 text-lg font-medium',
         {
-          'px-4 py-1.5': shape === Shape.Default,
-          'px-3 py-1.5': shape === Shape.Square,
           'bg-brand-100 dark:bg-brand-600': color === Color.Primary,
           'text-brand-500 dark:text-white': iconColor === Color.Primary,
           'bg-gray-100 dark:bg-gray-700': color === Color.Gray,

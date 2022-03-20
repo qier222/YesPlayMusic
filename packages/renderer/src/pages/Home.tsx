@@ -1,4 +1,8 @@
-import { PlaylistApiNames, fetchRecommendedPlaylists } from '@/api/playlist'
+import {
+  PlaylistApiNames,
+  fetchRecommendedPlaylists,
+  fetchDailyRecommendPlaylists,
+} from '@/api/playlist'
 import CoverRow from '@/components/CoverRow'
 import DailyTracksCard from '@/components/DailyTracksCard'
 import FMCard from '@/components/FMCard'
@@ -18,12 +22,27 @@ export default function Home() {
     }
   )
 
+  const {
+    data: dailyRecommendPlaylists,
+    isLoading: isLoadingDailyRecommendPlaylists,
+  } = useQuery(
+    PlaylistApiNames.FETCH_DAILY_RECOMMEND_PLAYLISTS,
+    fetchDailyRecommendPlaylists
+  )
+
+  const playlists = [
+    ...(dailyRecommendPlaylists?.recommend ?? []),
+    ...(recommendedPlaylists?.result ?? []),
+  ].slice(0, 10)
+
   return (
     <div>
       <CoverRow
-        title='Good Morning'
-        playlists={recommendedPlaylists?.result.slice(0, 10) ?? []}
-        isSkeleton={isLoadingRecommendedPlaylists}
+        title='推荐歌单'
+        playlists={playlists}
+        isSkeleton={
+          isLoadingRecommendedPlaylists || isLoadingDailyRecommendPlaylists
+        }
       />
 
       <div className='mt-10 mb-4 text-[28px] font-bold text-black dark:text-white'>

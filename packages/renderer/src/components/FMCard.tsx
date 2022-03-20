@@ -37,23 +37,23 @@ const FMCard = () => {
           <div className='opacity-75'>Wolf Alice</div>
         </div>
 
-        <div className='flex items-center justify-between'>
+        <div className='-mb-1 flex items-center justify-between'>
           {/* Actions */}
 
           <div>
             {Object.values(ACTION).map(action => (
               <button
                 key={action}
-                className='btn-pressed-animation btn-hover-animation mr-1 cursor-default rounded-lg p-2 transition duration-200 after:bg-white/10'
+                className='btn-pressed-animation btn-hover-animation mr-1 cursor-default rounded-lg p-1.5 transition duration-200 after:bg-white/10'
               >
-                <SvgIcon name={action} className='h-5 w-5' />
+                <SvgIcon name={action} className='h-6 w-6' />
               </button>
             ))}
           </div>
 
           {/* FM logo */}
           <div className='right-4 bottom-5 flex text-white opacity-20'>
-            <SvgIcon name='fm' className='mr-2 h-5 w-5' />
+            <SvgIcon name='fm' className='mr-1 h-6 w-6' />
             <span className='font-semibold'>私人FM</span>
           </div>
         </div>

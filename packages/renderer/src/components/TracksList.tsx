@@ -28,11 +28,11 @@ const Track = memo(
       <div
         onClick={e => onClick(e, track.id)}
         className={classNames(
-          'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl dark:after:bg-white/[.08]',
+          'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl ',
           'grid-cols-12 p-2 pr-4',
           !isSkeleton &&
             !isPlaying &&
-            'btn-hover-animation after:bg-gray-100 dark:after:bg-white/[.08]',
+            'btn-hover-animation after:bg-gray-100 dark:after:bg-white/10',
           !isSkeleton && isPlaying && 'bg-brand-50 dark:bg-gray-800'
         )}
       >
@@ -127,7 +127,7 @@ const Track = memo(
             >
               <SvgIcon
                 name={isLiked ? 'heart' : 'heart-outline'}
-                className='h-4 w-4 '
+                className='h-5 w-5'
               />
             </button>
           )}
@@ -197,7 +197,7 @@ const TracksList = memo(
           <div className='col-span-2 justify-self-end'>TIME</div>
         </div>
 
-        <div className='grid w-full gap-1'>
+        <div className='grid w-full'>
           {/* Tracks */}
           {isSkeleton
             ? skeletonTracks.map((track, index) => (
