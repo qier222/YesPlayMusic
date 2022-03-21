@@ -8,9 +8,9 @@ const ArtistInline = ({
   if (!artists) return <div></div>
 
   return (
-    <div className={classNames('flex truncate', className)}>
+    <div className={classNames('line-clamp-1', className)}>
       {artists.map((artist, index) => (
-        <span key={artist.id}>
+        <span key={artist.name}>
           <span className={classNames({ 'hover:underline': !!artist.id })}>
             {artist.name}
           </span>
