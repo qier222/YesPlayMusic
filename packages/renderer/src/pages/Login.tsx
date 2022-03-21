@@ -22,11 +22,11 @@ const EmailInput = ({
 }) => {
   return (
     <div className='w-full'>
-      <div className='mb-1 text-sm font-medium text-gray-700'>Email</div>
+      <div className='mb-1 text-sm font-medium text-gray-700 dark:text-gray-300'>Email</div>
       <input
         value={email}
         onChange={e => setEmail(e.target.value)}
-        className='w-full rounded-md border border-gray-300 px-2 py-2'
+        className='w-full rounded-md border border-gray-300 px-2 py-2 dark:border-gray-600 dark:bg-gray-700 dark:text-white'
         type='email'
       />
     </div>
