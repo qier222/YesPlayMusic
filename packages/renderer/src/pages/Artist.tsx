@@ -123,7 +123,7 @@ const Artist = () => {
       </div>
 
       {/* Albums */}
-      {(!!artist?.artist.id || !albums.length) && (
+      {(!artist?.artist.id || !!albums.length) && (
         <div className='mt-20 px-2'>
           <div className='mb-6 text-2xl font-semibold dark:text-white'>
             专辑
