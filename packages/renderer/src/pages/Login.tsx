@@ -22,7 +22,9 @@ const EmailInput = ({
 }) => {
   return (
     <div className='w-full'>
-      <div className='mb-1 text-sm font-medium text-gray-700 dark:text-gray-300'>Email</div>
+      <div className='mb-1 text-sm font-medium text-gray-700 dark:text-gray-300'>
+        Email
+      </div>
       <input
         value={email}
         onChange={e => setEmail(e.target.value)}
@@ -96,7 +98,7 @@ const PasswordInput = ({
         <div className='flex items-center justify-center rounded-md rounded-l-none border border-l-0 border-gray-300 pr-1 dark:border-gray-600 dark:bg-gray-700'>
           <button
             onClick={() => setShowPassword(!showPassword)}
-            className='dark:hover-text-white cursor-default  rounded p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white'
+            className='dark:hover-text-white cursor-default  rounded-md p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white'
           >
             <SvgIcon
               className='h-5 w-5'

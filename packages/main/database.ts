@@ -30,6 +30,7 @@ const RegularSchemas = [
   ModelNames.PLAYLIST,
   ModelNames.ALBUM,
   ModelNames.TRACK,
+  ModelNames.ARTIST,
 ].map(name => ({
   primaryKey: 'id',
   name,

@@ -32,7 +32,7 @@ const Button = ({
           'bg-brand-100 dark:bg-brand-600': color === Color.Primary,
           'text-brand-500 dark:text-white': iconColor === Color.Primary,
           'bg-gray-100 dark:bg-gray-700': color === Color.Gray,
-          'text-gray-900 dark:text-gray-400': iconColor === Color.Gray,
+          'text-gray-600 dark:text-gray-400': iconColor === Color.Gray,
           'animate-pulse bg-gray-100 !text-transparent dark:bg-gray-800':
             isSkelton,
         }

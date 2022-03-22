@@ -146,7 +146,7 @@ const Header = ({
             <div className='mt-5 text-lg font-medium text-gray-800 dark:text-gray-300'>
               Album by{' '}
               <NavLink
-                to={`/artist/${album?.artist.name}`}
+                to={`/artist/${album?.artist.id}`}
                 className='cursor-default font-semibold hover:underline'
               >
                 {album?.artist.name}

@@ -125,7 +125,7 @@ const CoverRow = ({
 
       <div
         className={classNames(
-          'grid gap-x-[24px] gap-y-7',
+          'grid gap-x-6 gap-y-7',
           className,
           !className &&
             'grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'
@@ -135,7 +135,7 @@ const CoverRow = ({
           <div
             key={item.id ?? index}
             onMouseOver={() => prefetch(item.id)}
-            className='grid gap-x-[24px] gap-y-7'
+            className='grid gap-x-6 gap-y-7'
           >
             <div>
               {/*  Cover  */}

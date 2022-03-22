@@ -131,7 +131,7 @@ const Slider = ({
       <div
         className={classNames(
           'absolute h-[2px] group-hover:bg-brand-500',
-          isDragging ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-600'
+          isDragging ? 'bg-brand-500' : 'bg-gray-300 dark:bg-gray-500'
         )}
         style={usedTrackStyle}
       ></div>

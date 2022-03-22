@@ -194,7 +194,6 @@ export class Player {
     if (_howler.playing()) return
     _howler.play()
     this.state = State.PLAYING
-    this._progress = _howler.seek()
   }
 
   /**

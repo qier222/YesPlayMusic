@@ -2,18 +2,25 @@ import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
 import { resizeImage } from '@/utils/common'
 
-const TrackListGrid = ({
+const Track = ({
   track,
   isSkeleton = false,
+  isHighlight = false,
 }: {
   track: Track
   isSkeleton: boolean
+  isHighlight: boolean
 }) => {
   return (
     <div
       className={classNames(
-        'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl',
-        'grid-cols-1 py-1.5 px-2'
+        'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl ',
+        'grid-cols-1 py-1.5 px-2',
+        !isSkeleton && {
+          'btn-hover-animation after:bg-gray-100 dark:after:bg-white/10':
+            !isHighlight,
+          'bg-brand-50 dark:bg-gray-800': isHighlight,
+        }
       )}
     >
       <div className='grid grid-cols-[3rem_auto] items-center'>
@@ -35,17 +42,19 @@ const TrackListGrid = ({
           {!isSkeleton && (
             <div
               v-if='!isSkeleton'
-              className='line-clamp-1 break-all text-base font-semibold'
+              className='line-clamp-1 break-all text-base font-semibold dark:text-white'
             >
               {track.name}
             </div>
           )}
           {isSkeleton && (
-            <Skeleton className='text-base'>PLACEHOLDER12345</Skeleton>
+            <Skeleton className='text-base '>PLACEHOLDER12345</Skeleton>
           )}
 
-          <div className='text-xs'>
-            {!isSkeleton && <ArtistInline artists={track.ar} />}
+          <div className='text-xs text-gray-500 dark:text-gray-400'>
+            {!isSkeleton && (
+              <ArtistInline artists={track.ar} disableLink={true} />
+            )}
             {isSkeleton && (
               <Skeleton className='w-2/3 translate-y-px'>PLACE</Skeleton>
             )}
@@ -56,4 +65,22 @@ const TrackListGrid = ({
   )
 }
 
-export default TrackListGrid
+const TrackGrid = ({
+  tracks,
+  isSkeleton = false,
+  onTrackDoubleClick,
+}: {
+  tracks: Track[]
+  isSkeleton?: boolean
+  onTrackDoubleClick?: (trackID: number) => void
+}) => {
+  return (
+    <div className='grid grid-cols-2 gap-x-2'>
+      {tracks.map((track, index) => (
+        <Track key={track.id} track={track} isSkeleton={isSkeleton} />
+      ))}
+    </div>
+  )
+}
+
+export default TrackGrid

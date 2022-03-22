@@ -5,6 +5,7 @@ import Album from '@/pages/Album'
 import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Playlist from '@/pages/Playlist'
+import Artist from '@/pages/Artist'
 
 const routes: RouteObject[] = [
   {
@@ -23,11 +24,15 @@ const routes: RouteObject[] = [
     path: '/album/:id',
     element: <Album />,
   },
+  {
+    path: '/artist/:id',
+    element: <Artist />,
+  },
 ]
 
-const router = () => {
+const Router = () => {
   const element = useRoutes(routes)
   return <Fragment>{element}</Fragment>
 }
 
-export default router
+export default Router

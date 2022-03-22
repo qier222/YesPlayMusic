@@ -44,6 +44,11 @@ export async function setCache(api: string, data: any, query: any) {
       db.set(ModelNames.PLAYLIST, Number(data.playlist.id), data)
       break
     }
+    case 'artists': {
+      if (!data.artist) return
+      db.set(ModelNames.ARTIST, Number(data.artist.id), data)
+      break
+    }
     case 'artist/album': {
       if (!data.hotAlbums) return
       db.set(ModelNames.ARTIST_ALBUMS, Number(data.artist.id), data)
@@ -115,6 +120,13 @@ export function getCache(
       const playlist = db.get(ModelNames.PLAYLIST, Number(query?.id)) as any
       if (checkIsExpired && isCacheExpired(playlist?.updateAt, 10)) return
       if (playlist?.json) return JSON.parse(playlist.json)
+      break
+    }
+    case 'artists': {
+      if (!query?.id) return
+      const artist = db.get(ModelNames.ARTIST, Number(query?.id)) as any
+      if (checkIsExpired && isCacheExpired(artist?.updateAt, 30)) return
+      if (artist?.json) return JSON.parse(artist.json)
       break
     }
     case 'artist/album': {

@@ -7,7 +7,7 @@ import { prefetchPlaylist } from '@/hooks/usePlaylist'
 
 interface Tab {
   name: string
-  icon?: string
+  icon: string
   route: string
 }
 interface PrimaryTab extends Tab {
@@ -41,7 +41,7 @@ const PrimaryTabs = () => {
           onClick={() => scrollToTop()}
           key={tab.route}
           to={tab.route}
-          className={({ isActive }: { isActive: boolean }) =>
+          className={({ isActive }) =>
             classNames(
               'btn-hover-animation mx-3 flex cursor-default items-center rounded-lg px-3 py-2 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:after:bg-white/20',
               !isActive && 'text-gray-700 dark:text-white',
