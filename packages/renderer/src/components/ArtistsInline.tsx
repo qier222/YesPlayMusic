@@ -11,7 +11,7 @@ const ArtistInline = ({
 
   const navigate = useNavigate()
   const handleClick = (id: number) => {
-    !id || disableLink ? null : navigate(`/artist/${id}`)
+    id !== 0 && !disableLink && navigate(`/artist/${id}`)
   }
 
   return (
