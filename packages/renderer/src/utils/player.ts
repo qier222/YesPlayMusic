@@ -178,7 +178,9 @@ export class Player {
     _howler = howler
     this.play()
     this.state = State.PLAYING
-    _howler.once('load', () => this._cacheAudio(this.trackID, audio))
+
+    const id = this.trackID
+    _howler.once('load', () => this._cacheAudio(id, audio))
 
     if (!this._progressInterval) {
       this._setupProgressInterval()

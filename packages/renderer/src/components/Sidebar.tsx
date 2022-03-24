@@ -16,17 +16,17 @@ interface PrimaryTab extends Tab {
 
 const primaryTabs: PrimaryTab[] = [
   {
-    name: 'Home',
+    name: '主页',
     icon: 'home',
     route: '/',
   },
   {
-    name: 'Podcast',
+    name: '播客',
     icon: 'podcast',
     route: '/podcast',
   },
   {
-    name: 'Library',
+    name: '音乐库',
     icon: 'music-library',
     route: '/library',
   },

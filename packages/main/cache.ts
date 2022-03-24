@@ -80,7 +80,7 @@ export function getCache(
       break
     }
     case 'user/playlist': {
-      if (!query.uid) return
+      if (isNaN(Number(query.uid))) return
       const userPlaylists = db.get(
         ModelNames.USER_PLAYLISTS,
         Number(query?.uid)
@@ -90,7 +90,16 @@ export function getCache(
     }
     case 'song/detail': {
       const ids: string[] = query?.ids.split(',')
+      if (ids.length === 0) return
+
+      let isIDsValid = true
+      ids.forEach(id => {
+        if (id === '' || isNaN(Number(id))) isIDsValid = false
+      })
+      if (!isIDsValid) return
+
       const idsQuery = ids.map(id => `id = ${id}`).join(' OR ')
+      console.log(idsQuery)
       const tracksRaw = realm
         .objects(ModelNames.TRACK)
         .filtered(`(${idsQuery})`)
@@ -109,28 +118,28 @@ export function getCache(
       }
     }
     case 'album': {
-      if (!query?.id) return
+      if (isNaN(Number(query?.id))) return
       const album = db.get(ModelNames.ALBUM, Number(query?.id)) as any
       if (checkIsExpired && isCacheExpired(album?.updateAt, 24 * 60)) return
       if (album?.json) return JSON.parse(album.json)
       break
     }
     case 'playlist/detail': {
-      if (!query?.id) return
+      if (isNaN(Number(query?.id))) return
       const playlist = db.get(ModelNames.PLAYLIST, Number(query?.id)) as any
       if (checkIsExpired && isCacheExpired(playlist?.updateAt, 10)) return
       if (playlist?.json) return JSON.parse(playlist.json)
       break
     }
     case 'artists': {
-      if (!query?.id) return
+      if (isNaN(Number(query?.id))) return
       const artist = db.get(ModelNames.ARTIST, Number(query?.id)) as any
       if (checkIsExpired && isCacheExpired(artist?.updateAt, 30)) return
       if (artist?.json) return JSON.parse(artist.json)
       break
     }
     case 'artist/album': {
-      if (!query?.id) return
+      if (isNaN(Number(query?.id))) return
       const artistAlbums = db.get(
         ModelNames.ARTIST_ALBUMS,
         Number(query?.id)

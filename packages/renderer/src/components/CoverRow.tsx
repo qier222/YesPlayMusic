@@ -170,6 +170,16 @@ const CoverRow = ({
                           className='mr-1 mb-1 inline-block h-3 w-3 text-gray-300'
                         />
                       )}
+
+                      {/* Explicit icon */}
+                      {(item as Album)?.mark === 1056768 && (
+                        <SvgIcon
+                          name='explicit'
+                          className='float-right mt-[2px] h-4 w-4 text-gray-300'
+                        />
+                      )}
+
+                      {/* Name */}
                       <span
                         onClick={() => goTo(item.id)}
                         className='decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-200'

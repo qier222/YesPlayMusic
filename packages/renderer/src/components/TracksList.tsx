@@ -87,7 +87,15 @@ const Track = memo(
               {isSkeleton ? (
                 <Skeleton className='w-2/3 translate-y-px'>PLACE</Skeleton>
               ) : (
-                <ArtistInline artists={track.ar} />
+                <span className='inline-flex items-center'>
+                  {track.mark === 1318912 && (
+                    <SvgIcon
+                      name='explicit'
+                      className='mr-1 h-3.5 w-3.5 text-gray-300 dark:text-gray-500'
+                    />
+                  )}
+                  <ArtistInline artists={track.ar} />
+                </span>
               )}
             </div>
           </div>
@@ -191,10 +199,10 @@ const TracksList = memo(
         <div className='ml-2 mr-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500'>
           <div className='col-span-6 grid grid-cols-[4.2rem_auto]'>
             <div></div>
-            <div>TITLE</div>
+            <div>标题</div>
           </div>
-          <div className='col-span-4'>ALBUM</div>
-          <div className='col-span-2 justify-self-end'>TIME</div>
+          <div className='col-span-4'>专辑</div>
+          <div className='col-span-2 justify-self-end'>时长</div>
         </div>
 
         <div className='grid w-full'>

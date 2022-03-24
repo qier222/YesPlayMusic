@@ -1,6 +1,8 @@
 import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
 import { resizeImage } from '@/utils/common'
+import { Fragment } from 'react'
+import SvgIcon from './SvgIcon'
 
 const Track = ({
   track,
@@ -52,11 +54,18 @@ const Track = ({
           )}
 
           <div className='text-xs text-gray-500 dark:text-gray-400'>
-            {!isSkeleton && (
-              <ArtistInline artists={track.ar} disableLink={true} />
-            )}
-            {isSkeleton && (
+            {isSkeleton ? (
               <Skeleton className='w-2/3 translate-y-px'>PLACE</Skeleton>
+            ) : (
+              <span className='flex items-center'>
+                {track.mark === 1318912 && (
+                  <SvgIcon
+                    name='explicit'
+                    className='mr-1 h-3 w-3 text-gray-300 dark:text-gray-500'
+                  />
+                )}
+                <ArtistInline artists={track.ar} disableLink={true} />
+              </span>
             )}
           </div>
         </div>

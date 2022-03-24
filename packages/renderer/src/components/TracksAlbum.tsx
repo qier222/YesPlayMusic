@@ -115,7 +115,15 @@ const Track = memo(
                   isHighlight ? 'text-brand-500' : 'text-black dark:text-white'
                 )}
               >
-                <span>{track.name}</span>
+                <span className='flex items-center'>
+                  {track.name}
+                  {track.mark === 1318912 && (
+                    <SvgIcon
+                      name='explicit'
+                      className='ml-1.5 mt-[2px] h-4 w-4 text-gray-300 dark:text-gray-500'
+                    />
+                  )}
+                </span>
                 {subtitle && (
                   <span
                     title={subtitle}
@@ -227,10 +235,10 @@ const TracksAlbum = ({
       <div className='mx-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500'>
         <div className='col-span-6 grid grid-cols-[2rem_auto]'>
           <div>#</div>
-          <div>TITLE</div>
+          <div>标题</div>
         </div>
-        <div className='col-span-4'>ARTIST</div>
-        <div className='col-span-2 justify-self-end'>TIME</div>
+        <div className='col-span-4'>艺人</div>
+        <div className='col-span-2 justify-self-end'>时长</div>
       </div>
 
       {/* Tracks */}

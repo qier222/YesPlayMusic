@@ -16,6 +16,7 @@ import {
   resizeImage,
   scrollToTop,
 } from '@/utils/common'
+import useTracks from '@/hooks/useTracks'
 
 const PlayButton = ({
   album,
@@ -95,7 +96,7 @@ const Header = ({
             />
           </Fragment>
         )}
-        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.84] to-white dark:from-black/[.5] dark:to-[#1d1d1d]'></div>
+        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/75 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
       </div>
 
       <div className='grid grid-cols-[17rem_auto] items-center gap-9'>
@@ -285,6 +286,10 @@ const Album = () => {
     id: Number(params.id) || 0,
   })
 
+  const { data: tracks } = useTracks({
+    ids: album?.songs?.map(track => track.id) ?? [],
+  })
+
   const handlePlay = async (trackID: number | null = null) => {
     const realAlbum = album?.album
     if (!realAlbum) {
@@ -302,7 +307,7 @@ const Album = () => {
         handlePlay={handlePlay}
       />
       <TracksAlbum
-        tracks={album?.album.songs ?? []}
+        tracks={tracks?.songs ?? album?.album.songs ?? []}
         onTrackDoubleClick={handlePlay}
         isSkeleton={isLoading}
       />

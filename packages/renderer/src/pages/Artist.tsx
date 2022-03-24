@@ -9,6 +9,7 @@ import TracksGrid from '@/components/TracksGrid'
 import CoverRow, { Subtitle } from '@/components/CoverRow'
 import Skeleton from '@/components/Skeleton'
 import { Fragment } from 'react'
+import useTracks from '@/hooks/useTracks'
 
 const Artist = () => {
   const params = useParams()
@@ -22,25 +23,48 @@ const Artist = () => {
     limit: 1000,
   })
 
+  const { data: tracks, isLoading: isLoadingTracks } = useTracks({
+    ids: artist?.hotSongs?.slice(0, 10)?.map(t => t.id) ?? [],
+  })
+
   const albums = useMemo(() => {
     if (!albumsRaw?.hotAlbums) return []
-    return albumsRaw.hotAlbums.filter(
-      album =>
-        album.type === '专辑' &&
-        ['混音版', '精选集', 'Remix'].includes(album.subType) === false &&
-        album.size > 1
-    )
+    const albums: Album[] = []
+    albumsRaw.hotAlbums.forEach(album => {
+      if (album.type !== '专辑') return false
+      if (['混音版', '精选集', 'Remix'].includes(album.subType)) return false
+
+      // No singles
+      if (album.size <= 1) return false
+
+      // No remixes
+      if (
+        /(\(|\[)(.*)(Remix|remix)(.*)(\)|\])/.test(
+          album.name.toLocaleLowerCase()
+        )
+      ) {
+        return false
+      }
+
+      // If have same name album only keep the Explicit version
+      const sameNameAlbumIndex = albums.findIndex(a => a.name === album.name)
+      if (sameNameAlbumIndex !== -1) {
+        if (album.mark === 1056768) albums[sameNameAlbumIndex] = album
+        return
+      }
+
+      albums.push(album)
+    })
+    return albums
   }, [albumsRaw?.hotAlbums])
 
   const singles = useMemo(() => {
     if (!albumsRaw?.hotAlbums) return []
+    const albumsIds = albums.map(album => album.id)
     return albumsRaw.hotAlbums.filter(
-      album =>
-        album.type !== '专辑' ||
-        ['混音版', '精选集', 'Remix'].includes(album.subType) ||
-        album.size === 1
+      album => albumsIds.includes(album.id) === false
     )
-  }, [albumsRaw?.hotAlbums])
+  }, [albums, albumsRaw?.hotAlbums])
 
   const latestAlbum = useMemo(() => {
     if (!albumsRaw || !albumsRaw.hotAlbums) return
@@ -89,7 +113,7 @@ const Artist = () => {
       <div className='mt-12 grid h-[20rem] grid-cols-[14rem,_auto] grid-rows-1 gap-16 px-2'>
         {/* Latest release */}
         <div>
-          <div className='mb-6 text-2xl font-semibold dark:text-white'>
+          <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
             最新发行
           </div>
           <div className='flex-grow rounded-xl '>
@@ -110,12 +134,12 @@ const Artist = () => {
 
         {/* Popular tracks */}
         <div>
-          <div className='mb-6 text-2xl font-semibold dark:text-white'>
+          <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
             热门歌曲
           </div>
           <div className='rounded-xl'>
             <TracksGrid
-              tracks={artist?.hotSongs.slice(0, 10) ?? []}
+              tracks={tracks?.songs ?? artist?.hotSongs.slice(0, 10) ?? []}
               isSkeleton={isLoading}
             />
           </div>
@@ -125,7 +149,7 @@ const Artist = () => {
       {/* Albums */}
       {albums.length !== 0 && (
         <div className='mt-20 px-2'>
-          <div className='mb-6 text-2xl font-semibold dark:text-white'>
+          <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
             专辑
           </div>
           <CoverRow
@@ -137,7 +161,7 @@ const Artist = () => {
 
       {/* Singles/EP */}
       <div className='mt-16 px-2'>
-        <div className='mb-6 text-2xl font-semibold dark:text-white'>
+        <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
           单曲和EP
         </div>
         <CoverRow
