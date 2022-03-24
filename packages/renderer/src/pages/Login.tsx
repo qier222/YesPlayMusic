@@ -1,7 +1,7 @@
 import md5 from 'md5'
 import QRCode from 'qrcode'
 import { Fragment } from 'react'
-import { loginWithPhone } from '@/api/auth'
+import {loginWithEmail, loginWithPhone} from '@/api/auth'
 import SvgIcon from '@/components/SvgIcon'
 import { state } from '@/store'
 import { setCookies } from '@/utils/cookie'
@@ -193,11 +193,52 @@ const saveCookie = (cookies: string) => {
 const LoginWithEmail = () => {
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const navigate = useNavigate()
+
+  const doLogin = useMutation(
+      () => {
+        return loginWithEmail({
+          email: email.trim(),
+          md5_password: md5(password.trim())
+        })
+      },
+      {
+        onSuccess: result => {
+          if (result?.code !== 200) {
+            toast(`Login failed: ${result.code}`)
+            return
+          }
+          saveCookie(result.cookie)
+          navigate(-1)
+        },
+        onError: error => {
+          toast(`Login failed: ${error}`)
+        },
+      }
+  )
+
+  const handleLogin = () => {
+    if (!email) {
+      toast.error('Please enter email')
+      return
+    }
+    if (!password) {
+      toast.error('Please enter password')
+      return
+    }
+    if (email.match(/^[^\s@]+@(126|163|yeah|188|vip\.163|vip\.126)\.(com|net)$/) == null){
+      toast.error('Please use netease email')
+      return
+    }
+
+    doLogin.mutate()
+  }
+
   return (
     <Fragment>
       <EmailInput {...{ email, setEmail }} />
       <PasswordInput {...{ password, setPassword }} />
-      <LoginButton onClick={() => toast('Work in progress')} disabled={true} />
+      <LoginButton onClick={handleLogin} disabled={doLogin.isLoading} />
     </Fragment>
   )
 }
