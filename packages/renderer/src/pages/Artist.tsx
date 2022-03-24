@@ -113,7 +113,7 @@ const Artist = () => {
           <div className='mb-6 text-2xl font-semibold dark:text-white'>
             热门歌曲
           </div>
-          <div className='overflow-scroll rounded-xl '>
+          <div className='rounded-xl'>
             <TracksGrid
               tracks={artist?.hotSongs.slice(0, 10) ?? []}
               isSkeleton={isLoading}
@@ -123,13 +123,17 @@ const Artist = () => {
       </div>
 
       {/* Albums */}
-      <div className='mt-20 px-2'>
-        <div className='mb-6 text-2xl font-semibold dark:text-white'>专辑</div>
-        <CoverRow
-          albums={albums.slice(0, 10)}
-          subtitle={Subtitle.TYPE_RELEASE_YEAR}
-        />
-      </div>
+      {albums.length !== 0 && (
+        <div className='mt-20 px-2'>
+          <div className='mb-6 text-2xl font-semibold dark:text-white'>
+            专辑
+          </div>
+          <CoverRow
+            albums={albums.slice(0, 10)}
+            subtitle={Subtitle.TYPE_RELEASE_YEAR}
+          />
+        </div>
+      )}
 
       {/* Singles/EP */}
       <div className='mt-16 px-2'>

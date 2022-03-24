@@ -10,8 +10,8 @@ const ArtistInline = ({
   if (!artists) return <div></div>
 
   const navigate = useNavigate()
-  const handleClick = () => {
-    disableLink ? null : navigate(`/artist/${artists[0].id}`)
+  const handleClick = (id: number) => {
+    id !== 0 && !disableLink && navigate(`/artist/${id}`)
   }
 
   return (
@@ -19,7 +19,7 @@ const ArtistInline = ({
       {artists.map((artist, index) => (
         <span key={`${artist.id}-${artist.name}`}>
           <span
-            onClick={handleClick}
+            onClick={() => handleClick(artist.id)}
             className={classNames({
               'hover:underline': !!artist.id && !disableLink,
             })}
