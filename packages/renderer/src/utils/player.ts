@@ -4,6 +4,7 @@ import {
   fetchTracksWithReactQuery,
 } from '@/hooks/useTracks'
 import { cacheAudio } from '@/api/yesplaymusic'
+import { clamp } from 'lodash-es'
 
 type TrackID = number
 enum TrackListSourceType {
@@ -31,12 +32,15 @@ export enum RepeatMode {
   ONE = 'one',
 }
 
+const PLAY_PAUSE_FADE_DURATION = 200
+
 let _howler = new Howl({ src: [''], format: ['mp3', 'flac'] })
 export class Player {
   private _track: Track | null = null
   private _trackIndex: number = 0
   private _progress: number = 0
   private _progressInterval: ReturnType<typeof setInterval> | undefined
+  private _volume: number = 1 // 0 to 1
 
   state: State = State.INITIALIZING
   mode: Mode = Mode.PLAYLIST
@@ -107,6 +111,17 @@ export class Player {
     _howler.seek(value)
   }
 
+  /**
+   * Get/Set current volume
+   */
+  get volume(): number {
+    return this._volume
+  }
+  set volume(value) {
+    this._volume = clamp(value, 0, 1)
+    Howler.volume(this._volume)
+  }
+
   private _setupProgressInterval() {
     this._progressInterval = setInterval(() => {
       if (this.state === State.PLAYING) this._progress = _howler.seek()
@@ -144,7 +159,6 @@ export class Player {
 
   /**
    * Play audio via howler
-   * @param {string} audio audio source url
    */
   private async _playAudio() {
     const audio = await this._fetchAudioSource(this.trackID)
@@ -190,26 +204,50 @@ export class Player {
    * Play current track
    * @param {boolean} fade fade in
    */
-  play() {
+  play(fade: boolean = false) {
     if (_howler.playing()) return
+
+    const setPlayState = () => {
+      this.state = State.PLAYING
+    }
+
     _howler.play()
-    this.state = State.PLAYING
+    if (fade) {
+      _howler.once('play', () => {
+        _howler.fade(0, this._volume, PLAY_PAUSE_FADE_DURATION)
+        setPlayState()
+      })
+    } else {
+      setPlayState()
+    }
   }
 
   /**
    * Pause current track
    * @param {boolean} fade fade out
    */
-  pause() {
-    _howler.pause()
-    this.state = State.PAUSED
+  pause(fade: boolean = false) {
+    const setPauseState = () => {
+      _howler.pause()
+      this.state = State.PAUSED
+    }
+
+    if (fade) {
+      _howler.fade(this._volume, 0, PLAY_PAUSE_FADE_DURATION)
+      _howler.once('fade', () => {
+        setPauseState()
+      })
+    } else {
+      setPauseState()
+    }
   }
 
   /**
    * Play or pause current track
+   * @param {boolean} fade fade in-out
    */
-  playOrPause() {
-    this.state === State.PLAYING ? this.pause() : this.play()
+  playOrPause(fade: boolean = true) {
+    this.state === State.PLAYING ? this.pause(fade) : this.play(fade)
   }
 
   /**
