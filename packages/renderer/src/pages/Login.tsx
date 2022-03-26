@@ -202,12 +202,11 @@ const LoginWithEmail = () => {
   const navigate = useNavigate()
 
   const doLogin = useMutation(
-    () => {
-      return loginWithEmail({
+    () =>
+      loginWithEmail({
         email: email.trim(),
         md5_password: md5(password.trim()),
-      })
-    },
+      }),
     {
       onSuccess: result => {
         if (result?.code !== 200) {
