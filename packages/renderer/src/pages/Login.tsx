@@ -1,10 +1,10 @@
 import md5 from 'md5'
 import QRCode from 'qrcode'
-import { Fragment } from 'react'
-import {loginWithEmail, loginWithPhone} from '@/api/auth'
+import {Fragment} from 'react'
+import {checkLoginQrCodeStatus, fetchLoginQrCodeKey, loginWithEmail, loginWithPhone} from '@/api/auth'
 import SvgIcon from '@/components/SvgIcon'
-import { state } from '@/store'
-import { setCookies } from '@/utils/cookie'
+import {state} from '@/store'
+import {setCookies} from '@/utils/cookie'
 
 enum Method {
   QRCODE = 'qrcode',
@@ -304,8 +304,53 @@ const LoginWithPhone = () => {
 
 // Login with QRCode
 const LoginWithQRCode = () => {
-  const [qrCodeUrl, setQrCodeUrl] = useState('dasdasfa')
+  const [qrCodeMessage, setQrCodeMessage] = useState('Scan QR code to login')
+  const [qrCodeUrl, setQrCodeUrl] = useState('Not Ready')
   const [qrCodeImage, setQrCodeImage] = useState('')
+
+  const navigate = useNavigate()
+
+  useEffect(()=>{
+    let intervalId: NodeJS.Timeout;
+    fetchLoginQrCodeKey().then(key_result=>{
+      if (key_result.code!==200){
+        toast(`Failed to get QR code key: ${key_result.code}`)
+        return
+      }
+      setQrCodeUrl(`https://music.163.com/login?codekey=${(key_result.data.unikey)}`)
+      intervalId = setInterval(()=>{
+        checkLoginQrCodeStatus({
+          key: key_result.data.unikey
+        }).then(result => {
+          switch (result.code){
+            case 800:
+              setQrCodeUrl(`https://music.163.com/login?codekey=${(key_result.data.unikey)}`)
+              break
+            case 801:
+              setQrCodeMessage('Waiting for scan')
+              break
+            case 802:
+              setQrCodeMessage('Waiting for confirm')
+              break
+            case 803:
+              if (result.cookie === undefined){
+                toast('checkLoginQrCodeStatus returned 803 without cookie')
+                break
+              }
+              saveCookie(result.cookie)
+              navigate(-1)
+              break
+          }
+        }).catch(error=>{
+          toast(`Failed to check QR code status: ${error}`)
+        })
+      },1000)
+    }).catch(error=>{
+      toast(`Failed to get QR code key: ${error}`)
+    })
+    return ()=> clearInterval(intervalId)
+  },[navigate])
+
   useMemo(async () => {
     try {
       const image = await QRCode.toDataURL(qrCodeUrl, {
@@ -321,7 +366,7 @@ const LoginWithQRCode = () => {
       console.error(err)
     }
   }, [qrCodeUrl])
-  const qrCodeMessage = 'test'
+
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='rounded-3xl border p-6 dark:border-gray-700'>
