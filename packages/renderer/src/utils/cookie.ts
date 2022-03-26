@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 
 export function setCookies(string: string) {
-  const cookies = string.replaceAll(/;.*?HTTPOnly.*?;/g, ';;').split(';;')
+  const cookies = string.replace(/;.*?HTTPOnly.*?;/g, ';;').split(';;')
   cookies.map(cookie => {
     const cookieKeyValue = cookie.split(';')[0].split('=')
     const [key, value] = cookieKeyValue
