@@ -314,38 +314,39 @@ const LoginWithPhone = () => {
 
 // Login with QRCode
 const LoginWithQRCode = () => {
-  const [qrCodeMessage, setQrCodeMessage] = useState('Scan QR code to login')
+  const [qrCodeKey, setQrCodeKey] = useState('')
+  const [qrCodeMessage, setQrCodeMessage] = useState('扫码登录')
   const [qrCodeUrl, setQrCodeUrl] = useState('Not Ready')
   const [qrCodeImage, setQrCodeImage] = useState('')
 
   const navigate = useNavigate()
 
-  const {
-    data: key,
-    status: key_status,
-    refetch: refetch_key,
-  } = useQuery(
+  const { status: keyStatus, refetch: refetchKey } = useQuery(
     'qrCodeKey',
-    async () => {
-      const key = await fetchLoginQrCodeKey()
-      if (key === undefined || key.code !== 200) {
-        toast('Cannot fetch QR code key')
-        throw Error('Cannot fetch QR code key')
-      }
-      setQrCodeUrl(`https://music.163.com/login?codekey=${key.data.unikey}`)
-      return key
-    },
+    fetchLoginQrCodeKey,
     {
-      retry: 10,
+      retry: true,
+      retryDelay: 500,
+      onSuccess: data => {
+        if (data.code !== 200) {
+          toast(`Failed to fetch QR code key: ${data.code}`)
+          refetchKey()
+          return
+        }
+        setQrCodeKey(data.data.unikey)
+      },
+      onError: error => {
+        toast(`Failed to fetch QR code key: ${error}`)
+      },
     }
   )
 
   useInterval(async () => {
-    if (key_status !== 'success' || key === undefined) return
-    const qrCodeStatus = await checkLoginQrCodeStatus({ key: key.data.unikey })
+    if (keyStatus !== 'success') return
+    const qrCodeStatus = await checkLoginQrCodeStatus({ key: qrCodeKey })
     switch (qrCodeStatus.code) {
       case 800:
-        refetch_key()
+        refetchKey()
         break
       case 801:
         setQrCodeMessage('等待扫码')
@@ -363,6 +364,10 @@ const LoginWithQRCode = () => {
         break
     }
   }, 1000)
+
+  useMemo(async () => {
+    setQrCodeUrl(`https://music.163.com/login?codekey=${qrCodeKey}`)
+  }, [qrCodeKey])
 
   useMemo(async () => {
     try {
