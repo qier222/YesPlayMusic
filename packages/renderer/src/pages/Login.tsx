@@ -364,9 +364,10 @@ const LoginWithQRCode = () => {
     }
   }, 1000)
 
-  const qrCodeUrl = useMemo(() => {
-    return `https://music.163.com/login?codekey=${qrCodeKey}`
-  }, [qrCodeKey])
+  const qrCodeUrl = useMemo(
+    () => `https://music.163.com/login?codekey=${qrCodeKey}`,
+    [qrCodeKey]
+  )
 
   useEffect(() => {
     const updateImage = async () => {
