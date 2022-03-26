@@ -1,10 +1,16 @@
 import md5 from 'md5'
 import QRCode from 'qrcode'
-import {Fragment} from 'react'
-import {checkLoginQrCodeStatus, fetchLoginQrCodeKey, loginWithEmail, loginWithPhone} from '@/api/auth'
+import { Fragment } from 'react'
+import {
+  checkLoginQrCodeStatus,
+  fetchLoginQrCodeKey,
+  loginWithEmail,
+  loginWithPhone,
+} from '@/api/auth'
 import SvgIcon from '@/components/SvgIcon'
-import {state} from '@/store'
-import {setCookies} from '@/utils/cookie'
+import { state } from '@/store'
+import { setCookies } from '@/utils/cookie'
+import { useInterval } from 'react-use'
 
 enum Method {
   QRCODE = 'qrcode',
@@ -196,25 +202,25 @@ const LoginWithEmail = () => {
   const navigate = useNavigate()
 
   const doLogin = useMutation(
-      () => {
-        return loginWithEmail({
-          email: email.trim(),
-          md5_password: md5(password.trim())
-        })
+    () => {
+      return loginWithEmail({
+        email: email.trim(),
+        md5_password: md5(password.trim()),
+      })
+    },
+    {
+      onSuccess: result => {
+        if (result?.code !== 200) {
+          toast(`Login failed: ${result.code}`)
+          return
+        }
+        saveCookie(result.cookie)
+        navigate(-1)
       },
-      {
-        onSuccess: result => {
-          if (result?.code !== 200) {
-            toast(`Login failed: ${result.code}`)
-            return
-          }
-          saveCookie(result.cookie)
-          navigate(-1)
-        },
-        onError: error => {
-          toast(`Login failed: ${error}`)
-        },
-      }
+      onError: error => {
+        toast(`Login failed: ${error}`)
+      },
+    }
   )
 
   const handleLogin = () => {
@@ -226,7 +232,11 @@ const LoginWithEmail = () => {
       toast.error('Please enter password')
       return
     }
-    if (email.match(/^[^\s@]+@(126|163|yeah|188|vip\.163|vip\.126)\.(com|net)$/) == null){
+    if (
+      email.match(
+        /^[^\s@]+@(126|163|yeah|188|vip\.163|vip\.126)\.(com|net)$/
+      ) == null
+    ) {
       toast.error('Please use netease email')
       return
     }
@@ -310,46 +320,49 @@ const LoginWithQRCode = () => {
 
   const navigate = useNavigate()
 
-  useEffect(()=>{
-    let intervalId: NodeJS.Timeout;
-    fetchLoginQrCodeKey().then(key_result=>{
-      if (key_result.code!==200){
-        toast(`Failed to get QR code key: ${key_result.code}`)
-        return
+  const {
+    data: key,
+    status: key_status,
+    refetch: refetch_key,
+  } = useQuery(
+    'qrCodeKey',
+    async () => {
+      const key = await fetchLoginQrCodeKey()
+      if (key === undefined || key.code !== 200) {
+        toast('Cannot fetch QR code key')
+        throw Error('Cannot fetch QR code key')
       }
-      setQrCodeUrl(`https://music.163.com/login?codekey=${(key_result.data.unikey)}`)
-      intervalId = setInterval(()=>{
-        checkLoginQrCodeStatus({
-          key: key_result.data.unikey
-        }).then(result => {
-          switch (result.code){
-            case 800:
-              setQrCodeUrl(`https://music.163.com/login?codekey=${(key_result.data.unikey)}`)
-              break
-            case 801:
-              setQrCodeMessage('Waiting for scan')
-              break
-            case 802:
-              setQrCodeMessage('Waiting for confirm')
-              break
-            case 803:
-              if (result.cookie === undefined){
-                toast('checkLoginQrCodeStatus returned 803 without cookie')
-                break
-              }
-              saveCookie(result.cookie)
-              navigate(-1)
-              break
-          }
-        }).catch(error=>{
-          toast(`Failed to check QR code status: ${error}`)
-        })
-      },1000)
-    }).catch(error=>{
-      toast(`Failed to get QR code key: ${error}`)
-    })
-    return ()=> clearInterval(intervalId)
-  },[navigate])
+      setQrCodeUrl(`https://music.163.com/login?codekey=${key.data.unikey}`)
+      return key
+    },
+    {
+      retry: 10,
+    }
+  )
+
+  useInterval(async () => {
+    if (key_status !== 'success' || key === undefined) return
+    const qrCodeStatus = await checkLoginQrCodeStatus({ key: key.data.unikey })
+    switch (qrCodeStatus.code) {
+      case 800:
+        refetch_key()
+        break
+      case 801:
+        setQrCodeMessage('等待扫码')
+        break
+      case 802:
+        setQrCodeMessage('等待确认')
+        break
+      case 803:
+        if (qrCodeStatus.cookie === undefined) {
+          toast('checkLoginQrCodeStatus returned 803 without cookie')
+          break
+        }
+        saveCookie(qrCodeStatus.cookie)
+        navigate(-1)
+        break
+    }
+  }, 1000)
 
   useMemo(async () => {
     try {
