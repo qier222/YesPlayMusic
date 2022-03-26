@@ -84,6 +84,7 @@ export default {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 img {
