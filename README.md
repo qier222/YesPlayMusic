@@ -47,7 +47,9 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 访问本项目的 [Releases](https://github.com/qier222/YesPlayMusic/releases)
 页面下载安装包。
 
-macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
+- macOS 用户可以通过 Homebrew 来安装：`brew install --cask yesplaymusic`
+
+- Windows 用户可以通过 Scoop 来安装：`scoop install extras/yesplaymusic`
 
 ## ⚙️ 部署至 Vercel
 
