@@ -314,9 +314,8 @@ const LoginWithPhone = () => {
 
 // Login with QRCode
 const LoginWithQRCode = () => {
-  const [qrCodeKey, setQrCodeKey] = useState('')
+  const [qrCodeKey, setQrCodeKey] = useState('Not Ready')
   const [qrCodeMessage, setQrCodeMessage] = useState('扫码登录')
-  const [qrCodeUrl, setQrCodeUrl] = useState('Not Ready')
   const [qrCodeImage, setQrCodeImage] = useState('')
 
   const navigate = useNavigate()
@@ -365,12 +364,12 @@ const LoginWithQRCode = () => {
     }
   }, 1000)
 
-  useMemo(async () => {
-    setQrCodeUrl(`https://music.163.com/login?codekey=${qrCodeKey}`)
+  const qrCodeUrl = useMemo(() => {
+    return `https://music.163.com/login?codekey=${qrCodeKey}`
   }, [qrCodeKey])
 
-  useMemo(async () => {
-    try {
+  useEffect(() => {
+    const updateImage = async () => {
       const image = await QRCode.toDataURL(qrCodeUrl, {
         width: 1024,
         margin: 0,
@@ -380,9 +379,8 @@ const LoginWithQRCode = () => {
         },
       })
       setQrCodeImage(image)
-    } catch (err) {
-      console.error(err)
     }
+    updateImage()
   }, [qrCodeUrl])
 
   return (
