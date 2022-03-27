@@ -313,35 +313,33 @@ const LoginWithPhone = () => {
 
 // Login with QRCode
 const LoginWithQRCode = () => {
-  const [qrCodeKey, setQrCodeKey] = useState('Not Ready')
   const [qrCodeMessage, setQrCodeMessage] = useState('扫码登录')
   const [qrCodeImage, setQrCodeImage] = useState('')
 
   const navigate = useNavigate()
 
-  const { status: keyStatus, refetch: refetchKey } = useQuery(
+  const {
+    data: key = { code: 200, data: { code: 200, unikey: 'Not Ready' } },
+    status: keyStatus,
+    refetch: refetchKey,
+  } = useQuery(
     'qrCodeKey',
-    fetchLoginQrCodeKey,
+    async () => {
+      const result = await fetchLoginQrCodeKey()
+      if (result.data.code !== 200) {
+        throw Error(`Failed to fetch QR code key: ${result.data.code}`)
+      }
+      return result
+    },
     {
       retry: true,
       retryDelay: 500,
-      onSuccess: data => {
-        if (data.code !== 200) {
-          toast(`Failed to fetch QR code key: ${data.code}`)
-          refetchKey()
-          return
-        }
-        setQrCodeKey(data.data.unikey)
-      },
-      onError: error => {
-        toast(`Failed to fetch QR code key: ${error}`)
-      },
     }
   )
 
   useInterval(async () => {
     if (keyStatus !== 'success') return
-    const qrCodeStatus = await checkLoginQrCodeStatus({ key: qrCodeKey })
+    const qrCodeStatus = await checkLoginQrCodeStatus({ key: key.data.unikey })
     switch (qrCodeStatus.code) {
       case 800:
         refetchKey()
@@ -364,8 +362,8 @@ const LoginWithQRCode = () => {
   }, 1000)
 
   const qrCodeUrl = useMemo(
-    () => `https://music.163.com/login?codekey=${qrCodeKey}`,
-    [qrCodeKey]
+    () => `https://music.163.com/login?codekey=${key.data.unikey}`,
+    [key]
   )
 
   useEffect(() => {
