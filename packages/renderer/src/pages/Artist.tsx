@@ -11,20 +11,111 @@ import Skeleton from '@/components/Skeleton'
 import { Fragment } from 'react'
 import useTracks from '@/hooks/useTracks'
 
+const Header = ({ artist }: { artist: Artist | undefined }) => {
+  const coverImage = resizeImage(artist?.img1v1Url || '', 'md')
+
+  return (
+    <Fragment>
+      <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
+        {coverImage && (
+          <Fragment>
+            <img
+              src={coverImage}
+              className='absolute -top-full w-full blur-[100px]'
+            />
+            <img
+              src={coverImage}
+              className='absolute -top-full w-full blur-[100px]'
+            />
+          </Fragment>
+        )}
+        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
+      </div>
+
+      <div className='relative mt-6 overflow-hidden rounded-2xl bg-gray-500/10 dark:bg-gray-800/20'>
+        <div className='flex h-[26rem] justify-center overflow-hidden'>
+          <img src={coverImage} className='aspect-square brightness-[.5]' />
+          <img src={coverImage} className='aspect-square brightness-[.5]' />
+          <img src={coverImage} />
+          <img src={coverImage} className='aspect-square brightness-[.5]' />
+          <img src={coverImage} className='aspect-square brightness-[.5]' />
+        </div>
+
+        <div className='absolute right-0 left-0 top-[18rem] h-32 bg-gradient-to-t  from-[#222]/60 to-transparent'></div>
+
+        <div className='absolute top-0 right-0 left-0 flex h-[26rem] items-end justify-between p-8 pb-6'>
+          <div className='text-7xl font-bold text-white'>{artist?.name}</div>
+        </div>
+      </div>
+    </Fragment>
+  )
+}
+
+const LatestRelease = ({
+  album,
+  isLoading,
+}: {
+  album: Album | undefined
+  isLoading: boolean
+}) => {
+  return (
+    <div>
+      <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
+        最新发行
+      </div>
+      <div className='flex-grow rounded-xl '>
+        {isLoading ? (
+          <Skeleton className='aspect-square w-full rounded-xl'></Skeleton>
+        ) : (
+          <Cover imageUrl={album?.picUrl ?? ''} />
+        )}
+        <div className='line-clamp-2  line-clamp-1 mt-2 font-semibold leading-tight decoration-gray-600 decoration-2 hover:underline  dark:text-white dark:decoration-gray-200'>
+          {album?.name}
+        </div>
+        <div className='text-[12px] text-gray-500 dark:text-gray-400'>
+          {album?.type} · {dayjs(album?.publishTime || 0).year()}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const PopularTracks = ({
+  tracks,
+  isLoadingArtist,
+}: {
+  tracks: Track[] | undefined
+  isLoadingArtist: boolean
+}) => {
+  const { data: tracksWithExtraInfo } = useTracks({
+    ids: tracks?.slice(0, 10)?.map(t => t.id) ?? [],
+  })
+
+  return (
+    <div>
+      <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
+        热门歌曲
+      </div>
+      <div className='rounded-xl'>
+        <TracksGrid
+          tracks={tracksWithExtraInfo?.songs ?? tracks?.slice(0, 10) ?? []}
+          isSkeleton={isLoadingArtist}
+        />
+      </div>
+    </div>
+  )
+}
+
 const Artist = () => {
   const params = useParams()
 
-  const { data: artist, isLoading } = useArtist({
+  const { data: artist, isLoading: isLoadingArtist } = useArtist({
     id: Number(params.id) || 0,
   })
 
-  const { data: albumsRaw, isLoading: isLoadingAlbum } = useArtistAlbums({
+  const { data: albumsRaw, isLoading: isLoadingAlbums } = useArtistAlbums({
     id: Number(params.id) || 0,
     limit: 1000,
-  })
-
-  const { data: tracks, isLoading: isLoadingTracks } = useTracks({
-    ids: artist?.hotSongs?.slice(0, 10)?.map(t => t.id) ?? [],
   })
 
   const albums = useMemo(() => {
@@ -66,84 +157,20 @@ const Artist = () => {
     )
   }, [albums, albumsRaw?.hotAlbums])
 
-  const latestAlbum = useMemo(() => {
-    if (!albumsRaw || !albumsRaw.hotAlbums) return
-    return albumsRaw.hotAlbums[0]
-  }, [albumsRaw])
-
-  const coverImage = resizeImage(artist?.artist?.img1v1Url || '', 'md')
-
   return (
     <div>
-      <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
-        {coverImage && (
-          <Fragment>
-            <img
-              src={coverImage}
-              className='absolute -top-full w-full blur-[100px]'
-            />
-            <img
-              src={coverImage}
-              className='absolute -top-full w-full blur-[100px]'
-            />
-          </Fragment>
-        )}
-        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.84] to-white dark:from-black/[.6] dark:to-[#1d1d1d]'></div>
-      </div>
-
-      {/* Header */}
-      <div className='relative mt-6 overflow-hidden rounded-2xl'>
-        <div className='flex h-[26rem] justify-center overflow-hidden'>
-          <img src={coverImage} className='aspect-square brightness-[.5]' />
-          <img src={coverImage} className='aspect-square brightness-[.5]' />
-          <img src={coverImage} />
-          <img src={coverImage} className='aspect-square brightness-[.5]' />
-          <img src={coverImage} className='aspect-square brightness-[.5]' />
-        </div>
-
-        <div className='absolute right-0 left-0 top-[18rem] h-32 bg-gradient-to-t  from-[#222]/60 to-transparent'></div>
-
-        <div className='absolute top-0 right-0 left-0 flex h-[26rem] items-end justify-between p-8 pb-6'>
-          <div className='text-7xl font-bold text-white'>
-            {artist?.artist.name}
-          </div>
-        </div>
-      </div>
+      <Header artist={artist?.artist} />
 
       <div className='mt-12 grid h-[20rem] grid-cols-[14rem,_auto] grid-rows-1 gap-16 px-2'>
-        {/* Latest release */}
-        <div>
-          <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
-            最新发行
-          </div>
-          <div className='flex-grow rounded-xl '>
-            {isLoadingAlbum ? (
-              <Skeleton className='aspect-square w-full rounded-xl'></Skeleton>
-            ) : (
-              <Cover imageUrl={latestAlbum?.picUrl ?? ''} />
-            )}
-            <div className='line-clamp-2  line-clamp-1 mt-2 font-semibold leading-tight decoration-gray-600 decoration-2 hover:underline  dark:text-white dark:decoration-gray-200'>
-              {latestAlbum?.name}
-            </div>
-            <div className='text-[12px] text-gray-500 dark:text-gray-400'>
-              {latestAlbum?.type} ·{' '}
-              {dayjs(latestAlbum?.publishTime || 0).year()}
-            </div>
-          </div>
-        </div>
+        <LatestRelease
+          album={albumsRaw?.hotAlbums[0]}
+          isLoading={isLoadingAlbums}
+        />
 
-        {/* Popular tracks */}
-        <div>
-          <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
-            热门歌曲
-          </div>
-          <div className='rounded-xl'>
-            <TracksGrid
-              tracks={tracks?.songs ?? artist?.hotSongs.slice(0, 10) ?? []}
-              isSkeleton={isLoading}
-            />
-          </div>
-        </div>
+        <PopularTracks
+          tracks={artist?.hotSongs}
+          isLoadingArtist={isLoadingArtist}
+        />
       </div>
 
       {/* Albums */}

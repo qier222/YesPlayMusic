@@ -29,17 +29,38 @@ const NavigationButtons = () => {
 }
 
 const SearchBox = () => {
+  const [keyword, setKeyword] = useState('')
+  const navigate = useNavigate()
+  const toSearch = (e: React.KeyboardEvent) => {
+    if (!keyword) return
+    if (e.key === 'Enter') {
+      navigate(`/search/${keyword}`)
+    }
+  }
+
   return (
-    <div className='app-region-no-drag group flex w-[16rem] cursor-text items-center rounded-full bg-gray-500 bg-opacity-5 px-3 transition duration-300 hover:bg-opacity-10 dark:bg-gray-300 dark:bg-opacity-5'>
+    <div className='app-region-no-drag group flex w-[16rem] cursor-text items-center rounded-full bg-gray-500 bg-opacity-5 pl-2.5 pr-2 transition duration-300 hover:bg-opacity-10 dark:bg-gray-300 dark:bg-opacity-5'>
       <SvgIcon
-        className='mr-2 h-5 w-5 text-gray-500 transition duration-300 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200'
+        className='mr-2 h-4 w-4 text-gray-500 transition duration-300 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200'
         name='search'
       />
       <input
+        value={keyword}
+        onChange={e => setKeyword(e.target.value)}
+        onKeyDown={toSearch}
         type='text'
-        className='w-full bg-transparent placeholder:text-gray-500 dark:text-white dark:placeholder:text-gray-400'
+        className='flex-grow bg-transparent placeholder:text-gray-500 dark:text-white dark:placeholder:text-gray-400'
         placeholder='搜索'
       />
+      <div
+        onClick={() => setKeyword('')}
+        className={classNames(
+          'cursor-default rounded-full p-1 transition after:bg-gray-300 hover:bg-white/20 dark:text-white/50',
+          !keyword && 'hidden'
+        )}
+      >
+        <SvgIcon className='h-4 w-4' name='x' />
+      </div>
     </div>
   )
 }
@@ -55,9 +76,12 @@ const Settings = () => {
 const Avatar = () => {
   const navigate = useNavigate()
   const { data: user } = useUser()
+
+  const avatarUrl = resizeImage(user?.profile?.avatarUrl ?? '', 'sm')
+
   return (
     <img
-      src={user?.profile?.avatarUrl}
+      src={avatarUrl}
       onClick={() => navigate('/login')}
       className='app-region-no-drag h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700'
     />

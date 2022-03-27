@@ -21,6 +21,8 @@
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "dependencies": {
+    "@sentry/node": "^6.19.2",
+    "@sentry/tracing": "^6.19.2",
     "NeteaseCloudMusicApi": "^4.5.8",
     "change-case": "^4.1.2",
     "cookie-parser": "^1.4.6",
@@ -30,6 +32,7 @@
     "realm": "^10.13.0"
   },
   "devDependencies": {
+    "@sentry/react": "^6.19.2",
     "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
     "@types/express-fileupload": "^1.2.2",

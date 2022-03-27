@@ -99,7 +99,6 @@ export function getCache(
       if (!isIDsValid) return
 
       const idsQuery = ids.map(id => `id = ${id}`).join(' OR ')
-      console.log(idsQuery)
       const tracksRaw = realm
         .objects(ModelNames.TRACK)
         .filtered(`(${idsQuery})`)

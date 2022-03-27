@@ -30,7 +30,7 @@ const Header = memo(
         <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
           <img src={coverUrl} className='absolute top-0 w-full blur-[100px]' />
           <img src={coverUrl} className='absolute top-0 w-full blur-[100px]' />
-          <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.84] to-white dark:from-black/[.5] dark:to-[#1d1d1d]'></div>
+          <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
         </div>
 
         <div className='grid grid-cols-[17rem_auto] items-center gap-9'>
@@ -73,7 +73,7 @@ const Header = memo(
             {/* <!-- Playlist creator --> */}
             {!isLoading && (
               <div className='mt-5 text-lg font-medium text-gray-800 dark:text-gray-300'>
-                Playlist by <span>{playlist?.creator?.nickname}</span>
+                歌单 · <span>{playlist?.creator?.nickname}</span>
               </div>
             )}
             {isLoading && (

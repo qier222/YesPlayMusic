@@ -96,7 +96,7 @@ const Header = ({
             />
           </Fragment>
         )}
-        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/75 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
+        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
       </div>
 
       <div className='grid grid-cols-[17rem_auto] items-center gap-9'>
@@ -145,7 +145,7 @@ const Header = ({
             <Skeleton className='mt-5 w-64 text-lg'>PLACEHOLDER</Skeleton>
           ) : (
             <div className='mt-5 text-lg font-medium text-gray-800 dark:text-gray-300'>
-              Album by{' '}
+              Album ·{' '}
               <NavLink
                 to={`/artist/${album?.artist.id}`}
                 className='cursor-default font-semibold hover:underline'
@@ -161,8 +161,14 @@ const Header = ({
               PLACEHOLDER
             </Skeleton>
           ) : (
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
-              {dayjs(album?.publishTime || 0).year()} · {album?.size} 首歌,{' '}
+            <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
+              {album?.mark === 1056768 && (
+                <SvgIcon
+                  name='explicit'
+                  className='mt-px mr-1 h-4 w-4 text-gray-400 dark:text-gray-500'
+                />
+              )}
+              {dayjs(album?.publishTime || 0).year()} · {album?.size} 首歌 ·{' '}
               {albumDuration}
             </div>
           )}

@@ -1,4 +1,5 @@
 import './preload' // must be first
+import './sentry'
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
