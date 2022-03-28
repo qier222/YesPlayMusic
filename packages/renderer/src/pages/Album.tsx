@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 import Button, { Color as ButtonColor } from '@/components/Button'
 import CoverRow, { Subtitle } from '@/components/CoverRow'
@@ -81,11 +80,11 @@ const Header = ({
   const [isCoverError, setCoverError] = useState(false)
 
   return (
-    <Fragment>
+    <>
       {/* Header background */}
       <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
         {coverUrl && !isCoverError && (
-          <Fragment>
+          <>
             <img
               src={coverUrl}
               className='absolute -top-full w-full blur-[100px]'
@@ -94,7 +93,7 @@ const Header = ({
               src={coverUrl}
               className='absolute -top-full w-full blur-[100px]'
             />
-          </Fragment>
+          </>
         )}
         <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
       </div>
@@ -208,7 +207,7 @@ const Header = ({
           </div>
         </div>
       </div>
-    </Fragment>
+    </>
   )
 }
 

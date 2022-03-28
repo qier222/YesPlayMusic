@@ -7,22 +7,22 @@ export enum SearchApiNames {
 
 // 搜索
 export enum SearchTypes {
-  SINGLE = 1,
-  ALBUM = 10,
-  ARTIST = 100,
-  PLAYLIST = 1000,
-  USER = 1002,
-  MV = 1004,
-  LYRICS = 1006,
-  RADIO = 1009,
-  VIDEO = 1014,
-  ALL = 1018,
+  SINGLE = '1',
+  ALBUM = '10',
+  ARTIST = '100',
+  PLAYLIST = '1000',
+  USER = '1002',
+  MV = '1004',
+  LYRICS = '1006',
+  RADIO = '1009',
+  VIDEO = '1014',
+  ALL = '1018',
 }
 export interface SearchParams {
   keywords: string
   limit?: number // 返回数量 , 默认为 30
   offset?: number // 偏移数量，用于分页 , 如 : 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
-  type?: SearchTypes // type: 搜索类型
+  type: keyof typeof SearchTypes // type: 搜索类型
 }
 interface SearchResponse {
   code: number
@@ -71,7 +71,10 @@ export function search(params: SearchParams): Promise<SearchResponse> {
   return request({
     url: '/search',
     method: 'get',
-    params: params,
+    params: {
+      ...params,
+      type: SearchTypes[params.type ?? SearchTypes.ALL],
+    },
   })
 }
 

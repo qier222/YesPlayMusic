@@ -1,6 +1,5 @@
 import md5 from 'md5'
 import QRCode from 'qrcode'
-import { Fragment } from 'react'
 import {
   checkLoginQrCodeStatus,
   fetchLoginQrCodeKey,
@@ -166,7 +165,7 @@ const OtherLoginMethods = ({
     },
   ]
   return (
-    <Fragment>
+    <>
       <div className='mt-8 mb-4 flex w-full items-center'>
         <span className='h-px flex-grow bg-gray-300 dark:bg-gray-700'></span>
         <span className='mx-2 text-sm text-gray-400 '>or</span>
@@ -187,7 +186,7 @@ const OtherLoginMethods = ({
             )
         )}
       </div>
-    </Fragment>
+    </>
   )
 }
 
@@ -244,11 +243,11 @@ const LoginWithEmail = () => {
   }
 
   return (
-    <Fragment>
+    <>
       <EmailInput {...{ email, setEmail }} />
       <PasswordInput {...{ password, setPassword }} />
       <LoginButton onClick={handleLogin} disabled={doLogin.isLoading} />
-    </Fragment>
+    </>
   )
 }
 
@@ -303,11 +302,11 @@ const LoginWithPhone = () => {
   }
 
   return (
-    <Fragment>
+    <>
       <PhoneInput {...{ countryCode, setCountryCode, phone, setPhone }} />
       <PasswordInput {...{ password, setPassword }} />
       <LoginButton onClick={handleLogin} disabled={doLogin.isLoading} />
-    </Fragment>
+    </>
   )
 }
 

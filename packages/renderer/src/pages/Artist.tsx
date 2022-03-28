@@ -8,26 +8,19 @@ import dayjs from 'dayjs'
 import TracksGrid from '@/components/TracksGrid'
 import CoverRow, { Subtitle } from '@/components/CoverRow'
 import Skeleton from '@/components/Skeleton'
-import { Fragment } from 'react'
 import useTracks from '@/hooks/useTracks'
 
 const Header = ({ artist }: { artist: Artist | undefined }) => {
   const coverImage = resizeImage(artist?.img1v1Url || '', 'md')
 
   return (
-    <Fragment>
+    <>
       <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
         {coverImage && (
-          <Fragment>
-            <img
-              src={coverImage}
-              className='absolute -top-full w-full blur-[100px]'
-            />
-            <img
-              src={coverImage}
-              className='absolute -top-full w-full blur-[100px]'
-            />
-          </Fragment>
+          <>
+            <img src={coverImage} className='absolute  w-full blur-[100px]' />
+            <img src={coverImage} className='absolute w-full blur-[100px]' />
+          </>
         )}
         <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
       </div>
@@ -47,7 +40,7 @@ const Header = ({ artist }: { artist: Artist | undefined }) => {
           <div className='text-7xl font-bold text-white'>{artist?.name}</div>
         </div>
       </div>
-    </Fragment>
+    </>
   )
 }
 
@@ -67,7 +60,7 @@ const LatestRelease = ({
         {isLoading ? (
           <Skeleton className='aspect-square w-full rounded-xl'></Skeleton>
         ) : (
-          <Cover imageUrl={album?.picUrl ?? ''} />
+          <Cover imageUrl={album?.picUrl ?? ''} showPlayButton={true} />
         )}
         <div className='line-clamp-2  line-clamp-1 mt-2 font-semibold leading-tight decoration-gray-600 decoration-2 hover:underline  dark:text-white dark:decoration-gray-200'>
           {album?.name}

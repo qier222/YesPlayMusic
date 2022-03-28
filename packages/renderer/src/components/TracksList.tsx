@@ -1,4 +1,4 @@
-import { Fragment, memo } from 'react'
+import { memo } from 'react'
 import { NavLink } from 'react-router-dom'
 import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
@@ -106,7 +106,7 @@ const Track = memo(
           {isSkeleton ? (
             <Skeleton>PLACEHOLDER1234567890</Skeleton>
           ) : (
-            <Fragment>
+            <>
               <NavLink
                 to={`/album/${track.al.id}`}
                 className={classNames(
@@ -117,7 +117,7 @@ const Track = memo(
                 {track.al.name}
               </NavLink>
               <span className='flex-grow'></span>
-            </Fragment>
+            </>
           )}
         </div>
 
@@ -194,7 +194,7 @@ const TracksList = memo(
     )
 
     return (
-      <Fragment>
+      <>
         {/* Tracks table header */}
         <div className='ml-2 mr-4 mt-10 mb-2 grid grid-cols-12 border-b border-gray-100 py-2.5 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-500'>
           <div className='col-span-6 grid grid-cols-[4.2rem_auto]'>
@@ -228,7 +228,7 @@ const TracksList = memo(
                 />
               ))}
         </div>
-      </Fragment>
+      </>
     )
   }
 )

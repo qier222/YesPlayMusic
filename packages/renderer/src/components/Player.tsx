@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import ArtistInline from '@/components/ArtistsInline'
 import IconButton from '@/components/IconButton'
 import Slider from '@/components/Slider'
@@ -27,7 +26,7 @@ const PlayingTrack = () => {
   }
 
   return (
-    <Fragment>
+    <>
       {track && (
         <div className='flex items-center gap-3'>
           {track?.al?.picUrl && (
@@ -67,7 +66,7 @@ const PlayingTrack = () => {
         </div>
       )}
       {!track && <div></div>}
-    </Fragment>
+    </>
   )
 }
 

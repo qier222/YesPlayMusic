@@ -29,12 +29,13 @@ const NavigationButtons = () => {
 }
 
 const SearchBox = () => {
-  const [keyword, setKeyword] = useState('')
+  const { type } = useParams()
+  const [keywords, setKeywords] = useState('')
   const navigate = useNavigate()
   const toSearch = (e: React.KeyboardEvent) => {
-    if (!keyword) return
+    if (!keywords) return
     if (e.key === 'Enter') {
-      navigate(`/search/${keyword}`)
+      navigate(`/search/${keywords}${type ? `/${type}` : ''}`)
     }
   }
 
@@ -45,18 +46,18 @@ const SearchBox = () => {
         name='search'
       />
       <input
-        value={keyword}
-        onChange={e => setKeyword(e.target.value)}
+        value={keywords}
+        onChange={e => setKeywords(e.target.value)}
         onKeyDown={toSearch}
         type='text'
         className='flex-grow bg-transparent placeholder:text-gray-500 dark:text-white dark:placeholder:text-gray-400'
         placeholder='搜索'
       />
       <div
-        onClick={() => setKeyword('')}
+        onClick={() => setKeywords('')}
         className={classNames(
           'cursor-default rounded-full p-1 transition after:bg-gray-300 hover:bg-white/20 dark:text-white/50',
-          !keyword && 'hidden'
+          !keywords && 'hidden'
         )}
       >
         <SvgIcon className='h-4 w-4' name='x' />
@@ -85,6 +86,12 @@ const Avatar = () => {
       onClick={() => navigate('/login')}
       className='app-region-no-drag h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700'
     />
+    // <div onClick={() => navigate('/login')}>
+    //   <SvgIcon
+    //     name='user'
+    //     className='h-9 w-9 rounded-full bg-gray-400/10 p-1 text-gray-400'
+    //   />
+    // </div>
   )
 }
 

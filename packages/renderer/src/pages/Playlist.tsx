@@ -1,4 +1,4 @@
-import React, { Fragment, memo } from 'react'
+import { memo } from 'react'
 import Button, { Color as ButtonColor } from '@/components/Button'
 import Skeleton from '@/components/Skeleton'
 import SvgIcon from '@/components/SvgIcon'
@@ -25,7 +25,7 @@ const Header = memo(
     const coverUrl = resizeImage(playlist?.coverImgUrl || '', 'lg')
 
     return (
-      <Fragment>
+      <>
         {/* Header background */}
         <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
           <img src={coverUrl} className='absolute top-0 w-full blur-[100px]' />
@@ -134,7 +134,7 @@ const Header = memo(
             </div>
           </div>
         </div>
-      </Fragment>
+      </>
     )
   }
 )
@@ -188,7 +188,7 @@ const Tracks = memo(
     }, [tracksPages])
 
     return (
-      <Fragment>
+      <>
         {isLoadingPlaylist ? (
           <TracksList tracks={[]} isSkeleton={true} />
         ) : isLoadingTracks ? (
@@ -199,7 +199,7 @@ const Tracks = memo(
         ) : (
           <TracksList tracks={tracks} onTrackDoubleClick={handlePlay} />
         )}
-      </Fragment>
+      </>
     )
   }
 )

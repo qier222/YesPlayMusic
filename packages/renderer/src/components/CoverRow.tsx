@@ -145,6 +145,7 @@ const CoverRow = ({
                 <Cover
                   onClick={() => goTo(item.id)}
                   imageUrl={getImageUrl(item)}
+                  showPlayButton={true}
                 />
               )}
 

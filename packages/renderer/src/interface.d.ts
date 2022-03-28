@@ -137,6 +137,7 @@ declare interface Artist {
   publishTime?: number
   picId_str?: string
   img1v1Id_str?: string
+  occupation?: string
 }
 declare interface Album {
   alias: unknown[]

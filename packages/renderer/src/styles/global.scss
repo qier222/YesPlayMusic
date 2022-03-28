@@ -32,7 +32,7 @@
   .btn-hover-animation {
     @apply relative transform;
     &::after {
-      @apply absolute top-0 left-0 z-[-1] h-full w-full scale-[0.92] rounded-lg opacity-0 transition-all duration-300;
+      @apply absolute top-0 left-0 z-[-1] h-full w-full scale-[.92] rounded-lg opacity-0 transition-all duration-300;
       content: '';
     }
 

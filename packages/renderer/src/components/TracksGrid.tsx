@@ -1,7 +1,6 @@
 import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
 import { resizeImage } from '@/utils/common'
-import { Fragment } from 'react'
 import SvgIcon from './SvgIcon'
 
 const Track = ({
@@ -78,15 +77,27 @@ const TrackGrid = ({
   tracks,
   isSkeleton = false,
   onTrackDoubleClick,
+  cols = 2,
 }: {
   tracks: Track[]
   isSkeleton?: boolean
   onTrackDoubleClick?: (trackID: number) => void
+  cols?: number
 }) => {
   return (
-    <div className='grid grid-cols-2 gap-x-2'>
+    <div
+      className='grid gap-x-2'
+      style={{
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+      }}
+    >
       {tracks.map((track, index) => (
-        <Track key={track.id} track={track} isSkeleton={isSkeleton} />
+        <Track
+          key={track.id}
+          track={track}
+          isSkeleton={isSkeleton}
+          isHighlight={false}
+        />
       ))}
     </div>
   )

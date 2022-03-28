@@ -1,4 +1,3 @@
-import { Fragment } from 'react'
 import type { RouteObject } from 'react-router-dom'
 import { useRoutes } from 'react-router-dom'
 import Album from '@/pages/Album'
@@ -6,6 +5,7 @@ import Home from '@/pages/Home'
 import Login from '@/pages/Login'
 import Playlist from '@/pages/Playlist'
 import Artist from '@/pages/Artist'
+import Search from '@/pages/Search'
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +15,16 @@ const routes: RouteObject[] = [
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/search/:keywords',
+    element: <Search />,
+    children: [
+      {
+        path: ':type',
+        element: <Search />,
+      },
+    ],
   },
   {
     path: '/playlist/:id',
@@ -32,7 +42,7 @@ const routes: RouteObject[] = [
 
 const Router = () => {
   const element = useRoutes(routes)
-  return <Fragment>{element}</Fragment>
+  return <>{element}</>
 }
 
 export default Router
