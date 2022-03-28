@@ -1,47 +1,46 @@
-import { playlistCategories } from '@/utils/staticData';
 import shortcuts from '@/utils/shortcuts';
+import {playlistCategories} from '@/utils/staticData';
 
 console.debug('[debug][initLocalStorage.js]');
-const enabledPlaylistCategories = playlistCategories
-  .filter(c => c.enable)
-  .map(c => c.name);
+const enabledPlaylistCategories =
+    playlistCategories.filter(c => c.enable).map(c => c.name);
 
 let localStorage = {
-  player: {},
-  settings: {
-    lang: null,
-    musicLanguage: 'all',
-    appearance: 'auto',
-    musicQuality: 320000,
-    lyricFontSize: 28,
-    outputDevice: 'default',
-    showPlaylistsByAppleMusic: true,
-    enableUnblockNeteaseMusic: true,
-    automaticallyCacheSongs: true,
-    cacheLimit: 8192,
-    enableReversedMode: false,
-    nyancatStyle: false,
-    showLyricsTranslation: true,
-    lyricsBackground: true,
-    closeAppOption: 'ask',
-    enableDiscordRichPresence: false,
-    enableGlobalShortcut: true,
-    showLibraryDefault: false,
-    subTitleDefault: false,
-    linuxEnableCustomTitlebar: false,
+  player : {},
+  settings : {
+    lang : null,
+    musicLanguage : 'all',
+    appearance : 'auto',
+    musicQuality : 320000,
+    lyricFontSize : 28,
+    outputDevice : 'default',
+    showPlaylistsByAppleMusic : true,
+    enableUnblockNeteaseMusic : true,
+    automaticallyCacheSongs : true,
+    cacheLimit : 8192,
+    enableReversedMode : false,
+    nyancatStyle : false,
+    showLyricsTranslation : true,
+    lyricsBackground : true,
+    closeAppOption : 'ask',
+    enableDiscordRichPresence : false,
+    enableGlobalShortcut : true,
+    showLibraryDefault : false,
+    subTitleDefault : false,
+    linuxEnableCustomTitlebar : false,
     enabledPlaylistCategories,
-    proxyConfig: {
-      protocol: 'noProxy',
-      server: '',
-      port: null,
+    proxyConfig : {
+      protocol : 'noProxy',
+      server : '',
+      port : null,
     },
-    shortcuts: shortcuts,
+    shortcuts : shortcuts,
   },
-  data: {
-    user: {},
-    likedSongPlaylistID: 0,
-    lastRefreshCookieDate: 0,
-    loginMode: null,
+  data : {
+    user : {},
+    likedSongPlaylistID : 0,
+    lastRefreshCookieDate : 0,
+    loginMode : null,
   },
 };
 

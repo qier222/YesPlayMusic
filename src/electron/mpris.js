@@ -1,12 +1,12 @@
-import { ipcMain, app } from 'electron';
+import {app, ipcMain} from 'electron';
 
 export function createMpris(window) {
   const Player = require('mpris-service');
   const renderer = window.webContents;
 
   const player = Player({
-    name: 'yesplaymusic',
-    identity: 'YesPlayMusic',
+    name : 'yesplaymusic',
+    identity : 'YesPlayMusic',
   });
 
   player.on('next', () => renderer.send('next'));
@@ -15,48 +15,44 @@ export function createMpris(window) {
   player.on('play', () => renderer.send('play'));
   player.on('pause', () => renderer.send('play'));
   player.on('quit', () => app.exit());
-  player.on('position', args =>
-    renderer.send('setPosition', args.position / 1000 / 1000)
-  );
+  player.on('position',
+            args => renderer.send('setPosition', args.position / 1000 / 1000));
   player.on('loopStatus', () => renderer.send('repeat'));
   player.on('shuffle', () => renderer.send('shuffle'));
 
-  ipcMain.on('player', (e, { playing }) => {
-    player.playbackStatus = playing
-      ? Player.PLAYBACK_STATUS_PLAYING
-      : Player.PLAYBACK_STATUS_PAUSED;
+  ipcMain.on('player', (e, {playing}) => {
+    player.playbackStatus = playing ? Player.PLAYBACK_STATUS_PLAYING
+                                    : Player.PLAYBACK_STATUS_PAUSED;
   });
 
   ipcMain.on('metadata', (e, metadata) => {
     player.metadata = {
-      'mpris:trackid': player.objectPath('track/' + metadata.trackId),
-      'mpris:artUrl': metadata.artwork[0].src,
-      'mpris:length': metadata.length * 1000 * 1000,
-      'xesam:title': metadata.title,
-      'xesam:album': metadata.album,
-      'xesam:artist': metadata.artist.split(','),
+      'mpris:trackid' : player.objectPath('track/' + metadata.trackId),
+      'mpris:artUrl' : metadata.artwork[0].src,
+      'mpris:length' : metadata.length * 1000 * 1000,
+      'xesam:title' : metadata.title,
+      'xesam:album' : metadata.album,
+      'xesam:artist' : metadata.artist.split(','),
     };
   });
 
-  ipcMain.on('playerCurrentTrackTime', (e, position) => {
-    player.getPosition = () => position * 1000 * 1000;
-  });
+  ipcMain.on(
+      'playerCurrentTrackTime',
+      (e, position) => { player.getPosition = () => position * 1000 * 1000; });
 
   ipcMain.on('switchRepeatMode', (e, mode) => {
     switch (mode) {
-      case 'off':
-        player.loopStatus = Player.LOOP_STATUS_NONE;
-        break;
-      case 'one':
-        player.loopStatus = Player.LOOP_STATUS_TRACK;
-        break;
-      case 'on':
-        player.loopStatus = Player.LOOP_STATUS_PLAYLIST;
-        break;
+    case 'off':
+      player.loopStatus = Player.LOOP_STATUS_NONE;
+      break;
+    case 'one':
+      player.loopStatus = Player.LOOP_STATUS_TRACK;
+      break;
+    case 'on':
+      player.loopStatus = Player.LOOP_STATUS_PLAYLIST;
+      break;
     }
   });
 
-  ipcMain.on('switchShuffle', (e, shuffle) => {
-    player.shuffle = shuffle;
-  });
+  ipcMain.on('switchShuffle', (e, shuffle) => { player.shuffle = shuffle; });
 }

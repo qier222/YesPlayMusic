@@ -1,5 +1,5 @@
+import {mapTrackPlayableStatus} from '@/utils/common';
 import request from '@/utils/request';
-import { mapTrackPlayableStatus } from '@/utils/common';
 
 /**
  * 推荐歌单
@@ -11,8 +11,8 @@ import { mapTrackPlayableStatus } from '@/utils/common';
  */
 export function recommendPlaylist(params) {
   return request({
-    url: '/personalized',
-    method: 'get',
+    url : '/personalized',
+    method : 'get',
     params,
   });
 }
@@ -24,42 +24,45 @@ export function recommendPlaylist(params) {
  */
 export function dailyRecommendPlaylist(params) {
   return request({
-    url: '/recommend/resource',
-    method: 'get',
+    url : '/recommend/resource',
+    method : 'get',
     params,
   });
 }
 /**
  * 获取歌单详情
- * 说明 : 歌单能看到歌单名字, 但看不到具体歌单内容 , 调用此接口 , 传入歌单 id, 可以获取对应歌单内的所有的音乐(未登录状态只能获取不完整的歌单,登录后是完整的)，
- * 但是返回的trackIds是完整的，tracks 则是不完整的，可拿全部 trackIds 请求一次 song/detail 接口
- * 获取所有歌曲的详情 (https://github.com/Binaryify/NeteaseCloudMusicApi/issues/452)
+ * 说明 : 歌单能看到歌单名字, 但看不到具体歌单内容 , 调用此接口 , 传入歌单 id,
+ * 可以获取对应歌单内的所有的音乐(未登录状态只能获取不完整的歌单,登录后是完整的)，
+ * 但是返回的trackIds是完整的，tracks 则是不完整的，可拿全部 trackIds 请求一次
+ * song/detail 接口 获取所有歌曲的详情
+ * (https://github.com/Binaryify/NeteaseCloudMusicApi/issues/452)
  * - id : 歌单 id
  * - s : 歌单最近的 s 个收藏者, 默认为8
  * @param {number} id
  * @param {boolean=} noCache
  */
 export function getPlaylistDetail(id, noCache = false) {
-  let params = { id };
-  if (noCache) params.timestamp = new Date().getTime();
+  let params = {id};
+  if (noCache)
+    params.timestamp = new Date().getTime();
   return request({
-    url: '/playlist/detail',
-    method: 'get',
-    params,
-  }).then(data => {
-    if (data.playlist) {
-      data.playlist.tracks = mapTrackPlayableStatus(
-        data.playlist.tracks,
-        data.privileges || []
-      );
-    }
-    return data;
-  });
+           url : '/playlist/detail',
+           method : 'get',
+           params,
+         })
+      .then(data => {
+        if (data.playlist) {
+          data.playlist.tracks = mapTrackPlayableStatus(data.playlist.tracks,
+                                                        data.privileges || []);
+        }
+        return data;
+      });
 }
 /**
  * 获取精品歌单
  * 说明 : 调用此接口 , 可获取精品歌单
- * - cat: tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为 "全部", 可从精品歌单标签列表接口获取(/playlist/highquality/tags)
+ * - cat: tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为 "全部",
+ * 可从精品歌单标签列表接口获取(/playlist/highquality/tags)
  * - limit: 取出歌单数量 , 默认为 20
  * - before: 分页参数,取上一页最后一个歌单的 updateTime 获取下一页数据
  * @param {Object} params
@@ -69,8 +72,8 @@ export function getPlaylistDetail(id, noCache = false) {
  */
 export function highQualityPlaylist(params) {
   return request({
-    url: '/top/playlist/highquality',
-    method: 'get',
+    url : '/top/playlist/highquality',
+    method : 'get',
     params,
   });
 }
@@ -79,7 +82,8 @@ export function highQualityPlaylist(params) {
  * 歌单 ( 网友精选碟 )
  * 说明 : 调用此接口 , 可获取网友精选碟歌单
  * - order: 可选值为 'new' 和 'hot', 分别对应最新和最热 , 默认为 'hot'
- * - cat: tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为 "全部",可从歌单分类接口获取(/playlist/catlist)
+ * - cat: tag, 比如 " 华语 "、" 古风 " 、" 欧美 "、" 流行 ", 默认为
+ * "全部",可从歌单分类接口获取(/playlist/catlist)
  * - limit: 取出歌单数量 , 默认为 50
  * @param {Object} params
  * @param {string} params.order
@@ -88,8 +92,8 @@ export function highQualityPlaylist(params) {
  */
 export function topPlaylist(params) {
   return request({
-    url: '/top/playlist',
-    method: 'get',
+    url : '/top/playlist',
+    method : 'get',
     params,
   });
 }
@@ -100,8 +104,8 @@ export function topPlaylist(params) {
  */
 export function playlistCatlist() {
   return request({
-    url: '/playlist/catlist',
-    method: 'get',
+    url : '/playlist/catlist',
+    method : 'get',
   });
 }
 
@@ -111,8 +115,8 @@ export function playlistCatlist() {
  */
 export function toplists() {
   return request({
-    url: '/toplist',
-    method: 'get',
+    url : '/toplist',
+    method : 'get',
   });
 }
 
@@ -128,8 +132,8 @@ export function toplists() {
 export function subscribePlaylist(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: '/playlist/subscribe',
-    method: 'post',
+    url : '/playlist/subscribe',
+    method : 'post',
     params,
   });
 }
@@ -142,9 +146,9 @@ export function subscribePlaylist(params) {
  */
 export function deletePlaylist(id) {
   return request({
-    url: '/playlist/delete',
-    method: 'post',
-    params: { id },
+    url : '/playlist/delete',
+    method : 'post',
+    params : {id},
   });
 }
 
@@ -162,8 +166,8 @@ export function deletePlaylist(id) {
 export function createPlaylist(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: '/playlist/create',
-    method: 'post',
+    url : '/playlist/create',
+    method : 'post',
     params,
   });
 }
@@ -180,8 +184,8 @@ export function createPlaylist(params) {
 export function addOrRemoveTrackFromPlaylist(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: '/playlist/tracks',
-    method: 'post',
+    url : '/playlist/tracks',
+    method : 'post',
     params,
   });
 }
@@ -195,16 +199,15 @@ export function addOrRemoveTrackFromPlaylist(params) {
  */
 export function dailyRecommendTracks() {
   return request({
-    url: '/recommend/songs',
-    method: 'get',
-    params: { timestamp: new Date().getTime() },
-  }).then(result => {
-    result.data.dailySongs = mapTrackPlayableStatus(
-      result.data.dailySongs,
-      result.data.privileges
-    );
-    return result;
-  });
+           url : '/recommend/songs',
+           method : 'get',
+           params : {timestamp : new Date().getTime()},
+         })
+      .then(result => {
+        result.data.dailySongs = mapTrackPlayableStatus(result.data.dailySongs,
+                                                        result.data.privileges);
+        return result;
+      });
 }
 
 /**
@@ -219,8 +222,8 @@ export function dailyRecommendTracks() {
  */
 export function intelligencePlaylist(params) {
   return request({
-    url: '/playmode/intelligence/list',
-    method: 'get',
+    url : '/playmode/intelligence/list',
+    method : 'get',
     params,
   });
 }

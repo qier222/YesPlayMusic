@@ -1,6 +1,8 @@
-import initLocalStorage from './initLocalStorage';
-import pkg from '../../package.json';
 import updateApp from '@/utils/updateApp';
+
+import pkg from '../../package.json';
+
+import initLocalStorage from './initLocalStorage';
 
 if (localStorage.getItem('appVersion') === null) {
   localStorage.setItem('settings', JSON.stringify(initLocalStorage.settings));
