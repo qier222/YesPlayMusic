@@ -6,8 +6,10 @@ export function ipcRenderer(vueInstance) {
   const self = vueInstance;
   // 添加专有的类名
   document.body.setAttribute('data-electron', 'yes');
-  document.body.setAttribute('data-electron-os',
-                             window.require('os').platform());
+  document.body.setAttribute(
+    'data-electron-os',
+    window.require('os').platform()
+  );
   // ipc message channel
   const electron = window.require('electron');
   const ipcRenderer = electron.ipcRenderer;
@@ -30,7 +32,9 @@ export function ipcRenderer(vueInstance) {
     self.$refs.navbar.inputFocus = true;
   });
 
-  ipcRenderer.on('play', () => { player.playOrPause(); });
+  ipcRenderer.on('play', () => {
+    player.playOrPause();
+  });
 
   ipcRenderer.on('next', () => {
     if (player.isPersonalFM) {
@@ -40,7 +44,9 @@ export function ipcRenderer(vueInstance) {
     }
   });
 
-  ipcRenderer.on('previous', () => { player.playPrevTrack(); });
+  ipcRenderer.on('previous', () => {
+    player.playPrevTrack();
+  });
 
   ipcRenderer.on('increaseVolume', () => {
     if (player.volume + 0.1 >= 1) {
@@ -56,25 +62,34 @@ export function ipcRenderer(vueInstance) {
     player.volume -= 0.1;
   });
 
-  ipcRenderer.on(
-      'like', () => { store.dispatch('likeATrack', player.currentTrack.id); });
+  ipcRenderer.on('like', () => {
+    store.dispatch('likeATrack', player.currentTrack.id);
+  });
 
-  ipcRenderer.on('repeat', () => { player.switchRepeatMode(); });
+  ipcRenderer.on('repeat', () => {
+    player.switchRepeatMode();
+  });
 
-  ipcRenderer.on('shuffle', () => { player.switchShuffle(); });
+  ipcRenderer.on('shuffle', () => {
+    player.switchShuffle();
+  });
 
-  ipcRenderer.on('routerGo',
-                 (event, where) => { self.$refs.navbar.go(where); });
+  ipcRenderer.on('routerGo', (event, where) => {
+    self.$refs.navbar.go(where);
+  });
 
-  ipcRenderer.on('nextUp', () => { self.$refs.player.goToNextTracksPage(); });
+  ipcRenderer.on('nextUp', () => {
+    self.$refs.player.goToNextTracksPage();
+  });
 
   ipcRenderer.on('rememberCloseAppOption', (event, value) => {
     store.commit('updateSettings', {
-      key : 'closeAppOption',
+      key: 'closeAppOption',
       value,
     });
   });
 
-  ipcRenderer.on('setPosition',
-                 (event, position) => { player._howler.seek(position); });
+  ipcRenderer.on('setPosition', (event, position) => {
+    player._howler.seek(position);
+  });
 }

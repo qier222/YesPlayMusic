@@ -1,69 +1,93 @@
 /* global __static */
-import {isLinux} from '@/utils/platform';
-import {app, Menu, nativeImage, Tray} from 'electron';
+import { isLinux } from '@/utils/platform';
+import { app, Menu, nativeImage, Tray } from 'electron';
 import path from 'path';
 
 function createMenuTemplate(win) {
   return [
     {
-      label : '播放',
-      icon :
-          nativeImage.createFromPath(path.join(__static, 'img/icons/play.png')),
-      click : () => { win.webContents.send('play'); },
-      id : 'play',
+      label: '播放',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/play.png')
+      ),
+      click: () => {
+        win.webContents.send('play');
+      },
+      id: 'play',
     },
     {
-      label : '暂停',
-      icon : nativeImage.createFromPath(
-          path.join(__static, 'img/icons/pause.png')),
-      click : () => { win.webContents.send('play'); },
-      id : 'pause',
-      visible : false,
+      label: '暂停',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/pause.png')
+      ),
+      click: () => {
+        win.webContents.send('play');
+      },
+      id: 'pause',
+      visible: false,
     },
     {
-      label : '上一首',
-      icon :
-          nativeImage.createFromPath(path.join(__static, 'img/icons/left.png')),
-      accelerator : 'CmdOrCtrl+Left',
-      click : () => { win.webContents.send('previous'); },
+      label: '上一首',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/left.png')
+      ),
+      accelerator: 'CmdOrCtrl+Left',
+      click: () => {
+        win.webContents.send('previous');
+      },
     },
     {
-      label : '下一首',
-      icon : nativeImage.createFromPath(
-          path.join(__static, 'img/icons/right.png')),
-      accelerator : 'CmdOrCtrl+Right',
-      click : () => { win.webContents.send('next'); },
+      label: '下一首',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/right.png')
+      ),
+      accelerator: 'CmdOrCtrl+Right',
+      click: () => {
+        win.webContents.send('next');
+      },
     },
     {
-      label : '循环播放',
-      icon : nativeImage.createFromPath(
-          path.join(__static, 'img/icons/repeat.png')),
-      accelerator : 'Alt+R',
-      click : () => { win.webContents.send('repeat'); },
+      label: '循环播放',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/repeat.png')
+      ),
+      accelerator: 'Alt+R',
+      click: () => {
+        win.webContents.send('repeat');
+      },
     },
     {
-      label : '加入喜欢',
-      icon :
-          nativeImage.createFromPath(path.join(__static, 'img/icons/like.png')),
-      accelerator : 'CmdOrCtrl+L',
-      click : () => { win.webContents.send('like'); },
-      id : 'like',
+      label: '加入喜欢',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/like.png')
+      ),
+      accelerator: 'CmdOrCtrl+L',
+      click: () => {
+        win.webContents.send('like');
+      },
+      id: 'like',
     },
     {
-      label : '取消喜欢',
-      icon : nativeImage.createFromPath(
-          path.join(__static, 'img/icons/unlike.png')),
-      accelerator : 'CmdOrCtrl+L',
-      click : () => { win.webContents.send('like'); },
-      id : 'unlike',
-      visible : false,
+      label: '取消喜欢',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/unlike.png')
+      ),
+      accelerator: 'CmdOrCtrl+L',
+      click: () => {
+        win.webContents.send('like');
+      },
+      id: 'unlike',
+      visible: false,
     },
     {
-      label : '退出',
-      icon :
-          nativeImage.createFromPath(path.join(__static, 'img/icons/exit.png')),
-      accelerator : 'CmdOrCtrl+W',
-      click : () => { app.exit(); },
+      label: '退出',
+      icon: nativeImage.createFromPath(
+        path.join(__static, 'img/icons/exit.png')
+      ),
+      accelerator: 'CmdOrCtrl+W',
+      click: () => {
+        app.exit();
+      },
     },
   ];
 }
@@ -91,11 +115,13 @@ class YPMTrayLinuxImpl {
     //所以此处单独为linux添加一个 显示主面板 选项
     this.template = [
       {
-        label : '显示主面板',
-        click : () => { this.win.show(); },
+        label: '显示主面板',
+        click: () => {
+          this.win.show();
+        },
       },
       {
-        type : 'separator',
+        type: 'separator',
       },
     ].concat(createMenuTemplate(this.win));
   }
@@ -133,7 +159,9 @@ class YPMTrayWindowsImpl {
   }
 
   handleEvents() {
-    this.tray.on('click', () => { this.win.show(); });
+    this.tray.on('click', () => {
+      this.win.show();
+    });
 
     this.tray.on('right-click', () => {
       if (this.isPlaying !== this.curDisplayPlaying) {
@@ -152,23 +180,26 @@ class YPMTrayWindowsImpl {
     });
 
     this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
-    this.emitter.on('updatePlayState',
-                    isPlaying => (this.isPlaying = isPlaying));
+    this.emitter.on(
+      'updatePlayState',
+      isPlaying => (this.isPlaying = isPlaying)
+    );
     this.emitter.on('updateLikeState', isLiked => (this.isLiked = isLiked));
   }
 }
 
 export function createTray(win, eventEmitter) {
-  let icon =
-      nativeImage.createFromPath(path.join(__static, 'img/icons/menu@88.png'))
-          .resize({
-            height : 20,
-            width : 20,
-          });
+  let icon = nativeImage
+    .createFromPath(path.join(__static, 'img/icons/menu@88.png'))
+    .resize({
+      height: 20,
+      width: 20,
+    });
 
   let tray = new Tray(icon);
   tray.setToolTip('YesPlayMusic');
 
-  return isLinux ? new YPMTrayLinuxImpl(tray, win, eventEmitter)
-                 : new YPMTrayWindowsImpl(tray, win, eventEmitter);
+  return isLinux
+    ? new YPMTrayLinuxImpl(tray, win, eventEmitter)
+    : new YPMTrayWindowsImpl(tray, win, eventEmitter);
 }
