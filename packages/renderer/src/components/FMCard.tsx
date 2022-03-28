@@ -14,10 +14,10 @@ const MediaControls = () => {
   const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
 
   const playOrPause = () => {
-    if (player.mode === PlayerMode.FM) {
+    if (playerSnapshot.mode === PlayerMode.FM) {
       player.playOrPause()
     } else {
-      player.playPersonalFM()
+      player.playFM()
     }
   }
 
@@ -35,7 +35,7 @@ const MediaControls = () => {
         <SvgIcon
           className='h-6 w-6'
           name={
-            player.mode === PlayerMode.FM &&
+            playerSnapshot.mode === PlayerMode.FM &&
             [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
               ? 'pause'
               : 'play'
@@ -59,14 +59,12 @@ const FMCard = () => {
   const [background, setBackground] = useState('')
 
   const playerSnapshot = useSnapshot(player)
-  const track = useMemo(
-    () => playerSnapshot.personalFMTrack,
-    [playerSnapshot.personalFMTrack]
-  )
-
-  useEffect(() => {
-    setCoverUrl(resizeImage(track?.al?.picUrl ?? '', 'md'))
-  }, [track])
+  const track = useMemo(() => {
+    setCoverUrl(
+      resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'md')
+    )
+    return playerSnapshot.fmTrack
+  }, [playerSnapshot.fmTrack])
 
   useEffect(() => {
     if (coverUrl) {
