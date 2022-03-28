@@ -77,14 +77,15 @@ const MediaControls = () => {
   const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
   return (
     <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
-      {mode === PlayerMode.PLAYLIST ? (
+      {mode === PlayerMode.PLAYLIST && (
         <IconButton
           onClick={() => track && player.prevTrack()}
           disabled={!track}
         >
           <SvgIcon className='h-6 w-6' name='previous' />
         </IconButton>
-      ) : (
+      )}
+      {mode === PlayerMode.FM && (
         <IconButton onClick={() => player.fmTrash()}>
           <SvgIcon className='h-6 w-6' name='dislike' />
         </IconButton>
