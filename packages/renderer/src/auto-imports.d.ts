@@ -9,8 +9,6 @@ declare global {
   const useInfiniteQuery: typeof import('react-query')['useInfiniteQuery']
   const useMemo: typeof import('react')['useMemo']
   const useMutation: typeof import('react-query')['useMutation']
-  const useNavigate: typeof import('react-router-dom')['useNavigate']
-  const useParams: typeof import('react-router-dom')['useParams']
   const useQuery: typeof import('react-query')['useQuery']
   const useReducer: typeof import('react')['useReducer']
   const useRef: typeof import('react')['useRef']
