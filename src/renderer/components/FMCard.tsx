@@ -55,14 +55,14 @@ const MediaControls = () => {
 }
 
 const FMCard = () => {
-  const [coverUrl, setCoverUrl] = useState('')
   const [background, setBackground] = useState('')
 
   const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => {
-    setCoverUrl(resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'md'))
-    return playerSnapshot.fmTrack
-  }, [playerSnapshot.fmTrack])
+  const track = useMemo(() => playerSnapshot.fmTrack, [playerSnapshot.fmTrack])
+  const coverUrl = useMemo(
+    () => resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'md'),
+    [playerSnapshot.fmTrack]
+  )
 
   useEffect(() => {
     if (coverUrl) {
