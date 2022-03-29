@@ -90,7 +90,3 @@ dist-ssr
 bundle-stats-main.html
 bundle-stats-preload.html
 bundle-stats-renderer.html
-
-.DS_STORE
-.temp
-dist/
