@@ -16,13 +16,13 @@ export default function useTracks(params: FetchTracksParams) {
       enabled: params.ids.length !== 0,
       refetchInterval: false,
       staleTime: Infinity,
-      initialData: (): FetchTracksResponse | undefined =>
-        window.ipcRenderer.sendSync('getApiCacheSync', {
-          api: 'song/detail',
-          query: {
-            ids: params.ids.join(','),
-          },
-        }),
+      // initialData: (): FetchTracksResponse | undefined =>
+      //   window.ipcRenderer.sendSync('getApiCacheSync', {
+      //     api: 'song/detail',
+      //     query: {
+      //       ids: params.ids.join(','),
+      //     },
+      //   }),
     }
   )
 }

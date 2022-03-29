@@ -17,8 +17,8 @@ export default function Home() {
       return fetchRecommendedPlaylists({})
     },
     {
-      placeholderData: () =>
-        window.ipcRenderer.sendSync('getApiCacheSync', { api: 'personalized' }),
+      // placeholderData: () =>
+      //   window.ipcRenderer.sendSync('getApiCacheSync', { api: 'personalized' }),
     }
   )
 

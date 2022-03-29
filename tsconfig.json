@@ -1,5 +1,4 @@
 {
-  "extends": "./paths.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -10,7 +9,11 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/renderer/*"]
+    }
   },
   "exclude": ["node_modules", "./dist"]
 }

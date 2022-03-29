@@ -11,12 +11,12 @@ import { release } from 'os'
 import path, { join } from 'path'
 import logger from './logger'
 import './server'
-import './database'
+// import './database'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
-const isDev = !app.isPackaged
+const isDev = process.env.NODE_ENV === 'development'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -51,10 +51,11 @@ let win: BrowserWindow | null = null
 
 async function createWindow() {
   // Create window
+
   const options: BrowserWindowConstructorOptions = {
     title: 'Main window',
     webPreferences: {
-      preload: join(__dirname, '../preload/index.cjs'),
+      preload: join(__dirname, '../main/rendererPreload.js'),
     },
     width: store.get('window.width'),
     height: store.get('window.height'),
@@ -70,14 +71,12 @@ async function createWindow() {
   win = new BrowserWindow(options)
 
   // Web server
-  if (app.isPackaged || process.env['DEBUG']) {
-    win.loadFile(join(__dirname, '../renderer/index.html'))
-  } else {
-    const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`
-    logger.info(`[index] Vite dev server running at: ${url}`)
-
+  if (isDev) {
+    const url = `http://127.0.0.1:${process.env.ELECTRON_WEB_SERVER_PORT}`
     win.loadURL(url)
     win.webContents.openDevTools()
+  } else {
+    win.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
   // Make all links open with the browser, not with the application

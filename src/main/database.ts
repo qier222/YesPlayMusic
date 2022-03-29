@@ -1,6 +1,7 @@
 import Realm from 'realm'
 import path from 'path'
-import { app } from 'electron'
+import { app, ipcMain } from 'electron'
+import fs from 'fs'
 
 export enum ModelNames {
   ACCOUNT_DATA = 'AccountData',
@@ -43,6 +44,10 @@ const RegularSchemas = [
 
 export const realm = new Realm({
   path: path.resolve(app.getPath('userData'), './api_cache/db.realm'),
+  shouldCompactOnLaunch: (totalSize, usedSize) => {
+    console.log(totalSize, usedSize)
+    return true
+  },
   schema: [
     ...RegularSchemas,
     {
@@ -96,3 +101,31 @@ export const db = {
     realm.delete(realm.objectForPrimaryKey(model, key))
   },
 }
+
+ipcMain.on('test', () => {
+  ;[
+    ModelNames.USER_PLAYLISTS,
+    ModelNames.ARTIST_ALBUMS,
+    ModelNames.PLAYLIST,
+    ModelNames.ALBUM,
+    ModelNames.TRACK,
+    ModelNames.ARTIST,
+    ModelNames.AUDIO,
+    ModelNames.ACCOUNT_DATA,
+  ].forEach(name => {
+    const data = realm.objects(name)
+
+    fs.writeFile(`./tmp/${name}.json`, JSON.stringify(data), function (err) {
+      if (err) {
+        return console.log(err)
+      }
+      console.log('The file was saved!')
+    })
+  })
+
+  // realm.write(() => {
+  //   realm.deleteAll()
+  // })
+
+  realm.compact()
+})
