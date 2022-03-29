@@ -38,9 +38,8 @@
     "realm": "^10.13.0"
   },
   "devDependencies": {
-    "preact": "^10.5.14",
-    "preact-render-to-string": "^5.1.19",
     "@babel/core": "^7.15.8",
+    "@ladle/react": "^0.9.0",
     "@preact/preset-vite": "^2.1.7",
     "@prefresh/vite": "^2.2.8",
     "@sentry/react": "^6.19.2",
@@ -89,6 +88,8 @@
     "ora": "^6.1.0",
     "picocolors": "^1.0.0",
     "postcss": "^8.4.12",
+    "preact": "^10.5.14",
+    "preact-render-to-string": "^5.1.19",
     "prettier": "2.5.1",
     "prettier-plugin-tailwindcss": "^0.1.8",
     "qrcode": "^1.5.0",
