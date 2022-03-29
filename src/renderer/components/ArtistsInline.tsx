@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import classNames from "classnames";
 
 export interface ArtistInlineProps {
   /** 歌手名單。 */
