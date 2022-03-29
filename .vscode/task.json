@@ -6,7 +6,7 @@
       "script": "debug",
       "problemMatcher": [],
       "label": "npm: debug",
-      "detail": "cross-env-shell NODE_ENV=debug \"npm run typecheck && node scripts/build.mjs && vite ./packages/renderer\"",
+      "detail": "cross-env-shell NODE_ENV=debug \"npm run typecheck && node scripts/build.main.mjs && vite ./src/renderer\"",
       "group": "build"
     }
   ]

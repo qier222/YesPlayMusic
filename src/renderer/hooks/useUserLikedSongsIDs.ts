@@ -13,13 +13,13 @@ export default function useUserLikedSongsIDs(
     {
       enabled: !!(params.uid && params.uid !== 0),
       refetchOnWindowFocus: true,
-      placeholderData: (): FetchUserLikedSongsIDsResponse | undefined =>
-        window.ipcRenderer.sendSync('getApiCacheSync', {
-          api: 'likelist',
-          query: {
-            uid: params.uid,
-          },
-        }),
+      // placeholderData: (): FetchUserLikedSongsIDsResponse | undefined =>
+      //   window.ipcRenderer.sendSync('getApiCacheSync', {
+      //     api: 'likelist',
+      //     query: {
+      //       uid: params.uid,
+      //     },
+      //   }),
     }
   )
 }

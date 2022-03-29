@@ -6,11 +6,13 @@ module.exports = {
   appId: 'com.qier222.yesplaymusic',
   productName: 'YesPlayMusic',
   copyright: 'Copyright © 2022 ${author}',
-  asar: true,
+  asar: false,
   directories: {
     output: 'release/${version}',
     buildResources: 'build',
   },
+  npmRebuild: false,
+  buildDependenciesFromSource: true,
   files: ['dist'],
   win: {
     target: [
@@ -44,7 +46,9 @@ module.exports = {
     artifactName: '${productName}-${version}-Installer.${ext}',
   },
   files: [
-    '**/*',
+    'dist/main/**/*',
+    'dist/renderer/**/*',
+    'node_modules/NeteaseCloudMusicApi',
     '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}',
     '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
     '!**/node_modules/*.d.ts',

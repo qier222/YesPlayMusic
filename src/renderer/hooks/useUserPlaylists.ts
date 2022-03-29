@@ -17,13 +17,13 @@ export default function useUserPlaylists(params: FetchUserPlaylistsParams) {
         params.uid !== 0 &&
         params.offset !== undefined
       ),
-      placeholderData: (): FetchUserPlaylistsResponse =>
-        window.ipcRenderer.sendSync('getApiCacheSync', {
-          api: 'user/playlist',
-          query: {
-            uid: params.uid,
-          },
-        }),
+      // placeholderData: (): FetchUserPlaylistsResponse =>
+      //   window.ipcRenderer.sendSync('getApiCacheSync', {
+      //     api: 'user/playlist',
+      //     query: {
+      //       uid: params.uid,
+      //     },
+      //   }),
     }
   )
 }
