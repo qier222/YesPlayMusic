@@ -60,9 +60,7 @@ const FMCard = () => {
 
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => {
-    setCoverUrl(
-      resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'md')
-    )
+    setCoverUrl(resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'md'))
     return playerSnapshot.fmTrack
   }, [playerSnapshot.fmTrack])
 
@@ -111,5 +109,12 @@ const FMCard = () => {
     </div>
   )
 }
+
+/**
+ * 不能在player的构造函数中调用initFM
+ * 那样在APP启动时不会加载私人FM的数据
+ * 只能在这里进行数据的初始化
+ */
+player.initFM()
 
 export default FMCard

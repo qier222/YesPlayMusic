@@ -44,6 +44,7 @@ export class Player {
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
   private _fmTrack: Track | null = null
+  private _fmInited = false
 
   state: State = State.INITIALIZING
   mode: Mode = Mode.PLAYLIST
@@ -54,7 +55,7 @@ export class Player {
   repeatMode: RepeatMode = RepeatMode.OFF
 
   constructor() {
-    this._initFM()
+    //
   }
 
   /**
@@ -131,14 +132,6 @@ export class Player {
   set volume(value) {
     this._volume = clamp(value, 0, 1)
     Howler.volume(this._volume)
-  }
-
-  private async _initFM() {
-    const response = await fetchPersonalFMWithReactQuery()
-    this.fmTrackList.push(...response?.data?.map(r => r.id))
-
-    const track = await this._fetchTrack(this.trackID)
-    if (track) this._fmTrack = track
   }
 
   private _setupProgressInterval() {
@@ -380,6 +373,21 @@ export class Player {
     } else {
       this._playTrack()
     }
+  }
+
+  /**
+   * Init personal fm
+   * should only be called in components/FMCard
+   */
+  async initFM() {
+    if (this._fmInited) return
+    const response = await fetchPersonalFMWithReactQuery()
+    this.fmTrackList.push(...response?.data?.map(r => r.id))
+
+    const trackId = this.fmTrackList[0]
+    const track = await this._fetchTrack(trackId)
+    if (track) this._fmTrack = track
+    this._fmInited = true
   }
 
   /**
