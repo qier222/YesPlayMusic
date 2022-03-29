@@ -12,7 +12,7 @@ Sentry.init({
   dsn: 'https://7cc7879b42ba4bed9f66fb6752558475@o436528.ingest.sentry.io/6274630',
   integrations: [new BrowserTracing()],
   release: `yesplaymusic@${pkg.version}`,
-  // environment: import.meta.env.MODE,
+  environment: import.meta.env.MODE,
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.

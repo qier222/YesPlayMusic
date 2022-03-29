@@ -15,13 +15,13 @@ export default function useUserAlbums(params: FetchArtistAlbumsParams) {
     {
       enabled: !!params.id && params.id !== 0,
       staleTime: 3600000,
-      // placeholderData: (): FetchArtistAlbumsResponse =>
-      //   window.ipcRenderer.sendSync('getApiCacheSync', {
-      //     api: 'artist/album',
-      //     query: {
-      //       id: params.id,
-      //     },
-      //   }),
+      placeholderData: (): FetchArtistAlbumsResponse =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'artist/album',
+          query: {
+            id: params.id,
+          },
+        }),
     }
   )
 }

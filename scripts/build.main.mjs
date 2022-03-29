@@ -25,6 +25,7 @@ const options = {
     ),
     'electron',
     'NeteaseCloudMusicApi',
+    'better-sqlite3',
   ],
 }
 

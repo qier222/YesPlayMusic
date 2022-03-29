@@ -2,12 +2,12 @@ import { pathCase } from 'change-case'
 import cookieParser from 'cookie-parser'
 import express, { Request, Response } from 'express'
 import logger from './logger'
-// import {
-//   setCache,
-//   getCacheForExpress,
-//   cacheAudio,
-//   getAudioCache,
-// } from './cache'
+import {
+  setCache,
+  getCacheForExpress,
+  cacheAudio,
+  getAudioCache,
+} from './cache'
 import fileUpload from 'express-fileupload'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -26,8 +26,8 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
     logger.info(`[server] Handling request: ${req.path}`)
 
     // Get from cache
-    // const cache = await getCacheForExpress(name, req)
-    // if (cache) return res.json(cache)
+    const cache = await getCacheForExpress(name, req)
+    if (cache) return res.json(cache)
 
     // Request netease api
     try {
@@ -36,7 +36,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
         cookie: `MUSIC_U=${req.cookies['MUSIC_U']}`,
       })
 
-      // setCache(name, result.body, req.query)
+      setCache(name, result.body, req.query)
       return res.send(result.body)
     } catch (error) {
       return res.status(500).send(error)
@@ -51,7 +51,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
 app.get(
   '/yesplaymusic/audio/:filename',
   async (req: Request, res: Response) => {
-    // getAudioCache(req.params.filename, res)
+    getAudioCache(req.params.filename, res)
   }
 )
 app.post('/yesplaymusic/audio/:id', async (req: Request, res: Response) => {
@@ -72,10 +72,10 @@ app.post('/yesplaymusic/audio/:id', async (req: Request, res: Response) => {
   }
 
   try {
-    // await cacheAudio(req.files.file.data, {
-    //   id: id,
-    //   source: 'netease',
-    // })
+    await cacheAudio(req.files.file.data, {
+      id: id,
+      source: 'netease',
+    })
     res.status(200).send('Audio cached!')
   } catch (error) {
     res.status(500).send({ error })

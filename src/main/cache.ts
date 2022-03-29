@@ -1,5 +1,5 @@
-import { db, ModelNames, realm } from './database'
-import type { FetchTracksResponse } from '../renderer/src/api/track'
+import { db, Tables } from './db'
+import type { FetchTracksResponse } from '../renderer/api/track'
 import { app, ipcMain } from 'electron'
 import { Request, Response } from 'express'
 import logger from './logger'
@@ -8,84 +8,80 @@ import * as musicMetadata from 'music-metadata'
 
 export async function setCache(api: string, data: any, query: any) {
   switch (api) {
+    case 'user/playlist':
     case 'user/account':
     case 'personalized':
+    case 'recommend/resource':
     case 'likelist': {
       if (!data) return
-      db.set(ModelNames.ACCOUNT_DATA, api, data)
-      break
-    }
-    case 'user/playlist': {
-      if (!data.playlist) return
-      db.set(ModelNames.USER_PLAYLISTS, Number(query.uid), data)
+      console.log(api)
+      db.upsert(Tables.ACCOUNT_DATA, {
+        id: api,
+        json: JSON.stringify(data),
+        updateAt: Date.now(),
+      })
       break
     }
     case 'song/detail': {
+      console.log('dsdadasdas')
       if (!data.songs) return
-      const tracks = (data as FetchTracksResponse).songs
-      db.batchSet(
-        ModelNames.TRACK,
-        tracks.map(t => ({
-          id: t.id,
-          json: JSON.stringify(t),
-          updateAt: Date.now(),
-        }))
-      )
+      const tracks = (data as FetchTracksResponse).songs.map(t => ({
+        id: t.id,
+        json: JSON.stringify(t),
+        updatedAt: Date.now(),
+      }))
+      db.upsertMany(Tables.TRACK, tracks)
       break
     }
     case 'album': {
       if (!data.album) return
       data.album.songs = (data as FetchTracksResponse).songs
-      db.set(ModelNames.ALBUM, Number(data.album.id), data)
+      db.upsert(Tables.ALBUM, {
+        id: data.album.id,
+        json: JSON.stringify(data),
+        updatedAt: Date.now(),
+      })
       break
     }
     case 'playlist/detail': {
       if (!data.playlist) return
-      db.set(ModelNames.PLAYLIST, Number(data.playlist.id), data)
+      db.upsert(Tables.PLAYLIST, {
+        id: data.playlist.id,
+        json: JSON.stringify(data),
+        updatedAt: Date.now(),
+      })
       break
     }
     case 'artists': {
       if (!data.artist) return
-      db.set(ModelNames.ARTIST, Number(data.artist.id), data)
+      db.upsert(Tables.ARTIST, {
+        id: data.artist.id,
+        json: JSON.stringify(data),
+        updatedAt: Date.now(),
+      })
       break
     }
     case 'artist/album': {
       if (!data.hotAlbums) return
-      db.set(ModelNames.ARTIST_ALBUMS, Number(data.artist.id), data)
+      db.upsert(Tables.ARTIST_ALBUMS, {
+        id: data.artist.id,
+        json: JSON.stringify(data),
+        updatedAt: Date.now(),
+      })
       break
     }
   }
 }
 
-/**
- * Check if the cache is expired
- * @param updateAt  from database, milliseconds
- * @param staleTime minutes
- */
-const isCacheExpired = (updateAt: number, staleTime: number) => {
-  return Date.now() - updateAt > staleTime * 1000 * 60
-}
-
-export function getCache(
-  api: string,
-  query: any,
-  checkIsExpired: boolean = false
-): any {
+export function getCache(api: string, query: any): any {
   switch (api) {
     case 'user/account':
+    case 'user/playlist':
     case 'personalized':
+    case 'recommend/resource':
     case 'likelist': {
-      const data = db.get(ModelNames.ACCOUNT_DATA, api) as any
+      const data = db.find(Tables.ACCOUNT_DATA, api)
       if (data?.json) return JSON.parse(data.json)
-      break
-    }
-    case 'user/playlist': {
-      if (isNaN(Number(query.uid))) return
-      const userPlaylists = db.get(
-        ModelNames.USER_PLAYLISTS,
-        Number(query?.uid)
-      ) as any
-      if (userPlaylists?.json) return JSON.parse(userPlaylists.json)
       break
     }
     case 'song/detail': {
@@ -98,10 +94,8 @@ export function getCache(
       })
       if (!isIDsValid) return
 
-      const idsQuery = ids.map(id => `id = ${id}`).join(' OR ')
-      const tracksRaw = realm
-        .objects(ModelNames.TRACK)
-        .filtered(`(${idsQuery})`)
+      const tracksRaw = db.findMany(Tables.TRACK, ids)
+
       if (tracksRaw.length !== ids.length) {
         return
       }
@@ -118,33 +112,27 @@ export function getCache(
     }
     case 'album': {
       if (isNaN(Number(query?.id))) return
-      const album = db.get(ModelNames.ALBUM, Number(query?.id)) as any
-      if (checkIsExpired && isCacheExpired(album?.updateAt, 24 * 60)) return
-      if (album?.json) return JSON.parse(album.json)
+      const data = db.find(Tables.ALBUM, query.id)
+      console.log(data)
+      if (data?.json) return JSON.parse(data.json)
       break
     }
     case 'playlist/detail': {
       if (isNaN(Number(query?.id))) return
-      const playlist = db.get(ModelNames.PLAYLIST, Number(query?.id)) as any
-      if (checkIsExpired && isCacheExpired(playlist?.updateAt, 10)) return
-      if (playlist?.json) return JSON.parse(playlist.json)
+      const data = db.find(Tables.PLAYLIST, query.id)
+      if (data?.json) return JSON.parse(data.json)
       break
     }
     case 'artists': {
       if (isNaN(Number(query?.id))) return
-      const artist = db.get(ModelNames.ARTIST, Number(query?.id)) as any
-      if (checkIsExpired && isCacheExpired(artist?.updateAt, 30)) return
-      if (artist?.json) return JSON.parse(artist.json)
+      const data = db.find(Tables.ARTIST, query.id)
+      if (data?.json) return JSON.parse(data.json)
       break
     }
     case 'artist/album': {
       if (isNaN(Number(query?.id))) return
-      const artistAlbums = db.get(
-        ModelNames.ARTIST_ALBUMS,
-        Number(query?.id)
-      ) as any
-      if (checkIsExpired && isCacheExpired(artistAlbums?.updateAt, 30)) return
-      if (artistAlbums?.json) return JSON.parse(artistAlbums.json)
+      const data = db.find(Tables.ARTIST_ALBUMS, query.id)
+      if (data?.json) return JSON.parse(data.json)
       break
     }
   }
@@ -162,7 +150,7 @@ export async function getCacheForExpress(api: string, req: Request) {
 
   // Get audio cache if API is song/detail
   if (api === 'song/url') {
-    const cache = db.get(ModelNames.AUDIO, Number(req.query.id)) as any
+    const cache = db.find(Tables.AUDIO, Number(req.query.id))
     if (!cache) return
 
     const audioFileName = `${cache.id}-${cache.br}.${cache.type}`
@@ -224,7 +212,7 @@ export function getAudioCache(fileName: string, res: Response) {
     const path = `${app.getPath('userData')}/audio_cache/${fileName}`
     const audio = fs.readFileSync(path)
     if (audio.byteLength === 0) {
-      db.delete(ModelNames.AUDIO, Number(id))
+      db.delete(Tables.AUDIO, id)
       fs.unlinkSync(path)
       return res.status(404).send({ error: 'Audio not found' })
     }
@@ -263,18 +251,12 @@ export async function cacheAudio(
     }
     logger.info(`Audio file ${id}-${br}.${type} cached!`)
 
-    realm.write(() => {
-      realm.create(
-        ModelNames.AUDIO,
-        {
-          id: Number(id),
-          type,
-          br,
-          source,
-          updateAt: Date.now(),
-        },
-        'modified'
-      )
+    db.upsert(Tables.AUDIO, {
+      id,
+      br,
+      type,
+      source,
+      updateAt: Date.now(),
     })
 
     logger.info(`[cache] cacheAudio ${id}-${br}.${type}`)
@@ -283,6 +265,6 @@ export async function cacheAudio(
 
 ipcMain.on('getApiCacheSync', (event, args) => {
   const { api, query } = args
-  const data = getCache(api, query, false)
+  const data = getCache(api, query)
   event.returnValue = data
 })

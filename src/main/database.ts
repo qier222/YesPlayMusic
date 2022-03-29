@@ -122,10 +122,4 @@ ipcMain.on('test', () => {
       console.log('The file was saved!')
     })
   })
-
-  // realm.write(() => {
-  //   realm.deleteAll()
-  // })
-
-  realm.compact()
 })

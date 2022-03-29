@@ -12,6 +12,7 @@ import path, { join } from 'path'
 import logger from './logger'
 import './server'
 // import './database'
+import './db'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'

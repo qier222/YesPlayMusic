@@ -17,13 +17,13 @@ export default function usePlaylist(
     {
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
       refetchOnWindowFocus: true,
-      // placeholderData: (): FetchPlaylistResponse | undefined =>
-      //   window.ipcRenderer.sendSync('getApiCacheSync', {
-      //     api: 'playlist/detail',
-      //     query: {
-      //       id: params.id,
-      //     },
-      //   }),
+      placeholderData: (): FetchPlaylistResponse | undefined =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'playlist/detail',
+          query: {
+            id: params.id,
+          },
+        }),
     }
   )
 }

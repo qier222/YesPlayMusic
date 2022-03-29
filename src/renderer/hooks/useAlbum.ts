@@ -18,13 +18,13 @@ export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
     {
       enabled: !!params.id,
       staleTime: 24 * 60 * 60 * 1000, // 24 hours
-      // placeholderData: (): FetchAlbumResponse =>
-      //   window.ipcRenderer.sendSync('getApiCacheSync', {
-      //     api: 'album',
-      //     query: {
-      //       id: params.id,
-      //     },
-      //   }),
+      placeholderData: (): FetchAlbumResponse =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'album',
+          query: {
+            id: params.id,
+          },
+        }),
     }
   )
 }

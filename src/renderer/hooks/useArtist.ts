@@ -12,13 +12,13 @@ export default function useArtist(
     {
       enabled: !!params.id && params.id > 0 && !isNaN(Number(params.id)),
       staleTime: 5 * 60 * 1000, // 5 mins
-      // placeholderData: (): FetchArtistResponse =>
-      //   window.ipcRenderer.sendSync('getApiCacheSync', {
-      //     api: 'artists',
-      //     query: {
-      //       id: params.id,
-      //     },
-      //   }),
+      placeholderData: (): FetchArtistResponse =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'artists',
+          query: {
+            id: params.id,
+          },
+        }),
     }
   )
 }

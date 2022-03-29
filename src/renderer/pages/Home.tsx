@@ -17,8 +17,10 @@ export default function Home() {
       return fetchRecommendedPlaylists({})
     },
     {
-      // placeholderData: () =>
-      //   window.ipcRenderer.sendSync('getApiCacheSync', { api: 'personalized' }),
+      placeholderData: () =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'personalized',
+        }),
     }
   )
 
@@ -27,7 +29,13 @@ export default function Home() {
     isLoading: isLoadingDailyRecommendPlaylists,
   } = useQuery(
     PlaylistApiNames.FETCH_DAILY_RECOMMEND_PLAYLISTS,
-    fetchDailyRecommendPlaylists
+    fetchDailyRecommendPlaylists,
+    {
+      placeholderData: () =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'recommend/resource',
+        }),
+    }
   )
 
   const playlists = [
