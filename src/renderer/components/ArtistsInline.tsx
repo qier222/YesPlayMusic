@@ -8,7 +8,12 @@ export interface ArtistInlineProps {
   className?: string,
   /** 是否允許前往歌手頁面？ */
   disableLink?: boolean,
-  /** 是否要在截斷第二位歌手的名字？ */
+  /**
+   * 截斷超出容器的歌手。
+   * 
+   * 預設是 `true`，亦即自動截斷。
+   * 若設定為 `false`，則會為超出範圍的歌手部分進行換行。
+   */
   clampLine?: boolean,
 }
 
