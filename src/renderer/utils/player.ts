@@ -201,7 +201,7 @@ export class Player {
 
   private _howlerOnEndCallback() {
     console.log('_howlerOnEndCallback')
-    if (this.repeatMode === RepeatMode.ONE) {
+    if (this.mode !== Mode.FM && this.repeatMode === RepeatMode.ONE) {
       _howler.seek(0)
       _howler.play()
     } else {
