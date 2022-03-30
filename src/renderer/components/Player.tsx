@@ -112,15 +112,20 @@ const MediaControls = () => {
 }
 
 const Others = () => {
+  const playerSnapshot = useSnapshot(player)
+  const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
+
+  const isFM = () => mode === PlayerMode.FM
+
   return (
     <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
         <SvgIcon className='h-6 w-6' name='playlist' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
         <SvgIcon className='h-6 w-6' name='repeat' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
         <SvgIcon className='h-6 w-6' name='shuffle' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>
