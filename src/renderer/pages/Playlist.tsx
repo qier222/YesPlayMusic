@@ -30,7 +30,7 @@ const Header = memo(
         <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
           <img src={coverUrl} className='absolute top-0 w-full blur-[100px]' />
           <img src={coverUrl} className='absolute top-0 w-full blur-[100px]' />
-          <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
+          <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.85] to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
         </div>
 
         <div className='grid grid-cols-[17rem_auto] items-center gap-9'>

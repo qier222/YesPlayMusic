@@ -22,7 +22,7 @@ const Header = ({ artist }: { artist: Artist | undefined }) => {
             <img src={coverImage} className='absolute w-full blur-[100px]' />
           </>
         )}
-        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
+        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.85] to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
       </div>
 
       <div className='relative mt-6 overflow-hidden rounded-2xl bg-gray-500/10 dark:bg-gray-800/20'>

@@ -56,7 +56,7 @@ const SearchBox = () => {
       <div
         onClick={() => setKeywords('')}
         className={classNames(
-          'cursor-default rounded-full p-1 transition after:bg-gray-300 hover:bg-white/20 dark:text-white/50',
+          'cursor-default rounded-full p-1 text-gray-600  transition hover:bg-gray-400/20 dark:text-white/50 dark:hover:bg-white/20',
           !keywords && 'hidden'
         )}
       >

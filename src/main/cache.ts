@@ -14,7 +14,6 @@ export async function setCache(api: string, data: any, query: any) {
     case 'recommend/resource':
     case 'likelist': {
       if (!data) return
-      console.log(api)
       db.upsert(Tables.ACCOUNT_DATA, {
         id: api,
         json: JSON.stringify(data),
@@ -23,7 +22,6 @@ export async function setCache(api: string, data: any, query: any) {
       break
     }
     case 'song/detail': {
-      console.log('dsdadasdas')
       if (!data.songs) return
       const tracks = (data as FetchTracksResponse).songs.map(t => ({
         id: t.id,
@@ -35,10 +33,10 @@ export async function setCache(api: string, data: any, query: any) {
     }
     case 'album': {
       if (!data.album) return
-      data.album.songs = (data as FetchTracksResponse).songs
+      data.album.songs = data.songs
       db.upsert(Tables.ALBUM, {
         id: data.album.id,
-        json: JSON.stringify(data),
+        json: JSON.stringify(data.album),
         updatedAt: Date.now(),
       })
       break
@@ -63,9 +61,21 @@ export async function setCache(api: string, data: any, query: any) {
     }
     case 'artist/album': {
       if (!data.hotAlbums) return
+      db.createMany(
+        Tables.ALBUM,
+        data.hotAlbums.map((a: Album) => ({
+          id: a.id,
+          json: JSON.stringify(a),
+          updatedAt: Date.now(),
+        }))
+      )
+      const modifiedData = {
+        ...data,
+        hotAlbums: data.hotAlbums.map((a: Album) => a.id),
+      }
       db.upsert(Tables.ARTIST_ALBUMS, {
         id: data.artist.id,
-        json: JSON.stringify(data),
+        json: JSON.stringify(modifiedData),
         updatedAt: Date.now(),
       })
       break
@@ -113,8 +123,13 @@ export function getCache(api: string, query: any): any {
     case 'album': {
       if (isNaN(Number(query?.id))) return
       const data = db.find(Tables.ALBUM, query.id)
-      console.log(data)
-      if (data?.json) return JSON.parse(data.json)
+      if (data?.json)
+        return {
+          resourceState: true,
+          songs: [],
+          code: 200,
+          album: JSON.parse(data.json),
+        }
       break
     }
     case 'playlist/detail': {
@@ -131,9 +146,19 @@ export function getCache(api: string, query: any): any {
     }
     case 'artist/album': {
       if (isNaN(Number(query?.id))) return
-      const data = db.find(Tables.ARTIST_ALBUMS, query.id)
-      if (data?.json) return JSON.parse(data.json)
-      break
+
+      const artistAlbumsRaw = db.find(Tables.ARTIST_ALBUMS, query.id)
+      if (!artistAlbumsRaw?.json) return
+      const artistAlbums = JSON.parse(artistAlbumsRaw.json)
+
+      const albumsRaw = db.findMany(Tables.ALBUM, artistAlbums.hotAlbums)
+      if (albumsRaw.length !== artistAlbums.hotAlbums.length) return
+      const albums = albumsRaw.map(a => JSON.parse(a.json))
+
+      artistAlbums.hotAlbums = artistAlbums.hotAlbums.map((id: number) =>
+        albums.find(a => a.id === id)
+      )
+      return artistAlbums
     }
   }
 }

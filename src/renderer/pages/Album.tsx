@@ -95,7 +95,7 @@ const Header = ({
             />
           </>
         )}
-        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/80 to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
+        <div className='absolute top-0 h-full w-full bg-gradient-to-b from-white/[.85] to-white dark:from-black/50 dark:to-[#1d1d1d]'></div>
       </div>
 
       <div className='grid grid-cols-[17rem_auto] items-center gap-9'>

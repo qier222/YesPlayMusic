@@ -9,7 +9,6 @@ export enum Tables {
   ARTIST = 'artist',
   PLAYLIST = 'playlist',
   ARTIST_ALBUMS = 'artist_album',
-  USER_PLAYLISTS = 'user_playlist',
 
   // Special tables
   ACCOUNT_DATA = 'account_data',
@@ -19,6 +18,19 @@ export enum Tables {
 const sqlite = new SQLite3(
   path.resolve(app.getPath('userData'), './api_cache/db.sqlite')
 )
+sqlite.pragma('auto_vacuum = FULL')
+
+// Init tables if not exist
+const trackTable = sqlite
+  .prepare("SELECT * FROM sqlite_master WHERE name='track' and type='table'")
+  .get()
+if (!trackTable) {
+  const migration = fs.readFileSync(
+    path.join(process.cwd(), './src/main/migrations/init.sql'),
+    'utf8'
+  )
+  sqlite.exec(migration)
+}
 
 export const db = {
   find: (table: Tables, key: number | string) => {
@@ -32,6 +44,24 @@ export const db = {
   },
   findAll: (table: Tables) => {
     return sqlite.prepare(`SELECT * FROM ${table}`).all()
+  },
+  create: (table: Tables, data: any, skipWhenExist: boolean = true) => {
+    if (skipWhenExist && db.find(table, data.id)) return
+    return sqlite.prepare(`INSERT INTO ${table} VALUES (?)`).run(data)
+  },
+  createMany: (table: Tables, data: any[], skipWhenExist: boolean = true) => {
+    const valuesQuery = Object.keys(data[0])
+      .map(key => `:${key}`)
+      .join(', ')
+    const insert = sqlite.prepare(
+      `INSERT ${
+        skipWhenExist ? 'OR IGNORE' : ''
+      } INTO ${table} VALUES (${valuesQuery})`
+    )
+    const insertMany = sqlite.transaction((rows: any[]) => {
+      rows.forEach((row: any) => insert.run(row))
+    })
+    insertMany(data)
   },
   upsert: (table: Tables, data: any) => {
     const valuesQuery = Object.keys(data)
@@ -63,26 +93,32 @@ export const db = {
   truncate: (table: Tables) => {
     return sqlite.prepare(`DELETE FROM ${table}`).run()
   },
+  vacuum: () => {
+    return sqlite.prepare('VACUUM').run()
+  },
 }
 
-ipcMain.on('db-export-json', () => {
-  const tables = [
-    Tables.ARTIST_ALBUMS,
-    Tables.PLAYLIST,
-    Tables.ALBUM,
-    Tables.TRACK,
-    Tables.ARTIST,
-    Tables.AUDIO,
-    Tables.ACCOUNT_DATA,
-  ]
-  tables.forEach(table => {
-    const data = db.findAll(table)
+// 导出tables到json文件，方便查看table大小
+if (process.env.NODE_ENV === 'development') {
+  ipcMain.on('db-export-json', () => {
+    const tables = [
+      Tables.ARTIST_ALBUMS,
+      Tables.PLAYLIST,
+      Tables.ALBUM,
+      Tables.TRACK,
+      Tables.ARTIST,
+      Tables.AUDIO,
+      Tables.ACCOUNT_DATA,
+    ]
+    tables.forEach(table => {
+      const data = db.findAll(table)
 
-    fs.writeFile(`./tmp/${table}.json`, JSON.stringify(data), function (err) {
-      if (err) {
-        return console.log(err)
-      }
-      console.log('The file was saved!')
+      fs.writeFile(`./tmp/${table}.json`, JSON.stringify(data), function (err) {
+        if (err) {
+          return console.log(err)
+        }
+        console.log('The file was saved!')
+      })
     })
   })
-})
+}
