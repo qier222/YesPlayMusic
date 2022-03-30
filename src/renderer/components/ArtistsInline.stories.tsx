@@ -16,14 +16,21 @@ const artists = [
     }
 ] as unknown as Artist[];
 
-export const ArtistsInlineStory: Story<ArtistInlineProps> = (props) => (
+export const MultipleArtists: Story<ArtistInlineProps> = (props) => (
     <div className="w-24">
         <ArtistInlineUI onArtistClicked={() => null} {...props} />
     </div>
 )
-
-ArtistsInlineStory.args = {
+MultipleArtists.args = {
     artists: artists,
+    className: '',
+    disableLink: false,
+    clampLine: true,
+}
+
+export const SingleArtist: Story<ArtistInlineProps> = (p) => <MultipleArtists {...p} />
+SingleArtist.args = {
+    artists: [artists[0]],
     className: '',
     disableLink: false,
     clampLine: true,
