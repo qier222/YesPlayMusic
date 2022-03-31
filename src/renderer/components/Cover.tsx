@@ -1,60 +1,96 @@
 import SvgIcon from '@/components/SvgIcon'
+import classNames from 'classnames'
+import React, { useState } from 'react'
 
-const Cover = ({
+export interface ImageConfig {
+  /**
+   * 指定圓角弧度的 Tailwind CSS Class。
+   */
+  roundedClass?: string;
+  /**
+   * 封面圖片的圖片連結。
+   */
+  imageUrl: string
+}
+
+export interface CoverProps extends ImageConfig {
+  onClick?: () => void
+  showPlayButton?: boolean
+  showShadow?: boolean
+}
+
+/**
+ * 智慧型背景陰影。
+ */
+export const NeonShadow = ({ roundedClass, imageUrl }: ImageConfig) => (
+  <div
+    className={classNames(
+      'absolute top-2 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] rounded-xl',
+      'bg-cover opacity-0 blur-lg filter transition duration-300 group-hover:opacity-60',
+      roundedClass
+    )}
+    style={{
+      backgroundImage: `url("${imageUrl}")`,
+    }}
+  ></div>
+);
+
+/**
+ * 無法取得圖片時的預設封面圖。
+ */
+export const FallbackCover = () => (
+  <div className='box-content flex items-center justify-center w-full h-full text-gray-300 bg-gray-800 border border-black aspect-square rounded-xl border-opacity-5'>
+    <SvgIcon name="music-note-icon" className='w-1/2 h-1/2' />
+  </div>
+)
+
+/**
+ * 封面圖。
+ */
+export const ImageCover = ({ roundedClass, imageUrl, ...props }: ImageConfig & React.ComponentPropsWithoutRef<'img'>) => (
+  <img
+    className={classNames(
+      'box-content aspect-square h-full w-full border border-black border-opacity-5 dark:border-white  dark:border-opacity-[.03]',
+      roundedClass
+    )}
+    src={imageUrl}
+    {...props}
+  />
+)
+
+export const CenteredPlayButton = () => (
+  <div className='absolute top-0 hidden w-full h-full place-content-center group-hover:grid'>
+    <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
+      <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
+    </button>
+  </div>
+)
+
+/**
+ * 封面圖。 
+ */
+export const Cover = ({
   imageUrl,
   onClick,
   roundedClass = 'rounded-xl',
   showPlayButton = false,
-  showHover = true,
-}: {
-  imageUrl: string
-  onClick?: () => void
-  roundedClass?: string
-  showPlayButton?: boolean
-  showHover?: boolean
-}) => {
+  showShadow = true,
+}: CoverProps) => {
   const [isError, setIsError] = useState(false)
 
   return (
-    <div onClick={onClick} className='group relative z-0'>
-      {/* Neon shadow */}
-      {showHover && (
-        <div
-          className={classNames(
-            'absolute top-2 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] rounded-xl bg-cover opacity-0 blur-lg filter transition duration-300 group-hover:opacity-60',
-            roundedClass
-          )}
-          style={{
-            backgroundImage: `url("${imageUrl}")`,
-          }}
-        ></div>
-      )}
+    <section onClick={onClick} className='relative z-0 cover group'>
+      {/* Neon Shadow */}
+      {showShadow && <NeonShadow roundedClass={roundedClass} imageUrl={imageUrl} />}
 
       {/* Cover */}
-      {isError ? (
-        <div className='box-content flex aspect-square h-full w-full items-center justify-center rounded-xl border border-black  border-opacity-5 bg-gray-800 text-gray-300'>
-          <SvgIcon name='music-note' className='h-1/2 w-1/2' />
-        </div>
-      ) : (
-        <img
-          className={classNames(
-            'box-content aspect-square h-full w-full border border-black border-opacity-5 dark:border-white  dark:border-opacity-[.03]',
-            roundedClass
-          )}
-          src={imageUrl}
-          onError={() => imageUrl && setIsError(true)}
-        />
-      )}
+      {!isError
+        ? <ImageCover roundedClass={roundedClass} imageUrl={imageUrl} onError={() => imageUrl && setIsError(true)} />
+        : <FallbackCover />}
 
       {/* Play button */}
-      {showPlayButton && (
-        <div className='absolute top-0 hidden h-full w-full place-content-center group-hover:grid'>
-          <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-            <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
-          </button>
-        </div>
-      )}
-    </div>
+      {showPlayButton && <CenteredPlayButton />}
+    </section>
   )
 }
 
