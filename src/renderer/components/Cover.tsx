@@ -6,17 +6,23 @@ export interface ImageConfig {
   /**
    * 指定圓角弧度的 Tailwind CSS Class。
    */
-  roundedClass?: string;
+  roundedClass?: string
   /**
    * 封面圖片的圖片連結。
    */
   imageUrl: string
 }
 
-export interface CoverProps extends ImageConfig {
+export interface CoverProps extends Omit<ImageConfig, 'imageUrl'> {
   onClick?: () => void
   showPlayButton?: boolean
   showShadow?: boolean
+  /**
+   * 封面圖片的圖片連結。
+   * 
+   * 若為 `null` 則使用 fallback cover。
+   */
+  imageUrl: string | null
 }
 
 /**
@@ -33,21 +39,25 @@ export const NeonShadow = ({ roundedClass, imageUrl }: ImageConfig) => (
       backgroundImage: `url("${imageUrl}")`,
     }}
   ></div>
-);
+)
 
 /**
  * 無法取得圖片時的預設封面圖。
  */
-export const FallbackCover = React.memo(() => (
+export const FallbackCover = () => (
   <div className='box-content flex items-center justify-center w-full h-full text-gray-300 bg-gray-800 border border-black aspect-square rounded-xl border-opacity-5'>
-    <SvgIcon name="music-note" className='w-1/2 h-1/2' />
+    <SvgIcon name='music-note' className='w-1/2 h-1/2' />
   </div>
-));
+)
 
 /**
  * 封面圖。
  */
-export const ImageCover = ({ roundedClass, imageUrl, ...props }: ImageConfig & React.ComponentPropsWithoutRef<'img'>) => (
+export const ImageCover = ({
+  roundedClass,
+  imageUrl,
+  ...props
+}: ImageConfig & React.ComponentPropsWithoutRef<'img'>) => (
   <img
     className={classNames(
       'box-content aspect-square h-full w-full border border-black border-opacity-5 dark:border-white  dark:border-opacity-[.03]',
@@ -58,16 +68,16 @@ export const ImageCover = ({ roundedClass, imageUrl, ...props }: ImageConfig & R
   />
 )
 
-export const CenteredPlayButton = React.memo(() => (
+export const CenteredPlayButton = () => (
   <div className='absolute top-0 hidden w-full h-full place-content-center group-hover:grid'>
     <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
       <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
     </button>
   </div>
-));
+)
 
 /**
- * 封面圖。 
+ * 封面圖。
  */
 export const Cover = ({
   imageUrl,
@@ -77,20 +87,33 @@ export const Cover = ({
   showShadow = true,
 }: CoverProps) => {
   const [isError, setIsError] = useState(false)
-  const onImageErrorCallback = useCallback(() => imageUrl && setIsError(true), [imageUrl, setIsError]);
+  const onImageErrorCallback = useCallback(
+    () => imageUrl && setIsError(true),
+    [imageUrl, setIsError]
+  )
 
   return (
     <section onClick={onClick} className='relative z-0 cover group'>
-      {/* Neon Shadow */}
-      {showShadow && <NeonShadow roundedClass={roundedClass} imageUrl={imageUrl} />}
+      {imageUrl && isError === false ? (
+        <>
+          {/* Neon Shadow */}
+          {showShadow && (
+            <NeonShadow roundedClass={roundedClass} imageUrl={imageUrl} />
+          )}
 
-      {/* Cover */}
-      {isError === false
-        ? <ImageCover roundedClass={roundedClass} imageUrl={imageUrl} onError={onImageErrorCallback} />
-        : <FallbackCover />}
+          {/* Cover */}
+          <ImageCover
+            roundedClass={roundedClass}
+            imageUrl={imageUrl}
+            onError={onImageErrorCallback}
+          />
 
-      {/* Play button */}
-      {showPlayButton && <CenteredPlayButton />}
+          {/* Play button */}
+          {showPlayButton && <CenteredPlayButton />}
+        </>
+      ) : (
+        <FallbackCover />
+      )}
     </section>
   )
 }
