@@ -40,7 +40,7 @@ export const NeonShadow = ({ roundedClass, imageUrl }: ImageConfig) => (
  */
 export const FallbackCover = React.memo(() => (
   <div className='box-content flex items-center justify-center w-full h-full text-gray-300 bg-gray-800 border border-black aspect-square rounded-xl border-opacity-5'>
-    <SvgIcon name="music-note-icon" className='w-1/2 h-1/2' />
+    <SvgIcon name="music-note" className='w-1/2 h-1/2' />
   </div>
 ));
 
