@@ -1,6 +1,6 @@
 import SvgIcon from '@/components/SvgIcon'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 export interface ImageConfig {
   /**
@@ -38,11 +38,11 @@ export const NeonShadow = ({ roundedClass, imageUrl }: ImageConfig) => (
 /**
  * 無法取得圖片時的預設封面圖。
  */
-export const FallbackCover = () => (
+export const FallbackCover = React.memo(() => (
   <div className='box-content flex items-center justify-center w-full h-full text-gray-300 bg-gray-800 border border-black aspect-square rounded-xl border-opacity-5'>
     <SvgIcon name="music-note-icon" className='w-1/2 h-1/2' />
   </div>
-)
+));
 
 /**
  * 封面圖。
@@ -58,13 +58,13 @@ export const ImageCover = ({ roundedClass, imageUrl, ...props }: ImageConfig & R
   />
 )
 
-export const CenteredPlayButton = () => (
+export const CenteredPlayButton = React.memo(() => (
   <div className='absolute top-0 hidden w-full h-full place-content-center group-hover:grid'>
     <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
       <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
     </button>
   </div>
-)
+));
 
 /**
  * 封面圖。 
@@ -77,6 +77,7 @@ export const Cover = ({
   showShadow = true,
 }: CoverProps) => {
   const [isError, setIsError] = useState(false)
+  const onImageErrorCallback = useCallback(() => imageUrl && setIsError(true), [imageUrl, setIsError]);
 
   return (
     <section onClick={onClick} className='relative z-0 cover group'>
@@ -84,8 +85,8 @@ export const Cover = ({
       {showShadow && <NeonShadow roundedClass={roundedClass} imageUrl={imageUrl} />}
 
       {/* Cover */}
-      {!isError
-        ? <ImageCover roundedClass={roundedClass} imageUrl={imageUrl} onError={() => imageUrl && setIsError(true)} />
+      {isError === false
+        ? <ImageCover roundedClass={roundedClass} imageUrl={imageUrl} onError={onImageErrorCallback} />
         : <FallbackCover />}
 
       {/* Play button */}
@@ -94,4 +95,4 @@ export const Cover = ({
   )
 }
 
-export default Cover
+export default React.memo(Cover)

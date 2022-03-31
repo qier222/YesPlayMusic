@@ -1,3 +1,4 @@
+import React from 'react'
 import classNames from 'classnames'
 import { ReactNode } from 'react'
 
@@ -46,4 +47,4 @@ const Button = ({
   />
 )
 
-export default Button
+export default React.memo(Button)
