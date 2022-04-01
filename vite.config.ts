@@ -43,7 +43,7 @@ export default defineConfig({
   base: './',
   build: {
     sourcemap: process.env.NODE_ENV === 'debug',
-    outDir: './dist/renderer',
+    outDir: '../../dist/renderer',
     emptyOutDir: true,
     rollupOptions: {
       plugins: [

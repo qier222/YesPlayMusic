@@ -48,8 +48,11 @@ module.exports = {
   files: [
     'dist/main/**/*',
     'dist/renderer/**/*',
-    'node_modules/NeteaseCloudMusicApi',
-    '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}',
+    {
+      from: 'src/main/migrations',
+      to: 'dist/main/migrations',
+    },
+    '!**/node_modules/*/{*.MD,*.md,README,readme}',
     '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
     '!**/node_modules/*.d.ts',
     '!**/node_modules/.bin',
@@ -60,6 +63,6 @@ module.exports = {
     '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
-    '!**/node_modules/realm/react-native/**/*',
+    '!**/*.{map,debug.min.js}',
   ],
 }

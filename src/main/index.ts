@@ -1,5 +1,6 @@
 import './preload' // must be first
 import './sentry'
+import './server'
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -10,14 +11,13 @@ import Store from 'electron-store'
 import { release } from 'os'
 import path, { join } from 'path'
 import logger from './logger'
-import './server'
-// import './database'
-import './db'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 const isDev = process.env.NODE_ENV === 'development'
+
+logger.info('[index] Main process start')
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -56,7 +56,7 @@ async function createWindow() {
   const options: BrowserWindowConstructorOptions = {
     title: 'Main window',
     webPreferences: {
-      preload: join(__dirname, '../main/rendererPreload.js'),
+      preload: join(__dirname, 'rendererPreload.js'),
     },
     width: store.get('window.width'),
     height: store.get('window.height'),
@@ -72,12 +72,11 @@ async function createWindow() {
   win = new BrowserWindow(options)
 
   // Web server
+  const url = `http://localhost:${process.env.ELECTRON_WEB_SERVER_PORT}`
+  win.loadURL(url)
+
   if (isDev) {
-    const url = `http://127.0.0.1:${process.env.ELECTRON_WEB_SERVER_PORT}`
-    win.loadURL(url)
     win.webContents.openDevTools()
-  } else {
-    win.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
   // Make all links open with the browser, not with the application
@@ -98,7 +97,7 @@ async function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  logger.info('[index] app ready')
+  logger.info('[index] App ready')
   createWindow()
 
   // Install devtool extension

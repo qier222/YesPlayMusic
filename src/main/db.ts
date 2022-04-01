@@ -2,6 +2,12 @@ import path from 'path'
 import { app, ipcMain } from 'electron'
 import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
+import logger from './logger'
+import { createFileIfNotExist } from './utils'
+
+const isDev = process.env.NODE_ENV === 'development'
+
+logger.info('[db] Initializing database...')
 
 export enum Tables {
   TRACK = 'track',
@@ -15,9 +21,13 @@ export enum Tables {
   AUDIO = 'audio',
 }
 
-const sqlite = new SQLite3(
-  path.resolve(app.getPath('userData'), './api_cache/db.sqlite')
+const dbFilePath = path.resolve(
+  app.getPath('userData'),
+  './api_cache/db.sqlite'
 )
+createFileIfNotExist(dbFilePath)
+
+const sqlite = new SQLite3(dbFilePath)
 sqlite.pragma('auto_vacuum = FULL')
 
 // Init tables if not exist
@@ -26,7 +36,9 @@ const trackTable = sqlite
   .get()
 if (!trackTable) {
   const migration = fs.readFileSync(
-    path.join(process.cwd(), './src/main/migrations/init.sql'),
+    isDev
+      ? path.join(process.cwd(), './src/main/migrations/init.sql')
+      : path.join(__dirname, './migrations/init.sql'),
     'utf8'
   )
   sqlite.exec(migration)
@@ -122,3 +134,5 @@ if (process.env.NODE_ENV === 'development') {
     })
   })
 }
+
+logger.info('[db] Database initialized')

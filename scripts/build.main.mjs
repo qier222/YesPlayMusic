@@ -5,9 +5,18 @@ import electron from 'electron'
 import { spawn } from 'child_process'
 import path from 'path'
 import waitOn from 'wait-on'
-import 'dotenv/config'
+import dotenv from 'dotenv'
 import pc from 'picocolors'
 import minimist from 'minimist'
+
+const env = dotenv.config({
+  path: path.resolve(process.cwd(), '.env'),
+})
+const envForEsbuild = {}
+Object.entries(env.parsed).forEach(([key, value]) => {
+  envForEsbuild[`process.env.${key}`] = `"${value}"`
+})
+console.log(envForEsbuild)
 
 const argv = minimist(process.argv.slice(2))
 const TAG = '[script/build.main.ts]'
@@ -19,6 +28,7 @@ const options = {
   platform: 'node',
   format: 'cjs',
   bundle: true,
+  define: envForEsbuild,
   external: [
     ...builtinModules.filter(
       x => !/^_|^(internal|v8|node-inspect)\/|\//.test(x)

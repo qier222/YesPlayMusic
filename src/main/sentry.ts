@@ -3,7 +3,7 @@ import * as Tracing from '@sentry/tracing'
 import pkg from '../../package.json'
 import logger from './logger'
 
-logger.info(`[sentry] init sentry`)
+logger.info(`[sentry] sentry initializing`)
 
 Sentry.init({
   dsn: 'https://2aaaa67f1c3d4d6baefafa5d58fcf340@o436528.ingest.sentry.io/6274637',
@@ -15,3 +15,5 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 })
+
+logger.info(`[sentry] sentry initialized`)
