@@ -57,7 +57,7 @@ const PlayingTrack = () => {
             </div>
           </div>
 
-          <IconButton onClick={() => toast('Work in progress')}>
+          <IconButton onClick={() => toast('施工中...')}>
             <SvgIcon
               className='h-6 w-6 text-black dark:text-white'
               name='heart-outline'
@@ -115,23 +115,30 @@ const Others = () => {
   const playerSnapshot = useSnapshot(player)
   const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
 
-  const isFM = () => mode === PlayerMode.FM
-
   return (
     <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
-      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
+      <IconButton
+        onClick={() => toast('Work in progress')}
+        disabled={mode === PlayerMode.FM}
+      >
         <SvgIcon className='h-6 w-6' name='playlist' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
+      <IconButton
+        onClick={() => toast('施工中...')}
+        disabled={mode === PlayerMode.FM}
+      >
         <SvgIcon className='h-6 w-6' name='repeat' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
+      <IconButton
+        onClick={() => toast('施工中...')}
+        disabled={mode === PlayerMode.FM}
+      >
         <SvgIcon className='h-6 w-6' name='shuffle' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('施工中...')}>
         <SvgIcon className='h-6 w-6' name='volume' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('施工中...')}>
         <SvgIcon className='h-6 w-6' name='lyrics' />
       </IconButton>
     </div>

@@ -157,7 +157,10 @@ export class Player {
    */
   private async _fetchAudioSource(trackID: TrackID) {
     const response = await fetchAudioSourceWithReactQuery({ id: trackID })
-    if (response.data?.[0]?.url) return response.data[0].url
+    return {
+      audio: response.data?.[0]?.url,
+      id: trackID,
+    }
   }
 
   /**
@@ -174,14 +177,14 @@ export class Player {
    * Play audio via howler
    */
   private async _playAudio() {
-    const audio = await this._fetchAudioSource(this.trackID)
+    const { audio, id } = await this._fetchAudioSource(this.trackID)
     if (!audio) {
       toast('Failed to load audio source')
       return
     }
     Howler.unload()
     const howler = new Howl({
-      src: [audio],
+      src: [`${audio}?id=${id}`],
       format: ['mp3', 'flac'],
       html5: true,
       autoplay: true,
@@ -191,8 +194,9 @@ export class Player {
     _howler = howler
     this.play()
     this.state = State.PLAYING
-
-    this._cacheAudio(this.trackID, audio)
+    _howler.once('load', () => {
+      this._cacheAudio(_howler._src)
+    })
 
     if (!this._progressInterval) {
       this._setupProgressInterval()
@@ -209,8 +213,10 @@ export class Player {
     }
   }
 
-  private _cacheAudio(id: number, audio: string) {
+  private _cacheAudio(audio: string) {
     if (audio.includes('yesplaymusic')) return
+    const id = Number(audio.split('?id=')[1])
+    if (isNaN(id) || !id) return
     cacheAudio(id, audio)
   }
 
@@ -242,18 +248,13 @@ export class Player {
   play(fade: boolean = false) {
     if (_howler.playing()) return
 
-    const setPlayState = () => {
-      this.state = State.PLAYING
-    }
-
     _howler.play()
     if (fade) {
       _howler.once('play', () => {
         _howler.fade(0, this._volume, PLAY_PAUSE_FADE_DURATION)
-        setPlayState()
       })
     } else {
-      setPlayState()
+      this.state = State.PLAYING
     }
   }
 
@@ -262,18 +263,15 @@ export class Player {
    * @param {boolean} fade fade out
    */
   pause(fade: boolean = false) {
-    const setPauseState = () => {
-      _howler.pause()
-      this.state = State.PAUSED
-    }
-
     if (fade) {
       _howler.fade(this._volume, 0, PLAY_PAUSE_FADE_DURATION)
+      this.state = State.PAUSED
       _howler.once('fade', () => {
-        setPauseState()
+        _howler.pause()
       })
     } else {
-      setPauseState()
+      this.state = State.PAUSED
+      _howler.pause()
     }
   }
 

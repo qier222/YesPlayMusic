@@ -28,7 +28,7 @@ const EmailInput = ({
   return (
     <div className='w-full'>
       <div className='mb-1 text-sm font-medium text-gray-700 dark:text-gray-300'>
-        Email
+        邮箱
       </div>
       <input
         value={email}
@@ -54,7 +54,7 @@ const PhoneInput = ({
   return (
     <div className='w-full'>
       <div className='mb-1 text-sm font-medium text-gray-700 dark:text-gray-300'>
-        Phone
+        手机
       </div>
       <div className='flex w-full'>
         <input
@@ -91,7 +91,7 @@ const PasswordInput = ({
   return (
     <div className='mt-3 flex w-full flex-col'>
       <div className='mb-1 text-sm font-medium text-gray-700  dark:text-gray-300'>
-        Password
+        密码
       </div>
       <div className='flex w-full'>
         <input
@@ -135,7 +135,7 @@ const LoginButton = ({
           'bg-brand-100 text-brand-300 dark:bg-brand-700 dark:text-white/50'
       )}
     >
-      Login
+      登录
     </button>
   )
 }
@@ -153,15 +153,15 @@ const OtherLoginMethods = ({
   }[] = [
     {
       id: Method.QRCODE,
-      name: 'QR Code',
+      name: '二维码',
     },
     {
       id: Method.EMAIL,
-      name: 'Email',
+      name: '邮箱',
     },
     {
       id: Method.PHONE,
-      name: 'Phone',
+      name: '手机',
     },
   ]
   return (
@@ -178,7 +178,7 @@ const OtherLoginMethods = ({
               <button
                 key={id}
                 onClick={() => setMethod(id)}
-                className='flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 font-medium text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 dark:hover:text-gray-100'
+                className='flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 dark:hover:text-gray-100'
               >
                 <SvgIcon className='mr-2 h-5 w-5' name={id} />
                 <span>{name}</span>
@@ -312,7 +312,7 @@ const LoginWithPhone = () => {
 
 // Login with QRCode
 const LoginWithQRCode = () => {
-  const [qrCodeMessage, setQrCodeMessage] = useState('扫码登录')
+  const [qrCodeMessage, setQrCodeMessage] = useState('打开网易云音乐，扫码登录')
   const [qrCodeImage, setQrCodeImage] = useState('')
 
   const navigate = useNavigate()
@@ -344,7 +344,7 @@ const LoginWithQRCode = () => {
         refetchKey()
         break
       case 801:
-        setQrCodeMessage('等待扫码')
+        setQrCodeMessage('打开网易云音乐，扫码登录')
         break
       case 802:
         setQrCodeMessage('等待确认')

@@ -68,7 +68,10 @@ const SearchBox = () => {
 
 const Settings = () => {
   return (
-    <div className='app-region-no-drag btn-hover-animation rounded-lg p-2.5 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'>
+    <div
+      onClick={() => toast('施工中...')}
+      className='app-region-no-drag btn-hover-animation rounded-lg p-2.5 text-gray-500 transition duration-300 after:rounded-full after:bg-black/[.06] hover:text-gray-900 dark:text-gray-300 dark:after:bg-white/10 dark:hover:text-gray-200'
+    >
       <SvgIcon className='h-[1.125rem] w-[1.125rem]' name='settings' />
     </div>
   )
@@ -78,20 +81,27 @@ const Avatar = () => {
   const navigate = useNavigate()
   const { data: user } = useUser()
 
-  const avatarUrl = resizeImage(user?.profile?.avatarUrl ?? '', 'sm')
+  const avatarUrl = user?.profile?.avatarUrl
+    ? resizeImage(user?.profile?.avatarUrl ?? '', 'sm')
+    : ''
 
   return (
-    <img
-      src={avatarUrl}
-      onClick={() => navigate('/login')}
-      className='app-region-no-drag h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700'
-    />
-    // <div onClick={() => navigate('/login')}>
-    //   <SvgIcon
-    //     name='user'
-    //     className='h-9 w-9 rounded-full bg-gray-400/10 p-1 text-gray-400'
-    //   />
-    // </div>
+    <>
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          onClick={() => navigate('/login')}
+          className='app-region-no-drag h-9 w-9 rounded-full bg-gray-100 dark:bg-gray-700'
+        />
+      ) : (
+        <div onClick={() => navigate('/login')}>
+          <SvgIcon
+            name='user'
+            className='h-9 w-9 rounded-full bg-black/[.06] p-1 text-gray-500'
+          />
+        </div>
+      )}
+    </>
   )
 }
 

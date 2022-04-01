@@ -42,6 +42,7 @@ export default defineConfig({
   ],
   base: './',
   build: {
+    target: process.env.IS_ELECTRON ? 'esnext' : 'modules',
     sourcemap: process.env.NODE_ENV === 'debug',
     outDir: '../../dist/renderer',
     emptyOutDir: true,

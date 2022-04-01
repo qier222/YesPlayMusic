@@ -9,6 +9,21 @@ import FMCard from '@/components/FMCard'
 
 export default function Home() {
   const {
+    data: dailyRecommendPlaylists,
+    isLoading: isLoadingDailyRecommendPlaylists,
+  } = useQuery(
+    PlaylistApiNames.FETCH_DAILY_RECOMMEND_PLAYLISTS,
+    fetchDailyRecommendPlaylists,
+    {
+      retry: false,
+      placeholderData: () =>
+        window.ipcRenderer?.sendSync('getApiCacheSync', {
+          api: 'recommend/resource',
+        }),
+    }
+  )
+
+  const {
     data: recommendedPlaylists,
     isLoading: isLoadingRecommendedPlaylists,
   } = useQuery(
@@ -20,20 +35,6 @@ export default function Home() {
       placeholderData: () =>
         window.ipcRenderer?.sendSync('getApiCacheSync', {
           api: 'personalized',
-        }),
-    }
-  )
-
-  const {
-    data: dailyRecommendPlaylists,
-    isLoading: isLoadingDailyRecommendPlaylists,
-  } = useQuery(
-    PlaylistApiNames.FETCH_DAILY_RECOMMEND_PLAYLISTS,
-    fetchDailyRecommendPlaylists,
-    {
-      placeholderData: () =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
-          api: 'recommend/resource',
         }),
     }
   )
