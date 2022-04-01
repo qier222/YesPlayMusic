@@ -2,12 +2,12 @@ const ArtistInline = ({
   artists,
   className,
   disableLink,
-  clampLine = true,
+  clampLines = 1,
 }: {
   artists: Artist[]
   className?: string
   disableLink?: boolean
-  clampLine?: boolean
+  clampLines?: 0 | 1 | 2 | 3
 }) => {
   if (!artists) return <div></div>
 
@@ -17,7 +17,12 @@ const ArtistInline = ({
   }
 
   return (
-    <div className={classNames(clampLine && 'line-clamp-1', className)}>
+    <div
+      className={classNames(
+        clampLines > 0 && `line-clamp-${clampLines}`,
+        className
+      )}
+    >
       {artists.map((artist, index) => (
         <span key={`${artist.id}-${artist.name}`}>
           <span

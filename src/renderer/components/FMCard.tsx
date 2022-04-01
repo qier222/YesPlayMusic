@@ -92,7 +92,7 @@ const FMCard = () => {
           <ArtistInline
             className='opacity-75'
             artists={track?.ar ?? []}
-            clampLine={false}
+            clampLines={2}
           />
         </div>
 
