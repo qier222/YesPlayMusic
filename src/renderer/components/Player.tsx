@@ -4,7 +4,7 @@ import Slider from '@/components/Slider'
 import SvgIcon from '@/components/SvgIcon'
 import { player } from '@/store'
 import { resizeImage } from '@/utils/common'
-import { State as PlayerState } from '@/utils/player'
+import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
 
 const PlayingTrack = () => {
   const navigate = useNavigate()
@@ -74,11 +74,22 @@ const MediaControls = () => {
   const playerSnapshot = useSnapshot(player)
   const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
+  const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
   return (
     <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
-      <IconButton onClick={() => track && player.prevTrack()} disabled={!track}>
-        <SvgIcon className='h-6 w-6' name='previous' />
-      </IconButton>
+      {mode === PlayerMode.PLAYLIST && (
+        <IconButton
+          onClick={() => track && player.prevTrack()}
+          disabled={!track}
+        >
+          <SvgIcon className='h-6 w-6' name='previous' />
+        </IconButton>
+      )}
+      {mode === PlayerMode.FM && (
+        <IconButton onClick={() => player.fmTrash()}>
+          <SvgIcon className='h-6 w-6' name='dislike' />
+        </IconButton>
+      )}
       <IconButton
         onClick={() => track && player.playOrPause()}
         disabled={!track}
@@ -101,15 +112,20 @@ const MediaControls = () => {
 }
 
 const Others = () => {
+  const playerSnapshot = useSnapshot(player)
+  const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
+
+  const isFM = () => mode === PlayerMode.FM
+
   return (
     <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
         <SvgIcon className='h-6 w-6' name='playlist' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
         <SvgIcon className='h-6 w-6' name='repeat' />
       </IconButton>
-      <IconButton onClick={() => toast('Work in progress')}>
+      <IconButton onClick={() => toast('Work in progress')} disabled={isFM()}>
         <SvgIcon className='h-6 w-6' name='shuffle' />
       </IconButton>
       <IconButton onClick={() => toast('Work in progress')}>

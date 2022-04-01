@@ -3,6 +3,8 @@ import {
   fetchAudioSourceWithReactQuery,
   fetchTracksWithReactQuery,
 } from '@/hooks/useTracks'
+import { fetchPersonalFMWithReactQuery } from '@/hooks/usePersonalFM'
+import { fmTrash } from '@/api/personalFM'
 import { cacheAudio } from '@/api/yesplaymusic'
 import { clamp } from 'lodash-es'
 
@@ -41,11 +43,14 @@ export class Player {
   private _progress: number = 0
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
+  private _fmTrack: Track | null = null
+  private _fmInited = false
 
   state: State = State.INITIALIZING
   mode: Mode = Mode.PLAYLIST
   trackList: TrackID[] = []
   trackListSource: TrackListSource | null = null
+  fmTrackList: TrackID[] = []
   shuffle: boolean = false
   repeatMode: RepeatMode = RepeatMode.OFF
 
@@ -89,8 +94,11 @@ export class Player {
    * Get current playing track ID
    */
   get trackID(): TrackID {
-    const { trackList, _trackIndex } = this
-    return trackList[_trackIndex] ?? 0
+    if (this.mode === Mode.PLAYLIST) {
+      const { trackList, _trackIndex } = this
+      return trackList[_trackIndex] ?? 0
+    }
+    return this.fmTrackList[0] ?? 0
   }
 
   /**
@@ -98,6 +106,10 @@ export class Player {
    */
   get track(): Track | null {
     return this._track ?? null
+  }
+
+  get fmTrack(): Track | null {
+    return this._fmTrack ?? null
   }
 
   /**
@@ -154,6 +166,7 @@ export class Player {
   private async _playTrack() {
     const track = await this._fetchTrack(this.trackID)
     if (track) this._track = track
+    if (track && this.mode === Mode.FM) this._fmTrack = track
     this._playAudio()
   }
 
@@ -188,7 +201,7 @@ export class Player {
 
   private _howlerOnEndCallback() {
     console.log('_howlerOnEndCallback')
-    if (this.repeatMode === RepeatMode.ONE) {
+    if (this.mode !== Mode.FM && this.repeatMode === RepeatMode.ONE) {
       _howler.seek(0)
       _howler.play()
     } else {
@@ -199,6 +212,27 @@ export class Player {
   private _cacheAudio(id: number, audio: string) {
     if (audio.includes('yesplaymusic')) return
     cacheAudio(id, audio)
+  }
+
+  private async _nextFMTrack() {
+    if (this.fmTrackList.length <= 1) {
+      for (let i = 0; i < 5; i++) {
+        const response = await fetchPersonalFMWithReactQuery()
+        if (!response?.data?.length) continue
+        this.fmTrackList.shift()
+        this.fmTrackList.push(...response?.data?.map(r => r.id))
+
+        this._playTrack()
+        break
+      }
+    } else {
+      this.fmTrackList.shift()
+      this._playTrack()
+      if (this.fmTrackList.length <= 1) {
+        const response = await fetchPersonalFMWithReactQuery()
+        this.fmTrackList.push(...response?.data?.map(r => r.id))
+      }
+    }
   }
 
   /**
@@ -255,6 +289,10 @@ export class Player {
    * Play previous track
    */
   prevTrack() {
+    if (this.mode === Mode.FM) {
+      toast('Personal FM not support previous track')
+      return
+    }
     if (this._prevTrackIndex === undefined) {
       toast('No previous track')
       return
@@ -266,8 +304,13 @@ export class Player {
   /**
    * Play next track
    */
-  nextTrack() {
+  nextTrack(forceFM: boolean = false) {
     console.log(this)
+    if (forceFM || this.mode === Mode.FM) {
+      this.mode = Mode.FM
+      this._nextFMTrack()
+      return
+    }
     if (this._nextTrackIndex === undefined) {
       toast('No next track')
       this.pause()
@@ -314,6 +357,69 @@ export class Player {
       ? album.songs.findIndex(t => t.id === autoPlayTrackID)
       : 0
     this._playTrack()
+  }
+
+  /**
+   *  Play personal fm
+   */
+  async playFM() {
+    this.mode = Mode.FM
+    if (
+      this.fmTrackList.length > 0 &&
+      this._fmTrack?.id === this.fmTrackList[0]
+    ) {
+      this._track = this._fmTrack
+      this._playAudio()
+    } else {
+      this._playTrack()
+    }
+  }
+
+  /**
+   * Init personal fm
+   * should only be called in components/FMCard
+   */
+  async initFM() {
+    if (this._fmInited) return
+    const response = await fetchPersonalFMWithReactQuery()
+    this.fmTrackList.push(...response?.data?.map(r => r.id))
+
+    const trackId = this.fmTrackList[0]
+    const track = await this._fetchTrack(trackId)
+    if (track) this._fmTrack = track
+    this._fmInited = true
+  }
+
+  /**
+   * Trash current PersonalFMTrack
+   */
+  async fmTrash() {
+    let trashId = this.fmTrackList.shift() ?? 0
+    if (trashId === 0) return
+
+    if (this.mode === Mode.FM) {
+      await this._nextFMTrack()
+    } else {
+      for (let i = 0; i < 5 && this.fmTrackList.length <= 1; i++) {
+        const response = await fetchPersonalFMWithReactQuery()
+        this.fmTrackList.push(...response?.data?.map(r => r.id))
+      }
+
+      for (let i = 0; i < 5; i++) {
+        let track = await this._fetchTrack(this.fmTrackList.at(0) ?? 0)
+        if (track) {
+          this._fmTrack = track
+          break
+        } else {
+          this.fmTrackList.shift()
+          if (this.fmTrackList.length <= 1) {
+            const response = await fetchPersonalFMWithReactQuery()
+            this.fmTrackList.push(...response?.data?.map(r => r.id))
+          }
+        }
+      }
+    }
+    fmTrash(trashId)
   }
 
   /**
