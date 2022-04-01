@@ -2,12 +2,10 @@ const ArtistInline = ({
   artists,
   className,
   disableLink,
-  clampLines = 1,
 }: {
   artists: Artist[]
   className?: string
   disableLink?: boolean
-  clampLines?: 0 | 1 | 2 | 3
 }) => {
   if (!artists) return <div></div>
 
@@ -19,7 +17,7 @@ const ArtistInline = ({
   return (
     <div
       className={classNames(
-        clampLines > 0 && `line-clamp-${clampLines}`,
+        !className?.includes('line-clamp') && 'line-clamp-1',
         className
       )}
     >

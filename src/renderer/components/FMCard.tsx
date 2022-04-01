@@ -90,9 +90,8 @@ const FMCard = () => {
         <div>
           <div className='text-xl font-semibold'>{track?.name}</div>
           <ArtistInline
-            className='opacity-75'
+            className='line-clamp-2 opacity-75'
             artists={track?.ar ?? []}
-            clampLines={2}
           />
         </div>
 
