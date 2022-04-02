@@ -69,7 +69,7 @@ const PlayingTrack = () => {
             <SvgIcon
               className='h-6 w-6 text-black dark:text-white'
               name={
-                !!track?.id && userLikedSongs?.ids?.includes(track.id)
+                track?.id && userLikedSongs?.ids?.includes(track.id)
                   ? 'heart'
                   : 'heart-outline'
               }
