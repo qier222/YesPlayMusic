@@ -187,6 +187,7 @@ export class Player {
       toast('无法播放此歌曲')
       return
     }
+    if (this.trackID !== id) return
     Howler.unload()
     const howler = new Howl({
       src: [`${audio}?id=${id}`],
