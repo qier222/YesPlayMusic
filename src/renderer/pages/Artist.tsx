@@ -9,6 +9,7 @@ import TracksGrid from '@/components/TracksGrid'
 import CoverRow, { Subtitle } from '@/components/CoverRow'
 import Skeleton from '@/components/Skeleton'
 import useTracks from '@/hooks/useTracks'
+import { player } from '@/store'
 
 const Header = ({ artist }: { artist: Artist | undefined }) => {
   const coverImage = resizeImage(artist?.img1v1Url || '', 'md')
@@ -51,18 +52,27 @@ const LatestRelease = ({
   album: Album | undefined
   isLoading: boolean
 }) => {
+  const navigate = useNavigate()
+  const toAlbum = () => navigate(`/album/${album?.id}`)
   return (
     <div>
       <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
         最新发行
       </div>
-      <div className='flex-grow rounded-xl '>
+      <div className='flex-grow rounded-xl'>
         {isLoading ? (
           <Skeleton className='aspect-square w-full rounded-xl'></Skeleton>
         ) : (
-          <Cover imageUrl={album?.picUrl ?? ''} showPlayButton={true} />
+          <Cover
+            imageUrl={album?.picUrl ?? ''}
+            showPlayButton={true}
+            onClick={toAlbum}
+          />
         )}
-        <div className='line-clamp-2  line-clamp-1 mt-2 font-semibold leading-tight decoration-gray-600 decoration-2 hover:underline  dark:text-white dark:decoration-gray-200'>
+        <div
+          onClick={toAlbum}
+          className='line-clamp-2  line-clamp-1 mt-2 font-semibold leading-tight decoration-gray-600 decoration-2 hover:underline  dark:text-white dark:decoration-gray-200'
+        >
           {album?.name}
         </div>
         <div className='text-[12px] text-gray-500 dark:text-gray-400'>
@@ -84,6 +94,20 @@ const PopularTracks = ({
     ids: tracks?.slice(0, 10)?.map(t => t.id) ?? [],
   })
 
+  const handlePlay = useCallback(
+    (trackID: number | null = null) => {
+      if (!tracks?.length) {
+        toast('无法播放歌单')
+        return
+      }
+      player.playAList(
+        tracks.map(t => t.id),
+        trackID
+      )
+    },
+    [tracks]
+  )
+
   return (
     <div>
       <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
@@ -93,6 +117,7 @@ const PopularTracks = ({
         <TracksGrid
           tracks={tracksWithExtraInfo?.songs ?? tracks?.slice(0, 10) ?? []}
           isSkeleton={isLoadingArtist}
+          onTrackDoubleClick={handlePlay}
         />
       </div>
     </div>

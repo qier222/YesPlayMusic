@@ -13,17 +13,20 @@ const Track = memo(
     track,
     isLiked = false,
     isSkeleton = false,
-    isPlaying = false,
-    subtitle = undefined,
+    isHighlight = false,
     onClick,
   }: {
     track: Track
     isLiked?: boolean
     isSkeleton?: boolean
-    isPlaying?: boolean
-    subtitle?: string
+    isHighlight?: boolean
     onClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
   }) => {
+    const subtitle = useMemo(
+      () => track.tns?.at(0) ?? track.alia?.at(0),
+      [track.alia, track.tns]
+    )
+
     return (
       <div
         onClick={e => onClick(e, track.id)}
@@ -31,9 +34,9 @@ const Track = memo(
           'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl ',
           'grid-cols-12 p-2 pr-4',
           !isSkeleton &&
-            !isPlaying &&
+            !isHighlight &&
             'btn-hover-animation after:bg-gray-100 dark:after:bg-white/10',
-          !isSkeleton && isPlaying && 'bg-brand-50 dark:bg-gray-800'
+          !isSkeleton && isHighlight && 'bg-brand-50 dark:bg-gray-800'
         )}
       >
         {/* Track info */}
@@ -58,7 +61,7 @@ const Track = memo(
               <div
                 className={classNames(
                   'line-clamp-1 break-all text-lg font-semibold',
-                  isPlaying ? 'text-brand-500' : 'text-black dark:text-white'
+                  isHighlight ? 'text-brand-500' : 'text-black dark:text-white'
                 )}
               >
                 <span>{track.name}</span>
@@ -67,7 +70,7 @@ const Track = memo(
                     title={subtitle}
                     className={classNames(
                       'ml-1',
-                      isPlaying ? 'text-brand-500/[.8]' : 'text-gray-400'
+                      isHighlight ? 'text-brand-500/[.8]' : 'text-gray-400'
                     )}
                   >
                     ({subtitle})
@@ -79,7 +82,7 @@ const Track = memo(
             <div
               className={classNames(
                 'text-sm',
-                isPlaying
+                isHighlight
                   ? 'text-brand-500'
                   : 'text-gray-600 dark:text-gray-400'
               )}
@@ -111,7 +114,7 @@ const Track = memo(
                 to={`/album/${track.al.id}`}
                 className={classNames(
                   'hover:underline',
-                  isPlaying && 'text-brand-500'
+                  isHighlight && 'text-brand-500'
                 )}
               >
                 {track.al.name}
@@ -147,7 +150,7 @@ const Track = memo(
             <div
               className={classNames(
                 'min-w-[2.5rem] text-right',
-                isPlaying
+                isHighlight
                   ? 'text-brand-500'
                   : 'text-gray-600 dark:text-gray-400'
               )}

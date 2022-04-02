@@ -28,6 +28,16 @@ export default function usePlaylist(
   )
 }
 
+export function fetchPlaylistWithReactQuery(params: FetchPlaylistParams) {
+  return reactQueryClient.fetchQuery(
+    [PlaylistApiNames.FETCH_PLAYLIST, params],
+    () => fetch(params),
+    {
+      staleTime: 3600000,
+    }
+  )
+}
+
 export async function prefetchPlaylist(params: FetchPlaylistParams) {
   await reactQueryClient.prefetchQuery(
     [PlaylistApiNames.FETCH_PLAYLIST, params],

@@ -1,5 +1,6 @@
 import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
+import { player } from '@/store'
 import { resizeImage } from '@/utils/common'
 import SvgIcon from './SvgIcon'
 
@@ -7,13 +8,16 @@ const Track = ({
   track,
   isSkeleton = false,
   isHighlight = false,
+  onClick,
 }: {
   track: Track
-  isSkeleton: boolean
-  isHighlight: boolean
+  isSkeleton?: boolean
+  isHighlight?: boolean
+  onClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
 }) => {
   return (
     <div
+      onClick={e => onClick(e, track.id)}
       className={classNames(
         'group grid w-full rounded-xl after:scale-[.98] after:rounded-xl ',
         'grid-cols-1 py-1.5 px-2',
@@ -27,29 +31,29 @@ const Track = ({
       <div className='grid grid-cols-[3rem_auto] items-center'>
         {/* Cover */}
         <div>
-          {!isSkeleton && (
+          {isSkeleton ? (
+            <Skeleton className='mr-4 h-9 w-9 rounded-md border border-gray-100' />
+          ) : (
             <img
               src={resizeImage(track.al.picUrl, 'xs')}
               className='box-content h-9 w-9 rounded-md border border-black border-opacity-[.03]'
             />
           )}
-          {isSkeleton && (
-            <Skeleton className='mr-4 h-9 w-9 rounded-md border border-gray-100' />
-          )}
         </div>
 
         {/* Track name & Artists */}
         <div className='flex flex-col justify-center'>
-          {!isSkeleton && (
+          {isSkeleton ? (
+            <Skeleton className='text-base '>PLACEHOLDER12345</Skeleton>
+          ) : (
             <div
-              v-if='!isSkeleton'
-              className='line-clamp-1 break-all text-base font-semibold dark:text-white'
+              className={classNames(
+                'line-clamp-1 break-all text-base font-semibold ',
+                isHighlight ? 'text-brand-500' : 'text-black dark:text-white'
+              )}
             >
               {track.name}
             </div>
-          )}
-          {isSkeleton && (
-            <Skeleton className='text-base '>PLACEHOLDER12345</Skeleton>
           )}
 
           <div className='text-xs text-gray-500 dark:text-gray-400'>
@@ -60,10 +64,23 @@ const Track = ({
                 {track.mark === 1318912 && (
                   <SvgIcon
                     name='explicit'
-                    className='mr-1 h-3 w-3 text-gray-300 dark:text-gray-500'
+                    className={classNames(
+                      'mr-1 h-3 w-3',
+                      isHighlight
+                        ? 'text-brand-500'
+                        : 'text-gray-300 dark:text-gray-500'
+                    )}
                   />
                 )}
-                <ArtistInline artists={track.ar} disableLink={true} />
+                <ArtistInline
+                  artists={track.ar}
+                  disableLink={true}
+                  className={
+                    isHighlight
+                      ? 'text-brand-500'
+                      : 'text-gray-600 dark:text-gray-400'
+                  }
+                />
               </span>
             )}
           </div>
@@ -84,6 +101,16 @@ const TrackGrid = ({
   onTrackDoubleClick?: (trackID: number) => void
   cols?: number
 }) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>, trackID: number) => {
+    if (e.detail === 2) onTrackDoubleClick?.(trackID)
+  }
+
+  const playerSnapshot = useSnapshot(player)
+  const playingTrack = useMemo(
+    () => playerSnapshot.track,
+    [playerSnapshot.track]
+  )
+
   return (
     <div
       className='grid gap-x-2'
@@ -93,10 +120,11 @@ const TrackGrid = ({
     >
       {tracks.map((track, index) => (
         <Track
+          onClick={handleClick}
           key={track.id}
           track={track}
           isSkeleton={isSkeleton}
-          isHighlight={false}
+          isHighlight={track.id === playingTrack?.id}
         />
       ))}
     </div>

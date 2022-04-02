@@ -49,18 +49,21 @@ const Track = memo(
     isLiked = false,
     isSkeleton = false,
     isHighlight = false,
-    subtitle = undefined,
     onClick,
   }: {
     track: Track
     isLiked?: boolean
     isSkeleton?: boolean
     isHighlight?: boolean
-    subtitle?: string
     onClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
   }) => {
     if (enableRenderLog)
       console.debug(`Rendering TracksAlbum.tsx Track ${track.name}`)
+
+    const subtitle = useMemo(
+      () => track.tns?.at(0) ?? track.alia?.at(0),
+      [track.alia, track.tns]
+    )
 
     return (
       <div
@@ -125,7 +128,6 @@ const Track = memo(
                   )}
                   {subtitle && (
                     <span
-                      title={subtitle}
                       className={classNames(
                         'ml-1',
                         isHighlight ? 'text-brand-500/[.8]' : 'text-gray-400'
@@ -259,7 +261,6 @@ const TracksAlbum = ({
               isLiked={userLikedSongs?.ids?.includes(track.id) ?? false}
               isSkeleton={false}
               isHighlight={track.id === playingTrack?.id}
-              subtitle={track.tns?.at(0) ?? track.alia?.at(0)}
             />
           ))}
     </div>

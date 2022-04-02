@@ -29,6 +29,16 @@ export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
   )
 }
 
+export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
+  return reactQueryClient.fetchQuery(
+    [AlbumApiNames.FETCH_ALBUM, params.id],
+    () => fetch(params),
+    {
+      staleTime: Infinity,
+    }
+  )
+}
+
 export async function prefetchAlbum(params: FetchAlbumParams) {
   await reactQueryClient.prefetchQuery(
     [AlbumApiNames.FETCH_ALBUM, params.id],

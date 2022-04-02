@@ -296,12 +296,11 @@ const Album = () => {
   })
 
   const handlePlay = async (trackID: number | null = null) => {
-    const realAlbum = album?.album
-    if (!realAlbum) {
-      toast('Failed to play album')
+    if (!album?.album.id) {
+      toast('无法播放专辑，该专辑不存在')
       return
     }
-    await player.playAlbum(realAlbum, trackID)
+    await player.playAlbum(album.album.id, trackID)
   }
 
   return (

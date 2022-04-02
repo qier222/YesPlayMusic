@@ -9,6 +9,8 @@ import { cacheAudio } from '@/api/yesplaymusic'
 import { clamp } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
+import { fetchPlaylistWithReactQuery } from '@/hooks/usePlaylist'
+import { fetchAlbumWithReactQuery } from '@/hooks/useAlbum'
 
 type TrackID = number
 enum TrackListSourceType {
@@ -114,7 +116,7 @@ export class Player {
    * Get/Set progress of current track
    */
   get progress(): number {
-    return this._progress
+    return this.state === State.LOADING ? 0 : this._progress
   }
   set progress(value) {
     this._progress = value
@@ -179,9 +181,10 @@ export class Player {
    * Play audio via howler
    */
   private async _playAudio() {
+    this._progress = 0
     const { audio, id } = await this._fetchAudioSource(this.trackID)
     if (!audio) {
-      toast('Failed to load audio source')
+      toast('无法播放此歌曲')
       return
     }
     Howler.unload()
@@ -228,7 +231,7 @@ export class Player {
     const loadMoreTracks = async () => {
       if (this.fmTrackList.length <= 5) {
         const response = await fetchPersonalFMWithReactQuery()
-        this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? {}))
+        this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
       }
     }
     const prefetchNextTrack = async () => {
@@ -291,6 +294,7 @@ export class Player {
    * Play previous track
    */
   prevTrack() {
+    this._progress = 0
     if (this.mode === Mode.FM) {
       toast('Personal FM not support previous track')
       return
@@ -307,13 +311,14 @@ export class Player {
    * Play next track
    */
   nextTrack(forceFM: boolean = false) {
+    this._progress = 0
     if (forceFM || this.mode === Mode.FM) {
       this.mode = Mode.FM
       this._nextFMTrack()
       return
     }
     if (this._nextTrackIndex === undefined) {
-      toast('No next track')
+      toast('没有下一首了')
       this.pause()
       return
     }
@@ -322,41 +327,54 @@ export class Player {
   }
 
   /**
-   * Play a playlist
-   * @param  {Playlist} playlist
-   * @param  {null|number=} autoPlayTrackID
+   * 播放一个track id列表
+   * @param {number[]} list
+   * @param {null|number} autoPlayTrackID
    */
-  async playPlaylist(playlist: Playlist, autoPlayTrackID?: null | number) {
-    if (!playlist?.trackIds?.length) return
-    this.trackListSource = {
-      type: TrackListSourceType.PLAYLIST,
-      id: playlist.id,
-    }
+  playAList(list: TrackID[], autoPlayTrackID?: null | number) {
     this.mode = Mode.PLAYLIST
-    this.trackList = playlist.trackIds.map(t => t.id)
+    this.trackList = list
     this._trackIndex = autoPlayTrackID
-      ? playlist.trackIds.findIndex(t => t.id === autoPlayTrackID)
+      ? list.findIndex(t => t === autoPlayTrackID)
       : 0
     this._playTrack()
   }
 
   /**
-   * Play am album
-   * @param  {Album} album
+   * Play a playlist
+   * @param  {number} playlistID
    * @param  {null|number=} autoPlayTrackID
    */
-  async playAlbum(album: Album, autoPlayTrackID?: null | number) {
+  async playPlaylist(playlistID: number, autoPlayTrackID?: null | number) {
+    const playlist = await fetchPlaylistWithReactQuery({ id: playlistID })
+    if (!playlist?.playlist?.trackIds?.length) return
+    this.trackListSource = {
+      type: TrackListSourceType.PLAYLIST,
+      id: playlistID,
+    }
+    this.playAList(
+      playlist.playlist.trackIds.map(t => t.id),
+      autoPlayTrackID
+    )
+  }
+
+  /**
+   * Play am album
+   * @param  {number} albumID
+   * @param  {null|number=} autoPlayTrackID
+   */
+  async playAlbum(albumID: number, autoPlayTrackID?: null | number) {
+    const album = await fetchAlbumWithReactQuery({ id: albumID })
     if (!album?.songs?.length) return
     this.trackListSource = {
       type: TrackListSourceType.ALBUM,
-      id: album.id,
+      id: albumID,
     }
-    this.mode = Mode.PLAYLIST
-    this.trackList = album.songs.map(t => t.id)
-    this._trackIndex = autoPlayTrackID
-      ? album.songs.findIndex(t => t.id === autoPlayTrackID)
-      : 0
     this._playTrack()
+    this.playAList(
+      album.songs.map(t => t.id),
+      autoPlayTrackID
+    )
   }
 
   /**
@@ -380,7 +398,7 @@ export class Player {
    */
   async initFM() {
     const response = await fetchPersonalFMWithReactQuery()
-    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? {}))
+    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
 
     const trackId = this.fmTrackList[0]
     const track = await this._fetchTrack(trackId)
@@ -401,7 +419,7 @@ export class Player {
    */
   async playTrack(trackID: TrackID) {
     const index = this.trackList.findIndex(t => t === trackID)
-    if (!index) toast('Failed to play: This track is not in the playlist')
+    if (!index) toast('播放失败，歌曲不在列表内')
     this._trackIndex = index
     this._playTrack()
   }

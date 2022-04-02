@@ -215,11 +215,11 @@ const Playlist = () => {
 
   const handlePlay = useCallback(
     (trackID: number | null = null) => {
-      if (!playlist) {
-        toast('Failed to play playlist')
+      if (!playlist?.playlist?.id) {
+        toast('无法播放歌单')
         return
       }
-      player.playPlaylist(playlist.playlist, trackID)
+      player.playPlaylist(playlist.playlist.id, trackID)
     },
     [playlist]
   )

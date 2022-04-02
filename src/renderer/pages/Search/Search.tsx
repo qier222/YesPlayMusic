@@ -6,6 +6,7 @@ import {
 } from '@/api/search'
 import Cover from '@/components/Cover'
 import TrackGrid from '@/components/TracksGrid'
+import { player } from '@/store'
 import { resizeImage } from '@/utils/common'
 
 const Artists = ({ artists }: { artists: Artist[] }) => {
@@ -98,6 +99,33 @@ const Search = () => {
     () => search({ keywords, type: searchType })
   )
 
+  const handlePlayTracks = useCallback(
+    (trackID: number | null = null) => {
+      const tracks = searchResult?.result.song.songs
+      if (!tracks?.length) {
+        toast('无法播放歌单')
+        return
+      }
+      player.playAList(
+        tracks.map(t => t.id),
+        trackID
+      )
+    },
+    [searchResult?.result.song.songs]
+  )
+
+  const navigate = useNavigate()
+  const navigateBestMatch = (match: Artist | Album) => {
+    if ((match as Artist).albumSize !== undefined) {
+      navigate(`/artist/${match.id}`)
+      return
+    }
+    if ((match as Album).artist !== undefined) {
+      navigate(`/album/${match.id}`)
+      return
+    }
+  }
+
   return (
     <div>
       <div className='mt-6 mb-8 text-4xl font-semibold dark:text-white'>
@@ -111,6 +139,7 @@ const Search = () => {
           <div className='grid grid-cols-2'>
             {bestMatch.map(match => (
               <div
+                onClick={() => navigateBestMatch(match)}
                 key={`${match.id}${match.picUrl}`}
                 className='btn-hover-animation flex items-center p-3 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
               >
@@ -154,7 +183,11 @@ const Search = () => {
         {searchResult?.result.song.songs && (
           <div className='col-span-2'>
             <div className='mb-2 text-sm font-medium text-gray-400'>歌曲</div>
-            <TrackGrid tracks={searchResult.result.song.songs} cols={3} />
+            <TrackGrid
+              tracks={searchResult.result.song.songs}
+              cols={3}
+              onTrackDoubleClick={handlePlayTracks}
+            />
           </div>
         )}
       </div>

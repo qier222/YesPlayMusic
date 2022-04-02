@@ -33,7 +33,7 @@ const PlayingTrack = () => {
             <img
               onClick={toAlbum}
               className='aspect-square h-full rounded-md shadow-md'
-              src={resizeImage(track?.al?.picUrl ?? '', 'sm')}
+              src={resizeImage(track.al.picUrl, 'xs')}
             />
           )}
           {!track?.al?.picUrl && (
