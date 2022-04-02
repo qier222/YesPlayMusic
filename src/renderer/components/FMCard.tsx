@@ -69,8 +69,6 @@ const FMCard = () => {
     if (coverUrl) {
       average(coverUrl, { amount: 1, format: 'hex', sample: 1 }).then(color => {
         let c = colord(color as string)
-        console.log({ dark: c.isDark(), light: c.isLight() })
-
         if (c.isLight()) c = c.darken(0.15)
         else if (c.isDark()) c = c.lighten(0.1)
         const to = c.darken(0.15).rotate(-5).toHex()

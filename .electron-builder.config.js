@@ -6,14 +6,23 @@ module.exports = {
   appId: 'com.qier222.yesplaymusic',
   productName: 'YesPlayMusic',
   copyright: 'Copyright © 2022 ${author}',
-  asar: false,
+  asar: true,
   directories: {
-    output: 'release/${version}',
+    output: 'release',
     buildResources: 'build',
   },
   npmRebuild: false,
   buildDependenciesFromSource: true,
-  files: ['dist'],
+  files: ['./dist'],
+  publish: [
+    {
+      provider: 'github',
+      owner: 'qier222',
+      repo: 'YesPlayMusic',
+      vPrefixedTagName: true,
+      releaseType: 'draft',
+    },
+  ],
   win: {
     target: [
       {
@@ -28,8 +37,14 @@ module.exports = {
         target: 'nsis',
         arch: ['ia32'],
       },
+      {
+        target: 'portable',
+        arch: ['x64'],
+      },
     ],
-    artifactName: '${productName}-${version}-Setup.${ext}',
+    artifactName: '${productName}-${os}-${version}-${arch}-Setup.${ext}',
+    publisherName: 'qier222',
+    icon: 'build/icons/icon.ico',
   },
   nsis: {
     oneClick: false,
@@ -38,12 +53,49 @@ module.exports = {
     deleteAppDataOnUninstall: true,
   },
   mac: {
-    target: ['dmg'],
-    artifactName: '${productName}-${version}-Installer.${ext}',
+    target: [
+      {
+        target: 'dmg',
+        arch: ['x64', 'arm64', 'universal'],
+      },
+    ],
+    artifactName: '${productName}-${os}-${version}-${arch}.${ext}',
+    darkModeSupport: true,
+    category: 'public.app-category.music',
+  },
+  dmg: {
+    icon: 'build/icons/icon.icns',
   },
   linux: {
-    target: ['AppImage'],
-    artifactName: '${productName}-${version}-Installer.${ext}',
+    target: [
+      {
+        target: 'deb',
+        arch: ['x64', 'arm64', 'armv7l'],
+      },
+      {
+        target: 'AppImage',
+        arch: ['x64'],
+      },
+      {
+        target: 'snap',
+        arch: ['x64'],
+      },
+      {
+        target: 'pacman',
+        arch: ['x64'],
+      },
+      {
+        target: 'rpm',
+        arch: ['x64'],
+      },
+      {
+        target: 'tar.gz',
+        arch: ['x64'],
+      },
+    ],
+    artifactName: '${productName}-${os}-${version}.${ext}',
+    category: 'Music',
+    icon: './build/icon.icns',
   },
   files: [
     'dist/main/**/*',

@@ -92,6 +92,10 @@ if (argv.watch) {
   spinner.start()
   build({
     ...options,
+    define: {
+      ...options.define,
+      'process.env.NODE_ENV': '"production"',
+    },
     minify: true,
   })
     .then(() => {

@@ -40,7 +40,7 @@ export default defineConfig({
       ],
     }),
   ],
-  base: './',
+  base: '/',
   build: {
     target: process.env.IS_ELECTRON ? 'esnext' : 'modules',
     sourcemap: process.env.NODE_ENV === 'debug',

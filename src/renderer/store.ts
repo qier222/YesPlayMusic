@@ -1,4 +1,3 @@
-import { RefObject } from 'react'
 import { proxy, subscribe } from 'valtio'
 import { devtools } from 'valtio/utils'
 import { player as PlayerCore } from '@/utils/player'
@@ -33,7 +32,7 @@ export const player = proxy(PlayerCore)
 player.init()
 
 if (import.meta.env.DEV) {
-  window.player = player
+  ;(window as any).player = player
 }
 
 // Devtools

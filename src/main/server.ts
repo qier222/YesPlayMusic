@@ -14,6 +14,7 @@ import path from 'path'
 logger.info('[server] starting http server')
 
 const isDev = process.env.NODE_ENV === 'development'
+const isProd = process.env.NODE_ENV === 'production'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const neteaseApi = require('NeteaseCloudMusicApi') as (params: any) => any[]
@@ -87,14 +88,14 @@ app.post('/yesplaymusic/audio/:id', async (req: Request, res: Response) => {
   }
 })
 
-if (!isDev) {
-  app.use(express.static(path.join(__dirname, '../renderer')))
+if (isProd) {
+  app.use('/', express.static(path.join(__dirname, '../renderer/')))
 }
 
 const port = Number(
-  isDev
-    ? process.env.ELECTRON_DEV_NETEASE_API_PORT ?? 3000
-    : process.env.ELECTRON_WEB_SERVER_PORT ?? 42710
+  isProd
+    ? process.env.ELECTRON_WEB_SERVER_PORT ?? 42710
+    : process.env.ELECTRON_DEV_NETEASE_API_PORT ?? 3000
 )
 app.listen(port, () => {
   logger.info(`[server] API server listening on port ${port}`)

@@ -14,13 +14,13 @@
     "dev:renderer": "vite dev",
     "build:main": "node scripts/build.main.mjs",
     "build:renderer": "vite build",
-    "build": "npm run typecheck && cross-env-shell IS_ELECTRON=true npm run build:renderer && npm run build:main && electron-builder --config .electron-builder.config.js",
-    "build-dir": "npm run typecheck && cross-env-shell IS_ELECTRON=true npm run build:renderer && npm run build:main && electron-builder --config .electron-builder.config.js --dir",
+    "build": "npm run typecheck && cross-env-shell IS_ELECTRON=true npm run build:renderer && npm run build:main",
+    "build:app": "npm run build && electron-builder --config .electron-builder.config.js",
+    "build:app-dir": "npm run build && electron-builder --config .electron-builder.config.js --dir",
     "typecheck": "tsc --noEmit --project src/renderer/tsconfig.json",
     "debug": "cross-env-shell NODE_ENV=debug \"npm run typecheck && node scripts/build.mjs && vite ./src/renderer\"",
     "eslint": "eslint --ext .ts,.js ./",
-    "prettier": "prettier --write './**/*.{ts,js,tsx,jsx}'",
-    "postinstall": "electron-rebuild"
+    "prettier": "prettier --write './**/*.{ts,js,tsx,jsx}'"
   },
   "engines": {
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"

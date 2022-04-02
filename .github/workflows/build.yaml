@@ -1,0 +1,90 @@
+name: Build/Release
+
+on:
+  push:
+    branches:
+      - react
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-18.04]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.29.0
+
+      - name: Install Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile false
+
+      - name: Electron rebuild
+        run: pnpm electron-rebuild
+
+      - name: Install RPM & Pacman (on Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update &&
+          sudo apt-get install --no-install-recommends -y rpm &&
+          sudo apt-get install --no-install-recommends -y bsdtar &&
+          sudo apt-get install --no-install-recommends -y libopenjp2-tools
+
+      - name: Install Snapcraft (on Ubuntu)
+        uses: samuelmeuli/action-snapcraft@v1
+        if: startsWith(matrix.os, 'ubuntu')
+        # with:
+        #   Disable since the Snapcraft token is currently not working
+        #   snapcraft_token: ${{ secrets.snapcraft_token }}
+
+      - name: Build/Release Electron app
+        uses: njzydark/action-electron-builder-pnpm@v1.1.0-pnpm
+        env:
+          ELECTRON_WEB_SERVER_PORT: 42710
+          VITE_APP_NETEASE_API_URL: /netease
+          VITE_APP_LASTFM_API_KEY: 09c55292403d961aa517ff7f5e8a3d9c
+          VITE_APP_LASTFM_API_SHARED_SECRET: 307c9fda32b3904e53654baff215cb67
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          args: --config .electron-builder.config.js
+          skip_package_manager_install: true
+          package_manager: pnpm
+
+      - name: Upload Artifact (macOS)
+        uses: actions/upload-artifact@v3
+        with:
+          name: YesPlayMusic-mac
+          path: release/*-universal.dmg
+          if-no-files-found: ignore
+
+      - name: Upload Artifact (Windows)
+        uses: actions/upload-artifact@v3
+        with:
+          name: YesPlayMusic-win
+          path: release/*-Setup.exe
+          if-no-files-found: ignore
+
+      - name: Upload Artifact (Linux)
+        uses: actions/upload-artifact@v3
+        with:
+          name: YesPlayMusic-linux
+          path: release/*.AppImage
+          if-no-files-found: ignore

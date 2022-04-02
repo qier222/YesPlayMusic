@@ -154,7 +154,7 @@ export class Player {
    */
   private async _fetchTrack(trackID: TrackID) {
     const response = await fetchTracksWithReactQuery({ ids: [trackID] })
-    return response?.songs?.length ? response.songs[0] : null
+    return response?.songs.length ? response.songs[0] : null
   }
 
   /**
@@ -173,8 +173,10 @@ export class Player {
    * Play a track based on this.trackID
    */
   private async _playTrack() {
+    const id = this.trackID
+    if (!id) return
     this.state = State.LOADING
-    const track = await this._fetchTrack(this.trackID)
+    const track = await this._fetchTrack(id)
     if (!track) {
       toast('加载歌曲信息失败')
       return
@@ -208,7 +210,7 @@ export class Player {
     this.play()
     this.state = State.PLAYING
     _howler.once('load', () => {
-      this._cacheAudio(_howler._src)
+      this._cacheAudio((_howler as any)._src)
     })
 
     if (!this._progressInterval) {
@@ -233,9 +235,6 @@ export class Player {
   }
 
   private async _nextFMTrack() {
-    this.fmTrackList.shift()
-    this._playTrack()
-
     const loadMoreTracks = async () => {
       if (this.fmTrackList.length <= 5) {
         const response = await fetchPersonalFMWithReactQuery()
@@ -248,7 +247,11 @@ export class Player {
       if (track?.al.picUrl) axios.get(resizeImage(track.al.picUrl, 'md'))
     }
 
-    loadMoreTracks()
+    if (this.fmTrackList.length === 0) await loadMoreTracks()
+    this.fmTrackList.shift()
+    this._playTrack()
+
+    this.fmTrackList.length === 0 ? await loadMoreTracks() : loadMoreTracks()
     prefetchNextTrack()
   }
 
@@ -405,6 +408,7 @@ export class Player {
    * Trash current PersonalFMTrack
    */
   async fmTrash() {
+    this.mode = Mode.FM
     const trashTrackID = this.fmTrackList[0]
     fmTrash(trashTrackID)
     this._nextFMTrack()
@@ -424,5 +428,5 @@ export class Player {
 export const player = new Player()
 
 if (import.meta.env.DEV) {
-  window.howler = _howler
+  ;(window as any).howler = _howler
 }

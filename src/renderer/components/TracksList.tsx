@@ -226,8 +226,7 @@ const TracksList = memo(
                   track={track}
                   isLiked={userLikedSongs?.ids?.includes(track.id) ?? false}
                   isSkeleton={false}
-                  isPlaying={track.id === playingTrack?.id}
-                  subtitle={track.tns?.at(0) ?? track.alia?.at(0)}
+                  isHighlight={track.id === playingTrack?.id}
                 />
               ))}
         </div>
