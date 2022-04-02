@@ -5,6 +5,7 @@ import { resizeImage } from '@/utils/common'
 import SvgIcon from '@/components/SvgIcon'
 import ArtistInline from '@/components/ArtistsInline'
 import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
+import Skeleton from './Skeleton'
 
 const MediaControls = () => {
   const classes =
@@ -67,39 +68,64 @@ const FMCard = () => {
   useEffect(() => {
     if (coverUrl) {
       average(coverUrl, { amount: 1, format: 'hex', sample: 1 }).then(color => {
-        const to = colord(color as string)
-          .darken(0.15)
-          .rotate(-5)
-          .toHex()
-        setBackground(`linear-gradient(to bottom right, ${color}, ${to})`)
+        let c = colord(color as string)
+        console.log({ dark: c.isDark(), light: c.isLight() })
+
+        if (c.isLight()) c = c.darken(0.15)
+        else if (c.isDark()) c = c.lighten(0.1)
+        const to = c.darken(0.15).rotate(-5).toHex()
+        setBackground(`linear-gradient(to bottom right, ${c.toHex()}, ${to})`)
       })
-    } else {
-      setBackground(`linear-gradient(to bottom right, #66ccff, #ee0000)`)
     }
   }, [coverUrl])
 
   return (
     <div
-      className='relative flex h-[198px] overflow-hidden rounded-2xl p-4'
+      className='relative flex h-[198px] overflow-hidden rounded-2xl bg-gray-100 p-4 dark:bg-gray-800'
       style={{ background }}
     >
-      {coverUrl && <img className='rounded-lg shadow-2xl' src={coverUrl} />}
+      {coverUrl ? (
+        <img className='rounded-lg shadow-2xl' src={coverUrl} />
+      ) : (
+        <div className='aspect-square h-full rounded-lg bg-gray-200 dark:bg-white/5'></div>
+      )}
 
       <div className='ml-5 flex w-full flex-col justify-between text-white'>
         {/* Track info */}
         <div>
-          <div className='text-xl font-semibold'>{track?.name}</div>
-          <ArtistInline
-            className='line-clamp-2 opacity-75'
-            artists={track?.ar ?? []}
-          />
+          {track ? (
+            <div className='text-xl font-semibold'>{track?.name}</div>
+          ) : (
+            <div className='flex'>
+              <div className='bg-gray-200 text-xl text-transparent dark:bg-white/5'>
+                PLACEHOLDER12345
+              </div>
+            </div>
+          )}
+          {track ? (
+            <ArtistInline
+              className='line-clamp-2 opacity-75'
+              artists={track?.ar ?? []}
+            />
+          ) : (
+            <div className='mt-1 flex'>
+              <div className='bg-gray-200 text-transparent dark:bg-white/5'>
+                PLACEHOLDER
+              </div>
+            </div>
+          )}
         </div>
 
         <div className='-mb-1 flex items-center justify-between'>
-          <MediaControls />
+          {track ? <MediaControls /> : <div className='h-9'></div>}
 
           {/* FM logo */}
-          <div className='right-4 bottom-5 flex text-white opacity-20'>
+          <div
+            className={classNames(
+              'right-4 bottom-5 flex opacity-20',
+              track ? 'text-white ' : 'text-gray-700 dark:text-white'
+            )}
+          >
             <SvgIcon name='fm' className='mr-1 h-6 w-6' />
             <span className='font-semibold'>私人FM</span>
           </div>
@@ -108,12 +134,5 @@ const FMCard = () => {
     </div>
   )
 }
-
-/**
- * 不能在player的构造函数中调用initFM
- * 那样在APP启动时不会加载私人FM的数据
- * 只能在这里进行数据的初始化
- */
-player.initFM()
 
 export default FMCard

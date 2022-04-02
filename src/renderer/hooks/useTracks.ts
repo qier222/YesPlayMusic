@@ -34,7 +34,10 @@ export function fetchTracksWithReactQuery(params: FetchTracksParams) {
       return fetchTracks(params)
     },
     {
-      retry: 3,
+      retry: 4,
+      retryDelay: (retryCount: number) => {
+        return retryCount * 500
+      },
       staleTime: 86400000,
     }
   )

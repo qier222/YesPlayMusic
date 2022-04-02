@@ -75,6 +75,7 @@ const MediaControls = () => {
   const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
   const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
+
   return (
     <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
       {mode === PlayerMode.PLAYLIST && (

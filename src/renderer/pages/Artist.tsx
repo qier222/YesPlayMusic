@@ -18,7 +18,7 @@ const Header = ({ artist }: { artist: Artist | undefined }) => {
       <div className='absolute top-0 left-0 z-0 h-[24rem] w-full overflow-hidden'>
         {coverImage && (
           <>
-            <img src={coverImage} className='absolute  w-full blur-[100px]' />
+            <img src={coverImage} className='absolute w-full blur-[100px]' />
             <img src={coverImage} className='absolute w-full blur-[100px]' />
           </>
         )}

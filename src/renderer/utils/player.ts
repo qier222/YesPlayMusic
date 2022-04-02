@@ -7,6 +7,8 @@ import { fetchPersonalFMWithReactQuery } from '@/hooks/usePersonalFM'
 import { fmTrash } from '@/api/personalFM'
 import { cacheAudio } from '@/api/yesplaymusic'
 import { clamp } from 'lodash-es'
+import axios from 'axios'
+import { resizeImage } from './common'
 
 type TrackID = number
 enum TrackListSourceType {
@@ -43,8 +45,6 @@ export class Player {
   private _progress: number = 0
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
-  private _fmTrack: Track | null = null
-  private _fmInited = false
 
   state: State = State.INITIALIZING
   mode: Mode = Mode.PLAYLIST
@@ -53,9 +53,11 @@ export class Player {
   fmTrackList: TrackID[] = []
   shuffle: boolean = false
   repeatMode: RepeatMode = RepeatMode.OFF
+  fmTrack: Track | null = null
 
-  constructor() {
-    //
+  init() {
+    this.state = State.READY
+    this.initFM()
   }
 
   /**
@@ -105,11 +107,7 @@ export class Player {
    * Get current playing track
    */
   get track(): Track | null {
-    return this._track ?? null
-  }
-
-  get fmTrack(): Track | null {
-    return this._fmTrack ?? null
+    return this.mode === Mode.FM ? this.fmTrack : this._track
   }
 
   /**
@@ -144,7 +142,6 @@ export class Player {
    * Fetch track details from Netease based on this.trackID
    */
   private async _fetchTrack(trackID: TrackID) {
-    this.state = State.LOADING
     const response = await fetchTracksWithReactQuery({ ids: [trackID] })
     if (response.songs.length) {
       return response.songs[0]
@@ -167,9 +164,14 @@ export class Player {
    * Play a track based on this.trackID
    */
   private async _playTrack() {
+    this.state = State.LOADING
     const track = await this._fetchTrack(this.trackID)
-    if (track) this._track = track
-    if (track && this.mode === Mode.FM) this._fmTrack = track
+    if (!track) {
+      toast('加载歌曲信息失败')
+      return
+    }
+    if (this.mode === Mode.PLAYLIST) this._track = track
+    if (this.mode === Mode.FM) this.fmTrack = track
     this._playAudio()
   }
 
@@ -204,7 +206,6 @@ export class Player {
   }
 
   private _howlerOnEndCallback() {
-    console.log('_howlerOnEndCallback')
     if (this.mode !== Mode.FM && this.repeatMode === RepeatMode.ONE) {
       _howler.seek(0)
       _howler.play()
@@ -221,24 +222,23 @@ export class Player {
   }
 
   private async _nextFMTrack() {
-    if (this.fmTrackList.length <= 1) {
-      for (let i = 0; i < 5; i++) {
-        const response = await fetchPersonalFMWithReactQuery()
-        if (!response?.data?.length) continue
-        this.fmTrackList.shift()
-        this.fmTrackList.push(...response?.data?.map(r => r.id))
+    this.fmTrackList.shift()
+    this._playTrack()
 
-        this._playTrack()
-        break
-      }
-    } else {
-      this.fmTrackList.shift()
-      this._playTrack()
-      if (this.fmTrackList.length <= 1) {
+    const loadMoreTracks = async () => {
+      if (this.fmTrackList.length <= 5) {
         const response = await fetchPersonalFMWithReactQuery()
-        this.fmTrackList.push(...response?.data?.map(r => r.id))
+        this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? {}))
       }
     }
+    const prefetchNextTrack = async () => {
+      const prefetchTrackID = this.fmTrackList[1]
+      const track = await this._fetchTrack(prefetchTrackID)
+      if (track?.al.picUrl) axios.get(resizeImage(track.al.picUrl, 'md'))
+    }
+
+    loadMoreTracks()
+    prefetchNextTrack()
   }
 
   /**
@@ -246,10 +246,14 @@ export class Player {
    * @param {boolean} fade fade in
    */
   play(fade: boolean = false) {
-    if (_howler.playing()) return
+    if (_howler.playing()) {
+      this.state = State.PLAYING
+      return
+    }
 
     _howler.play()
     if (fade) {
+      this.state = State.PLAYING
       _howler.once('play', () => {
         _howler.fade(0, this._volume, PLAY_PAUSE_FADE_DURATION)
       })
@@ -303,7 +307,6 @@ export class Player {
    * Play next track
    */
   nextTrack(forceFM: boolean = false) {
-    console.log(this)
     if (forceFM || this.mode === Mode.FM) {
       this.mode = Mode.FM
       this._nextFMTrack()
@@ -343,7 +346,6 @@ export class Player {
    * @param  {null|number=} autoPlayTrackID
    */
   async playAlbum(album: Album, autoPlayTrackID?: null | number) {
-    console.log(album)
     if (!album?.songs?.length) return
     this.trackListSource = {
       type: TrackListSourceType.ALBUM,
@@ -364,9 +366,9 @@ export class Player {
     this.mode = Mode.FM
     if (
       this.fmTrackList.length > 0 &&
-      this._fmTrack?.id === this.fmTrackList[0]
+      this.fmTrack?.id === this.fmTrackList[0]
     ) {
-      this._track = this._fmTrack
+      this._track = this.fmTrack
       this._playAudio()
     } else {
       this._playTrack()
@@ -375,49 +377,23 @@ export class Player {
 
   /**
    * Init personal fm
-   * should only be called in components/FMCard
    */
   async initFM() {
-    if (this._fmInited) return
     const response = await fetchPersonalFMWithReactQuery()
-    this.fmTrackList.push(...response?.data?.map(r => r.id))
+    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? {}))
 
     const trackId = this.fmTrackList[0]
     const track = await this._fetchTrack(trackId)
-    if (track) this._fmTrack = track
-    this._fmInited = true
+    if (track) this.fmTrack = track
   }
 
   /**
    * Trash current PersonalFMTrack
    */
   async fmTrash() {
-    let trashId = this.fmTrackList.shift() ?? 0
-    if (trashId === 0) return
-
-    if (this.mode === Mode.FM) {
-      await this._nextFMTrack()
-    } else {
-      for (let i = 0; i < 5 && this.fmTrackList.length <= 1; i++) {
-        const response = await fetchPersonalFMWithReactQuery()
-        this.fmTrackList.push(...response?.data?.map(r => r.id))
-      }
-
-      for (let i = 0; i < 5; i++) {
-        let track = await this._fetchTrack(this.fmTrackList.at(0) ?? 0)
-        if (track) {
-          this._fmTrack = track
-          break
-        } else {
-          this.fmTrackList.shift()
-          if (this.fmTrackList.length <= 1) {
-            const response = await fetchPersonalFMWithReactQuery()
-            this.fmTrackList.push(...response?.data?.map(r => r.id))
-          }
-        }
-      }
-    }
-    fmTrash(trashId)
+    const trashTrackID = this.fmTrackList[0]
+    fmTrash(trashTrackID)
+    this._nextFMTrack()
   }
 
   /**
@@ -432,3 +408,7 @@ export class Player {
 }
 
 export const player = new Player()
+
+if (import.meta.env.DEV) {
+  window.howler = _howler
+}

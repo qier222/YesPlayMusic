@@ -91,7 +91,6 @@ export interface FetchPersonalFMResponse {
     s_ctrp: string
   }[]
 }
-
 export function fetchPersonalFM(): Promise<FetchPersonalFMResponse> {
   return request({
     url: '/personal/fm',

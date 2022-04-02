@@ -30,6 +30,11 @@ subscribe(state, () => {
 })
 
 export const player = proxy(PlayerCore)
+player.init()
+
+if (import.meta.env.DEV) {
+  window.player = player
+}
 
 // Devtools
 devtools(state, 'state')
