@@ -237,7 +237,7 @@ export class Player {
     this._playTrack()
 
     const loadMoreTracks = async () => {
-      if (this.fmTrackList.length <= 1) {
+      if (this.fmTrackList.length <= 5) {
         const response = await fetchPersonalFMWithReactQuery()
         this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
       }
