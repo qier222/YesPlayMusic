@@ -134,7 +134,7 @@ export class Player {
     Howler.volume(this._volume)
   }
 
-  async _initFM() {
+  private async _initFM() {
     const response = await fetchPersonalFMWithReactQuery()
     this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
 
