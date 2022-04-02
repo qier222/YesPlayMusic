@@ -167,7 +167,7 @@ export class Player {
    */
   private async _fetchTrack(trackID: TrackID) {
     const response = await fetchTracksWithReactQuery({ ids: [trackID] })
-    return response?.songs.length ? response.songs[0] : null
+    return response?.songs?.length ? response.songs[0] : null
   }
 
   /**
@@ -265,11 +265,11 @@ export class Player {
       }
     }
 
-    if (this.fmTrackList.length === 0) await loadMoreTracks()
     this.fmTrackList.shift()
+    if (this.fmTrackList.length === 0) await loadMoreTracks()
     this._playTrack()
 
-    this.fmTrackList.length === 0 ? await loadMoreTracks() : loadMoreTracks()
+    this.fmTrackList.length <= 1 ? await loadMoreTracks() : loadMoreTracks()
     prefetchNextTrack()
   }
 
