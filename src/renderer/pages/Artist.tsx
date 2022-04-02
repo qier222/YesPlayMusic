@@ -179,11 +179,19 @@ const Artist = () => {
     <div>
       <Header artist={artist?.artist} />
 
-      <div className='mt-12 grid h-[20rem] grid-cols-[14rem,_auto] grid-rows-1 gap-16 px-2'>
-        <LatestRelease
-          album={albumsRaw?.hotAlbums[0]}
-          isLoading={isLoadingAlbums}
-        />
+      <div
+        className={classNames(
+          'mt-12 px-2',
+          albumsRaw?.hotAlbums?.length !== 0 &&
+            'grid h-[20rem] grid-cols-[14rem,_auto] grid-rows-1 gap-16'
+        )}
+      >
+        {albumsRaw?.hotAlbums?.length !== 0 && (
+          <LatestRelease
+            album={albumsRaw?.hotAlbums[0]}
+            isLoading={isLoadingAlbums}
+          />
+        )}
 
         <PopularTracks
           tracks={artist?.hotSongs}
@@ -205,15 +213,17 @@ const Artist = () => {
       )}
 
       {/* Singles/EP */}
-      <div className='mt-16 px-2'>
-        <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
-          单曲和EP
+      {singles.length !== 0 && (
+        <div className='mt-16 px-2'>
+          <div className='mb-6 text-2xl font-semibold text-gray-800 dark:text-white'>
+            单曲和EP
+          </div>
+          <CoverRow
+            albums={singles.slice(0, 5)}
+            subtitle={Subtitle.TYPE_RELEASE_YEAR}
+          />
         </div>
-        <CoverRow
-          albums={singles.slice(0, 5)}
-          subtitle={Subtitle.TYPE_RELEASE_YEAR}
-        />
-      </div>
+      )}
     </div>
   )
 }
