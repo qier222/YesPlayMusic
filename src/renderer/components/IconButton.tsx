@@ -14,6 +14,7 @@ const IconButton = ({
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={classNames(
         className,
         'relative transform cursor-default p-1.5 transition duration-200',

@@ -2,6 +2,8 @@ import ArtistInline from '@/components/ArtistsInline'
 import IconButton from '@/components/IconButton'
 import Slider from '@/components/Slider'
 import SvgIcon from '@/components/SvgIcon'
+import useUser from '@/hooks/useUser'
+import useUserLikedSongsIDs from '@/hooks/useUserLikedSongsIDs'
 import { player } from '@/store'
 import { resizeImage } from '@/utils/common'
 import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
@@ -14,6 +16,12 @@ const PlayingTrack = () => {
     () => snappedPlayer.trackListSource,
     [snappedPlayer.trackListSource]
   )
+
+  // Liked songs ids
+  const { data: user } = useUser()
+  const { data: userLikedSongs } = useUserLikedSongsIDs({
+    uid: user?.account?.id ?? 0,
+  })
 
   const toAlbum = () => {
     const id = track?.al?.id
@@ -60,7 +68,11 @@ const PlayingTrack = () => {
           <IconButton onClick={() => toast('施工中...')}>
             <SvgIcon
               className='h-6 w-6 text-black dark:text-white'
-              name='heart-outline'
+              name={
+                track?.id && userLikedSongs?.ids?.includes(track.id)
+                  ? 'heart'
+                  : 'heart-outline'
+              }
             />
           </IconButton>
         </div>

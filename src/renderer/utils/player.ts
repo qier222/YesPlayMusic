@@ -59,7 +59,7 @@ export class Player {
 
   init() {
     this.state = State.READY
-    this.initFM()
+    this._initFM()
   }
 
   /**
@@ -134,6 +134,15 @@ export class Player {
     Howler.volume(this._volume)
   }
 
+  private async _initFM() {
+    const response = await fetchPersonalFMWithReactQuery()
+    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
+
+    const trackId = this.fmTrackList[0]
+    const track = await this._fetchTrack(trackId)
+    if (track) this.fmTrack = track
+  }
+
   private _setupProgressInterval() {
     this._progressInterval = setInterval(() => {
       if (this.state === State.PLAYING) this._progress = _howler.seek()
@@ -145,9 +154,7 @@ export class Player {
    */
   private async _fetchTrack(trackID: TrackID) {
     const response = await fetchTracksWithReactQuery({ ids: [trackID] })
-    if (response.songs.length) {
-      return response.songs[0]
-    }
+    return response?.songs?.length ? response.songs[0] : null
   }
 
   /**
@@ -187,6 +194,7 @@ export class Player {
       toast('无法播放此歌曲')
       return
     }
+    if (this.trackID !== id) return
     Howler.unload()
     const howler = new Howl({
       src: [`${audio}?id=${id}`],
@@ -391,18 +399,6 @@ export class Player {
     } else {
       this._playTrack()
     }
-  }
-
-  /**
-   * Init personal fm
-   */
-  async initFM() {
-    const response = await fetchPersonalFMWithReactQuery()
-    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
-
-    const trackId = this.fmTrackList[0]
-    const track = await this._fetchTrack(trackId)
-    if (track) this.fmTrack = track
   }
 
   /**
