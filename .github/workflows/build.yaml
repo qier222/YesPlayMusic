@@ -6,6 +6,7 @@ on:
       - master
     tags:
       - v*
+  workflow_dispatch:
 
 jobs:
   release:
@@ -18,11 +19,14 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: 14.16.0
+          node-version: 16
+          cache: 'yarn'
 
       - name: Install RPM & Pacman (on Ubuntu)
         if: runner.os == 'Linux'
@@ -35,8 +39,9 @@ jobs:
       - name: Install Snapcraft (on Ubuntu)
         uses: samuelmeuli/action-snapcraft@v1
         if: startsWith(matrix.os, 'ubuntu')
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
+        # with:
+        #   Disable since the Snapcraft token is currently not working
+        #   snapcraft_token: ${{ secrets.snapcraft_token }}
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0

@@ -31,9 +31,8 @@ export default {
       c => c === name
     );
     if (index !== -1) {
-      state.settings.enabledPlaylistCategories = state.settings.enabledPlaylistCategories.filter(
-        c => c !== name
-      );
+      state.settings.enabledPlaylistCategories =
+        state.settings.enabledPlaylistCategories.filter(c => c !== name);
     } else {
       state.settings.enabledPlaylistCategories.push(name);
     }
@@ -72,5 +71,8 @@ export default {
   },
   enableScrolling(state, status = null) {
     state.enableScrolling = status ? status : !state.enableScrolling;
+  },
+  updateTitle(state, title) {
+    state.title = title;
   },
 };

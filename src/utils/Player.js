@@ -3,17 +3,47 @@ import shuffle from 'lodash/shuffle';
 import { Howler, Howl } from 'howler';
 import { cacheTrackSource, getTrackSource } from '@/utils/db';
 import { getAlbum } from '@/api/album';
-import { getPlaylistDetail } from '@/api/playlist';
+import { getPlaylistDetail, intelligencePlaylist } from '@/api/playlist';
 import { getArtist } from '@/api/artist';
 import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
+import { isCreateMpris, isCreateTray } from '@/utils/platform';
+
+const PLAY_PAUSE_FADE_DURATION = 200;
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
   process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
+const delay = ms =>
+  new Promise(resolve => {
+    setTimeout(() => {
+      resolve('');
+    }, ms);
+  });
+const excludeSaveKeys = [
+  '_playing',
+  '_personalFMLoading',
+  '_personalFMNextLoading',
+];
+
+function setTitle(track) {
+  document.title = track
+    ? `${track.name} · ${track.ar[0].name} - YesPlayMusic`
+    : 'YesPlayMusic';
+  if (isCreateTray) {
+    ipcRenderer.send('updateTrayTooltip', document.title);
+  }
+  store.commit('updateTitle', document.title);
+}
+
+function setTrayLikeState(isLiked) {
+  if (isCreateTray) {
+    ipcRenderer.send('updateTrayLikeState', isLiked);
+  }
+}
 
 export default class {
   constructor() {
@@ -23,8 +53,11 @@ export default class {
     this._enabled = false; // 是否启用Player
     this._repeatMode = 'off'; // off | on | one
     this._shuffle = false; // true | false
+    this._reversed = false;
     this._volume = 1; // 0 to 1
     this._volumeBeforeMuted = 1; // 用于保存静音前的音量
+    this._personalFMLoading = false; // 是否正在私人FM中加载新的track
+    this._personalFMNextLoading = false; // 是否正在缓存私人FM的下一首歌曲
 
     // 播放信息
     this._list = []; // 播放列表
@@ -83,6 +116,18 @@ export default class {
     if (shuffle) {
       this._shuffleTheList();
     }
+  }
+  get reversed() {
+    return this._reversed;
+  }
+  set reversed(reversed) {
+    if (this._isPersonalFM) return;
+    if (reversed !== true && reversed !== false) {
+      console.warn('reversed: invalid args, must be Boolean');
+      return;
+    }
+    console.log('changing reversed to:', reversed);
+    this._reversed = reversed;
   }
   get volume() {
     return this._volume;
@@ -162,12 +207,22 @@ export default class {
     this._setIntervals();
 
     // 初始化私人FM
-    if (this._personalFMTrack.id === 0 || this._personalFMNextTrack.id === 0) {
+    if (
+      this._personalFMTrack.id === 0 ||
+      this._personalFMNextTrack.id === 0 ||
+      this._personalFMTrack.id === this._personalFMNextTrack.id
+    ) {
       personalFM().then(result => {
         this._personalFMTrack = result.data[0];
         this._personalFMNextTrack = result.data[1];
         return this._personalFMTrack;
       });
+    }
+  }
+  _setPlaying(isPlaying) {
+    this._playing = isPlaying;
+    if (isCreateTray) {
+      ipcRenderer.send('updateTrayPlayState', this._playing);
     }
   }
   _setIntervals() {
@@ -177,30 +232,49 @@ export default class {
       if (this._howler === null) return;
       this._progress = this._howler.seek();
       localStorage.setItem('playerCurrentTrackTime', this._progress);
+      if (isCreateMpris) {
+        ipcRenderer.send('playerCurrentTrackTime', this._progress);
+      }
     }, 1000);
   }
   _getNextTrack() {
+    const next = this._reversed ? this.current - 1 : this.current + 1;
+
     if (this._playNextList.length > 0) {
       let trackID = this._playNextList.shift();
       return [trackID, this.current];
     }
 
-    // 当歌曲是列表最后一首 && 循环模式开启
-    if (this.list.length === this.current + 1 && this.repeatMode === 'on') {
-      return [this.list[0], 0];
+    // 循环模式开启，则重新播放当前模式下的相对的下一首
+    if (this.repeatMode === 'on') {
+      if (this._reversed && this.current === 0) {
+        // 倒序模式，当前歌曲是第一首，则重新播放列表最后一首
+        return [this.list[this.list.length - 1], this.list.length - 1];
+      } else if (this.list.length === this.current + 1) {
+        // 正序模式，当前歌曲是最后一首，则重新播放第一首
+        return [this.list[0], 0];
+      }
     }
 
     // 返回 [trackID, index]
-    return [this.list[this.current + 1], this.current + 1];
+    return [this.list[next], next];
   }
   _getPrevTrack() {
-    // 当歌曲是列表第一首 && 循环模式开启
-    if (this.current === 0 && this.repeatMode === 'on') {
-      return [this.list[this.list.length - 1], this.list.length - 1];
+    const next = this._reversed ? this.current + 1 : this.current - 1;
+
+    // 循环模式开启，则重新播放当前模式下的相对的下一首
+    if (this.repeatMode === 'on') {
+      if (this._reversed && this.current === 0) {
+        // 倒序模式，当前歌曲是最后一首，则重新播放列表第一首
+        return [this.list[0], 0];
+      } else if (this.list.length === this.current + 1) {
+        // 正序模式，当前歌曲是第一首，则重新播放列表最后一首
+        return [this.list[this.list.length - 1], this.list.length - 1];
+      }
     }
 
     // 返回 [trackID, index]
-    return [this.list[this.current - 1], this.current - 1];
+    return [this.list[next], next];
   }
   async _shuffleTheList(firstTrackID = this._currentTrack.id) {
     let list = this._list.filter(tid => tid !== firstTrackID);
@@ -240,17 +314,18 @@ export default class {
       src: [source],
       html5: true,
       format: ['mp3', 'flac'],
+      onend: () => {
+        this._nextTrackCallback();
+      },
     });
     if (autoplay) {
       this.play();
       if (this._currentTrack.name) {
-        document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+        setTitle(this._currentTrack);
       }
+      setTrayLikeState(store.state.liked.songs.includes(this.currentTrack.id));
     }
     this.setOutputDevice();
-    this._howler.once('end', () => {
-      this._nextTrackCallback();
-    });
   }
   _getAudioSourceFromCache(id) {
     return getTrackSource(id).then(t => {
@@ -338,16 +413,22 @@ export default class {
           return source;
         } else {
           store.dispatch('showToast', `无法播放 ${track.name}`);
-          ifUnplayableThen === 'playNextTrack'
-            ? this.playNextTrack()
-            : this.playPrevTrack();
+          if (ifUnplayableThen === 'playNextTrack') {
+            if (this.isPersonalFM) {
+              this.playNextFMTrack();
+            } else {
+              this.playNextTrack();
+            }
+          } else {
+            this.playPrevTrack();
+          }
         }
       });
     });
   }
   _cacheNextTrack() {
     let nextTrackID = this._isPersonalFM
-      ? this._personalFMNextTrack.id
+      ? this._personalFMNextTrack?.id ?? 0
       : this._getNextTrack()[0];
     if (!nextTrackID) return;
     if (this._personalFMTrack.id == nextTrackID) return;
@@ -375,7 +456,11 @@ export default class {
         this.playPrevTrack();
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
-        this.playNextTrack();
+        if (this.isPersonalFM) {
+          this.playNextFMTrack();
+        } else {
+          this.playNextTrack();
+        }
       });
       navigator.mediaSession.setActionHandler('stop', () => {
         this.pause();
@@ -399,7 +484,7 @@ export default class {
       return;
     }
     let artists = track.ar.map(a => a.name);
-    navigator.mediaSession.metadata = new window.MediaMetadata({
+    const metadata = {
       title: track.name,
       artist: artists.join(','),
       album: track.al.name,
@@ -410,7 +495,14 @@ export default class {
           sizes: '512x512',
         },
       ],
-    });
+      length: this.currentTrackDuration,
+      trackId: this.current,
+    };
+
+    navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+    if (isCreateMpris) {
+      ipcRenderer.send('metadata', metadata);
+    }
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {
@@ -428,16 +520,33 @@ export default class {
     this._scrobble(this._currentTrack, 0, true);
     if (!this.isPersonalFM && this.repeatMode === 'one') {
       this._replaceCurrentTrack(this._currentTrack.id);
+    } else if (this.isPersonalFM) {
+      this.playNextFMTrack();
     } else {
       this.playNextTrack();
     }
   }
   _loadPersonalFMNextTrack() {
-    return personalFM().then(result => {
-      this._personalFMNextTrack = result.data[0];
-      this._cacheNextTrack(); // cache next track
-      return this._personalFMNextTrack;
-    });
+    if (this._personalFMNextLoading) {
+      return [false, undefined];
+    }
+    this._personalFMNextLoading = true;
+    return personalFM()
+      .then(result => {
+        if (!result || !result.data) {
+          this._personalFMNextTrack = undefined;
+        } else {
+          this._personalFMNextTrack = result.data[0];
+          this._cacheNextTrack(); // cache next track
+        }
+        this._personalFMNextLoading = false;
+        return [true, this._personalFMNextTrack];
+      })
+      .catch(() => {
+        this._personalFMNextTrack = undefined;
+        this._personalFMNextLoading = false;
+        return [false, this._personalFMNextTrack];
+      });
   }
   _playDiscordPresence(track, seekTime = 0) {
     if (
@@ -467,23 +576,61 @@ export default class {
   appendTrack(trackID) {
     this.list.append(trackID);
   }
-  playNextTrack(isFM = false) {
-    if (this._isPersonalFM || isFM === true) {
-      this._isPersonalFM = true;
-      this._personalFMTrack = this._personalFMNextTrack;
-      this._replaceCurrentTrack(this._personalFMTrack.id);
-      this._loadPersonalFMNextTrack();
-      return true;
-    }
+  playNextTrack() {
     // TODO: 切换歌曲时增加加载中的状态
     const [trackID, index] = this._getNextTrack();
     if (trackID === undefined) {
       this._howler?.stop();
-      this._playing = false;
+      this._setPlaying(false);
       return false;
     }
     this.current = index;
     this._replaceCurrentTrack(trackID);
+    return true;
+  }
+  async playNextFMTrack() {
+    if (this._personalFMLoading) {
+      return false;
+    }
+
+    this._isPersonalFM = true;
+    if (!this._personalFMNextTrack) {
+      this._personalFMLoading = true;
+      let result = null;
+      let retryCount = 5;
+      for (; retryCount >= 0; retryCount--) {
+        result = await personalFM().catch(() => null);
+        if (!result) {
+          this._personalFMLoading = false;
+          store.dispatch('showToast', 'personal fm timeout');
+          return false;
+        }
+        if (result.data?.length > 0) {
+          break;
+        } else if (retryCount > 0) {
+          await delay(1000);
+        }
+      }
+      this._personalFMLoading = false;
+
+      if (retryCount < 0) {
+        let content = '获取私人FM数据时重试次数过多，请手动切换下一首';
+        store.dispatch('showToast', content);
+        console.log(content);
+        return false;
+      }
+      // 这里只能拿到一条数据
+      this._personalFMTrack = result.data[0];
+    } else {
+      if (this._personalFMNextTrack.id === this._personalFMTrack.id) {
+        return false;
+      }
+      this._personalFMTrack = this._personalFMNextTrack;
+    }
+    if (this._isPersonalFM) {
+      this._replaceCurrentTrack(this._personalFMTrack.id);
+    }
+    this._loadPersonalFMNextTrack();
     return true;
   }
   playPrevTrack() {
@@ -496,7 +643,7 @@ export default class {
   saveSelfToLocalStorage() {
     let player = {};
     for (let [key, value] of Object.entries(this)) {
-      if (key === '_playing') continue;
+      if (excludeSaveKeys.includes(key)) continue;
       player[key] = value;
     }
 
@@ -504,28 +651,38 @@ export default class {
   }
 
   pause() {
-    this._howler?.pause();
-    this._playing = false;
-    document.title = 'YesPlayMusic';
-    this._pauseDiscordPresence(this._currentTrack);
+    this._howler?.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
+
+    this._howler?.once('fade', () => {
+      this._howler?.pause();
+      this._setPlaying(false);
+      setTitle(null);
+      this._pauseDiscordPresence(this._currentTrack);
+    });
   }
   play() {
     if (this._howler?.playing()) return;
+
     this._howler?.play();
-    this._playing = true;
-    if (this._currentTrack.name) {
-      document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
-    }
-    this._playDiscordPresence(this._currentTrack, this.seek());
-    if (store.state.lastfm.key !== undefined) {
-      trackUpdateNowPlaying({
-        artist: this.currentTrack.ar[0].name,
-        track: this.currentTrack.name,
-        album: this.currentTrack.al.name,
-        trackNumber: this.currentTrack.no,
-        duration: ~~(this.currentTrack.dt / 1000),
-      });
-    }
+
+    this._howler?.once('play', () => {
+      this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
+
+      this._setPlaying(true);
+      if (this._currentTrack.name) {
+        setTitle(this._currentTrack);
+      }
+      this._playDiscordPresence(this._currentTrack, this.seek());
+      if (store.state.lastfm.key !== undefined) {
+        trackUpdateNowPlaying({
+          artist: this.currentTrack.ar[0].name,
+          track: this.currentTrack.name,
+          album: this.currentTrack.al.name,
+          trackNumber: this.currentTrack.no,
+          duration: ~~(this.currentTrack.dt / 1000),
+        });
+      }
+    });
   }
   playOrPause() {
     if (this._howler?.playing()) {
@@ -606,9 +763,27 @@ export default class {
     }
     this._replaceCurrentTrack(id);
   }
+  playIntelligenceListById(id, trackID = 'first', noCache = false) {
+    getPlaylistDetail(id, noCache).then(data => {
+      const randomId = Math.floor(
+        Math.random() * (data.playlist.trackIds.length + 1)
+      );
+      const songId = data.playlist.trackIds[randomId].id;
+      intelligencePlaylist({ id: songId, pid: id }).then(result => {
+        let trackIDs = result.data.map(t => t.id);
+        this.replacePlaylist(trackIDs, id, 'playlist', trackID);
+      });
+    });
+  }
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);
-    if (playNow) this.playNextTrack();
+    if (playNow) {
+      if (this.isPersonalFM) {
+        this.playNextFMTrack();
+      } else {
+        this.playNextTrack();
+      }
+    }
   }
   playPersonalFM() {
     this._isPersonalFM = true;
@@ -621,18 +796,22 @@ export default class {
       this.playOrPause();
     }
   }
-  moveToFMTrash() {
+  async moveToFMTrash() {
     this._isPersonalFM = true;
-    this.playNextTrack();
-    fmTrash(this._personalFMTrack.id);
+    let id = this._personalFMTrack.id;
+    if (await this.playNextFMTrack()) {
+      fmTrash(id);
+    }
   }
 
   sendSelfToIpcMain() {
     if (process.env.IS_ELECTRON !== true) return false;
+    let liked = store.state.liked.songs.includes(this.currentTrack.id);
     ipcRenderer.send('player', {
       playing: this.playing,
-      likedCurrentTrack: store.state.liked.songs.includes(this.currentTrack.id),
+      likedCurrentTrack: liked,
     });
+    setTrayLikeState(liked);
   }
 
   switchRepeatMode() {
@@ -643,9 +822,18 @@ export default class {
     } else {
       this.repeatMode = 'on';
     }
+    if (isCreateMpris) {
+      ipcRenderer.send('switchRepeatMode', this.repeatMode);
+    }
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
+    if (isCreateMpris) {
+      ipcRenderer.send('switchShuffle', this.shuffle);
+    }
+  }
+  switchReversed() {
+    this.reversed = !this.reversed;
   }
 
   clearPlayNextList() {

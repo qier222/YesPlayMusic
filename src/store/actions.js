@@ -5,6 +5,7 @@ import { getPlaylistDetail } from '@/api/playlist';
 import { getTrackDetail } from '@/api/track';
 import {
   userPlaylist,
+  userPlayHistory,
   userLikedSongsIDs,
   likedAlbums,
   likedArtists,
@@ -155,11 +156,36 @@ export default {
   },
   fetchCloudDisk: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
-    return cloudDisk().then(result => {
+    // FIXME: #1242
+    return cloudDisk({ limit: 1000 }).then(result => {
       if (result.data) {
         commit('updateLikedXXX', {
           name: 'cloudDisk',
           data: result.data,
+        });
+      }
+    });
+  },
+  fetchPlayHistory: ({ state, commit }) => {
+    if (!isAccountLoggedIn()) return;
+    return Promise.all([
+      userPlayHistory({ uid: state.data.user?.userId, type: 0 }),
+      userPlayHistory({ uid: state.data.user?.userId, type: 1 }),
+    ]).then(result => {
+      const data = {};
+      const dataType = { 0: 'allData', 1: 'weekData' };
+      if (result[0] && result[1]) {
+        for (let i = 0; i < result.length; i++) {
+          const songData = result[i][dataType[i]].map(item => {
+            const song = item.song;
+            song.playCount = item.playCount;
+            return song;
+          });
+          data[[dataType[i]]] = songData;
+        }
+        commit('updateLikedXXX', {
+          name: 'playHistory',
+          data: data,
         });
       }
     });

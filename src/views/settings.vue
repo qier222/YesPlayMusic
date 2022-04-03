@@ -331,6 +331,23 @@
         </div>
       </div>
 
+      <div v-if="isElectron && isLinux" class="item">
+        <div class="left">
+          <div class="title"> {{ $t('settings.enableCustomTitlebar') }} </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-custom-titlebar"
+              v-model="enableCustomTitlebar"
+              type="checkbox"
+              name="enable-custom-titlebar"
+            />
+            <label for="enable-custom-titlebar"></label>
+          </div>
+        </div>
+      </div>
+
       <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.showLibraryDefault') }}</div>
@@ -380,6 +397,23 @@
               name="sub-title-default"
             />
             <label for="sub-title-default"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="left">
+          <div class="title">{{ $t('settings.enableReversedMode') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-reversed-mode"
+              v-model="enableReversedMode"
+              type="checkbox"
+              name="enable-reversed-mode"
+            />
+            <label for="enable-reversed-mode"></label>
           </div>
         </div>
       </div>
@@ -574,6 +608,9 @@ export default {
     },
     isMac() {
       return /macintosh|mac os x/i.test(navigator.userAgent);
+    },
+    isLinux() {
+      return process.platform === 'linux';
     },
     version() {
       return pkg.version;
@@ -805,6 +842,21 @@ export default {
         });
       },
     },
+    enableReversedMode: {
+      get() {
+        if (this.settings.enableReversedMode === undefined) return false;
+        return this.settings.enableReversedMode;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'enableReversedMode',
+          value,
+        });
+        if (value === false) {
+          this.$store.state.player.reversed = false;
+        }
+      },
+    },
     enableGlobalShortcut: {
       get() {
         return this.settings.enableGlobalShortcut;
@@ -893,6 +945,17 @@ export default {
         this.$store.commit('updateSettings', {
           key: 'unmSource',
           value: value.length ? value : null,
+        });
+      },
+    },
+    enableCustomTitlebar: {
+      get() {
+        return this.settings.linuxEnableCustomTitlebar;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'linuxEnableCustomTitlebar',
+          value,
         });
       },
     },

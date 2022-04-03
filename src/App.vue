@@ -124,6 +124,7 @@ main {
   overflow: auto;
   padding: 64px 10vw 96px 10vw;
   box-sizing: border-box;
+  scrollbar-width: none; // firefox
 }
 
 @media (max-width: 1336px) {

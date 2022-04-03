@@ -25,7 +25,14 @@ export default {
     albums: '專輯',
     artists: '藝人',
     mvs: 'MV',
+    cloudDisk: '雲端硬碟',
     newPlayList: '新增歌單',
+    uploadSongs: '上傳音樂',
+    playHistory: {
+      title: '聽歌排行',
+      week: '最近一周',
+      all: '所有時間',
+    },
     userProfileMenu: {
       settings: '設定',
       logout: '登出',
@@ -97,6 +104,7 @@ export default {
     repeat: '循環播放',
     repeatTrack: '單曲循環',
     shuffle: '隨機播放',
+    reversed: '倒序播放',
     play: '播放',
     pause: '暫停',
     mute: '靜音',
@@ -154,6 +162,8 @@ export default {
     enableGlobalShortcut: '啟用全域快捷鍵',
     showLibraryDefault: '啟動後顯示音樂庫',
     subTitleDefault: '副標題使用別名',
+    enableReversedMode: '啟用倒序播放功能 (實驗性功能)',
+    enableCustomTitlebar: '啟用自訂標題列（重新啟動後生效）',
     lyricsBackground: {
       text: '顯示歌詞背景',
       off: '關閉',
@@ -181,6 +191,7 @@ export default {
     allPlaylists: '全部歌單',
     minePlaylists: '我建立的歌單',
     likedPlaylists: '收藏的歌單',
+    cardiacMode: '心動模式',
   },
   toast: {
     savedToPlaylist: '已新增至歌單',

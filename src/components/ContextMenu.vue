@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'ContextMenu',
   data() {
@@ -24,10 +26,14 @@ export default {
       left: '0px',
     };
   },
+  computed: {
+    ...mapState(['player']),
+  },
   methods: {
     setMenu(top, left) {
+      let heightOffset = this.player.enabled ? 64 : 0;
       let largestHeight =
-        window.innerHeight - this.$refs.menu.offsetHeight - 25;
+        window.innerHeight - this.$refs.menu.offsetHeight - heightOffset;
       let largestWidth = window.innerWidth - this.$refs.menu.offsetWidth - 25;
       if (top > largestHeight) top = largestHeight;
       if (left > largestWidth) left = largestWidth;

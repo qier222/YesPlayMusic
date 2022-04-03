@@ -25,7 +25,14 @@ export default {
     albums: '专辑',
     artists: '艺人',
     mvs: 'MV',
+    cloudDisk: '云盘',
     newPlayList: '新建歌单',
+    uploadSongs: '上传歌曲',
+    playHistory: {
+      title: '听歌排行',
+      week: '最近一周',
+      all: '所有时间',
+    },
     userProfileMenu: {
       settings: '设置',
       logout: '登出',
@@ -101,6 +108,7 @@ export default {
     repeat: '循环播放',
     repeatTrack: '单曲循环',
     shuffle: '随机播放',
+    reversed: '倒序播放',
     play: '播放',
     pause: '暂停',
     mute: '静音',
@@ -157,6 +165,8 @@ export default {
     enableGlobalShortcut: '启用全局快捷键',
     showLibraryDefault: '启动后显示音乐库',
     subTitleDefault: '副标题使用别名',
+    enableReversedMode: '启用倒序播放功能 (实验性功能)',
+    enableCustomTitlebar: '启用自定义标题栏 (重启后生效)',
     lyricsBackground: {
       text: '显示歌词背景',
       off: '关闭',
@@ -184,6 +194,7 @@ export default {
     allPlaylists: '全部歌单',
     minePlaylists: '创建的歌单',
     likedPlaylists: '收藏的歌单',
+    cardiacMode: '心动模式',
   },
   toast: {
     savedToPlaylist: '已添加到歌单',

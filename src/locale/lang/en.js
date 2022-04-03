@@ -28,7 +28,14 @@ export default {
     albums: 'Albums',
     artists: 'Artists',
     mvs: 'MVs',
+    cloudDisk: 'Cloud Disk',
     newPlayList: 'New Playlist',
+    uploadSongs: 'Upload Songs',
+    playHistory: {
+      title: 'Play History',
+      week: 'Latest Week',
+      all: 'All Time',
+    },
     userProfileMenu: {
       settings: 'Settings',
       logout: 'Logout',
@@ -100,6 +107,7 @@ export default {
     repeat: 'Repeat',
     repeatTrack: 'Repeat Track',
     shuffle: 'Shuffle',
+    reversed: 'Reversed',
     play: 'Play',
     pause: 'Pause',
     mute: 'Mute',
@@ -154,8 +162,10 @@ export default {
     showPlaylistsByAppleMusic: 'Show playlists by Apple Music',
     enableDiscordRichPresence: 'Enable Discord Rich Presence',
     enableGlobalShortcut: 'Enable Global Shortcut',
-    showLibraryDefault: 'Show library default',
-    subTitleDefault: 'Sub title alia default',
+    showLibraryDefault: 'Show Library after App Launched',
+    subTitleDefault: 'Show Alias for Subtitle by default',
+    enableReversedMode: 'Enable Reversed Mode (Experimental)',
+    enableCustomTitlebar: 'Enable custom title bar (Need restart)',
     lyricsBackground: {
       text: 'Show Lyrics Background',
       off: 'Off',
@@ -183,6 +193,7 @@ export default {
     allPlaylists: 'All Playlists',
     minePlaylists: 'My Playlists',
     likedPlaylists: 'Liked Playlists',
+    cardiacMode: 'Cardiac Mode',
   },
   toast: {
     savedToPlaylist: 'Saved to playlist',

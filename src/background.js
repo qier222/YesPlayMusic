@@ -8,6 +8,14 @@ import {
   globalShortcut,
   nativeTheme,
 } from 'electron';
+import {
+  isWindows,
+  isMac,
+  isLinux,
+  isDevelopment,
+  isCreateTray,
+  isCreateMpris,
+} from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { startNeteaseMusicApi } from './electron/services';
 import { initIpcMain } from './electron/ipcMain.js';
@@ -18,9 +26,11 @@ import { createDockMenu } from './electron/dockMenu';
 import { registerGlobalShortcut } from './electron/globalShortcut';
 import { autoUpdater } from 'electron-updater';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import { EventEmitter } from 'events';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
 import Store from 'electron-store';
+import { createMpris } from '@/electron/mpris';
 const clc = require('cli-color');
 const log = text => {
   console.log(`${clc.blueBright('[background.js]')} ${text}`);
@@ -69,15 +79,10 @@ const closeOnLinux = (e, win, store) => {
   }
 };
 
-const isWindows = process.platform === 'win32';
-const isMac = process.platform === 'darwin';
-const isLinux = process.platform === 'linux';
-const isDevelopment = process.env.NODE_ENV === 'development';
-
 class Background {
   constructor() {
     this.window = null;
-    this.tray = null;
+    this.ypmTrayImpl = null;
     this.store = new Store({
       windowWidth: {
         width: { type: 'number', default: 1440 },
@@ -110,6 +115,14 @@ class Background {
 
     // handle app events
     this.handleAppEvents();
+
+    // disable chromium mpris
+    if (isCreateMpris) {
+      app.commandLine.appendSwitch(
+        'disable-features',
+        'HardwareMediaKeyHandling,MediaSessionService'
+      );
+    }
   }
 
   async initDevtools() {
@@ -167,7 +180,10 @@ class Background {
       minWidth: 1080,
       minHeight: 720,
       titleBarStyle: 'hiddenInset',
-      frame: !isWindows,
+      frame: !(
+        isWindows ||
+        (isLinux && this.store.get('settings.linuxEnableCustomTitlebar'))
+      ),
       title: 'YesPlayMusic',
       show: false,
       webPreferences: {
@@ -324,8 +340,14 @@ class Background {
       });
       this.handleWindowEvents();
 
+      // create tray
+      if (isCreateTray) {
+        this.trayEventEmitter = new EventEmitter();
+        this.ypmTrayImpl = createTray(this.window, this.trayEventEmitter);
+      }
+
       // init ipcMain
-      initIpcMain(this.window, this.store);
+      initIpcMain(this.window, this.store, this.trayEventEmitter);
 
       // set proxy
       const proxyRules = this.store.get('proxy');
@@ -341,11 +363,6 @@ class Background {
       // create menu
       createMenu(this.window, this.store);
 
-      // create tray
-      if (isWindows || isLinux || isDevelopment) {
-        this.tray = createTray(this.window);
-      }
-
       // create dock menu for macOS
       const createdDockMenu = createDockMenu(this.window);
       if (createDockMenu && app.dock) app.dock.setMenu(createdDockMenu);
@@ -357,6 +374,11 @@ class Background {
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut') !== false) {
         registerGlobalShortcut(this.window, this.store);
+      }
+
+      // create mpris
+      if (isCreateMpris) {
+        createMpris(this.window);
       }
     });
 

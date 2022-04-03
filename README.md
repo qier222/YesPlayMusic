@@ -9,7 +9,8 @@
     高颜值的第三方网易云播放器
     <br />
     <a href="https://music.qier222.com" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="#%EF%B8%8F-安装" target="blank"><strong>📦️ 下载安装包</strong></a>
+    <a href="#%EF%B8%8F-安装" target="blank"><strong>📦️ 下载安装包</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="https://t.me/yesplaymusic" target="blank"><strong>💬 加入交流群</strong></a>
     <br />
     <br />
   </p>
@@ -36,6 +37,7 @@
 - 🟥 支持 Last.fm Scrobble
 - ☁️ 支持音乐云盘
 - ⌨️ 自定义快捷键和全局快捷键
+- 🎧 支持Mpris
 - 🛠 更多特性开发中
 
 ## 📦️ 安装
@@ -45,7 +47,9 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 访问本项目的 [Releases](https://github.com/qier222/YesPlayMusic/releases)
 页面下载安装包。
 
-macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
+- macOS 用户可以通过 Homebrew 来安装：`brew install --cask yesplaymusic`
+
+- Windows 用户可以通过 Scoop 来安装：`scoop install extras/yesplaymusic`
 
 ## ⚙️ 部署至 Vercel
 
@@ -86,7 +90,7 @@ macOS 用户也可以通过 `brew install --cask yesplaymusic` 来安装。
 2. 克隆本仓库
 
 ```sh
-git clone https://github.com/qier222/YesPlayMusic.git
+git clone --recursive https://github.com/qier222/YesPlayMusic.git
 ```
 
 3. 安装依赖
@@ -112,6 +116,28 @@ yarn run build
 
 7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
+## ⚙️ Docker 部署
+
+1. 构建 Docker Image
+
+```sh
+docker build -t yesplaymusic .
+```
+
+2. 启动 Docker Container
+
+```sh
+docker run -d --name YesPlayMusic -p 80:80 yesplaymusic
+```
+
+3. Docker Compose 启动
+
+```sh
+docker-compose up -d
+```
+
+YesPlayMusic 地址为 `http://localhost`
+
 ## 👷‍♂️ 打包客户端
 
 如果在 Release 页面没有找到适合你的设备的安装包的话，你可以根据下面的步骤来打包自己的客户端。
@@ -119,7 +145,7 @@ yarn run build
 1. 打包 Electron 需要用到 Node.js 和 Yarn。可前往 [Node.js 官网](https://nodejs.org/zh-cn/) 下载安装包。安装 Node.js
    后可在终端里执行 `npm install -g yarn` 来安装 Yarn。
 
-2. 使用 `git clone https://github.com/qier222/YesPlayMusic.git` 克隆本仓库到本地。
+2. 使用 `git clone --recursive https://github.com/qier222/YesPlayMusic.git` 克隆本仓库到本地。
 
 3. 使用 `yarn install` 安装项目依赖。
 
@@ -136,7 +162,7 @@ yarn run build
 
 ## :computer: 配置开发环境
 
-本项目由 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 提供 API，已经包含在本项目的`netease_api`目录。
+本项目由 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 提供 API。
 
 运行本项目
 
@@ -157,9 +183,6 @@ yarn electron:serve
 本地运行 NeteaseCloudMusicApi，或者将 API [部署至 Vercel](#%EF%B8%8F-部署至-vercel)
 
 ```shell
-# 安装依赖
-yarn netease_api:install
-
 # 运行 API （默认 3000 端口）
 yarn netease_api:run
 ```
