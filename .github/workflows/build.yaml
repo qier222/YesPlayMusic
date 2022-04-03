@@ -39,9 +39,8 @@ jobs:
       - name: Install Snapcraft (on Ubuntu)
         uses: samuelmeuli/action-snapcraft@v1
         if: startsWith(matrix.os, 'ubuntu')
-        # with:
-        #   Disable since the Snapcraft token is currently not working
-        #   snapcraft_token: ${{ secrets.snapcraft_token }}
+        with:
+          snapcraft_token: ${{ secrets.snapcraft_token }}
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
