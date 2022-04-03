@@ -34,23 +34,22 @@ module.exports = {
         arch: ['arm64'],
       },
       {
-        target: 'nsis',
-        arch: ['ia32'],
-      },
-      {
         target: 'portable',
         arch: ['x64'],
       },
     ],
-    artifactName: '${productName}-${os}-${version}-${arch}-Setup.${ext}',
     publisherName: 'qier222',
     icon: 'build/icons/icon.ico',
   },
   nsis: {
     oneClick: false,
-    perMachine: false,
+    perMachine: true,
     allowToChangeInstallationDirectory: true,
     deleteAppDataOnUninstall: true,
+    artifactName: '${productName}-${version}-${os}-${arch}-Setup.${ext}',
+  },
+  portable: {
+    artifactName: '${productName}-${version}-${os}-${arch}-Portable.${ext}',
   },
   mac: {
     target: [
@@ -59,7 +58,7 @@ module.exports = {
         arch: ['x64', 'arm64', 'universal'],
       },
     ],
-    artifactName: '${productName}-${os}-${version}-${arch}.${ext}',
+    artifactName: '${productName}-${version}-${os}-${arch}.${ext}',
     darkModeSupport: true,
     category: 'public.app-category.music',
   },
@@ -93,7 +92,7 @@ module.exports = {
         arch: ['x64'],
       },
     ],
-    artifactName: '${productName}-${os}-${version}.${ext}',
+    artifactName: '${productName}-${version}-${os}.${ext}',
     category: 'Music',
     icon: './build/icon.icns',
   },

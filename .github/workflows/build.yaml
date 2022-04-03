@@ -32,10 +32,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile false
 
-      - name: Electron rebuild
-        run: pnpm electron-rebuild
+      - name: Build sqlite3 binaries (macOS, Windows)
+        if: runner.os == 'macOS'
+        run: node ./scripts/build.sqlite3.mjs --arm64 --x64
 
-      - name: Install RPM & Pacman (on Ubuntu)
+      - name: Build sqlite3 binaries (Linux)
+        if: runner.os == 'Linux'
+        run: node ./scripts/build.sqlite3.mjs --arm64 --arm --x64
+
+      - name: Install RPM & Pacman (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update &&
@@ -43,7 +48,7 @@ jobs:
           sudo apt-get install --no-install-recommends -y bsdtar &&
           sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
-      - name: Install Snapcraft (on Ubuntu)
+      - name: Install Snapcraft (Linux)
         uses: samuelmeuli/action-snapcraft@v1
         if: startsWith(matrix.os, 'ubuntu')
         # with:
@@ -79,7 +84,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: YesPlayMusic-win
-          path: release/*-Setup.exe
+          path: release/*x64-Setup.exe
           if-no-files-found: ignore
 
       - name: Upload Artifact (Linux)

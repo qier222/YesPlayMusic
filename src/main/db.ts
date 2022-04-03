@@ -27,7 +27,9 @@ const dbFilePath = path.resolve(
 )
 createFileIfNotExist(dbFilePath)
 
-const sqlite = new SQLite3(dbFilePath)
+const sqlite = new SQLite3(dbFilePath, {
+  nativeBinding: path.join(__dirname, `./better_sqlite3_${process.arch}.node`),
+})
 sqlite.pragma('auto_vacuum = FULL')
 
 // Init tables if not exist
