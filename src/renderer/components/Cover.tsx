@@ -21,7 +21,7 @@ const Cover = ({
       {showHover && (
         <div
           className={classNames(
-            'absolute top-2 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] rounded-xl bg-cover opacity-0 blur-lg filter transition duration-300 group-hover:opacity-60',
+            'absolute top-2 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] bg-cover opacity-0 blur-lg filter transition duration-300 group-hover:opacity-60',
             roundedClass
           )}
           style={{

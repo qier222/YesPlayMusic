@@ -4,6 +4,8 @@ export enum UserApiNames {
   FETCH_USER_ACCOUNT = 'fetchUserAccount',
   FETCH_USER_LIKED_TRACKS_IDS = 'fetchUserLikedTracksIDs',
   FETCH_USER_PLAYLISTS = 'fetchUserPlaylists',
+  FETCH_USER_ALBUMS = 'fetchUserAlbums',
+  FETCH_USER_ARTIST = 'fetchUserArtists',
 }
 
 /**
@@ -99,7 +101,7 @@ export interface FetchUserPlaylistsParams {
 }
 export interface FetchUserPlaylistsResponse {
   code: number
-  more: false
+  more: boolean
   version: string
   playlist: Playlist[]
 }
@@ -151,40 +153,44 @@ export function dailySignin(type = 0) {
   })
 }
 
-/**
- * 获取收藏的专辑（需要登录）
- * 说明 : 调用此接口可获取到用户收藏的专辑
- * - limit : 返回数量 , 默认为 25
- * - offset : 偏移数量，用于分页 , 如 :( 页数 -1)*25, 其中 25 为 limit 的值 , 默认为 0
- * @param {Object} params
- * @param {number} params.limit
- * @param {number=} params.offset
- */
-// export function likedAlbums(params) {
-//   return request({
-//     url: '/album/sublist',
-//     method: 'get',
-//     params: {
-//       limit: params.limit,
-//       timestamp: new Date().getTime(),
-//     },
-//   })
-// }
+export interface FetchUserAlbumsParams {
+  offset?: number // default 0
+  limit?: number // default 25
+}
+export interface FetchUserAlbumsResponse {
+  code: number
+  hasMore: boolean
+  paidCount: number
+  count: number
+  data: Album[]
+}
+export function fetchUserAlbums(params: FetchUserAlbumsParams) {
+  return request({
+    url: '/album/sublist',
+    method: 'get',
+    params: {
+      ...params,
+      timestamp: new Date().getTime(),
+    },
+  })
+}
 
-/**
- * 获取收藏的歌手（需要登录）
- * 说明 : 调用此接口可获取到用户收藏的歌手
- */
-// export function likedArtists(params) {
-//   return request({
-//     url: '/artist/sublist',
-//     method: 'get',
-//     params: {
-//       limit: params.limit,
-//       timestamp: new Date().getTime(),
-//     },
-//   })
-// }
+// 获取收藏的歌手
+export interface FetchUserArtistsResponse {
+  code: number
+  hasMore: boolean
+  count: number
+  data: Artist[]
+}
+export function fetchUserArtists(): Promise<FetchUserArtistsResponse> {
+  return request({
+    url: '/artist/sublist',
+    method: 'get',
+    params: {
+      timestamp: new Date().getTime(),
+    },
+  })
+}
 
 /**
  * 获取收藏的MV（需要登录）

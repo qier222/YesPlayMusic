@@ -1,4 +1,6 @@
+import CoverRow, { Subtitle } from '@/components/CoverRow'
 import SvgIcon from '@/components/SvgIcon'
+import useUserAlbums from '@/hooks/useUserAlbums'
 import useLyric from '@/hooks/useLyric'
 import usePlaylist from '@/hooks/usePlaylist'
 import useUser from '@/hooks/useUser'
@@ -6,6 +8,7 @@ import useUserPlaylists from '@/hooks/useUserPlaylists'
 import { player } from '@/store'
 import { resizeImage } from '@/utils/common'
 import { sample, chunk } from 'lodash-es'
+import useUserArtists from '@/hooks/useUserArtists'
 
 const LikedTracksCard = ({ className }: { className?: string }) => {
   const navigate = useNavigate()
@@ -122,8 +125,116 @@ const OtherCard = ({
   )
 }
 
+const Playlists = () => {
+  const { data: user } = useUser()
+
+  const { data: playlists } = useUserPlaylists({
+    uid: user?.account?.id ?? 0,
+    offset: 0,
+  })
+  return (
+    <div>
+      <CoverRow
+        playlists={playlists?.playlist?.slice(1) ?? []}
+        subtitle={Subtitle.CREATOR}
+      />
+    </div>
+  )
+}
+
+const Albums = () => {
+  const { data: albums } = useUserAlbums({
+    limit: 1000,
+  })
+
+  return (
+    <div>
+      <CoverRow albums={albums?.data ?? []} subtitle={Subtitle.ARTIST} />
+    </div>
+  )
+}
+
+const Artists = () => {
+  const { data: artists } = useUserArtists()
+
+  return (
+    <div>
+      <CoverRow artists={artists?.data ?? []} subtitle={Subtitle.ARTIST} />
+    </div>
+  )
+}
+
+const MVs = () => {
+  return <div>施工中</div>
+}
+
+const Podcasts = () => {
+  return <div>施工中</div>
+}
+interface TabsType {
+  playlist: string
+  album: string
+  artist: string
+  mv: string
+  podcast: string
+}
+
+const TabHeader = ({
+  activeTab,
+  tabs,
+  setActiveTab,
+}: {
+  activeTab: keyof TabsType
+  tabs: TabsType
+  setActiveTab: (tab: keyof TabsType) => void
+}) => {
+  return (
+    <div className='mt-10 flex text-lg'>
+      {Object.entries(tabs).map(([id, name]) => (
+        <div
+          key={id}
+          onClick={() => setActiveTab(id as keyof TabsType)}
+          className={classNames(
+            'btn-pressed-animation mr-3  rounded-lg px-3.5 py-1.5 font-medium',
+            activeTab === id
+              ? 'bg-black/[.04]'
+              : 'btn-hover-animation after:bg-black/[.04] dark:after:bg-white/10'
+          )}
+        >
+          {name}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const Tabs = () => {
-  return <div></div>
+  const tabs = {
+    playlist: '全部歌单',
+    album: '专辑',
+    artist: '艺人',
+    mv: 'MV',
+    podcast: '播客',
+  }
+
+  const [activeTab, setActiveTab] = useState<keyof TabsType>('playlist')
+
+  return (
+    <>
+      <TabHeader
+        activeTab={activeTab}
+        tabs={tabs}
+        setActiveTab={setActiveTab}
+      />
+      <div className='mt-6'>
+        {activeTab === 'playlist' && <Playlists />}
+        {activeTab === 'album' && <Albums />}
+        {activeTab === 'artist' && <Artists />}
+        {activeTab === 'mv' && <MVs />}
+        {activeTab === 'podcast' && <Podcasts />}
+      </div>
+    </>
+  )
 }
 
 const Library = () => {
@@ -148,6 +259,8 @@ const Library = () => {
         <OtherCard name='最近播放' icon='playlist' className='' />
         <OtherCard name='听歌排行' icon='music-library' className='' />
       </div>
+
+      <Tabs />
     </div>
   )
 }

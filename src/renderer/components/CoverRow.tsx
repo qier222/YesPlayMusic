@@ -38,7 +38,12 @@ const getSubtitleText = (
   subtitle: Subtitle
 ) => {
   const nickname = 'creator' in item ? item.creator.nickname : 'someone'
-  const artist = 'artist' in item ? item.artist.name : 'unknown'
+  const artist =
+    'artist' in item
+      ? item.artist.name
+      : 'artists' in item
+      ? item.artists?.[0]?.name
+      : 'unknown'
   const copywriter = 'copywriter' in item ? item.copywriter : 'unknown'
   const releaseYear =
     ('publishTime' in item &&
@@ -125,10 +130,10 @@ const CoverRow = ({
 
       <div
         className={classNames(
-          'grid gap-x-6 gap-y-7',
+          'grid',
           className,
           !className &&
-            'grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'
+            'grid-cols-3 gap-x-6 gap-y-7 lg:grid-cols-4  xl:grid-cols-5 2xl:grid-cols-6'
         )}
       >
         {renderItems.map((item, index) => (
@@ -146,6 +151,7 @@ const CoverRow = ({
                   onClick={() => goTo(item.id)}
                   imageUrl={getImageUrl(item)}
                   showPlayButton={true}
+                  roundedClass={artists ? 'rounded-full' : 'rounded-xl'}
                 />
               )}
 
@@ -163,9 +169,14 @@ const CoverRow = ({
                       </Skeleton>
                     </div>
                   ) : (
-                    <span className='line-clamp-2 leading-tight '>
+                    <span
+                      className={classNames(
+                        'line-clamp-2 leading-tight',
+                        artists && 'mt-3 text-center'
+                      )}
+                    >
                       {/* Playlist private icon */}
-                      {(item as Playlist).privacy && (
+                      {(item as Playlist).privacy === 10 && (
                         <SvgIcon
                           name='lock'
                           className='mr-1 mb-1 inline-block h-3 w-3 text-gray-300'
@@ -197,9 +208,11 @@ const CoverRow = ({
                     PLACEHOLDER
                   </Skeleton>
                 ) : (
-                  <div className='flex text-[12px] text-gray-500 dark:text-gray-400'>
-                    <span>{getSubtitleText(item, subtitle)}</span>
-                  </div>
+                  !artists && (
+                    <div className='flex text-[12px] text-gray-500 dark:text-gray-400'>
+                      <span>{getSubtitleText(item, subtitle)}</span>
+                    </div>
+                  )
                 )}
               </div>
             </div>
