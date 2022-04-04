@@ -4,7 +4,12 @@ declare global {
   interface Window {
     // Expose some Api through preload script
     ipcRenderer?: import('electron').IpcRenderer
-    isElectron?: boolean
+    env?: {
+      isElectron: boolean
+      isLinux: boolean
+      isMac: boolean
+      isWin: boolean
+    }
   }
 }
 

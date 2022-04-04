@@ -6,11 +6,16 @@ import Login from '@/pages/Login'
 import Playlist from '@/pages/Playlist'
 import Artist from '@/pages/Artist'
 import Search from '@/pages/Search'
+import Library from '@/pages/Library'
 
 const routes: RouteObject[] = [
   {
     path: '/',
     element: <Home />,
+  },
+  {
+    path: '/library',
+    element: <Library />,
   },
   {
     path: '/login',

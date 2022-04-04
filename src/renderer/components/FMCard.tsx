@@ -5,7 +5,6 @@ import { resizeImage } from '@/utils/common'
 import SvgIcon from '@/components/SvgIcon'
 import ArtistInline from '@/components/ArtistsInline'
 import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
-import Skeleton from './Skeleton'
 
 const MediaControls = () => {
   const classes =
@@ -66,8 +65,9 @@ const FMCard = () => {
   )
 
   useEffect(() => {
-    if (coverUrl) {
-      average(coverUrl, { amount: 1, format: 'hex', sample: 1 }).then(color => {
+    const cover = resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'xs')
+    if (cover) {
+      average(cover, { amount: 1, format: 'hex', sample: 1 }).then(color => {
         let c = colord(color as string)
         if (c.isLight()) c = c.darken(0.15)
         else if (c.isDark()) c = c.lighten(0.1)
@@ -75,7 +75,7 @@ const FMCard = () => {
         setBackground(`linear-gradient(to bottom right, ${c.toHex()}, ${to})`)
       })
     }
-  }, [coverUrl])
+  }, [playerSnapshot.fmTrack?.al?.picUrl])
 
   return (
     <div

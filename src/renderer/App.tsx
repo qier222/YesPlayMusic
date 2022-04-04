@@ -5,10 +5,13 @@ import Player from '@/components/Player'
 import Sidebar from '@/components/Sidebar'
 import reactQueryClient from '@/utils/reactQueryClient'
 import Main from './components/Main'
+import TitleBar from './components/Titlebar'
 
 const App = () => {
   return (
     <QueryClientProvider client={reactQueryClient}>
+      {window.env?.isWin && <TitleBar />}
+
       <div id='layout' className='grid select-none grid-cols-[16rem_auto]'>
         <Sidebar />
         <Main />

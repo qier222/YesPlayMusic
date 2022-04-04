@@ -67,7 +67,7 @@ const PlayingTrack = () => {
 
           <IconButton onClick={() => toast('施工中...')}>
             <SvgIcon
-              className='h-6 w-6 text-black dark:text-white'
+              className='h-5 w-5 text-black dark:text-white'
               name={
                 track?.id && userLikedSongs?.ids?.includes(track.id)
                   ? 'heart'

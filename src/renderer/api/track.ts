@@ -3,6 +3,7 @@ import request from '@/utils/request'
 export enum TrackApiNames {
   FETCH_TRACKS = 'fetchTracks',
   FETCH_AUDIO_SOURCE = 'fetchAudioSource',
+  FETCH_LYRIC = 'fetchLyric',
 }
 
 // 获取歌曲详情
@@ -67,6 +68,54 @@ export function fetchAudioSource(
 ): Promise<FetchAudioSourceResponse> {
   return request({
     url: '/song/url',
+    method: 'get',
+    params,
+  })
+}
+
+// 获取歌词
+export interface FetchLyricParams {
+  id: number
+}
+export interface FetchLyricResponse {
+  code: number
+  sgc: boolean
+  sfy: boolean
+  qfy: boolean
+  lyricUser?: {
+    id: number
+    status: number
+    demand: number
+    userid: number
+    nickname: string
+    uptime: number
+  }
+  transUser?: {
+    id: number
+    status: number
+    demand: number
+    userid: number
+    nickname: string
+    uptime: number
+  }
+  lrc: {
+    version: number
+    lyric: string
+  }
+  klyric?: {
+    version: number
+    lyric: string
+  }
+  tlyric?: {
+    version: number
+    lyric: string
+  }
+}
+export function fetchLyric(
+  params: FetchLyricParams
+): Promise<FetchLyricResponse> {
+  return request({
+    url: '/lyric',
     method: 'get',
     params,
   })

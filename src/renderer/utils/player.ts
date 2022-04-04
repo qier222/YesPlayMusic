@@ -244,7 +244,10 @@ export class Player {
     const prefetchNextTrack = async () => {
       const prefetchTrackID = this.fmTrackList[1]
       const track = await this._fetchTrack(prefetchTrackID)
-      if (track?.al.picUrl) axios.get(resizeImage(track.al.picUrl, 'md'))
+      if (track?.al.picUrl) {
+        axios.get(resizeImage(track.al.picUrl, 'md'))
+        axios.get(resizeImage(track.al.picUrl, 'xs'))
+      }
     }
 
     if (this.fmTrackList.length === 0) await loadMoreTracks()
