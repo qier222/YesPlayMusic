@@ -5,7 +5,7 @@ import Player from '@/components/Player'
 import Sidebar from '@/components/Sidebar'
 import reactQueryClient from '@/utils/reactQueryClient'
 import Main from './components/Main'
-import TitleBar from './components/Titlebar'
+import TitleBar from './components/TitleBar'
 
 const App = () => {
   return (

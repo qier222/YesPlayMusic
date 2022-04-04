@@ -7,6 +7,8 @@ import Playlist from '@/pages/Playlist'
 import Artist from '@/pages/Artist'
 import Search from '@/pages/Search'
 import Library from '@/pages/Library'
+import Podcast from '@/pages/Podcast'
+import Settings from '@/pages/Settings'
 
 const routes: RouteObject[] = [
   {
@@ -14,8 +16,16 @@ const routes: RouteObject[] = [
     element: <Home />,
   },
   {
+    path: '/podcast',
+    element: <Podcast />,
+  },
+  {
     path: '/library',
     element: <Library />,
+  },
+  {
+    path: '/settings',
+    element: <Settings />,
   },
   {
     path: '/login',

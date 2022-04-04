@@ -11,7 +11,7 @@ declare interface Playlist {
   adType?: number
   alg?: string
   anonimous?: boolean
-  artists?: []
+  artists?: Artist[]
   backgroundCoverId?: number
   backgroundCoverUrl?: string | null
   creator: User

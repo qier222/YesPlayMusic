@@ -55,6 +55,7 @@ const MediaControls = () => {
 }
 
 const FMCard = () => {
+  const navigate = useNavigate()
   const [background, setBackground] = useState('')
 
   const playerSnapshot = useSnapshot(player)
@@ -83,7 +84,11 @@ const FMCard = () => {
       style={{ background }}
     >
       {coverUrl ? (
-        <img className='rounded-lg shadow-2xl' src={coverUrl} />
+        <img
+          onClick={() => track?.al?.id && navigate(`/album/${track.al.id}`)}
+          className='rounded-lg shadow-2xl'
+          src={coverUrl}
+        />
       ) : (
         <div className='aspect-square h-full rounded-lg bg-gray-200 dark:bg-white/5'></div>
       )}
