@@ -120,3 +120,23 @@ export function fetchLyric(
     params,
   })
 }
+
+export interface LikeATrackParams {
+  id: number
+  like: boolean
+}
+export interface LikeATrackResponse {
+  code: number
+  playlistId: number
+  songs: Track[]
+}
+export function likeATrack(params: LikeATrackParams) {
+  return request({
+    url: '/like',
+    method: 'post',
+    params: {
+      ...params,
+      timestamp: Date.now(),
+    },
+  })
+}

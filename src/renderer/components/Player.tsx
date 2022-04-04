@@ -2,8 +2,9 @@ import ArtistInline from '@/components/ArtistsInline'
 import IconButton from '@/components/IconButton'
 import Slider from '@/components/Slider'
 import SvgIcon from '@/components/SvgIcon'
-import useUser from '@/hooks/useUser'
-import useUserLikedSongsIDs from '@/hooks/useUserLikedSongsIDs'
+import useUserLikedTracksIDs, {
+  useMutationLikeATrack,
+} from '@/hooks/useUserLikedTracksIDs'
 import { player } from '@/store'
 import { resizeImage } from '@/utils/common'
 import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
@@ -18,10 +19,8 @@ const PlayingTrack = () => {
   )
 
   // Liked songs ids
-  const { data: user } = useUser()
-  const { data: userLikedSongs } = useUserLikedSongsIDs({
-    uid: user?.account?.id ?? 0,
-  })
+  const { data: userLikedSongs } = useUserLikedTracksIDs()
+  const mutationLikeATrack = useMutationLikeATrack()
 
   const toAlbum = () => {
     const id = track?.al?.id
@@ -65,7 +64,9 @@ const PlayingTrack = () => {
             </div>
           </div>
 
-          <IconButton onClick={() => toast('施工中...')}>
+          <IconButton
+            onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
+          >
             <SvgIcon
               className='h-5 w-5 text-black dark:text-white'
               name={

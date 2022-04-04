@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export enum UserApiNames {
   FETCH_USER_ACCOUNT = 'fetchUserAccount',
-  FETCH_USER_LIKED_SONGS_IDS = 'fetchUserLikedSongsIDs',
+  FETCH_USER_LIKED_TRACKS_IDS = 'fetchUserLikedTracksIDs',
   FETCH_USER_PLAYLISTS = 'fetchUserPlaylists',
 }
 
@@ -113,17 +113,17 @@ export function fetchUserPlaylists(
   })
 }
 
-export interface FetchUserLikedSongsIDsParams {
+export interface FetchUserLikedTracksIDsParams {
   uid: number
 }
-export interface FetchUserLikedSongsIDsResponse {
+export interface FetchUserLikedTracksIDsResponse {
   code: number
   checkPoint: number
   ids: number[]
 }
-export function fetchUserLikedSongsIDs(
-  params: FetchUserLikedSongsIDsParams
-): Promise<FetchUserLikedSongsIDsResponse> {
+export function fetchUserLikedTracksIDs(
+  params: FetchUserLikedTracksIDsParams
+): Promise<FetchUserLikedTracksIDsResponse> {
   return request({
     url: '/likelist',
     method: 'get',

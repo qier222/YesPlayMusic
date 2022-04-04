@@ -2,8 +2,9 @@ import { memo } from 'react'
 import ArtistInline from '@/components/ArtistsInline'
 import Skeleton from '@/components/Skeleton'
 import SvgIcon from '@/components/SvgIcon'
-import useUser from '@/hooks/useUser'
-import useUserLikedSongsIDs from '@/hooks/useUserLikedSongsIDs'
+import useUserLikedTracksIDs, {
+  useMutationLikeATrack,
+} from '@/hooks/useUserLikedTracksIDs'
 import { player } from '@/store'
 import { formatDuration } from '@/utils/common'
 import { State as PlayerState } from '@/utils/player'
@@ -64,6 +65,8 @@ const Track = memo(
       () => track.tns?.at(0) ?? track.alia?.at(0),
       [track.alia, track.tns]
     )
+
+    const mutationLikeATrack = useMutationLikeATrack()
 
     return (
       <div
@@ -163,6 +166,7 @@ const Track = memo(
           {/* Like button */}
           {!isSkeleton && (
             <button
+              onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
               className={classNames(
                 'mr-5 cursor-default transition duration-300 hover:scale-[1.2]',
                 isLiked
@@ -213,10 +217,7 @@ const TracksAlbum = ({
   const skeletonTracks: Track[] = new Array(1).fill({})
 
   // Liked songs ids
-  const { data: user } = useUser()
-  const { data: userLikedSongs } = useUserLikedSongsIDs({
-    uid: user?.account?.id ?? 0,
-  })
+  const { data: userLikedSongs } = useUserLikedTracksIDs()
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLElement>, trackID: number) => {
