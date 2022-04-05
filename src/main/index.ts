@@ -65,7 +65,7 @@ async function createWindow() {
     minHeight: 720,
     vibrancy: 'fullscreen-ui',
     titleBarStyle: 'hiddenInset',
-    frame: !(isWindows || isLinux) // TODO: 适用于linux下独立的启用开关
+    frame: !(isWindows || isLinux), // TODO: 适用于linux下独立的启用开关
   }
   if (store.get('window')) {
     options.x = store.get('window.x')
