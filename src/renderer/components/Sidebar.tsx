@@ -60,11 +60,7 @@ const PrimaryTabs = () => {
 }
 
 const Playlists = () => {
-  const { data: user } = useUser()
-  const { data: playlists } = useUserPlaylists({
-    uid: user?.account?.id ?? 0,
-    offset: 0,
-  })
+  const { data: playlists } = useUserPlaylists()
 
   return (
     <div className='mb-16 overflow-auto pb-2'>

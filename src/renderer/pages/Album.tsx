@@ -16,6 +16,8 @@ import {
   scrollToTop,
 } from '@/utils/common'
 import useTracks from '@/hooks/useTracks'
+import useUserAlbums, { useMutationLikeAAlbum } from '@/hooks/useUserAlbums'
+import useUser from '@/hooks/useUser'
 
 const PlayButton = ({
   album,
@@ -78,6 +80,13 @@ const Header = ({
   }, [album?.songs])
 
   const [isCoverError, setCoverError] = useState(false)
+
+  const { data: userAlbums } = useUserAlbums()
+  const isThisAlbumLiked = useMemo(() => {
+    if (!album) return false
+    return !!userAlbums?.data?.find(a => a.id === album.id)
+  }, [album, userAlbums?.data])
+  const mutationLikeAAlbum = useMutationLikeAAlbum()
 
   return (
     <>
@@ -189,11 +198,16 @@ const Header = ({
 
             <Button
               color={ButtonColor.Gray}
-              iconColor={ButtonColor.Gray}
+              iconColor={
+                isThisAlbumLiked ? ButtonColor.Primary : ButtonColor.Gray
+              }
               isSkelton={isLoading}
-              onClick={() => toast('施工中...')}
+              onClick={() => album?.id && mutationLikeAAlbum.mutate(album)}
             >
-              <SvgIcon name='heart-outline' className='h-6 w-6' />
+              <SvgIcon
+                name={isThisAlbumLiked ? 'heart' : 'heart-outline'}
+                className='h-6 w-6'
+              />
             </Button>
 
             <Button

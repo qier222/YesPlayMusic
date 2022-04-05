@@ -27,3 +27,23 @@ export function fetchAlbum(
     params: { ...params, ...otherParams },
   })
 }
+
+export interface LikeAAlbumParams {
+  t: 1 | 2
+  id: number
+}
+export interface LikeAAlbumResponse {
+  code: number
+}
+export function likeAAlbum(
+  params: LikeAAlbumParams
+): Promise<LikeAAlbumResponse> {
+  return request({
+    url: '/album/sub',
+    method: 'post',
+    params: {
+      ...params,
+      timestamp: Date.now(),
+    },
+  })
+}

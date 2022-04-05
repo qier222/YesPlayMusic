@@ -164,7 +164,9 @@ export interface FetchUserAlbumsResponse {
   count: number
   data: Album[]
 }
-export function fetchUserAlbums(params: FetchUserAlbumsParams) {
+export function fetchUserAlbums(
+  params: FetchUserAlbumsParams
+): Promise<FetchUserAlbumsResponse> {
   return request({
     url: '/album/sublist',
     method: 'get',

@@ -33,14 +33,16 @@ export const useMutationLikeATrack = () => {
   const key = [UserApiNames.FETCH_USER_LIKED_TRACKS_IDS, uid]
 
   return useMutation(
-    (trackID: number) => {
+    async (trackID: number) => {
       if (!trackID || userLikedSongs?.ids === undefined) {
         throw new Error('trackID is required or userLikedSongs is undefined')
       }
-      return likeATrack({
+      const response = await likeATrack({
         id: trackID,
         like: !userLikedSongs.ids.includes(trackID),
       })
+      if (response.code !== 200) throw new Error((response as any).msg)
+      return response
     },
     {
       onMutate: async trackID => {
@@ -57,7 +59,6 @@ export const useMutationLikeATrack = () => {
           const newIds = ids.includes(trackID)
             ? ids.filter(id => id !== trackID)
             : [...ids, trackID]
-          console.log(trackID, ids.includes(trackID), ids, newIds)
           return {
             ...likedSongs,
             ids: newIds,
@@ -70,10 +71,7 @@ export const useMutationLikeATrack = () => {
       // If the mutation fails, use the context returned from onMutate to roll back
       onError: (err, trackID, context) => {
         queryClient.setQueryData(key, (context as any).previousData)
-      },
-      // Always refetch after error or success:
-      onSettled: () => {
-        queryClient.invalidateQueries(key)
+        toast((err as any).toString())
       },
     }
   )

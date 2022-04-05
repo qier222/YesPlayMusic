@@ -4,6 +4,7 @@ export enum PlaylistApiNames {
   FETCH_PLAYLIST = 'fetchPlaylist',
   FETCH_RECOMMENDED_PLAYLISTS = 'fetchRecommendedPlaylists',
   FETCH_DAILY_RECOMMEND_PLAYLISTS = 'fetchDailyRecommendPlaylists',
+  LIKE_A_PLAYLIST = 'likeAPlaylist',
 }
 
 // 歌单详情
@@ -68,5 +69,25 @@ export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlayl
   return request({
     url: '/recommend/resource',
     method: 'get',
+  })
+}
+
+export interface LikeAPlaylistParams {
+  t: 1 | 2
+  id: number
+}
+export interface LikeAPlaylistResponse {
+  code: number
+}
+export function likeAPlaylist(
+  params: LikeAPlaylistParams
+): Promise<LikeAPlaylistResponse> {
+  return request({
+    url: '/playlist/subscribe',
+    method: 'post',
+    params: {
+      ...params,
+      timestamp: Date.now(),
+    },
   })
 }

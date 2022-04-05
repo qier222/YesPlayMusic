@@ -8,6 +8,10 @@ import useScroll from '@/hooks/useScroll'
 import useTracksInfinite from '@/hooks/useTracksInfinite'
 import { player } from '@/store'
 import { formatDate, resizeImage } from '@/utils/common'
+import useUserPlaylists, {
+  useMutationLikeAPlaylist,
+} from '@/hooks/useUserPlaylists'
+import useUser from '@/hooks/useUser'
 
 const enableRenderLog = true
 
@@ -23,6 +27,20 @@ const Header = memo(
   }) => {
     if (enableRenderLog) console.debug('Rendering Playlist.tsx Header')
     const coverUrl = resizeImage(playlist?.coverImgUrl || '', 'lg')
+
+    const mutationLikeAPlaylist = useMutationLikeAPlaylist()
+    const { data: userPlaylists } = useUserPlaylists()
+
+    const isThisPlaylistLiked = useMemo(() => {
+      if (!playlist) return false
+      return !!userPlaylists?.playlist?.find(p => p.id === playlist.id)
+    }, [playlist, userPlaylists?.playlist])
+
+    const { data: user } = useUser()
+    const isThisPlaylistCreatedByCurrentUser = useMemo(() => {
+      if (!playlist || !user) return false
+      return playlist.creator.userId === user?.profile?.userId
+    }, [playlist, user])
 
     return (
       <>
@@ -114,14 +132,23 @@ const Header = memo(
                 播放
               </Button>
 
-              <Button
-                color={ButtonColor.Gray}
-                iconColor={ButtonColor.Gray}
-                isSkelton={isLoading}
-                onClick={() => toast('施工中...')}
-              >
-                <SvgIcon name='heart-outline' className='h-6 w-6' />
-              </Button>
+              {!isThisPlaylistCreatedByCurrentUser && (
+                <Button
+                  color={ButtonColor.Gray}
+                  iconColor={
+                    isThisPlaylistLiked ? ButtonColor.Primary : ButtonColor.Gray
+                  }
+                  isSkelton={isLoading}
+                  onClick={() =>
+                    playlist?.id && mutationLikeAPlaylist.mutate(playlist)
+                  }
+                >
+                  <SvgIcon
+                    name={isThisPlaylistLiked ? 'heart' : 'heart-outline'}
+                    className='h-6 w-6'
+                  />
+                </Button>
+              )}
 
               <Button
                 color={ButtonColor.Gray}

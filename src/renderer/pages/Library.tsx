@@ -12,12 +12,8 @@ import useUserArtists from '@/hooks/useUserArtists'
 
 const LikedTracksCard = ({ className }: { className?: string }) => {
   const navigate = useNavigate()
-  const { data: user } = useUser()
 
-  const { data: playlists } = useUserPlaylists({
-    uid: user?.account?.id ?? 0,
-    offset: 0,
-  })
+  const { data: playlists } = useUserPlaylists()
 
   const { data: likedSongsPlaylist } = usePlaylist({
     id: playlists?.playlist?.[0].id ?? 0,
@@ -126,12 +122,7 @@ const OtherCard = ({
 }
 
 const Playlists = () => {
-  const { data: user } = useUser()
-
-  const { data: playlists } = useUserPlaylists({
-    uid: user?.account?.id ?? 0,
-    offset: 0,
-  })
+  const { data: playlists } = useUserPlaylists()
   return (
     <div>
       <CoverRow

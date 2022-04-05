@@ -130,7 +130,9 @@ export interface LikeATrackResponse {
   playlistId: number
   songs: Track[]
 }
-export function likeATrack(params: LikeATrackParams) {
+export function likeATrack(
+  params: LikeATrackParams
+): Promise<LikeATrackResponse> {
   return request({
     url: '/like',
     method: 'post',

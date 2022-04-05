@@ -39,7 +39,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
     try {
       const result = await handler({
         ...req.query,
-        cookie: `MUSIC_U=${req.cookies['MUSIC_U']}`,
+        cookie: req.cookies,
       })
 
       setCache(name, result.body, req.query)
