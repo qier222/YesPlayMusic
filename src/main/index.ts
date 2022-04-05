@@ -6,6 +6,7 @@ import {
   BrowserWindowConstructorOptions,
   app,
   shell,
+  ipcMain,
 } from 'electron'
 import Store from 'electron-store'
 import { release } from 'os'
@@ -64,6 +65,7 @@ async function createWindow() {
     minHeight: 720,
     vibrancy: 'fullscreen-ui',
     titleBarStyle: 'hiddenInset',
+    frame: !(isWindows || isLinux) // TODO: 适用于linux下独立的启用开关
   }
   if (store.get('window')) {
     options.x = store.get('window.x')
@@ -99,6 +101,7 @@ async function createWindow() {
 app.whenReady().then(async () => {
   logger.info('[index] App ready')
   createWindow()
+  handleWindowEvents()
 
   // Install devtool extension
   if (isDev) {
@@ -138,3 +141,26 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+ipcMain.on('minimize', () => {
+  win?.minimize()
+})
+
+ipcMain.on('maximize-or-unmaximize', () => {
+  if (!win) return
+  win.isMaximized() ? win.unmaximize() : win.maximize()
+})
+
+ipcMain.on('close', () => {
+  app.exit()
+})
+
+const handleWindowEvents = () => {
+  win?.on('maximize', () => {
+    win?.webContents.send('is-maximized', true)
+  })
+
+  win?.on('unmaximize', () => {
+    win?.webContents.send('is-maximized', false)
+  })
+}

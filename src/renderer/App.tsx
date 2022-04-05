@@ -10,7 +10,7 @@ import TitleBar from './components/TitleBar'
 const App = () => {
   return (
     <QueryClientProvider client={reactQueryClient}>
-      {window.env?.isWin && <TitleBar />}
+      {window.env?.isEnableTitlebar && <TitleBar />}
 
       <div id='layout' className='grid select-none grid-cols-[16rem_auto]'>
         <Sidebar />
