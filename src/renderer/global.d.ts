@@ -6,9 +6,13 @@ declare global {
     ipcRenderer?: import('electron').IpcRenderer
     env?: {
       isElectron: boolean
+      isEnableTitlebar: boolean
       isLinux: boolean
       isMac: boolean
       isWin: boolean
+    }
+    onApi?: {
+      maximizedStateChanged(fn: (value: boolean) => void)
     }
   }
 }
