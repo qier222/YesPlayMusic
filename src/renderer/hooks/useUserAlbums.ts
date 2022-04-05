@@ -10,6 +10,7 @@ export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
     [UserApiNames.FETCH_USER_ALBUMS, user?.profile?.userId ?? 0],
     () => fetchUserAlbums(params),
     {
+      refetchOnWindowFocus: true,
       placeholderData: (): FetchUserAlbumsResponse | undefined =>
         window.ipcRenderer?.sendSync('getApiCacheSync', {
           api: 'album/sublist',

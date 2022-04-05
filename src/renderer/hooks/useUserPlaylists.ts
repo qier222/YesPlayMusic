@@ -29,6 +29,7 @@ export default function useUserPlaylists() {
         params.uid !== 0 &&
         params.offset !== undefined
       ),
+      refetchOnWindowFocus: true,
       placeholderData: (): FetchUserPlaylistsResponse =>
         window.ipcRenderer?.sendSync('getApiCacheSync', {
           api: 'user/playlist',

@@ -29,7 +29,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
   name = pathCase(name)
 
   const wrappedHandler = async (req: Request, res: Response) => {
-    logger.info(`[server] Handling request: ${req.path}`)
+    logger.debug(`[server] Handling request: ${req.path}`)
 
     // Get from cache
     const cache = await getCacheForExpress(name, req)

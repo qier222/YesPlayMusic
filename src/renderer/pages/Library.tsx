@@ -73,7 +73,7 @@ const LikedTracksCard = ({ className }: { className?: string }) => {
         navigate(`/playlist/${likedSongsPlaylist.playlist.id}`)
       }
       className={classNames(
-        'relative flex h-full w-full flex-col justify-between rounded-2xl bg-brand-50 py-5 px-6 text-brand-600 ',
+        'relative flex h-full w-full flex-col justify-between rounded-2xl bg-brand-50 py-5 px-6 text-brand-600 dark:bg-brand-800 dark:text-brand-50',
         className
       )}
     >
@@ -91,7 +91,7 @@ const LikedTracksCard = ({ className }: { className?: string }) => {
 
       <button
         onClick={handlePlay}
-        className='btn-pressed-animation absolute bottom-6 right-6 grid h-11 w-11 cursor-default place-content-center rounded-full bg-brand-600 text-brand-50 shadow-lg'
+        className='btn-pressed-animation absolute bottom-6 right-6 grid h-11 w-11 cursor-default place-content-center rounded-full bg-brand-600 text-brand-50 shadow-lg dark:bg-white dark:text-brand-600'
       >
         <SvgIcon name='play-fill' className='ml-0.5 h-6 w-6' />
       </button>
@@ -111,7 +111,7 @@ const OtherCard = ({
   return (
     <div
       className={classNames(
-        'flex h-full w-full flex-col justify-between rounded-2xl bg-gray-100 text-lg font-bold',
+        'flex h-full w-full flex-col justify-between rounded-2xl bg-gray-100 text-lg font-bold dark:bg-gray-800 dark:text-gray-200',
         className
       )}
     >
@@ -180,7 +180,7 @@ const TabHeader = ({
   setActiveTab: (tab: keyof TabsType) => void
 }) => {
   return (
-    <div className='mt-10 flex text-lg'>
+    <div className='mt-10 flex text-lg dark:text-white'>
       {Object.entries(tabs).map(([id, name]) => (
         <div
           key={id}
@@ -188,7 +188,7 @@ const TabHeader = ({
           className={classNames(
             'btn-pressed-animation mr-3  rounded-lg px-3.5 py-1.5 font-medium',
             activeTab === id
-              ? 'bg-black/[.04]'
+              ? 'bg-black/[.04] dark:bg-white/10'
               : 'btn-hover-animation after:bg-black/[.04] dark:after:bg-white/10'
           )}
         >
@@ -238,7 +238,7 @@ const Library = () => {
 
   return (
     <div className='mt-8'>
-      <div className='flex items-center text-[2.625rem] font-semibold'>
+      <div className='flex items-center text-[2.625rem] font-semibold dark:text-white'>
         <img src={avatarUrl} className='mr-3 mt-1 h-12 w-12 rounded-full' />
         {user?.profile?.nickname}的音乐库
       </div>

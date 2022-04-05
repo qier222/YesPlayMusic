@@ -64,7 +64,7 @@ const LatestRelease = ({
           <Skeleton className='aspect-square w-full rounded-xl'></Skeleton>
         ) : (
           <Cover
-            imageUrl={album?.picUrl ?? ''}
+            imageUrl={resizeImage(album?.picUrl ?? '', 'md')}
             showPlayButton={true}
             onClick={toAlbum}
           />

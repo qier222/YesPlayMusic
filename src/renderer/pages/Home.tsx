@@ -40,7 +40,7 @@ export default function Home() {
   )
 
   const playlists = [
-    ...(dailyRecommendPlaylists?.recommend?.slice(1) ?? []),
+    ...(dailyRecommendPlaylists?.recommend?.slice(1).slice(0, 8) ?? []),
     ...(recommendedPlaylists?.result ?? []),
   ]
     .slice(0, 10)

@@ -80,6 +80,15 @@ export async function setCache(api: string, data: any, query: any) {
       })
       break
     }
+    case 'lyric': {
+      if (!data.lrc) return
+      db.upsert(Tables.LYRIC, {
+        id: query.id,
+        json: JSON.stringify(data),
+        updatedAt: Date.now(),
+      })
+      break
+    }
   }
 }
 
@@ -160,6 +169,12 @@ export function getCache(api: string, query: any): any {
       )
       return artistAlbums
     }
+    case 'lyric': {
+      if (isNaN(Number(query?.id))) return
+      const data = db.find(Tables.LYRIC, query.id)
+      if (data?.json) return JSON.parse(data.json)
+      break
+    }
   }
 }
 
@@ -168,7 +183,7 @@ export async function getCacheForExpress(api: string, req: Request) {
   if (api === 'song/detail') {
     const cache = getCache(api, req.query)
     if (cache) {
-      logger.info(`[cache] Cache hit for ${req.path}`)
+      logger.debug(`[cache] Cache hit for ${req.path}`)
       return cache
     }
   }
@@ -185,7 +200,7 @@ export async function getCacheForExpress(api: string, req: Request) {
     )
     if (!isAudioFileExists) return
 
-    logger.info(`[cache] Audio cache hit for ${req.path}`)
+    logger.debug(`[cache] Audio cache hit for ${req.path}`)
 
     return {
       data: [

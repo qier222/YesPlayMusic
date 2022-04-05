@@ -15,6 +15,7 @@ export enum Tables {
   ARTIST = 'artist',
   PLAYLIST = 'playlist',
   ARTIST_ALBUMS = 'artist_album',
+  LYRIC = 'lyric',
 
   // Special tables
   ACCOUNT_DATA = 'account_data',
@@ -123,6 +124,7 @@ if (process.env.NODE_ENV === 'development') {
       Tables.ARTIST,
       Tables.AUDIO,
       Tables.ACCOUNT_DATA,
+      Tables.LYRIC,
     ]
     tables.forEach(table => {
       const data = db.findAll(table)
