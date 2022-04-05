@@ -57,8 +57,21 @@ export class Player {
   repeatMode: RepeatMode = RepeatMode.OFF
   fmTrack: Track | null = null
 
-  init() {
+  init(params: { [key: string]: any }) {
+    if (params._track) this._track = params._track
+    if (params._trackIndex) this._trackIndex = params._trackIndex
+    if (params._volume) this._volume = params._volume
+    if (params.state) this.trackList = params.state
+    if (params.mode) this.mode = params.mode
+    if (params.trackList) this.trackList = params.trackList
+    if (params.trackListSource) this.trackListSource = params.trackListSource
+    if (params.fmTrackList) this.fmTrackList = params.fmTrackList
+    if (params.shuffle) this.shuffle = params.shuffle
+    if (params.repeatMode) this.repeatMode = params.repeatMode
+    if (params.fmTrack) this.fmTrack = params.fmTrack
+
     this.state = State.READY
+    this._playAudio(false) // just load the audio, not play
     this._initFM()
   }
 
@@ -189,7 +202,7 @@ export class Player {
   /**
    * Play audio via howler
    */
-  private async _playAudio() {
+  private async _playAudio(autoplay: boolean = true) {
     this._progress = 0
     const { audio, id } = await this._fetchAudioSource(this.trackID)
     if (!audio) {
@@ -202,13 +215,15 @@ export class Player {
       src: [`${audio}?id=${id}`],
       format: ['mp3', 'flac'],
       html5: true,
-      autoplay: true,
+      autoplay,
       volume: 1,
       onend: () => this._howlerOnEndCallback(),
     })
     _howler = howler
-    this.play()
-    this.state = State.PLAYING
+    if (autoplay) {
+      this.play()
+      this.state = State.PLAYING
+    }
     _howler.once('load', () => {
       this._cacheAudio((_howler as any)._src)
     })
@@ -427,8 +442,6 @@ export class Player {
     this._playTrack()
   }
 }
-
-export const player = new Player()
 
 if (import.meta.env.DEV) {
   ;(window as any).howler = _howler

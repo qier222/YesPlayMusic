@@ -1,6 +1,6 @@
 import { proxy, subscribe } from 'valtio'
 import { devtools } from 'valtio/utils'
-import { player as PlayerCore } from '@/utils/player'
+import { Player } from '@/utils/player'
 
 interface Store {
   uiStates: {
@@ -28,8 +28,12 @@ subscribe(state, () => {
   localStorage.setItem('state', JSON.stringify(state))
 })
 
-export const player = proxy(PlayerCore)
-player.init()
+const playerInLocalStorage = localStorage.getItem('player')
+export const player = proxy(new Player())
+player.init((playerInLocalStorage && JSON.parse(playerInLocalStorage)) || {})
+subscribe(player, () => {
+  localStorage.setItem('player', JSON.stringify(player))
+})
 
 if (import.meta.env.DEV) {
   ;(window as any).player = player
