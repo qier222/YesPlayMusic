@@ -147,6 +147,7 @@ export default {
       label {
         font-size: 12px;
       }
+      user-select: none;
     }
   }
 }

@@ -153,10 +153,22 @@
       </div>
 
       <div v-show="currentTab === 'playHistory'">
-        <button class="playHistory-button" @click="playHistoryMode = 'week'">
+        <button
+          :class="{
+            'playHistory-button': true,
+            'playHistory-button--selected': playHistoryMode === 'week',
+          }"
+          @click="playHistoryMode = 'week'"
+        >
           {{ $t('library.playHistory.week') }}
         </button>
-        <button class="playHistory-button" @click="playHistoryMode = 'all'">
+        <button
+          :class="{
+            'playHistory-button': true,
+            'playHistory-button--selected': playHistoryMode === 'all',
+          }"
+          @click="playHistoryMode = 'all'"
+        >
           {{ $t('library.playHistory.all') }}
         </button>
         <TrackList
@@ -581,13 +593,29 @@ button.tab-button {
 button.playHistory-button {
   color: var(--color-text);
   border-radius: 8px;
-  padding: 10px;
+  padding: 6px 8px;
+  margin-bottom: 12px;
+  margin-right: 4px;
   transition: 0.2s;
   opacity: 0.68;
   font-weight: 500;
+  cursor: pointer;
   &:hover {
     opacity: 1;
     background: var(--color-secondary-bg);
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+button.playHistory-button--selected {
+  color: var(--color-text);
+  background: var(--color-secondary-bg);
+  opacity: 1;
+  font-weight: 700;
+  &:active {
+    transform: none;
   }
 }
 </style>
