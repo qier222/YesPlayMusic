@@ -188,6 +188,7 @@ export default {
     saveToLibrary: '保存到音乐库',
     removeFromLibrary: '从音乐库删除',
     addToPlaylist: '添加到歌单',
+    copyLink: '复制链接',
     searchInPlaylist: '歌单内搜索',
     copyUrl: '复制链接',
     openInBrowser: '在浏览器中打开',
@@ -197,6 +198,7 @@ export default {
     cardiacMode: '心动模式',
   },
   toast: {
+    copiedUrl: '已复制链接',
     savedToPlaylist: '已添加到歌单',
     removedFromPlaylist: '已从歌单中删除',
     savedToMyLikedSongs: '已添加到我喜欢的音乐',
