@@ -78,7 +78,7 @@ const TitleBar = () => {
 
   return (
     <div className='app-region-drag fixed z-30'>
-      {window.env?.isLinux ? (
+      {window.env?.isWin ? (
         <Win title={title()} />
       ) : (
         <Linux title={title()} />
