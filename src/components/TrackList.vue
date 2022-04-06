@@ -273,7 +273,7 @@ export default {
       clipboard.writeText(
         `https://music.163.com/song?id=${this.rightClickedTrack.id}`
       );
-      this.showToast(locale.t('toast.copiedUrl'));
+      this.showToast(locale.t('toast.copied'));
     },
     removeTrackFromQueue() {
       this.$store.state.player.removeTrackFromQueue(
