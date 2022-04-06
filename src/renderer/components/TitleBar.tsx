@@ -5,7 +5,7 @@ const Buttons = () => {
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
-    window.onApi?.maximizedStateChanged(value => {
+    window.rendererEvents?.onMaximizeStateChanged(value => {
       setIsMaximized(value)
     })
   }, [])

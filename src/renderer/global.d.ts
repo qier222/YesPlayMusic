@@ -11,8 +11,8 @@ declare global {
       isMac: boolean
       isWin: boolean
     }
-    onApi?: {
-      maximizedStateChanged(fn: (value: boolean) => void)
+    rendererEvents?: {
+      onMaximizeStateChanged(fn: (value: boolean) => void)
     }
   }
 }

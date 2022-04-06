@@ -16,8 +16,8 @@ contextBridge.exposeInMainWorld('env', {
   isWin: process.platform === 'win32',
 })
 
-contextBridge.exposeInMainWorld('onApi', {
-  maximizedStateChanged: (fn: (value: boolean) => void) => {
+contextBridge.exposeInMainWorld('rendererEvents', {
+  onMaximizeStateChanged: (fn: (value: boolean) => void) => {
     const safeFn = (e: IpcRendererEvent, value: boolean) => fn(value)
     addListener(EventKeys.IS_MAXIMIZED, safeFn)
   },
