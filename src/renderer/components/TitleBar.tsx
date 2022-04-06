@@ -1,7 +1,7 @@
 import { player } from '@/store'
 import SvgIcon from './SvgIcon'
 
-const Buttons = () => {
+const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffect(() => {
@@ -49,40 +49,45 @@ const Buttons = () => {
   )
 }
 
-const Win = ({ title }: { title: string }) => {
+const Title = ({ className }: { className?: string }) => {
+  const playerSnapshot = useSnapshot(player)
+  const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
+
   return (
-    <div className='flex h-8 w-screen items-center justify-between bg-gray-50'>
-      <div className='ml-3 text-sm text-gray-500'>{title}</div>
-      <Buttons />
+    <div className={classNames('text-sm text-gray-500', className)}>
+      {track?.name && (
+        <>
+          <span>{track.name}</span>
+          <span className='ml-2 mr-2'>-</span>
+        </>
+      )}
+      <span>YesPlayMusic</span>
     </div>
   )
 }
 
-const Linux = ({ title }: { title: string }) => {
+const Win = () => {
   return (
     <div className='flex h-8 w-screen items-center justify-between bg-gray-50'>
-      <div className='w-8'></div>
-      <div className='text-center text-sm text-gray-500'>{title}</div>
-      <Buttons />
+      <Title className='ml-3' />
+      <Controls />
+    </div>
+  )
+}
+
+const Linux = () => {
+  return (
+    <div className='flex h-8 w-screen items-center justify-between bg-gray-50'>
+      <Title className='text-center' />
+      <Controls />
     </div>
   )
 }
 
 const TitleBar = () => {
-  const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
-
-  const title = () => {
-    return track ? `${track.name} - YesPlayMusic` : 'YesPlayMusic'
-  }
-
   return (
     <div className='app-region-drag fixed z-30'>
-      {window.env?.isWin ? (
-        <Win title={title()} />
-      ) : (
-        <Linux title={title()} />
-      )}
+      {window.env?.isWin ? <Win /> : <Linux />}
     </div>
   )
 }
