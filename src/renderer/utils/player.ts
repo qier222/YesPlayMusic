@@ -207,6 +207,7 @@ export class Player {
     const { audio, id } = await this._fetchAudioSource(this.trackID)
     if (!audio) {
       toast('无法播放此歌曲')
+      this.nextTrack()
       return
     }
     if (this.trackID !== id) return
