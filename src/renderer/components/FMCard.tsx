@@ -61,22 +61,24 @@ const FMCard = () => {
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.fmTrack, [playerSnapshot.fmTrack])
   const coverUrl = useMemo(
-    () => resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'md'),
-    [playerSnapshot.fmTrack]
+    () => resizeImage(track?.al?.picUrl ?? '', 'md'),
+    [track?.al?.picUrl]
   )
 
   useEffect(() => {
-    const cover = resizeImage(playerSnapshot.fmTrack?.al?.picUrl ?? '', 'xs')
+    const cover = resizeImage(track?.al?.picUrl ?? '', 'xs')
     if (cover) {
       average(cover, { amount: 1, format: 'hex', sample: 1 }).then(color => {
         let c = colord(color as string)
-        if (c.isLight()) c = c.darken(0.15)
-        else if (c.isDark()) c = c.lighten(0.1)
+        const hsl = c.toHsl()
+        if (hsl.s > 50) c = colord({ ...hsl, s: 50 })
+        if (hsl.l > 50) c = colord({ ...c.toHsl(), l: 50 })
+        if (hsl.l < 30) c = colord({ ...c.toHsl(), l: 30 })
         const to = c.darken(0.15).rotate(-5).toHex()
-        setBackground(`linear-gradient(to bottom right, ${c.toHex()}, ${to})`)
+        setBackground(`linear-gradient(to bottom, ${c.toHex()}, ${to})`)
       })
     }
-  }, [playerSnapshot.fmTrack?.al?.picUrl])
+  }, [track?.al?.picUrl])
 
   return (
     <div

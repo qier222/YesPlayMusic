@@ -75,6 +75,10 @@ export class Player {
     this._initFM()
   }
 
+  get howler() {
+    return _howler
+  }
+
   /**
    * Get prev track index
    */

@@ -5,6 +5,7 @@ import { Player } from '@/utils/player'
 interface Store {
   uiStates: {
     loginPhoneCountryCode: string
+    showLyricPanel: boolean
   }
   settings: {
     showSidebar: boolean
@@ -14,6 +15,7 @@ interface Store {
 const initialState: Store = {
   uiStates: {
     loginPhoneCountryCode: '+86',
+    showLyricPanel: false,
   },
   settings: {
     showSidebar: true,
@@ -28,6 +30,7 @@ subscribe(state, () => {
   localStorage.setItem('state', JSON.stringify(state))
 })
 
+// player
 const playerInLocalStorage = localStorage.getItem('player')
 export const player = proxy(new Player())
 player.init((playerInLocalStorage && JSON.parse(playerInLocalStorage)) || {})

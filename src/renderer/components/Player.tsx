@@ -5,7 +5,7 @@ import SvgIcon from '@/components/SvgIcon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/hooks/useUserLikedTracksIDs'
-import { player } from '@/store'
+import { player, state } from '@/store'
 import { resizeImage } from '@/utils/common'
 import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
 
@@ -152,7 +152,9 @@ const Others = () => {
       <IconButton onClick={() => toast('施工中...')}>
         <SvgIcon className='h-6 w-6' name='volume' />
       </IconButton>
-      <IconButton onClick={() => toast('施工中...')}>
+
+      {/* Lyric */}
+      <IconButton onClick={() => (state.uiStates.showLyricPanel = true)}>
         <SvgIcon className='h-6 w-6' name='lyrics' />
       </IconButton>
     </div>

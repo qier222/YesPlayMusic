@@ -6,12 +6,14 @@ const Cover = ({
   roundedClass = 'rounded-xl',
   showPlayButton = false,
   showHover = true,
+  alwaysShowShadow = false,
 }: {
   imageUrl: string
   onClick?: () => void
   roundedClass?: string
   showPlayButton?: boolean
   showHover?: boolean
+  alwaysShowShadow?: boolean
 }) => {
   const [isError, setIsError] = useState(false)
 
@@ -21,8 +23,9 @@ const Cover = ({
       {showHover && (
         <div
           className={classNames(
-            'absolute top-2 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] bg-cover opacity-0 blur-lg filter transition duration-300 group-hover:opacity-60',
-            roundedClass
+            'absolute top-2 z-[-1] h-full w-full scale-x-[.92] scale-y-[.96] bg-cover  blur-lg filter transition duration-300 ',
+            roundedClass,
+            !alwaysShowShadow && 'opacity-0 group-hover:opacity-60'
           )}
           style={{
             backgroundImage: `url("${imageUrl}")`,
@@ -32,7 +35,7 @@ const Cover = ({
 
       {/* Cover */}
       {isError ? (
-        <div className='box-content flex aspect-square h-full w-full items-center justify-center rounded-xl border border-black  border-opacity-5 bg-gray-800 text-gray-300'>
+        <div className='box-content flex aspect-square h-full w-full items-center justify-center rounded-xl border border-black border-opacity-5  bg-gray-800 text-gray-300 '>
           <SvgIcon name='music-note' className='h-1/2 w-1/2' />
         </div>
       ) : (

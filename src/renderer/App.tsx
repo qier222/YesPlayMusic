@@ -4,8 +4,9 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 import Player from '@/components/Player'
 import Sidebar from '@/components/Sidebar'
 import reactQueryClient from '@/utils/reactQueryClient'
-import Main from './components/Main'
-import TitleBar from './components/TitleBar'
+import Main from '@/components/Main'
+import TitleBar from '@/components/TitleBar'
+import Lyric from '@/components/Lyric'
 
 const App = () => {
   return (
@@ -17,6 +18,8 @@ const App = () => {
         <Main />
         <Player />
       </div>
+
+      <Lyric />
 
       <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />
 
