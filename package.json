@@ -10,7 +10,7 @@
   "repository": "github:qier222/YesPlayMusic",
   "main": "dist/main/index.js",
   "scripts": {
-    "install": "node scripts/build.sqlite3.mjs",
+    "install": "node scripts/build.sqlite3.mjs --x64",
     "dev": "concurrently -n=vite,main -c=#646cff,#74b1be \"npm run dev:renderer\" \"node scripts/build.main.mjs --watch\"",
     "dev:renderer": "vite dev",
     "build:main": "node scripts/build.main.mjs",

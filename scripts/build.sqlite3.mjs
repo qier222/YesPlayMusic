@@ -23,6 +23,12 @@ const build = async arch => {
         './node_modules/better-sqlite3/build/Release/better_sqlite3.node',
         `./dist/main/better_sqlite3_${arch}.node`
       )
+      if (process.platform === 'win32') {
+        fs.copyFileSync(
+          './node_modules/better-sqlite3/build/Release/sqlite3.dll',
+          './dist/main/sqlite3.dll'
+        )
+      }
     })
     .catch(e => {
       console.error(pc.red('Rebuild failed!'))
