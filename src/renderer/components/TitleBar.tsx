@@ -58,7 +58,7 @@ const Title = ({ className }: { className?: string }) => {
       {track?.name && (
         <>
           <span>{track.name}</span>
-          <span className='ml-2 mr-2'>-</span>
+          <span className='mx-2'>-</span>
         </>
       )}
       <span>YesPlayMusic</span>
@@ -78,6 +78,7 @@ const Win = () => {
 const Linux = () => {
   return (
     <div className='flex h-8 w-screen items-center justify-between bg-gray-50'>
+      <div></div>
       <Title className='text-center' />
       <Controls />
     </div>
