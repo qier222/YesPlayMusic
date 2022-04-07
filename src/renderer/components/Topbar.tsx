@@ -121,7 +121,7 @@ const Topbar = () => {
       className={classNames(
         'sticky z-30 flex h-16 min-h-[4rem] w-full cursor-default items-center justify-between px-8 transition duration-300',
         window.env?.isMac && 'app-region-drag',
-        window.env?.isEnableTitlebar ? 'top-8': 'top-0',
+        window.env?.isEnableTitlebar ? 'top-8' : 'top-0',
         !scroll.arrivedState.top &&
           'bg-white bg-opacity-[.86] backdrop-blur-xl backdrop-saturate-[1.8] dark:bg-[#222] dark:bg-opacity-[.86]'
       )}
