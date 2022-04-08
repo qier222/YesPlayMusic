@@ -11,6 +11,7 @@ import Store from 'electron-store'
 import { release } from 'os'
 import path, { join } from 'path'
 import logger from './logger'
+import { initIpcMain } from './ipcMain'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -64,6 +65,7 @@ async function createWindow() {
     minHeight: 720,
     vibrancy: 'fullscreen-ui',
     titleBarStyle: 'hiddenInset',
+    frame: !(isWindows || isLinux), // TODO: 适用于linux下独立的启用开关
   }
   if (store.get('window')) {
     options.x = store.get('window.x')
@@ -99,6 +101,8 @@ async function createWindow() {
 app.whenReady().then(async () => {
   logger.info('[index] App ready')
   createWindow()
+  handleWindowEvents()
+  initIpcMain(win)
 
   // Install devtool extension
   if (isDev) {
@@ -138,3 +142,13 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+const handleWindowEvents = () => {
+  win?.on('maximize', () => {
+    win?.webContents.send('is-maximized', true)
+  })
+
+  win?.on('unmaximize', () => {
+    win?.webContents.send('is-maximized', false)
+  })
+}

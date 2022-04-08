@@ -35,7 +35,9 @@ const primaryTabs: PrimaryTab[] = [
 const PrimaryTabs = () => {
   return (
     <div>
-      <div className='app-region-drag h-14'></div>
+      <div
+        className={classNames(window.env?.isMac && 'app-region-drag', 'h-14')}
+      ></div>
       {primaryTabs.map(tab => (
         <NavLink
           onClick={() => scrollToTop()}
