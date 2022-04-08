@@ -1,0 +1,4 @@
+commit_template: "style: with ${restyler.name}"
+restylers:
+  - prettier
+
