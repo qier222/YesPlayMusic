@@ -1,4 +1,5 @@
 import fs from 'fs'
+import path from 'path'
 
 export const createDirIfNotExist = (dir: string) => {
   if (!fs.existsSync(dir)) {
@@ -7,7 +8,7 @@ export const createDirIfNotExist = (dir: string) => {
 }
 
 export const createFileIfNotExist = (file: string) => {
-  createDirIfNotExist(file.split('/').slice(0, -1).join('/'))
+  createDirIfNotExist(path.dirname(file))
   if (!fs.existsSync(file)) {
     fs.writeFileSync(file, '')
   }
