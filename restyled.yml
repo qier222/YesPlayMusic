@@ -1,0 +1,7 @@
+commit_template: 'style: with ${restyler.name}'
+restylers:
+  - prettier
+  - prettier-json
+  - prettier-markdown
+  - prettier-yaml
+  - whitespace
