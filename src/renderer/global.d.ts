@@ -11,9 +11,6 @@ declare global {
       isMac: boolean
       isWin: boolean
     }
-    rendererEvents?: {
-      onMaximizeStateChanged(fn: (value: boolean) => void)
-    }
   }
 }
 

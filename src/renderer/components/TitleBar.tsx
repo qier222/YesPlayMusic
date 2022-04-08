@@ -4,11 +4,11 @@ import SvgIcon from './SvgIcon'
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
 
-  useEffect(() => {
-    window.rendererEvents?.onMaximizeStateChanged(value => {
+  useEffectOnce(() => {
+    return window.ipcRenderer?.on('is-maximized', (e, value) => {
       setIsMaximized(value)
     })
-  }, [])
+  })
 
   const minimize = () => {
     window.ipcRenderer?.send('minimize')

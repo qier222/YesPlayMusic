@@ -7,6 +7,7 @@ declare global {
   const useContext: typeof import('react')['useContext']
   const useDebugValue: typeof import('react')['useDebugValue']
   const useEffect: typeof import('react')['useEffect']
+  const useEffectOnce: typeof import('react-use')['useEffectOnce']
   const useImperativeHandle: typeof import('react')['useImperativeHandle']
   const useInfiniteQuery: typeof import('react-query')['useInfiniteQuery']
   const useMemo: typeof import('react')['useMemo']

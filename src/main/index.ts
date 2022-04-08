@@ -6,12 +6,12 @@ import {
   BrowserWindowConstructorOptions,
   app,
   shell,
-  ipcMain,
 } from 'electron'
 import Store from 'electron-store'
 import { release } from 'os'
 import path, { join } from 'path'
 import logger from './logger'
+import { initIpcMain } from './ipcMain'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -102,6 +102,7 @@ app.whenReady().then(async () => {
   logger.info('[index] App ready')
   createWindow()
   handleWindowEvents()
+  initIpcMain(win)
 
   // Install devtool extension
   if (isDev) {
@@ -140,19 +141,6 @@ app.on('activate', () => {
   } else {
     createWindow()
   }
-})
-
-ipcMain.on('minimize', () => {
-  win?.minimize()
-})
-
-ipcMain.on('maximize-or-unmaximize', () => {
-  if (!win) return
-  win.isMaximized() ? win.unmaximize() : win.maximize()
-})
-
-ipcMain.on('close', () => {
-  app.exit()
 })
 
 const handleWindowEvents = () => {
