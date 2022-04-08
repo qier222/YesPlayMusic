@@ -8,6 +8,7 @@ import Cover from '@/renderer/components/Cover'
 import TrackGrid from '@/renderer/components/TracksGrid'
 import { player } from '@/renderer/store'
 import { resizeImage } from '@/renderer/utils/common'
+import dayjs from 'dayjs'
 
 const Artists = ({ artists }: { artists: Artist[] }) => {
   const navigate = useNavigate()
@@ -62,7 +63,7 @@ const Albums = ({ albums }: { albums: Album[] }) => {
               {album.name}
             </div>
             <div className='mt-0.5 text-sm font-medium text-gray-500  dark:text-gray-400'>
-              专辑 · {album?.artist.name} · 2020
+              专辑 · {album?.artist.name} · {dayjs(album.publishTime).year()}
             </div>
           </div>
         </div>
