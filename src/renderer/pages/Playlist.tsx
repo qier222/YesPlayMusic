@@ -1,17 +1,17 @@
 import { memo } from 'react'
-import Button, { Color as ButtonColor } from '@/components/Button'
-import Skeleton from '@/components/Skeleton'
-import SvgIcon from '@/components/SvgIcon'
-import TracksList from '@/components/TracksList'
-import usePlaylist from '@/hooks/usePlaylist'
-import useScroll from '@/hooks/useScroll'
-import useTracksInfinite from '@/hooks/useTracksInfinite'
-import { player } from '@/store'
-import { formatDate, resizeImage } from '@/utils/common'
+import Button, { Color as ButtonColor } from '@/renderer/components/Button'
+import Skeleton from '@/renderer/components/Skeleton'
+import SvgIcon from '@/renderer/components/SvgIcon'
+import TracksList from '@/renderer/components/TracksList'
+import usePlaylist from '@/renderer/hooks/usePlaylist'
+import useScroll from '@/renderer/hooks/useScroll'
+import useTracksInfinite from '@/renderer/hooks/useTracksInfinite'
+import { player } from '@/renderer/store'
+import { formatDate, resizeImage } from '@/renderer/utils/common'
 import useUserPlaylists, {
   useMutationLikeAPlaylist,
-} from '@/hooks/useUserPlaylists'
-import useUser from '@/hooks/useUser'
+} from '@/renderer/hooks/useUserPlaylists'
+import useUser from '@/renderer/hooks/useUser'
 
 const enableRenderLog = true
 

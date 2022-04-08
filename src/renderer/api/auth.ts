@@ -1,5 +1,5 @@
-import type { fetchUserAccountResponse } from '@/api/user'
-import request from '@/utils/request'
+import type { fetchUserAccountResponse } from '@/renderer/api/user'
+import request from '@/renderer/utils/request'
 
 // 手机号登录
 interface LoginWithPhoneParams {

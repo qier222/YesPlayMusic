@@ -1,9 +1,8 @@
 import { NavLink } from 'react-router-dom'
-import SvgIcon from '@/components/SvgIcon'
-import useUser from '@/hooks/useUser'
-import useUserPlaylists from '@/hooks/useUserPlaylists'
-import { scrollToTop } from '@/utils/common'
-import { prefetchPlaylist } from '@/hooks/usePlaylist'
+import SvgIcon from './SvgIcon'
+import useUserPlaylists from '@/renderer/hooks/useUserPlaylists'
+import { scrollToTop } from '@/renderer/utils/common'
+import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
 
 interface Tab {
   name: string

@@ -1,9 +1,18 @@
+import { IpcChannels } from '@/main/IpcChannelsName'
+
 export {}
 
 declare global {
   interface Window {
     // Expose some Api through preload script
-    ipcRenderer?: import('electron').IpcRenderer
+    ipcRenderer?: {
+      sendSync: (channel: IpcChannels, ...args: any[]) => any
+      send: (channel: IpcChannels, ...args: any[]) => void
+      on: (
+        channel: IpcChannels,
+        listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+      ) => void
+    }
     env?: {
       isElectron: boolean
       isEnableTitlebar: boolean

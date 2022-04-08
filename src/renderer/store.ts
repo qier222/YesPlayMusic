@@ -1,6 +1,6 @@
 import { proxy, subscribe } from 'valtio'
 import { devtools } from 'valtio/utils'
-import { Player } from '@/utils/player'
+import { Player } from '@/renderer/utils/player'
 
 interface Store {
   uiStates: {

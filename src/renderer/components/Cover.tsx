@@ -1,4 +1,4 @@
-import SvgIcon from '@/components/SvgIcon'
+import SvgIcon from '@/renderer/components/SvgIcon'
 
 const Cover = ({
   imageUrl,

@@ -1,5 +1,5 @@
 import path from 'path'
-import { app, ipcMain } from 'electron'
+import { app } from 'electron'
 import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
 import logger from './logger'
@@ -111,32 +111,6 @@ export const db = {
   vacuum: () => {
     return sqlite.prepare('VACUUM').run()
   },
-}
-
-// 导出tables到json文件，方便查看table大小
-if (process.env.NODE_ENV === 'development') {
-  ipcMain.on('db-export-json', () => {
-    const tables = [
-      Tables.ARTIST_ALBUMS,
-      Tables.PLAYLIST,
-      Tables.ALBUM,
-      Tables.TRACK,
-      Tables.ARTIST,
-      Tables.AUDIO,
-      Tables.ACCOUNT_DATA,
-      Tables.LYRIC,
-    ]
-    tables.forEach(table => {
-      const data = db.findAll(table)
-
-      fs.writeFile(`./tmp/${table}.json`, JSON.stringify(data), function (err) {
-        if (err) {
-          return console.log(err)
-        }
-        console.log('The file was saved!')
-      })
-    })
-  })
 }
 
 logger.info('[db] Database initialized')

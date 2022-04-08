@@ -1,14 +1,33 @@
 import { BrowserWindow, ipcMain, app } from 'electron'
 import { db, Tables } from './db'
+import { IpcChannels } from './IpcChannelsName'
+import { getCache } from './cache'
+import logger from './logger'
+import fs from 'fs'
 
-export enum Events {
-  ClearAPICache = 'clear-api-cache',
-  Minimize = 'minimize',
-  MaximizeOrUnmaximize = 'maximize-or-unmaximize',
-  Close = 'close',
+/**
+ * 处理需要win对象的事件
+ * @param {BrowserWindow} win
+ */
+export function initIpcMain(win: BrowserWindow | null) {
+  ipcMain.on(IpcChannels.Minimize, () => {
+    win?.minimize()
+  })
+
+  ipcMain.on(IpcChannels.MaximizeOrUnmaximize, () => {
+    if (!win) return
+    win.isMaximized() ? win.unmaximize() : win.maximize()
+  })
+
+  ipcMain.on(IpcChannels.Close, () => {
+    app.exit()
+  })
 }
 
-ipcMain.on(Events.ClearAPICache, () => {
+/**
+ * 清除API缓存
+ */
+ipcMain.on(IpcChannels.ClearAPICache, () => {
   db.truncate(Tables.TRACK)
   db.truncate(Tables.ALBUM)
   db.truncate(Tables.ARTIST)
@@ -19,17 +38,39 @@ ipcMain.on(Events.ClearAPICache, () => {
   db.vacuum()
 })
 
-export function initIpcMain(win: BrowserWindow | null) {
-  ipcMain.on(Events.Minimize, () => {
-    win?.minimize()
-  })
+/**
+ * Get API cache
+ */
+ipcMain.on(IpcChannels.GetApiCacheSync, (event, args) => {
+  const { api, query } = args
+  const data = getCache(api, query)
+  event.returnValue = data
+})
 
-  ipcMain.on(Events.MaximizeOrUnmaximize, () => {
-    if (!win) return
-    win.isMaximized() ? win.unmaximize() : win.maximize()
-  })
+/**
+ * 导出tables到json文件，方便查看table大小（dev环境）
+ */
+if (process.env.NODE_ENV === 'development') {
+  ipcMain.on(IpcChannels.DevDbExportJson, () => {
+    const tables = [
+      Tables.ARTIST_ALBUMS,
+      Tables.PLAYLIST,
+      Tables.ALBUM,
+      Tables.TRACK,
+      Tables.ARTIST,
+      Tables.AUDIO,
+      Tables.ACCOUNT_DATA,
+      Tables.LYRIC,
+    ]
+    tables.forEach(table => {
+      const data = db.findAll(table)
 
-  ipcMain.on(Events.Close, () => {
-    app.exit()
+      fs.writeFile(`./tmp/${table}.json`, JSON.stringify(data), function (err) {
+        if (err) {
+          return console.log(err)
+        }
+        console.log('The file was saved!')
+      })
+    })
   })
 }

@@ -1,7 +1,7 @@
-import SvgIcon from '@/components/SvgIcon'
-import useScroll from '@/hooks/useScroll'
-import useUser from '@/hooks/useUser'
-import { resizeImage } from '@/utils/common'
+import SvgIcon from '@/renderer/components/SvgIcon'
+import useScroll from '@/renderer/hooks/useScroll'
+import useUser from '@/renderer/hooks/useUser'
+import { resizeImage } from '@/renderer/utils/common'
 
 const NavigationButtons = () => {
   const navigate = useNavigate()

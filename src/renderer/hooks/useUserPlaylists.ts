@@ -1,8 +1,9 @@
-import { likeAPlaylist } from '@/api/playlist'
-import type { FetchUserPlaylistsResponse } from '@/api/user'
-import { UserApiNames, fetchUserPlaylists } from '@/api/user'
+import { likeAPlaylist } from '@/renderer/api/playlist'
+import type { FetchUserPlaylistsResponse } from '@/renderer/api/user'
+import { UserApiNames, fetchUserPlaylists } from '@/renderer/api/user'
 import { useQueryClient } from 'react-query'
 import useUser from './useUser'
+import { IpcChannels } from '@/main/IpcChannelsName'
 
 export default function useUserPlaylists() {
   const { data: user } = useUser()
@@ -31,7 +32,7 @@ export default function useUserPlaylists() {
       ),
       refetchOnWindowFocus: true,
       placeholderData: (): FetchUserPlaylistsResponse =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: 'user/playlist',
           query: {
             uid: params.uid,

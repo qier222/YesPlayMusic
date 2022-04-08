@@ -1,9 +1,9 @@
-import Cover from '@/components/Cover'
-import Skeleton from '@/components/Skeleton'
-import SvgIcon from '@/components/SvgIcon'
-import { prefetchAlbum } from '@/hooks/useAlbum'
-import { prefetchPlaylist } from '@/hooks/usePlaylist'
-import { formatDate, resizeImage, scrollToTop } from '@/utils/common'
+import Cover from '@/renderer/components/Cover'
+import Skeleton from '@/renderer/components/Skeleton'
+import SvgIcon from '@/renderer/components/SvgIcon'
+import { prefetchAlbum } from '@/renderer/hooks/useAlbum'
+import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
+import { formatDate, resizeImage, scrollToTop } from '@/renderer/utils/common'
 
 export enum Subtitle {
   COPYWRITER = 'copywriter',

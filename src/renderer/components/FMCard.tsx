@@ -1,10 +1,13 @@
 import { average } from 'color.js'
 import { colord } from 'colord'
-import { player } from '@/store'
-import { resizeImage } from '@/utils/common'
-import SvgIcon from '@/components/SvgIcon'
-import ArtistInline from '@/components/ArtistsInline'
-import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
+import { player } from '@/renderer/store'
+import { resizeImage } from '@/renderer/utils/common'
+import SvgIcon from './SvgIcon'
+import ArtistInline from './ArtistsInline'
+import {
+  State as PlayerState,
+  Mode as PlayerMode,
+} from '@/renderer/utils/player'
 
 const MediaControls = () => {
   const classes =

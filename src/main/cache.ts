@@ -1,6 +1,6 @@
 import { db, Tables } from './db'
 import type { FetchTracksResponse } from '../renderer/api/track'
-import { app, ipcMain } from 'electron'
+import { app } from 'electron'
 import { Request, Response } from 'express'
 import logger from './logger'
 import fs from 'fs'
@@ -302,9 +302,3 @@ export async function cacheAudio(
     logger.info(`[cache] cacheAudio ${id}-${br}.${type}`)
   })
 }
-
-ipcMain.on('getApiCacheSync', (event, args) => {
-  const { api, query } = args
-  const data = getCache(api, query)
-  event.returnValue = data
-})

@@ -1,12 +1,12 @@
 import { Toaster } from 'react-hot-toast'
 import { QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
-import Player from '@/components/Player'
-import Sidebar from '@/components/Sidebar'
-import reactQueryClient from '@/utils/reactQueryClient'
-import Main from '@/components/Main'
-import TitleBar from '@/components/TitleBar'
-import Lyric from '@/components/Lyric'
+import Player from '@/renderer/components/Player'
+import Sidebar from '@/renderer/components/Sidebar'
+import reactQueryClient from '@/renderer/utils/reactQueryClient'
+import Main from '@/renderer/components/Main'
+import TitleBar from '@/renderer/components/TitleBar'
+import Lyric from '@/renderer/components/Lyric'
 
 const App = () => {
   return (

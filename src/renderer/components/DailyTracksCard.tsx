@@ -1,4 +1,4 @@
-import SvgIcon from '@/components/SvgIcon'
+import SvgIcon from './SvgIcon'
 import style from './DailyTracksCard.module.scss'
 
 const DailyTracksCard = () => {

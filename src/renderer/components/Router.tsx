@@ -1,14 +1,14 @@
 import type { RouteObject } from 'react-router-dom'
 import { useRoutes } from 'react-router-dom'
-import Album from '@/pages/Album'
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Playlist from '@/pages/Playlist'
-import Artist from '@/pages/Artist'
-import Search from '@/pages/Search'
-import Library from '@/pages/Library'
-import Podcast from '@/pages/Podcast'
-import Settings from '@/pages/Settings'
+import Album from '@/renderer/pages/Album'
+import Home from '@/renderer/pages/Home'
+import Login from '@/renderer/pages/Login'
+import Playlist from '@/renderer/pages/Playlist'
+import Artist from '@/renderer/pages/Artist'
+import Search from '@/renderer/pages/Search'
+import Library from '@/renderer/pages/Library'
+import Podcast from '@/renderer/pages/Podcast'
+import Settings from '@/renderer/pages/Settings'
 
 const routes: RouteObject[] = [
   {

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import 'virtual:svg-icons-register'
-import '@/styles/global.scss'
+import './styles/global.scss'
 import App from './App'
 import pkg from '../../package.json'
 

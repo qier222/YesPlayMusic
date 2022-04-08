@@ -1,8 +1,12 @@
-import { likeAAlbum } from '@/api/album'
-import type { FetchUserAlbumsParams, FetchUserAlbumsResponse } from '@/api/user'
-import { UserApiNames, fetchUserAlbums } from '@/api/user'
+import { likeAAlbum } from '@/renderer/api/album'
+import type {
+  FetchUserAlbumsParams,
+  FetchUserAlbumsResponse,
+} from '@/renderer/api/user'
+import { UserApiNames, fetchUserAlbums } from '@/renderer/api/user'
 import { useQueryClient } from 'react-query'
 import useUser from './useUser'
+import { IpcChannels } from '@/main/IpcChannelsName'
 
 export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
   const { data: user } = useUser()
@@ -12,7 +16,7 @@ export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
     {
       refetchOnWindowFocus: true,
       placeholderData: (): FetchUserAlbumsResponse | undefined =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: 'album/sublist',
           query: params,
         }),

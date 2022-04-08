@@ -2,10 +2,11 @@ import {
   PlaylistApiNames,
   fetchRecommendedPlaylists,
   fetchDailyRecommendPlaylists,
-} from '@/api/playlist'
-import CoverRow from '@/components/CoverRow'
-import DailyTracksCard from '@/components/DailyTracksCard'
-import FMCard from '@/components/FMCard'
+} from '@/renderer/api/playlist'
+import CoverRow from '@/renderer/components/CoverRow'
+import DailyTracksCard from '@/renderer/components/DailyTracksCard'
+import FMCard from '@/renderer/components/FMCard'
+import { IpcChannels } from '@/main/IpcChannelsName'
 
 export default function Home() {
   const {
@@ -17,7 +18,7 @@ export default function Home() {
     {
       retry: false,
       placeholderData: () =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: 'recommend/resource',
         }),
     }
@@ -33,7 +34,7 @@ export default function Home() {
     },
     {
       placeholderData: () =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: 'personalized',
         }),
     }

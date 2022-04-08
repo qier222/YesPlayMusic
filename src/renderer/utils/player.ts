@@ -2,15 +2,15 @@ import { Howl, Howler } from 'howler'
 import {
   fetchAudioSourceWithReactQuery,
   fetchTracksWithReactQuery,
-} from '@/hooks/useTracks'
-import { fetchPersonalFMWithReactQuery } from '@/hooks/usePersonalFM'
-import { fmTrash } from '@/api/personalFM'
-import { cacheAudio } from '@/api/yesplaymusic'
+} from '@/renderer/hooks/useTracks'
+import { fetchPersonalFMWithReactQuery } from '@/renderer/hooks/usePersonalFM'
+import { fmTrash } from '@/renderer/api/personalFM'
+import { cacheAudio } from '@/renderer/api/yesplaymusic'
 import { clamp } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
-import { fetchPlaylistWithReactQuery } from '@/hooks/usePlaylist'
-import { fetchAlbumWithReactQuery } from '@/hooks/useAlbum'
+import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
+import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 
 type TrackID = number
 enum TrackListSourceType {

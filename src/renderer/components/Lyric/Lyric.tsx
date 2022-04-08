@@ -1,5 +1,5 @@
-import useLyric from '@/hooks/useLyric'
-import { player } from '@/store'
+import useLyric from '@/renderer/hooks/useLyric'
+import { player } from '@/renderer/store'
 import {
   motion,
   useMotionValue,
@@ -8,7 +8,7 @@ import {
   useAnimation,
   LayoutGroup,
 } from 'framer-motion'
-import { lyricParser } from '@/utils/lyric'
+import { lyricParser } from '@/renderer/utils/lyric'
 
 const Lyric = ({ className }: { className?: string }) => {
   //   const ease = [0.5, 0.2, 0.2, 0.8]

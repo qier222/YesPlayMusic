@@ -1,23 +1,25 @@
 import dayjs from 'dayjs'
 import { NavLink } from 'react-router-dom'
-import Button, { Color as ButtonColor } from '@/components/Button'
-import CoverRow, { Subtitle } from '@/components/CoverRow'
-import Skeleton from '@/components/Skeleton'
-import SvgIcon from '@/components/SvgIcon'
-import TracksAlbum from '@/components/TracksAlbum'
-import useAlbum from '@/hooks/useAlbum'
-import useArtistAlbums from '@/hooks/useArtistAlbums'
-import { player } from '@/store'
-import { State as PlayerState } from '@/utils/player'
+import Button, { Color as ButtonColor } from '@/renderer/components/Button'
+import CoverRow, { Subtitle } from '@/renderer/components/CoverRow'
+import Skeleton from '@/renderer/components/Skeleton'
+import SvgIcon from '@/renderer/components/SvgIcon'
+import TracksAlbum from '@/renderer/components/TracksAlbum'
+import useAlbum from '@/renderer/hooks/useAlbum'
+import useArtistAlbums from '@/renderer/hooks/useArtistAlbums'
+import { player } from '@/renderer/store'
+import { State as PlayerState } from '@/renderer/utils/player'
 import {
   formatDate,
   formatDuration,
   resizeImage,
   scrollToTop,
-} from '@/utils/common'
-import useTracks from '@/hooks/useTracks'
-import useUserAlbums, { useMutationLikeAAlbum } from '@/hooks/useUserAlbums'
-import useUser from '@/hooks/useUser'
+} from '@/renderer/utils/common'
+import useTracks from '@/renderer/hooks/useTracks'
+import useUserAlbums, {
+  useMutationLikeAAlbum,
+} from '@/renderer/hooks/useUserAlbums'
+import useUser from '@/renderer/hooks/useUser'
 
 const PlayButton = ({
   album,

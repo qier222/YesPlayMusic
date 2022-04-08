@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/renderer/utils/request'
 
 export enum ArtistApiNames {
   FETCH_ARTIST = 'fetchArtist',

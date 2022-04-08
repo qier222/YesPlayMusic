@@ -3,11 +3,11 @@ import {
   search,
   SearchApiNames,
   SearchTypes,
-} from '@/api/search'
-import Cover from '@/components/Cover'
-import TrackGrid from '@/components/TracksGrid'
-import { player } from '@/store'
-import { resizeImage } from '@/utils/common'
+} from '@/renderer/api/search'
+import Cover from '@/renderer/components/Cover'
+import TrackGrid from '@/renderer/components/TracksGrid'
+import { player } from '@/renderer/store'
+import { resizeImage } from '@/renderer/utils/common'
 
 const Artists = ({ artists }: { artists: Artist[] }) => {
   const navigate = useNavigate()

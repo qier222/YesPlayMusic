@@ -1,14 +1,17 @@
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/hooks/useUserLikedTracksIDs'
-import { player, state } from '@/store'
-import { resizeImage } from '@/utils/common'
+} from '@/renderer/hooks/useUserLikedTracksIDs'
+import { player, state } from '@/renderer/store'
+import { resizeImage } from '@/renderer/utils/common'
 
 import ArtistInline from '../ArtistsInline'
 import Cover from '../Cover'
 import IconButton from '../IconButton'
 import SvgIcon from '../SvgIcon'
-import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
+import {
+  State as PlayerState,
+  Mode as PlayerMode,
+} from '@/renderer/utils/player'
 
 const PlayingTrack = () => {
   const playerSnapshot = useSnapshot(player)

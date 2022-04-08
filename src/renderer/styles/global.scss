@@ -54,38 +54,38 @@
 @font-face {
   font-family: Barlow;
   font-weight: normal;
-  src: url('@/assets/fonts/Barlow-Regular.woff2') format('woff2'),
-    url('@/assets/fonts/Barlow-Regular.ttf') format('truetype');
+  src: url('@/renderer/assets/fonts/Barlow-Regular.woff2') format('woff2'),
+    url('@/renderer/assets/fonts/Barlow-Regular.ttf') format('truetype');
 }
 @font-face {
   font-family: Barlow;
   font-weight: medium;
-  src: url('@/assets/fonts/Barlow-Medium.woff2') format('woff2'),
-    url('@/assets/fonts/Barlow-Medium.ttf') format('truetype');
+  src: url('@/renderer/assets/fonts/Barlow-Medium.woff2') format('woff2'),
+    url('@/renderer/assets/fonts/Barlow-Medium.ttf') format('truetype');
 }
 @font-face {
   font-family: Barlow;
   font-weight: 600;
-  src: url('@/assets/fonts/Barlow-SemiBold.woff2') format('woff2'),
-    url('@/assets/fonts/Barlow-SemiBold.ttf') format('truetype');
+  src: url('@/renderer/assets/fonts/Barlow-SemiBold.woff2') format('woff2'),
+    url('@/renderer/assets/fonts/Barlow-SemiBold.ttf') format('truetype');
 }
 @font-face {
   font-family: Barlow;
   font-weight: bold;
-  src: url('@/assets/fonts/Barlow-Bold.woff2') format('woff2'),
-    url('@/assets/fonts/Barlow-Bold.ttf') format('truetype');
+  src: url('@/renderer/assets/fonts/Barlow-Bold.woff2') format('woff2'),
+    url('@/renderer/assets/fonts/Barlow-Bold.ttf') format('truetype');
 }
 @font-face {
   font-family: Barlow;
   font-weight: 800;
-  src: url('@/assets/fonts/Barlow-ExtraBold.woff2') format('woff2'),
-    url('@/assets/fonts/Barlow-ExtraBold.ttf') format('truetype');
+  src: url('@/renderer/assets/fonts/Barlow-ExtraBold.woff2') format('woff2'),
+    url('@/renderer/assets/fonts/Barlow-ExtraBold.ttf') format('truetype');
 }
 @font-face {
   font-family: Barlow;
   font-weight: 900;
-  src: url('@/assets/fonts/Barlow-Black.woff2') format('woff2'),
-    url('@/assets/fonts/Barlow-Black.ttf') format('truetype');
+  src: url('@/renderer/assets/fonts/Barlow-Black.woff2') format('woff2'),
+    url('@/renderer/assets/fonts/Barlow-Black.ttf') format('truetype');
 }
 
 body,

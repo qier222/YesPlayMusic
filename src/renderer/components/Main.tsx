@@ -1,5 +1,5 @@
-import Router from '@/components/Router'
-import Topbar from '@/components/Topbar'
+import Router from './Router'
+import Topbar from './Topbar'
 
 const Main = () => {
   return (

@@ -1,5 +1,5 @@
-import { fetchPersonalFM, PersonalFMApiNames } from '@/api/personalFM'
-import reactQueryClient from '@/utils/reactQueryClient'
+import { fetchPersonalFM, PersonalFMApiNames } from '@/renderer/api/personalFM'
+import reactQueryClient from '@/renderer/utils/reactQueryClient'
 
 export function fetchPersonalFMWithReactQuery() {
   return reactQueryClient.fetchQuery(

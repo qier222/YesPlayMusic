@@ -1,13 +1,16 @@
-import ArtistInline from '@/components/ArtistsInline'
-import IconButton from '@/components/IconButton'
-import Slider from '@/components/Slider'
-import SvgIcon from '@/components/SvgIcon'
+import ArtistInline from './ArtistsInline'
+import IconButton from './IconButton'
+import Slider from './Slider'
+import SvgIcon from './SvgIcon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/hooks/useUserLikedTracksIDs'
-import { player, state } from '@/store'
-import { resizeImage } from '@/utils/common'
-import { State as PlayerState, Mode as PlayerMode } from '@/utils/player'
+} from '@/renderer/hooks/useUserLikedTracksIDs'
+import { player, state } from '@/renderer/store'
+import { resizeImage } from '@/renderer/utils/common'
+import {
+  State as PlayerState,
+  Mode as PlayerMode,
+} from '@/renderer/utils/player'
 
 const PlayingTrack = () => {
   const navigate = useNavigate()

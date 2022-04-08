@@ -36,7 +36,7 @@ export default defineConfig({
         { 'react-query': ['useQuery', 'useMutation', 'useInfiniteQuery'] },
         { 'react-router-dom': ['useNavigate', 'useParams'] },
         { 'react-hot-toast': ['toast'] },
-        { 'react-use': ['useEffectOnce']},
+        { 'react-use': ['useEffectOnce'] },
         { valtio: ['useSnapshot'] },
       ],
     }),
@@ -60,7 +60,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': join(__dirname, './src/renderer'),
+      '@': join(__dirname, './src'),
     },
   },
   clearScreen: false,

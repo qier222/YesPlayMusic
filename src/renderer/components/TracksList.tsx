@@ -1,14 +1,14 @@
 import { memo } from 'react'
 import { NavLink } from 'react-router-dom'
-import ArtistInline from '@/components/ArtistsInline'
-import Skeleton from '@/components/Skeleton'
-import SvgIcon from '@/components/SvgIcon'
-import useUser from '@/hooks/useUser'
+import ArtistInline from '@/renderer/components/ArtistsInline'
+import Skeleton from '@/renderer/components/Skeleton'
+import SvgIcon from '@/renderer/components/SvgIcon'
+import useUser from '@/renderer/hooks/useUser'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/hooks/useUserLikedTracksIDs'
-import { formatDuration, resizeImage } from '@/utils/common'
-import { player } from '@/store'
+} from '@/renderer/hooks/useUserLikedTracksIDs'
+import { formatDuration, resizeImage } from '@/renderer/utils/common'
+import { player } from '@/renderer/store'
 
 const Track = memo(
   ({

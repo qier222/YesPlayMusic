@@ -1,6 +1,6 @@
 import Player from './Player'
-import { player, state } from '@/store'
-import { resizeImage } from '@/utils/common'
+import { player, state } from '@/renderer/store'
+import { resizeImage } from '@/renderer/utils/common'
 import { average } from 'color.js'
 import { colord } from 'colord'
 import IconButton from '../IconButton'

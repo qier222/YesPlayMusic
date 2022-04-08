@@ -1,25 +1,26 @@
-import { player } from '@/store'
+import { player } from '@/renderer/store'
 import SvgIcon from './SvgIcon'
+import { IpcChannels } from '@/main/IpcChannelsName'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
 
   useEffectOnce(() => {
-    return window.ipcRenderer?.on('is-maximized', (e, value) => {
+    return window.ipcRenderer?.on(IpcChannels.IsMaximized, (e, value) => {
       setIsMaximized(value)
     })
   })
 
   const minimize = () => {
-    window.ipcRenderer?.send('minimize')
+    window.ipcRenderer?.send(IpcChannels.Minimize)
   }
 
   const maxRestore = () => {
-    window.ipcRenderer?.send('maximize-or-unmaximize')
+    window.ipcRenderer?.send(IpcChannels.MaximizeOrUnmaximize)
   }
 
   const close = () => {
-    window.ipcRenderer?.send('close')
+    window.ipcRenderer?.send(IpcChannels.Close)
   }
 
   return (

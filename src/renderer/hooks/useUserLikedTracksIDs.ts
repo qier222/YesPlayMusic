@@ -1,8 +1,9 @@
-import type { FetchUserLikedTracksIDsResponse } from '@/api/user'
-import { UserApiNames, fetchUserLikedTracksIDs } from '@/api/user'
-import { likeATrack } from '@/api/track'
+import type { FetchUserLikedTracksIDsResponse } from '@/renderer/api/user'
+import { UserApiNames, fetchUserLikedTracksIDs } from '@/renderer/api/user'
+import { likeATrack } from '@/renderer/api/track'
 import useUser from './useUser'
 import { useQueryClient } from 'react-query'
+import { IpcChannels } from '@/main/IpcChannelsName'
 
 export default function useUserLikedTracksIDs() {
   const { data: user } = useUser()
@@ -15,7 +16,7 @@ export default function useUserLikedTracksIDs() {
       enabled: !!(uid && uid !== 0),
       refetchOnWindowFocus: true,
       placeholderData: (): FetchUserLikedTracksIDsResponse | undefined =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: 'likelist',
           query: {
             uid,

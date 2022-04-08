@@ -12,7 +12,7 @@
     "jsx": "react-jsx",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/renderer/*"]
+      "@/*": ["src/*"]
     }
   },
   "exclude": ["node_modules", "./dist"]

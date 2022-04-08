@@ -5,10 +5,10 @@ import {
   fetchLoginQrCodeKey,
   loginWithEmail,
   loginWithPhone,
-} from '@/api/auth'
-import SvgIcon from '@/components/SvgIcon'
-import { state } from '@/store'
-import { setCookies } from '@/utils/cookie'
+} from '@/renderer/api/auth'
+import SvgIcon from '@/renderer/components/SvgIcon'
+import { state } from '@/renderer/store'
+import { setCookies } from '@/renderer/utils/cookie'
 import { useInterval } from 'react-use'
 
 enum Method {

@@ -1,13 +1,13 @@
 import { memo } from 'react'
-import ArtistInline from '@/components/ArtistsInline'
-import Skeleton from '@/components/Skeleton'
-import SvgIcon from '@/components/SvgIcon'
+import ArtistInline from '@/renderer/components/ArtistsInline'
+import Skeleton from '@/renderer/components/Skeleton'
+import SvgIcon from '@/renderer/components/SvgIcon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/hooks/useUserLikedTracksIDs'
-import { player } from '@/store'
-import { formatDuration } from '@/utils/common'
-import { State as PlayerState } from '@/utils/player'
+} from '@/renderer/hooks/useUserLikedTracksIDs'
+import { player } from '@/renderer/store'
+import { formatDuration } from '@/renderer/utils/common'
+import { State as PlayerState } from '@/renderer/utils/player'
 
 const enableRenderLog = true
 

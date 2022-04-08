@@ -1,7 +1,7 @@
-import ArtistInline from '@/components/ArtistsInline'
-import Skeleton from '@/components/Skeleton'
-import { player } from '@/store'
-import { resizeImage } from '@/utils/common'
+import ArtistInline from '@/renderer/components/ArtistsInline'
+import Skeleton from '@/renderer/components/Skeleton'
+import { player } from '@/renderer/store'
+import { resizeImage } from '@/renderer/utils/common'
 import SvgIcon from './SvgIcon'
 
 const Track = ({

@@ -1,7 +1,11 @@
-import { fetchPlaylist } from '@/api/playlist'
-import { PlaylistApiNames } from '@/api/playlist'
-import type { FetchPlaylistParams, FetchPlaylistResponse } from '@/api/playlist'
-import reactQueryClient from '@/utils/reactQueryClient'
+import { fetchPlaylist } from '@/renderer/api/playlist'
+import { PlaylistApiNames } from '@/renderer/api/playlist'
+import type {
+  FetchPlaylistParams,
+  FetchPlaylistResponse,
+} from '@/renderer/api/playlist'
+import reactQueryClient from '@/renderer/utils/reactQueryClient'
+import { IpcChannels } from '@/main/IpcChannelsName'
 
 const fetch = (params: FetchPlaylistParams, noCache?: boolean) => {
   return fetchPlaylist(params, !!noCache)
@@ -18,7 +22,7 @@ export default function usePlaylist(
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
       refetchOnWindowFocus: true,
       placeholderData: (): FetchPlaylistResponse | undefined =>
-        window.ipcRenderer?.sendSync('getApiCacheSync', {
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: 'playlist/detail',
           query: {
             id: params.id,
