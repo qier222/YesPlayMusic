@@ -152,8 +152,10 @@ export class Player {
   }
 
   private async _initFM() {
-    const response = await fetchPersonalFMWithReactQuery()
-    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
+    if (this.fmTrackList?.length <= 5) {
+      const response = await fetchPersonalFMWithReactQuery()
+      this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
+    }
 
     const trackId = this.fmTrackList[0]
     const track = await this._fetchTrack(trackId)
