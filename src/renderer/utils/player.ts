@@ -158,7 +158,7 @@ export class Player {
     const track = await this._fetchTrack(trackId)
     if (track) this.fmTrack = track
 
-    if (this.fmTrackList.length <= 5) this._loadMoreFMTracks()
+    this._loadMoreFMTracks()
   }
 
   private _setupProgressInterval() {
