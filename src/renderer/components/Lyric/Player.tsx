@@ -30,9 +30,7 @@ const PlayingTrack = () => {
     [playerSnapshot.trackListSource]
   )
 
-  const playerMode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
-
-  const hasListSource = playerMode !== PlayerMode.FM && trackListSource?.type
+  const hasListSource = playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
 
   const toTrackListSource = () => {
     if (!hasListSource) return
