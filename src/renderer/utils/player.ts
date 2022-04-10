@@ -152,12 +152,13 @@ export class Player {
   }
 
   private async _initFM() {
-    const response = await fetchPersonalFMWithReactQuery()
-    this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
+    if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
 
     const trackId = this.fmTrackList[0]
     const track = await this._fetchTrack(trackId)
     if (track) this.fmTrack = track
+
+    this._loadMoreFMTracks()
   }
 
   private _setupProgressInterval() {
@@ -255,12 +256,6 @@ export class Player {
   }
 
   private async _nextFMTrack() {
-    const loadMoreTracks = async () => {
-      if (this.fmTrackList.length <= 5) {
-        const response = await fetchPersonalFMWithReactQuery()
-        this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
-      }
-    }
     const prefetchNextTrack = async () => {
       const prefetchTrackID = this.fmTrackList[1]
       const track = await this._fetchTrack(prefetchTrackID)
@@ -271,11 +266,18 @@ export class Player {
     }
 
     this.fmTrackList.shift()
-    if (this.fmTrackList.length === 0) await loadMoreTracks()
+    if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
     this._playTrack()
 
-    this.fmTrackList.length <= 1 ? await loadMoreTracks() : loadMoreTracks()
+    this.fmTrackList.length <= 1 ? await this._loadMoreFMTracks() : this._loadMoreFMTracks()
     prefetchNextTrack()
+  }
+
+  private async _loadMoreFMTracks() {
+    if (this.fmTrackList.length <= 5) {
+      const response = await fetchPersonalFMWithReactQuery()
+      this.fmTrackList.push(...(response?.data?.map(r => r.id) ?? []))
+    }
   }
 
   /**

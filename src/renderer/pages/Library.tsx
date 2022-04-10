@@ -40,7 +40,7 @@ const LikedTracksCard = ({ className }: { className?: string }) => {
         chunk(
           lyric?.lrc.lyric
             ?.split('\n')
-            ?.map(l => l.split(']')[1]?.trim())
+            ?.map(l => l.split(']').pop()?.trim())
             ?.filter(
               l =>
                 l &&

@@ -29,8 +29,11 @@ const PlayingTrack = () => {
     () => playerSnapshot.trackListSource,
     [playerSnapshot.trackListSource]
   )
+
+  const hasListSource = playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
+
   const toTrackListSource = () => {
-    if (!trackListSource?.type) return
+    if (!hasListSource) return
 
     navigate(`/${trackListSource.type}/${trackListSource.id}`)
     state.uiStates.showLyricPanel = false
@@ -40,19 +43,24 @@ const PlayingTrack = () => {
     <div>
       <div
         onClick={toTrackListSource}
-        className='line-clamp-1 text-[22px] font-semibold text-white hover:underline'
+        className={classNames(
+          'line-clamp-1 text-[22px] font-semibold text-white',
+          hasListSource && 'hover:underline'
+        )}
       >
         {track?.name}
       </div>
       <div className='line-clamp-1 -mt-0.5 inline-flex max-h-7 text-white opacity-60'>
         <ArtistInline artists={track?.ar ?? []} />
-        <span>
-          {' '}
-          -{' '}
-          <span onClick={toAlbum} className='hover:underline'>
-            {track?.al.name}
+        {!!track?.al?.id && (
+          <span>
+            {' '}
+            -{' '}
+            <span onClick={toAlbum} className='hover:underline'>
+              {track?.al.name}
+            </span>
           </span>
-        </span>
+        )}
       </div>
     </div>
   )
