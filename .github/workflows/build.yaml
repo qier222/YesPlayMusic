@@ -32,13 +32,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile false
 
-      - name: Build sqlite3 binaries (macOS, Windows)
-        if: runner.os == 'macOS'
-        run: node ./scripts/build.sqlite3.mjs --arm64 --x64
-
-      - name: Build sqlite3 binaries (Linux)
-        if: runner.os == 'Linux'
-        run: node ./scripts/build.sqlite3.mjs --arm64 --arm --x64
+      - name: Build sqlite3 binaries
+        run: node ./scripts/build.sqlite3.js
 
       - name: Install RPM & Pacman (Linux)
         if: runner.os == 'Linux'
