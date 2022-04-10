@@ -102,7 +102,7 @@ const FMCard = () => {
         {/* Track info */}
         <div>
           {track ? (
-            <div className='line-clamp-3 text-xl font-semibold'>
+            <div className='line-clamp-2 text-xl font-semibold'>
               {track?.name}
             </div>
           ) : (
