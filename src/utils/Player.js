@@ -656,7 +656,6 @@ export default class {
   }
 
   pause() {
-    navigator.mediaSession.playbackState = 'paused';
     this._howler?.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
 
     this._howler?.once('fade', () => {
@@ -667,7 +666,6 @@ export default class {
     });
   }
   play() {
-    navigator.mediaSession.playbackState = 'playing';
     if (this._howler?.playing()) return;
 
     this._howler?.play();
