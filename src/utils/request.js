@@ -34,6 +34,10 @@ service.interceptors.request.use(function (config) {
     config.params.realIP = '211.161.244.70';
   }
 
+  if (process.env.REAL_IP) {
+    config.params.realIP = process.env.REAL_IP;
+  }
+
   const proxy = JSON.parse(localStorage.getItem('settings')).proxyConfig;
   if (['HTTP', 'HTTPS'].includes(proxy.protocol)) {
     config.params.proxy = `${proxy.protocol}://${proxy.server}:${proxy.port}`;
