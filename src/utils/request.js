@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { getCookie, doLogout } from '@/utils/auth';
 import router from '@/router';
+import { doLogout, getCookie } from '@/utils/auth';
+import axios from 'axios';
 
 let baseURL = '';
 // Web 和 Electron 跑在不同端口避免同时启动时冲突
@@ -32,6 +32,10 @@ service.interceptors.request.use(function (config) {
 
   if (!process.env.IS_ELECTRON && !config.url.includes('/login')) {
     config.params.realIP = '211.161.244.70';
+  }
+
+  if (process.env.VUE_APP_REAL_IP) {
+    config.params.realIP = process.env.VUE_APP_REAL_IP;
   }
 
   const proxy = JSON.parse(localStorage.getItem('settings')).proxyConfig;
