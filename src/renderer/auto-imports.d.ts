@@ -2,14 +2,23 @@
 // We suggest you to commit this file into source control
 declare global {
   const classNames: typeof import('classnames')['default']
+  const createRef: typeof import('react')['createRef']
+  const forwardRef: typeof import('react')['forwardRef']
+  const lazy: typeof import('react')['lazy']
+  const memo: typeof import('react')['memo']
+  const startTransition: typeof import('react')['startTransition']
   const toast: typeof import('react-hot-toast')['toast']
   const useCallback: typeof import('react')['useCallback']
   const useContext: typeof import('react')['useContext']
   const useDebugValue: typeof import('react')['useDebugValue']
+  const useDeferredValue: typeof import('react')['useDeferredValue']
   const useEffect: typeof import('react')['useEffect']
   const useEffectOnce: typeof import('react-use')['useEffectOnce']
+  const useId: typeof import('react')['useId']
   const useImperativeHandle: typeof import('react')['useImperativeHandle']
   const useInfiniteQuery: typeof import('react-query')['useInfiniteQuery']
+  const useInsertionEffect: typeof import('react')['useInsertionEffect']
+  const useLayoutEffect: typeof import('react')['useLayoutEffect']
   const useMemo: typeof import('react')['useMemo']
   const useMutation: typeof import('react-query')['useMutation']
   const useNavigate: typeof import('react-router-dom')['useNavigate']
@@ -19,5 +28,7 @@ declare global {
   const useRef: typeof import('react')['useRef']
   const useSnapshot: typeof import('valtio')['useSnapshot']
   const useState: typeof import('react')['useState']
+  const useSyncExternalStore: typeof import('react')['useSyncExternalStore']
+  const useTransition: typeof import('react')['useTransition']
 }
 export {}

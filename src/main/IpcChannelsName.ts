@@ -6,4 +6,5 @@ export enum IpcChannels {
   IsMaximized = 'is-maximized',
   GetApiCacheSync = 'get-api-cache-sync',
   DevDbExportJson = 'dev-db-export-json',
+  CacheCoverColor = 'cache-cover-color',
 }
