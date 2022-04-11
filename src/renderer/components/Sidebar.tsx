@@ -3,6 +3,7 @@ import SvgIcon from './SvgIcon'
 import useUserPlaylists from '@/renderer/hooks/useUserPlaylists'
 import { scrollToTop } from '@/renderer/utils/common'
 import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
+import { player } from '@/renderer/store'
 
 interface Tab {
   name: string
@@ -62,7 +63,10 @@ const PrimaryTabs = () => {
 
 const Playlists = () => {
   const { data: playlists } = useUserPlaylists()
+  const playerSnapshot = useSnapshot(player)
+  const currentPlaylistID = useMemo(() => playerSnapshot.playlistID, [playerSnapshot.playlistID])
 
+  const isPlaying = true
   return (
     <div className='mb-16 overflow-auto pb-2'>
       {playlists?.playlist?.map(playlist => (
@@ -77,8 +81,12 @@ const Playlists = () => {
               isActive && 'after:scale-100 after:opacity-100'
             )
           }
+          style={{ justifyContent: 'space-between'}}
         >
           <span className='line-clamp-1'>{playlist.name}</span>
+          {currentPlaylistID == playlist.id
+            &&
+          <SvgIcon className='h-5 w-5' name="play-fill"/>}
         </NavLink>
       ))}
     </div>
