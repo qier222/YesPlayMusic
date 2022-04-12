@@ -72,7 +72,7 @@ const Playlists = () => {
           to={`/playlist/${playlist.id}`}
           className={({ isActive }: { isActive: boolean }) =>
             classNames(
-              'btn-hover-animation line-clamp-1 my-px mx-3 flex cursor-default items-center rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20 flex justify-between',
+              'btn-hover-animation line-clamp-1 my-px mx-3 flex flex cursor-default items-center justify-between rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20',
               isActive && 'after:scale-100 after:opacity-100'
             )
           }
