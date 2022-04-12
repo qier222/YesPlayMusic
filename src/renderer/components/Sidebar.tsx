@@ -4,7 +4,7 @@ import useUserPlaylists from '@/renderer/hooks/useUserPlaylists'
 import { scrollToTop } from '@/renderer/utils/common'
 import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
 import { player } from '@/renderer/store'
-import { Mode } from '@/renderer/utils/player'
+import { Mode, TrackListSourceType } from '@/renderer/utils/player'
 
 const primaryTabs = [
   {
@@ -60,6 +60,10 @@ const Playlists = () => {
     () => playerSnapshot.trackListSource?.id,
     [playerSnapshot.trackListSource]
   )
+  const playlistMode = useMemo(
+    () => playerSnapshot.trackListSource?.type,
+    [playerSnapshot.trackListSource]
+  )
   const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
 
   return (
@@ -78,9 +82,11 @@ const Playlists = () => {
           }
         >
           <span className='line-clamp-1'>{playlist.name}</span>
-          {mode === Mode.PLAYLIST && currentPlaylistID === playlist.id && (
-            <SvgIcon className='h-5 w-5' name='volume-half' />
-          )}
+          {playlistMode === TrackListSourceType.PLAYLIST &&
+            mode === Mode.PLAYLIST &&
+            currentPlaylistID === playlist.id && (
+              <SvgIcon className='h-5 w-5' name='volume-half' />
+            )}
         </NavLink>
       ))}
     </div>

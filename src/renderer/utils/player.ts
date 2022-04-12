@@ -13,7 +13,7 @@ import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 
 type TrackID = number
-enum TrackListSourceType {
+export enum TrackListSourceType {
   ALBUM = 'album',
   PLAYLIST = 'playlist',
 }
