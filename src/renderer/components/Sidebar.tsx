@@ -43,7 +43,7 @@ const PrimaryTabs = () => {
             )
           }
         >
-          <SvgIcon className='mr-3 h-6 w-6' name={tab['icon']} />
+          <SvgIcon className='mr-3 h-6 w-6' name={tab.icon} />
           <span className='font-semibold'>{tab.name}</span>
         </NavLink>
       ))}
