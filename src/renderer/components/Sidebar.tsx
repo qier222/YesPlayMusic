@@ -6,16 +6,8 @@ import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
 import { player } from '@/renderer/store'
 import { Mode } from '@/renderer/utils/player'
 
-interface Tab {
-  name: string
-  icon: string
-  route: string
-}
-interface PrimaryTab extends Tab {
-  icon: string
-}
 
-const primaryTabs: PrimaryTab[] = [
+const primaryTabs = [
   {
     name: '主页',
     icon: 'home',
@@ -31,7 +23,7 @@ const primaryTabs: PrimaryTab[] = [
     icon: 'music-library',
     route: '/library',
   },
-]
+] as const
 
 const PrimaryTabs = () => {
   return (
@@ -52,7 +44,7 @@ const PrimaryTabs = () => {
             )
           }
         >
-          <SvgIcon className='mr-3 h-6 w-6' name={tab.icon} />
+          <SvgIcon className='mr-3 h-6 w-6' name={tab['icon']} />
           <span className='font-semibold'>{tab.name}</span>
         </NavLink>
       ))}
@@ -68,6 +60,10 @@ const Playlists = () => {
   const currentPlaylistID = useMemo(() => playerSnapshot.trackListSource?.id, [playerSnapshot.trackListSource])
   const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
 
+  const playOrPause = () => {
+    player.playOrPause()
+  }
+
   return (
     <div className='mb-16 overflow-auto pb-2'>
       {playlists?.playlist?.map(playlist => (
@@ -82,12 +78,12 @@ const Playlists = () => {
               isActive && 'after:scale-100 after:opacity-100'
             )
           }
-          style={{ justifyContent: 'space-between'}}
+          style={{ justifyContent: 'space-between' }}
         >
           <span className='line-clamp-1'>{playlist.name}</span>
-          {mode == Mode.PLAYLIST && currentPlaylistID == playlist.id 
-            && 
-          <SvgIcon className='h-5 w-5' name="play-fill"/>}
+          {mode == Mode.PLAYLIST && currentPlaylistID == playlist.id
+            &&
+           <SvgIcon className='h-5 w-5' name="volume-half" />}
         </NavLink>
       ))}
     </div>
