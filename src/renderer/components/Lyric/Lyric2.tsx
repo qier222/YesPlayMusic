@@ -61,7 +61,7 @@ const Lyric = ({ className }: { className?: string }) => {
         return (
           <motion.div
             id={String(time)}
-            key={time}
+            key={`${String(index)}-${String(time)}`}
             className={classNames(
               'max-w-[78%] py-[calc(100vw_*_0.0111)] text-white duration-700'
             )}
