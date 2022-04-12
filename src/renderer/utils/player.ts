@@ -44,7 +44,6 @@ let _howler = new Howl({ src: [''], format: ['mp3', 'flac'] })
 export class Player {
   private _track: Track | null = null
   private _trackIndex: number = 0
-  // add current playing playlist info to player
   private _progress: number = 0
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
@@ -270,7 +269,9 @@ export class Player {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
     this._playTrack()
 
-    this.fmTrackList.length <= 1 ? await this._loadMoreFMTracks() : this._loadMoreFMTracks()
+    this.fmTrackList.length <= 1
+      ? await this._loadMoreFMTracks()
+      : this._loadMoreFMTracks()
     prefetchNextTrack()
   }
 
@@ -452,5 +453,5 @@ export class Player {
 }
 
 if (import.meta.env.DEV) {
-  ; (window as any).howler = _howler
+  ;(window as any).howler = _howler
 }

@@ -6,7 +6,6 @@ import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
 import { player } from '@/renderer/store'
 import { Mode } from '@/renderer/utils/player'
 
-
 const primaryTabs = [
   {
     name: '主页',
@@ -57,12 +56,11 @@ const PrimaryTabs = () => {
 const Playlists = () => {
   const { data: playlists } = useUserPlaylists()
   const playerSnapshot = useSnapshot(player)
-  const currentPlaylistID = useMemo(() => playerSnapshot.trackListSource?.id, [playerSnapshot.trackListSource])
+  const currentPlaylistID = useMemo(
+    () => playerSnapshot.trackListSource?.id,
+    [playerSnapshot.trackListSource]
+  )
   const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
-
-  const playOrPause = () => {
-    player.playOrPause()
-  }
 
   return (
     <div className='mb-16 overflow-auto pb-2'>
@@ -74,16 +72,15 @@ const Playlists = () => {
           to={`/playlist/${playlist.id}`}
           className={({ isActive }: { isActive: boolean }) =>
             classNames(
-              'btn-hover-animation line-clamp-1 my-px mx-3 flex cursor-default items-center rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20',
+              'btn-hover-animation line-clamp-1 my-px mx-3 flex cursor-default items-center rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20 flex justify-between',
               isActive && 'after:scale-100 after:opacity-100'
             )
           }
-          style={{ justifyContent: 'space-between' }}
         >
           <span className='line-clamp-1'>{playlist.name}</span>
-          {mode == Mode.PLAYLIST && currentPlaylistID == playlist.id
-            &&
-           <SvgIcon className='h-5 w-5' name="volume-half" />}
+          {mode === Mode.PLAYLIST && currentPlaylistID === playlist.id && (
+            <SvgIcon className='h-5 w-5' name='volume-half' />
+          )}
         </NavLink>
       ))}
     </div>
