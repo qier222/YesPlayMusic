@@ -30,7 +30,8 @@ const PlayingTrack = () => {
     [playerSnapshot.trackListSource]
   )
 
-  const hasListSource = playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
+  const hasListSource =
+    playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
 
   const toTrackListSource = () => {
     if (!hasListSource) return

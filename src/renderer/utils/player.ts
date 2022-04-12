@@ -13,7 +13,7 @@ import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 
 type TrackID = number
-enum TrackListSourceType {
+export enum TrackListSourceType {
   ALBUM = 'album',
   PLAYLIST = 'playlist',
 }
@@ -269,7 +269,9 @@ export class Player {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
     this._playTrack()
 
-    this.fmTrackList.length <= 1 ? await this._loadMoreFMTracks() : this._loadMoreFMTracks()
+    this.fmTrackList.length <= 1
+      ? await this._loadMoreFMTracks()
+      : this._loadMoreFMTracks()
     prefetchNextTrack()
   }
 
