@@ -45,7 +45,6 @@ export class Player {
   private _track: Track | null = null
   private _trackIndex: number = 0
   // add current playing playlist info to player
-  private _playlist = {playlistID: 0}
   private _progress: number = 0
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
@@ -62,7 +61,6 @@ export class Player {
   init(params: { [key: string]: any }) {
     if (params._track) this._track = params._track
     if (params._trackIndex) this._trackIndex = params._trackIndex
-    if (params._playlist) this._playlist = params._playlist
     if (params._volume) this._volume = params._volume
     if (params.state) this.trackList = params.state
     if (params.mode) this.mode = params.mode
@@ -131,12 +129,6 @@ export class Player {
   get track(): Track | null {
     return this.mode === Mode.FM ? this.fmTrack : this._track
   }
-    /**
-   * Get current playing playlistID
-   */
-     get playlistID(): number{
-      return this._playlist.playlistID
-    }
 
   /**
    * Get/Set progress of current track
@@ -401,7 +393,6 @@ export class Player {
       playlist.playlist.trackIds.map(t => t.id),
       autoPlayTrackID
     )
-    this._playlist = {playlistID}
   }
 
   /**
