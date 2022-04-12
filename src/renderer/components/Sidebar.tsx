@@ -85,8 +85,8 @@ const Playlists = () => {
           style={{ justifyContent: 'space-between'}}
         >
           <span className='line-clamp-1'>{playlist.name}</span>
-          {mode == Mode.PLAYLIST && currentPlaylistID == playlist.id 
-            && 
+          {mode == Mode.PLAYLIST && currentPlaylistID == playlist.id
+            &&
           <SvgIcon className='h-5 w-5' name="play-fill"/>}
         </NavLink>
       ))}
