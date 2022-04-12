@@ -39,11 +39,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    minWidth: {
+      type: String,
+      default: 'calc(min(23rem, 100vw))',
+    },
   },
   computed: {
     modalStyles() {
       return {
         width: this.width,
+        minWidth: this.minWidth,
       };
     },
   },

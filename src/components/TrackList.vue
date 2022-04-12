@@ -46,6 +46,9 @@
         @click="addTrackToPlaylist"
         >{{ $t('contextMenu.addToPlaylist') }}</div
       >
+      <div v-show="type !== 'cloudDisk'" class="item" @click="copyLink">{{
+        $t('contextMenu.copyUrl')
+      }}</div>
       <div
         v-if="extraContextMenuItem.includes('removeTrackFromCloudDisk')"
         class="item"
@@ -72,6 +75,7 @@ import { mapActions, mapMutations, mapState } from 'vuex';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { cloudDiskTrackDelete } from '@/api/user';
 import { isAccountLoggedIn } from '@/utils/auth';
+const { clipboard } = require('electron');
 
 import TrackListItem from '@/components/TrackListItem.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
@@ -264,6 +268,12 @@ export default {
           this.$parent.removeTrack(trackID);
         });
       }
+    },
+    copyLink() {
+      clipboard.writeText(
+        `https://music.163.com/song?id=${this.rightClickedTrack.id}`
+      );
+      this.showToast(locale.t('toast.copied'));
     },
     removeTrackFromQueue() {
       this.$store.state.player.removeTrackFromQueue(
