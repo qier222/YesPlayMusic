@@ -40,6 +40,11 @@ const PlayingTrack = () => {
     state.uiStates.showLyricPanel = false
   }
 
+  const toArtist = (id: number) => {
+    navigate(`/artist/${id}`)
+    state.uiStates.showLyricPanel = false
+  }
+
   return (
     <div>
       <div
@@ -52,7 +57,7 @@ const PlayingTrack = () => {
         {track?.name}
       </div>
       <div className='line-clamp-1 -mt-0.5 inline-flex max-h-7 text-white opacity-60'>
-        <ArtistInline artists={track?.ar ?? []} />
+        <ArtistInline artists={track?.ar ?? []} onClick={toArtist} />
         {!!track?.al?.id && (
           <span>
             {' '}

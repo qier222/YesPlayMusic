@@ -2,16 +2,23 @@ const ArtistInline = ({
   artists,
   className,
   disableLink,
+  onClick,
 }: {
   artists: Artist[]
   className?: string
   disableLink?: boolean
+  onClick?: (artistId: number) => void
 }) => {
   if (!artists) return <div></div>
 
   const navigate = useNavigate()
   const handleClick = (id: number) => {
-    id !== 0 && !disableLink && navigate(`/artist/${id}`)
+    if (id === 0 || disableLink) return
+    if (!onClick) {
+      navigate(`/artist/${id}`)
+    } else {
+      onClick(id)
+    }
   }
 
   return (
