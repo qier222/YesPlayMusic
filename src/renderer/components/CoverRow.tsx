@@ -4,6 +4,8 @@ import SvgIcon from '@/renderer/components/SvgIcon'
 import { prefetchAlbum } from '@/renderer/hooks/useAlbum'
 import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
 import { formatDate, resizeImage, scrollToTop } from '@/renderer/utils/common'
+import { player } from '@/renderer/store'
+import { TrackListSourceType } from '@/renderer/utils/player'
 
 export enum Subtitle {
   COPYWRITER = 'copywriter',
@@ -124,6 +126,17 @@ const CoverRow = ({
     if (playlists) prefetchPlaylist({ id })
   }
 
+  const handlePlay = async (id: number) => { 
+    console.log('[CoverRow Component][handlePlay info]', id );
+    
+    if (!id) {
+      toast('无法播放歌单')
+      return
+    }
+    if (albums) await player.playAlbum(id)
+    if (playlists) await player.playPlaylist(id)
+   }
+
   return (
     <div>
       {title && <Title title={title} seeMoreLink={seeMoreLink ?? ''} />}
@@ -151,6 +164,11 @@ const CoverRow = ({
                   onClick={() => goTo(item.id)}
                   imageUrl={getImageUrl(item)}
                   showPlayButton={true}
+                  handlePlay={()=>handlePlay(item.id)}
+                  coverInfo={{
+                    type: albums ? TrackListSourceType.ALBUM : playlists? TrackListSourceType.PLAYLIST : null,
+                    id: item.id
+                  }}
                   roundedClass={artists ? 'rounded-full' : 'rounded-xl'}
                 />
               )}

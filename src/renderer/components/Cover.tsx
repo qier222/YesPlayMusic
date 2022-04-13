@@ -1,21 +1,30 @@
 import SvgIcon from '@/renderer/components/SvgIcon'
+import { player } from "@/renderer/store";
+import { State, TrackListSourceType } from '@/renderer/utils/player'
 
 const Cover = ({
   imageUrl,
   onClick,
+  handlePlay,
   roundedClass = 'rounded-xl',
   showPlayButton = false,
   showHover = true,
   alwaysShowShadow = false,
+  coverInfo,
 }: {
   imageUrl: string
   onClick?: () => void
+  handlePlay?: () => void
   roundedClass?: string
   showPlayButton?: boolean
   showHover?: boolean
   alwaysShowShadow?: boolean
+  coverInfo: { type: TrackListSourceType | null, id: number }
 }) => {
   const [isError, setIsError] = useState(false)
+  const playerSnapshot = useSnapshot(player)
+  const trackListSource = useMemo(() => playerSnapshot.trackListSource, [playerSnapshot.trackListSource])
+  const flag = coverInfo?.type === trackListSource?.type && coverInfo?.id === trackListSource?.id 
 
   return (
     <div onClick={onClick} className='group relative z-0'>
@@ -50,10 +59,10 @@ const Cover = ({
       )}
 
       {/* Play button */}
-      {showPlayButton && (
+      {showPlayButton && coverInfo?.type && (
         <div className='absolute top-0 hidden h-full w-full place-content-center group-hover:grid'>
-          <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-            <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
+          <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]' onClick={handlePlay}>
+            {flag ? <SvgIcon className='ml-0.5 h-6 w-6' name='volume-half' /> : <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />}
           </button>
         </div>
       )}
