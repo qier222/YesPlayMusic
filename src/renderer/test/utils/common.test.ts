@@ -1,0 +1,185 @@
+import {
+  expect,
+  test,
+  describe,
+  afterEach,
+  vi,
+  beforeEach,
+  afterAll,
+  beforeAll,
+} from 'vitest'
+import {
+  resizeImage,
+  formatDate,
+  formatDuration,
+  cacheCoverColor,
+  calcCoverColor,
+  getCoverColor,
+} from '@/renderer/utils/common'
+import { IpcChannels } from '@/main/IpcChannelsName'
+import { APIs } from '@/main/CacheAPIsName'
+
+test('resizeImage', () => {
+  expect(resizeImage('https://test.com/test.jpg', 'xs')).toBe(
+    'https://test.com/test.jpg?param=128y128'
+  )
+  expect(resizeImage('https://test.com/test.jpg', 'sm')).toBe(
+    'https://test.com/test.jpg?param=256y256'
+  )
+  expect(resizeImage('https://test.com/test.jpg', 'md')).toBe(
+    'https://test.com/test.jpg?param=512y512'
+  )
+  expect(resizeImage('https://test.com/test.jpg', 'lg')).toBe(
+    'https://test.com/test.jpg?param=1024y1024'
+  )
+  // test http => https
+  expect(resizeImage('http://test.com/test.jpg', 'xs')).toBe(
+    'https://test.com/test.jpg?param=128y128'
+  )
+  expect(resizeImage('', 'xs')).toBe('')
+})
+
+test('formatDate', () => {
+  const time = 1650590574000
+  expect(formatDate(time)).toBe('2022年04月22日')
+  expect(formatDate(time, 'en')).toBe('Apr 22, 2022')
+  expect(formatDate(time, 'en', 'YYYY-MMM-DD')).toBe('2022-Apr-22')
+  expect(formatDate(time, 'zh-CN')).toBe('2022年04月22日')
+  expect(formatDate(time, 'zh-TW')).toBe('2022年04月22日')
+})
+
+test('formatDuration', () => {
+  expect(formatDuration(1000)).toBe('0:01')
+  expect(formatDuration(60000)).toBe('1:00')
+  expect(formatDuration(3600000)).toBe('1:00:00')
+  expect(formatDuration(3700000)).toBe('1:01:40')
+
+  expect(formatDuration(3600000, 'en', 'hh[hr] mm[min]')).toBe('1 hr')
+  expect(formatDuration(3600000, 'zh-CN', 'hh[hr] mm[min]')).toBe('1 小时')
+  expect(formatDuration(3600000, 'zh-TW', 'hh[hr] mm[min]')).toBe('1 小時')
+  expect(formatDuration(3700000, 'en', 'hh[hr] mm[min]')).toBe('1 hr 1 min')
+  expect(formatDuration(3700000, 'zh-CN', 'hh[hr] mm[min]')).toBe(
+    '1 小时 1 分钟'
+  )
+  expect(formatDuration(3700000, 'zh-TW', 'hh[hr] mm[min]')).toBe(
+    '1 小時 1 分鐘'
+  )
+
+  expect(formatDuration(0)).toBe('0:00')
+  expect(formatDuration(0, 'en', 'hh[hr] mm[min]')).toBe('0 min')
+  expect(formatDuration(0, 'zh-CN', 'hh[hr] mm[min]')).toBe('0 分钟')
+})
+
+test('cacheCoverColor', () => {
+  vi.stubGlobal('ipcRenderer', {
+    send: (channel: IpcChannels, ...args: any[]) => {
+      expect(channel).toBe(IpcChannels.CacheCoverColor)
+      expect(args[0].api).toBe(APIs.CoverColor)
+      expect(args[0].query).toEqual({
+        id: '109951165911363',
+        color: '#fff',
+      })
+    },
+  })
+
+  const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+  expect(
+    cacheCoverColor(
+      'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256',
+      '#fff'
+    )
+  )
+  expect(sendSpy).toHaveBeenCalledTimes(1)
+
+  vi.stubGlobal('ipcRenderer', undefined)
+})
+
+test('calcCoverColor', async () => {
+  vi.mock('color.js', () => {
+    return {
+      average: vi.fn(
+        () =>
+          new Promise(resolve => {
+            resolve('#fff')
+          })
+      ),
+    }
+  })
+
+  vi.stubGlobal('ipcRenderer', {
+    send: (channel: IpcChannels, ...args: any[]) => {
+      expect(channel).toBe(IpcChannels.CacheCoverColor)
+      expect(args[0].api).toBe(APIs.CoverColor)
+      expect(args[0].query).toEqual({
+        id: '109951165911363',
+        color: '#808080',
+      })
+    },
+  })
+
+  const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+
+  expect(
+    await calcCoverColor(
+      'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
+    )
+  ).toBe('#808080')
+
+  expect(sendSpy).toHaveBeenCalledTimes(1)
+  vi.stubGlobal('ipcRenderer', undefined)
+})
+
+describe('getCoverColor', () => {
+  test('hit cache', async () => {
+    vi.stubGlobal('ipcRenderer', {
+      sendSync: (channel: IpcChannels, ...args: any[]) => {
+        expect(channel).toBe(IpcChannels.GetApiCacheSync)
+        expect(args[0].api).toBe(APIs.CoverColor)
+        expect(args[0].query).toEqual({
+          id: '109951165911363',
+        })
+        return '#fff'
+      },
+    })
+
+    const sendSyncSpy = vi.spyOn(window.ipcRenderer as any, 'sendSync')
+
+    expect(
+      await getCoverColor(
+        'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
+      )
+    ).toBe('#fff')
+
+    expect(sendSyncSpy).toHaveBeenCalledTimes(1)
+    vi.stubGlobal('ipcRenderer', undefined)
+  })
+
+  test('did not hit cache', async () => {
+    vi.stubGlobal('ipcRenderer', {
+      sendSync: (channel: IpcChannels, ...args: any[]) => {
+        expect(channel).toBe(IpcChannels.GetApiCacheSync)
+        expect(args[0].api).toBe(APIs.CoverColor)
+        expect(args[0].query).toEqual({
+          id: '109951165911363',
+        })
+        return undefined
+      },
+      send: () => {
+        //
+      },
+    })
+
+    const sendSyncSpy = vi.spyOn(window.ipcRenderer as any, 'sendSync')
+    const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+
+    expect(
+      await getCoverColor(
+        'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
+      )
+    ).toBe('#808080')
+
+    expect(sendSyncSpy).toHaveBeenCalledTimes(1)
+    expect(sendSpy).toHaveBeenCalledTimes(1)
+    vi.stubGlobal('ipcRenderer', undefined)
+  })
+})

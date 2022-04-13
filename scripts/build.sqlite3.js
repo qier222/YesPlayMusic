@@ -4,7 +4,7 @@ const fs = require('fs')
 const minimist = require('minimist')
 const pc = require('picocolors')
 const releases = require('electron-releases')
-const pkg = require('../package.json')
+const pkg = require(`${process.cwd()}/package.json`)
 const axios = require('axios')
 const { execSync } = require('child_process')
 
@@ -21,8 +21,10 @@ const isWin = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 
-if (!fs.existsSync('./dist/main')) {
-  fs.mkdirSync('./dist/main', {
+const projectDir = process.cwd()
+
+if (!fs.existsSync(`${projectDir}/dist/main`)) {
+  fs.mkdirSync(`${projectDir}/dist/main`, {
     recursive: true,
   })
 }
@@ -33,7 +35,7 @@ const download = async arch => {
     console.log(pc.red('No electron module version found! Skip download.'))
     return false
   }
-  const dir = './tmp/better-sqlite3'
+  const dir = `${projectDir}/tmp/better-sqlite3`
   const fileName = `better-sqlite3-v${betterSqlite3Version}-electron-v${electronModuleVersion}-${process.platform}-${arch}`
   const zipFileName = `${fileName}.tar.gz`
   const url = `https://github.com/JoshuaWise/better-sqlite3/releases/download/v${betterSqlite3Version}/${zipFileName}`
@@ -67,7 +69,7 @@ const download = async arch => {
   try {
     fs.copyFileSync(
       `${dir}/build/Release/better_sqlite3.node`,
-      `./dist/main/better_sqlite3_${arch}.node`
+      `${projectDir}/dist/main/better_sqlite3_${arch}.node`
     )
   } catch (e) {
     console.log(pc.red('Copy failed! Skip copy.', e))
@@ -90,15 +92,15 @@ const build = async arch => {
 
   console.log(pc.cyan(`Building for ${arch}...`))
   await rebuild({
-    buildPath: process.cwd(),
+    buildPath: projectDir,
     electronVersion,
     arch: arch,
   })
     .then(() => {
       console.info('Build succeeded')
       fs.copyFileSync(
-        './node_modules/better-sqlite3/build/Release/better_sqlite3.node',
-        `./dist/main/better_sqlite3_${arch}.node`
+        `${projectDir}/node_modules/better-sqlite3/build/Release/better_sqlite3.node`,
+        `${projectDir}/dist/main/better_sqlite3_${arch}.node`
       )
     })
     .catch(e => {

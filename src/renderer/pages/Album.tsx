@@ -279,18 +279,22 @@ const MoreAlbum = ({ album }: { album: Album | undefined }) => {
   return (
     <div>
       <div className='my-5 h-px w-full bg-gray-100 dark:bg-gray-800'></div>
-      <div className='pl-px text-[1.375rem] font-semibold text-gray-800 dark:text-gray-100'>
-        More by{' '}
-        <NavLink
-          to={`/artist/${album?.artist?.id}`}
-          className='cursor-default hover:underline'
-        >
-          {album?.artist.name}
-        </NavLink>
-      </div>
+      {!isLoading && albums?.hotAlbums?.length && (
+        <div className='pl-px text-[1.375rem] font-semibold text-gray-800 dark:text-gray-100'>
+          More by{' '}
+          <NavLink
+            to={`/artist/${album?.artist?.id}`}
+            className='cursor-default hover:underline'
+          >
+            {album?.artist.name}
+          </NavLink>
+        </div>
+      )}
       <div className='mt-3'>
         <CoverRow
-          albums={filteredAlbums}
+          albums={
+            filteredAlbums.length ? filteredAlbums : albums?.hotAlbums || []
+          }
           subtitle={Subtitle.TYPE_RELEASE_YEAR}
           isSkeleton={isLoading}
           rows={1}

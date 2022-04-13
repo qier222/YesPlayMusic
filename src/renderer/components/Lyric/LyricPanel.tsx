@@ -1,7 +1,6 @@
 import Player from './Player'
 import { player, state } from '@/renderer/store'
-import { resizeImage } from '@/renderer/utils/common'
-import { average } from 'color.js'
+import { getCoverColor } from '@/renderer/utils/common'
 import { colord } from 'colord'
 import IconButton from '../IconButton'
 import SvgIcon from '../SvgIcon'
@@ -16,21 +15,11 @@ const LyricPanel = () => {
 
   const [bgColor, setBgColor] = useState({ from: '#222', to: '#222' })
   useEffect(() => {
-    const cover = resizeImage(track?.al?.picUrl ?? '', 'xs')
-    if (cover) {
-      average(cover, { amount: 1, format: 'hex', sample: 1 }).then(color => {
-        let c = colord(color as string)
-        const hsl = c.toHsl()
-        if (hsl.s > 50) c = colord({ ...hsl, s: 50 })
-        if (hsl.l > 50) c = colord({ ...c.toHsl(), l: 50 })
-        if (hsl.l < 30) c = colord({ ...c.toHsl(), l: 30 })
-        const to = c.darken(0.15).rotate(-5).toHex()
-        setBgColor({
-          from: c.toHex(),
-          to,
-        })
-      })
-    }
+    getCoverColor(track?.al?.picUrl || '').then(color => {
+      if (!color) return
+      const to = colord(color).darken(0.15).rotate(-5).toHex()
+      setBgColor({ from: color, to })
+    })
   }, [track?.al?.picUrl])
 
   return (

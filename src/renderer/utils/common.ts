@@ -15,14 +15,12 @@ export function resizeImage(
   size: 'xs' | 'sm' | 'md' | 'lg'
 ): string {
   if (!url) return ''
+
   const sizeMap = {
     xs: '128',
     sm: '256',
     md: '512',
     lg: '1024',
-  }
-  if (!Object.keys(sizeMap).includes(size)) {
-    console.error(`Invalid cover size: ${size}`)
   }
   return `${url}?param=${sizeMap[size]}y${sizeMap[size]}`.replace(
     'http://',
@@ -48,7 +46,7 @@ export const storage = {
  */
 export function formatDate(
   timestamp: number,
-  locale: 'en' | 'zh-TW' | 'zh-CN' = 'en',
+  locale: 'en' | 'zh-TW' | 'zh-CN' = 'zh-CN',
   format: string = 'default'
 ): string {
   if (!timestamp) return ''
@@ -67,11 +65,9 @@ export function formatDate(
  */
 export function formatDuration(
   milliseconds: number,
-  locale: 'en' | 'zh-TW' | 'zh-CN' = 'en',
+  locale: 'en' | 'zh-TW' | 'zh-CN' = 'zh-CN',
   format: 'hh:mm:ss' | 'hh[hr] mm[min]' = 'hh:mm:ss'
 ): string {
-  if (!milliseconds) return ''
-
   dayjs.extend(duration)
 
   const time = dayjs.duration(milliseconds)
@@ -98,16 +94,15 @@ export function formatDuration(
         mins: '分鐘',
       },
     }
+
     return hours !== '0'
-      ? `${hours} ${units[locale].hours} ${mins}`
+      ? `${hours} ${units[locale].hours}${
+          mins === '0' ? '' : ` ${mins} ${units[locale].mins}`
+        }`
       : `${mins} ${units[locale].mins}`
   }
 
   return String(milliseconds)
-}
-
-export function sleep(time: number) {
-  return new Promise(resolve => setTimeout(resolve, time))
 }
 
 export function scrollToTop(smooth = false) {
