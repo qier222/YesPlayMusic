@@ -48,6 +48,11 @@ function parseLyric(lrc: string): ParsedLyric[] {
     return low
   }
 
+  function trimContent(content: string): string {
+    const t = content.trim()
+    return t.length < 1 ? content : t
+  }
+
   for (const line of lrc.trim().matchAll(extractLrcRegex)) {
     const { lyricTimestamps, content } = line.groups as {
       lyricTimestamps: string
@@ -80,9 +85,4 @@ function parseLyric(lrc: string): ParsedLyric[] {
   }
 
   return parsedLyrics
-}
-
-function trimContent(content: string): string {
-  const t = content.trim()
-  return t.length < 1 ? content : t
 }

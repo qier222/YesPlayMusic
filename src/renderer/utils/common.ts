@@ -79,7 +79,7 @@ export function formatDuration(
     return hours !== '0'
       ? `${hours}:${mins.padStart(2, '0')}:${seconds}`
       : `${mins}:${seconds}`
-  } else if (format === 'hh[hr] mm[min]') {
+  } else {
     const units = {
       en: {
         hours: 'hr',
