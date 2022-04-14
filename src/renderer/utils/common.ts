@@ -101,8 +101,6 @@ export function formatDuration(
         }`
       : `${mins} ${units[locale].mins}`
   }
-
-  return String(milliseconds)
 }
 
 export function scrollToTop(smooth = false) {

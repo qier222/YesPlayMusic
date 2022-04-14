@@ -1,13 +1,4 @@
-import {
-  expect,
-  test,
-  describe,
-  afterEach,
-  vi,
-  beforeEach,
-  afterAll,
-  beforeAll,
-} from 'vitest'
+import { expect, test, describe, vi } from 'vitest'
 import {
   resizeImage,
   formatDate,
@@ -15,6 +6,7 @@ import {
   cacheCoverColor,
   calcCoverColor,
   getCoverColor,
+  storage,
 } from '@/renderer/utils/common'
 import { IpcChannels } from '@/main/IpcChannelsName'
 import { APIs } from '@/main/CacheAPIsName'
@@ -182,4 +174,29 @@ describe('getCoverColor', () => {
     expect(sendSpy).toHaveBeenCalledTimes(1)
     vi.stubGlobal('ipcRenderer', undefined)
   })
+})
+
+test('storage', () => {
+  const mockLocalStorage: any = {
+    test: {
+      key: 'value',
+    },
+  }
+
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => {
+      return mockLocalStorage[key] ?? undefined
+    },
+    setItem: (key: string, value: string) => {
+      expect(key).toBe('test')
+      expect(value).toEqual(`{"key":"value2"}`)
+      mockLocalStorage[key] = value
+    },
+  })
+
+  expect(storage.set('test', { key: 'value2' })).toBe(undefined)
+  expect(storage.get('test')).toEqual({ key: 'value2' })
+  expect(storage.get('test2')).toBe(null)
+
+  vi.stubGlobal('localStorage', undefined)
 })
