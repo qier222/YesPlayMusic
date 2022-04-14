@@ -8,7 +8,11 @@ import TracksAlbum from '@/renderer/components/TracksAlbum'
 import useAlbum from '@/renderer/hooks/useAlbum'
 import useArtistAlbums from '@/renderer/hooks/useArtistAlbums'
 import { player } from '@/renderer/store'
-import { State as PlayerState } from '@/renderer/utils/player'
+import {
+  Mode as PlayerMode,
+  State as PlayerState,
+  TrackListSourceType,
+} from '@/renderer/utils/player'
 import {
   formatDate,
   formatDuration,
@@ -22,45 +26,21 @@ import useUserAlbums, {
 import useUser from '@/renderer/hooks/useUser'
 
 const PlayButton = ({
-  album,
-  handlePlay,
+  onClick,
   isLoading,
+  isPlaying,
 }: {
-  album: Album | undefined
+  onClick: () => void
   isLoading: boolean
-  handlePlay: () => void
+  isPlaying: boolean
 }) => {
-  const playerSnapshot = useSnapshot(player)
-  const isPlaying = useMemo(
-    () => playerSnapshot.state === PlayerState.PLAYING,
-    [playerSnapshot.state]
-  )
-  const isThisAlbumPlaying = useMemo(
-    () =>
-      playerSnapshot.trackListSource?.type === 'album' &&
-      playerSnapshot.trackListSource?.id === album?.id,
-    [playerSnapshot.trackListSource, album?.id]
-  )
-
-  const wrappedHandlePlay = () => {
-    if (isPlaying && isThisAlbumPlaying) {
-      player.pause()
-      return
-    }
-    if (!isPlaying && isThisAlbumPlaying) {
-      player.play()
-      return
-    }
-    handlePlay()
-  }
-
   return (
-    <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
+    <Button onClick={onClick} isSkelton={isLoading}>
       <SvgIcon
-        name={isPlaying && isThisAlbumPlaying ? 'pause' : 'play'}
+        name={isPlaying ? 'pause' : 'play'}
         className='mr-1 -ml-1 h-6 w-6'
       />
-      {isPlaying && isThisAlbumPlaying ? '暂停' : '播放'}
+      {isPlaying ? '暂停' : '播放'}
     </Button>
   )
 }
@@ -89,6 +69,23 @@ const Header = ({
     return !!userAlbums?.data?.find(a => a.id === album.id)
   }, [album, userAlbums?.data])
   const mutationLikeAAlbum = useMutationLikeAAlbum()
+
+  const playerSnapshot = useSnapshot(player)
+  const isThisAlbumPlaying = useMemo(
+    () =>
+      playerSnapshot.mode === PlayerMode.PLAYLIST &&
+      playerSnapshot.trackListSource?.type === TrackListSourceType.ALBUM &&
+      playerSnapshot.trackListSource?.id === album?.id,
+    [playerSnapshot.trackListSource, album?.id]
+  )
+
+  const wrappedHandlePlay = () => {
+    if (isThisAlbumPlaying) {
+      player.playOrPause()
+    } else {
+      handlePlay()
+    }
+  }
 
   return (
     <>
@@ -196,7 +193,16 @@ const Header = ({
 
           {/*  Buttons */}
           <div className='mt-5 flex gap-4'>
-            <PlayButton {...{ album, handlePlay, isLoading }} />
+            <PlayButton
+              onClick={wrappedHandlePlay}
+              isLoading={isLoading}
+              isPlaying={
+                isThisAlbumPlaying &&
+                [PlayerState.PLAYING, PlayerState.LOADING].includes(
+                  playerSnapshot.state
+                )
+              }
+            />
 
             <Button
               color={ButtonColor.Gray}
