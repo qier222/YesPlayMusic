@@ -12,8 +12,33 @@ import useUserPlaylists, {
   useMutationLikeAPlaylist,
 } from '@/renderer/hooks/useUserPlaylists'
 import useUser from '@/renderer/hooks/useUser'
+import {
+  Mode as PlayerMode,
+  TrackListSourceType,
+  State as PlayerState,
+} from '@/renderer/utils/player'
 
 const enableRenderLog = true
+
+const PlayButton = ({
+  onClick,
+  isLoading,
+  isPlaying,
+}: {
+  onClick: () => void
+  isLoading: boolean
+  isPlaying: boolean
+}) => {
+  return (
+    <Button onClick={onClick} isSkelton={isLoading}>
+      <SvgIcon
+        name={isPlaying ? 'pause' : 'play'}
+        className='-ml-1 mr-1 h-6 w-6'
+      />
+      {isPlaying ? '暂停' : '播放'}
+    </Button>
+  )
+}
 
 const Header = memo(
   ({
@@ -41,6 +66,23 @@ const Header = memo(
       if (!playlist || !user) return false
       return playlist.creator.userId === user?.profile?.userId
     }, [playlist, user])
+
+    const playerSnapshot = useSnapshot(player)
+    const isThisPlaylistPlaying = useMemo(
+      () =>
+        playerSnapshot.mode === PlayerMode.PLAYLIST &&
+        playerSnapshot.trackListSource?.type === TrackListSourceType.PLAYLIST &&
+        playerSnapshot.trackListSource?.id === playlist?.id,
+      [playerSnapshot.trackListSource, playlist?.id]
+    )
+
+    const wrappedHandlePlay = () => {
+      if (isThisPlaylistPlaying) {
+        player.playOrPause()
+      } else {
+        handlePlay()
+      }
+    }
 
     return (
       <>
@@ -127,10 +169,16 @@ const Header = memo(
 
             {/* <!-- Buttons --> */}
             <div className='mt-5 flex gap-4'>
-              <Button onClick={() => handlePlay()} isSkelton={isLoading}>
-                <SvgIcon name='play' className='-ml-1 mr-1 h-6 w-6' />
-                播放
-              </Button>
+              <PlayButton
+                onClick={wrappedHandlePlay}
+                isLoading={isLoading}
+                isPlaying={
+                  isThisPlaylistPlaying &&
+                  [PlayerState.PLAYING, PlayerState.LOADING].includes(
+                    playerSnapshot.state
+                  )
+                }
+              />
 
               {!isThisPlaylistCreatedByCurrentUser && (
                 <Button
