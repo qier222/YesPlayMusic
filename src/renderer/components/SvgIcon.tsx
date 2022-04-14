@@ -1,4 +1,4 @@
-type SvgName =
+export type SvgName =
   | 'back'
   | 'dislike'
   | 'dj'
@@ -35,6 +35,7 @@ type SvgName =
   | 'volume-mute'
   | 'volume'
   | 'windows-close'
+  | 'windows-minimize'
   | 'windows-maximize'
   | 'windows-un-maximize'
   | 'x'

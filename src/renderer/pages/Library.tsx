@@ -1,5 +1,5 @@
 import CoverRow, { Subtitle } from '@/renderer/components/CoverRow'
-import SvgIcon from '@/renderer/components/SvgIcon'
+import SvgIcon, { SvgName } from '@/renderer/components/SvgIcon'
 import useUserAlbums from '@/renderer/hooks/useUserAlbums'
 import useLyric from '@/renderer/hooks/useLyric'
 import usePlaylist from '@/renderer/hooks/usePlaylist'
@@ -105,7 +105,7 @@ const OtherCard = ({
   className,
 }: {
   name: string
-  icon: string
+  icon: SvgName
   className?: string
 }) => {
   return (
