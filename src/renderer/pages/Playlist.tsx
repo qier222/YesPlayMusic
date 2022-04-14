@@ -21,16 +21,37 @@ import {
 const enableRenderLog = true
 
 const PlayButton = ({
-  onClick,
+  playlist,
+  handlePlay,
   isLoading,
-  isPlaying,
 }: {
-  onClick: () => void
+  playlist: Playlist | undefined
+  handlePlay: () => void
   isLoading: boolean
-  isPlaying: boolean
 }) => {
+  const playerSnapshot = useSnapshot(player)
+  const isThisPlaylistPlaying = useMemo(
+    () =>
+      playerSnapshot.mode === PlayerMode.PLAYLIST &&
+      playerSnapshot.trackListSource?.type === TrackListSourceType.PLAYLIST &&
+      playerSnapshot.trackListSource?.id === playlist?.id,
+    [playerSnapshot.trackListSource, playlist?.id]
+  )
+
+  const wrappedHandlePlay = () => {
+    if (isThisPlaylistPlaying) {
+      player.playOrPause()
+    } else {
+      handlePlay()
+    }
+  }
+
+  const isPlaying =
+    isThisPlaylistPlaying &&
+    [PlayerState.PLAYING, PlayerState.LOADING].includes(playerSnapshot.state)
+
   return (
-    <Button onClick={onClick} isSkelton={isLoading}>
+    <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
       <SvgIcon
         name={isPlaying ? 'pause' : 'play'}
         className='-ml-1 mr-1 h-6 w-6'
@@ -66,23 +87,6 @@ const Header = memo(
       if (!playlist || !user) return false
       return playlist.creator.userId === user?.profile?.userId
     }, [playlist, user])
-
-    const playerSnapshot = useSnapshot(player)
-    const isThisPlaylistPlaying = useMemo(
-      () =>
-        playerSnapshot.mode === PlayerMode.PLAYLIST &&
-        playerSnapshot.trackListSource?.type === TrackListSourceType.PLAYLIST &&
-        playerSnapshot.trackListSource?.id === playlist?.id,
-      [playerSnapshot.trackListSource, playlist?.id]
-    )
-
-    const wrappedHandlePlay = () => {
-      if (isThisPlaylistPlaying) {
-        player.playOrPause()
-      } else {
-        handlePlay()
-      }
-    }
 
     return (
       <>
@@ -169,16 +173,7 @@ const Header = memo(
 
             {/* <!-- Buttons --> */}
             <div className='mt-5 flex gap-4'>
-              <PlayButton
-                onClick={wrappedHandlePlay}
-                isLoading={isLoading}
-                isPlaying={
-                  isThisPlaylistPlaying &&
-                  [PlayerState.PLAYING, PlayerState.LOADING].includes(
-                    playerSnapshot.state
-                  )
-                }
-              />
+              <PlayButton {...{ playlist, handlePlay, isLoading }} />
 
               {!isThisPlaylistCreatedByCurrentUser && (
                 <Button

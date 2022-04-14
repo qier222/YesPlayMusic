@@ -26,16 +26,37 @@ import useUserAlbums, {
 import useUser from '@/renderer/hooks/useUser'
 
 const PlayButton = ({
-  onClick,
+  album,
+  handlePlay,
   isLoading,
-  isPlaying,
 }: {
-  onClick: () => void
+  album: Album | undefined
+  handlePlay: () => void
   isLoading: boolean
-  isPlaying: boolean
 }) => {
+  const playerSnapshot = useSnapshot(player)
+  const isThisAlbumPlaying = useMemo(
+    () =>
+      playerSnapshot.mode === PlayerMode.PLAYLIST &&
+      playerSnapshot.trackListSource?.type === TrackListSourceType.ALBUM &&
+      playerSnapshot.trackListSource?.id === album?.id,
+    [playerSnapshot.trackListSource, album?.id]
+  )
+
+  const isPlaying =
+    isThisAlbumPlaying &&
+    [PlayerState.PLAYING, PlayerState.LOADING].includes(playerSnapshot.state)
+
+  const wrappedHandlePlay = () => {
+    if (isThisAlbumPlaying) {
+      player.playOrPause()
+    } else {
+      handlePlay()
+    }
+  }
+
   return (
-    <Button onClick={onClick} isSkelton={isLoading}>
+    <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
       <SvgIcon
         name={isPlaying ? 'pause' : 'play'}
         className='mr-1 -ml-1 h-6 w-6'
@@ -69,23 +90,6 @@ const Header = ({
     return !!userAlbums?.data?.find(a => a.id === album.id)
   }, [album, userAlbums?.data])
   const mutationLikeAAlbum = useMutationLikeAAlbum()
-
-  const playerSnapshot = useSnapshot(player)
-  const isThisAlbumPlaying = useMemo(
-    () =>
-      playerSnapshot.mode === PlayerMode.PLAYLIST &&
-      playerSnapshot.trackListSource?.type === TrackListSourceType.ALBUM &&
-      playerSnapshot.trackListSource?.id === album?.id,
-    [playerSnapshot.trackListSource, album?.id]
-  )
-
-  const wrappedHandlePlay = () => {
-    if (isThisAlbumPlaying) {
-      player.playOrPause()
-    } else {
-      handlePlay()
-    }
-  }
 
   return (
     <>
@@ -193,16 +197,7 @@ const Header = ({
 
           {/*  Buttons */}
           <div className='mt-5 flex gap-4'>
-            <PlayButton
-              onClick={wrappedHandlePlay}
-              isLoading={isLoading}
-              isPlaying={
-                isThisAlbumPlaying &&
-                [PlayerState.PLAYING, PlayerState.LOADING].includes(
-                  playerSnapshot.state
-                )
-              }
-            />
+            <PlayButton {...{ album, handlePlay, isLoading }} />
 
             <Button
               color={ButtonColor.Gray}
