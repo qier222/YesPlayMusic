@@ -45,6 +45,7 @@ jobs:
       - name: Install UNM dependencies for Windows
         if: runner.os == 'Windows'
         run: |
+          shopt -s expand_aliases
           alias addpkg="yarn add --ignore-platform --ignore-optional"
           addpkg @unblockneteasemusic/rust-napi-win32-x64-msvc
         shell: bash
@@ -52,6 +53,7 @@ jobs:
       - name: Install UNM dependencies for macOS
         if: runner.os == 'macOS'
         run: |
+          shopt -s expand_aliases
           alias addpkg="yarn add --ignore-platform --ignore-optional"
           addpkg @unblockneteasemusic/rust-napi-darwin-x64
           addpkg @unblockneteasemusic/rust-napi-darwin-arm64
@@ -60,6 +62,7 @@ jobs:
       - name: Install UNM dependencies for Linux
         if: runner.os == 'Linux'
         run: |
+          shopt -s expand_aliases
           alias addpkg="yarn add --ignore-platform --ignore-optional"
           addpkg @unblockneteasemusic/rust-napi-linux-x64-gnu
           addpkg @unblockneteasemusic/rust-napi-linux-arm64-gnu
