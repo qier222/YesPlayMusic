@@ -135,13 +135,12 @@ function parseSourceStringToList(executor, sourceString) {
 }
 
 export function initIpcMain(win, store, trayEventEmitter) {
-  UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
+  // WIP: Do not enable logging as it has some issues in non-blocking I/O environment.
+  // UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
   const unmExecutor = new UNM.Executor();
   const context = { enableFlac: true };
 
   ipcMain.handle('unblock-music', async (_, track, source) => {
-    console.log(track);
-
     const song = {
       id: track.id && track.id.toString(),
       name: track.name,
@@ -154,8 +153,6 @@ export function initIpcMain(win, store, trayEventEmitter) {
         ? track.ar.map(({ id, name }) => ({ id: id && id.toString(), name }))
         : [],
     };
-
-    console.log(song);
 
     const sourceList =
       typeof source === 'string'
@@ -173,7 +170,8 @@ export function initIpcMain(win, store, trayEventEmitter) {
         retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
       }
 
-      log('respond with retrieve song…');
+      log(`respond with retrieve song…`);
+      log(JSON.stringify(matchedAudio));
       return retrievedSong;
     } catch (err) {
       const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
