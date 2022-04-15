@@ -66,7 +66,7 @@
     "tunnel": "^0.0.6",
     "vscode-codicons": "^0.0.17",
     "vue": "^2.6.11",
-    "vue-analytics": "^5.22.1",
+    "vue-gtag": "^5.22.1",
     "vue-clipboard2": "^0.3.1",
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.4.3",
