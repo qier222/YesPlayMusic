@@ -42,6 +42,29 @@ jobs:
         with:
           snapcraft_token: ${{ secrets.snapcraft_token }}
 
+      - name: Install UNM dependencies for Windows
+        if: runner.os == 'Windows'
+        run: |
+          alias addpkg="yarn add --ignore-platform --ignore-optional"
+          addpkg @unblockneteasemusic/rust-napi-win32-x64-msvc
+        shell: bash
+
+      - name: Install UNM dependencies for macOS
+        if: runner.os == 'macOS'
+        run: |
+          alias addpkg="yarn add --ignore-platform --ignore-optional"
+          addpkg @unblockneteasemusic/rust-napi-darwin-x64
+          addpkg @unblockneteasemusic/rust-napi-darwin-arm64
+        shell: bash
+
+      - name: Install UNM dependencies for Linux
+        if: runner.os == 'Linux'
+        run: |
+          alias addpkg="yarn add --ignore-platform --ignore-optional"
+          addpkg @unblockneteasemusic/rust-napi-linux-x64-gnu
+          addpkg @unblockneteasemusic/rust-napi-linux-arm64-gnu
+          addpkg @unblockneteasemusic/rust-napi-linux-arm-gnueabihf
+
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
         env:
