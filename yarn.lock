@@ -1800,6 +1800,90 @@
   dependencies:
     "@types/node" "*"
 
+"@unblockneteasemusic/rust-napi-android-arm-eabi@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-android-arm-eabi/-/rust-napi-android-arm-eabi-0.2.0-pre.3.tgz#56d2df9acfc2523b0280d60ae064c090d07123cb"
+  integrity sha512-HqwR0wdf4jdj+80ckBCBIsw1kDb6Sa911fNYCFrTYJSZ+4dA2/jWJ0eHqb9h5D9XxNili01EK0DevPV82oUTNQ==
+
+"@unblockneteasemusic/rust-napi-android-arm64@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-android-arm64/-/rust-napi-android-arm64-0.2.0-pre.3.tgz#ddce7ccfbd45461f85e81b3e51136c0e6a337f09"
+  integrity sha512-Qt4Iz54apyynQAEMAFSaDg17IMh074q+t1tWLJeNZp/WiV0G2NvP4P46QOOh4lHRmCgKSkvIfy9WhIHE4cAKQg==
+
+"@unblockneteasemusic/rust-napi-darwin-arm64@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-darwin-arm64/-/rust-napi-darwin-arm64-0.2.0-pre.3.tgz#6dfd3db864eb2c233cec34c06ff3f54d7cf216c9"
+  integrity sha512-Oy4yfdO4lWm++DFiZ+/ObtGoPp7nlSeBDHEY6VJm9QxwcwV1ZHyqUjyg8RgjlN8W+s2I5Rzm1exz8ZcEzb/B5Q==
+
+"@unblockneteasemusic/rust-napi-darwin-x64@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-darwin-x64/-/rust-napi-darwin-x64-0.2.0-pre.3.tgz#61e30d2d650b00afc499f0653aa7ba53d05022b5"
+  integrity sha512-8c9kLpdsyqrF+Xzk/trUQfcs3uEPeUdfLeG2iwJnxjQzr1sVIts24+NLRYm6K5txy4ZAmJmkr+HDM7VlaiHj6A==
+
+"@unblockneteasemusic/rust-napi-freebsd-x64@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-freebsd-x64/-/rust-napi-freebsd-x64-0.2.0-pre.3.tgz#b06f570708e90a616239a0d32a087d64fb983ba1"
+  integrity sha512-7iw6eHXEdIBR330nIL1Qmmn5zdDAoWbW1hExnSYezIGIiDa9Cqf0ZL6nkYXU5MeJ4jHUhYBWL1KU22R2gg5qzw==
+
+"@unblockneteasemusic/rust-napi-linux-arm-gnueabihf@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-arm-gnueabihf/-/rust-napi-linux-arm-gnueabihf-0.2.0-pre.3.tgz#11e97af758e82baa7d6db04f4c0b6847ed846dd2"
+  integrity sha512-g1VgGES6V8P+jXS2g2KkShzcBfPExYY2W3f2pl1Oa3fmRyKMk+2XNGOz0OCW6JuOakG7GSf8Z2AHnU5x6T9plg==
+
+"@unblockneteasemusic/rust-napi-linux-arm64-gnu@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-arm64-gnu/-/rust-napi-linux-arm64-gnu-0.2.0-pre.3.tgz#aa5fafcf1ed7c1f7b2e282c686c6d16956d9d617"
+  integrity sha512-bVoJY/8XTSaoVPs24mUnBQzex5iSQopJ1VyA1qDedCboz/rJenZtc6+p8on19tOecGXjByStb3JrUQ8c99ijHQ==
+
+"@unblockneteasemusic/rust-napi-linux-arm64-musl@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-arm64-musl/-/rust-napi-linux-arm64-musl-0.2.0-pre.3.tgz#a70f722790554f9d38654b9d9dbf836b36edbf63"
+  integrity sha512-ZvRWRQazF0w5LTFlpb6WVMaHP76YgvR/MWLQ13OhlUTjK2f+v8FwJsR6kfGLkhTmdYty9fQc4lDkRBzEGHdnmw==
+
+"@unblockneteasemusic/rust-napi-linux-x64-gnu@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-x64-gnu/-/rust-napi-linux-x64-gnu-0.2.0-pre.3.tgz#fc12c4896302b441b9396329299372aabf854beb"
+  integrity sha512-zKduX8moG2fytdFTzbHrcsomSiT4e3UFnbzT3zJvgf05VABl5AXiWiiqPLxV7yeml4+EO5vIJQmrq/NdB/S1Ig==
+
+"@unblockneteasemusic/rust-napi-linux-x64-musl@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-x64-musl/-/rust-napi-linux-x64-musl-0.2.0-pre.3.tgz#8e6af8d1d523b1c9946efdc31c847bdf659f4f18"
+  integrity sha512-+ltjt6uIR/NQEUdTK8UxaP8iyej10H1Ln/kacbnwJDFYItGYswjuSGSJRJWQMY6x25wBVwLSIMBdm7qcrT/DrQ==
+
+"@unblockneteasemusic/rust-napi-win32-arm64-msvc@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-win32-arm64-msvc/-/rust-napi-win32-arm64-msvc-0.2.0-pre.3.tgz#0346752d8dab496410f4fdf03e8811629385b647"
+  integrity sha512-RpawYA+kCTxnJKq/zs2rl7hTIBVDd/fjl0GCkrptsPhkLTVf4dnRiHLHupuc13AB8AFcsOdmpNG0D648H2pc9A==
+
+"@unblockneteasemusic/rust-napi-win32-ia32-msvc@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-win32-ia32-msvc/-/rust-napi-win32-ia32-msvc-0.2.0-pre.3.tgz#fdb0ec6f58c4e00f334e92444a99f1ef8bd39168"
+  integrity sha512-/jHMbK6dwaF8pyt6PD6DsPNWS+6WsnJNA3IJpeqU/85mSkJYvaK+fzUn8cfi8nbHoYjD2IZ0o1iKEERE6vbFtA==
+
+"@unblockneteasemusic/rust-napi-win32-x64-msvc@0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-win32-x64-msvc/-/rust-napi-win32-x64-msvc-0.2.0-pre.3.tgz#4a894187bbbef1439c68d3f07681db6f8f5a7340"
+  integrity sha512-uAUjN/6gd1mfDUewNutxrIEktIsH5h6A+Oze6Iaca/WrcX8ynsSsmNdjd6AI8Vm3RmxwQ2dMGOJZ1cbzptP41A==
+
+"@unblockneteasemusic/rust-napi@^0.2.0-pre.3":
+  version "0.2.0-pre.3"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi/-/rust-napi-0.2.0-pre.3.tgz#f6eec2b72b6ad533e1503185f9827ab80c8c68e3"
+  integrity sha512-SRX03t3PnNv6ZLlUzK2c1bj0sKOyO49KEE8YHyAUSdWKplWa2nMY8QEO8ON0WjgpfgukuDENn3gCDgRILgqueA==
+  optionalDependencies:
+    "@unblockneteasemusic/rust-napi-android-arm-eabi" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-android-arm64" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-darwin-arm64" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-darwin-x64" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-freebsd-x64" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-linux-arm-gnueabihf" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-linux-arm64-gnu" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-linux-arm64-musl" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-linux-x64-gnu" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-linux-x64-musl" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-win32-arm64-msvc" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-win32-ia32-msvc" "0.2.0-pre.3"
+    "@unblockneteasemusic/rust-napi-win32-x64-msvc" "0.2.0-pre.3"
+
 "@unblockneteasemusic/server@v0.27.0-rc.6":
   version "0.27.0-rc.6"
   resolved "https://registry.yarnpkg.com/@unblockneteasemusic/server/-/server-0.27.0-rc.6.tgz#a6ce8d025d3fcfad0f93d1944e4cd0810fedd019"
