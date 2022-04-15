@@ -1,5 +1,6 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-import match from '@unblockneteasemusic/server';
+// import match from '@unblockneteasemusic/server';
+import UNM from '@unblockneteasemusic/rust-napi';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
 import shortcuts from '@/utils/shortcuts';
@@ -112,49 +113,66 @@ async function getBiliVideoFile(url) {
 /**
  * Parse the source string (`a, b`) to source list `['a', 'b']`.
  *
+ * @param {import("@unblockneteasemusic/rust-napi").Executor} executor
  * @param {string} sourceString The source string.
  * @returns {string[]} The source list.
  */
-function parseSourceStringToList(sourceString) {
-  return sourceString.split(',').map(s => s.trim());
+function parseSourceStringToList(executor, sourceString) {
+  const availableSource = executor.list();
+
+  return sourceString
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(s => {
+      const isAvailable = availableSource.includes(s);
+
+      if (!isAvailable) {
+        log(`This source is not one of the supported source: ${s}`);
+      }
+
+      return isAvailable;
+    });
 }
 
 export function initIpcMain(win, store, trayEventEmitter) {
-  ipcMain.handle('unblock-music', async (_, track, source) => {
-    // 兼容 unblockneteasemusic 所使用的 api 字段
-    track.alias = track.alia || [];
-    track.duration = track.dt || 0;
-    track.album = track.al || [];
-    track.artists = track.ar || [];
+  // WIP: Do not enable logging as it has some issues in non-blocking I/O environment.
+  // UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
+  const unmExecutor = new UNM.Executor();
+  const context = { enableFlac: true };
 
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject('timeout');
-      }, 5000);
-    });
+  ipcMain.handle('unblock-music', async (_, track, source) => {
+    const song = {
+      id: track.id && track.id.toString(),
+      name: track.name,
+      duration: track.dt,
+      album: track.al && {
+        id: track.al.id && track.al.id.toString(),
+        name: track.al.name,
+      },
+      artists: track.ar
+        ? track.ar.map(({ id, name }) => ({ id: id && id.toString(), name }))
+        : [],
+    };
 
     const sourceList =
-      typeof source === 'string' ? parseSourceStringToList(source) : null;
-    log(`[UNM] using source: ${sourceList || '<default>'}`);
+      typeof source === 'string'
+        ? parseSourceStringToList(unmExecutor, source)
+        : ['kuwo', 'migu', 'ytdl', 'bilibili'];
+    log(`[UNM] using source: ${sourceList.join(', ')}`);
 
     try {
-      const matchedAudio = await Promise.race([
-        // TODO: tell users to install yt-dlp.
-        // we passed "null" to source, to let UNM choose the default source.
-        match(track.id, sourceList, track),
-        timeoutPromise,
-      ]);
-
-      if (!matchedAudio || !matchedAudio.url) {
-        throw new Error('no such a song found');
-      }
+      // TODO: tell users to install yt-dlp.
+      const matchedAudio = await unmExecutor.search(sourceList, song, context);
+      const retrievedSong = await unmExecutor.retrieve(matchedAudio, context);
 
       // bilibili's audio file needs some special treatment
-      if (matchedAudio.url.includes('bilivideo.com')) {
-        matchedAudio.url = await getBiliVideoFile(matchedAudio.url);
+      if (retrievedSong.url.includes('bilivideo.com')) {
+        retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
       }
 
-      return matchedAudio;
+      log(`respond with retrieve song…`);
+      log(JSON.stringify(matchedAudio));
+      return retrievedSong;
     } catch (err) {
       const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
       log(`UnblockNeteaseMusic failed: ${errorMessage}`);

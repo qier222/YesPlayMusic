@@ -23,6 +23,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@unblockneteasemusic/rust-napi": "^0.2.0-pre.5",
     "@unblockneteasemusic/server": "v0.27.0-rc.6",
     "NeteaseCloudMusicApi": "^4.5.2",
     "axios": "^0.21.0",
