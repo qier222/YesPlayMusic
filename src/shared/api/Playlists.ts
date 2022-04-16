@@ -1,8 +1,8 @@
 export enum PlaylistApiNames {
-  FETCH_PLAYLIST = 'fetchPlaylist',
-  FETCH_RECOMMENDED_PLAYLISTS = 'fetchRecommendedPlaylists',
-  FETCH_DAILY_RECOMMEND_PLAYLISTS = 'fetchDailyRecommendPlaylists',
-  LIKE_A_PLAYLIST = 'likeAPlaylist',
+  FetchPlaylist = 'fetchPlaylist',
+  FetchRecommendedPlaylists = 'fetchRecommendedPlaylists',
+  FetchDailyRecommendPlaylists = 'fetchDailyRecommendPlaylists',
+  LikeAPlaylist = 'likeAPlaylist',
 }
 
 // 歌单详情

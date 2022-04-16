@@ -1,9 +1,9 @@
 export enum UserApiNames {
-  FETCH_USER_ACCOUNT = 'fetchUserAccount',
-  FETCH_USER_LIKED_TRACKS_IDS = 'fetchUserLikedTracksIDs',
-  FETCH_USER_PLAYLISTS = 'fetchUserPlaylists',
-  FETCH_USER_ALBUMS = 'fetchUserAlbums',
-  FETCH_USER_ARTIST = 'fetchUserArtists',
+  FetchUserAccount = 'fetchUserAccount',
+  FetchUserLikedTracksIds = 'fetchUserLikedTracksIDs',
+  FetchUserPlaylists = 'fetchUserPlaylists',
+  FetchUserAlbums = 'fetchUserAlbums',
+  FetchUserArtist = 'fetchUserArtists',
 }
 
 // 获取账号详情

@@ -3,7 +3,7 @@ import useUser from './useUser'
 import { useQueryClient } from 'react-query'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { APIs } from '@/shared/CacheAPIs'
-import { fetchUserLikedTracksIDs } from 'api/user'
+import { fetchUserLikedTracksIDs } from '../api/user'
 import {
   FetchUserLikedTracksIDsResponse,
   UserApiNames,
@@ -14,7 +14,7 @@ export default function useUserLikedTracksIDs() {
   const uid = user?.account?.id ?? 0
 
   return useQuery(
-    [UserApiNames.FETCH_USER_LIKED_TRACKS_IDS, uid],
+    [UserApiNames.FetchUserLikedTracksIds, uid],
     () => fetchUserLikedTracksIDs({ uid }),
     {
       enabled: !!(uid && uid !== 0),
@@ -35,7 +35,7 @@ export const useMutationLikeATrack = () => {
   const { data: user } = useUser()
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const uid = user?.account?.id ?? 0
-  const key = [UserApiNames.FETCH_USER_LIKED_TRACKS_IDS, uid]
+  const key = [UserApiNames.FetchUserLikedTracksIds, uid]
 
   return useMutation(
     async (trackID: number) => {

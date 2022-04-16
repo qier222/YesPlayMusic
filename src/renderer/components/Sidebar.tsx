@@ -82,7 +82,7 @@ const Playlists = () => {
           }
         >
           <span className='line-clamp-1'>{playlist.name}</span>
-          {playlistMode === TrackListSourceType.PLAYLIST &&
+          {playlistMode === TrackListSourceType.Playlist &&
             mode === Mode.TrackList &&
             currentPlaylistID === playlist.id && (
               <SvgIcon className='h-5 w-5' name='volume-half' />

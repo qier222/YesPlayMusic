@@ -39,7 +39,7 @@ const MediaControls = () => {
           className='h-6 w-6'
           name={
             playerSnapshot.mode === PlayerMode.FM &&
-            [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
+            [PlayerState.Playing, PlayerState.Loading].includes(state)
               ? 'pause'
               : 'play'
           }

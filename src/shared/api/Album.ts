@@ -1,5 +1,5 @@
 export enum AlbumApiNames {
-  FETCH_ALBUM = 'fetchAlbum',
+  FetchAlbum = 'fetchAlbum',
 }
 
 // 专辑详情

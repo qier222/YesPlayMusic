@@ -123,7 +123,7 @@ const Controls = () => {
         <SvgIcon
           className='h-7 w-7'
           name={
-            [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
+            [PlayerState.Playing, PlayerState.Loading].includes(state)
               ? 'pause'
               : 'play'
           }

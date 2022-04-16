@@ -14,7 +14,7 @@ export function search(params: SearchParams): Promise<SearchResponse> {
     method: 'get',
     params: {
       ...params,
-      type: SearchTypes[params.type ?? SearchTypes.ALL],
+      type: SearchTypes[params.type ?? SearchTypes.All],
     },
   })
 }

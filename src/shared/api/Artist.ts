@@ -1,6 +1,6 @@
 export enum ArtistApiNames {
-  FETCH_ARTIST = 'fetchArtist',
-  FETCH_ARTIST_ALBUMS = 'fetchArtistAlbums',
+  FetchArtist = 'fetchArtist',
+  FetchArtistAlbums = 'fetchArtistAlbums',
 }
 
 // 歌手详情

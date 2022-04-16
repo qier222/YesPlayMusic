@@ -12,9 +12,9 @@ import { setCookies } from '@/renderer/utils/cookie'
 import { useInterval } from 'react-use'
 
 enum Method {
-  QRCODE = 'qrcode',
-  EMAIL = 'email',
-  PHONE = 'phone',
+  QrCode = 'qrcode',
+  Email = 'email',
+  Phone = 'phone',
 }
 
 // Shared components and methods
@@ -152,15 +152,15 @@ const OtherLoginMethods = ({
     name: string
   }[] = [
     {
-      id: Method.QRCODE,
+      id: Method.QrCode,
       name: '二维码',
     },
     {
-      id: Method.EMAIL,
+      id: Method.Email,
       name: '邮箱',
     },
     {
-      id: Method.PHONE,
+      id: Method.Phone,
       name: '手机',
     },
   ]
@@ -393,14 +393,14 @@ const LoginWithQRCode = () => {
 }
 
 export default function Login() {
-  const [method, setMethod] = useState<Method>(Method.PHONE)
+  const [method, setMethod] = useState<Method>(Method.Phone)
 
   return (
     <div className='grid h-full place-content-center'>
       <div className='w-80'>
-        {method === Method.EMAIL && <LoginWithEmail />}
-        {method === Method.PHONE && <LoginWithPhone />}
-        {method === Method.QRCODE && <LoginWithQRCode />}
+        {method === Method.Email && <LoginWithEmail />}
+        {method === Method.Phone && <LoginWithPhone />}
+        {method === Method.QrCode && <LoginWithQRCode />}
         <OtherLoginMethods {...{ method, setMethod }} />
       </div>
     </div>

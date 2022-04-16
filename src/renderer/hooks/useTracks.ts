@@ -12,7 +12,7 @@ import { APIs } from '@/shared/CacheAPIs'
 
 export default function useTracks(params: FetchTracksParams) {
   return useQuery(
-    [TrackApiNames.FETCH_TRACKS, params],
+    [TrackApiNames.FetchTracks, params],
     () => {
       return fetchTracks(params)
     },
@@ -33,7 +33,7 @@ export default function useTracks(params: FetchTracksParams) {
 
 export function fetchTracksWithReactQuery(params: FetchTracksParams) {
   return reactQueryClient.fetchQuery(
-    [TrackApiNames.FETCH_TRACKS, params],
+    [TrackApiNames.FetchTracks, params],
     () => {
       return fetchTracks(params)
     },
@@ -49,7 +49,7 @@ export function fetchTracksWithReactQuery(params: FetchTracksParams) {
 
 export function fetchAudioSourceWithReactQuery(params: FetchAudioSourceParams) {
   return reactQueryClient.fetchQuery(
-    [TrackApiNames.FETCH_AUDIO_SOURCE, params],
+    [TrackApiNames.FetchAudioSource, params],
     () => {
       return fetchAudioSource(params)
     },

@@ -8,12 +8,12 @@ import {
   UserApiNames,
   FetchUserAlbumsResponse,
 } from '@/shared/api/User'
-import { fetchUserAlbums } from 'api/user'
+import { fetchUserAlbums } from '../api/user'
 
 export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
   const { data: user } = useUser()
   return useQuery(
-    [UserApiNames.FETCH_USER_ALBUMS, user?.profile?.userId ?? 0],
+    [UserApiNames.FetchUserAlbums, user?.profile?.userId ?? 0],
     () => fetchUserAlbums(params),
     {
       refetchOnWindowFocus: true,
@@ -31,7 +31,7 @@ export const useMutationLikeAAlbum = () => {
   const { data: user } = useUser()
   const { data: userAlbums } = useUserAlbums({ limit: 2000 })
   const uid = user?.account?.id ?? 0
-  const key = [UserApiNames.FETCH_USER_ALBUMS, uid]
+  const key = [UserApiNames.FetchUserAlbums, uid]
 
   return useMutation(
     async (album: Album) => {

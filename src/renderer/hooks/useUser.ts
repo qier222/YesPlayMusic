@@ -4,7 +4,7 @@ import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 
 export default function useUser() {
-  return useQuery(UserApiNames.FETCH_USER_ACCOUNT, fetchUserAccount, {
+  return useQuery(UserApiNames.FetchUserAccount, fetchUserAccount, {
     refetchOnWindowFocus: true,
     placeholderData: (): FetchUserAccountResponse | undefined =>
       window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {

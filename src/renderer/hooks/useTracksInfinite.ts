@@ -1,12 +1,12 @@
 import { FetchTracksParams, TrackApiNames } from '@/shared/api/Track'
-import { fetchTracks } from 'api/track'
+import { fetchTracks } from '../api/track'
 
 // 100 tracks each page
 const offset = 100
 
 export default function useTracksInfinite(params: FetchTracksParams) {
   return useInfiniteQuery(
-    [TrackApiNames.FETCH_TRACKS, params],
+    [TrackApiNames.FetchTracks, params],
     ({ pageParam = 0 }) => {
       const cursorStart = pageParam * offset
       const cursorEnd = cursorStart + offset

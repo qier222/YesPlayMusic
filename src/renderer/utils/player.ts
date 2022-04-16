@@ -14,8 +14,8 @@ import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 
 type TrackID = number
 export enum TrackListSourceType {
-  ALBUM = 'album',
-  PLAYLIST = 'playlist',
+  Album = 'album',
+  Playlist = 'playlist',
 }
 interface TrackListSource {
   type: TrackListSourceType
@@ -26,16 +26,16 @@ export enum Mode {
   FM = 'fm',
 }
 export enum State {
-  INITIALIZING = 'initializing',
-  READY = 'ready',
-  PLAYING = 'playing',
-  PAUSED = 'paused',
-  LOADING = 'loading',
+  Initializing = 'initializing',
+  Ready = 'ready',
+  Playing = 'playing',
+  Paused = 'paused',
+  Loading = 'loading',
 }
 export enum RepeatMode {
-  OFF = 'off',
-  ON = 'on',
-  ONE = 'one',
+  Off = 'off',
+  On = 'on',
+  One = 'one',
 }
 
 const PLAY_PAUSE_FADE_DURATION = 200
@@ -48,13 +48,13 @@ export class Player {
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
 
-  state: State = State.INITIALIZING
+  state: State = State.Initializing
   mode: Mode = Mode.TrackList
   trackList: TrackID[] = []
   trackListSource: TrackListSource | null = null
   fmTrackList: TrackID[] = []
   shuffle: boolean = false
-  repeatMode: RepeatMode = RepeatMode.OFF
+  repeatMode: RepeatMode = RepeatMode.Off
   fmTrack: Track | null = null
 
   init(params: { [key: string]: any }) {
@@ -70,7 +70,7 @@ export class Player {
     if (params.repeatMode) this.repeatMode = params.repeatMode
     if (params.fmTrack) this.fmTrack = params.fmTrack
 
-    this.state = State.READY
+    this.state = State.Ready
     this._playAudio(false) // just load the audio, not play
     this._initFM()
   }
@@ -84,12 +84,12 @@ export class Player {
    */
   get _prevTrackIndex(): number | undefined {
     switch (this.repeatMode) {
-      case RepeatMode.ONE:
+      case RepeatMode.One:
         return this._trackIndex
-      case RepeatMode.OFF:
+      case RepeatMode.Off:
         if (this._trackIndex === 0) return 0
         return this._trackIndex - 1
-      case RepeatMode.ON:
+      case RepeatMode.On:
         if (this._trackIndex - 1 < 0) return this.trackList.length - 1
         return this._trackIndex - 1
     }
@@ -100,12 +100,12 @@ export class Player {
    */
   get _nextTrackIndex(): number | undefined {
     switch (this.repeatMode) {
-      case RepeatMode.ONE:
+      case RepeatMode.One:
         return this._trackIndex
-      case RepeatMode.OFF:
+      case RepeatMode.Off:
         if (this._trackIndex + 1 >= this.trackList.length) return
         return this._trackIndex + 1
-      case RepeatMode.ON:
+      case RepeatMode.On:
         if (this._trackIndex + 1 >= this.trackList.length) return 0
         return this._trackIndex + 1
     }
@@ -133,7 +133,7 @@ export class Player {
    * Get/Set progress of current track
    */
   get progress(): number {
-    return this.state === State.LOADING ? 0 : this._progress
+    return this.state === State.Loading ? 0 : this._progress
   }
   set progress(value) {
     this._progress = value
@@ -163,7 +163,7 @@ export class Player {
 
   private _setupProgressInterval() {
     this._progressInterval = setInterval(() => {
-      if (this.state === State.PLAYING) this._progress = _howler.seek()
+      if (this.state === State.Playing) this._progress = _howler.seek()
     }, 1000)
   }
 
@@ -193,7 +193,7 @@ export class Player {
   private async _playTrack() {
     const id = this.trackID
     if (!id) return
-    this.state = State.LOADING
+    this.state = State.Loading
     const track = await this._fetchTrack(id)
     if (!track) {
       toast('加载歌曲信息失败')
@@ -228,7 +228,7 @@ export class Player {
     _howler = howler
     if (autoplay) {
       this.play()
-      this.state = State.PLAYING
+      this.state = State.Playing
     }
     _howler.once('load', () => {
       this._cacheAudio((_howler as any)._src)
@@ -240,7 +240,7 @@ export class Player {
   }
 
   private _howlerOnEndCallback() {
-    if (this.mode !== Mode.FM && this.repeatMode === RepeatMode.ONE) {
+    if (this.mode !== Mode.FM && this.repeatMode === RepeatMode.One) {
       _howler.seek(0)
       _howler.play()
     } else {
@@ -288,18 +288,18 @@ export class Player {
    */
   play(fade: boolean = false) {
     if (_howler.playing()) {
-      this.state = State.PLAYING
+      this.state = State.Playing
       return
     }
 
     _howler.play()
     if (fade) {
-      this.state = State.PLAYING
+      this.state = State.Playing
       _howler.once('play', () => {
         _howler.fade(0, this._volume, PLAY_PAUSE_FADE_DURATION)
       })
     } else {
-      this.state = State.PLAYING
+      this.state = State.Playing
     }
   }
 
@@ -310,12 +310,12 @@ export class Player {
   pause(fade: boolean = false) {
     if (fade) {
       _howler.fade(this._volume, 0, PLAY_PAUSE_FADE_DURATION)
-      this.state = State.PAUSED
+      this.state = State.Paused
       _howler.once('fade', () => {
         _howler.pause()
       })
     } else {
-      this.state = State.PAUSED
+      this.state = State.Paused
       _howler.pause()
     }
   }
@@ -325,7 +325,7 @@ export class Player {
    * @param {boolean} fade fade in-out
    */
   playOrPause(fade: boolean = true) {
-    this.state === State.PLAYING ? this.pause(fade) : this.play(fade)
+    this.state === State.Playing ? this.pause(fade) : this.play(fade)
   }
 
   /**
@@ -387,7 +387,7 @@ export class Player {
     const playlist = await fetchPlaylistWithReactQuery({ id: playlistID })
     if (!playlist?.playlist?.trackIds?.length) return
     this.trackListSource = {
-      type: TrackListSourceType.PLAYLIST,
+      type: TrackListSourceType.Playlist,
       id: playlistID,
     }
     this.playAList(
@@ -405,7 +405,7 @@ export class Player {
     const album = await fetchAlbumWithReactQuery({ id: albumID })
     if (!album?.songs?.length) return
     this.trackListSource = {
-      type: TrackListSourceType.ALBUM,
+      type: TrackListSourceType.Album,
       id: albumID,
     }
     this._playTrack()

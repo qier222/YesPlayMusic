@@ -1,20 +1,20 @@
 export enum SearchApiNames {
-  SEARCH = 'search',
-  MULTI_MATCH_SEARCH = 'multiMatchSearch',
+  Search = 'search',
+  MultiMatchSearch = 'multiMatchSearch',
 }
 
 // 搜索
 export enum SearchTypes {
-  SINGLE = '1',
-  ALBUM = '10',
-  ARTIST = '100',
-  PLAYLIST = '1000',
-  USER = '1002',
-  MV = '1004',
-  LYRICS = '1006',
-  RADIO = '1009',
-  VIDEO = '1014',
-  ALL = '1018',
+  Single = '1',
+  Album = '10',
+  Artist = '100',
+  Playlist = '1000',
+  User = '1002',
+  Mv = '1004',
+  Lyrics = '1006',
+  Radio = '1009',
+  Video = '1014',
+  All = '1018',
 }
 export interface SearchParams {
   keywords: string

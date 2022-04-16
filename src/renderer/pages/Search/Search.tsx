@@ -69,15 +69,15 @@ const Albums = ({ albums }: { albums: Album[] }) => {
 }
 
 const Search = () => {
-  const { keywords = '', type = 'ALL' } = useParams()
+  const { keywords = '', type = 'all' } = useParams()
 
   const searchType: keyof typeof SearchTypes =
     type.toUpperCase() in SearchTypes
       ? (type.toUpperCase() as keyof typeof SearchTypes)
-      : 'ALL'
+      : 'All'
 
   const { data: bestMatchRaw, isLoading: isLoadingBestMatch } = useQuery(
-    [SearchApiNames.MULTI_MATCH_SEARCH, keywords],
+    [SearchApiNames.MultiMatchSearch, keywords],
     () => multiMatchSearch({ keywords })
   )
 
@@ -92,7 +92,7 @@ const Search = () => {
   }, [bestMatchRaw?.result])
 
   const { data: searchResult, isLoading: isLoadingSearchResult } = useQuery(
-    [SearchApiNames.SEARCH, keywords, searchType],
+    [SearchApiNames.Search, keywords, searchType],
     () => search({ keywords, type: searchType })
   )
 

@@ -1,7 +1,7 @@
 import request from '@/renderer/utils/request'
 
 export enum PersonalFMApiNames {
-  FETCH_PERSONAL_FM = 'fetchPersonalFM',
+  FetchPersonalFm = 'fetchPersonalFM',
 }
 
 export interface PersonalMusic {

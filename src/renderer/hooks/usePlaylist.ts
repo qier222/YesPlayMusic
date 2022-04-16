@@ -17,7 +17,7 @@ export default function usePlaylist(
   noCache?: boolean
 ) {
   return useQuery(
-    [PlaylistApiNames.FETCH_PLAYLIST, params],
+    [PlaylistApiNames.FetchPlaylist, params],
     () => fetch(params, noCache),
     {
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
@@ -35,7 +35,7 @@ export default function usePlaylist(
 
 export function fetchPlaylistWithReactQuery(params: FetchPlaylistParams) {
   return reactQueryClient.fetchQuery(
-    [PlaylistApiNames.FETCH_PLAYLIST, params],
+    [PlaylistApiNames.FetchPlaylist, params],
     () => fetch(params),
     {
       staleTime: 3600000,
@@ -45,7 +45,7 @@ export function fetchPlaylistWithReactQuery(params: FetchPlaylistParams) {
 
 export async function prefetchPlaylist(params: FetchPlaylistParams) {
   await reactQueryClient.prefetchQuery(
-    [PlaylistApiNames.FETCH_PLAYLIST, params],
+    [PlaylistApiNames.FetchPlaylist, params],
     () => fetch(params),
     {
       staleTime: 3600000,

@@ -3,7 +3,7 @@ import { useQueryClient } from 'react-query'
 import useUser from './useUser'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { APIs } from '@/shared/CacheAPIs'
-import { fetchUserPlaylists } from 'api/user'
+import { fetchUserPlaylists } from '@/renderer/api/user'
 import { FetchUserPlaylistsResponse, UserApiNames } from '@/shared/api/User'
 
 export default function useUserPlaylists() {
@@ -17,7 +17,7 @@ export default function useUserPlaylists() {
   }
 
   return useQuery(
-    [UserApiNames.FETCH_USER_PLAYLISTS, uid],
+    [UserApiNames.FetchUserPlaylists, uid],
     async () => {
       if (!params.uid) {
         throw new Error('请登录后再请求用户收藏的歌单')
@@ -48,7 +48,7 @@ export const useMutationLikeAPlaylist = () => {
   const { data: user } = useUser()
   const { data: userPlaylists } = useUserPlaylists()
   const uid = user?.account?.id ?? 0
-  const key = [UserApiNames.FETCH_USER_PLAYLISTS, uid]
+  const key = [UserApiNames.FetchUserPlaylists, uid]
 
   return useMutation(
     async (playlist: Playlist) => {

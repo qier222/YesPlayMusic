@@ -18,7 +18,7 @@ const fetch = async (params: FetchAlbumParams, noCache?: boolean) => {
 
 export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
   return useQuery(
-    [AlbumApiNames.FETCH_ALBUM, params.id],
+    [AlbumApiNames.FetchAlbum, params.id],
     () => fetch(params, noCache),
     {
       enabled: !!params.id,
@@ -36,7 +36,7 @@ export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
 
 export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
   return reactQueryClient.fetchQuery(
-    [AlbumApiNames.FETCH_ALBUM, params.id],
+    [AlbumApiNames.FetchAlbum, params.id],
     () => fetch(params),
     {
       staleTime: Infinity,
@@ -46,7 +46,7 @@ export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
 
 export async function prefetchAlbum(params: FetchAlbumParams) {
   await reactQueryClient.prefetchQuery(
-    [AlbumApiNames.FETCH_ALBUM, params.id],
+    [AlbumApiNames.FetchAlbum, params.id],
     () => fetch(params),
     {
       staleTime: Infinity,

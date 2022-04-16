@@ -9,7 +9,7 @@ import {
 
 export default function useUserAlbums(params: FetchArtistAlbumsParams) {
   return useQuery(
-    [ArtistApiNames.FETCH_ARTIST_ALBUMS, params],
+    [ArtistApiNames.FetchArtistAlbums, params],
     async () => {
       const data = await fetchArtistAlbums(params)
       return data

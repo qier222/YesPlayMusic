@@ -12,7 +12,7 @@ export default function useArtist(
   noCache?: boolean
 ) {
   return useQuery(
-    [ArtistApiNames.FETCH_ARTIST, params],
+    [ArtistApiNames.FetchArtist, params],
     () => fetchArtist(params, !!noCache),
     {
       enabled: !!params.id && params.id > 0 && !isNaN(Number(params.id)),

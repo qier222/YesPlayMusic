@@ -1,7 +1,7 @@
 export enum TrackApiNames {
-  FETCH_TRACKS = 'fetchTracks',
-  FETCH_AUDIO_SOURCE = 'fetchAudioSource',
-  FETCH_LYRIC = 'fetchLyric',
+  FetchTracks = 'fetchTracks',
+  FetchAudioSource = 'fetchAudioSource',
+  FetchLyric = 'fetchLyric',
 }
 
 // 获取歌曲详情

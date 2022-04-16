@@ -14,7 +14,7 @@ export default function Home() {
     data: dailyRecommendPlaylists,
     isLoading: isLoadingDailyRecommendPlaylists,
   } = useQuery(
-    PlaylistApiNames.FETCH_DAILY_RECOMMEND_PLAYLISTS,
+    PlaylistApiNames.FetchDailyRecommendPlaylists,
     fetchDailyRecommendPlaylists,
     {
       retry: false,
@@ -29,7 +29,7 @@ export default function Home() {
     data: recommendedPlaylists,
     isLoading: isLoadingRecommendedPlaylists,
   } = useQuery(
-    PlaylistApiNames.FETCH_RECOMMENDED_PLAYLISTS,
+    PlaylistApiNames.FetchRecommendedPlaylists,
     () => {
       return fetchRecommendedPlaylists({})
     },
