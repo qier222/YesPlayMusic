@@ -154,6 +154,7 @@ class YPMTrayImpl implements YPMTray {
   setTooltip(text: string): void {
     this._tray.setToolTip(text)
   }
+
   setLikeState(isLiked: boolean): void {
     this._contextMenu.getMenuItemById(MenuItemIDs.Like)!.visible = !isLiked
     this._contextMenu.getMenuItemById(MenuItemIDs.Unlike)!.visible = isLiked
@@ -168,7 +169,10 @@ class YPMTrayImpl implements YPMTray {
 
   setRepeatMode(mode: RepeatMode): void {
     const item = this._contextMenu.getMenuItemById(mode)
-    if (item) item.checked = true
+    if (item) {
+      item.checked = true
+      this._updateContextMenu()
+    }
   }
 }
 
