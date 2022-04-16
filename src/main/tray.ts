@@ -23,7 +23,7 @@ enum MenuItemIDs {
 }
 
 export interface YPMTray {
-  setTooltip(title: string): void
+  setTooltip(text: string): void
   setLikeState(isLiked: boolean): void
   setPlayState(isPlaying: boolean): void
   setRepeatMode(mode: RepeatMode): void
@@ -151,8 +151,8 @@ class YPMTrayImpl implements YPMTray {
     this._tray.setContextMenu(this._contextMenu)
   }
 
-  setTooltip(tooltip: string): void {
-    this._tray.setToolTip(tooltip)
+  setTooltip(text: string): void {
+    this._tray.setToolTip(text)
   }
   setLikeState(isLiked: boolean): void {
     this._contextMenu.getMenuItemById(MenuItemIDs.Like)!.visible = !isLiked
