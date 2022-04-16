@@ -266,10 +266,93 @@
             <input
               id="unm-source"
               v-model="unmSource"
-              class="text-input"
+              class="text-input margin-right-0"
               placeholder="例 bilibili, kuwo"
             />
             <label for="unm-source"></label>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 啟用無損音質 (FLAC) </div>
+            <div class="description"> 設定後需要清掉快取才能生效。 </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="unm-enable-flac"
+                v-model="unmEnableFlac"
+                type="checkbox"
+              />
+              <label for="unm-enable-flac" />
+            </div>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 音源搜尋模式 </div>
+          </div>
+          <div class="right">
+            <select v-model="unmSearchMode">
+              <option value="fast-first"> 速度優先，不論順序 </option>
+              <option value="order-first"> 順序優先，不論速度 </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 請求用代理伺服器 (Proxy) </div>
+            <div class="description">
+              請求如 YouTube 音源服務時要使用的代理伺服器。<br />
+              留空則不進行相關設定。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmProxyUri"
+              class="text-input margin-right-0"
+              placeholder="例 https://192.168.11.45"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> Joox 引擎的 Cookie </div>
+            <div class="description">
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
+                target="_blank"
+                >設定說明請參見此處。</a
+              >
+              留空則不進行相關設定。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmJooxCookie"
+              class="text-input margin-right-0"
+              placeholder="wmid=..; session_key=.."
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> YtDl 引擎要使用的 youtube-dl 執行檔 </div>
+            <div class="description">
+              預設使用 <code>yt-dlp</code>。 留空則不進行相關設定。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmYtDlExe"
+              class="text-input margin-right-0"
+              placeholder="ex. youtube-dl"
+            />
           </div>
         </div>
       </section>
@@ -944,7 +1027,62 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'unmSource',
-          value: value.length ? value : null,
+          value: value.length && value,
+        });
+      },
+    },
+    unmSearchMode: {
+      get() {
+        return this.settings.unmSearchMode || 'fast-first';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmSearchMode',
+          value: value,
+        });
+      },
+    },
+    unmEnableFlac: {
+      get() {
+        return this.settings.unmEnableFlac || false;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmEnableFlac',
+          value: value || false,
+        });
+      },
+    },
+    unmProxyUri: {
+      get() {
+        return this.settings.unmProxyUri || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmProxyUri',
+          value: value.length && value,
+        });
+      },
+    },
+    unmJooxCookie: {
+      get() {
+        return this.settings.unmJooxCookie || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmJooxCookie',
+          value: value.length && value,
+        });
+      },
+    },
+    unmYtDlExe: {
+      get() {
+        return this.settings.unmYtDlExe || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmYtDlExe',
+          value: value.length && value,
         });
       },
     },
@@ -1274,6 +1412,9 @@ button {
   }
 }
 
+input.text-input.margin-right-0 {
+  margin-right: 0;
+}
 input.text-input {
   background: var(--color-secondary-bg);
   border: none;

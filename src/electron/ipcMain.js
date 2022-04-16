@@ -138,47 +138,66 @@ export function initIpcMain(win, store, trayEventEmitter) {
   // WIP: Do not enable logging as it has some issues in non-blocking I/O environment.
   // UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
   const unmExecutor = new UNM.Executor();
-  const context = { enableFlac: true };
 
-  ipcMain.handle('unblock-music', async (_, track, source) => {
-    const song = {
-      id: track.id && track.id.toString(),
-      name: track.name,
-      duration: track.dt,
-      album: track.al && {
-        id: track.al.id && track.al.id.toString(),
-        name: track.al.name,
-      },
-      artists: track.ar
-        ? track.ar.map(({ id, name }) => ({ id: id && id.toString(), name }))
-        : [],
-    };
+  ipcMain.handle(
+    'unblock-music',
+    /**
+     *
+     * @param {*} _
+     * @param {string | null} sourceListString
+     * @param {Record<string, any>} ncmTrack
+     * @param {UNM.Context} context
+     */
+    async (_, sourceListString, ncmTrack, context) => {
+      // Formt the track input
+      // FIXME: Figure out the structure of Track
+      const song = {
+        id: ncmTrack.id && ncmTrack.id.toString(),
+        name: ncmTrack.name,
+        duration: ncmTrack.dt,
+        album: ncmTrack.al && {
+          id: ncmTrack.al.id && ncmTrack.al.id.toString(),
+          name: ncmTrack.al.name,
+        },
+        artists: ncmTrack.ar
+          ? ncmTrack.ar.map(({ id, name }) => ({
+              id: id && id.toString(),
+              name,
+            }))
+          : [],
+      };
 
-    const sourceList =
-      typeof source === 'string'
-        ? parseSourceStringToList(unmExecutor, source)
-        : ['kuwo', 'migu', 'ytdl', 'bilibili'];
-    log(`[UNM] using source: ${sourceList.join(', ')}`);
+      const sourceList =
+        typeof sourceListString === 'string'
+          ? parseSourceStringToList(unmExecutor, sourceListString)
+          : ['kuwo', 'migu', 'ytdl', 'bilibili'];
+      log(`[UNM] using source: ${sourceList.join(', ')}`);
+      log(`[UNM] using configuration: ${JSON.stringify(context)}`);
 
-    try {
-      // TODO: tell users to install yt-dlp.
-      const matchedAudio = await unmExecutor.search(sourceList, song, context);
-      const retrievedSong = await unmExecutor.retrieve(matchedAudio, context);
+      try {
+        // TODO: tell users to install yt-dlp.
+        const matchedAudio = await unmExecutor.search(
+          sourceList,
+          song,
+          context
+        );
+        const retrievedSong = await unmExecutor.retrieve(matchedAudio, context);
 
-      // bilibili's audio file needs some special treatment
-      if (retrievedSong.url.includes('bilivideo.com')) {
-        retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
+        // bilibili's audio file needs some special treatment
+        if (retrievedSong.url.includes('bilivideo.com')) {
+          retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
+        }
+
+        log(`respond with retrieve song…`);
+        log(JSON.stringify(matchedAudio));
+        return retrievedSong;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
+        log(`UnblockNeteaseMusic failed: ${errorMessage}`);
+        return null;
       }
-
-      log(`respond with retrieve song…`);
-      log(JSON.stringify(matchedAudio));
-      return retrievedSong;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
-      log(`UnblockNeteaseMusic failed: ${errorMessage}`);
-      return null;
     }
-  });
+  );
 
   ipcMain.on('close', e => {
     if (isMac) {
