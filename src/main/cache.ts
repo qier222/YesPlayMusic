@@ -1,11 +1,11 @@
 import { db, Tables } from './db'
-import type { FetchTracksResponse } from '../renderer/api/track'
+import type { FetchTracksResponse } from '@/shared/api/Track'
 import { app } from 'electron'
 import { Request, Response } from 'express'
 import log from './log'
 import fs from 'fs'
 import * as musicMetadata from 'music-metadata'
-import { APIs } from './CacheAPIsName'
+import { APIs, APIsParams, APIsResponse } from '../shared/CacheAPIs'
 
 class Cache {
   constructor() {
@@ -18,6 +18,8 @@ class Cache {
       case APIs.UserAccount:
       case APIs.Personalized:
       case APIs.RecommendResource:
+      case APIs.UserAlbums:
+      case APIs.UserArtists:
       case APIs.Likelist: {
         if (!data) return
         db.upsert(Tables.AccountData, {
@@ -27,7 +29,7 @@ class Cache {
         })
         break
       }
-      case APIs.SongDetail: {
+      case APIs.Track: {
         if (!data.songs) return
         const tracks = (data as FetchTracksResponse).songs.map(t => ({
           id: t.id,
@@ -47,7 +49,7 @@ class Cache {
         })
         break
       }
-      case APIs.PlaylistDetail: {
+      case APIs.Playlist: {
         if (!data.playlist) return
         db.upsert(Tables.Playlist, {
           id: data.playlist.id,
@@ -56,7 +58,7 @@ class Cache {
         })
         break
       }
-      case APIs.Artists: {
+      case APIs.Artist: {
         if (!data.artist) return
         db.upsert(Tables.Artist, {
           id: data.artist.id,
@@ -108,7 +110,7 @@ class Cache {
     }
   }
 
-  get(api: string, query: any): any {
+  get<T extends keyof APIsParams>(api: T, params: any): any {
     switch (api) {
       case APIs.UserPlaylist:
       case APIs.UserAccount:
@@ -119,15 +121,13 @@ class Cache {
         if (data?.json) return JSON.parse(data.json)
         break
       }
-      case APIs.SongDetail: {
-        const ids: string[] = query?.ids.split(',')
+      case APIs.Track: {
+        const ids: number[] = params?.ids
+          .split(',')
+          .map((id: string) => Number(id))
         if (ids.length === 0) return
 
-        let isIDsValid = true
-        ids.forEach(id => {
-          if (id === '' || isNaN(Number(id))) isIDsValid = false
-        })
-        if (!isIDsValid) return
+        if (ids.includes(NaN)) return
 
         const tracksRaw = db.findMany(Tables.Track, ids)
 
@@ -138,7 +138,6 @@ class Cache {
           const track = tracksRaw.find(t => t.id === Number(id)) as any
           return JSON.parse(track.json)
         })
-
         return {
           code: 200,
           songs: tracks,
@@ -146,8 +145,8 @@ class Cache {
         }
       }
       case APIs.Album: {
-        if (isNaN(Number(query?.id))) return
-        const data = db.find(Tables.Album, query.id)
+        if (isNaN(Number(params?.id))) return
+        const data = db.find(Tables.Album, params.id)
         if (data?.json)
           return {
             resourceState: true,
@@ -157,22 +156,22 @@ class Cache {
           }
         break
       }
-      case APIs.PlaylistDetail: {
-        if (isNaN(Number(query?.id))) return
-        const data = db.find(Tables.Playlist, query.id)
+      case APIs.Playlist: {
+        if (isNaN(Number(params?.id))) return
+        const data = db.find(Tables.Playlist, params.id)
         if (data?.json) return JSON.parse(data.json)
         break
       }
-      case APIs.Artists: {
-        if (isNaN(Number(query?.id))) return
-        const data = db.find(Tables.Artist, query.id)
+      case APIs.Artist: {
+        if (isNaN(Number(params?.id))) return
+        const data = db.find(Tables.Artist, params.id)
         if (data?.json) return JSON.parse(data.json)
         break
       }
       case APIs.ArtistAlbum: {
-        if (isNaN(Number(query?.id))) return
+        if (isNaN(Number(params?.id))) return
 
-        const artistAlbumsRaw = db.find(Tables.ArtistAlbum, query.id)
+        const artistAlbumsRaw = db.find(Tables.ArtistAlbum, params.id)
         if (!artistAlbumsRaw?.json) return
         const artistAlbums = JSON.parse(artistAlbumsRaw.json)
 
@@ -186,21 +185,21 @@ class Cache {
         return artistAlbums
       }
       case APIs.Lyric: {
-        if (isNaN(Number(query?.id))) return
-        const data = db.find(Tables.Lyric, query.id)
+        if (isNaN(Number(params?.id))) return
+        const data = db.find(Tables.Lyric, params.id)
         if (data?.json) return JSON.parse(data.json)
         break
       }
       case APIs.CoverColor: {
-        if (isNaN(Number(query?.id))) return
-        return db.find(Tables.CoverColor, query.id)?.color
+        if (isNaN(Number(params?.id))) return
+        return db.find(Tables.CoverColor, params.id)?.color
       }
     }
   }
 
   getForExpress(api: string, req: Request) {
     // Get track detail cache
-    if (api === APIs.SongDetail) {
+    if (api === APIs.Track) {
       const cache = this.get(api, req.query)
       if (cache) {
         log.debug(`[cache] Cache hit for ${req.path}`)

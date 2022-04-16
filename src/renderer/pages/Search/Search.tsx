@@ -1,13 +1,9 @@
-import {
-  multiMatchSearch,
-  search,
-  SearchApiNames,
-  SearchTypes,
-} from '@/renderer/api/search'
+import { multiMatchSearch, search } from '@/renderer/api/search'
 import Cover from '@/renderer/components/Cover'
 import TrackGrid from '@/renderer/components/TracksGrid'
 import { player } from '@/renderer/store'
 import { resizeImage } from '@/renderer/utils/common'
+import { SearchTypes, SearchApiNames } from '@/shared/api/Search'
 import dayjs from 'dayjs'
 
 const Artists = ({ artists }: { artists: Artist[] }) => {

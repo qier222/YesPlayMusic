@@ -1,8 +1,12 @@
 import { fetchAlbum } from '@/renderer/api/album'
-import { AlbumApiNames } from '@/renderer/api/album'
-import type { FetchAlbumParams, FetchAlbumResponse } from '@/renderer/api/album'
 import reactQueryClient from '@/renderer/utils/reactQueryClient'
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
+import {
+  FetchAlbumParams,
+  AlbumApiNames,
+  FetchAlbumResponse,
+} from '@/shared/api/Album'
 
 const fetch = async (params: FetchAlbumParams, noCache?: boolean) => {
   const album = await fetchAlbum(params, !!noCache)
@@ -21,7 +25,7 @@ export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
       staleTime: 24 * 60 * 60 * 1000, // 24 hours
       placeholderData: (): FetchAlbumResponse =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'album',
+          api: APIs.Album,
           query: {
             id: params.id,
           },

@@ -1,5 +1,5 @@
-import { TrackApiNames, fetchTracks } from '@/renderer/api/track'
-import type { FetchTracksParams } from '@/renderer/api/track'
+import { FetchTracksParams, TrackApiNames } from '@/shared/api/Track'
+import { fetchTracks } from 'api/track'
 
 // 100 tracks each page
 const offset = 100

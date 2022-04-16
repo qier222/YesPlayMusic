@@ -1,26 +1,15 @@
 import request from '@/renderer/utils/request'
-
-export enum PlaylistApiNames {
-  FETCH_PLAYLIST = 'fetchPlaylist',
-  FETCH_RECOMMENDED_PLAYLISTS = 'fetchRecommendedPlaylists',
-  FETCH_DAILY_RECOMMEND_PLAYLISTS = 'fetchDailyRecommendPlaylists',
-  LIKE_A_PLAYLIST = 'likeAPlaylist',
-}
+import {
+  FetchPlaylistParams,
+  FetchPlaylistResponse,
+  FetchRecommendedPlaylistsParams,
+  FetchRecommendedPlaylistsResponse,
+  FetchDailyRecommendPlaylistsResponse,
+  LikeAPlaylistParams,
+  LikeAPlaylistResponse,
+} from '@/shared/api/Playlists'
 
 // 歌单详情
-export interface FetchPlaylistParams {
-  id: number
-  s?: number // 歌单最近的 s 个收藏者
-}
-export interface FetchPlaylistResponse {
-  code: number
-  playlist: Playlist
-  privileges: unknown // TODO: unknown type
-  relatedVideos: null
-  resEntrance: null
-  sharedPrivilege: null
-  urls: null
-}
 export function fetchPlaylist(
   params: FetchPlaylistParams,
   noCache: boolean
@@ -39,15 +28,6 @@ export function fetchPlaylist(
 }
 
 // 推荐歌单
-interface FetchRecommendedPlaylistsParams {
-  limit?: number
-}
-export interface FetchRecommendedPlaylistsResponse {
-  code: number
-  category: number
-  hasTaste: boolean
-  result: Playlist[]
-}
 export function fetchRecommendedPlaylists(
   params: FetchRecommendedPlaylistsParams
 ): Promise<FetchRecommendedPlaylistsResponse> {
@@ -59,12 +39,7 @@ export function fetchRecommendedPlaylists(
 }
 
 // 每日推荐歌单（需要登录）
-export interface FetchDailyRecommendPlaylistsResponse {
-  code: number
-  featureFirst: boolean
-  haveRcmdSongs: boolean
-  recommend: Playlist[]
-}
+
 export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlaylistsResponse> {
   return request({
     url: '/recommend/resource',
@@ -72,13 +47,6 @@ export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlayl
   })
 }
 
-export interface LikeAPlaylistParams {
-  t: 1 | 2
-  id: number
-}
-export interface LikeAPlaylistResponse {
-  code: number
-}
 export function likeAPlaylist(
   params: LikeAPlaylistParams
 ): Promise<LikeAPlaylistResponse> {

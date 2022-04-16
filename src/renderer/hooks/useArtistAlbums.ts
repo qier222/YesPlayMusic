@@ -1,10 +1,11 @@
 import { fetchArtistAlbums } from '@/renderer/api/artist'
-import { ArtistApiNames } from '@/renderer/api/artist'
-import type {
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
+import {
   FetchArtistAlbumsParams,
+  ArtistApiNames,
   FetchArtistAlbumsResponse,
-} from '@/renderer/api/artist'
-import { IpcChannels } from '@/main/IpcChannelsName'
+} from '@/shared/api/Artist'
 
 export default function useUserAlbums(params: FetchArtistAlbumsParams) {
   return useQuery(
@@ -18,7 +19,7 @@ export default function useUserAlbums(params: FetchArtistAlbumsParams) {
       staleTime: 3600000,
       placeholderData: (): FetchArtistAlbumsResponse =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'artist/album',
+          api: APIs.ArtistAlbum,
           query: {
             id: params.id,
           },

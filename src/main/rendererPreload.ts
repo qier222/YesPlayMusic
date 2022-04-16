@@ -1,4 +1,5 @@
-import { IpcChannels } from '@/main/IpcChannelsName'
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { IpcChannels } from '@/shared/IpcChannels'
 const { contextBridge, ipcRenderer } = require('electron')
 const log = require('electron-log')
 

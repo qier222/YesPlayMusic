@@ -1,7 +1,7 @@
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannels } from '@/shared/IpcChannels'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { APIs } from '@/main/CacheAPIsName'
+import { APIs } from '@/shared/CacheAPIs'
 import { average } from 'color.js'
 import { colord } from 'colord'
 
@@ -110,7 +110,13 @@ export function scrollToTop(smooth = false) {
 }
 
 export async function getCoverColor(coverUrl: string) {
-  const id = new URL(coverUrl).pathname.split('/').pop()?.split('.')[0]
+  let id: string | undefined
+  try {
+    id = new URL(coverUrl).pathname.split('/').pop()?.split('.')[0]
+  } catch (e) {
+    return
+  }
+
   const colorFromCache = window.ipcRenderer?.sendSync(
     IpcChannels.GetApiCacheSync,
     {
@@ -124,14 +130,18 @@ export async function getCoverColor(coverUrl: string) {
 }
 
 export async function cacheCoverColor(coverUrl: string, color: string) {
-  const id = new URL(coverUrl).pathname.split('/').pop()?.split('.')[0]
+  let id: string | undefined
+  try {
+    id = new URL(coverUrl).pathname.split('/').pop()?.split('.')[0]
+  } catch (e) {
+    return
+  }
+
+  if (!id || isNaN(Number(id))) return
 
   window.ipcRenderer?.send(IpcChannels.CacheCoverColor, {
-    api: APIs.CoverColor,
-    query: {
-      id,
-      color,
-    },
+    id: Number(id),
+    color,
   })
 }
 

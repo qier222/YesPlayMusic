@@ -1,10 +1,11 @@
 import { fetchArtist } from '@/renderer/api/artist'
-import { ArtistApiNames } from '@/renderer/api/artist'
-import type {
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
+import {
   FetchArtistParams,
+  ArtistApiNames,
   FetchArtistResponse,
-} from '@/renderer/api/artist'
-import { IpcChannels } from '@/main/IpcChannelsName'
+} from '@/shared/api/Artist'
 
 export default function useArtist(
   params: FetchArtistParams,
@@ -18,7 +19,7 @@ export default function useArtist(
       staleTime: 5 * 60 * 1000, // 5 mins
       placeholderData: (): FetchArtistResponse =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'artists',
+          api: APIs.Artist,
           query: {
             id: params.id,
           },

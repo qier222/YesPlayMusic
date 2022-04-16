@@ -1,15 +1,14 @@
+import { fetchAudioSource, fetchTracks } from '@/renderer/api/track'
+import type {} from '@/renderer/api/track'
+import reactQueryClient from '@/renderer/utils/reactQueryClient'
+import { IpcChannels } from '@/shared/IpcChannels'
 import {
-  TrackApiNames,
-  fetchAudioSource,
-  fetchTracks,
-} from '@/renderer/api/track'
-import type {
   FetchAudioSourceParams,
   FetchTracksParams,
   FetchTracksResponse,
-} from '@/renderer/api/track'
-import reactQueryClient from '@/renderer/utils/reactQueryClient'
-import { IpcChannels } from '@/main/IpcChannelsName'
+  TrackApiNames,
+} from '@/shared/api/Track'
+import { APIs } from '@/shared/CacheAPIs'
 
 export default function useTracks(params: FetchTracksParams) {
   return useQuery(
@@ -23,7 +22,7 @@ export default function useTracks(params: FetchTracksParams) {
       staleTime: Infinity,
       initialData: (): FetchTracksResponse | undefined =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'song/detail',
+          api: APIs.Track,
           query: {
             ids: params.ids.join(','),
           },
