@@ -1,4 +1,4 @@
-import { IpcChannels, IpcChannelsParams, IpcChannelsReturns } from '@/shared/IpcChannels'
+import { IpcChannelsParams, IpcChannelsReturns } from '@/shared/IpcChannels'
 import { useEffect } from 'react'
 
 

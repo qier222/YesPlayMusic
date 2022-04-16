@@ -1,6 +1,5 @@
 import { player } from '@/renderer/store'
-import { IpcChannels, IpcChannelsReturns } from '@/shared/IpcChannels'
-import { IpcChannelsParams } from '@/shared/IpcChannels'
+import { IpcChannels, IpcChannelsReturns, IpcChannelsParams } from '@/shared/IpcChannels'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
