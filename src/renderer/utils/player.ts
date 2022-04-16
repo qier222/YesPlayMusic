@@ -244,12 +244,6 @@ export class Player {
     if (!this._progressInterval) {
       this._setupProgressInterval()
     }
-
-    window.ipcRenderer?.send(IpcChannels.SetTrayTooltip, {
-      text: !!this.track?.name
-        ? `${this.track.name} - YesPlayMusic`
-        : 'YesPlayMusic',
-    })
   }
 
   private _howlerOnEndCallback() {

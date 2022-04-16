@@ -49,6 +49,16 @@ const PlayingTrack = () => {
     LikeThisTrack()
   })
 
+  useEffect(() => {
+    window.ipcRenderer?.send(IpcChannels.SetTrayLikeState, {
+      isLiked: userLikedSongs?.ids?.includes(track?.id ?? 0) ?? false,
+    })
+
+    window.ipcRenderer?.send(IpcChannels.SetTrayTooltip, {
+      text: track?.name ? `${track.name} - YesPlayMusic` : 'YesPlayMusic',
+    })
+  }, [userLikedSongs, track])
+
   return (
     <>
       {track && (
@@ -84,9 +94,7 @@ const PlayingTrack = () => {
             </div>
           </div>
 
-          <IconButton
-            onClick={LikeThisTrack}
-          >
+          <IconButton onClick={LikeThisTrack}>
             <SvgIcon
               className='h-5 w-5 text-black dark:text-white'
               name={
