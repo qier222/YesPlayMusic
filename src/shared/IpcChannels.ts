@@ -13,7 +13,7 @@ export const enum IpcChannels {
   SetTrayTooltip = 'set-tray-tooltip',
   SetTrayPlayState = 'set-tray-play-state',
   SetTrayLikeState = 'set-tray-like-state',
-  // 准备三个播放相关channel, 为 mpris预留接口
+  // 准备三个播放相关channel, 为 mpris 预留接口
   Play = 'play',
   Pause = 'pause',
   PlayOrPause = 'play-or-pause',

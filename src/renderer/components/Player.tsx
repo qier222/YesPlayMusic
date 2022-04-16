@@ -45,7 +45,9 @@ const PlayingTrack = () => {
       navigate(`/${trackListSource.type}/${trackListSource.id}`)
   }
 
-  useIpcRenderer(IpcChannels.Like, LikeThisTrack)
+  useIpcRenderer(IpcChannels.Like, () => {
+    LikeThisTrack()
+  })
 
   return (
     <>
