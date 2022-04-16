@@ -22,7 +22,7 @@ interface TrackListSource {
   id: number
 }
 export enum Mode {
-  PLAYLIST = 'playlist',
+  TrackList = 'trackList',
   FM = 'fm',
 }
 export enum State {
@@ -49,7 +49,7 @@ export class Player {
   private _volume: number = 1 // 0 to 1
 
   state: State = State.INITIALIZING
-  mode: Mode = Mode.PLAYLIST
+  mode: Mode = Mode.TrackList
   trackList: TrackID[] = []
   trackListSource: TrackListSource | null = null
   fmTrackList: TrackID[] = []
@@ -115,7 +115,7 @@ export class Player {
    * Get current playing track ID
    */
   get trackID(): TrackID {
-    if (this.mode === Mode.PLAYLIST) {
+    if (this.mode === Mode.TrackList) {
       const { trackList, _trackIndex } = this
       return trackList[_trackIndex] ?? 0
     }
@@ -199,7 +199,7 @@ export class Player {
       toast('加载歌曲信息失败')
       return
     }
-    if (this.mode === Mode.PLAYLIST) this._track = track
+    if (this.mode === Mode.TrackList) this._track = track
     if (this.mode === Mode.FM) this.fmTrack = track
     this._playAudio()
   }
@@ -370,7 +370,7 @@ export class Player {
    * @param {null|number} autoPlayTrackID
    */
   playAList(list: TrackID[], autoPlayTrackID?: null | number) {
-    this.mode = Mode.PLAYLIST
+    this.mode = Mode.TrackList
     this.trackList = list
     this._trackIndex = autoPlayTrackID
       ? list.findIndex(t => t === autoPlayTrackID)

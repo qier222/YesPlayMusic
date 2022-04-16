@@ -95,7 +95,7 @@ const MediaControls = () => {
 
   return (
     <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
-      {mode === PlayerMode.PLAYLIST && (
+      {mode === PlayerMode.TrackList && (
         <IconButton
           onClick={() => track && player.prevTrack()}
           disabled={!track}

@@ -102,7 +102,7 @@ const Controls = () => {
 
   return (
     <div className='flex items-center justify-center gap-2 text-white'>
-      {mode === PlayerMode.PLAYLIST && (
+      {mode === PlayerMode.TrackList && (
         <IconButton
           onClick={() => track && player.prevTrack()}
           disabled={!track}

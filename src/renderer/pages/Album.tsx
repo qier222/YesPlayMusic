@@ -37,10 +37,15 @@ const PlayButton = ({
   const playerSnapshot = useSnapshot(player)
   const isThisAlbumPlaying = useMemo(
     () =>
-      playerSnapshot.mode === PlayerMode.PLAYLIST &&
+      playerSnapshot.mode === PlayerMode.TrackList &&
       playerSnapshot.trackListSource?.type === TrackListSourceType.ALBUM &&
       playerSnapshot.trackListSource?.id === album?.id,
-    [playerSnapshot.trackListSource, album?.id]
+    [
+      playerSnapshot.mode,
+      playerSnapshot.trackListSource?.type,
+      playerSnapshot.trackListSource?.id,
+      album?.id,
+    ]
   )
 
   const isPlaying =

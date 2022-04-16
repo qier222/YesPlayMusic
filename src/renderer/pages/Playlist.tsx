@@ -32,10 +32,15 @@ const PlayButton = ({
   const playerSnapshot = useSnapshot(player)
   const isThisPlaylistPlaying = useMemo(
     () =>
-      playerSnapshot.mode === PlayerMode.PLAYLIST &&
+      playerSnapshot.mode === PlayerMode.TrackList &&
       playerSnapshot.trackListSource?.type === TrackListSourceType.PLAYLIST &&
       playerSnapshot.trackListSource?.id === playlist?.id,
-    [playerSnapshot.trackListSource, playlist?.id]
+    [
+      playerSnapshot.mode,
+      playerSnapshot.trackListSource?.id,
+      playerSnapshot.trackListSource?.type,
+      playlist?.id,
+    ]
   )
 
   const wrappedHandlePlay = () => {
