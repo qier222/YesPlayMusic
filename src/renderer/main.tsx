@@ -8,6 +8,9 @@ import 'virtual:svg-icons-register'
 import './styles/global.scss'
 import App from './App'
 import pkg from '../../package.json'
+import ReactGA from 'react-ga4'
+
+ReactGA.initialize('G-KMJJCFZDKF')
 
 Sentry.init({
   dsn: 'https://7cc7879b42ba4bed9f66fb6752558475@o436528.ingest.sentry.io/6274630',
