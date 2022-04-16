@@ -18,7 +18,7 @@ const PlayOrPauseButtonInTrack = memo(
 
     const playerSnapshot = useSnapshot(player)
     const isPlaying = useMemo(
-      () => playerSnapshot.state === PlayerState.PLAYING,
+      () => playerSnapshot.state === PlayerState.Playing,
       [playerSnapshot.state]
     )
 

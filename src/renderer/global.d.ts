@@ -1,17 +1,25 @@
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannelsParams, IpcChannelsReturns } from '@/shared/IpcChannels'
 import { ElectronLog } from 'electron-log'
 
 export {}
 
 declare global {
   interface Window {
-    // Expose some Api through preload script
     ipcRenderer?: {
-      sendSync: (channel: IpcChannels, ...args: any[]) => any
-      send: (channel: IpcChannels, ...args: any[]) => void
-      on: (
-        channel: IpcChannels,
-        listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+      sendSync: <T extends keyof IpcChannelsParams>(
+        channel: T,
+        params?: IpcChannelsParams[T]
+      ) => IpcChannelsReturns[T]
+      send: <T extends keyof IpcChannelsParams>(
+        channel: T,
+        params?: IpcChannelsParams[T]
+      ) => void
+      on: <T extends keyof IpcChannelsParams>(
+        channel: T,
+        listener: (
+          event: Electron.IpcRendererEvent,
+          value: IpcChannelsReturns[T]
+        ) => void
       ) => void
     }
     env?: {

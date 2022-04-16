@@ -1,34 +1,37 @@
-import type { FetchUserLikedTracksIDsResponse } from '@/renderer/api/user'
-import { UserApiNames, fetchUserLikedTracksIDs } from '@/renderer/api/user'
 import { likeATrack } from '@/renderer/api/track'
 import useUser from './useUser'
 import { useQueryClient } from 'react-query'
-import { IpcChannels } from '@/main/IpcChannelsName'
-import { player } from '@/renderer/store'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
+import { fetchUserLikedTracksIDs } from '../api/user'
+import {
+  FetchUserLikedTracksIDsResponse,
+  UserApiNames,
+} from '@/shared/api/User'
 
 export default function useUserLikedTracksIDs() {
   const { data: user } = useUser()
   const uid = user?.account?.id ?? 0
 
   return useQuery(
-    [UserApiNames.FETCH_USER_LIKED_TRACKS_IDS, uid],
+    [UserApiNames.FetchUserLikedTracksIds, uid],
     () => fetchUserLikedTracksIDs({ uid }),
     {
       enabled: !!(uid && uid !== 0),
       refetchOnWindowFocus: true,
       placeholderData: (): FetchUserLikedTracksIDsResponse | undefined =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'likelist',
+          api: APIs.Likelist,
           query: {
             uid,
           },
         }),
-      onSuccess: ({ ids }) => {
-        window.ipcRenderer?.send(
-          IpcChannels.SetTrayLikeState,
-          ids.includes(player.trackID)
-        )
-      },
+      // onSuccess: ({ ids }) => { //TODO: FIXME
+      //   window.ipcRenderer?.send(
+      //     IpcChannels.SetTrayLikeState,
+      //     ids.includes(player.trackID)
+      //   )
+      // },
     }
   )
 }
@@ -38,7 +41,7 @@ export const useMutationLikeATrack = () => {
   const { data: user } = useUser()
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const uid = user?.account?.id ?? 0
-  const key = [UserApiNames.FETCH_USER_LIKED_TRACKS_IDS, uid]
+  const key = [UserApiNames.FetchUserLikedTracksIds, uid]
 
   return useMutation(
     async (trackID: number) => {

@@ -38,6 +38,7 @@ export interface TablesStructures {
   [Tables.Audio]: {
     id: number
     br: number
+    type: 'mp3' | 'flac' | 'ogg' | 'wav' | 'm4a' | 'aac' | 'unknown'
     source: 'netease' | 'migu' | 'kuwo' | 'kugou' | 'youtube'
     url: string
     updatedAt: number
@@ -155,10 +156,7 @@ class DB {
     upsertMany(data)
   }
 
-  delete<T extends TableNames>(
-    table: T,
-    key: TablesStructures[T]['id']
-  ) {
+  delete<T extends TableNames>(table: T, key: TablesStructures[T]['id']) {
     return this.sqlite.prepare(`DELETE FROM ${table} WHERE id = ?`).run(key)
   }
 

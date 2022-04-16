@@ -8,8 +8,8 @@ import {
   getCoverColor,
   storage,
 } from '@/renderer/utils/common'
-import { IpcChannels } from '@/main/IpcChannelsName'
-import { APIs } from '@/main/CacheAPIsName'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
 
 test('resizeImage', () => {
   expect(resizeImage('https://test.com/test.jpg', 'xs')).toBe(
@@ -62,28 +62,48 @@ test('formatDuration', () => {
   expect(formatDuration(0, 'zh-CN', 'hh[hr] mm[min]')).toBe('0 分钟')
 })
 
-test('cacheCoverColor', () => {
-  vi.stubGlobal('ipcRenderer', {
-    send: (channel: IpcChannels, ...args: any[]) => {
-      expect(channel).toBe(IpcChannels.CacheCoverColor)
-      expect(args[0].api).toBe(APIs.CoverColor)
-      expect(args[0].query).toEqual({
-        id: '109951165911363',
-        color: '#fff',
-      })
-    },
-  })
+describe('cacheCoverColor', () => {
+  test('cache with valid url', () => {
+    vi.stubGlobal('ipcRenderer', {
+      send: (channel: IpcChannels, ...args: any[]) => {
+        expect(channel).toBe(IpcChannels.CacheCoverColor)
+        expect(args[0].api).toBe(APIs.CoverColor)
+        expect(args[0].query).toEqual({
+          id: '109951165911363',
+          color: '#fff',
+        })
+      },
+    })
 
-  const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
-  expect(
+    const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
     cacheCoverColor(
       'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256',
       '#fff'
     )
-  )
-  expect(sendSpy).toHaveBeenCalledTimes(1)
 
-  vi.stubGlobal('ipcRenderer', undefined)
+    expect(sendSpy).toHaveBeenCalledTimes(1)
+
+    vi.stubGlobal('ipcRenderer', undefined)
+  })
+
+  test('cache with invalid url', () => {
+    vi.stubGlobal('ipcRenderer', {
+      send: (channel: IpcChannels, ...args: any[]) => {
+        expect(channel).toBe(IpcChannels.CacheCoverColor)
+        expect(args[0].api).toBe(APIs.CoverColor)
+        expect(args[0].query).toEqual({
+          id: '',
+          color: '#fff',
+        })
+      },
+    })
+
+    const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+    cacheCoverColor('not a valid url', '#fff')
+    expect(sendSpy).toHaveBeenCalledTimes(0)
+
+    vi.stubGlobal('ipcRenderer', undefined)
+  })
 })
 
 test('calcCoverColor', async () => {
@@ -117,7 +137,6 @@ test('calcCoverColor', async () => {
     )
   ).toBe('#808080')
 
-  expect(sendSpy).toHaveBeenCalledTimes(1)
   vi.stubGlobal('ipcRenderer', undefined)
 })
 
@@ -173,6 +192,10 @@ describe('getCoverColor', () => {
     expect(sendSyncSpy).toHaveBeenCalledTimes(1)
     expect(sendSpy).toHaveBeenCalledTimes(1)
     vi.stubGlobal('ipcRenderer', undefined)
+  })
+
+  test('invalid url', async () => {
+    expect(await getCoverColor('not a valid url')).toBe(undefined)
   })
 })
 

@@ -127,7 +127,7 @@ const Playlists = () => {
     <div>
       <CoverRow
         playlists={playlists?.playlist?.slice(1) ?? []}
-        subtitle={Subtitle.CREATOR}
+        subtitle={Subtitle.Creator}
       />
     </div>
   )
@@ -140,7 +140,7 @@ const Albums = () => {
 
   return (
     <div>
-      <CoverRow albums={albums?.data ?? []} subtitle={Subtitle.ARTIST} />
+      <CoverRow albums={albums?.data ?? []} subtitle={Subtitle.Artist} />
     </div>
   )
 }
@@ -150,7 +150,7 @@ const Artists = () => {
 
   return (
     <div>
-      <CoverRow artists={artists?.data ?? []} subtitle={Subtitle.ARTIST} />
+      <CoverRow artists={artists?.data ?? []} subtitle={Subtitle.Artist} />
     </div>
   )
 }

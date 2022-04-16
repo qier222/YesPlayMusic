@@ -109,7 +109,7 @@ const MediaControls = () => {
 
   return (
     <div className='flex items-center justify-center gap-2 text-black dark:text-white'>
-      {mode === PlayerMode.PLAYLIST && (
+      {mode === PlayerMode.TrackList && (
         <IconButton
           onClick={() => track && player.prevTrack()}
           disabled={!track}
@@ -130,7 +130,7 @@ const MediaControls = () => {
         <SvgIcon
           className='h-7 w-7'
           name={
-            [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
+            [PlayerState.Playing, PlayerState.Loading].includes(state)
               ? 'pause'
               : 'play'
           }
@@ -147,12 +147,12 @@ const Others = () => {
   const playerSnapshot = useSnapshot(player)
 
   const switchRepeatMode = () => {
-    if (playerSnapshot.repeatMode === PlayerRepeatMode.OFF) {
-      player.repeatMode = PlayerRepeatMode.ON
-    } else if (playerSnapshot.repeatMode === PlayerRepeatMode.ON) {
-      player.repeatMode = PlayerRepeatMode.ONE
+    if (playerSnapshot.repeatMode === PlayerRepeatMode.Off) {
+      player.repeatMode = PlayerRepeatMode.On
+    } else if (playerSnapshot.repeatMode === PlayerRepeatMode.On) {
+      player.repeatMode = PlayerRepeatMode.One
     } else {
-      player.repeatMode = PlayerRepeatMode.OFF
+      player.repeatMode = PlayerRepeatMode.Off
     }
   }
 
@@ -171,11 +171,11 @@ const Others = () => {
         <SvgIcon
           className={classNames(
             'h-6 w-6',
-            playerSnapshot.repeatMode !== PlayerRepeatMode.OFF &&
+            playerSnapshot.repeatMode !== PlayerRepeatMode.Off &&
               'text-brand-500'
           )}
           name={
-            playerSnapshot.repeatMode === PlayerRepeatMode.ONE
+            playerSnapshot.repeatMode === PlayerRepeatMode.One
               ? 'repeat-1'
               : 'repeat'
           }
@@ -215,7 +215,7 @@ const Progress = () => {
           min={0}
           max={(track.dt ?? 0) / 1000}
           value={
-            state === PlayerState.PLAYING || state === PlayerState.PAUSED
+            state === PlayerState.Playing || state === PlayerState.Paused
               ? progress
               : 0
           }

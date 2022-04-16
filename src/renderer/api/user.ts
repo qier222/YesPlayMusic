@@ -1,12 +1,14 @@
 import request from '@/renderer/utils/request'
-
-export enum UserApiNames {
-  FETCH_USER_ACCOUNT = 'fetchUserAccount',
-  FETCH_USER_LIKED_TRACKS_IDS = 'fetchUserLikedTracksIDs',
-  FETCH_USER_PLAYLISTS = 'fetchUserPlaylists',
-  FETCH_USER_ALBUMS = 'fetchUserAlbums',
-  FETCH_USER_ARTIST = 'fetchUserArtists',
-}
+import {
+  FetchUserAccountResponse,
+  FetchUserPlaylistsParams,
+  FetchUserPlaylistsResponse,
+  FetchUserLikedTracksIDsParams,
+  FetchUserLikedTracksIDsResponse,
+  FetchUserAlbumsParams,
+  FetchUserAlbumsResponse,
+  FetchUserArtistsResponse,
+} from '@/shared/api/User'
 
 /**
  * 获取用户详情
@@ -26,64 +28,7 @@ export function userDetail(uid: number) {
 }
 
 // 获取账号详情
-export interface fetchUserAccountResponse {
-  code: number
-  account: {
-    anonimousUser: boolean
-    ban: number
-    baoyueVersion: number
-    createTime: number
-    donateVersion: number
-    id: number
-    paidFee: boolean
-    status: number
-    tokenVersion: number
-    type: number
-    userName: string
-    vipType: number
-    whitelistAuthority: number
-  } | null
-  profile: {
-    userId: number
-    userType: number
-    nickname: string
-    avatarImgId: number
-    avatarUrl: string
-    backgroundImgId: number
-    backgroundUrl: string
-    signature: string
-    createTime: number
-    userName: string
-    accountType: number
-    shortUserName: string
-    birthday: number
-    authority: number
-    gender: number
-    accountStatus: number
-    province: number
-    city: number
-    authStatus: number
-    description: string | null
-    detailDescription: string | null
-    defaultAvatar: boolean
-    expertTags: [] | null
-    experts: [] | null
-    djStatus: number
-    locationStatus: number
-    vipType: number
-    followed: boolean
-    mutual: boolean
-    authenticated: boolean
-    lastLoginTime: number
-    lastLoginIP: string
-    remarkName: string | null
-    viptypeVersion: number
-    authenticationTypes: number
-    avatarDetail: string | null
-    anchor: boolean
-  } | null
-}
-export function fetchUserAccount(): Promise<fetchUserAccountResponse> {
+export function fetchUserAccount(): Promise<FetchUserAccountResponse> {
   return request({
     url: '/user/account',
     method: 'get',
@@ -94,17 +39,6 @@ export function fetchUserAccount(): Promise<fetchUserAccountResponse> {
 }
 
 // 获取用户歌单
-export interface FetchUserPlaylistsParams {
-  uid: number
-  offset: number
-  limit?: number // default 30
-}
-export interface FetchUserPlaylistsResponse {
-  code: number
-  more: boolean
-  version: string
-  playlist: Playlist[]
-}
 export function fetchUserPlaylists(
   params: FetchUserPlaylistsParams
 ): Promise<FetchUserPlaylistsResponse> {
@@ -115,14 +49,6 @@ export function fetchUserPlaylists(
   })
 }
 
-export interface FetchUserLikedTracksIDsParams {
-  uid: number
-}
-export interface FetchUserLikedTracksIDsResponse {
-  code: number
-  checkPoint: number
-  ids: number[]
-}
 export function fetchUserLikedTracksIDs(
   params: FetchUserLikedTracksIDsParams
 ): Promise<FetchUserLikedTracksIDsResponse> {
@@ -153,17 +79,6 @@ export function dailySignin(type = 0) {
   })
 }
 
-export interface FetchUserAlbumsParams {
-  offset?: number // default 0
-  limit?: number // default 25
-}
-export interface FetchUserAlbumsResponse {
-  code: number
-  hasMore: boolean
-  paidCount: number
-  count: number
-  data: Album[]
-}
 export function fetchUserAlbums(
   params: FetchUserAlbumsParams
 ): Promise<FetchUserAlbumsResponse> {
@@ -178,12 +93,6 @@ export function fetchUserAlbums(
 }
 
 // 获取收藏的歌手
-export interface FetchUserArtistsResponse {
-  code: number
-  hasMore: boolean
-  count: number
-  data: Artist[]
-}
 export function fetchUserArtists(): Promise<FetchUserArtistsResponse> {
   return request({
     url: '/artist/sublist',

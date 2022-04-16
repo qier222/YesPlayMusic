@@ -6,16 +6,16 @@ import { resizeImage } from '@/renderer/utils/common'
 const NavigationButtons = () => {
   const navigate = useNavigate()
   enum ACTION {
-    BACK = 'back',
-    FORWARD = 'forward',
+    Back = 'back',
+    Forward = 'forward',
   }
   const handleNavigate = (action: ACTION) => {
-    if (action === ACTION.BACK) navigate(-1)
-    if (action === ACTION.FORWARD) navigate(1)
+    if (action === ACTION.Back) navigate(-1)
+    if (action === ACTION.Forward) navigate(1)
   }
   return (
     <div className='flex gap-1'>
-      {[ACTION.BACK, ACTION.FORWARD].map(action => (
+      {[ACTION.Back, ACTION.Forward].map(action => (
         <div
           onClick={() => handleNavigate(action)}
           key={action}

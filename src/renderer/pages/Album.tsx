@@ -23,7 +23,6 @@ import useTracks from '@/renderer/hooks/useTracks'
 import useUserAlbums, {
   useMutationLikeAAlbum,
 } from '@/renderer/hooks/useUserAlbums'
-import useUser from '@/renderer/hooks/useUser'
 
 const PlayButton = ({
   album,
@@ -37,15 +36,20 @@ const PlayButton = ({
   const playerSnapshot = useSnapshot(player)
   const isThisAlbumPlaying = useMemo(
     () =>
-      playerSnapshot.mode === PlayerMode.PLAYLIST &&
-      playerSnapshot.trackListSource?.type === TrackListSourceType.ALBUM &&
+      playerSnapshot.mode === PlayerMode.TrackList &&
+      playerSnapshot.trackListSource?.type === TrackListSourceType.Album &&
       playerSnapshot.trackListSource?.id === album?.id,
-    [playerSnapshot.trackListSource, album?.id]
+    [
+      playerSnapshot.mode,
+      playerSnapshot.trackListSource?.type,
+      playerSnapshot.trackListSource?.id,
+      album?.id,
+    ]
   )
 
   const isPlaying =
     isThisAlbumPlaying &&
-    [PlayerState.PLAYING, PlayerState.LOADING].includes(playerSnapshot.state)
+    [PlayerState.Playing, PlayerState.Loading].includes(playerSnapshot.state)
 
   const wrappedHandlePlay = () => {
     if (isThisAlbumPlaying) {
@@ -296,7 +300,7 @@ const MoreAlbum = ({ album }: { album: Album | undefined }) => {
           albums={
             filteredAlbums.length ? filteredAlbums : albums?.hotAlbums || []
           }
-          subtitle={Subtitle.TYPE_RELEASE_YEAR}
+          subtitle={Subtitle.TypeReleaseYear}
           isSkeleton={isLoading}
           rows={1}
           navigateCallback={scrollToTop}

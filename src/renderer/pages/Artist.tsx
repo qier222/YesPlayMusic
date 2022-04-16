@@ -207,7 +207,7 @@ const Artist = () => {
           </div>
           <CoverRow
             albums={albums.slice(0, 10)}
-            subtitle={Subtitle.TYPE_RELEASE_YEAR}
+            subtitle={Subtitle.TypeReleaseYear}
           />
         </div>
       )}
@@ -220,7 +220,7 @@ const Artist = () => {
           </div>
           <CoverRow
             albums={singles.slice(0, 5)}
-            subtitle={Subtitle.TYPE_RELEASE_YEAR}
+            subtitle={Subtitle.TypeReleaseYear}
           />
         </div>
       )}

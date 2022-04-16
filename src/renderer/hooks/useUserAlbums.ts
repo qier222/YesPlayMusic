@@ -1,23 +1,25 @@
 import { likeAAlbum } from '@/renderer/api/album'
-import type {
-  FetchUserAlbumsParams,
-  FetchUserAlbumsResponse,
-} from '@/renderer/api/user'
-import { UserApiNames, fetchUserAlbums } from '@/renderer/api/user'
 import { useQueryClient } from 'react-query'
 import useUser from './useUser'
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
+import {
+  FetchUserAlbumsParams,
+  UserApiNames,
+  FetchUserAlbumsResponse,
+} from '@/shared/api/User'
+import { fetchUserAlbums } from '../api/user'
 
 export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
   const { data: user } = useUser()
   return useQuery(
-    [UserApiNames.FETCH_USER_ALBUMS, user?.profile?.userId ?? 0],
+    [UserApiNames.FetchUserAlbums, user?.profile?.userId ?? 0],
     () => fetchUserAlbums(params),
     {
       refetchOnWindowFocus: true,
       placeholderData: (): FetchUserAlbumsResponse | undefined =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'album/sublist',
+          api: APIs.UserAlbums,
           query: params,
         }),
     }
@@ -29,7 +31,7 @@ export const useMutationLikeAAlbum = () => {
   const { data: user } = useUser()
   const { data: userAlbums } = useUserAlbums({ limit: 2000 })
   const uid = user?.account?.id ?? 0
-  const key = [UserApiNames.FETCH_USER_ALBUMS, uid]
+  const key = [UserApiNames.FetchUserAlbums, uid]
 
   return useMutation(
     async (album: Album) => {

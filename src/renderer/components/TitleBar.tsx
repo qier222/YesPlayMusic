@@ -1,14 +1,13 @@
 import { player } from '@/renderer/store'
 import SvgIcon from './SvgIcon'
-import { IpcChannels } from '@/main/IpcChannelsName'
-import useIpcRenderer from '@/renderer/hooks/useIpcRenderer'
+import { IpcChannels } from '@/shared/IpcChannels'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
 
-  useIpcRenderer(IpcChannels.IsMaximized, (e, value) => {
-    setIsMaximized(value)
-  })
+  // useIpcRenderer(IpcChannels.IsMaximized, (e, value) => {
+  //   setIsMaximized(value)
+  // })
 
   const minimize = () => {
     window.ipcRenderer?.send(IpcChannels.Minimize)

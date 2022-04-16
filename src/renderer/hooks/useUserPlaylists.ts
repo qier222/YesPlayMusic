@@ -1,9 +1,10 @@
 import { likeAPlaylist } from '@/renderer/api/playlist'
-import type { FetchUserPlaylistsResponse } from '@/renderer/api/user'
-import { UserApiNames, fetchUserPlaylists } from '@/renderer/api/user'
 import { useQueryClient } from 'react-query'
 import useUser from './useUser'
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { APIs } from '@/shared/CacheAPIs'
+import { fetchUserPlaylists } from '@/renderer/api/user'
+import { FetchUserPlaylistsResponse, UserApiNames } from '@/shared/api/User'
 
 export default function useUserPlaylists() {
   const { data: user } = useUser()
@@ -16,7 +17,7 @@ export default function useUserPlaylists() {
   }
 
   return useQuery(
-    [UserApiNames.FETCH_USER_PLAYLISTS, uid],
+    [UserApiNames.FetchUserPlaylists, uid],
     async () => {
       if (!params.uid) {
         throw new Error('请登录后再请求用户收藏的歌单')
@@ -33,7 +34,7 @@ export default function useUserPlaylists() {
       refetchOnWindowFocus: true,
       placeholderData: (): FetchUserPlaylistsResponse =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'user/playlist',
+          api: APIs.UserPlaylist,
           query: {
             uid: params.uid,
           },
@@ -47,7 +48,7 @@ export const useMutationLikeAPlaylist = () => {
   const { data: user } = useUser()
   const { data: userPlaylists } = useUserPlaylists()
   const uid = user?.account?.id ?? 0
-  const key = [UserApiNames.FETCH_USER_PLAYLISTS, uid]
+  const key = [UserApiNames.FetchUserPlaylists, uid]
 
   return useMutation(
     async (playlist: Playlist) => {
