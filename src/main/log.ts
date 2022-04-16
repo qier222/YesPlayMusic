@@ -5,14 +5,17 @@
  * @see https://www.npmjs.com/package/electron-log
  */
 
-import logger from 'electron-log'
+import log from 'electron-log'
 import pc from 'picocolors'
 
-Object.assign(console, logger.functions)
-logger.transports.console.format = `${pc.dim('{h}:{i}:{s}{scope}')} › {text}`
-logger.transports.file.level = 'info'
+Object.assign(console, log.functions)
+log.variables.process = 'main'
+log.transports.console.format = `[{process}] ${pc.dim(
+  '{h}:{i}:{s}{scope}'
+)} {level} › {text}`
+log.transports.file.level = 'info'
 
-logger.info(
+log.info(
   `\n\n██╗   ██╗███████╗███████╗██████╗ ██╗      █████╗ ██╗   ██╗███╗   ███╗██╗   ██╗███████╗██╗ ██████╗
 ╚██╗ ██╔╝██╔════╝██╔════╝██╔══██╗██║     ██╔══██╗╚██╗ ██╔╝████╗ ████║██║   ██║██╔════╝██║██╔════╝
  ╚████╔╝ █████╗  ███████╗██████╔╝██║     ███████║ ╚████╔╝ ██╔████╔██║██║   ██║███████╗██║██║     
@@ -21,6 +24,6 @@ logger.info(
    ╚═╝   ╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═════╝\n`
 )
 
-export default logger
+export default log
 
-logger.info(`[logger] logger initialized`)
+log.info(`[logger] logger initialized`)

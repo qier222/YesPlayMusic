@@ -1,12 +1,12 @@
 import { pathCase } from 'change-case'
 import cookieParser from 'cookie-parser'
 import express, { Request, Response } from 'express'
-import logger from './logger'
+import log from './log'
 import cache from './cache'
 import fileUpload from 'express-fileupload'
 import path from 'path'
 
-logger.info('[server] starting http server')
+log.info('[server] starting http server')
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = process.env.NODE_ENV === 'production'
@@ -24,7 +24,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
   name = pathCase(name)
 
   const wrappedHandler = async (req: Request, res: Response) => {
-    logger.debug(`[server] Handling request: ${req.path}`)
+    log.debug(`[server] Handling request: ${req.path}`)
 
     // Get from cache
     const cacheData = await cache.getForExpress(name, req)
@@ -93,5 +93,5 @@ const port = Number(
     : process.env.ELECTRON_DEV_NETEASE_API_PORT ?? 3000
 )
 app.listen(port, () => {
-  logger.info(`[server] API server listening on port ${port}`)
+  log.info(`[server] API server listening on port ${port}`)
 })

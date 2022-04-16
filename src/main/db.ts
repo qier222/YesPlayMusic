@@ -2,7 +2,7 @@ import path from 'path'
 import { app } from 'electron'
 import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
-import logger from './logger'
+import log from './log'
 import { createFileIfNotExist } from './utils'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -29,7 +29,7 @@ class DB {
   )
 
   constructor() {
-    logger.info('[db] Initializing database...')
+    log.info('[db] Initializing database...')
 
     createFileIfNotExist(this.dbFilePath)
 
@@ -42,7 +42,7 @@ class DB {
     this.sqlite.pragma('auto_vacuum = FULL')
     this.initTables()
 
-    logger.info('[db] Database initialized')
+    log.info('[db] Database initialized')
   }
 
   initTables() {

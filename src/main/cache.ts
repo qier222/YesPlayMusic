@@ -2,7 +2,7 @@ import { db, Tables } from './db'
 import type { FetchTracksResponse } from '../renderer/api/track'
 import { app } from 'electron'
 import { Request, Response } from 'express'
-import logger from './logger'
+import log from './log'
 import fs from 'fs'
 import * as musicMetadata from 'music-metadata'
 import { APIs } from './CacheAPIsName'
@@ -203,7 +203,7 @@ class Cache {
     if (api === APIs.SongDetail) {
       const cache = this.get(api, req.query)
       if (cache) {
-        logger.debug(`[cache] Cache hit for ${req.path}`)
+        log.debug(`[cache] Cache hit for ${req.path}`)
         return cache
       }
     }
@@ -220,7 +220,7 @@ class Cache {
       )
       if (!isAudioFileExists) return
 
-      logger.debug(`[cache] Audio cache hit for ${req.path}`)
+      log.debug(`[cache] Audio cache hit for ${req.path}`)
 
       return {
         data: [
@@ -306,9 +306,9 @@ class Cache {
 
     await fs.writeFile(`${path}/${id}-${br}.${type}`, buffer, error => {
       if (error) {
-        return logger.error(`[cache] cacheAudio failed: ${error}`)
+        return log.error(`[cache] cacheAudio failed: ${error}`)
       }
-      logger.info(`Audio file ${id}-${br}.${type} cached!`)
+      log.info(`Audio file ${id}-${br}.${type} cached!`)
 
       db.upsert(Tables.Audio, {
         id,
@@ -318,7 +318,7 @@ class Cache {
         updateAt: Date.now(),
       })
 
-      logger.info(`[cache] cacheAudio ${id}-${br}.${type}`)
+      log.info(`[cache] cacheAudio ${id}-${br}.${type}`)
     })
   }
 }

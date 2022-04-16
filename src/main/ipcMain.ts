@@ -2,7 +2,7 @@ import { BrowserWindow, ipcMain, app } from 'electron'
 import { db, Tables } from './db'
 import { IpcChannels } from './IpcChannelsName'
 import cache from './cache'
-import logger from './logger'
+import log from './log'
 import fs from 'fs'
 import { APIs } from './CacheAPIsName'
 

@@ -1,4 +1,4 @@
-import logger from './logger'
+import log from './log'
 import path from 'path'
 import { app } from 'electron'
 import { createDirIfNotExist } from './utils'
@@ -10,4 +10,4 @@ if (isDev) {
   createDirIfNotExist(devUserDataPath)
   app.setPath('appData', devUserDataPath)
 }
-logger.info(`[index] userData path: ${app.getPath('userData')}`)
+log.info(`[index] userData path: ${app.getPath('userData')}`)
