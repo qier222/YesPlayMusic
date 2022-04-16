@@ -12,6 +12,8 @@ import { release } from 'os'
 import path, { join } from 'path'
 import log from './log'
 import { initIpcMain } from './ipcMain'
+import { createTray, YPMTray } from './tray'
+import { IpcChannels } from './IpcChannelsName'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -102,6 +104,11 @@ app.whenReady().then(async () => {
   log.info('[index] App ready')
   createWindow()
   handleWindowEvents()
+
+  if (isWindows || isLinux || isDev) {
+    createTray(win)
+  }
+
   initIpcMain(win)
 
   // Install devtool extension
@@ -123,7 +130,7 @@ app.whenReady().then(async () => {
 
 app.on('window-all-closed', () => {
   win = null
-  if (process.platform !== 'darwin') app.quit()
+  if (!isMac) app.quit()
 })
 
 app.on('second-instance', () => {
@@ -145,10 +152,10 @@ app.on('activate', () => {
 
 const handleWindowEvents = () => {
   win?.on('maximize', () => {
-    win?.webContents.send('is-maximized', true)
+    win?.webContents.send(IpcChannels.IsMaximized, true)
   })
 
   win?.on('unmaximize', () => {
-    win?.webContents.send('is-maximized', false)
+    win?.webContents.send(IpcChannels.IsMaximized, false)
   })
 }

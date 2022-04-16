@@ -12,6 +12,8 @@ import {
   Mode as PlayerMode,
   RepeatMode as PlayerRepeatMode,
 } from '@/renderer/utils/player'
+import { IpcChannels } from '@/main/IpcChannelsName'
+import useIpcRenderer from '@/renderer/hooks/useIpcRenderer'
 
 const PlayingTrack = () => {
   const navigate = useNavigate()
@@ -26,15 +28,24 @@ const PlayingTrack = () => {
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const mutationLikeATrack = useMutationLikeATrack()
 
+  const LikeThisTrack = () => {
+    track?.id && mutationLikeATrack.mutate(track.id)
+  }
+
+  const hasTrackListSource =
+    snappedPlayer.mode !== PlayerMode.FM && trackListSource?.type
+
   const toAlbum = () => {
     const id = track?.al?.id
     if (id) navigate(`/album/${id}`)
   }
 
   const toTrackListSource = () => {
-    if (trackListSource?.type)
+    if (hasTrackListSource)
       navigate(`/${trackListSource.type}/${trackListSource.id}`)
   }
+
+  useIpcRenderer(IpcChannels.Like, LikeThisTrack)
 
   return (
     <>
@@ -59,7 +70,10 @@ const PlayingTrack = () => {
           <div className='flex flex-col justify-center leading-tight'>
             <div
               onClick={toTrackListSource}
-              className='line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-300'
+              className={classNames(
+                'line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 dark:text-white dark:decoration-gray-300',
+                hasTrackListSource && 'hover:underline'
+              )}
             >
               {track?.name}
             </div>
@@ -69,7 +83,7 @@ const PlayingTrack = () => {
           </div>
 
           <IconButton
-            onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
+            onClick={LikeThisTrack}
           >
             <SvgIcon
               className='h-5 w-5 text-black dark:text-white'

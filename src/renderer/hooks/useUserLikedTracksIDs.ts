@@ -4,6 +4,7 @@ import { likeATrack } from '@/renderer/api/track'
 import useUser from './useUser'
 import { useQueryClient } from 'react-query'
 import { IpcChannels } from '@/main/IpcChannelsName'
+import { player } from '@/renderer/store'
 
 export default function useUserLikedTracksIDs() {
   const { data: user } = useUser()
@@ -22,6 +23,12 @@ export default function useUserLikedTracksIDs() {
             uid,
           },
         }),
+      onSuccess: ({ ids }) => {
+        window.ipcRenderer?.send(
+          IpcChannels.SetTrayLikeState,
+          ids.includes(player.trackID)
+        )
+      },
     }
   )
 }
