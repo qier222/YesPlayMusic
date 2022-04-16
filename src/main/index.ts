@@ -13,6 +13,7 @@ import { join } from 'path'
 import log from './log'
 import { initIpcMain } from './ipcMain'
 import { createTray } from './tray'
+import { IpcChannels } from '@/shared/IpcChannels'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -127,11 +128,11 @@ class Main {
 
     // Window maximize and minimize
     this.win.on('maximize', () => {
-      this.win && this.win.webContents.send('is-maximized', true)
+      this.win && this.win.webContents.send(IpcChannels.IsMaximized, true)
     })
 
     this.win.on('unmaximize', () => {
-      this.win && this.win.webContents.send('is-maximized', false)
+      this.win && this.win.webContents.send(IpcChannels.IsMaximized, false)
     })
 
     // Save window position

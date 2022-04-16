@@ -2,13 +2,14 @@ import path from 'path'
 import {
   app,
   BrowserWindow,
-  ipcMain,
   Menu,
   MenuItemConstructorOptions,
   nativeImage,
   Tray,
 } from 'electron'
-import { IpcChannels } from './IpcChannelsName'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { on as ipcMainOn } from 'ipcMain'
+import { RepeatMode } from '@/shared/playerDataTypes'
 
 const iconDirRoot =
   process.env.NODE_ENV === 'development'
@@ -18,9 +19,6 @@ const iconDirRoot =
 enum MenuItemIDs {
   Play = 'play',
   Pause = 'pause',
-  RepeatOff = 'off',
-  RepeatOn = 'on',
-  RepeatOne = 'one',
   Like = 'like',
   Unlike = 'unlike',
 }
@@ -29,7 +27,7 @@ export interface YPMTray {
   setTooltip(title: string): void
   setLikeState(isLiked: boolean): void
   setPlayState(isPlaying: boolean): void
-  setRepeatMode(mode: string): void
+  setRepeatMode(mode: RepeatMode): void
 }
 
 function createNativeImage(filename: string) {
@@ -67,21 +65,21 @@ function createMenuTemplate(win: BrowserWindow): MenuItemConstructorOptions[] {
       submenu: [
         {
           label: '关闭循环',
-          click: () => win.webContents.send(IpcChannels.Repeat, 'off'),
-          id: MenuItemIDs.RepeatOff,
+          click: () => win.webContents.send(IpcChannels.Repeat, RepeatMode.Off),
+          id: RepeatMode.Off,
           checked: true,
           type: 'radio',
         },
         {
           label: '列表循环',
-          click: () => win.webContents.send(IpcChannels.Repeat, 'on'),
-          id: MenuItemIDs.RepeatOn,
+          click: () => win.webContents.send(IpcChannels.Repeat, RepeatMode.On),
+          id: RepeatMode.On,
           type: 'radio',
         },
         {
           label: '单曲循环',
-          click: () => win.webContents.send(IpcChannels.Repeat, 'one'),
-          id: MenuItemIDs.RepeatOne,
+          click: () => win.webContents.send(IpcChannels.Repeat, RepeatMode.One),
+          id: RepeatMode.One,
           type: 'radio',
         },
       ],
@@ -169,7 +167,7 @@ class YPMTrayImpl implements YPMTray {
     this._updateContextMenu()
   }
 
-  setRepeatMode(mode: string): void {
+  setRepeatMode(mode: RepeatMode): void {
     const item = this._contextMenu.getMenuItemById(mode)
     if (item) item.checked = true
   }
@@ -178,14 +176,14 @@ class YPMTrayImpl implements YPMTray {
 export function createTray(win: BrowserWindow): YPMTray {
   const tray = new YPMTrayImpl(win)
 
-  ipcMain.on(IpcChannels.SetTrayTooltip, (e, title) => tray.setTooltip(title))
-  ipcMain.on(IpcChannels.SetTrayLikeState, (e, isLiked) =>
+  ipcMainOn(IpcChannels.SetTrayTooltip, (e, { text }) => tray.setTooltip(text))
+  ipcMainOn(IpcChannels.SetTrayLikeState, (e, { isLiked }) =>
     tray.setLikeState(isLiked)
   )
-  ipcMain.on(IpcChannels.SetTrayPlayState, (e, isPlaying) =>
+  ipcMainOn(IpcChannels.SetTrayPlayState, (e, { isPlaying }) =>
     tray.setPlayState(isPlaying)
   )
-  ipcMain.on(IpcChannels.Repeat, (e, mode) => tray.setRepeatMode(mode))
+  ipcMainOn(IpcChannels.Repeat, (e, { mode }) => tray.setRepeatMode(mode))
 
   return tray
 }

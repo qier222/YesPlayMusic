@@ -10,10 +10,10 @@ import { resizeImage } from '@/renderer/utils/common'
 import {
   State as PlayerState,
   Mode as PlayerMode,
-  RepeatMode as PlayerRepeatMode,
 } from '@/renderer/utils/player'
-import { IpcChannels } from '@/main/IpcChannelsName'
 import useIpcRenderer from '@/renderer/hooks/useIpcRenderer'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { RepeatMode as PlayerRepeatMode } from '@/shared/playerDataTypes'
 
 const PlayingTrack = () => {
   const navigate = useNavigate()

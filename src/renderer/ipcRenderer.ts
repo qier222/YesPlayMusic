@@ -1,28 +1,37 @@
 import { player } from '@/renderer/store'
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannels, IpcChannelsReturns } from '@/shared/IpcChannels'
+import { IpcChannelsParams } from '@/shared/IpcChannels'
+
+const on = <T extends keyof IpcChannelsParams>(
+  channel: T,
+  listener: (event: any, params: IpcChannelsReturns[T]) => void
+) => {
+  window.ipcRenderer?.on(channel, listener)
+}
 
 export function ipcRenderer() {
-  window.ipcRenderer?.on(IpcChannels.Play, () => {
+  on(IpcChannels.Play, () => {
     player.play()
   })
 
-  window.ipcRenderer?.on(IpcChannels.Pause, () => {
+  on(IpcChannels.Pause, () => {
     player.pause()
   })
 
-  window.ipcRenderer?.on(IpcChannels.PlayOrPause, () => {
+  on(IpcChannels.PlayOrPause, () => {
     player.playOrPause()
   })
 
-  window.ipcRenderer?.on(IpcChannels.Next, () => {
+  on(IpcChannels.Next, () => {
     player.nextTrack()
   })
 
-  window.ipcRenderer?.on(IpcChannels.Previous, () => {
+  on(IpcChannels.Previous, () => {
     player.prevTrack()
   })
 
-  window.ipcRenderer?.on(IpcChannels.Repeat, (e, mode) => {
+  on(IpcChannels.Repeat, (e, mode) => {
+    console.log(mode)
     player.repeatMode = mode
   })
 }

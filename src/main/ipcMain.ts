@@ -6,7 +6,7 @@ import log from './log'
 import fs from 'fs'
 import { APIs } from '../shared/CacheAPIs'
 
-const on = <T extends keyof IpcChannelsParams>(
+export const on = <T extends keyof IpcChannelsParams>(
   channel: T,
   listener: (event: Electron.IpcMainEvent, params: IpcChannelsParams[T]) => void
 ) => {

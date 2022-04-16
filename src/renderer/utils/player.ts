@@ -12,6 +12,7 @@ import { resizeImage } from './common'
 import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 import { IpcChannels } from '@/shared/IpcChannels'
+import { RepeatMode } from '@/shared/playerDataTypes'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -32,11 +33,6 @@ export enum State {
   Playing = 'playing',
   Paused = 'paused',
   Loading = 'loading',
-}
-export enum RepeatMode {
-  Off = 'off',
-  On = 'on',
-  One = 'one',
 }
 
 const PLAY_PAUSE_FADE_DURATION = 200
@@ -75,7 +71,7 @@ export class Player {
     this._playAudio(false) // just load the audio, not play
     this._initFM()
 
-    window.ipcRenderer?.send(IpcChannels.Repeat, this._repeatMode)
+    window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
   get howler() {
@@ -159,7 +155,7 @@ export class Player {
   }
   set repeatMode(value) {
     this._repeatMode = value
-    window.ipcRenderer?.send(IpcChannels.Repeat, value)
+    window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
   private async _initFM() {
@@ -313,7 +309,7 @@ export class Player {
       this.state = State.Playing
     }
 
-    window.ipcRenderer?.send(IpcChannels.SetTrayPlayState, true)
+    window.ipcRenderer?.send(IpcChannels.SetTrayPlayState, { isPlaying: true })
   }
 
   /**
@@ -332,7 +328,7 @@ export class Player {
       _howler.pause()
     }
 
-    window.ipcRenderer?.send(IpcChannels.SetTrayPlayState, false)
+    window.ipcRenderer?.send(IpcChannels.SetTrayPlayState, { isPlaying: false })
   }
 
   /**

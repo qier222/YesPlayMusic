@@ -8,6 +8,7 @@ import {
   FetchUserLikedTracksIDsResponse,
   UserApiNames,
 } from '@/shared/api/User'
+import { player } from '@/renderer/store'
 
 export default function useUserLikedTracksIDs() {
   const { data: user } = useUser()
@@ -26,12 +27,11 @@ export default function useUserLikedTracksIDs() {
             uid,
           },
         }),
-      // onSuccess: ({ ids }) => { //TODO: FIXME
-      //   window.ipcRenderer?.send(
-      //     IpcChannels.SetTrayLikeState,
-      //     ids.includes(player.trackID)
-      //   )
-      // },
+      onSuccess: ({ ids }) => {
+        window.ipcRenderer?.send(IpcChannels.SetTrayLikeState, {
+          isLiked: ids.includes(player.trackID),
+        })
+      },
     }
   )
 }
