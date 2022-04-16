@@ -8,7 +8,6 @@ import {
   Tray,
 } from 'electron'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { on as ipcMainOn } from 'ipcMain'
 import { RepeatMode } from '@/shared/playerDataTypes'
 
 const iconDirRoot =
@@ -174,16 +173,5 @@ class YPMTrayImpl implements YPMTray {
 }
 
 export function createTray(win: BrowserWindow): YPMTray {
-  const tray = new YPMTrayImpl(win)
-
-  ipcMainOn(IpcChannels.SetTrayTooltip, (e, { text }) => tray.setTooltip(text))
-  ipcMainOn(IpcChannels.SetTrayLikeState, (e, { isLiked }) =>
-    tray.setLikeState(isLiked)
-  )
-  ipcMainOn(IpcChannels.SetTrayPlayState, (e, { isPlaying }) =>
-    tray.setPlayState(isPlaying)
-  )
-  ipcMainOn(IpcChannels.Repeat, (e, { mode }) => tray.setRepeatMode(mode))
-
-  return tray
+  return new YPMTrayImpl(win)
 }

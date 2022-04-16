@@ -12,7 +12,7 @@ import { release } from 'os'
 import { join } from 'path'
 import log from './log'
 import { initIpcMain } from './ipcMain'
-import { createTray } from './tray'
+import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
 
 const isWindows = process.platform === 'win32'
@@ -39,6 +39,7 @@ class Main {
       },
     },
   })
+  tray: YPMTray | null = null
 
   constructor() {
     log.info('[index] Main process start')
@@ -61,7 +62,7 @@ class Main {
       this.handleAppEvents()
       this.handleWindowEvents()
       this.createTray()
-      initIpcMain(this.win)
+      initIpcMain(this.win, this.tray)
       this.initDevTools()
     })
   }
@@ -88,7 +89,7 @@ class Main {
 
   createTray() {
     if (isWindows || isLinux || isDev) {
-      createTray(this.win!)
+      this.tray = createTray(this.win!)
     }
   }
 
