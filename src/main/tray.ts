@@ -34,7 +34,20 @@ function createNativeImage(filename: string) {
 }
 
 function createMenuTemplate(win: BrowserWindow): MenuItemConstructorOptions[] {
-  return [
+  let template: MenuItemConstructorOptions[] =
+    process.platform === 'linux'
+      ? [
+          {
+            label: '显示主面板',
+            click: () => win.show(),
+          },
+          {
+            type: 'separator',
+          },
+        ]
+      : []
+
+  return template.concat([
     {
       label: '播放',
       click: () => win.webContents.send(IpcChannels.Play),
@@ -101,7 +114,7 @@ function createMenuTemplate(win: BrowserWindow): MenuItemConstructorOptions[] {
       click: () => app.exit(),
       icon: createNativeImage('exit.png'),
     },
-  ]
+  ])
 }
 
 class YPMTrayImpl implements YPMTray {
@@ -117,57 +130,36 @@ class YPMTrayImpl implements YPMTray {
       width: 20,
     })
     this._tray = new Tray(icon)
-    this._template = this._createTemplate()
+    this._template = createMenuTemplate(this._win)
     this._contextMenu = Menu.buildFromTemplate(this._template)
 
     this._updateContextMenu()
     this.setTooltip('YesPlayMusic')
 
-    this._tray.on('click', () => {
-      win.show()
-    })
-  }
-
-  private _createTemplate(): MenuItemConstructorOptions[] {
-    let template: MenuItemConstructorOptions[] =
-      process.platform === 'linux'
-        ? [
-            {
-              label: '显示主面板',
-              click: () => {
-                this._win.show()
-              },
-            },
-            {
-              type: 'separator',
-            },
-          ]
-        : []
-
-    return template.concat(createMenuTemplate(this._win))
+    this._tray.on('click', () => win.show())
   }
 
   private _updateContextMenu() {
     this._tray.setContextMenu(this._contextMenu)
   }
 
-  setTooltip(text: string): void {
+  setTooltip(text: string) {
     this._tray.setToolTip(text)
   }
 
-  setLikeState(isLiked: boolean): void {
+  setLikeState(isLiked: boolean) {
     this._contextMenu.getMenuItemById(MenuItemIDs.Like)!.visible = !isLiked
     this._contextMenu.getMenuItemById(MenuItemIDs.Unlike)!.visible = isLiked
     this._updateContextMenu()
   }
 
-  setPlayState(isPlaying: boolean): void {
+  setPlayState(isPlaying: boolean) {
     this._contextMenu.getMenuItemById(MenuItemIDs.Play)!.visible = !isPlaying
     this._contextMenu.getMenuItemById(MenuItemIDs.Pause)!.visible = isPlaying
     this._updateContextMenu()
   }
 
-  setRepeatMode(mode: RepeatMode): void {
+  setRepeatMode(mode: RepeatMode) {
     const item = this._contextMenu.getMenuItemById(mode)
     if (item) {
       item.checked = true

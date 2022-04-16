@@ -10,11 +10,11 @@ const on = <T extends keyof IpcChannelsParams>(
 
 export function ipcRenderer() {
   on(IpcChannels.Play, () => {
-    player.play()
+    player.play(true)
   })
 
   on(IpcChannels.Pause, () => {
-    player.pause()
+    player.pause(true)
   })
 
   on(IpcChannels.PlayOrPause, () => {
