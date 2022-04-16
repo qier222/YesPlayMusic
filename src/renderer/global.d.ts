@@ -1,4 +1,5 @@
 import { IpcChannels } from '@/main/IpcChannelsName'
+import { ElectronLog } from 'electron-log'
 
 export {}
 
@@ -20,6 +21,7 @@ declare global {
       isMac: boolean
       isWin: boolean
     }
+    log?: ElectronLog
   }
 }
 

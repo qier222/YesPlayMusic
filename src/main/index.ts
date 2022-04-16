@@ -10,7 +10,7 @@ import {
 import Store from 'electron-store'
 import { release } from 'os'
 import path, { join } from 'path'
-import logger from './logger'
+import log from './log'
 import { initIpcMain } from './ipcMain'
 
 const isWindows = process.platform === 'win32'
@@ -18,7 +18,7 @@ const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 const isDev = process.env.NODE_ENV === 'development'
 
-logger.info('[index] Main process start')
+log.info('[index] Main process start')
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -99,7 +99,7 @@ async function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  logger.info('[index] App ready')
+  log.info('[index] App ready')
   createWindow()
   handleWindowEvents()
   initIpcMain(win)
@@ -113,10 +113,10 @@ app.whenReady().then(async () => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
     } = require('electron-devtools-installer')
     installExtension(REACT_DEVELOPER_TOOLS.id).catch(err =>
-      logger.info('An error occurred: ', err)
+      log.info('An error occurred: ', err)
     )
     installExtension(REDUX_DEVTOOLS.id).catch(err =>
-      logger.info('An error occurred: ', err)
+      log.info('An error occurred: ', err)
     )
   }
 })

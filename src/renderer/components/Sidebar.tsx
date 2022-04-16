@@ -3,17 +3,10 @@ import SvgIcon from './SvgIcon'
 import useUserPlaylists from '@/renderer/hooks/useUserPlaylists'
 import { scrollToTop } from '@/renderer/utils/common'
 import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
+import { player } from '@/renderer/store'
+import { Mode, TrackListSourceType } from '@/renderer/utils/player'
 
-interface Tab {
-  name: string
-  icon: string
-  route: string
-}
-interface PrimaryTab extends Tab {
-  icon: string
-}
-
-const primaryTabs: PrimaryTab[] = [
+const primaryTabs = [
   {
     name: '主页',
     icon: 'home',
@@ -29,7 +22,7 @@ const primaryTabs: PrimaryTab[] = [
     icon: 'music-library',
     route: '/library',
   },
-]
+] as const
 
 const PrimaryTabs = () => {
   return (
@@ -62,6 +55,16 @@ const PrimaryTabs = () => {
 
 const Playlists = () => {
   const { data: playlists } = useUserPlaylists()
+  const playerSnapshot = useSnapshot(player)
+  const currentPlaylistID = useMemo(
+    () => playerSnapshot.trackListSource?.id,
+    [playerSnapshot.trackListSource]
+  )
+  const playlistMode = useMemo(
+    () => playerSnapshot.trackListSource?.type,
+    [playerSnapshot.trackListSource]
+  )
+  const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
 
   return (
     <div className='mb-16 overflow-auto pb-2'>
@@ -73,12 +76,17 @@ const Playlists = () => {
           to={`/playlist/${playlist.id}`}
           className={({ isActive }: { isActive: boolean }) =>
             classNames(
-              'btn-hover-animation line-clamp-1 my-px mx-3 flex cursor-default items-center rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20',
+              'btn-hover-animation line-clamp-1 my-px mx-3 flex cursor-default items-center justify-between rounded-lg px-3 py-[0.38rem] text-sm text-black opacity-70 transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/20',
               isActive && 'after:scale-100 after:opacity-100'
             )
           }
         >
           <span className='line-clamp-1'>{playlist.name}</span>
+          {playlistMode === TrackListSourceType.PLAYLIST &&
+            mode === Mode.PLAYLIST &&
+            currentPlaylistID === playlist.id && (
+              <SvgIcon className='h-5 w-5' name='volume-half' />
+            )}
         </NavLink>
       ))}
     </div>

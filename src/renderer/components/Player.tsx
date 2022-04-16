@@ -10,6 +10,7 @@ import { resizeImage } from '@/renderer/utils/common'
 import {
   State as PlayerState,
   Mode as PlayerMode,
+  RepeatMode as PlayerRepeatMode,
 } from '@/renderer/utils/player'
 
 const PlayingTrack = () => {
@@ -130,25 +131,45 @@ const MediaControls = () => {
 
 const Others = () => {
   const playerSnapshot = useSnapshot(player)
-  const mode = useMemo(() => playerSnapshot.mode, [playerSnapshot.mode])
+
+  const switchRepeatMode = () => {
+    if (playerSnapshot.repeatMode === PlayerRepeatMode.OFF) {
+      player.repeatMode = PlayerRepeatMode.ON
+    } else if (playerSnapshot.repeatMode === PlayerRepeatMode.ON) {
+      player.repeatMode = PlayerRepeatMode.ONE
+    } else {
+      player.repeatMode = PlayerRepeatMode.OFF
+    }
+  }
 
   return (
     <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
       <IconButton
         onClick={() => toast('Work in progress')}
-        disabled={mode === PlayerMode.FM}
+        disabled={playerSnapshot.mode === PlayerMode.FM}
       >
         <SvgIcon className='h-6 w-6' name='playlist' />
       </IconButton>
       <IconButton
-        onClick={() => toast('施工中...')}
-        disabled={mode === PlayerMode.FM}
+        onClick={switchRepeatMode}
+        disabled={playerSnapshot.mode === PlayerMode.FM}
       >
-        <SvgIcon className='h-6 w-6' name='repeat' />
+        <SvgIcon
+          className={classNames(
+            'h-6 w-6',
+            playerSnapshot.repeatMode !== PlayerRepeatMode.OFF &&
+              'text-brand-500'
+          )}
+          name={
+            playerSnapshot.repeatMode === PlayerRepeatMode.ONE
+              ? 'repeat-1'
+              : 'repeat'
+          }
+        />
       </IconButton>
       <IconButton
         onClick={() => toast('施工中...')}
-        disabled={mode === PlayerMode.FM}
+        disabled={playerSnapshot.mode === PlayerMode.FM}
       >
         <SvgIcon className='h-6 w-6' name='shuffle' />
       </IconButton>

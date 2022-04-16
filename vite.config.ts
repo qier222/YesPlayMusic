@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import react from '@vitejs/plugin-react'
 import dotenv from 'dotenv'
 import path, { join } from 'path'
@@ -78,5 +79,8 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/yesplaymusic/, ''),
       },
     },
+  },
+  test: {
+    environment: 'jsdom',
   },
 })

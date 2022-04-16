@@ -95,7 +95,7 @@ const Lyric = ({ className }: { className?: string }) => {
       {displayLines.map(({ content, time }, index) => {
         return (
           <motion.div
-            key={time}
+            key={`${String(index)}-${String(time)}`}
             custom={index}
             variants={variants}
             initial={'initial'}

@@ -10,7 +10,7 @@ export function lyricParser(lrc: FetchLyricResponse) {
 }
 
 /**
- * @see https://regexr.com/6e52n
+ * @see {@link https://regexr.com/6e52n}
  */
 const extractLrcRegex =
   /^(?<lyricTimestamps>(?:\[.+?\])+)(?!\[)(?<content>.+)$/gm
@@ -48,6 +48,11 @@ function parseLyric(lrc: string): ParsedLyric[] {
     return low
   }
 
+  function trimContent(content: string): string {
+    const t = content.trim()
+    return t.length < 1 ? content : t
+  }
+
   for (const line of lrc.trim().matchAll(extractLrcRegex)) {
     const { lyricTimestamps, content } = line.groups as {
       lyricTimestamps: string
@@ -58,7 +63,8 @@ function parseLyric(lrc: string): ParsedLyric[] {
 
     if (
       content.match(
-        /((\s|\S)*)(作曲|作词|编曲|制作|Producers|Producer|Produced|贝斯|工程师|吉他|合成器|助理|编程|制作|和声|母带|人声|鼓|混音|中提琴|编写|Talkbox|钢琴|出版|录音|发行|出品|键盘|弦乐|设计|监制|原曲|演唱|声明|版权|封面|插画|统筹|企划|填词|原唱|后期|和音|琵琶)((\s|\S)*)(:|：)/
+        // https://regexr.com/6j8pf
+        /.*(?<role>作曲|作词|编曲|制作|Producers|Producer|Produced|贝斯|工程师|吉他|合成器|助理|编程|制作|和声|母带|人声|鼓|混音|中提琴|编写|Talkbox|钢琴|出版|录音|发行|出品|键盘|弦乐|设计|监制|原曲|演唱|声明|版权|封面|插画|统筹|企划|填词|原唱|后期|和音|琵琶).*[:：]\s*(?<name>.*)/
       )
     ) {
       continue
@@ -79,9 +85,4 @@ function parseLyric(lrc: string): ParsedLyric[] {
   }
 
   return parsedLyrics
-}
-
-function trimContent(content: string): string {
-  const t = content.trim()
-  return t.length < 1 ? content : t
 }

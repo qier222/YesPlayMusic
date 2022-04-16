@@ -30,12 +30,18 @@ const PlayingTrack = () => {
     [playerSnapshot.trackListSource]
   )
 
-  const hasListSource = playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
+  const hasListSource =
+    playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
 
   const toTrackListSource = () => {
     if (!hasListSource) return
 
     navigate(`/${trackListSource.type}/${trackListSource.id}`)
+    state.uiStates.showLyricPanel = false
+  }
+
+  const toArtist = (id: number) => {
+    navigate(`/artist/${id}`)
     state.uiStates.showLyricPanel = false
   }
 
@@ -51,7 +57,7 @@ const PlayingTrack = () => {
         {track?.name}
       </div>
       <div className='line-clamp-1 -mt-0.5 inline-flex max-h-7 text-white opacity-60'>
-        <ArtistInline artists={track?.ar ?? []} />
+        <ArtistInline artists={track?.ar ?? []} onClick={toArtist} />
         {!!track?.al?.id && (
           <span>
             {' '}

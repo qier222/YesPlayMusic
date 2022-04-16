@@ -8,7 +8,11 @@ import TracksAlbum from '@/renderer/components/TracksAlbum'
 import useAlbum from '@/renderer/hooks/useAlbum'
 import useArtistAlbums from '@/renderer/hooks/useArtistAlbums'
 import { player } from '@/renderer/store'
-import { State as PlayerState } from '@/renderer/utils/player'
+import {
+  Mode as PlayerMode,
+  State as PlayerState,
+  TrackListSourceType,
+} from '@/renderer/utils/player'
 import {
   formatDate,
   formatDuration,
@@ -27,40 +31,37 @@ const PlayButton = ({
   isLoading,
 }: {
   album: Album | undefined
-  isLoading: boolean
   handlePlay: () => void
+  isLoading: boolean
 }) => {
   const playerSnapshot = useSnapshot(player)
-  const isPlaying = useMemo(
-    () => playerSnapshot.state === PlayerState.PLAYING,
-    [playerSnapshot.state]
-  )
   const isThisAlbumPlaying = useMemo(
     () =>
-      playerSnapshot.trackListSource?.type === 'album' &&
+      playerSnapshot.mode === PlayerMode.PLAYLIST &&
+      playerSnapshot.trackListSource?.type === TrackListSourceType.ALBUM &&
       playerSnapshot.trackListSource?.id === album?.id,
     [playerSnapshot.trackListSource, album?.id]
   )
 
+  const isPlaying =
+    isThisAlbumPlaying &&
+    [PlayerState.PLAYING, PlayerState.LOADING].includes(playerSnapshot.state)
+
   const wrappedHandlePlay = () => {
-    if (isPlaying && isThisAlbumPlaying) {
-      player.pause()
-      return
+    if (isThisAlbumPlaying) {
+      player.playOrPause()
+    } else {
+      handlePlay()
     }
-    if (!isPlaying && isThisAlbumPlaying) {
-      player.play()
-      return
-    }
-    handlePlay()
   }
 
   return (
     <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
       <SvgIcon
-        name={isPlaying && isThisAlbumPlaying ? 'pause' : 'play'}
+        name={isPlaying ? 'pause' : 'play'}
         className='mr-1 -ml-1 h-6 w-6'
       />
-      {isPlaying && isThisAlbumPlaying ? '暂停' : '播放'}
+      {isPlaying ? '暂停' : '播放'}
     </Button>
   )
 }
@@ -279,18 +280,22 @@ const MoreAlbum = ({ album }: { album: Album | undefined }) => {
   return (
     <div>
       <div className='my-5 h-px w-full bg-gray-100 dark:bg-gray-800'></div>
-      <div className='pl-px text-[1.375rem] font-semibold text-gray-800 dark:text-gray-100'>
-        More by{' '}
-        <NavLink
-          to={`/artist/${album?.artist?.id}`}
-          className='cursor-default hover:underline'
-        >
-          {album?.artist.name}
-        </NavLink>
-      </div>
+      {!isLoading && albums?.hotAlbums?.length && (
+        <div className='pl-px text-[1.375rem] font-semibold text-gray-800 dark:text-gray-100'>
+          More by{' '}
+          <NavLink
+            to={`/artist/${album?.artist?.id}`}
+            className='cursor-default hover:underline'
+          >
+            {album?.artist.name}
+          </NavLink>
+        </div>
+      )}
       <div className='mt-3'>
         <CoverRow
-          albums={filteredAlbums}
+          albums={
+            filteredAlbums.length ? filteredAlbums : albums?.hotAlbums || []
+          }
           subtitle={Subtitle.TYPE_RELEASE_YEAR}
           isSkeleton={isLoading}
           rows={1}

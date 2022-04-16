@@ -2,115 +2,181 @@ import path from 'path'
 import { app } from 'electron'
 import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
-import logger from './logger'
+import log from './log'
 import { createFileIfNotExist } from './utils'
 
 const isDev = process.env.NODE_ENV === 'development'
 
-logger.info('[db] Initializing database...')
-
-export enum Tables {
-  TRACK = 'track',
-  ALBUM = 'album',
-  ARTIST = 'artist',
-  PLAYLIST = 'playlist',
-  ARTIST_ALBUMS = 'artist_album',
-  LYRIC = 'lyric',
-
-  // Special tables
-  ACCOUNT_DATA = 'account_data',
-  AUDIO = 'audio',
+export const enum Tables {
+  Track = 'Track',
+  Album = 'Album',
+  Artist = 'Artist',
+  Playlist = 'Playlist',
+  ArtistAlbum = 'ArtistAlbum',
+  Lyric = 'Lyric',
+  Audio = 'Audio',
+  AccountData = 'AccountData',
+  CoverColor = 'CoverColor',
+}
+interface CommonTableStructure {
+  id: number
+  json: string
+  updatedAt: number
+}
+export interface TablesStructures {
+  [Tables.Track]: CommonTableStructure
+  [Tables.Album]: CommonTableStructure
+  [Tables.Artist]: CommonTableStructure
+  [Tables.Playlist]: CommonTableStructure
+  [Tables.ArtistAlbum]: CommonTableStructure
+  [Tables.Lyric]: CommonTableStructure
+  [Tables.AccountData]: {
+    id: string
+    json: string
+    updatedAt: number
+  }
+  [Tables.Audio]: {
+    id: number
+    br: number
+    source: 'netease' | 'migu' | 'kuwo' | 'kugou' | 'youtube'
+    url: string
+    updatedAt: number
+  }
+  [Tables.CoverColor]: {
+    id: number
+    color: string
+  }
 }
 
-const dbFilePath = path.resolve(
-  app.getPath('userData'),
-  './api_cache/db.sqlite'
-)
-createFileIfNotExist(dbFilePath)
+type TableNames = keyof TablesStructures
 
-const sqlite = new SQLite3(dbFilePath, {
-  nativeBinding: path.join(__dirname, `./better_sqlite3_${process.arch}.node`),
-})
-sqlite.pragma('auto_vacuum = FULL')
-
-// Init tables if not exist
-const trackTable = sqlite
-  .prepare("SELECT * FROM sqlite_master WHERE name='track' and type='table'")
-  .get()
-if (!trackTable) {
-  const migration = fs.readFileSync(
-    isDev
-      ? path.join(process.cwd(), './src/main/migrations/init.sql')
-      : path.join(__dirname, './migrations/init.sql'),
-    'utf8'
+class DB {
+  sqlite: SQLite3.Database
+  dbFilePath: string = path.resolve(
+    app.getPath('userData'),
+    './api_cache/db.sqlite'
   )
-  sqlite.exec(migration)
-}
 
-export const db = {
-  find: (table: Tables, key: number | string) => {
-    return sqlite
+  constructor() {
+    log.info('[db] Initializing database...')
+
+    createFileIfNotExist(this.dbFilePath)
+
+    this.sqlite = new SQLite3(this.dbFilePath, {
+      nativeBinding: path.join(
+        __dirname,
+        `./better_sqlite3_${process.arch}.node`
+      ),
+    })
+    this.sqlite.pragma('auto_vacuum = FULL')
+    this.initTables()
+
+    log.info('[db] Database initialized')
+  }
+
+  initTables() {
+    const migration = fs.readFileSync(
+      isDev
+        ? path.join(process.cwd(), './src/main/migrations/init.sql')
+        : path.join(__dirname, './migrations/init.sql'),
+      'utf8'
+    )
+    this.sqlite.exec(migration)
+  }
+
+  find<T extends TableNames>(
+    table: T,
+    key: TablesStructures[T]['id']
+  ): TablesStructures[T] {
+    return this.sqlite
       .prepare(`SELECT * FROM ${table} WHERE id = ? LIMIT 1`)
       .get(key)
-  },
-  findMany: (table: Tables, keys: number[] | string[]) => {
+  }
+
+  findMany<T extends TableNames>(
+    table: T,
+    keys: TablesStructures[T]['id'][]
+  ): TablesStructures[T][] {
     const idsQuery = keys.map(key => `id = ${key}`).join(' OR ')
-    return sqlite.prepare(`SELECT * FROM ${table} WHERE ${idsQuery}`).all()
-  },
-  findAll: (table: Tables) => {
-    return sqlite.prepare(`SELECT * FROM ${table}`).all()
-  },
-  create: (table: Tables, data: any, skipWhenExist: boolean = true) => {
+    return this.sqlite.prepare(`SELECT * FROM ${table} WHERE ${idsQuery}`).all()
+  }
+
+  findAll<T extends TableNames>(table: T): TablesStructures[T][] {
+    return this.sqlite.prepare(`SELECT * FROM ${table}`).all()
+  }
+
+  create<T extends TableNames>(
+    table: T,
+    data: TablesStructures[T],
+    skipWhenExist: boolean = true
+  ) {
     if (skipWhenExist && db.find(table, data.id)) return
-    return sqlite.prepare(`INSERT INTO ${table} VALUES (?)`).run(data)
-  },
-  createMany: (table: Tables, data: any[], skipWhenExist: boolean = true) => {
+    return this.sqlite.prepare(`INSERT INTO ${table} VALUES (?)`).run(data)
+  }
+
+  createMany<T extends TableNames>(
+    table: T,
+    data: TablesStructures[T][],
+    skipWhenExist: boolean = true
+  ) {
     const valuesQuery = Object.keys(data[0])
       .map(key => `:${key}`)
       .join(', ')
-    const insert = sqlite.prepare(
+    const insert = this.sqlite.prepare(
       `INSERT ${
         skipWhenExist ? 'OR IGNORE' : ''
       } INTO ${table} VALUES (${valuesQuery})`
     )
-    const insertMany = sqlite.transaction((rows: any[]) => {
+    const insertMany = this.sqlite.transaction((rows: any[]) => {
       rows.forEach((row: any) => insert.run(row))
     })
     insertMany(data)
-  },
-  upsert: (table: Tables, data: any) => {
+  }
+
+  upsert<T extends TableNames>(table: T, data: TablesStructures[T]) {
     const valuesQuery = Object.keys(data)
       .map(key => `:${key}`)
       .join(', ')
-    return sqlite
+    return this.sqlite
       .prepare(`INSERT OR REPLACE INTO ${table} VALUES (${valuesQuery})`)
       .run(data)
-  },
-  upsertMany: (table: Tables, data: any[]) => {
+  }
+
+  upsertMany<T extends TableNames>(table: T, data: TablesStructures[T][]) {
     const valuesQuery = Object.keys(data[0])
       .map(key => `:${key}`)
       .join(', ')
-    const upsert = sqlite.prepare(
+    const upsert = this.sqlite.prepare(
       `INSERT OR REPLACE INTO ${table} VALUES (${valuesQuery})`
     )
-    const upsertMany = sqlite.transaction((rows: any[]) => {
+    const upsertMany = this.sqlite.transaction((rows: any[]) => {
       rows.forEach((row: any) => upsert.run(row))
     })
     upsertMany(data)
-  },
-  delete: (table: Tables, key: number | string) => {
-    return sqlite.prepare(`DELETE FROM ${table} WHERE id = ?`).run(key)
-  },
-  deleteMany: (table: Tables, keys: number[] | string[]) => {
+  }
+
+  delete<T extends TableNames>(
+    table: T,
+    key: TablesStructures[T]['id']
+  ) {
+    return this.sqlite.prepare(`DELETE FROM ${table} WHERE id = ?`).run(key)
+  }
+
+  deleteMany<T extends TableNames>(
+    table: T,
+    keys: TablesStructures[T]['id'][]
+  ) {
     const idsQuery = keys.map(key => `id = ${key}`).join(' OR ')
-    return sqlite.prepare(`DELETE FROM ${table} WHERE ${idsQuery}`).run()
-  },
-  truncate: (table: Tables) => {
-    return sqlite.prepare(`DELETE FROM ${table}`).run()
-  },
-  vacuum: () => {
-    return sqlite.prepare('VACUUM').run()
-  },
+    return this.sqlite.prepare(`DELETE FROM ${table} WHERE ${idsQuery}`).run()
+  }
+
+  truncate<T extends TableNames>(table: T) {
+    return this.sqlite.prepare(`DELETE FROM ${table}`).run()
+  }
+
+  vacuum() {
+    return this.sqlite.prepare('VACUUM').run()
+  }
 }
 
-logger.info('[db] Database initialized')
+export const db = new DB()

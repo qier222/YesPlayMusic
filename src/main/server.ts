@@ -1,17 +1,12 @@
 import { pathCase } from 'change-case'
 import cookieParser from 'cookie-parser'
 import express, { Request, Response } from 'express'
-import logger from './logger'
-import {
-  setCache,
-  getCacheForExpress,
-  cacheAudio,
-  getAudioCache,
-} from './cache'
+import log from './log'
+import cache from './cache'
 import fileUpload from 'express-fileupload'
 import path from 'path'
 
-logger.info('[server] starting http server')
+log.info('[server] starting http server')
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = process.env.NODE_ENV === 'production'
@@ -29,11 +24,11 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
   name = pathCase(name)
 
   const wrappedHandler = async (req: Request, res: Response) => {
-    logger.debug(`[server] Handling request: ${req.path}`)
+    log.debug(`[server] Handling request: ${req.path}`)
 
     // Get from cache
-    const cache = await getCacheForExpress(name, req)
-    if (cache) return res.json(cache)
+    const cacheData = await cache.getForExpress(name, req)
+    if (cacheData) return res.json(cacheData)
 
     // Request netease api
     try {
@@ -42,7 +37,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
         cookie: req.cookies,
       })
 
-      setCache(name, result.body, req.query)
+      cache.set(name, result.body, req.query)
       return res.send(result.body)
     } catch (error) {
       return res.status(500).send(error)
@@ -57,7 +52,7 @@ Object.entries(neteaseApi).forEach(([name, handler]) => {
 app.get(
   '/yesplaymusic/audio/:filename',
   async (req: Request, res: Response) => {
-    getAudioCache(req.params.filename, res)
+    cache.getAudio(req.params.filename, res)
   }
 )
 app.post('/yesplaymusic/audio/:id', async (req: Request, res: Response) => {
@@ -78,7 +73,7 @@ app.post('/yesplaymusic/audio/:id', async (req: Request, res: Response) => {
   }
 
   try {
-    await cacheAudio(req.files.file.data, {
+    await cache.setAudio(req.files.file.data, {
       id: id,
       source: 'netease',
     })
@@ -98,5 +93,5 @@ const port = Number(
     : process.env.ELECTRON_DEV_NETEASE_API_PORT ?? 3000
 )
 app.listen(port, () => {
-  logger.info(`[server] API server listening on port ${port}`)
+  log.info(`[server] API server listening on port ${port}`)
 })

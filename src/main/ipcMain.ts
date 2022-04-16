@@ -1,9 +1,10 @@
 import { BrowserWindow, ipcMain, app } from 'electron'
 import { db, Tables } from './db'
 import { IpcChannels } from './IpcChannelsName'
-import { getCache } from './cache'
-import logger from './logger'
+import cache from './cache'
+import log from './log'
 import fs from 'fs'
+import { APIs } from './CacheAPIsName'
 
 /**
  * 处理需要win对象的事件
@@ -28,13 +29,13 @@ export function initIpcMain(win: BrowserWindow | null) {
  * 清除API缓存
  */
 ipcMain.on(IpcChannels.ClearAPICache, () => {
-  db.truncate(Tables.TRACK)
-  db.truncate(Tables.ALBUM)
-  db.truncate(Tables.ARTIST)
-  db.truncate(Tables.PLAYLIST)
-  db.truncate(Tables.ARTIST_ALBUMS)
-  db.truncate(Tables.ACCOUNT_DATA)
-  db.truncate(Tables.AUDIO)
+  db.truncate(Tables.Track)
+  db.truncate(Tables.Album)
+  db.truncate(Tables.Artist)
+  db.truncate(Tables.Playlist)
+  db.truncate(Tables.ArtistAlbum)
+  db.truncate(Tables.AccountData)
+  db.truncate(Tables.Audio)
   db.vacuum()
 })
 
@@ -43,8 +44,16 @@ ipcMain.on(IpcChannels.ClearAPICache, () => {
  */
 ipcMain.on(IpcChannels.GetApiCacheSync, (event, args) => {
   const { api, query } = args
-  const data = getCache(api, query)
+  const data = cache.get(api, query)
   event.returnValue = data
+})
+
+/**
+ * 缓存封面颜色
+ */
+ipcMain.on(IpcChannels.CacheCoverColor, (event, args) => {
+  const { id, color } = args.query
+  cache.set(APIs.CoverColor, { id, color })
 })
 
 /**
@@ -53,14 +62,14 @@ ipcMain.on(IpcChannels.GetApiCacheSync, (event, args) => {
 if (process.env.NODE_ENV === 'development') {
   ipcMain.on(IpcChannels.DevDbExportJson, () => {
     const tables = [
-      Tables.ARTIST_ALBUMS,
-      Tables.PLAYLIST,
-      Tables.ALBUM,
-      Tables.TRACK,
-      Tables.ARTIST,
-      Tables.AUDIO,
-      Tables.ACCOUNT_DATA,
-      Tables.LYRIC,
+      Tables.ArtistAlbum,
+      Tables.Playlist,
+      Tables.Album,
+      Tables.Track,
+      Tables.Artist,
+      Tables.Audio,
+      Tables.AccountData,
+      Tables.Lyric,
     ]
     tables.forEach(table => {
       const data = db.findAll(table)
