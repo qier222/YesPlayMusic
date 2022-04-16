@@ -223,11 +223,11 @@
       </div>
 
       <section v-if="isElectron" class="unm-configuration">
-        <h3>UnblockNeteaseMusic 设定</h3>
+        <h3>UnblockNeteaseMusic 设置</h3>
         <div class="item">
           <div class="left">
             <div class="title"
-              >启用
+              >激活
               <a
                 href="https://github.com/UnblockNeteaseMusic/server"
                 target="blank"
@@ -247,16 +247,17 @@
             </div>
           </div>
         </div>
+
         <div class="item">
           <div class="left">
             <div class="title"> 备选音源 </div>
             <div class="description">
               音源的具体代号
               <a
-                href="https://github.com/UnblockNeteaseMusic/server#音源清单"
+                href="https://github.com/UnblockNeteaseMusic/server-rust/blob/main/README.md#支援的所有引擎"
                 target="_blank"
               >
-                可以点此到 UNM 的说明页面查询 </a
+                可以点此到 UNM 的说明页面查询。 </a
               ><br />
               多个音源请用 <code>,</code> 逗号分隔。<br />
               留空则使用 UNM 内置的默认值。
@@ -264,19 +265,16 @@
           </div>
           <div class="right">
             <input
-              id="unm-source"
               v-model="unmSource"
               class="text-input margin-right-0"
               placeholder="例 bilibili, kuwo"
             />
-            <label for="unm-source"></label>
           </div>
         </div>
 
         <div class="item">
           <div class="left">
-            <div class="title"> 啟用無損音質 (FLAC) </div>
-            <div class="description"> 設定後需要清掉快取才能生效。 </div>
+            <div class="title"> 激活无损音质 (FLAC) </div>
           </div>
           <div class="right">
             <div class="toggle">
@@ -292,22 +290,93 @@
 
         <div class="item">
           <div class="left">
-            <div class="title"> 音源搜尋模式 </div>
+            <div class="title"> 用于 UNM 的 Proxy 服务器 </div>
+            <div class="description">
+              请求如 YouTube 音源服务时要使用的 Proxy 服务器。<br />
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmProxyUri"
+              class="text-input"
+              placeholder="例 https://192.168.11.45"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> Joox 引擎的 Cookie </div>
+            <div class="description">
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
+                target="_blank"
+                >设置说明请参见此处。</a
+              >
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmJooxCookie"
+              class="text-input"
+              placeholder="wmid=..; session_key=.."
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> YtDl 引擎要使用的 youtube-dl 运行文件 </div>
+            <div class="description">
+              默认使用 <code>yt-dlp</code>。 留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmYtDlExe"
+              class="text-input"
+              placeholder="ex. youtube-dl"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 激活无损音质 (FLAC) </div>
+            <div class="description"> 设置后需要清掉快取才能生效。 </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="unm-enable-flac"
+                v-model="unmEnableFlac"
+                type="checkbox"
+              />
+              <label for="unm-enable-flac" />
+            </div>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 音源搜索模式 </div>
           </div>
           <div class="right">
             <select v-model="unmSearchMode">
-              <option value="fast-first"> 速度優先，不論順序 </option>
-              <option value="order-first"> 順序優先，不論速度 </option>
+              <option value="fast-first"> 速度优先，不论顺序 </option>
+              <option value="order-first"> 顺序优先，不论速度 </option>
             </select>
           </div>
         </div>
 
         <div class="item">
           <div class="left">
-            <div class="title"> 請求用代理伺服器 (Proxy) </div>
+            <div class="title"> 请求用代理服务器 (Proxy) </div>
             <div class="description">
-              請求如 YouTube 音源服務時要使用的代理伺服器。<br />
-              留空則不進行相關設定。
+              请求如 YouTube 音源服务时要使用的代理服务器。<br />
+              留空则不进行相关设置。
             </div>
           </div>
           <div class="right">
@@ -324,11 +393,11 @@
             <div class="title"> Joox 引擎的 Cookie </div>
             <div class="description">
               <a
-                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-设置说明"
                 target="_blank"
-                >設定說明請參見此處。</a
+                >设置说明请参见此处。</a
               >
-              留空則不進行相關設定。
+              留空则不进行相关设置。
             </div>
           </div>
           <div class="right">
@@ -342,9 +411,9 @@
 
         <div class="item">
           <div class="left">
-            <div class="title"> YtDl 引擎要使用的 youtube-dl 執行檔 </div>
+            <div class="title"> YtDl 引擎要使用的 youtube-dl 运行档 </div>
             <div class="description">
-              預設使用 <code>yt-dlp</code>。 留空則不進行相關設定。
+              默认使用 <code>yt-dlp</code>。 留空则不进行相关设置。
             </div>
           </div>
           <div class="right">
