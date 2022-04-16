@@ -23,7 +23,7 @@ class Cache {
         db.upsert(Tables.AccountData, {
           id: api,
           json: JSON.stringify(data),
-          updateAt: Date.now(),
+          updatedAt: Date.now(),
         })
         break
       }

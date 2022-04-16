@@ -7,19 +7,48 @@ import { createFileIfNotExist } from './utils'
 
 const isDev = process.env.NODE_ENV === 'development'
 
-export enum Tables {
-  Track = 'track',
-  Album = 'album',
-  Artist = 'artist',
-  Playlist = 'playlist',
-  ArtistAlbum = 'artist_album',
-  Lyric = 'lyric',
-
-  // Special tables
-  AccountData = 'account_data',
-  Audio = 'audio',
-  CoverColor = 'cover_color',
+export const enum Tables {
+  Track = 'Track',
+  Album = 'Album',
+  Artist = 'Artist',
+  Playlist = 'Playlist',
+  ArtistAlbum = 'ArtistAlbum',
+  Lyric = 'Lyric',
+  Audio = 'Audio',
+  AccountData = 'AccountData',
+  CoverColor = 'CoverColor',
 }
+interface CommonTableStructure {
+  id: number
+  json: string
+  updatedAt: number
+}
+export interface TablesStructures {
+  [Tables.Track]: CommonTableStructure
+  [Tables.Album]: CommonTableStructure
+  [Tables.Artist]: CommonTableStructure
+  [Tables.Playlist]: CommonTableStructure
+  [Tables.ArtistAlbum]: CommonTableStructure
+  [Tables.Lyric]: CommonTableStructure
+  [Tables.AccountData]: {
+    id: string
+    json: string
+    updatedAt: number
+  }
+  [Tables.Audio]: {
+    id: number
+    br: number
+    source: 'netease' | 'migu' | 'kuwo' | 'kugou' | 'youtube'
+    url: string
+    updatedAt: number
+  }
+  [Tables.CoverColor]: {
+    id: number
+    color: string
+  }
+}
+
+type TableNames = keyof TablesStructures
 
 class DB {
   sqlite: SQLite3.Database
@@ -55,27 +84,41 @@ class DB {
     this.sqlite.exec(migration)
   }
 
-  find(table: Tables, key: number | string) {
+  find<T extends TableNames>(
+    table: T,
+    key: TablesStructures[T]['id']
+  ): TablesStructures[T] {
     return this.sqlite
       .prepare(`SELECT * FROM ${table} WHERE id = ? LIMIT 1`)
       .get(key)
   }
 
-  findMany(table: Tables, keys: number[] | string[]) {
+  findMany<T extends TableNames>(
+    table: T,
+    keys: TablesStructures[T]['id'][]
+  ): TablesStructures[T][] {
     const idsQuery = keys.map(key => `id = ${key}`).join(' OR ')
     return this.sqlite.prepare(`SELECT * FROM ${table} WHERE ${idsQuery}`).all()
   }
 
-  findAll(table: Tables) {
+  findAll<T extends TableNames>(table: T): TablesStructures[T][] {
     return this.sqlite.prepare(`SELECT * FROM ${table}`).all()
   }
 
-  create(table: Tables, data: any, skipWhenExist: boolean = true) {
+  create<T extends TableNames>(
+    table: T,
+    data: TablesStructures[T],
+    skipWhenExist: boolean = true
+  ) {
     if (skipWhenExist && db.find(table, data.id)) return
     return this.sqlite.prepare(`INSERT INTO ${table} VALUES (?)`).run(data)
   }
 
-  createMany(table: Tables, data: any[], skipWhenExist: boolean = true) {
+  createMany<T extends TableNames>(
+    table: T,
+    data: TablesStructures[T][],
+    skipWhenExist: boolean = true
+  ) {
     const valuesQuery = Object.keys(data[0])
       .map(key => `:${key}`)
       .join(', ')
@@ -90,7 +133,7 @@ class DB {
     insertMany(data)
   }
 
-  upsert(table: Tables, data: any) {
+  upsert<T extends TableNames>(table: T, data: TablesStructures[T]) {
     const valuesQuery = Object.keys(data)
       .map(key => `:${key}`)
       .join(', ')
@@ -99,7 +142,7 @@ class DB {
       .run(data)
   }
 
-  upsertMany(table: Tables, data: any[]) {
+  upsertMany<T extends TableNames>(table: T, data: TablesStructures[T][]) {
     const valuesQuery = Object.keys(data[0])
       .map(key => `:${key}`)
       .join(', ')
@@ -112,16 +155,22 @@ class DB {
     upsertMany(data)
   }
 
-  delete(table: Tables, key: number | string) {
+  delete<T extends TableNames>(
+    table: T,
+    key: TablesStructures[T]['id']
+  ) {
     return this.sqlite.prepare(`DELETE FROM ${table} WHERE id = ?`).run(key)
   }
 
-  deleteMany(table: Tables, keys: number[] | string[]) {
+  deleteMany<T extends TableNames>(
+    table: T,
+    keys: TablesStructures[T]['id'][]
+  ) {
     const idsQuery = keys.map(key => `id = ${key}`).join(' OR ')
     return this.sqlite.prepare(`DELETE FROM ${table} WHERE ${idsQuery}`).run()
   }
 
-  truncate(table: Tables) {
+  truncate<T extends TableNames>(table: T) {
     return this.sqlite.prepare(`DELETE FROM ${table}`).run()
   }
 
