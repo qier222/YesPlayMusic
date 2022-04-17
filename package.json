@@ -29,6 +29,7 @@
     "test:types-renderer": "tsc --noEmit --project src/renderer/tsconfig.json",
     "test:types-main": "tsc --noEmit --project src/main/tsconfig.json",
     "test:types-shared": "tsc --noEmit --project src/shared/tsconfig.json",
+    "netease": "npx NeteaseCloudMusicApi",
     "eslint": "eslint --ext .ts,.js ./",
     "prettier": "prettier --write './**/*.{ts,js,tsx,jsx}'"
   },

@@ -73,7 +73,7 @@ const LikedTracksCard = ({ className }: { className?: string }) => {
         navigate(`/playlist/${likedSongsPlaylist.playlist.id}`)
       }
       className={classNames(
-        'relative flex h-full w-full flex-col justify-between rounded-2xl bg-brand-50 py-5 px-6 text-brand-600 dark:bg-brand-800 dark:text-brand-50',
+        'relative flex h-full w-full flex-col justify-between rounded-2xl bg-brand-50 py-5 px-6 text-brand-600 dark:bg-brand-600 dark:text-brand-50',
         className
       )}
     >
