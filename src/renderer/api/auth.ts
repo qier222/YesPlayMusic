@@ -1,5 +1,5 @@
-import type { fetchUserAccountResponse } from '@/renderer/api/user'
 import request from '@/renderer/utils/request'
+import { FetchUserAccountResponse } from '@/shared/api/User'
 
 // 手机号登录
 interface LoginWithPhoneParams {
@@ -30,7 +30,7 @@ export interface LoginWithEmailParams {
   password?: string
   md5_password?: string
 }
-export interface loginWithEmailResponse extends fetchUserAccountResponse {
+export interface loginWithEmailResponse extends FetchUserAccountResponse {
   code: number
   cookie: string
   loginType: number

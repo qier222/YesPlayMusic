@@ -1,25 +1,26 @@
 import {
-  PlaylistApiNames,
   fetchRecommendedPlaylists,
   fetchDailyRecommendPlaylists,
 } from '@/renderer/api/playlist'
 import CoverRow from '@/renderer/components/CoverRow'
 import DailyTracksCard from '@/renderer/components/DailyTracksCard'
 import FMCard from '@/renderer/components/FMCard'
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { PlaylistApiNames } from '@/shared/api/Playlists'
+import { APIs } from '@/shared/CacheAPIs'
+import { IpcChannels } from '@/shared/IpcChannels'
 
 export default function Home() {
   const {
     data: dailyRecommendPlaylists,
     isLoading: isLoadingDailyRecommendPlaylists,
   } = useQuery(
-    PlaylistApiNames.FETCH_DAILY_RECOMMEND_PLAYLISTS,
+    PlaylistApiNames.FetchDailyRecommendPlaylists,
     fetchDailyRecommendPlaylists,
     {
       retry: false,
       placeholderData: () =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'recommend/resource',
+          api: APIs.RecommendResource,
         }),
     }
   )
@@ -28,14 +29,14 @@ export default function Home() {
     data: recommendedPlaylists,
     isLoading: isLoadingRecommendedPlaylists,
   } = useQuery(
-    PlaylistApiNames.FETCH_RECOMMENDED_PLAYLISTS,
+    PlaylistApiNames.FetchRecommendedPlaylists,
     () => {
       return fetchRecommendedPlaylists({})
     },
     {
       placeholderData: () =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: 'personalized',
+          api: APIs.Personalized,
         }),
     }
   )

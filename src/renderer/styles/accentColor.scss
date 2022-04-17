@@ -1,0 +1,220 @@
+:root {
+  --brand-color-50: 239 246 255;
+  --brand-color-100: 219 234 254;
+  --brand-color-200: 191 219 254;
+  --brand-color-300: 147 197 253;
+  --brand-color-400: 96 165 250;
+  --brand-color-500: 59 130 246;
+  --brand-color-600: 37 99 235;
+  --brand-color-700: 29 78 216;
+  --brand-color-800: 30 64 175;
+  --brand-color-900: 30 58 138;
+}
+
+[data-accent-color='red'] {
+  --brand-color-50: 254 242 242;
+  --brand-color-100: 254 226 226;
+  --brand-color-200: 254 202 202;
+  --brand-color-300: 252 165 165;
+  --brand-color-400: 248 113 113;
+  --brand-color-500: 239 68 68;
+  --brand-color-600: 220 38 38;
+  --brand-color-700: 185 28 28;
+  --brand-color-800: 153 27 27;
+  --brand-color-900: 127 29 29;
+}
+
+[data-accent-color='orange'] {
+  --brand-color-50: 255 247 237;
+  --brand-color-100: 255 237 213;
+  --brand-color-200: 254 215 170;
+  --brand-color-300: 253 186 116;
+  --brand-color-400: 251 146 60;
+  --brand-color-500: 249 115 22;
+  --brand-color-600: 234 88 12;
+  --brand-color-700: 194 65 12;
+  --brand-color-800: 154 52 18;
+  --brand-color-900: 124 45 18;
+}
+
+[data-accent-color='amber'] {
+  --brand-color-50: 255 251 235;
+  --brand-color-100: 254 243 199;
+  --brand-color-200: 253 230 138;
+  --brand-color-300: 252 211 77;
+  --brand-color-400: 251 191 36;
+  --brand-color-500: 245 158 11;
+  --brand-color-600: 217 119 6;
+  --brand-color-700: 180 83 9;
+  --brand-color-800: 146 64 14;
+  --brand-color-900: 120 53 15;
+}
+
+[data-accent-color='yellow'] {
+  --brand-color-50: 254 252 232;
+  --brand-color-100: 254 249 195;
+  --brand-color-200: 254 240 138;
+  --brand-color-300: 253 224 71;
+  --brand-color-400: 250 204 21;
+  --brand-color-500: 234 179 8;
+  --brand-color-600: 202 138 4;
+  --brand-color-700: 161 98 7;
+  --brand-color-800: 133 77 14;
+  --brand-color-900: 113 63 18;
+}
+
+[data-accent-color='lime'] {
+  --brand-color-50: 247 254 231;
+  --brand-color-100: 236 252 203;
+  --brand-color-200: 217 249 157;
+  --brand-color-300: 190 242 100;
+  --brand-color-400: 163 230 53;
+  --brand-color-500: 132 204 22;
+  --brand-color-600: 101 163 13;
+  --brand-color-700: 77 124 15;
+  --brand-color-800: 63 98 18;
+  --brand-color-900: 54 83 20;
+}
+
+[data-accent-color='green'] {
+  --brand-color-50: 240 253 244;
+  --brand-color-100: 220 252 231;
+  --brand-color-200: 187 247 208;
+  --brand-color-300: 134 239 172;
+  --brand-color-400: 74 222 128;
+  --brand-color-500: 34 197 94;
+  --brand-color-600: 22 163 74;
+  --brand-color-700: 21 128 61;
+  --brand-color-800: 22 101 52;
+  --brand-color-900: 20 83 45;
+}
+
+[data-accent-color='emerald'] {
+  --brand-color-50: 236 253 245;
+  --brand-color-100: 209 250 229;
+  --brand-color-200: 167 243 208;
+  --brand-color-300: 110 231 183;
+  --brand-color-400: 52 211 153;
+  --brand-color-500: 16 185 129;
+  --brand-color-600: 5 150 105;
+  --brand-color-700: 4 120 87;
+  --brand-color-800: 6 95 70;
+  --brand-color-900: 6 78 59;
+}
+
+[data-accent-color='teal'] {
+  --brand-color-50: 240 253 250;
+  --brand-color-100: 204 251 241;
+  --brand-color-200: 153 246 228;
+  --brand-color-300: 94 234 212;
+  --brand-color-400: 45 212 191;
+  --brand-color-500: 20 184 166;
+  --brand-color-600: 13 148 136;
+  --brand-color-700: 15 118 110;
+  --brand-color-800: 17 94 89;
+  --brand-color-900: 19 78 74;
+}
+
+[data-accent-color='cyan'] {
+  --brand-color-50: 236 254 255;
+  --brand-color-100: 207 250 254;
+  --brand-color-200: 165 243 252;
+  --brand-color-300: 103 232 249;
+  --brand-color-400: 34 211 238;
+  --brand-color-500: 6 182 212;
+  --brand-color-600: 8 145 178;
+  --brand-color-700: 14 116 144;
+  --brand-color-800: 21 94 117;
+  --brand-color-900: 22 78 99;
+}
+
+[data-accent-color='sky'] {
+  --brand-color-50: 240 249 255;
+  --brand-color-100: 224 242 254;
+  --brand-color-200: 186 230 253;
+  --brand-color-300: 125 211 252;
+  --brand-color-400: 56 189 248;
+  --brand-color-500: 14 165 233;
+  --brand-color-600: 2 132 199;
+  --brand-color-700: 3 105 161;
+  --brand-color-800: 7 89 133;
+  --brand-color-900: 12 74 110;
+}
+
+[data-accent-color='indigo'] {
+  --brand-color-50: 238 242 255;
+  --brand-color-100: 224 231 255;
+  --brand-color-200: 199 210 254;
+  --brand-color-300: 165 180 252;
+  --brand-color-400: 129 140 248;
+  --brand-color-500: 99 102 241;
+  --brand-color-600: 79 70 229;
+  --brand-color-700: 67 56 202;
+  --brand-color-800: 55 48 163;
+  --brand-color-900: 49 46 129;
+}
+
+[data-accent-color='violet'] {
+  --brand-color-50: 245 243 255;
+  --brand-color-100: 237 233 254;
+  --brand-color-200: 221 214 254;
+  --brand-color-300: 196 181 253;
+  --brand-color-400: 167 139 250;
+  --brand-color-500: 139 92 246;
+  --brand-color-600: 124 58 237;
+  --brand-color-700: 109 40 217;
+  --brand-color-800: 91 33 182;
+  --brand-color-900: 76 29 149;
+}
+
+[data-accent-color='purple'] {
+  --brand-color-50: 250 245 255;
+  --brand-color-100: 243 232 255;
+  --brand-color-200: 233 213 255;
+  --brand-color-300: 216 180 254;
+  --brand-color-400: 192 132 252;
+  --brand-color-500: 168 85 247;
+  --brand-color-600: 147 51 234;
+  --brand-color-700: 126 34 206;
+  --brand-color-800: 107 33 168;
+  --brand-color-900: 88 28 135;
+}
+
+[data-accent-color='fuchsia'] {
+  --brand-color-50: 253 244 255;
+  --brand-color-100: 250 232 255;
+  --brand-color-200: 245 208 254;
+  --brand-color-300: 240 171 252;
+  --brand-color-400: 232 121 249;
+  --brand-color-500: 217 70 239;
+  --brand-color-600: 192 38 211;
+  --brand-color-700: 162 28 175;
+  --brand-color-800: 134 25 143;
+  --brand-color-900: 112 26 117;
+}
+
+[data-accent-color='pink'] {
+  --brand-color-50: 253 242 248;
+  --brand-color-100: 252 231 243;
+  --brand-color-200: 251 207 232;
+  --brand-color-300: 249 168 212;
+  --brand-color-400: 244 114 182;
+  --brand-color-500: 236 72 153;
+  --brand-color-600: 219 39 119;
+  --brand-color-700: 190 24 93;
+  --brand-color-800: 157 23 77;
+  --brand-color-900: 131 24 67;
+}
+
+[data-accent-color='rose'] {
+  --brand-color-50: 255 241 242;
+  --brand-color-100: 255 228 230;
+  --brand-color-200: 254 205 211;
+  --brand-color-300: 253 164 175;
+  --brand-color-400: 251 113 133;
+  --brand-color-500: 244 63 94;
+  --brand-color-600: 225 29 72;
+  --brand-color-700: 190 18 60;
+  --brand-color-800: 159 18 57;
+  --brand-color-900: 136 19 55;
+}

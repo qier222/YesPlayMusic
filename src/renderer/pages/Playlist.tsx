@@ -32,10 +32,15 @@ const PlayButton = ({
   const playerSnapshot = useSnapshot(player)
   const isThisPlaylistPlaying = useMemo(
     () =>
-      playerSnapshot.mode === PlayerMode.PLAYLIST &&
-      playerSnapshot.trackListSource?.type === TrackListSourceType.PLAYLIST &&
+      playerSnapshot.mode === PlayerMode.TrackList &&
+      playerSnapshot.trackListSource?.type === TrackListSourceType.Playlist &&
       playerSnapshot.trackListSource?.id === playlist?.id,
-    [playerSnapshot.trackListSource, playlist?.id]
+    [
+      playerSnapshot.mode,
+      playerSnapshot.trackListSource?.id,
+      playerSnapshot.trackListSource?.type,
+      playlist?.id,
+    ]
   )
 
   const wrappedHandlePlay = () => {
@@ -48,7 +53,7 @@ const PlayButton = ({
 
   const isPlaying =
     isThisPlaylistPlaying &&
-    [PlayerState.PLAYING, PlayerState.LOADING].includes(playerSnapshot.state)
+    [PlayerState.Playing, PlayerState.Loading].includes(playerSnapshot.state)
 
   return (
     <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>

@@ -8,6 +8,7 @@ import {
   State as PlayerState,
   Mode as PlayerMode,
 } from '@/renderer/utils/player'
+import useCoverColor from '../hooks/useCoverColor'
 
 const MediaControls = () => {
   const classes =
@@ -39,7 +40,7 @@ const MediaControls = () => {
           className='h-6 w-6'
           name={
             playerSnapshot.mode === PlayerMode.FM &&
-            [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
+            [PlayerState.Playing, PlayerState.Loading].includes(state)
               ? 'pause'
               : 'play'
           }
@@ -59,7 +60,6 @@ const MediaControls = () => {
 
 const FMCard = () => {
   const navigate = useNavigate()
-  const [bgColor, setBgColor] = useState({ from: '#222', to: '#222' })
 
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.fmTrack, [playerSnapshot.fmTrack])
@@ -68,13 +68,7 @@ const FMCard = () => {
     [track?.al?.picUrl]
   )
 
-  useEffect(() => {
-    getCoverColor(track?.al?.picUrl || '').then(color => {
-      if (!color) return
-      const to = colord(color).darken(0.15).rotate(-5).toHex()
-      setBgColor({ from: color, to })
-    })
-  }, [track?.al?.picUrl])
+  const bgColor = useCoverColor(track?.al?.picUrl ?? '')
 
   return (
     <div

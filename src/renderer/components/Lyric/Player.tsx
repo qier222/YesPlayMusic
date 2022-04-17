@@ -102,7 +102,7 @@ const Controls = () => {
 
   return (
     <div className='flex items-center justify-center gap-2 text-white'>
-      {mode === PlayerMode.PLAYLIST && (
+      {mode === PlayerMode.TrackList && (
         <IconButton
           onClick={() => track && player.prevTrack()}
           disabled={!track}
@@ -123,7 +123,7 @@ const Controls = () => {
         <SvgIcon
           className='h-7 w-7'
           name={
-            [PlayerState.PLAYING, PlayerState.LOADING].includes(state)
+            [PlayerState.Playing, PlayerState.Loading].includes(state)
               ? 'pause'
               : 'play'
           }

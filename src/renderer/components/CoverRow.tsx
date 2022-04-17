@@ -8,10 +8,10 @@ import { player } from '@/renderer/store'
 import { TrackListSourceType } from '@/renderer/utils/player'
 
 export enum Subtitle {
-  COPYWRITER = 'copywriter',
-  CREATOR = 'creator',
-  TYPE_RELEASE_YEAR = 'type+releaseYear',
-  ARTIST = 'artist',
+  Copywriter = 'copywriter',
+  Creator = 'creator',
+  TypeReleaseYear = 'type+releaseYear',
+  Artist = 'artist',
 }
 
 const Title = ({
@@ -64,10 +64,10 @@ const getSubtitleText = (
   }[('type' in item && typeof item.type !== 'number' && item.type) || 'unknown']
 
   const table = {
-    [Subtitle.CREATOR]: `by ${nickname}`,
-    [Subtitle.TYPE_RELEASE_YEAR]: `${type} · ${releaseYear}`,
-    [Subtitle.ARTIST]: artist,
-    [Subtitle.COPYWRITER]: copywriter,
+    [Subtitle.Creator]: `by ${nickname}`,
+    [Subtitle.TypeReleaseYear]: `${type} · ${releaseYear}`,
+    [Subtitle.Artist]: artist,
+    [Subtitle.Copywriter]: copywriter,
   }
 
   return table[subtitle]
@@ -86,7 +86,7 @@ const CoverRow = ({
   albums,
   artists,
   playlists,
-  subtitle = Subtitle.COPYWRITER,
+  subtitle = Subtitle.Copywriter,
   seeMoreLink,
   isSkeleton,
   className,

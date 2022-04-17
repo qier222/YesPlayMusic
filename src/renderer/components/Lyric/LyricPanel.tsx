@@ -7,20 +7,14 @@ import SvgIcon from '../SvgIcon'
 import Lyric from './Lyric'
 import { motion, AnimatePresence } from 'framer-motion'
 import Lyric2 from './Lyric2'
+import useCoverColor from '@/renderer/hooks/useCoverColor'
 
 const LyricPanel = () => {
   const stateSnapshot = useSnapshot(state)
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
 
-  const [bgColor, setBgColor] = useState({ from: '#222', to: '#222' })
-  useEffect(() => {
-    getCoverColor(track?.al?.picUrl || '').then(color => {
-      if (!color) return
-      const to = colord(color).darken(0.15).rotate(-5).toHex()
-      setBgColor({ from: color, to })
-    })
-  }, [track?.al?.picUrl])
+  const bgColor = useCoverColor(track?.al?.picUrl ?? '')
 
   return (
     <AnimatePresence>

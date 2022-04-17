@@ -1,26 +1,33 @@
 import { BrowserWindow, ipcMain, app } from 'electron'
 import { db, Tables } from './db'
-import { IpcChannels } from './IpcChannelsName'
+import { IpcChannels, IpcChannelsParams } from '../shared/IpcChannels'
 import cache from './cache'
 import log from './log'
 import fs from 'fs'
-import { APIs } from './CacheAPIsName'
+import { APIs } from '../shared/CacheAPIs'
+
+const on = <T extends keyof IpcChannelsParams>(
+  channel: T,
+  listener: (event: Electron.IpcMainEvent, params: IpcChannelsParams[T]) => void
+) => {
+  ipcMain.on(channel, listener)
+}
 
 /**
  * 处理需要win对象的事件
  * @param {BrowserWindow} win
  */
 export function initIpcMain(win: BrowserWindow | null) {
-  ipcMain.on(IpcChannels.Minimize, () => {
+  on(IpcChannels.Minimize, () => {
     win?.minimize()
   })
 
-  ipcMain.on(IpcChannels.MaximizeOrUnmaximize, () => {
+  on(IpcChannels.MaximizeOrUnmaximize, () => {
     if (!win) return
     win.isMaximized() ? win.unmaximize() : win.maximize()
   })
 
-  ipcMain.on(IpcChannels.Close, () => {
+  on(IpcChannels.Close, () => {
     app.exit()
   })
 }
@@ -28,7 +35,7 @@ export function initIpcMain(win: BrowserWindow | null) {
 /**
  * 清除API缓存
  */
-ipcMain.on(IpcChannels.ClearAPICache, () => {
+on(IpcChannels.ClearAPICache, () => {
   db.truncate(Tables.Track)
   db.truncate(Tables.Album)
   db.truncate(Tables.Artist)
@@ -42,7 +49,7 @@ ipcMain.on(IpcChannels.ClearAPICache, () => {
 /**
  * Get API cache
  */
-ipcMain.on(IpcChannels.GetApiCacheSync, (event, args) => {
+on(IpcChannels.GetApiCacheSync, (event, args) => {
   const { api, query } = args
   const data = cache.get(api, query)
   event.returnValue = data
@@ -51,8 +58,8 @@ ipcMain.on(IpcChannels.GetApiCacheSync, (event, args) => {
 /**
  * 缓存封面颜色
  */
-ipcMain.on(IpcChannels.CacheCoverColor, (event, args) => {
-  const { id, color } = args.query
+on(IpcChannels.CacheCoverColor, (event, args) => {
+  const { id, color } = args
   cache.set(APIs.CoverColor, { id, color })
 })
 
@@ -60,7 +67,7 @@ ipcMain.on(IpcChannels.CacheCoverColor, (event, args) => {
  * 导出tables到json文件，方便查看table大小（dev环境）
  */
 if (process.env.NODE_ENV === 'development') {
-  ipcMain.on(IpcChannels.DevDbExportJson, () => {
+  on(IpcChannels.DevDbExportJson, () => {
     const tables = [
       Tables.ArtistAlbum,
       Tables.Playlist,

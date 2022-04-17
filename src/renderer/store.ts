@@ -9,6 +9,7 @@ interface Store {
   }
   settings: {
     showSidebar: boolean
+    accentColor: string
   }
 }
 
@@ -19,6 +20,7 @@ const initialState: Store = {
   },
   settings: {
     showSidebar: true,
+    accentColor: 'blue',
   },
 }
 

@@ -1,4 +1,4 @@
-import { FetchLyricResponse } from '@/renderer/api/track'
+import { FetchLyricResponse } from '@/shared/api/Track'
 
 export function lyricParser(lrc: FetchLyricResponse) {
   return {

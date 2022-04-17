@@ -1,6 +1,6 @@
 import { player } from '@/renderer/store'
 import SvgIcon from './SvgIcon'
-import { IpcChannels } from '@/main/IpcChannelsName'
+import { IpcChannels } from '@/shared/IpcChannels'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)

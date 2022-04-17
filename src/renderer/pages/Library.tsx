@@ -73,7 +73,7 @@ const LikedTracksCard = ({ className }: { className?: string }) => {
         navigate(`/playlist/${likedSongsPlaylist.playlist.id}`)
       }
       className={classNames(
-        'relative flex h-full w-full flex-col justify-between rounded-2xl bg-brand-50 py-5 px-6 text-brand-600 dark:bg-brand-800 dark:text-brand-50',
+        'relative flex h-full w-full flex-col justify-between rounded-2xl bg-brand-50 py-5 px-6 text-brand-600 dark:bg-brand-600 dark:text-brand-50',
         className
       )}
     >
@@ -127,7 +127,7 @@ const Playlists = () => {
     <div>
       <CoverRow
         playlists={playlists?.playlist?.slice(1) ?? []}
-        subtitle={Subtitle.CREATOR}
+        subtitle={Subtitle.Creator}
       />
     </div>
   )
@@ -140,7 +140,7 @@ const Albums = () => {
 
   return (
     <div>
-      <CoverRow albums={albums?.data ?? []} subtitle={Subtitle.ARTIST} />
+      <CoverRow albums={albums?.data ?? []} subtitle={Subtitle.Artist} />
     </div>
   )
 }
@@ -150,7 +150,7 @@ const Artists = () => {
 
   return (
     <div>
-      <CoverRow artists={artists?.data ?? []} subtitle={Subtitle.ARTIST} />
+      <CoverRow artists={artists?.data ?? []} subtitle={Subtitle.Artist} />
     </div>
   )
 }
