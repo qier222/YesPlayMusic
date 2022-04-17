@@ -11,8 +11,6 @@ import {
   State as PlayerState,
   Mode as PlayerMode,
 } from '@/renderer/utils/player'
-import useIpcRenderer from '@/renderer/hooks/useIpcRenderer'
-import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode as PlayerRepeatMode } from '@/shared/playerDataTypes'
 
 const PlayingTrack = () => {
@@ -28,10 +26,6 @@ const PlayingTrack = () => {
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const mutationLikeATrack = useMutationLikeATrack()
 
-  const LikeThisTrack = () => {
-    track?.id && mutationLikeATrack.mutate(track.id)
-  }
-
   const hasTrackListSource =
     snappedPlayer.mode !== PlayerMode.FM && trackListSource?.type
 
@@ -44,20 +38,6 @@ const PlayingTrack = () => {
     if (hasTrackListSource)
       navigate(`/${trackListSource.type}/${trackListSource.id}`)
   }
-
-  useIpcRenderer(IpcChannels.Like, () => {
-    LikeThisTrack()
-  })
-
-  useEffect(() => {
-    window.ipcRenderer?.send(IpcChannels.SetTrayLikeState, {
-      isLiked: userLikedSongs?.ids?.includes(track?.id ?? 0) ?? false,
-    })
-
-    window.ipcRenderer?.send(IpcChannels.SetTrayTooltip, {
-      text: track?.name ? `${track.name} - YesPlayMusic` : 'YesPlayMusic',
-    })
-  }, [userLikedSongs, track])
 
   return (
     <>
@@ -94,7 +74,9 @@ const PlayingTrack = () => {
             </div>
           </div>
 
-          <IconButton onClick={LikeThisTrack}>
+          <IconButton
+            onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
+          >
             <SvgIcon
               className='h-5 w-5 text-black dark:text-white'
               name={

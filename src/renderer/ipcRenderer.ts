@@ -30,7 +30,6 @@ export function ipcRenderer() {
   })
 
   on(IpcChannels.Repeat, (e, mode) => {
-    console.log(mode)
     player.repeatMode = mode
   })
 }

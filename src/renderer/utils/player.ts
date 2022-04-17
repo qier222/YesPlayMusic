@@ -308,8 +308,6 @@ export class Player {
     } else {
       this.state = State.Playing
     }
-
-    window.ipcRenderer?.send(IpcChannels.SetTrayPlayState, { isPlaying: true })
   }
 
   /**
@@ -327,8 +325,6 @@ export class Player {
       this.state = State.Paused
       _howler.pause()
     }
-
-    window.ipcRenderer?.send(IpcChannels.SetTrayPlayState, { isPlaying: false })
   }
 
   /**
