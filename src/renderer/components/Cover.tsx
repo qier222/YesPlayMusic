@@ -24,7 +24,7 @@ const Cover = ({
   const [isError, setIsError] = useState(false)
   const playerSnapshot = useSnapshot(player)
   const trackListSource = useMemo(() => playerSnapshot.trackListSource, [playerSnapshot.trackListSource])
-  const flag = coverInfo?.type === trackListSource?.type && coverInfo?.id === trackListSource?.id 
+  const flag = coverInfo?.type === trackListSource?.type && coverInfo?.id === trackListSource?.id
 
   return (
     <div onClick={onClick} className='group relative z-0'>

@@ -126,9 +126,9 @@ const CoverRow = ({
     if (playlists) prefetchPlaylist({ id })
   }
 
-  const handlePlay = async (id: number) => { 
+  const handlePlay = async (id: number) => {
     console.log('[CoverRow Component][handlePlay info]', id );
-    
+
     if (!id) {
       toast('无法播放歌单')
       return
