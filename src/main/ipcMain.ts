@@ -49,9 +49,9 @@ function initTrayIpcMain(tray: YPMTray | null) {
     tray?.setLikeState(isLiked)
   )
 
-  on(IpcChannels.SetTrayPlayState, (e, { isPlaying }) =>
-    tray?.setPlayState(isPlaying)
-  )
+  on(IpcChannels.Play, () => tray?.setPlayState(true))
+  on(IpcChannels.Pause, () => tray?.setPlayState(false))
+
   on(IpcChannels.Repeat, (e, { mode }) => tray?.setRepeatMode(mode))
 }
 

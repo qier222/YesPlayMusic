@@ -11,7 +11,6 @@ export const enum IpcChannels {
   DevDbExportJson = 'dev-db-export-json',
   CacheCoverColor = 'cache-cover-color',
   SetTrayTooltip = 'set-tray-tooltip',
-  SetTrayPlayState = 'set-tray-play-state',
   SetTrayLikeState = 'set-tray-like-state',
   // 准备三个播放相关channel, 为 mpris 预留接口
   Play = 'play',
@@ -42,9 +41,6 @@ export interface IpcChannelsParams {
   [IpcChannels.SetTrayTooltip]: {
     text: string
   }
-  [IpcChannels.SetTrayPlayState]: {
-    isPlaying: boolean
-  }
   [IpcChannels.SetTrayLikeState]: {
     isLiked: boolean
   }
@@ -72,7 +68,6 @@ export interface IpcChannelsReturns {
   [IpcChannels.DevDbExportJson]: void
   [IpcChannels.CacheCoverColor]: void
   [IpcChannels.SetTrayTooltip]: void
-  [IpcChannels.SetTrayPlayState]: void
   [IpcChannels.SetTrayLikeState]: void
   [IpcChannels.Play]: void
   [IpcChannels.Pause]: void
