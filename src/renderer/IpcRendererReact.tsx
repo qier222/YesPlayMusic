@@ -24,18 +24,18 @@ const IpcRendererReact = () => {
 
   useEffect(() => {
     trackIDRef.current = track?.id ?? 0
+
+    const text = track?.name ? `${track.name} - YesPlayMusic` : 'YesPlayMusic'
+    window.ipcRenderer?.send(IpcChannels.SetTrayTooltip, {
+      text,
+    })
+    document.title = text
   }, [track])
 
   useEffect(() => {
     window.ipcRenderer?.send(IpcChannels.SetTrayLikeState, {
       isLiked: userLikedSongs?.ids?.includes(track?.id ?? 0) ?? false,
     })
-
-    let text = track?.name ? `${track.name} - YesPlayMusic` : 'YesPlayMusic'
-    window.ipcRenderer?.send(IpcChannels.SetTrayTooltip, {
-      text,
-    })
-    document.title = text
   }, [userLikedSongs, track])
 
   useEffect(() => {

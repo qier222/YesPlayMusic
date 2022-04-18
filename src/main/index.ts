@@ -31,6 +31,7 @@ interface TypedElectronStore {
 
 class Main {
   win: BrowserWindow | null = null
+  tray: YPMTray | null = null
   store = new Store<TypedElectronStore>({
     defaults: {
       window: {
@@ -39,7 +40,6 @@ class Main {
       },
     },
   })
-  tray: YPMTray | null = null
 
   constructor() {
     log.info('[index] Main process start')

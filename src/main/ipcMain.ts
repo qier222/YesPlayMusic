@@ -5,7 +5,7 @@ import cache from './cache'
 import log from './log'
 import fs from 'fs'
 import { APIs } from '../shared/CacheAPIs'
-import { YPMTray } from 'tray'
+import { YPMTray } from './tray'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
