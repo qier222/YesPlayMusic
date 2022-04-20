@@ -9,9 +9,11 @@ import {
 } from 'electron'
 import Store from 'electron-store'
 import { release } from 'os'
-import path, { join } from 'path'
+import { join } from 'path'
 import log from './log'
 import { initIpcMain } from './ipcMain'
+import { createTray, YPMTray } from './tray'
+import { IpcChannels } from '@/shared/IpcChannels'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -29,6 +31,7 @@ interface TypedElectronStore {
 
 class Main {
   win: BrowserWindow | null = null
+  tray: YPMTray | null = null
   store = new Store<TypedElectronStore>({
     defaults: {
       window: {
@@ -58,7 +61,8 @@ class Main {
       this.createWindow()
       this.handleAppEvents()
       this.handleWindowEvents()
-      initIpcMain(this.win)
+      this.createTray()
+      initIpcMain(this.win, this.tray)
       this.initDevTools()
     })
   }
@@ -81,6 +85,12 @@ class Main {
     )
 
     this.win.webContents.openDevTools()
+  }
+
+  createTray() {
+    if (isWindows || isLinux || isDev) {
+      this.tray = createTray(this.win!)
+    }
   }
 
   createWindow() {
@@ -119,11 +129,11 @@ class Main {
 
     // Window maximize and minimize
     this.win.on('maximize', () => {
-      this.win && this.win.webContents.send('is-maximized', true)
+      this.win && this.win.webContents.send(IpcChannels.IsMaximized, true)
     })
 
     this.win.on('unmaximize', () => {
-      this.win && this.win.webContents.send('is-maximized', false)
+      this.win && this.win.webContents.send(IpcChannels.IsMaximized, false)
     })
 
     // Save window position

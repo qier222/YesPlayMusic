@@ -5,6 +5,7 @@ import cache from './cache'
 import log from './log'
 import fs from 'fs'
 import { APIs } from '../shared/CacheAPIs'
+import { YPMTray } from './tray'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -13,11 +14,16 @@ const on = <T extends keyof IpcChannelsParams>(
   ipcMain.on(channel, listener)
 }
 
+export function initIpcMain(win: BrowserWindow | null, tray: YPMTray | null) {
+  initWindowIpcMain(win)
+  initTrayIpcMain(tray)
+}
+
 /**
  * 处理需要win对象的事件
  * @param {BrowserWindow} win
  */
-export function initIpcMain(win: BrowserWindow | null) {
+function initWindowIpcMain(win: BrowserWindow | null) {
   on(IpcChannels.Minimize, () => {
     win?.minimize()
   })
@@ -30,6 +36,23 @@ export function initIpcMain(win: BrowserWindow | null) {
   on(IpcChannels.Close, () => {
     app.exit()
   })
+}
+
+/**
+ * 处理需要tray对象的事件
+ * @param {YPMTray} tray
+ */
+function initTrayIpcMain(tray: YPMTray | null) {
+  on(IpcChannels.SetTrayTooltip, (e, { text }) => tray?.setTooltip(text))
+
+  on(IpcChannels.SetTrayLikeState, (e, { isLiked }) =>
+    tray?.setLikeState(isLiked)
+  )
+
+  on(IpcChannels.Play, () => tray?.setPlayState(true))
+  on(IpcChannels.Pause, () => tray?.setPlayState(false))
+
+  on(IpcChannels.Repeat, (e, { mode }) => tray?.setRepeatMode(mode))
 }
 
 /**

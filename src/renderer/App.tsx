@@ -7,6 +7,7 @@ import reactQueryClient from '@/renderer/utils/reactQueryClient'
 import Main from '@/renderer/components/Main'
 import TitleBar from '@/renderer/components/TitleBar'
 import Lyric from '@/renderer/components/Lyric'
+import IpcRendererReact from '@/renderer/IpcRendererReact'
 
 const App = () => {
   return (
@@ -22,6 +23,8 @@ const App = () => {
       <Lyric />
 
       <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />
+
+      <IpcRendererReact />
 
       {/* Devtool */}
       <ReactQueryDevtools

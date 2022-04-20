@@ -10,8 +10,8 @@ import { resizeImage } from '@/renderer/utils/common'
 import {
   State as PlayerState,
   Mode as PlayerMode,
-  RepeatMode as PlayerRepeatMode,
 } from '@/renderer/utils/player'
+import { RepeatMode as PlayerRepeatMode } from '@/shared/playerDataTypes'
 
 const PlayingTrack = () => {
   const navigate = useNavigate()
@@ -26,13 +26,16 @@ const PlayingTrack = () => {
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const mutationLikeATrack = useMutationLikeATrack()
 
+  const hasTrackListSource =
+    snappedPlayer.mode !== PlayerMode.FM && trackListSource?.type
+
   const toAlbum = () => {
     const id = track?.al?.id
     if (id) navigate(`/album/${id}`)
   }
 
   const toTrackListSource = () => {
-    if (trackListSource?.type)
+    if (hasTrackListSource)
       navigate(`/${trackListSource.type}/${trackListSource.id}`)
   }
 
@@ -59,7 +62,10 @@ const PlayingTrack = () => {
           <div className='flex flex-col justify-center leading-tight'>
             <div
               onClick={toTrackListSource}
-              className='line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 hover:underline dark:text-white dark:decoration-gray-300'
+              className={classNames(
+                'line-clamp-1 font-semibold text-black decoration-gray-600 decoration-2 dark:text-white dark:decoration-gray-300',
+                hasTrackListSource && 'hover:underline'
+              )}
             >
               {track?.name}
             </div>

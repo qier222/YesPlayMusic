@@ -103,6 +103,10 @@ module.exports = {
       from: 'src/main/migrations',
       to: 'dist/main/migrations',
     },
+    {
+      from: 'src/main/assets',
+      to: 'dist/main/assets',
+    },
     '!**/node_modules/*/{*.MD,*.md,README,readme}',
     '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
     '!**/node_modules/*.d.ts',

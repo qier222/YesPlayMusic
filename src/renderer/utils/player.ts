@@ -11,6 +11,8 @@ import axios from 'axios'
 import { resizeImage } from './common'
 import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
+import { IpcChannels } from '@/shared/IpcChannels'
+import { RepeatMode } from '@/shared/playerDataTypes'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -32,11 +34,6 @@ export enum State {
   Paused = 'paused',
   Loading = 'loading',
 }
-export enum RepeatMode {
-  Off = 'off',
-  On = 'on',
-  One = 'one',
-}
 
 const PLAY_PAUSE_FADE_DURATION = 200
 
@@ -47,6 +44,7 @@ export class Player {
   private _progress: number = 0
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
+  private _repeatMode: RepeatMode = RepeatMode.Off
 
   state: State = State.Initializing
   mode: Mode = Mode.TrackList
@@ -54,25 +52,26 @@ export class Player {
   trackListSource: TrackListSource | null = null
   fmTrackList: TrackID[] = []
   shuffle: boolean = false
-  repeatMode: RepeatMode = RepeatMode.Off
   fmTrack: Track | null = null
 
   init(params: { [key: string]: any }) {
     if (params._track) this._track = params._track
     if (params._trackIndex) this._trackIndex = params._trackIndex
     if (params._volume) this._volume = params._volume
+    if (params._repeatMode) this._repeatMode = params._repeatMode
     if (params.state) this.trackList = params.state
     if (params.mode) this.mode = params.mode
     if (params.trackList) this.trackList = params.trackList
     if (params.trackListSource) this.trackListSource = params.trackListSource
     if (params.fmTrackList) this.fmTrackList = params.fmTrackList
     if (params.shuffle) this.shuffle = params.shuffle
-    if (params.repeatMode) this.repeatMode = params.repeatMode
     if (params.fmTrack) this.fmTrack = params.fmTrack
 
     this.state = State.Ready
     this._playAudio(false) // just load the audio, not play
     this._initFM()
+
+    window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
   get howler() {
@@ -149,6 +148,14 @@ export class Player {
   set volume(value) {
     this._volume = clamp(value, 0, 1)
     Howler.volume(this._volume)
+  }
+
+  get repeatMode(): RepeatMode {
+    return this._repeatMode
+  }
+  set repeatMode(value) {
+    this._repeatMode = value
+    window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
   private async _initFM() {

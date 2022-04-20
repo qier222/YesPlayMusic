@@ -11,6 +11,7 @@ import './styles/accentColor.scss'
 import App from './App'
 import pkg from '../../package.json'
 import ReactGA from 'react-ga4'
+import { ipcRenderer } from '@/renderer/ipcRenderer'
 
 ReactGA.initialize('G-KMJJCFZDKF')
 
@@ -25,6 +26,8 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 })
+
+ipcRenderer()
 
 const container = document.getElementById('root') as HTMLElement
 const root = ReactDOMClient.createRoot(container)
