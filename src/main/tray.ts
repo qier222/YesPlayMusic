@@ -12,8 +12,8 @@ import { RepeatMode } from '@/shared/playerDataTypes'
 
 const iconDirRoot =
   process.env.NODE_ENV === 'development'
-    ? path.join(process.cwd(), './src/main/assets/icons')
-    : path.join(__dirname, './assets/icons')
+    ? path.join(process.cwd(), './src/main/assets/icons/tray')
+    : path.join(__dirname, './assets/icons/tray')
 
 enum MenuItemIDs {
   Play = 'play',
