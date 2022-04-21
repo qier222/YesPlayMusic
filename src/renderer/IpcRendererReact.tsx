@@ -33,7 +33,7 @@ const IpcRendererReact = () => {
   }, [track])
 
   useEffect(() => {
-    window.ipcRenderer?.send(IpcChannels.SetTrayLikeState, {
+    window.ipcRenderer?.send(IpcChannels.Like, {
       isLiked: userLikedSongs?.ids?.includes(track?.id ?? 0) ?? false,
     })
   }, [userLikedSongs, track])
