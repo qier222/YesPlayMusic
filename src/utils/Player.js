@@ -192,8 +192,6 @@ export default class {
 
   _init() {
     this._loadSelfFromLocalStorage();
-    Howler.autoUnlock = false;
-    Howler.usingWebAudio = true;
     Howler.volume(this.volume);
 
     if (this._enabled) {
@@ -313,6 +311,7 @@ export default class {
     this._howler = new Howl({
       src: [source],
       html5: true,
+      preload: true,
       format: ['mp3', 'flac'],
       onend: () => {
         this._nextTrackCallback();
