@@ -704,13 +704,13 @@ export default {
       span {
         opacity: 0.28;
         cursor: default;
-        font-size: 1em;
+        font-size: 0.8em;
         transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
 
       span.translation {
         opacity: 0.2;
-        font-size: 0.95em;
+        font-size: 0.75em;
       }
     }
 
@@ -722,15 +722,18 @@ export default {
       margin-top: 0.1em;
     }
 
+    .highlight {
+      transform-origin: center left;
+      transform: scale(1.05);
+    }
+
     .highlight span {
       opacity: 0.98;
       display: inline-block;
-      font-size: 1.25em;
     }
 
     .highlight span.translation {
       opacity: 0.65;
-      font-size: 1.1em;
     }
   }
 
