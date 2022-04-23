@@ -1,15 +1,15 @@
-import { getTrackDetail, scrobble, getMP3 } from '@/api/track';
-import shuffle from 'lodash/shuffle';
-import { Howler, Howl } from 'howler';
-import { cacheTrackSource, getTrackSource } from '@/utils/db';
 import { getAlbum } from '@/api/album';
-import { getPlaylistDetail, intelligencePlaylist } from '@/api/playlist';
 import { getArtist } from '@/api/artist';
-import { personalFM, fmTrash } from '@/api/others';
+import { trackScrobble, trackUpdateNowPlaying } from '@/api/lastfm';
+import { fmTrash, personalFM } from '@/api/others';
+import { getPlaylistDetail, intelligencePlaylist } from '@/api/playlist';
+import { getMP3, getTrackDetail, scrobble } from '@/api/track';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
-import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
+import { cacheTrackSource, getTrackSource } from '@/utils/db';
 import { isCreateMpris, isCreateTray } from '@/utils/platform';
+import { Howl, Howler } from 'howler';
+import shuffle from 'lodash/shuffle';
 
 const PLAY_PAUSE_FADE_DURATION = 200;
 
@@ -69,7 +69,9 @@ export default class {
     this._playNextList = []; // 当这个list不为空时，会优先播放这个list的歌
     this._isPersonalFM = false; // 是否是私人FM模式
     this._personalFMTrack = { id: 0 }; // 私人FM当前歌曲
-    this._personalFMNextTrack = { id: 0 }; // 私人FM下一首歌曲信息（为了快速加载下一首）
+    this._personalFMNextTrack = {
+      id: 0,
+    }; // 私人FM下一首歌曲信息（为了快速加载下一首）
 
     /**
      * The blob records for cleanup.
@@ -225,7 +227,8 @@ export default class {
   }
   _setIntervals() {
     // 同步播放进度
-    // TODO: 如果 _progress 在别的地方被改变了，这个定时器会覆盖之前改变的值，是bug
+    // TODO: 如果 _progress 在别的地方被改变了，
+    // 这个定时器会覆盖之前改变的值，是bug
     setInterval(() => {
       if (this._howler === null) return;
       this._progress = this._howler.seek();
