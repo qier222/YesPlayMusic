@@ -275,6 +275,7 @@
         <div class="item">
           <div class="left">
             <div class="title"> 激活无损音质 (FLAC) </div>
+            <div class="description"> 设置后需要清掉快取才能生效。 </div>
           </div>
           <div class="right">
             <div class="toggle">
@@ -339,23 +340,6 @@
               class="text-input"
               placeholder="ex. youtube-dl"
             />
-          </div>
-        </div>
-
-        <div class="item">
-          <div class="left">
-            <div class="title"> 激活无损音质 (FLAC) </div>
-            <div class="description"> 设置后需要清掉快取才能生效。 </div>
-          </div>
-          <div class="right">
-            <div class="toggle">
-              <input
-                id="unm-enable-flac"
-                v-model="unmEnableFlac"
-                type="checkbox"
-              />
-              <label for="unm-enable-flac" />
-            </div>
           </div>
         </div>
 
