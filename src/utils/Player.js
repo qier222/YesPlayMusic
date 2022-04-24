@@ -406,6 +406,7 @@ export default class {
         searchMode: determineSearchMode(store.state.settings.unmSearchMode),
         config: {
           'joox:cookie': store.state.settings.unmJooxCookie || null,
+          'qq:cookie': store.state.settings.unmQQCookie || null,
           'ytdl:exe': store.state.settings.unmYtDlExe || null,
         },
       })

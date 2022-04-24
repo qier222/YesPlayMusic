@@ -291,60 +291,6 @@
 
         <div class="item">
           <div class="left">
-            <div class="title"> 用于 UNM 的 Proxy 服务器 </div>
-            <div class="description">
-              请求如 YouTube 音源服务时要使用的 Proxy 服务器。<br />
-              留空则不进行相关设置。
-            </div>
-          </div>
-          <div class="right">
-            <input
-              v-model="unmProxyUri"
-              class="text-input"
-              placeholder="例 https://192.168.11.45"
-            />
-          </div>
-        </div>
-
-        <div class="item">
-          <div class="left">
-            <div class="title"> Joox 引擎的 Cookie </div>
-            <div class="description">
-              <a
-                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
-                target="_blank"
-                >设置说明请参见此处。</a
-              >
-              留空则不进行相关设置。
-            </div>
-          </div>
-          <div class="right">
-            <input
-              v-model="unmJooxCookie"
-              class="text-input"
-              placeholder="wmid=..; session_key=.."
-            />
-          </div>
-        </div>
-
-        <div class="item">
-          <div class="left">
-            <div class="title"> YtDl 引擎要使用的 youtube-dl 运行文件 </div>
-            <div class="description">
-              默认使用 <code>yt-dlp</code>。 留空则不进行相关设置。
-            </div>
-          </div>
-          <div class="right">
-            <input
-              v-model="unmYtDlExe"
-              class="text-input"
-              placeholder="ex. youtube-dl"
-            />
-          </div>
-        </div>
-
-        <div class="item">
-          <div class="left">
             <div class="title"> 音源搜索模式 </div>
           </div>
           <div class="right">
@@ -377,7 +323,7 @@
             <div class="title"> Joox 引擎的 Cookie </div>
             <div class="description">
               <a
-                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-设置说明"
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
                 target="_blank"
                 >设置说明请参见此处。</a
               >
@@ -395,9 +341,34 @@
 
         <div class="item">
           <div class="left">
+            <div class="title"> QQ 引擎的 Cookie </div>
+            <div class="description">
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#qq-cookie-設定說明"
+                target="_blank"
+                >设置说明请参见此处。</a
+              >
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmQQCookie"
+              class="text-input margin-right-0"
+              placeholder="uin=..; qm_keyst=..;"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
             <div class="title"> YtDl 引擎要使用的 youtube-dl 运行档 </div>
             <div class="description">
-              默认使用 <code>yt-dlp</code>。 留空则不进行相关设置。
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#ytdlexe-設定說明"
+                target="_blank"
+                >设置说明请参见此处。</a
+              >留空则不进行相关设置。
             </div>
           </div>
           <div class="right">
@@ -405,6 +376,23 @@
               v-model="unmYtDlExe"
               class="text-input margin-right-0"
               placeholder="ex. youtube-dl"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 用于 UNM 的 Proxy 服务器 </div>
+            <div class="description">
+              请求如 YouTube 音源服务时要使用的 Proxy 服务器。<br />
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmProxyUri"
+              class="text-input margin-right-0"
+              placeholder="例 https://192.168.11.45"
             />
           </div>
         </div>
@@ -1124,6 +1112,17 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'unmJooxCookie',
+          value: value.length && value,
+        });
+      },
+    },
+    unmQQCookie: {
+      get() {
+        return this.settings.unmQQCookie || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmQQCookie',
           value: value.length && value,
         });
       },
