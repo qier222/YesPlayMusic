@@ -1,5 +1,4 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-// import match from '@unblockneteasemusic/server';
 import UNM from '@unblockneteasemusic/rust-napi';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
