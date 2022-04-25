@@ -69,7 +69,7 @@
 
         <div v-show="mode == 'qrCode'">
           <div v-show="qrCodeImage" class="qr-code-container">
-            <img :src="qrCodeImage" />
+            <img :src="qrCodeImage" width="192px" />
           </div>
           <div class="qr-code-info">
             {{ qrCodeInformation }}
@@ -236,7 +236,7 @@ export default {
           QRCode.toDataURL(
             `https://music.163.com/login?codekey=${this.qrCodeKey}`,
             {
-              width: 192,
+              width: 384,
               margin: 0,
               color: {
                 dark: '#335eea',
