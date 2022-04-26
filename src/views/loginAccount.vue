@@ -68,9 +68,11 @@
         </div>
 
         <div v-show="mode == 'qrCode'">
-          <div v-show="qrCodeImage" class="qr-code-container">
-            <img :src="qrCodeImage" width="192px" />
-          </div>
+          <div
+            v-show="qrCodeSvg"
+            class="qr-code-container"
+            v-html="qrCodeSvg"
+          ></div>
           <div class="qr-code-info">
             {{ qrCodeInformation }}
           </div>
@@ -109,7 +111,7 @@
 </template>
 
 <script>
-import QRCode from 'qrcode';
+import QRCode from 'qrcode-svg';
 import md5 from 'crypto-js/md5';
 import NProgress from 'nprogress';
 import { mapMutations } from 'vuex';
@@ -135,7 +137,7 @@ export default {
       smsCode: '',
       inputFocus: '',
       qrCodeKey: '',
-      qrCodeImage: '',
+      qrCodeSvg: '',
       qrCodeCheckInterval: null,
       qrCodeInformation: '打开网易云音乐APP扫码登录',
     };
@@ -233,26 +235,16 @@ export default {
       return loginQrCodeKey().then(result => {
         if (result.code === 200) {
           this.qrCodeKey = result.data.unikey;
-          QRCode.toDataURL(
-            `https://music.163.com/login?codekey=${this.qrCodeKey}`,
-            {
-              width: 384,
-              margin: 0,
-              color: {
-                dark: '#335eea',
-                light: '#00000000',
-              },
-            }
-          )
-            .then(url => {
-              this.qrCodeImage = url;
-            })
-            .catch(err => {
-              console.error(err);
-            })
-            .finally(() => {
-              NProgress.done();
-            });
+          const qrCode = new QRCode({
+            content: `https://music.163.com/login?codekey=${this.qrCodeKey}`,
+            padding: 0,
+            height: 192,
+            width: 192,
+            color: '#335eea',
+            background: '#00000000',
+          });
+          this.qrCodeSvg = qrCode.svg();
+          NProgress.done();
         }
         this.checkQrCodeLogin();
       });

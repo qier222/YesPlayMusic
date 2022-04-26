@@ -60,7 +60,7 @@
     "pac-proxy-agent": "^4.1.0",
     "plyr": "^3.6.2",
     "prettier": "2.5.1",
-    "qrcode": "^1.4.4",
+    "qrcode-svg": "^1.1.0",
     "register-service-worker": "^1.7.1",
     "svg-sprite-loader": "^5.0.0",
     "tunnel": "^0.0.6",
@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.0",
+    "@types/qrcode-svg": "^1.1.1",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",
