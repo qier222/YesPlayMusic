@@ -5,8 +5,8 @@ import path from 'path'
 enum ItemKeys {
   Play = 'play',
   Pause = 'pause',
-  Forward = 'forward',
-  Backward = 'backward',
+  Previous = 'previous',
+  Next = 'next',
 }
 
 type ThumbarButtonMap = Map<ItemKeys, ThumbarButton>
@@ -32,12 +32,12 @@ function createThumbarButtons(win: BrowserWindow): ThumbarButtonMap {
       icon: createNativeImage('pause.png'),
       tooltip: '暂停',
     })
-    .set(ItemKeys.Backward, {
+    .set(ItemKeys.Previous, {
       click: () => win.webContents.send(IpcChannels.Previous),
       icon: createNativeImage('previous.png'),
       tooltip: '上一首',
     })
-    .set(ItemKeys.Forward, {
+    .set(ItemKeys.Next, {
       click: () => win.webContents.send(IpcChannels.Next),
       icon: createNativeImage('next.png'),
       tooltip: '下一首',
@@ -53,25 +53,23 @@ class ThumbarImpl implements Thumbar {
   private _buttons: ThumbarButtonMap
 
   private _playOrPause: ThumbarButton
-  private _forward: ThumbarButton
-  private _backward: ThumbarButton
+  private _previous: ThumbarButton
+  private _next: ThumbarButton
 
   constructor(win: BrowserWindow) {
     this._win = win
     this._buttons = createThumbarButtons(win)
 
     this._playOrPause = this._buttons.get(ItemKeys.Play)!
-    this._forward = this._buttons.get(ItemKeys.Forward)!
-    this._backward = this._buttons.get(ItemKeys.Backward)!
-
-    this._updateThumbarButtons(true)
+    this._previous = this._buttons.get(ItemKeys.Previous)!
+    this._next = this._buttons.get(ItemKeys.Next)!
   }
 
   private _updateThumbarButtons(clear: boolean) {
     this._win.setThumbarButtons(
       clear
         ? []
-        : [this._backward, this._playOrPause, this._forward]
+        : [this._previous, this._playOrPause, this._next]
     )
   }
 
