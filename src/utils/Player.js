@@ -10,7 +10,6 @@ import { cacheTrackSource, getTrackSource } from '@/utils/db';
 import { isCreateMpris, isCreateTray } from '@/utils/platform';
 import { Howl, Howler } from 'howler';
 import shuffle from 'lodash/shuffle';
-import { SearchMode } from '@unblockneteasemusic/rust-napi';
 
 const PLAY_PAUSE_FADE_DURATION = 200;
 
@@ -385,13 +384,17 @@ export default class {
      * @returns {import("@unblockneteasemusic/rust-napi").SearchMode}
      */
     const determineSearchMode = searchMode => {
+      /**
+       * FastFirst = 0
+       * OrderFirst = 1
+       */
       switch (searchMode) {
         case 'fast-first':
-          return SearchMode.FastFirst;
+          return 0;
         case 'order-first':
-          return SearchMode.OrderFirst;
+          return 1;
         default:
-          return SearchMode.FastFirst;
+          return 0;
       }
     };
 
