@@ -66,10 +66,6 @@ function initTrayIpcMain(tray: YPMTray | null) {
  * @param {Thumbar} thumbar
  */
 function initTaskbarIpcMain(thumbar: Thumbar | null) {
-  on(IpcChannels.Like, (e, { isLiked }) => {
-    thumbar?.setLikeState(isLiked)
-  })
-
   on(IpcChannels.Play, () => thumbar?.setPlayState(true))
   on(IpcChannels.Pause, () => thumbar?.setPlayState(false))
 }

@@ -5,8 +5,6 @@ import path from 'path'
 enum ItemKeys {
   Play = 'play',
   Pause = 'pause',
-  Like = 'like',
-  Unlike = 'unlike',
   Forward = 'forward',
   Backward = 'backward',
 }
@@ -36,28 +34,17 @@ function createThumbarButtons(win: BrowserWindow): ThumbarButtonMap {
     })
     .set(ItemKeys.Backward, {
       click: () => win.webContents.send(IpcChannels.Previous),
-      icon: createNativeImage('backward.png'),
+      icon: createNativeImage('previous.png'),
       tooltip: '上一首',
     })
     .set(ItemKeys.Forward, {
       click: () => win.webContents.send(IpcChannels.Next),
-      icon: createNativeImage('forward.png'),
+      icon: createNativeImage('next.png'),
       tooltip: '下一首',
-    })
-    .set(ItemKeys.Like, {
-      click: () => win.webContents.send(IpcChannels.Like),
-      icon: createNativeImage('like.png'),
-      tooltip: '加入喜欢',
-    })
-    .set(ItemKeys.Unlike, {
-      click: () => win.webContents.send(IpcChannels.Like),
-      icon: createNativeImage('like_fill.png'),
-      tooltip: '取消喜欢',
     })
 }
 
 export interface Thumbar {
-  setLikeState(isLiked: boolean): void
   setPlayState(isPlaying: boolean): void
 }
 
@@ -65,7 +52,6 @@ class ThumbarImpl implements Thumbar {
   private _win: BrowserWindow
   private _buttons: ThumbarButtonMap
 
-  private _likeOrUnlike: ThumbarButton
   private _playOrPause: ThumbarButton
   private _forward: ThumbarButton
   private _backward: ThumbarButton
@@ -74,7 +60,6 @@ class ThumbarImpl implements Thumbar {
     this._win = win
     this._buttons = createThumbarButtons(win)
 
-    this._likeOrUnlike = this._buttons.get(ItemKeys.Like)!
     this._playOrPause = this._buttons.get(ItemKeys.Play)!
     this._forward = this._buttons.get(ItemKeys.Forward)!
     this._backward = this._buttons.get(ItemKeys.Backward)!
@@ -86,15 +71,8 @@ class ThumbarImpl implements Thumbar {
     this._win.setThumbarButtons(
       clear
         ? []
-        : [this._likeOrUnlike, this._backward, this._playOrPause, this._forward]
+        : [this._backward, this._playOrPause, this._forward]
     )
-  }
-
-  setLikeState(isLiked: boolean) {
-    this._likeOrUnlike = this._buttons.get(
-      isLiked ? ItemKeys.Unlike : ItemKeys.Like
-    )!
-    this._updateThumbarButtons(false)
   }
 
   setPlayState(isPlaying: boolean) {
