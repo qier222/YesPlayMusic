@@ -68,11 +68,9 @@
         </div>
 
         <div v-show="mode == 'qrCode'">
-          <div
-            v-show="qrCodeSvg"
-            class="qr-code-container"
-            v-html="qrCodeSvg"
-          ></div>
+          <div v-show="qrCodeSvg" class="qr-code-container">
+            <img :src="qrCodeSvg" />
+          </div>
           <div class="qr-code-info">
             {{ qrCodeInformation }}
           </div>
@@ -243,7 +241,9 @@ export default {
             color: '#335eea',
             background: '#00000000',
           });
-          this.qrCodeSvg = qrCode.svg();
+          this.qrCodeSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
+            qrCode.svg()
+          )}`;
           NProgress.done();
         }
         this.checkQrCodeLogin();
