@@ -370,22 +370,61 @@ export default class {
   }
   async _getAudioSourceFromUnblockMusic(track) {
     console.debug(`[debug][Player.js] _getAudioSourceFromUnblockMusic`);
+
     if (
       process.env.IS_ELECTRON !== true ||
       store.state.settings.enableUnblockNeteaseMusic === false
     ) {
       return null;
     }
-    const source = await ipcRenderer.invoke(
+
+    /**
+     *
+     * @param {string=} searchMode
+     * @returns {import("@unblockneteasemusic/rust-napi").SearchMode}
+     */
+    const determineSearchMode = searchMode => {
+      /**
+       * FastFirst = 0
+       * OrderFirst = 1
+       */
+      switch (searchMode) {
+        case 'fast-first':
+          return 0;
+        case 'order-first':
+          return 1;
+        default:
+          return 0;
+      }
+    };
+
+    /** @type {import("@unblockneteasemusic/rust-napi").RetrievedSongInfo | null} */
+    const retrieveSongInfo = await ipcRenderer.invoke(
       'unblock-music',
+      store.state.settings.unmSource,
       track,
-      store.state.settings.unmSource
+      /** @type {import("@unblockneteasemusic/rust-napi").Context} */ ({
+        enableFlac: store.state.settings.unmEnableFlac || null,
+        proxyUri: store.state.settings.unmProxyUri || null,
+        searchMode: determineSearchMode(store.state.settings.unmSearchMode),
+        config: {
+          'joox:cookie': store.state.settings.unmJooxCookie || null,
+          'qq:cookie': store.state.settings.unmQQCookie || null,
+          'ytdl:exe': store.state.settings.unmYtDlExe || null,
+        },
+      })
     );
-    if (store.state.settings.automaticallyCacheSongs && source?.url) {
-      // TODO: 将unblockMusic字样换成真正的来源（比如酷我咪咕等）
-      cacheTrackSource(track, source.url, 128000, 'unblockMusic');
+
+    if (store.state.settings.automaticallyCacheSongs && retrieveSongInfo?.url) {
+      cacheTrackSource(
+        track,
+        retrieveSongInfo.url,
+        128000,
+        `unm:${retrieveSongInfo.source}`
+      );
     }
-    return source?.url;
+
+    return retrieveSongInfo?.url;
   }
   _getAudioSource(track) {
     return this._getAudioSourceFromCache(String(track.id))

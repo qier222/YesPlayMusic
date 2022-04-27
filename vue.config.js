@@ -56,6 +56,13 @@ module.exports = {
         symbolId: 'icon-[name]',
       })
       .end();
+    config.module
+      .rule('napi')
+      .test(/\.node$/)
+      .use('node-loader')
+      .loader('node-loader')
+      .end();
+
     // LimitChunkCountPlugin 可以通过合并块来对块进行后期处理。用以解决 chunk 包太多的问题
     config.plugin('chunkPlugin').use(webpack.optimize.LimitChunkCountPlugin, [
       {
@@ -69,10 +76,7 @@ module.exports = {
     // electron-builder的配置文件
     electronBuilder: {
       nodeIntegration: true,
-      externals: [
-        '@unblockneteasemusic/server',
-        '@unblockneteasemusic/server/src/consts',
-      ],
+      externals: ['@unblockneteasemusic/rust-napi'],
       builderOptions: {
         productName: 'YesPlayMusic',
         copyright: 'Copyright © YesPlayMusic',

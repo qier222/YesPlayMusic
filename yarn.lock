@@ -1714,14 +1714,89 @@
   dependencies:
     "@types/node" "*"
 
-"@unblockneteasemusic/server@v0.27.0-rc.6":
-  version "0.27.0-rc.6"
-  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/server/-/server-0.27.0-rc.6.tgz#a6ce8d025d3fcfad0f93d1944e4cd0810fedd019"
-  integrity sha512-H/dtVM5tmvuYeBhqmLrUo2sbGZKSN1xtZs4Km0rOqsiKkX/vMAlF1gmy61Wnc0hLjL1orY6eHnvRdZV/2hWnvQ==
-  dependencies:
-    node-windows "^1.0.0-beta.6"
-    pino "6.14.0"
-    pino-pretty "^7.5.3"
+"@unblockneteasemusic/rust-napi-android-arm-eabi@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-android-arm-eabi/-/rust-napi-android-arm-eabi-0.3.0-pre.1.tgz#290f22c5155f95bc5919cab2954cf051a88dcf85"
+  integrity sha512-932T6uUSHbWXTS2lt0wTI5F2lsIrGea2aU22VwSFaHfpTgxB8qDfd+jn+zMRlpnqTmuglyd0hk/1yUZd9tgu+w==
+
+"@unblockneteasemusic/rust-napi-android-arm64@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-android-arm64/-/rust-napi-android-arm64-0.3.0-pre.1.tgz#442461c328153dc5eaaec1047dd5333b74eaa452"
+  integrity sha512-RQMCzO7+0Iw+R/MHy0hvv9Vg6BzqrUmWk9bMLR0mkkYKxR0wPEaB7WpAvUfLRKevSqiWP8rrNRuzqGVBu0PaCg==
+
+"@unblockneteasemusic/rust-napi-darwin-arm64@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-darwin-arm64/-/rust-napi-darwin-arm64-0.3.0-pre.1.tgz#b4175437dab3738360c94f696af5bc5512822df4"
+  integrity sha512-M3YvPhYNyBSytho3FmyX1cj5k21ZlW14mPuy/5oLRw4qehAmjsSYjCEFLG5I29IlZTLN0sbIz92dqHkYclSXSg==
+
+"@unblockneteasemusic/rust-napi-darwin-x64@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-darwin-x64/-/rust-napi-darwin-x64-0.3.0-pre.1.tgz#dc2016d49f4d33ef7b7eaa8d607706c99e56831d"
+  integrity sha512-kN4Bur22hFo2UAJ4vljuEX4ue7TlhhOnz9Q3KrwhxOtv2KlQi2iQ/8tCl+/whKpqgf/cs/klQLDJj73PsE1G+w==
+
+"@unblockneteasemusic/rust-napi-freebsd-x64@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-freebsd-x64/-/rust-napi-freebsd-x64-0.3.0-pre.1.tgz#551f3e888655dd6cb02bbeb03fe997001c3fc22d"
+  integrity sha512-tRBudpZX+0X8sDSP+LmnU9nfsT7939rCu+bZhizjHHe2jt02iX/ZLHOkEcVBh0VHhHVvTehj0zH3iHFkfYnR2Q==
+
+"@unblockneteasemusic/rust-napi-linux-arm-gnueabihf@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-arm-gnueabihf/-/rust-napi-linux-arm-gnueabihf-0.3.0-pre.1.tgz#893aba87269a3d9f25b3ad36be4c663ccca3dc62"
+  integrity sha512-3vkXlBm6f2dWOWLKaosTcFAO5b/VV9WvyT3PQBJFvq0PtRGonr2Zr1gYJC4zUz2UraSKaFg4GMKgopU2Duxgow==
+
+"@unblockneteasemusic/rust-napi-linux-arm64-gnu@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-arm64-gnu/-/rust-napi-linux-arm64-gnu-0.3.0-pre.1.tgz#739f21a7d0e088be654a4c007cd2e3041f7959b5"
+  integrity sha512-Zq1kjjXhle0OA7NzadzBQvjbTZfbK/qMuHay97+ZGXZH4uxv0jmJ2aQWR7HlrrKmQKpknURvrxbXmi8dxeI+SA==
+
+"@unblockneteasemusic/rust-napi-linux-arm64-musl@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-arm64-musl/-/rust-napi-linux-arm64-musl-0.3.0-pre.1.tgz#18301a8e8cfdf6c45b068ec21b452ce353ad76cf"
+  integrity sha512-Yp7+Ra8ksx2nCZs18duK7BPtsY2chzdrBIrWY14N7aP0IIglwBcazP+GGFNaqqDx0nW+/0463pUsi8OgbWX+mA==
+
+"@unblockneteasemusic/rust-napi-linux-x64-gnu@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-x64-gnu/-/rust-napi-linux-x64-gnu-0.3.0-pre.1.tgz#ed453b556c6f8914b557eef1d8e1311c75f26806"
+  integrity sha512-A71/PhBCotAQPimGIJnZEYJwBv2FilhYC1OC4wOy3Rt54C9Cw12FJp49c7J13mZLktZfCJOSu6/6RPY8+6Yfrw==
+
+"@unblockneteasemusic/rust-napi-linux-x64-musl@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-linux-x64-musl/-/rust-napi-linux-x64-musl-0.3.0-pre.1.tgz#ce1e308491df2d2b671223ad255192e0d5de2064"
+  integrity sha512-klXwwdVb4LdHmUrdclZSfn6nQwXddBwJJk392wRagjGUyNbUkC9b3JHfMEdrssMIPtIGtNHWt/43z+saovZl2g==
+
+"@unblockneteasemusic/rust-napi-win32-arm64-msvc@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-win32-arm64-msvc/-/rust-napi-win32-arm64-msvc-0.3.0-pre.1.tgz#f78512ef26951ef98f63cc6fc51c39e47c0cf80f"
+  integrity sha512-jaX6UvQlRuH1iyextG34l8b19MtVFTZZX8U34oW3d7rZxcas5ZitEHzd6XfjpHcTtkXSyhQxx+WjDiY2BQ+B3A==
+
+"@unblockneteasemusic/rust-napi-win32-ia32-msvc@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-win32-ia32-msvc/-/rust-napi-win32-ia32-msvc-0.3.0-pre.1.tgz#6fe03b8862c46e2d4b9758c36450138db81cbabd"
+  integrity sha512-QgO05vQxxkU0+bfprxQMVLXxguI8N1ApPQCyAYNnvrKTQ/F6OjV+bQghlWaKwcIeve8zoYN1zgSHDyNj+0xrYA==
+
+"@unblockneteasemusic/rust-napi-win32-x64-msvc@0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi-win32-x64-msvc/-/rust-napi-win32-x64-msvc-0.3.0-pre.1.tgz#99b1e5c1f09241b436a2797bdfc01d7a4c566f51"
+  integrity sha512-6CI0YlQxHiU6vetwoAjYgBOFlWoTkLVUSd0tpEN9/5R7iExRUHdFdRfpXqPJzpYnAhZlGqAIslCayoNcf7vnQw==
+
+"@unblockneteasemusic/rust-napi@^0.3.0-pre.1":
+  version "0.3.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@unblockneteasemusic/rust-napi/-/rust-napi-0.3.0-pre.1.tgz#ff5a18c0d8fbdde14af79b89fe8d760153406c6d"
+  integrity sha512-n1zDJvy5OEEMPQdhTPARRRQLM4Tnvx9UGq0smVKWu6CjutK6rcSIVoxe4ADILzBOY3RCe5vuo9Qn4RUzKCeeWQ==
+  optionalDependencies:
+    "@unblockneteasemusic/rust-napi-android-arm-eabi" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-android-arm64" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-darwin-arm64" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-darwin-x64" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-freebsd-x64" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-linux-arm-gnueabihf" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-linux-arm64-gnu" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-linux-arm64-musl" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-linux-x64-gnu" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-linux-x64-musl" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-win32-arm64-msvc" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-win32-ia32-msvc" "0.3.0-pre.1"
+    "@unblockneteasemusic/rust-napi-win32-x64-msvc" "0.3.0-pre.1"
 
 "@vibrant/color@^3.2.1-alpha.1":
   version "3.2.1-alpha.1"
@@ -3799,7 +3874,7 @@ colorette@^2.0.7:
   version "2.0.16"
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-2.0.16.tgz#713b9af84fdb000139f04546bd4a93f62a5085da"
   integrity sha512-hUewv7oMjCp+wkBv5Rm0v87eJhq4woh5rSR+42YSQJKecCqgIqNkZ6lAlQms/BwHPJA5NKMRlpxPRv0n8HQW6g==
-
+  
 colors@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.0.3.tgz#0433f44d809680fdeb60ed260f1b0c262e82a40b"
@@ -4382,11 +4457,6 @@ data-uri-to-buffer@3:
   resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-3.0.1.tgz#594b8973938c5bc2c33046535785341abc4f3636"
   integrity sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og==
 
-dateformat@^4.6.3:
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-4.6.3.tgz#556fa6497e5217fedb78821424f8a1c22fa3f4b5"
-  integrity sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==
-
 dayjs@^1.8.36:
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.1.tgz#90b33a3dda3417258d48ad2771b415def6545eb0"
@@ -4907,7 +4977,7 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-duplexify@^4.1.1, duplexify@^4.1.2:
+duplexify@^4.1.1:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-4.1.2.tgz#18b4f8d28289132fa0b9573c898d9f903f81c7b0"
   integrity sha512-fz3OjcNCHmRP12MJoZMPglx8m4rrFP8rovnk4vT8Fs+aonZoCwGg10dSsQsfP/E62eZcPTMSMP6686fu9Qlqtw==
@@ -5795,16 +5865,6 @@ fast-levenshtein@~2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fast-redact@^3.0.0:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/fast-redact/-/fast-redact-3.1.1.tgz#790fcff8f808c2e12fabbfb2be5cb2deda448fa0"
-  integrity sha512-odVmjC8x8jNeMZ3C+rPMESzXVSEU8tSWSHv9HFxP2mm89G/1WwqhrerJDQm9Zus8X6aoRgQDThKqptdNA6bt+A==
-
-fast-safe-stringify@^2.0.7, fast-safe-stringify@^2.0.8:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
-  integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
-
 fastq@^1.6.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
@@ -5992,11 +6052,6 @@ flat-cache@^2.0.1:
     flatted "^2.0.0"
     rimraf "2.6.3"
     write "1.0.3"
-
-flatstr@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/flatstr/-/flatstr-1.0.12.tgz#c2ba6a08173edbb6c9640e3055b95e287ceb5931"
-  integrity sha512-4zPxDyhCyiN2wIAtSLI6gc82/EjqZc1onI4Mz/l0pWrAlsSfYH/2ZIcU+e3oA2wDwbzIWNKwa23F8rh6+DRWkw==
 
 flatted@^2.0.0:
   version "2.0.2"
@@ -7618,11 +7673,6 @@ jimp@^0.16.1:
     "@jimp/types" "^0.16.1"
     regenerator-runtime "^0.13.3"
 
-joycon@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/joycon/-/joycon-3.1.1.tgz#bce8596d6ae808f8b68168f5fc69280996894f03"
-  integrity sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==
-
 jpeg-js@0.4.2:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.4.2.tgz#8b345b1ae4abde64c2da2fe67ea216a114ac279d"
@@ -8441,11 +8491,6 @@ minimist@^1.2.3:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
-minimist@~0.0.1:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
-  integrity sha1-3j+YVD2/lggr5IrRoMfNqDYwHc8=
-
 minipass-collect@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/minipass-collect/-/minipass-collect-1.0.2.tgz#22b813bf745dc6edba2576b940022ad6edc8c617"
@@ -8778,14 +8823,6 @@ node-vibrant@^3.2.1-alpha.1:
     "@vibrant/quantizer-mmcq" "^3.2.1-alpha.1"
     url "^0.11.0"
 
-node-windows@^1.0.0-beta.6:
-  version "1.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/node-windows/-/node-windows-1.0.0-beta.6.tgz#04bf66946760bb8507f1d1326267587b56b8c8b3"
-  integrity sha512-Ehig70tF9A9Wns4VMpnsvT7dyat/d2fio6C4g1RAEaAi+piAjN6Wc+/fdSOifl8YCCncVllijv5Q9wdyHvdgeA==
-  dependencies:
-    optimist "~0.6.0"
-    xml "0.0.12"
-
 normalize-package-data@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/normalize-package-data/-/normalize-package-data-2.5.0.tgz#e66db1838b200c1dfc233225d12cb36520e234a8"
@@ -9049,14 +9086,6 @@ opn@^5.5.0:
   integrity sha512-PqHpggC9bLV0VeWcdKhkpxY+3JTzetLSqTCWL/z/tFIbI6G8JCjondXklT1JinczLz2Xib62sSp0T/gKT4KksA==
   dependencies:
     is-wsl "^1.1.0"
-
-optimist@~0.6.0:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/optimist/-/optimist-0.6.1.tgz#da3ea74686fa21a19a111c326e90eb15a0196686"
-  integrity sha1-2j6nRob6IaGaERwybpDrFaAZZoY=
-  dependencies:
-    minimist "~0.0.1"
-    wordwrap "~0.0.2"
 
 optionator@^0.8.1, optionator@^0.8.3:
   version "0.8.3"
@@ -9515,50 +9544,6 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
-
-pino-abstract-transport@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-0.5.0.tgz#4b54348d8f73713bfd14e3dc44228739aa13d9c0"
-  integrity sha512-+KAgmVeqXYbTtU2FScx1XS3kNyfZ5TrXY07V96QnUSFqo2gAqlvmaxH67Lj7SWazqsMabf+58ctdTcBgnOLUOQ==
-  dependencies:
-    duplexify "^4.1.2"
-    split2 "^4.0.0"
-
-pino-pretty@^7.5.3:
-  version "7.5.3"
-  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-7.5.3.tgz#cceb5f0ae193c949d8a0b302227b1cec69b7491c"
-  integrity sha512-jOGysjWxOfaeUElKTeJPstiitt1Ii7owcb21lDc1BS5F4P4HRDDcGxL1f1jskSA0zkTyj64/iaXlMLGhwtLVtg==
-  dependencies:
-    args "^5.0.1"
-    colorette "^2.0.7"
-    dateformat "^4.6.3"
-    fast-safe-stringify "^2.0.7"
-    joycon "^3.1.1"
-    pino-abstract-transport "^0.5.0"
-    pump "^3.0.0"
-    readable-stream "^3.6.0"
-    rfdc "^1.3.0"
-    secure-json-parse "^2.4.0"
-    sonic-boom "^2.2.0"
-    strip-json-comments "^3.1.1"
-
-pino-std-serializers@^3.1.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-3.2.0.tgz#b56487c402d882eb96cd67c257868016b61ad671"
-  integrity sha512-EqX4pwDPrt3MuOAAUBMU0Tk5kR/YcCM5fNPEzgCO2zJ5HfX0vbiH9HbJglnyeQsN96Kznae6MWD47pZB5avTrg==
-
-pino@6.14.0:
-  version "6.14.0"
-  resolved "https://registry.yarnpkg.com/pino/-/pino-6.14.0.tgz#b745ea87a99a6c4c9b374e4f29ca7910d4c69f78"
-  integrity sha512-iuhEDel3Z3hF9Jfe44DPXR8l07bhjuFY3GMHIXbjnY9XcafbyDDwl2sN2vw2GjMPf5Nkoe+OFao7ffn9SXaKDg==
-  dependencies:
-    fast-redact "^3.0.0"
-    fast-safe-stringify "^2.0.8"
-    flatstr "^1.0.12"
-    pino-std-serializers "^3.1.0"
-    process-warning "^1.0.0"
-    quick-format-unescaped "^4.0.3"
-    sonic-boom "^1.0.2"
 
 pixelmatch@^4.0.2:
   version "4.0.2"
@@ -10118,11 +10103,6 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-process-warning@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/process-warning/-/process-warning-1.0.0.tgz#980a0b25dc38cd6034181be4b7726d89066b4616"
-  integrity sha512-du4wfLyj4yCZq1VupnVSZmRsPJsNuxoDQFdCFHLaYiEbFBD7QE0a+I4D7hOxrVnh78QE/YipFAj9lXHiXocV+Q==
-
 process@^0.11.10:
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
@@ -10286,11 +10266,6 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
-
-quick-format-unescaped@^4.0.3:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/quick-format-unescaped/-/quick-format-unescaped-4.0.4.tgz#93ef6dd8d3453cbc7970dd614fad4c5954d6b5a7"
-  integrity sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==
 
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
@@ -10680,11 +10655,6 @@ reusify@^1.0.4:
   resolved "https://registry.yarnpkg.com/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
-rfdc@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/rfdc/-/rfdc-1.3.0.tgz#d0b7c441ab2720d05dc4cf26e01c89631d9da08b"
-  integrity sha512-V2hovdzFbOi77/WajaSMXk2OLm+xNIeQdMMuB7icj7bk6zi2F8GGAxigcnDFpJHbNyNcgyJDiP+8nOrY5cZGrA==
-
 rgb-regex@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/rgb-regex/-/rgb-regex-1.0.1.tgz#c0e0d6882df0e23be254a475e8edd41915feaeb1"
@@ -10847,11 +10817,6 @@ schema-utils@^3.0.0:
     "@types/json-schema" "^7.0.8"
     ajv "^6.12.5"
     ajv-keywords "^3.5.2"
-
-secure-json-parse@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/secure-json-parse/-/secure-json-parse-2.4.0.tgz#5aaeaaef85c7a417f76271a4f5b0cc3315ddca85"
-  integrity sha512-Q5Z/97nbON5t/L/sH6mY2EacfjVGwrCcSi5D3btRO2GZ8pf1K1UN7Z9H5J57hjVU2Qzxr1xO+FmBhOvEkzCMmg==
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -11220,21 +11185,6 @@ socks@^2.3.3:
     ip "^1.1.5"
     smart-buffer "^4.2.0"
 
-sonic-boom@^1.0.2:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/sonic-boom/-/sonic-boom-1.4.1.tgz#d35d6a74076624f12e6f917ade7b9d75e918f53e"
-  integrity sha512-LRHh/A8tpW7ru89lrlkU4AszXt1dbwSjVWguGrmlxE7tawVmDBlI1PILMkXAxJTwqhgsEeTHzj36D5CmHgQmNg==
-  dependencies:
-    atomic-sleep "^1.0.0"
-    flatstr "^1.0.12"
-
-sonic-boom@^2.2.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/sonic-boom/-/sonic-boom-2.6.0.tgz#8786fc78be07c18a90381acd816d1d4afe3537a2"
-  integrity sha512-6xYZFRmDEtxGqfOKcDQ4cPLrNa0SPEDI+wlzDAHowXE6YV42NeXqg9mP2KkiM8JVu3lHfZ2iQKYlGOz+kTpphg==
-  dependencies:
-    atomic-sleep "^1.0.0"
-
 sort-keys-length@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/sort-keys-length/-/sort-keys-length-1.0.1.tgz#9cb6f4f4e9e48155a6aa0671edd336ff1479a188"
@@ -11360,11 +11310,6 @@ split2@^3.0.0:
   integrity sha512-9NThjpgZnifTkJpzTZ7Eue85S49QwpNhZTq6GRJwObb6jnLFNGB7Qm73V5HewTROPyxD0C29xqmaI68bQtV+hg==
   dependencies:
     readable-stream "^3.0.0"
-
-split2@^4.0.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/split2/-/split2-4.1.0.tgz#101907a24370f85bb782f08adaabe4e281ecf809"
-  integrity sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==
 
 split@0.3:
   version "0.3.3"
@@ -11624,7 +11569,7 @@ strip-indent@^2.0.0:
   resolved "https://registry.yarnpkg.com/strip-indent/-/strip-indent-2.0.0.tgz#5ef8db295d01e6ed6cbf7aab96998d7822527b68"
   integrity sha1-XvjbKV0B5u1sv3qrlpmNeCJSe2g=
 
-strip-json-comments@^3.0.1, strip-json-comments@^3.1.1:
+strip-json-comments@^3.0.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
@@ -12924,11 +12869,6 @@ word-wrap@~1.2.3:
   resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
   integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
 
-wordwrap@~0.0.2:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.3.tgz#a3d5da6cd5c0bc0008d37234bbaf1bed63059107"
-  integrity sha1-o9XabNXAvAAI03I0u68b7WMFkQc=
-
 workbox-background-sync@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/workbox-background-sync/-/workbox-background-sync-4.3.1.tgz#26821b9bf16e9e37fd1d640289edddc08afd1950"
@@ -13166,11 +13106,6 @@ xml2js@^0.4.17, xml2js@^0.4.5:
   dependencies:
     sax ">=0.6.0"
     xmlbuilder "~11.0.0"
-
-xml@0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/xml/-/xml-0.0.12.tgz#f08b347109912be00285785f46f15ad8e50a5f67"
-  integrity sha1-8Is0cQmRK+AChXhfRvFa2OUKX2c=
 
 xmlbuilder@>=11.0.1:
   version "15.1.1"

@@ -1,5 +1,8 @@
 name: Release
 
+env:
+  YARN_INSTALL_NOPT: yarn add --ignore-platform --ignore-optional
+
 on:
   push:
     branches:
@@ -41,6 +44,39 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         with:
           snapcraft_token: ${{ secrets.snapcraft_token }}
+
+      - id: get_unm_version
+        name: Get the installed UNM version
+        run: |
+          yarn --ignore-optional
+          unm_version=$(node -e "console.log(require('./node_modules/@unblockneteasemusic/rust-napi/package.json').version)")
+          echo "::set-output name=unmver::${unm_version}"
+        shell: bash
+
+      - name: Install UNM dependencies for Windows
+        if: runner.os == 'Windows'
+        run: |
+          ${{ env.YARN_INSTALL_NOPT }} \
+            @unblockneteasemusic/rust-napi-win32-x64-msvc@${{steps.get_unm_version.outputs.unmver}}
+        shell: bash
+
+      - name: Install UNM dependencies for macOS
+        if: runner.os == 'macOS'
+        run: |
+          ${{ env.YARN_INSTALL_NOPT }} \
+            @unblockneteasemusic/rust-napi-darwin-x64@${{steps.get_unm_version.outputs.unmver}} \
+            @unblockneteasemusic/rust-napi-darwin-arm64@${{steps.get_unm_version.outputs.unmver}} \
+            dmg-license
+        shell: bash
+
+      - name: Install UNM dependencies for Linux
+        if: runner.os == 'Linux'
+        run: |
+          ${{ env.YARN_INSTALL_NOPT }} \
+            @unblockneteasemusic/rust-napi-linux-x64-gnu@${{steps.get_unm_version.outputs.unmver}} \
+            @unblockneteasemusic/rust-napi-linux-arm64-gnu@${{steps.get_unm_version.outputs.unmver}} \
+            @unblockneteasemusic/rust-napi-linux-arm-gnueabihf@${{steps.get_unm_version.outputs.unmver}}
+        shell: bash
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0

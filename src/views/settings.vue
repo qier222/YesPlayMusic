@@ -223,11 +223,11 @@
       </div>
 
       <section v-if="isElectron" class="unm-configuration">
-        <h3>UnblockNeteaseMusic 设定</h3>
+        <h3>UnblockNeteaseMusic 设置</h3>
         <div class="item">
           <div class="left">
             <div class="title"
-              >启用
+              >激活
               <a
                 href="https://github.com/UnblockNeteaseMusic/server"
                 target="blank"
@@ -247,16 +247,17 @@
             </div>
           </div>
         </div>
+
         <div class="item">
           <div class="left">
             <div class="title"> 备选音源 </div>
             <div class="description">
               音源的具体代号
               <a
-                href="https://github.com/UnblockNeteaseMusic/server#音源清单"
+                href="https://github.com/UnblockNeteaseMusic/server-rust/blob/main/README.md#支援的所有引擎"
                 target="_blank"
               >
-                可以点此到 UNM 的说明页面查询 </a
+                可以点此到 UNM 的说明页面查询。 </a
               ><br />
               多个音源请用 <code>,</code> 逗号分隔。<br />
               留空则使用 UNM 内置的默认值。
@@ -264,12 +265,135 @@
           </div>
           <div class="right">
             <input
-              id="unm-source"
               v-model="unmSource"
-              class="text-input"
+              class="text-input margin-right-0"
               placeholder="例 bilibili, kuwo"
             />
-            <label for="unm-source"></label>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 激活无损音质 (FLAC) </div>
+            <div class="description"> 设置后需要清掉快取才能生效。 </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="unm-enable-flac"
+                v-model="unmEnableFlac"
+                type="checkbox"
+              />
+              <label for="unm-enable-flac" />
+            </div>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 音源搜索模式 </div>
+          </div>
+          <div class="right">
+            <select v-model="unmSearchMode">
+              <option value="fast-first"> 速度优先，不论顺序 </option>
+              <option value="order-first"> 顺序优先，不论速度 </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 请求用代理服务器 (Proxy) </div>
+            <div class="description">
+              请求如 YouTube 音源服务时要使用的代理服务器。<br />
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmProxyUri"
+              class="text-input margin-right-0"
+              placeholder="例 https://192.168.11.45"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> Joox 引擎的 Cookie </div>
+            <div class="description">
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
+                target="_blank"
+                >设置说明请参见此处。</a
+              >
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmJooxCookie"
+              class="text-input margin-right-0"
+              placeholder="wmid=..; session_key=.."
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> QQ 引擎的 Cookie </div>
+            <div class="description">
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#qq-cookie-設定說明"
+                target="_blank"
+                >设置说明请参见此处。</a
+              >
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmQQCookie"
+              class="text-input margin-right-0"
+              placeholder="uin=..; qm_keyst=..;"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> YtDl 引擎要使用的 youtube-dl 运行档 </div>
+            <div class="description">
+              <a
+                href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#ytdlexe-設定說明"
+                target="_blank"
+                >设置说明请参见此处。</a
+              >留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmYtDlExe"
+              class="text-input margin-right-0"
+              placeholder="ex. youtube-dl"
+            />
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="left">
+            <div class="title"> 用于 UNM 的 Proxy 服务器 </div>
+            <div class="description">
+              请求如 YouTube 音源服务时要使用的 Proxy 服务器。<br />
+              留空则不进行相关设置。
+            </div>
+          </div>
+          <div class="right">
+            <input
+              v-model="unmProxyUri"
+              class="text-input margin-right-0"
+              placeholder="例 https://192.168.11.45"
+            />
           </div>
         </div>
       </section>
@@ -944,7 +1068,73 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'unmSource',
-          value: value.length ? value : null,
+          value: value.length && value,
+        });
+      },
+    },
+    unmSearchMode: {
+      get() {
+        return this.settings.unmSearchMode || 'fast-first';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmSearchMode',
+          value: value,
+        });
+      },
+    },
+    unmEnableFlac: {
+      get() {
+        return this.settings.unmEnableFlac || false;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmEnableFlac',
+          value: value || false,
+        });
+      },
+    },
+    unmProxyUri: {
+      get() {
+        return this.settings.unmProxyUri || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmProxyUri',
+          value: value.length && value,
+        });
+      },
+    },
+    unmJooxCookie: {
+      get() {
+        return this.settings.unmJooxCookie || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmJooxCookie',
+          value: value.length && value,
+        });
+      },
+    },
+    unmQQCookie: {
+      get() {
+        return this.settings.unmQQCookie || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmQQCookie',
+          value: value.length && value,
+        });
+      },
+    },
+    unmYtDlExe: {
+      get() {
+        return this.settings.unmYtDlExe || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'unmYtDlExe',
+          value: value.length && value,
         });
       },
     },
@@ -1274,6 +1464,9 @@ button {
   }
 }
 
+input.text-input.margin-right-0 {
+  margin-right: 0;
+}
 input.text-input {
   background: var(--color-secondary-bg);
   border: none;
