@@ -333,12 +333,12 @@ class Background {
     });
 
     this.window.on('maximize', () => {
-      this.window.webContents.send('isMaximized', true)
-    })
-  
+      this.window.webContents.send('isMaximized', true);
+    });
+
     this.window.on('unmaximize', () => {
-      this.window.webContents.send('isMaximized', false)
-    })
+      this.window.webContents.send('isMaximized', false);
+    });
 
     this.window.webContents.on('new-window', function (e, url) {
       e.preventDefault();
