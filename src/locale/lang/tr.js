@@ -172,6 +172,31 @@ export default {
       exit: 'Exit',
       minimizeToTray: 'Küçült',
     },
+    unm: {
+      enable: 'Enable',
+      audioSource: {
+        title: 'Audio Source',
+      },
+      enableFlac: {
+        title: 'Enable FLAC',
+        desc: 'Need to clear the cache to take effect after enable',
+      },
+      searchMode: {
+        title: 'Audio Search Mode',
+        fast: 'Speed Priority',
+        order: 'Order Priority',
+      },
+      cookie: {
+        desc1: 'Setting description see here',
+        desc2: 'not apply setting if value is empty',
+      },
+      ytdl: 'Youtube-dl execute file',
+      proxy: {
+        title: 'For UNM Proxy',
+        desc1: '请求如 YouTube 音源服务时要使用的代理服务器',
+        desc2: '留空则不进行相关设置',
+      },
+    },
   },
   contextMenu: {
     play: 'Oynat',

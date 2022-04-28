@@ -176,6 +176,31 @@ export default {
       exit: '退出',
       minimizeToTray: '最小化到工作列角落',
     },
+    unm: {
+      enable: '啓用',
+      audioSource: {
+        title: '備選音源',
+      },
+      enableFlac: {
+        title: '啓用 FLAC',
+        desc: '啓用后需要清除歌曲快取才能生效',
+      },
+      searchMode: {
+        title: '音源搜索模式',
+        fast: '速度優先',
+        order: '順序優先',
+      },
+      cookie: {
+        desc1: '設定説明請參見此處',
+        desc2: '留空則不進行相關設定',
+      },
+      ytdl: 'YtDl 引擎要使用的 youtube-dl 執行檔',
+      proxy: {
+        title: '用於 UNM 的 Proxy 伺服器',
+        desc1: '请求如 YouTube 音源服務時要使用的 Proxy 伺服器',
+        desc2: '留空則不進行相關設定',
+      },
+    },
   },
   contextMenu: {
     play: '播放',
