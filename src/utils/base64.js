@@ -2,7 +2,7 @@
 // Copyright (c) 2012 Niklas von Hertzen Licensed under the MIT license.
 
 const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 // Use a lookup table to find the index.
 const lookup = typeof Uint8Array === 'undefined' ? [] : new Uint8Array(256);
@@ -11,7 +11,10 @@ for (let i = 0; i < chars.length; i++) {
 }
 
 export const encode = arraybuffer => {
-  let bytes = new Uint8Array(arraybuffer), i, len = bytes.length, base64 = '';
+  let bytes = new Uint8Array(arraybuffer),
+    i,
+    len = bytes.length,
+    base64 = '';
 
   for (i = 0; i < len; i += 3) {
     base64 += chars[bytes[i] >> 2];
@@ -30,8 +33,14 @@ export const encode = arraybuffer => {
 };
 
 export const decode = base64 => {
-  let bufferLength = base64.length * 0.75, len = base64.length, i, p = 0,
-      encoded1, encoded2, encoded3, encoded4;
+  let bufferLength = base64.length * 0.75,
+    len = base64.length,
+    i,
+    p = 0,
+    encoded1,
+    encoded2,
+    encoded3,
+    encoded4;
 
   if (base64[base64.length - 1] === '=') {
     bufferLength--;
@@ -41,7 +50,7 @@ export const decode = base64 => {
   }
 
   const arraybuffer = new ArrayBuffer(bufferLength),
-        bytes = new Uint8Array(arraybuffer);
+    bytes = new Uint8Array(arraybuffer);
 
   for (i = 0; i < len; i += 4) {
     encoded1 = lookup[base64.charCodeAt(i)];
