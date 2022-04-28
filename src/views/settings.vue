@@ -303,23 +303,6 @@
 
         <div class="item">
           <div class="left">
-            <div class="title"> 请求用代理服务器 (Proxy) </div>
-            <div class="description">
-              请求如 YouTube 音源服务时要使用的代理服务器。<br />
-              留空则不进行相关设置。
-            </div>
-          </div>
-          <div class="right">
-            <input
-              v-model="unmProxyUri"
-              class="text-input margin-right-0"
-              placeholder="例 https://192.168.11.45"
-            />
-          </div>
-        </div>
-
-        <div class="item">
-          <div class="left">
             <div class="title"> Joox 引擎的 Cookie </div>
             <div class="description">
               <a

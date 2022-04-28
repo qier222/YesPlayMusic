@@ -88,10 +88,10 @@ function toBuffer(data) {
 }
 
 /**
- * Get the file URI from bilivideo.
+ * Get the file base64 data from bilivideo.
  *
  * @param {string} url The URL to fetch.
- * @returns {Promise<string>} The file URI.
+ * @returns {Promise<string>} The file base64 data.
  */
 async function getBiliVideoFile(url) {
   const axios = await import('axios').then(m => m.default);
@@ -106,7 +106,7 @@ async function getBiliVideoFile(url) {
   const buffer = toBuffer(response.data);
   const encodedData = buffer.toString('base64');
 
-  return `data:application/octet-stream;base64,${encodedData}`;
+  return encodedData;
 }
 
 /**
