@@ -222,9 +222,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
   });
 
   ipcMain.on('maximizeOrUnmaximize', () => {
-    const isMaximized = win.isMaximized();
-    isMaximized ? win.unmaximize() : win.maximize();
-    win.webContents.send('isMaximized', isMaximized);
+    win.isMaximized() ? win.unmaximize() : win.maximize();
   });
 
   ipcMain.on('settings', (event, options) => {

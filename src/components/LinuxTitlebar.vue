@@ -12,8 +12,8 @@
       <div
         class="button max-restore codicon"
         :class="{
-          'codicon-chrome-restore': !isShowMaximized,
-          'codicon-chrome-maximize': isShowMaximized,
+          'codicon-chrome-restore': isMaximized,
+          'codicon-chrome-maximize': !isMaximized,
         }"
         @click="windowMaxRestore"
       ></div>
@@ -40,7 +40,7 @@ export default {
   name: 'LinuxTitlebar',
   data() {
     return {
-      isShowMaximized: true,
+      isMaximized: false,
     };
   },
   computed: {
@@ -49,9 +49,7 @@ export default {
   created() {
     if (process.env.IS_ELECTRON === true) {
       ipcRenderer.on('isMaximized', (_, value) => {
-        // 当窗口最大化时，value为false
-        // 当窗口还原时，value为true
-        this.isShowMaximized = value;
+        this.isMaximized = value;
       });
     }
   },
