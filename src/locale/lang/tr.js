@@ -175,11 +175,11 @@ export default {
     unm: {
       enable: 'Enable',
       audioSource: {
-        title: 'Audio Source',
+        title: 'Audio Sources (to use)',
       },
       enableFlac: {
-        title: 'Enable FLAC',
-        desc: 'Need to clear the cache to take effect after enable',
+        title: 'Enable FLAC Sources',
+        desc: 'To take effect, it may be required to clear the cache after enabling this function.',
       },
       searchMode: {
         title: 'Audio Search Mode',
@@ -187,14 +187,17 @@ export default {
         order: 'Order Priority',
       },
       cookie: {
-        desc1: 'Setting description see here',
-        desc2: 'not apply setting if value is empty',
+        joox: 'Cookie for Joox use',
+        qq: 'Cookie for QQ use',
+        desc1: 'Click here for the configuration instruction. ',
+        desc2: 'Leave empty to pick up the default value',
       },
-      ytdl: 'Youtube-dl execute file',
+      ytdl: 'The youtube-dl Executable File for YtDl',
       proxy: {
-        title: 'For UNM Proxy',
-        desc1: '请求如 YouTube 音源服务时要使用的代理服务器',
-        desc2: '留空则不进行相关设置',
+        title: 'Proxy Server for UNM',
+        desc1:
+          'The proxy server to use for requesting services such as YouTube',
+        desc2: 'Leave empty to pick up the default value',
       },
     },
   },

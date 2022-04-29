@@ -311,12 +311,12 @@
 
         <div class="item">
           <div class="left">
-            <div class="title"> Joox Cookie </div>
+            <div class="title">{{ $t('settings.unm.cookie.joox') }}</div>
             <div class="description">
               <a
                 href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#joox-cookie-設定說明"
                 target="_blank"
-                >{{ $t('settings.unm.cookie.desc1') }},
+                >{{ $t('settings.unm.cookie.desc1') }}
               </a>
               {{ $t('settings.unm.cookie.desc2') }}
             </div>
@@ -332,12 +332,12 @@
 
         <div class="item">
           <div class="left">
-            <div class="title"> QQ Cookie </div>
+            <div class="title"> {{ $t('settings.unm.cookie.qq') }} </div>
             <div class="description">
               <a
                 href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#qq-cookie-設定說明"
                 target="_blank"
-                >{{ $t('settings.unm.cookie.desc1') }},
+                >{{ $t('settings.unm.cookie.desc1') }}
               </a>
               {{ $t('settings.unm.cookie.desc2') }}
             </div>
@@ -358,7 +358,7 @@
               <a
                 href="https://github.com/UnblockNeteaseMusic/server-rust/tree/main/engines#ytdlexe-設定說明"
                 target="_blank"
-                >{{ $t('settings.unm.cookie.desc1') }},
+                >{{ $t('settings.unm.cookie.desc1') }}
               </a>
               {{ $t('settings.unm.cookie.desc2') }}
             </div>
@@ -384,7 +384,7 @@
             <input
               v-model="unmProxyUri"
               class="text-input margin-right-0"
-              placeholder="例 https://192.168.11.45"
+              placeholder="ex. https://192.168.11.45"
             />
           </div>
         </div>

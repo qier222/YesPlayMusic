@@ -194,8 +194,10 @@ export default {
         order: '顺序优先',
       },
       cookie: {
+        joox: 'Joox 引擎的 Cookie',
+        qq: 'QQ 引擎的 Cookie',
         desc1: '设置说明请参见此处',
-        desc2: '留空则不进行相关设置',
+        desc2: '，留空则不进行相关设置',
       },
       ytdl: 'YtDl 引擎要使用的 youtube-dl 可执行文件',
       proxy: {
