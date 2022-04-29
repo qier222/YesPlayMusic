@@ -46,7 +46,6 @@ export default function Home() {
     ...(recommendedPlaylists?.result ?? []),
   ]
     .slice(0, 10)
-    .reverse()
 
   return (
     <div>
