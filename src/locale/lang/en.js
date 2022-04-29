@@ -181,7 +181,7 @@ export default {
     unm: {
       enable: 'Enable',
       audioSource: {
-        title: 'Audio Sources (to use)',
+        title: 'Audio Sources',
       },
       enableFlac: {
         title: 'Enable FLAC Sources',

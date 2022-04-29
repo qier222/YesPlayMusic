@@ -183,7 +183,7 @@ export default {
       },
       enableFlac: {
         title: '啟用 FLAC',
-        desc: '啟用后需要清除歌曲快取才能生效',
+        desc: '啟用後需要清除歌曲快取才能生效',
       },
       searchMode: {
         title: '音源搜尋模式',
