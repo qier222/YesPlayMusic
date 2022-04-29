@@ -45,7 +45,7 @@ export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlayl
     url: '/recommend/resource',
     method: 'get',
     params: {
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
     },
   })
 }
