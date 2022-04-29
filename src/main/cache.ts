@@ -275,7 +275,12 @@ class Cache {
         fs.unlinkSync(path)
         return res.status(404).send({ error: 'Audio not found' })
       }
-      res.send(audio)
+      res
+        .status(206)
+        .setHeader('Accept-Ranges', 'bytes')
+        .setHeader('Connection', 'keep-alive')
+        .setHeader('Content-Range', `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`)
+        .send(audio)
     } catch (error) {
       res.status(500).send({ error })
     }

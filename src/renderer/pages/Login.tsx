@@ -17,6 +17,8 @@ enum Method {
   Phone = 'phone',
 }
 
+const domParser = new DOMParser()
+
 // Shared components and methods
 const EmailInput = ({
   email,
@@ -367,23 +369,34 @@ const LoginWithQRCode = () => {
 
   useEffect(() => {
     const updateImage = async () => {
-      const image = await QRCode.toDataURL(qrCodeUrl, {
-        width: 1024,
+      const svg = await QRCode.toString(qrCodeUrl, {
         margin: 0,
         color: {
-          dark: '#335eea', // TODO: change brand color
           light: '#ffffff00',
         },
+        type: 'svg',
       })
-      setQrCodeImage(image)
+      const path = domParser
+        .parseFromString(svg, 'text/xml')
+        .getElementsByTagName('path')[0]
+
+      setQrCodeImage(path?.getAttribute('d') ?? '')
     }
     updateImage()
   }, [qrCodeUrl])
 
   return (
     <div className='flex flex-col items-center justify-center'>
-      <div className='rounded-3xl border p-6 dark:border-gray-700'>
-        <img src={qrCodeImage} alt='QR Code' className='no-drag' />
+      <div className='rounded-3xl border p-6 text-brand-500 dark:border-gray-700'>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width='270'
+          height='270'
+          viewBox='0 0 37 37'
+          shapeRendering='crispEdges'
+        >
+          <path stroke='currentColor' d={qrCodeImage} />
+        </svg>
       </div>
       <div className='mt-4 text-sm text-gray-500 dark:text-gray-200'>
         {qrCodeMessage}

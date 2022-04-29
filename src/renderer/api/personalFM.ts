@@ -95,6 +95,9 @@ export function fetchPersonalFM(): Promise<FetchPersonalFMResponse> {
   return request({
     url: '/personal/fm',
     method: 'get',
+    params: {
+      timestamp: Date.now(),
+    },
   })
 }
 
@@ -110,6 +113,7 @@ export function fmTrash(id: number): Promise<FMTrashResponse> {
     method: 'post',
     params: {
       id,
+      timestamp: Date.now(),
     },
   })
 }
