@@ -332,6 +332,14 @@ class Background {
       this.store.set('window', this.window.getBounds());
     });
 
+    this.window.on('maximize', () => {
+      this.window.webContents.send('isMaximized', true);
+    });
+
+    this.window.on('unmaximize', () => {
+      this.window.webContents.send('isMaximized', false);
+    });
+
     this.window.webContents.on('new-window', function (e, url) {
       e.preventDefault();
       log('open url');
