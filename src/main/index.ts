@@ -14,6 +14,7 @@ import log from './log'
 import { initIpcMain } from './ipcMain'
 import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
+import { createTaskbar, Thumbar } from './windowsTaskbar'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -32,6 +33,7 @@ interface TypedElectronStore {
 class Main {
   win: BrowserWindow | null = null
   tray: YPMTray | null = null
+  thumbar: Thumbar | null = null
   store = new Store<TypedElectronStore>({
     defaults: {
       window: {
@@ -62,7 +64,8 @@ class Main {
       this.handleAppEvents()
       this.handleWindowEvents()
       this.createTray()
-      initIpcMain(this.win, this.tray)
+      this.createThumbar()
+      initIpcMain(this.win, this.tray, this.thumbar)
       this.initDevTools()
     })
   }
@@ -91,6 +94,10 @@ class Main {
     if (isWindows || isLinux || isDev) {
       this.tray = createTray(this.win!)
     }
+  }
+
+  createThumbar() {
+    if (isWindows) this.thumbar = createTaskbar(this.win!)
   }
 
   createWindow() {
@@ -150,7 +157,7 @@ class Main {
   handleAppEvents() {
     app.on('window-all-closed', () => {
       this.win = null
-      if (process.platform !== 'darwin') app.quit()
+      if (!isMac) app.quit()
     })
 
     app.on('second-instance', () => {

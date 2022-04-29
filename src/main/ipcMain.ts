@@ -6,6 +6,7 @@ import log from './log'
 import fs from 'fs'
 import { APIs } from '../shared/CacheAPIs'
 import { YPMTray } from './tray'
+import { Thumbar } from './windowsTaskbar'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -14,9 +15,14 @@ const on = <T extends keyof IpcChannelsParams>(
   ipcMain.on(channel, listener)
 }
 
-export function initIpcMain(win: BrowserWindow | null, tray: YPMTray | null) {
+export function initIpcMain(
+  win: BrowserWindow | null,
+  tray: YPMTray | null,
+  thumbar: Thumbar | null
+) {
   initWindowIpcMain(win)
   initTrayIpcMain(tray)
+  initTaskbarIpcMain(thumbar)
 }
 
 /**
@@ -45,7 +51,7 @@ function initWindowIpcMain(win: BrowserWindow | null) {
 function initTrayIpcMain(tray: YPMTray | null) {
   on(IpcChannels.SetTrayTooltip, (e, { text }) => tray?.setTooltip(text))
 
-  on(IpcChannels.SetTrayLikeState, (e, { isLiked }) =>
+  on(IpcChannels.Like, (e, { isLiked }) =>
     tray?.setLikeState(isLiked)
   )
 
@@ -53,6 +59,15 @@ function initTrayIpcMain(tray: YPMTray | null) {
   on(IpcChannels.Pause, () => tray?.setPlayState(false))
 
   on(IpcChannels.Repeat, (e, { mode }) => tray?.setRepeatMode(mode))
+}
+
+/**
+ * 处理需要thumbar对象的事件
+ * @param {Thumbar} thumbar
+ */
+function initTaskbarIpcMain(thumbar: Thumbar | null) {
+  on(IpcChannels.Play, () => thumbar?.setPlayState(true))
+  on(IpcChannels.Pause, () => thumbar?.setPlayState(false))
 }
 
 /**

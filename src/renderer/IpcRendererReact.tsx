@@ -33,7 +33,7 @@ const IpcRendererReact = () => {
   }, [track])
 
   useEffect(() => {
-    window.ipcRenderer?.send(IpcChannels.SetTrayLikeState, {
+    window.ipcRenderer?.send(IpcChannels.Like, {
       isLiked: userLikedSongs?.ids?.includes(track?.id ?? 0) ?? false,
     })
   }, [userLikedSongs, track])
@@ -45,6 +45,13 @@ const IpcRendererReact = () => {
     window.ipcRenderer?.send(playing ? IpcChannels.Play : IpcChannels.Pause)
     setIsPlaying(playing)
   }, [state])
+
+  useEffectOnce(() => {
+    // 用于显示 windows taskbar buttons
+    if (playerSnapshot.track?.id) {
+      window.ipcRenderer?.send(IpcChannels.Pause)
+    }
+  })
 
   return <></>
 }
