@@ -98,7 +98,7 @@ const Search = () => {
 
   const handlePlayTracks = useCallback(
     (trackID: number | null = null) => {
-      const tracks = searchResult?.result.song.songs
+      const tracks = searchResult?.result?.song?.songs
       if (!tracks?.length) {
         toast('无法播放歌单')
         return
@@ -108,7 +108,7 @@ const Search = () => {
         trackID
       )
     },
-    [searchResult?.result.song.songs]
+    [searchResult?.result?.song?.songs]
   )
 
   const navigate = useNavigate()
@@ -163,21 +163,21 @@ const Search = () => {
 
       {/* Search result */}
       <div className='grid grid-cols-2 gap-6'>
-        {searchResult?.result.artist.artists && (
+        {searchResult?.result?.artist?.artists && (
           <div>
             <div className='mb-2 text-sm font-medium text-gray-400'>艺人</div>
             <Artists artists={searchResult.result.artist.artists} />
           </div>
         )}
 
-        {searchResult?.result.album.albums && (
+        {searchResult?.result?.album?.albums && (
           <div>
             <div className='mb-2 text-sm font-medium text-gray-400'>专辑</div>
             <Albums albums={searchResult.result.album.albums} />
           </div>
         )}
 
-        {searchResult?.result.song.songs && (
+        {searchResult?.result?.song?.songs && (
           <div className='col-span-2'>
             <div className='mb-2 text-sm font-medium text-gray-400'>歌曲</div>
             <TrackGrid
