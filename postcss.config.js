@@ -15,6 +15,9 @@ const replaceBrandColorWithCssVar = () => {
     Declaration(decl) {
       let value = decl.value
       blues.forEach(blue => {
+        if (decl?.parent?.selector?.includes('-blue-')) {
+          return
+        }
         value = value.replace(
           `rgb(${blue.rgb}`,
           `rgb(var(--brand-color-${blue.key})`

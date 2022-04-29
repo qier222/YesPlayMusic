@@ -12,7 +12,7 @@ class Cache {
     //
   }
 
-  set(api: string, data: any, query: any = {}) {
+  async set(api: string, data: any, query: any = {}) {
     switch (api) {
       case APIs.UserPlaylist:
       case APIs.UserAccount:

@@ -5,7 +5,7 @@ const prettier = require('prettier')
 const fs = require('fs')
 const prettierConfig = require('../prettier.config.js')
 
-const pickedColors = {
+ const pickedColors = {
   blue: colors.blue,
   red: colors.red,
   orange: colors.orange,
@@ -24,6 +24,7 @@ const pickedColors = {
   pink: colors.pink,
   rose: colors.rose,
 }
+module.exports = pickedColors
 
 const colorsCss = {}
 Object.entries(pickedColors).forEach(([name, colors]) => {
@@ -46,3 +47,4 @@ ${name === 'blue' ? ':root' : `[data-accent-color='${name}']`} {${color}
 
 const formatted = prettier.format(css, { ...prettierConfig, parser: 'css' })
 fs.writeFileSync('./src/renderer/styles/accentColor.scss', formatted)
+

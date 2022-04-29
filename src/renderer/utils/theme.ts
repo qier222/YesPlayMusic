@@ -3,6 +3,6 @@ export const changeAccentColor = (color: string) => {
 }
 
 const stateString = localStorage.getItem('state')
-const state = stateString ? JSON.parse(stateString) : {}
+const stateInLocalStorage = stateString ? JSON.parse(stateString) : {}
 
-changeAccentColor(state.settings.accentColor || 'blue')
+changeAccentColor(stateInLocalStorage?.settings?.accentColor || 'blue')

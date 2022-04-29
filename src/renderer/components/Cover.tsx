@@ -15,7 +15,7 @@ const Cover = ({
   showHover?: boolean
   alwaysShowShadow?: boolean
 }) => {
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState(imageUrl.includes('3132508627578625'))
 
   return (
     <div onClick={onClick} className='group relative z-0'>

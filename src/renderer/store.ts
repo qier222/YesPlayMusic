@@ -1,6 +1,7 @@
 import { proxy, subscribe } from 'valtio'
 import { devtools } from 'valtio/utils'
 import { Player } from '@/renderer/utils/player'
+import {merge} from 'lodash-es'
 
 interface Store {
   uiStates: {
@@ -26,7 +27,7 @@ const initialState: Store = {
 
 const stateInLocalStorage = localStorage.getItem('state')
 export const state = proxy<Store>(
-  (stateInLocalStorage && JSON.parse(stateInLocalStorage)) || initialState
+  merge(initialState, stateInLocalStorage ? JSON.parse(stateInLocalStorage) : {})
 )
 subscribe(state, () => {
   localStorage.setItem('state', JSON.stringify(state))

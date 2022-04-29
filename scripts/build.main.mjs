@@ -28,6 +28,7 @@ const options = {
   platform: 'node',
   format: 'cjs',
   bundle: true,
+  sourcemap: true,
   define: envForEsbuild,
   external: [
     ...builtinModules.filter(
@@ -80,6 +81,7 @@ if (argv.watch) {
               }
             },
           },
+          sourcemap: true,
         }).then(() => {
           console.log(pc.yellow(`⚡ Run App`))
           if (child) child.kill()

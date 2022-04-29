@@ -56,7 +56,7 @@ class Server {
           if ([400, 301].includes(error.status)) {
             return res.status(error.status).send(error.body)
           }
-          return res.status(500).send(error)
+          return res.status(500)
         }
       }
 

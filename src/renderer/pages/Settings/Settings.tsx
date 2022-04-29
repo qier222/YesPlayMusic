@@ -51,8 +51,10 @@ const Sidebar = () => {
         <div
           key={category}
           className={classNames(
-            'btn-hover-animation my-px flex cursor-default items-center justify-between rounded-lg px-3 py-2 font-medium text-black transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/10',
-            active === category && 'after:scale-100 after:opacity-100'
+            'btn-hover-animation my-px flex cursor-default items-center justify-between rounded-lg px-3 py-2 font-medium  transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/10',
+            active === category
+              ? 'text-black after:scale-100 after:opacity-100'
+              : 'text-gray-600'
           )}
         >
           {category}

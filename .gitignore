@@ -90,3 +90,4 @@ dist-ssr
 bundle-stats-main.html
 bundle-stats-preload.html
 bundle-stats-renderer.html
+tailwind-output.css

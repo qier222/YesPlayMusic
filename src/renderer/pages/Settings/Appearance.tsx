@@ -26,26 +26,45 @@ const AccentColor = () => {
     state.settings.accentColor = color
     changeAccentColor(color)
   }
+
+  const accentColor = useSnapshot(state).settings.accentColor
   return (
-    <div className='mt-4 flex'>
-      {Object.entries(colors).map(([color, bg]) => (
-        <div
-          key={color}
-          className={classNames(bg, 'mr-3 h-6 w-6 rounded-full')}
-          onClick={() => changeColor(color)}
-        ></div>
-      ))}
+    <div className='mt-4'>
+      <div className='mb-2 dark:text-white'>强调色</div>
+      <div className=' flex items-center'>
+        {Object.entries(colors).map(([color, bg]) => (
+          <div
+            key={color}
+            className={classNames(bg, 'mr-2.5 h-5 w-5 rounded-full flex items-center justify-center')}
+            onClick={() => changeColor(color)}
+          >
+            {color === accentColor && <div className='bg-white h-1.5 w-1.5 rounded-full'></div>}
+          </div>
+        ))}
+      </div>
     </div>
   )
+}
+
+const Theme = () => {
+  return  <div className='mt-4'>
+    <div className='mb-2 dark:text-white'>主题</div>
+    <div>
+      
+    </div>
+  </div>
 }
 
 const Appearance = () => {
   return (
     <div>
-      <div className='text-xl dark:text-white/70'>主题</div>
-      <div className='mt-3 h-px w-full bg-white/10'></div>
+      <div className='text-xl font-medium text-gray-800 dark:text-white/70'>
+        主题
+      </div>
+      <div className='mt-3 h-px w-full bg-black/5 dark:bg-white/10'></div>
 
       <AccentColor />
+      <Theme />
     </div>
   )
 }

@@ -69,14 +69,12 @@ export default defineConfig({
     port: Number(process.env['ELECTRON_WEB_SERVER_PORT'] ?? 42710),
     proxy: {
       '/netease/': {
-        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT}/netease`,
+        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT}`,
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/netease/, ''),
       },
       '/yesplaymusic/': {
-        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT}/yesplaymusic`,
+        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT}`,
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/yesplaymusic/, ''),
       },
     },
   },
