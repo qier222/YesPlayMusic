@@ -4,6 +4,7 @@ import SvgIcon from '@/renderer/components/SvgIcon'
 import { prefetchAlbum } from '@/renderer/hooks/useAlbum'
 import { prefetchPlaylist } from '@/renderer/hooks/usePlaylist'
 import { formatDate, resizeImage, scrollToTop } from '@/renderer/utils/common'
+import { TrackListSource, TrackListSourceType } from '@/renderer/utils/player'
 
 export enum Subtitle {
   Copywriter = 'copywriter',
@@ -42,8 +43,8 @@ const getSubtitleText = (
     'artist' in item
       ? item.artist.name
       : 'artists' in item
-      ? item.artists?.[0]?.name
-      : 'unknown'
+        ? item.artists?.[0]?.name
+        : 'unknown'
   const copywriter = 'copywriter' in item ? item.copywriter : 'unknown'
   const releaseYear =
     ('publishTime' in item &&
@@ -124,6 +125,13 @@ const CoverRow = ({
     if (playlists) prefetchPlaylist({ id })
   }
 
+  const getCoverInfo = (id: number): TrackListSource | undefined => {
+    if (albums) return { type: TrackListSourceType.Album, id }
+    if (playlists) return { type: TrackListSourceType.Playlist, id }
+    return undefined
+  }
+
+
   return (
     <div>
       {title && <Title title={title} seeMoreLink={seeMoreLink ?? ''} />}
@@ -133,7 +141,7 @@ const CoverRow = ({
           'grid',
           className,
           !className &&
-            'grid-cols-3 gap-x-6 gap-y-7 lg:grid-cols-4  xl:grid-cols-5 2xl:grid-cols-6'
+          'grid-cols-3 gap-x-6 gap-y-7 lg:grid-cols-4  xl:grid-cols-5 2xl:grid-cols-6'
         )}
       >
         {renderItems.map((item, index) => (
@@ -150,7 +158,7 @@ const CoverRow = ({
                 <Cover
                   onClick={() => goTo(item.id)}
                   imageUrl={getImageUrl(item)}
-                  showPlayButton={true}
+                  coverInfo={getCoverInfo(item.id)}
                   roundedClass={artists ? 'rounded-full' : 'rounded-xl'}
                 />
               )}

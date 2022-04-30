@@ -1,22 +1,60 @@
 import SvgIcon from '@/renderer/components/SvgIcon'
+import { player } from '@/renderer/store'
+import {
+  Mode,
+  State,
+  TrackListSource,
+  TrackListSourceType,
+} from '@/renderer/utils/player'
+import { SyntheticEvent } from 'react'
 
 const Cover = ({
   imageUrl,
   onClick,
   roundedClass = 'rounded-xl',
-  showPlayButton = false,
   showHover = true,
   alwaysShowShadow = false,
+  coverInfo,
 }: {
   imageUrl: string
   onClick?: () => void
   roundedClass?: string
-  showPlayButton?: boolean
   showHover?: boolean
   alwaysShowShadow?: boolean
+  coverInfo?: TrackListSource
 }) => {
   const [isError, setIsError] = useState(imageUrl.includes('3132508627578625'))
-
+  const playerSnapshot = useSnapshot(player)
+  const trackListSource = useMemo(
+    () => playerSnapshot.trackListSource,
+    [playerSnapshot.trackListSource]
+  )
+  const isThisCoverPlaying = useMemo(
+    () =>
+      playerSnapshot.mode === Mode.TrackList &&
+      coverInfo &&
+      coverInfo.type === trackListSource?.type &&
+      coverInfo.id === trackListSource?.id,
+    [playerSnapshot.mode, coverInfo, trackListSource?.type, trackListSource?.id]
+  )
+  const isPlaying =
+    isThisCoverPlaying &&
+    [State.Playing, State.Loading].includes(playerSnapshot.state)
+  const handlePlay = (event: SyntheticEvent) => {
+    event.stopPropagation()
+    if (!coverInfo) return
+    const { type, id } = coverInfo
+    if (!id) {
+      toast('无法播放歌单')
+      return
+    }
+    if (isPlaying) {
+      player.playOrPause()
+      return
+    }
+    if (type === TrackListSourceType.Album) player.playAlbum(id)
+    if (type === TrackListSourceType.Playlist) player.playPlaylist(id)
+  }
   return (
     <div onClick={onClick} className='group relative z-0'>
       {/* Neon shadow */}
@@ -50,10 +88,16 @@ const Cover = ({
       )}
 
       {/* Play button */}
-      {showPlayButton && (
+      {coverInfo && (
         <div className='absolute top-0 hidden h-full w-full place-content-center group-hover:grid'>
-          <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-            <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
+          <button
+            className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'
+            onClick={handlePlay}
+          >
+            <SvgIcon
+              className='ml-0.5 h-6 w-6'
+              name={isPlaying ? 'pause' : 'play-fill'}
+            />
           </button>
         </div>
       )}

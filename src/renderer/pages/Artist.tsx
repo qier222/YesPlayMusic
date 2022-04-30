@@ -1,5 +1,3 @@
-import Button, { Color as ButtonColor } from '@/renderer/components/Button'
-import SvgIcon from '@/renderer/components/SvgIcon'
 import Cover from '@/renderer/components/Cover'
 import useArtist from '@/renderer/hooks/useArtist'
 import useArtistAlbums from '@/renderer/hooks/useArtistAlbums'
@@ -61,11 +59,10 @@ const LatestRelease = ({
       </div>
       <div className='flex-grow rounded-xl'>
         {isLoading ? (
-          <Skeleton className='aspect-square w-full rounded-xl'></Skeleton>
+          <Skeleton className='aspect-square w-full rounded-xl' />
         ) : (
           <Cover
             imageUrl={resizeImage(album?.picUrl ?? '', 'md')}
-            showPlayButton={true}
             onClick={toAlbum}
           />
         )}
@@ -183,7 +180,7 @@ const Artist = () => {
         className={classNames(
           'mt-12 px-2',
           albumsRaw?.hotAlbums?.length !== 0 &&
-            'grid h-[20rem] grid-cols-[14rem,_auto] grid-rows-1 gap-16'
+          'grid h-[20rem] grid-cols-[14rem,_auto] grid-rows-1 gap-16'
         )}
       >
         {albumsRaw?.hotAlbums?.length !== 0 && (

@@ -85,6 +85,7 @@ dist
 release
 .DS_Store
 dist-ssr
+.idea
 *.local
 .vscode/settings.json
 bundle-stats-main.html

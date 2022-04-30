@@ -19,9 +19,9 @@ export enum TrackListSourceType {
   Album = 'album',
   Playlist = 'playlist',
 }
-interface TrackListSource {
-  type: TrackListSourceType
-  id: number
+export interface TrackListSource {
+  type: TrackListSourceType ,
+  id: number,
 }
 export enum Mode {
   TrackList = 'trackList',
@@ -45,11 +45,11 @@ export class Player {
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
   private _repeatMode: RepeatMode = RepeatMode.Off
+  private _trackListSource: TrackListSource | null = null
 
   state: State = State.Initializing
   mode: Mode = Mode.TrackList
   trackList: TrackID[] = []
-  trackListSource: TrackListSource | null = null
   fmTrackList: TrackID[] = []
   shuffle: boolean = false
   fmTrack: Track | null = null
@@ -62,7 +62,7 @@ export class Player {
     if (params.state) this.trackList = params.state
     if (params.mode) this.mode = params.mode
     if (params.trackList) this.trackList = params.trackList
-    if (params.trackListSource) this.trackListSource = params.trackListSource
+    if (params._trackListSource) this._trackListSource = params._trackListSource
     if (params.fmTrackList) this.fmTrackList = params.fmTrackList
     if (params.shuffle) this.shuffle = params.shuffle
     if (params.fmTrack) this.fmTrack = params.fmTrack
@@ -156,6 +156,13 @@ export class Player {
   set repeatMode(value) {
     this._repeatMode = value
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
+  }
+
+  /**
+   * Get/Set current tracklist
+   */
+  get trackListSource(): TrackListSource | null {
+    return this._trackListSource
   }
 
   private async _initFM() {
@@ -396,7 +403,7 @@ export class Player {
   async playPlaylist(playlistID: number, autoPlayTrackID?: null | number) {
     const playlist = await fetchPlaylistWithReactQuery({ id: playlistID })
     if (!playlist?.playlist?.trackIds?.length) return
-    this.trackListSource = {
+    this._trackListSource = {
       type: TrackListSourceType.Playlist,
       id: playlistID,
     }
@@ -414,7 +421,7 @@ export class Player {
   async playAlbum(albumID: number, autoPlayTrackID?: null | number) {
     const album = await fetchAlbumWithReactQuery({ id: albumID })
     if (!album?.songs?.length) return
-    this.trackListSource = {
+    this._trackListSource = {
       type: TrackListSourceType.Album,
       id: albumID,
     }
@@ -463,5 +470,5 @@ export class Player {
 }
 
 if (import.meta.env.DEV) {
-  ;(window as any).howler = _howler
+  (window as any).howler = _howler
 }
