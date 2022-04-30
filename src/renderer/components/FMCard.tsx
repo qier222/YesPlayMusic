@@ -1,14 +1,13 @@
-import { average } from 'color.js'
-import { colord } from 'colord'
 import { player } from '@/renderer/store'
-import { resizeImage, getCoverColor } from '@/renderer/utils/common'
+import { resizeImage } from '@/renderer/utils/common'
 import SvgIcon from './SvgIcon'
 import ArtistInline from './ArtistsInline'
 import {
   State as PlayerState,
   Mode as PlayerMode,
 } from '@/renderer/utils/player'
-import useCoverColor from '../hooks/useCoverColor'
+import useCoverColor from '@/renderer/hooks/useCoverColor'
+import Cover from '@/renderer/components/Cover'
 
 const MediaControls = () => {
   const classes =
@@ -63,31 +62,24 @@ const FMCard = () => {
 
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.fmTrack, [playerSnapshot.fmTrack])
-  const coverUrl = useMemo(
-    () => resizeImage(track?.al?.picUrl ?? '', 'md'),
-    [track?.al?.picUrl]
-  )
 
-  const bgColor = useCoverColor(track?.al?.picUrl ?? '')
+  const bgColor = useCoverColor(track?.al?.picUrl ?? '', '#262626')
 
   return (
     <div
-      className='relative flex h-[198px] overflow-hidden rounded-2xl bg-gray-100 p-4 dark:bg-gray-800'
+      className='relative h-[198px] overflow-hidden p-4 rounded-2xl grid grid-cols-[166px_auto] gap-x-4 bg-gray-100 dark:bg-gray-800'
       style={{
         background: `linear-gradient(to bottom, ${bgColor.from}, ${bgColor.to})`,
       }}
     >
-      {coverUrl ? (
-        <img
-          onClick={() => track?.al?.id && navigate(`/album/${track.al.id}`)}
-          className='rounded-lg shadow-2xl'
-          src={coverUrl}
-        />
-      ) : (
-        <div className='aspect-square h-full rounded-lg bg-gray-200 dark:bg-white/5'></div>
-      )}
+      <Cover
+        imageUrl={ resizeImage(track?.al?.picUrl ?? '', 'md')}
+        onClick={() => track?.al?.id && navigate(`/album/${track?.al?.id}`)}
+        showHover={false}
+        roundedClass='rounded-lg border-0'
+      />
 
-      <div className='ml-5 flex w-full flex-col justify-between text-white'>
+      <div className='flex w-full flex-col justify-between text-white'>
         {/* Track info */}
         <div>
           {track ? (

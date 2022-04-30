@@ -14,9 +14,15 @@ import {
 import { RepeatMode as PlayerRepeatMode } from '@/shared/playerDataTypes'
 
 const PlayingTrack = () => {
+  const [isCoverError, setIsCoverError] = useState(false)
   const navigate = useNavigate()
   const snappedPlayer = useSnapshot(player)
-  const track = useMemo(() => snappedPlayer.track, [snappedPlayer.track])
+
+  const track = useMemo(() => {
+    setIsCoverError(false)
+    return snappedPlayer.track
+  }, [snappedPlayer.track])
+
   const trackListSource = useMemo(
     () => snappedPlayer.trackListSource,
     [snappedPlayer.trackListSource]
@@ -43,14 +49,14 @@ const PlayingTrack = () => {
     <>
       {track && (
         <div className='flex items-center gap-3'>
-          {track?.al?.picUrl && (
+          {track?.al?.picUrl && !isCoverError ? (
             <img
               onClick={toAlbum}
               className='aspect-square h-full rounded-md shadow-md'
               src={resizeImage(track.al.picUrl, 'xs')}
+              onError={() => setIsCoverError(true)}
             />
-          )}
-          {!track?.al?.picUrl && (
+          ) : (
             <div
               onClick={toAlbum}
               className='flex aspect-square h-full items-center justify-center rounded-md bg-black/[.04] shadow-sm'

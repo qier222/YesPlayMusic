@@ -1,7 +1,5 @@
 import Player from './Player'
 import { player, state } from '@/renderer/store'
-import { getCoverColor } from '@/renderer/utils/common'
-import { colord } from 'colord'
 import IconButton from '../IconButton'
 import SvgIcon from '../SvgIcon'
 import Lyric from './Lyric'
@@ -14,7 +12,7 @@ const LyricPanel = () => {
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
 
-  const bgColor = useCoverColor(track?.al?.picUrl ?? '')
+  const bgColor = useCoverColor(track?.al?.picUrl ?? '', '#262626')
 
   return (
     <AnimatePresence>
