@@ -355,7 +355,7 @@ export default class {
   }
   _getAudioSourceFromNetease(track) {
     if (isAccountLoggedIn()) {
-      return getMP3(track.id, track.sq?.br, track.hr?.br).then(result => {
+      return getMP3(track.id).then(result => {
         if (!result.data[0]) return null;
         if (!result.data[0].url) return null;
         if (result.data[0].freeTrialInfo !== null) return null; // 跳过只能试听的歌曲

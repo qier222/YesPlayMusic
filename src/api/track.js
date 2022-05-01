@@ -13,15 +13,12 @@ import {
  * 说明 : 使用歌单详情接口后 , 能得到的音乐的 id, 但不能得到的音乐 url, 调用此接口, 传入的音乐 id( 可多个 , 用逗号隔开 ), 可以获取对应的音乐的 url,
  * !!!未登录状态返回试听片段(返回字段包含被截取的正常歌曲的开始时间和结束时间)
  * @param {string} id - 音乐的 id，例如 id=405998841,33894312
- * @param {string} sqBr - flac(SQ)的比特率
- * @param {string} hiResBr - hi-res的比特率
  */
-export function getMP3(id, sqBr, hiResBr) {
-  const getBr = (quality, sqBr, hiResBr) => {
-    if (quality === undefined) return 320000;
-    if (quality === 'flac' && sqBr) return sqBr;
-    if (quality === '999000' && hiResBr) return hiResBr;
-    return quality;
+export function getMP3(id) {
+  const getBr = () => {
+    // 当返回的 quality >= 400000时，就会优先返回 hi-res
+    const quality = store.state.settings?.musicQuality ?? '320000';
+    return quality === 'flac' ? '350000' : quality;
   };
 
   return request({
@@ -29,7 +26,7 @@ export function getMP3(id, sqBr, hiResBr) {
     method: 'get',
     params: {
       id,
-      br: getBr(store.state.settings?.musicQuality, sqBr, hiResBr),
+      br: getBr(),
     },
   });
 }
