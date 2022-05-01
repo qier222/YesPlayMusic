@@ -1,5 +1,5 @@
 import store from '@/store';
-import {mapTrackPlayableStatus} from '@/utils/common';
+import { mapTrackPlayableStatus } from '@/utils/common';
 import {
   cacheLyric,
   cacheTrackDetail,
@@ -23,11 +23,11 @@ export function getMP3(id) {
   };
 
   return request({
-    url : '/song/url',
-    method : 'get',
-    params : {
+    url: '/song/url',
+    method: 'get',
+    params: {
       id,
-      br : getBr(),
+      br: getBr(),
     },
   });
 }
@@ -41,24 +41,23 @@ export function getMP3(id) {
 export function getTrackDetail(ids) {
   const fetchLatest = () => {
     return request({
-             url : '/song/detail',
-             method : 'get',
-             params : {
-               ids,
-             },
-           })
-        .then(data => {
-          data.songs.map(song => {
-            const privileges = data.privileges.find(t => t.id === song.id);
-            cacheTrackDetail(song, privileges);
-          });
-          data.songs = mapTrackPlayableStatus(data.songs, data.privileges);
-          return data;
-        });
+      url: '/song/detail',
+      method: 'get',
+      params: {
+        ids,
+      },
+    }).then(data => {
+      data.songs.map(song => {
+        const privileges = data.privileges.find(t => t.id === song.id);
+        cacheTrackDetail(song, privileges);
+      });
+      data.songs = mapTrackPlayableStatus(data.songs, data.privileges);
+      return data;
+    });
   };
   fetchLatest();
 
-  let idsInArray = [ String(ids) ];
+  let idsInArray = [String(ids)];
   if (typeof ids === 'string') {
     idsInArray = ids.split(',');
   }
@@ -79,22 +78,22 @@ export function getTrackDetail(ids) {
 export function getLyric(id) {
   const fetchLatest = () => {
     return request({
-             url : '/lyric',
-             method : 'get',
-             params : {
-               id,
-             },
-           })
-        .then(result => {
-          cacheLyric(id, result);
-          return result;
-        });
+      url: '/lyric',
+      method: 'get',
+      params: {
+        id,
+      },
+    }).then(result => {
+      cacheLyric(id, result);
+      return result;
+    });
   };
 
   fetchLatest();
 
-  return getLyricFromCache(id).then(
-      result => { return result ?? fetchLatest(); });
+  return getLyricFromCache(id).then(result => {
+    return result ?? fetchLatest();
+  });
 }
 
 /**
@@ -105,9 +104,9 @@ export function getLyric(id) {
  */
 export function topSong(type) {
   return request({
-    url : '/top/song',
-    method : 'get',
-    params : {
+    url: '/top/song',
+    method: 'get',
+    params: {
       type,
     },
   });
@@ -125,8 +124,8 @@ export function topSong(type) {
 export function likeATrack(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url : '/like',
-    method : 'get',
+    url: '/like',
+    method: 'get',
     params,
   });
 }
@@ -145,8 +144,8 @@ export function likeATrack(params) {
 export function scrobble(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url : '/scrobble',
-    method : 'get',
+    url: '/scrobble',
+    method: 'get',
     params,
   });
 }
