@@ -85,8 +85,6 @@ export function getLyric(id) {
     });
   };
 
-  fetchLatest();
-
   return getLyricFromCache(id).then(result => {
     return result ?? fetchLatest();
   });

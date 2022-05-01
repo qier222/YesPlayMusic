@@ -58,10 +58,11 @@
       </div>
       <div></div>
     </div>
-
-    <div v-if="showAlbumName" class="album">
-      <router-link :to="`/album/${album.id}`">{{ album.name }}</router-link>
-      <div></div>
+    <div v-if="showAlbumName && album" class="album">
+      <router-link :to="`/album/${album.id}`">
+        {{ album.name }}
+      </router-link>
+      <div />
     </div>
 
     <div v-if="showLikeButton" class="actions">
@@ -85,6 +86,7 @@
 import ArtistsInLine from '@/components/ArtistsInLine.vue';
 import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
 import { mapState } from 'vuex';
+import isNil from 'lodash/isNil';
 
 export default {
   name: 'TrackListItem',
@@ -117,8 +119,8 @@ export default {
       return image + '?param=224y224';
     },
     artists() {
-      if (this.track.ar !== undefined) return this.track.ar;
-      if (this.track.artists !== undefined) return this.track.artists;
+      if (!isNil(this.track.ar)) return this.track.ar;
+      if (!isNil(this.track.artists)) return this.track.artists;
       return [];
     },
     album() {
@@ -160,7 +162,8 @@ export default {
       return this.$parent.liked.songs.includes(this.track?.id);
     },
     isPlaying() {
-      return this.$store.state.player.currentTrack.id === this.track?.id;
+      if (this.$store.state.player) return false;
+      return this.$store.state.player?.currentTrack.id === this.track?.id;
     },
     trackClass() {
       let trackClass = [this.type];

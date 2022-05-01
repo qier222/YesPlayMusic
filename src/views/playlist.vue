@@ -444,6 +444,12 @@ export default {
       });
     },
     loadData(id, next = undefined) {
+      if (!isAccountLoggedIn()) {
+        this.showToast(locale.t('toast.needToLogin'));
+        this.show = true;
+        NProgress.done();
+        return;
+      }
       this.id = id;
       getPlaylistDetail(this.id, true)
         .then(data => {

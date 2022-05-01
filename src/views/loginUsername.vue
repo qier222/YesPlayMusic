@@ -16,7 +16,7 @@
           </div>
         </div>
       </div>
-      <div class="sestion">
+      <div class="section">
         <div v-show="activeUser.nickname === undefined" class="name">
           {{ $t('login.enterTip') }}
         </div>
@@ -114,7 +114,7 @@ export default {
   margin-bottom: 48px;
 }
 
-.sestion {
+.section {
   margin-top: 18px;
   .name {
     font-size: 14px;

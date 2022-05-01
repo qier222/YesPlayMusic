@@ -196,6 +196,9 @@ export default {
   },
   computed: {
     ...mapState(['data', 'liked']),
+    isAccountLoggedIn() {
+      return isAccountLoggedIn();
+    },
     pickedLyric() {
       if (this.lyric === undefined) return '';
       let lyric = this.lyric.split('\n');
@@ -257,11 +260,13 @@ export default {
         });
       }
       this.$store.dispatch('fetchLikedSongs');
-      this.$store.dispatch('fetchLikedPlaylist');
-      this.$store.dispatch('fetchLikedAlbums');
-      this.$store.dispatch('fetchLikedArtists');
-      this.$store.dispatch('fetchLikedMVs');
-      this.$store.dispatch('fetchCloudDisk');
+      if (isAccountLoggedIn()) {
+        this.$store.dispatch('fetchLikedPlaylist');
+        this.$store.dispatch('fetchLikedAlbums');
+        this.$store.dispatch('fetchLikedArtists');
+        this.$store.dispatch('fetchLikedMVs');
+        this.$store.dispatch('fetchCloudDisk');
+      }
     },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(

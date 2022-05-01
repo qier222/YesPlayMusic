@@ -8,9 +8,9 @@
       @scroll="handleScroll"
     >
       <keep-alive>
-        <router-view v-if="$route.meta.keepAlive"></router-view>
+        <router-view v-if="$route.meta.keepAlive" />
       </keep-alive>
-      <router-view v-if="!$route.meta.keepAlive"></router-view>
+      <router-view v-if="!$route.meta.keepAlive" />
     </main>
     <transition name="slide-up">
       <Player v-if="enablePlayer" v-show="showPlayer" ref="player" />
@@ -94,8 +94,8 @@ export default {
       if (!isLooseLoggedIn()) return;
       this.$store.dispatch('fetchLikedSongs');
       this.$store.dispatch('fetchLikedSongsWithDetails');
-      this.$store.dispatch('fetchLikedPlaylist');
       if (isAccountLoggedIn()) {
+        this.$store.dispatch('fetchLikedPlaylist');
         this.$store.dispatch('fetchLikedAlbums');
         this.$store.dispatch('fetchLikedArtists');
         this.$store.dispatch('fetchLikedMVs');

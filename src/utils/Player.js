@@ -121,7 +121,7 @@ export default class {
     return this._personalFMTrack;
   }
   get currentTrackDuration() {
-    const trackDuration = this._currentTrack.dt || 1000;
+    const trackDuration = this._currentTrack?.dt || 1000;
     let duration = ~~(trackDuration / 1000);
     return duration > 1 ? duration - 1 : duration;
   }
@@ -134,7 +134,7 @@ export default class {
     }
   }
   get isCurrentTrackLiked() {
-    return store.state.liked.songs.includes(this.currentTrack.id);
+    return store.state.liked.songs.includes(this.currentTrack?.id);
   }
 
   _init() {
@@ -268,7 +268,7 @@ export default class {
     }
   }
   _getAudioSourceFromUnblockMusic(track) {
-    console.debug(`[debug][Player.js] _getAudioSourceFromUnblockMusic`);
+    console.debug('[debug][Player.js] _getAudioSourceFromUnblockMusic');
     if (
       process.env.IS_ELECTRON !== true ||
       store.state.settings.enableUnblockNeteaseMusic === false
@@ -296,11 +296,11 @@ export default class {
     autoplay = true,
     ifUnplayableThen = 'playNextTrack'
   ) {
-    if (autoplay && this._currentTrack.name) {
+    if (autoplay && this._currentTrack?.name) {
       this._scrobble(this.currentTrack, this._howler?.seek());
     }
     return getTrackDetail(id).then(data => {
-      let track = data.songs[0];
+      let track = data.songs?.[0];
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
       return this._getAudioSource(track).then(source => {
@@ -485,15 +485,15 @@ export default class {
     if (this._howler?.playing()) return;
     this._howler?.play();
     this._playing = true;
-    document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
+    document.title = `${this._currentTrack?.name} · ${this._currentTrack?.ar[0].name} - YesPlayMusic`;
     this._playDiscordPresence(this._currentTrack, this.seek());
     if (store.state.lastfm.key !== undefined) {
       trackUpdateNowPlaying({
-        artist: this.currentTrack.ar[0].name,
-        track: this.currentTrack.name,
-        album: this.currentTrack.al.name,
-        trackNumber: this.currentTrack.no,
-        duration: ~~(this.currentTrack.dt / 1000),
+        artist: this.currentTrack?.ar[0].name,
+        track: this.currentTrack?.name,
+        album: this.currentTrack?.al.name,
+        trackNumber: this.currentTrack?.no,
+        duration: ~~(this.currentTrack?.dt / 1000),
       });
     }
   }
@@ -559,10 +559,12 @@ export default class {
     console.debug(
       `[debug][Player.js] playPlaylistByID 👉 id:${id} trackID:${trackID} noCache:${noCache}`
     );
-    getPlaylistDetail(id, noCache).then(data => {
-      let trackIDs = data.playlist.trackIds.map(t => t.id);
-      this.replacePlaylist(trackIDs, id, 'playlist', trackID);
-    });
+    if (isAccountLoggedIn()) {
+      getPlaylistDetail(id, noCache).then(data => {
+        let trackIDs = data.playlist.trackIds.map(t => t.id);
+        this.replacePlaylist(trackIDs, id, 'playlist', trackID);
+      });
+    }
   }
   playArtistByID(id, trackID = 'first') {
     getArtist(id).then(data => {
