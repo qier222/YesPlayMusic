@@ -60,6 +60,8 @@ export interface FetchPersonalFMResponse {
     lMusic?: PersonalMusic
     mMusic?: PersonalMusic
     hMusic?: PersonalMusic
+    sqMusic?: PersonalMusic
+    hrMusic?: PersonalMusic
     reason: string
     privilege: {
       id: number

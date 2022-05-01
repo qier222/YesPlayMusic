@@ -13,6 +13,7 @@ import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
+import { SelectAudio } from '@/renderer/utils/neteaseAudioSelector'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -187,10 +188,14 @@ export class Player {
    * @param {TrackID} trackID
    */
   private async _fetchAudioSource(trackID: TrackID) {
-    const response = await fetchAudioSourceWithReactQuery({ id: trackID })
+    const track = await this._fetchTrack(trackID)
+    if (!track) return { audio: null, id: 0, quality: null }
+    const { quality, br } = SelectAudio(track)
+    const response = await fetchAudioSourceWithReactQuery({ id: trackID, br })
     return {
       audio: response.data?.[0]?.url,
       id: trackID,
+      quality,
     }
   }
 
