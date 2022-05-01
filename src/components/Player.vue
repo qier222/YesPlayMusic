@@ -27,6 +27,7 @@
         <div class="container" @click.stop>
           <img
             :src="currentTrack.al && currentTrack.al.picUrl | resizeImage(224)"
+            loading="lazy"
             @click="goToAlbum"
           />
           <div class="track-info" :title="audioSource">

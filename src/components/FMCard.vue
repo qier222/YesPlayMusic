@@ -1,9 +1,10 @@
 <template>
   <div class="fm" :style="{ background }" data-theme="dark">
-    <img :src="nextTrackCover" style="display: none" />
+    <img :src="nextTrackCover" style="display: none" loading="lazy" />
     <img
       class="cover"
       :src="track.album && track.album.picUrl | resizeImage(512)"
+      loading="lazy"
       @click="goToAlbum"
     />
     <div class="right-part">

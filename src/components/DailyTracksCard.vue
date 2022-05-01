@@ -1,6 +1,6 @@
 <template>
   <div class="daily-recommend-card" @click="goToDailyTracks">
-    <img :src="coverUrl" />
+    <img :src="coverUrl" loading="lazy" />
     <div class="container">
       <div class="title-box">
         <div class="title">

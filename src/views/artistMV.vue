@@ -1,9 +1,11 @@
 <template>
   <div v-show="show">
     <h1>
-      <img class="avatar" :src="artist.img1v1Url | resizeImage(1024)" />{{
-        artist.name
-      }}'s Music Videos
+      <img
+        class="avatar"
+        :src="artist.img1v1Url | resizeImage(1024)"
+        loading="lazy"
+      />{{ artist.name }}'s Music Videos
     </h1>
     <MvRow :mvs="mvs" subtitle="publishTime" />
     <div class="load-more">
