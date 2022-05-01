@@ -1,3 +1,5 @@
+import { FetchAudioSourceParams } from '@/shared/api/Track'
+
 export enum AudioQualityTypes {
   Low = '128Kbps',
   Mid = '192Kbps',
@@ -11,8 +13,8 @@ export interface NeteaseAudioSelecteResult {
   quality: AudioQualityTypes
   /** 音源的实际比特率 */
   realBr: number
-  /** 用于获取音源接口使用的br参数 */
-  br: number
+  /** 获取音源使用的参数 */
+  fetchParams: FetchAudioSourceParams
 }
 
 function getBr(quality: AudioQualityTypes): number {
@@ -56,6 +58,6 @@ export function SelectAudio(track: Track): NeteaseAudioSelecteResult {
   return {
     quality,
     realBr,
-    br: getBr(quality),
+    fetchParams: { id: track.id, br: getBr(quality) },
   }
 }

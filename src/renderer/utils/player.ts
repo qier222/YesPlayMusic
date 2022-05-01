@@ -190,8 +190,8 @@ export class Player {
   private async _fetchAudioSource(trackID: TrackID) {
     const track = await this._fetchTrack(trackID)
     if (!track) return { audio: null, id: 0, quality: null }
-    const { quality, br } = SelectAudio(track)
-    const response = await fetchAudioSourceWithReactQuery({ id: trackID, br })
+    const { quality, fetchParams } = SelectAudio(track)
+    const response = await fetchAudioSourceWithReactQuery(fetchParams)
     return {
       audio: response.data?.[0]?.url,
       id: trackID,
