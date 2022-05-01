@@ -80,11 +80,11 @@ declare interface Track {
   dt: number
   fee: number
   ftype: number
-  l?: AudioQuality
-  m?: AudioQuality
-  h?: AudioQuality
-  sq?: AudioQuality
-  hr?: AudioQuality
+  l?: Audio
+  m?: Audio
+  h?: Audio
+  sq?: Audio
+  hr?: Audio
   mark: number
   mst: number
   mv: number
@@ -113,7 +113,7 @@ declare interface Track {
   tns: (string | null)[]
 }
 
-declare interface AudioQuality {
+declare interface Audio {
   br: number
   fid: number
   size: number
