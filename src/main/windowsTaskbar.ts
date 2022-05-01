@@ -67,9 +67,7 @@ class ThumbarImpl implements Thumbar {
 
   private _updateThumbarButtons(clear: boolean) {
     this._win.setThumbarButtons(
-      clear
-        ? []
-        : [this._previous, this._playOrPause, this._next]
+      clear ? [] : [this._previous, this._playOrPause, this._next]
     )
   }
 

@@ -9,13 +9,8 @@ import { player } from '@/renderer/store'
 import { formatDuration } from '@/renderer/utils/common'
 import { State as PlayerState } from '@/renderer/utils/player'
 
-const enableRenderLog = true
-
 const PlayOrPauseButtonInTrack = memo(
   ({ isHighlight, trackID }: { isHighlight: boolean; trackID: number }) => {
-    if (enableRenderLog)
-      console.debug(`Rendering TracksAlbum.tsx PlayOrPauseButtonInTrack`)
-
     const playerSnapshot = useSnapshot(player)
     const isPlaying = useMemo(
       () => playerSnapshot.state === PlayerState.Playing,
@@ -58,9 +53,6 @@ const Track = memo(
     isHighlight?: boolean
     onClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
   }) => {
-    if (enableRenderLog)
-      console.debug(`Rendering TracksAlbum.tsx Track ${track.name}`)
-
     const subtitle = useMemo(
       () => track.tns?.at(0) ?? track.alia?.at(0),
       [track.alia, track.tns]

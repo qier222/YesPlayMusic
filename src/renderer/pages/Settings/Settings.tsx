@@ -2,6 +2,7 @@ import Avatar from '@/renderer/components/Avatar'
 import SvgIcon from '@/renderer/components/SvgIcon'
 import useUser from '@/renderer/hooks/useUser'
 import Appearance from './Appearance'
+import UnblockNeteaseMusic from './UnblockNeteaseMusic'
 
 const UserCard = () => {
   const { data: user } = useUser()
@@ -42,17 +43,30 @@ const UserCard = () => {
   )
 }
 
-const Sidebar = () => {
-  const categories = ['外观', '播放', '歌词', '其他', '试验性功能']
-  const active = '外观'
+const Sidebar = ({
+  activeCategory,
+  setActiveCategory,
+}: {
+  activeCategory: string
+  setActiveCategory: (category: string) => void
+}) => {
+  const categories = [
+    '外观',
+    '播放',
+    '歌词',
+    '其他',
+    'UnblockNeteaseMusic',
+    '试验性功能',
+  ]
   return (
     <div>
       {categories.map(category => (
         <div
           key={category}
+          onClick={() => setActiveCategory(category)}
           className={classNames(
             'btn-hover-animation my-px flex cursor-default items-center justify-between rounded-lg px-3 py-2 font-medium  transition-colors duration-200 after:scale-[0.97] after:bg-black/[.06] dark:text-white dark:after:bg-white/10',
-            active === category
+            activeCategory === category
               ? 'text-black after:scale-100 after:opacity-100'
               : 'text-gray-600'
           )}
@@ -65,14 +79,20 @@ const Sidebar = () => {
 }
 
 const Settings = () => {
+  const [activeCategory, setActiveCategory] = useState('外观')
+
   return (
     <div className='mt-6'>
       <UserCard />
 
       <div className='mt-8 grid grid-cols-[12rem_auto] gap-10'>
-        <Sidebar />
+        <Sidebar
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+        />
         <div className=''>
-          <Appearance />
+          {activeCategory === '外观' && <Appearance />}
+          {activeCategory === 'UnblockNeteaseMusic' && <UnblockNeteaseMusic />}
         </div>
       </div>
     </div>

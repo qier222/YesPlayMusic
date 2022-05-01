@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const colors = require('tailwindcss/colors')
-const pickedColors = require('./scripts/generate.accent.color.css.js')
+const pickedColors = require('./scripts/pickedColors.js')
 
 module.exports = {
   content: [

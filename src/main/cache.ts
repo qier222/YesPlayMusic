@@ -6,6 +6,7 @@ import log from './log'
 import fs from 'fs'
 import * as musicMetadata from 'music-metadata'
 import { APIs, APIsParams, APIsResponse } from '../shared/CacheAPIs'
+import { TablesStructures } from './db'
 
 class Cache {
   constructor() {
@@ -206,59 +207,6 @@ class Cache {
         return cache
       }
     }
-
-    // Get audio cache if API is song/detail
-    if (api === APIs.SongUrl) {
-      const cache = db.find(Tables.Audio, Number(req.query.id))
-      if (!cache) return
-
-      const audioFileName = `${cache.id}-${cache.br}.${cache.type}`
-
-      const isAudioFileExists = fs.existsSync(
-        `${app.getPath('userData')}/audio_cache/${audioFileName}`
-      )
-      if (!isAudioFileExists) return
-
-      log.debug(`[cache] Audio cache hit for ${req.path}`)
-
-      return {
-        data: [
-          {
-            source: cache.source,
-            id: cache.id,
-            url: `http://127.0.0.1:42710/yesplaymusic/audio/${audioFileName}`,
-            br: cache.br,
-            size: 0,
-            md5: '',
-            code: 200,
-            expi: 0,
-            type: cache.type,
-            gain: 0,
-            fee: 8,
-            uf: null,
-            payed: 0,
-            flag: 4,
-            canExtend: false,
-            freeTrialInfo: null,
-            level: 'standard',
-            encodeType: cache.type,
-            freeTrialPrivilege: {
-              resConsumable: false,
-              userConsumable: false,
-              listenType: null,
-            },
-            freeTimeTrialPrivilege: {
-              resConsumable: false,
-              userConsumable: false,
-              type: 0,
-              remainTime: 0,
-            },
-            urlSource: 0,
-          },
-        ],
-        code: 200,
-      }
-    }
   }
 
   getAudio(fileName: string, res: Response) {
@@ -279,17 +227,17 @@ class Cache {
         .status(206)
         .setHeader('Accept-Ranges', 'bytes')
         .setHeader('Connection', 'keep-alive')
-        .setHeader('Content-Range', `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`)
+        .setHeader(
+          'Content-Range',
+          `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`
+        )
         .send(audio)
     } catch (error) {
       res.status(500).send({ error })
     }
   }
 
-  async setAudio(
-    buffer: Buffer,
-    { id, source }: { id: number; source: string }
-  ) {
+  async setAudio(buffer: Buffer, { id, url }: { id: number; url: string }) {
     const path = `${app.getPath('userData')}/audio_cache`
 
     try {
@@ -299,16 +247,26 @@ class Cache {
     }
 
     const meta = await musicMetadata.parseBuffer(buffer)
-    const br = meta.format.bitrate
-    const type = {
-      'MPEG 1 Layer 3': 'mp3',
-      'Ogg Vorbis': 'ogg',
-      AAC: 'm4a',
-      FLAC: 'flac',
-      unknown: 'unknown',
-    }[meta.format.codec ?? 'unknown']
+    const br =
+      meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0
+    const type =
+      {
+        'MPEG 1 Layer 3': 'mp3',
+        'Ogg Vorbis': 'ogg',
+        AAC: 'm4a',
+        FLAC: 'flac',
+        OPUS: 'opus',
+      }[meta.format.codec ?? ''] ?? 'unknown'
 
-    await fs.writeFile(`${path}/${id}-${br}.${type}`, buffer, error => {
+    let source: TablesStructures[Tables.Audio]['source'] = 'unknown'
+    if (url.includes('googlevideo.com')) source = 'youtube'
+    if (url.includes('126.net')) source = 'netease'
+    if (url.includes('migu.cn')) source = 'migu'
+    if (url.includes('kuwo.cn')) source = 'kuwo'
+    if (url.includes('bilivideo.com')) source = 'bilibili'
+    // TODO: missing kugou qq joox
+
+    fs.writeFile(`${path}/${id}-${br}.${type}`, buffer, error => {
       if (error) {
         return log.error(`[cache] cacheAudio failed: ${error}`)
       }
@@ -317,9 +275,9 @@ class Cache {
       db.upsert(Tables.Audio, {
         id,
         br,
-        type,
+        type: type as TablesStructures[Tables.Audio]['type'],
         source,
-        updateAt: Date.now(),
+        updatedAt: Date.now(),
       })
 
       log.info(`[cache] cacheAudio ${id}-${br}.${type}`)

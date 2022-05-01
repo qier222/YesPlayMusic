@@ -22,6 +22,7 @@ specifiers:
   '@types/react-dom': ^18.0.1
   '@typescript-eslint/eslint-plugin': ^5.21.0
   '@typescript-eslint/parser': ^5.21.0
+  '@unblockneteasemusic/rust-napi': ^0.3.0-pre.1
   '@vitejs/plugin-react': ^1.3.1
   '@vitest/ui': ^0.10.0
   NeteaseCloudMusicApi: ^4.5.12
@@ -88,6 +89,7 @@ specifiers:
 dependencies:
   '@sentry/node': 6.19.7
   '@sentry/tracing': 6.19.7
+  '@unblockneteasemusic/rust-napi': 0.3.0-pre.1
   NeteaseCloudMusicApi: 4.5.12
   better-sqlite3: 7.5.1
   change-case: 4.1.2
@@ -1211,6 +1213,142 @@ packages:
       '@typescript-eslint/types': 5.21.0
       eslint-visitor-keys: 3.3.0
     dev: true
+
+  /@unblockneteasemusic/rust-napi-android-arm-eabi/0.3.0-pre.1:
+    resolution: {integrity: sha512-932T6uUSHbWXTS2lt0wTI5F2lsIrGea2aU22VwSFaHfpTgxB8qDfd+jn+zMRlpnqTmuglyd0hk/1yUZd9tgu+w==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-android-arm64/0.3.0-pre.1:
+    resolution: {integrity: sha512-RQMCzO7+0Iw+R/MHy0hvv9Vg6BzqrUmWk9bMLR0mkkYKxR0wPEaB7WpAvUfLRKevSqiWP8rrNRuzqGVBu0PaCg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-darwin-arm64/0.3.0-pre.1:
+    resolution: {integrity: sha512-M3YvPhYNyBSytho3FmyX1cj5k21ZlW14mPuy/5oLRw4qehAmjsSYjCEFLG5I29IlZTLN0sbIz92dqHkYclSXSg==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-darwin-x64/0.3.0-pre.1:
+    resolution: {integrity: sha512-kN4Bur22hFo2UAJ4vljuEX4ue7TlhhOnz9Q3KrwhxOtv2KlQi2iQ/8tCl+/whKpqgf/cs/klQLDJj73PsE1G+w==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-freebsd-x64/0.3.0-pre.1:
+    resolution: {integrity: sha512-tRBudpZX+0X8sDSP+LmnU9nfsT7939rCu+bZhizjHHe2jt02iX/ZLHOkEcVBh0VHhHVvTehj0zH3iHFkfYnR2Q==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-linux-arm-gnueabihf/0.3.0-pre.1:
+    resolution: {integrity: sha512-3vkXlBm6f2dWOWLKaosTcFAO5b/VV9WvyT3PQBJFvq0PtRGonr2Zr1gYJC4zUz2UraSKaFg4GMKgopU2Duxgow==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-linux-arm64-gnu/0.3.0-pre.1:
+    resolution: {integrity: sha512-Zq1kjjXhle0OA7NzadzBQvjbTZfbK/qMuHay97+ZGXZH4uxv0jmJ2aQWR7HlrrKmQKpknURvrxbXmi8dxeI+SA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-linux-arm64-musl/0.3.0-pre.1:
+    resolution: {integrity: sha512-Yp7+Ra8ksx2nCZs18duK7BPtsY2chzdrBIrWY14N7aP0IIglwBcazP+GGFNaqqDx0nW+/0463pUsi8OgbWX+mA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-linux-x64-gnu/0.3.0-pre.1:
+    resolution: {integrity: sha512-A71/PhBCotAQPimGIJnZEYJwBv2FilhYC1OC4wOy3Rt54C9Cw12FJp49c7J13mZLktZfCJOSu6/6RPY8+6Yfrw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-linux-x64-musl/0.3.0-pre.1:
+    resolution: {integrity: sha512-klXwwdVb4LdHmUrdclZSfn6nQwXddBwJJk392wRagjGUyNbUkC9b3JHfMEdrssMIPtIGtNHWt/43z+saovZl2g==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-win32-arm64-msvc/0.3.0-pre.1:
+    resolution: {integrity: sha512-jaX6UvQlRuH1iyextG34l8b19MtVFTZZX8U34oW3d7rZxcas5ZitEHzd6XfjpHcTtkXSyhQxx+WjDiY2BQ+B3A==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-win32-ia32-msvc/0.3.0-pre.1:
+    resolution: {integrity: sha512-QgO05vQxxkU0+bfprxQMVLXxguI8N1ApPQCyAYNnvrKTQ/F6OjV+bQghlWaKwcIeve8zoYN1zgSHDyNj+0xrYA==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi-win32-x64-msvc/0.3.0-pre.1:
+    resolution: {integrity: sha512-6CI0YlQxHiU6vetwoAjYgBOFlWoTkLVUSd0tpEN9/5R7iExRUHdFdRfpXqPJzpYnAhZlGqAIslCayoNcf7vnQw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /@unblockneteasemusic/rust-napi/0.3.0-pre.1:
+    resolution: {integrity: sha512-n1zDJvy5OEEMPQdhTPARRRQLM4Tnvx9UGq0smVKWu6CjutK6rcSIVoxe4ADILzBOY3RCe5vuo9Qn4RUzKCeeWQ==}
+    engines: {node: '>= 10'}
+    optionalDependencies:
+      '@unblockneteasemusic/rust-napi-android-arm-eabi': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-android-arm64': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-darwin-arm64': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-darwin-x64': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-freebsd-x64': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-linux-arm-gnueabihf': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-linux-arm64-gnu': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-linux-arm64-musl': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-linux-x64-gnu': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-linux-x64-musl': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-win32-arm64-msvc': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-win32-ia32-msvc': 0.3.0-pre.1
+      '@unblockneteasemusic/rust-napi-win32-x64-msvc': 0.3.0-pre.1
+    dev: false
 
   /@vitejs/plugin-react/1.3.1:
     resolution: {integrity: sha512-qQS8Y2fZCjo5YmDUplEXl3yn+aueiwxB7BaoQ4nWYJYR+Ai8NXPVLlkLobVMs5+DeyFyg9Lrz6zCzdX1opcvyw==}

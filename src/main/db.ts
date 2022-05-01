@@ -38,9 +38,17 @@ export interface TablesStructures {
   [Tables.Audio]: {
     id: number
     br: number
-    type: 'mp3' | 'flac' | 'ogg' | 'wav' | 'm4a' | 'aac' | 'unknown'
-    source: 'netease' | 'migu' | 'kuwo' | 'kugou' | 'youtube'
-    url: string
+    type: 'mp3' | 'flac' | 'ogg' | 'wav' | 'm4a' | 'aac' | 'unknown' | 'opus'
+    source:
+      | 'unknown'
+      | 'netease'
+      | 'migu'
+      | 'kuwo'
+      | 'kugou'
+      | 'youtube'
+      | 'qq'
+      | 'bilibili'
+      | 'joox'
     updatedAt: number
   }
   [Tables.CoverColor]: {

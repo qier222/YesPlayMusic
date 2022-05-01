@@ -224,15 +224,19 @@ export class Player {
     }
     if (this.trackID !== id) return
     Howler.unload()
+    const url = audio.includes('?')
+      ? `${audio}&ypm-id=${id}`
+      : `${audio}?ypm-id=${id}`
     const howler = new Howl({
-      src: [`${audio}?id=${id}`],
-      format: ['mp3', 'flac'],
+      src: [url],
+      format: ['mp3', 'flac', 'webm'],
       html5: true,
       autoplay,
       volume: 1,
       onend: () => this._howlerOnEndCallback(),
     })
     _howler = howler
+    window.howler = howler
     if (autoplay) {
       this.play()
       this.state = State.Playing
@@ -257,7 +261,7 @@ export class Player {
 
   private _cacheAudio(audio: string) {
     if (audio.includes('yesplaymusic')) return
-    const id = Number(audio.split('?id=')[1])
+    const id = Number(new URL(audio).searchParams.get('ypm-id'))
     if (isNaN(id) || !id) return
     cacheAudio(id, audio)
   }

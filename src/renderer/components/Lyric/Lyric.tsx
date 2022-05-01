@@ -12,7 +12,6 @@ import { lyricParser } from '@/renderer/utils/lyric'
 
 const Lyric = ({ className }: { className?: string }) => {
   //   const ease = [0.5, 0.2, 0.2, 0.8]
-  console.log('rendering')
 
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])

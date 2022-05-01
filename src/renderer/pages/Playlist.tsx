@@ -18,8 +18,6 @@ import {
   State as PlayerState,
 } from '@/renderer/utils/player'
 
-const enableRenderLog = true
-
 const PlayButton = ({
   playlist,
   handlePlay,
@@ -76,7 +74,6 @@ const Header = memo(
     isLoading: boolean
     handlePlay: () => void
   }) => {
-    if (enableRenderLog) console.debug('Rendering Playlist.tsx Header')
     const coverUrl = resizeImage(playlist?.coverImgUrl || '', 'lg')
 
     const mutationLikeAPlaylist = useMutationLikeAPlaylist()
@@ -225,8 +222,6 @@ const Tracks = memo(
     handlePlay: (trackID: number | null) => void
     isLoadingPlaylist: boolean
   }) => {
-    if (enableRenderLog) console.debug('Rendering Playlist.tsx Tracks')
-
     const {
       data: tracksPages,
       hasNextPage,
@@ -281,8 +276,6 @@ const Tracks = memo(
 Tracks.displayName = 'Tracks'
 
 const Playlist = () => {
-  if (enableRenderLog) console.debug('Rendering Playlist.tsx Playlist')
-
   const params = useParams()
   const { data: playlist, isLoading } = usePlaylist({
     id: Number(params.id) || 0,

@@ -4,6 +4,8 @@ import { IpcChannels, IpcChannelsParams } from '../shared/IpcChannels'
 import cache from './cache'
 import log from './log'
 import fs from 'fs'
+import Store from 'electron-store'
+import { TypedElectronStore } from './index'
 import { APIs } from '../shared/CacheAPIs'
 import { YPMTray } from './tray'
 import { Thumbar } from './windowsTaskbar'
@@ -18,11 +20,14 @@ const on = <T extends keyof IpcChannelsParams>(
 export function initIpcMain(
   win: BrowserWindow | null,
   tray: YPMTray | null,
-  thumbar: Thumbar | null
+  thumbar: Thumbar | null,
+  store: Store<TypedElectronStore>
 ) {
   initWindowIpcMain(win)
   initTrayIpcMain(tray)
   initTaskbarIpcMain(thumbar)
+  initStoreIpcMain(store)
+  initOtherIpcMain()
 }
 
 /**
@@ -51,9 +56,7 @@ function initWindowIpcMain(win: BrowserWindow | null) {
 function initTrayIpcMain(tray: YPMTray | null) {
   on(IpcChannels.SetTrayTooltip, (e, { text }) => tray?.setTooltip(text))
 
-  on(IpcChannels.Like, (e, { isLiked }) =>
-    tray?.setLikeState(isLiked)
-  )
+  on(IpcChannels.Like, (e, { isLiked }) => tray?.setLikeState(isLiked))
 
   on(IpcChannels.Play, () => tray?.setPlayState(true))
   on(IpcChannels.Pause, () => tray?.setPlayState(false))
@@ -71,60 +74,82 @@ function initTaskbarIpcMain(thumbar: Thumbar | null) {
 }
 
 /**
- * 清除API缓存
+ * 处理需要electron-store的事件
+ * @param {Store<TypedElectronStore>} store
  */
-on(IpcChannels.ClearAPICache, () => {
-  db.truncate(Tables.Track)
-  db.truncate(Tables.Album)
-  db.truncate(Tables.Artist)
-  db.truncate(Tables.Playlist)
-  db.truncate(Tables.ArtistAlbum)
-  db.truncate(Tables.AccountData)
-  db.truncate(Tables.Audio)
-  db.vacuum()
-})
+function initStoreIpcMain(store: Store<TypedElectronStore>) {
+  /**
+   * 同步设置到Main
+   */
+  on(IpcChannels.SyncSettings, (event, settings) => {
+    store.set('settings', settings)
+  })
+}
 
 /**
- * Get API cache
+ * 处理其他事件
  */
-on(IpcChannels.GetApiCacheSync, (event, args) => {
-  const { api, query } = args
-  const data = cache.get(api, query)
-  event.returnValue = data
-})
+function initOtherIpcMain() {
+  /**
+   * 清除API缓存
+   */
+  on(IpcChannels.ClearAPICache, () => {
+    db.truncate(Tables.Track)
+    db.truncate(Tables.Album)
+    db.truncate(Tables.Artist)
+    db.truncate(Tables.Playlist)
+    db.truncate(Tables.ArtistAlbum)
+    db.truncate(Tables.AccountData)
+    db.truncate(Tables.Audio)
+    db.vacuum()
+  })
 
-/**
- * 缓存封面颜色
- */
-on(IpcChannels.CacheCoverColor, (event, args) => {
-  const { id, color } = args
-  cache.set(APIs.CoverColor, { id, color })
-})
+  /**
+   * Get API cache
+   */
+  on(IpcChannels.GetApiCacheSync, (event, args) => {
+    const { api, query } = args
+    const data = cache.get(api, query)
+    event.returnValue = data
+  })
 
-/**
- * 导出tables到json文件，方便查看table大小（dev环境）
- */
-if (process.env.NODE_ENV === 'development') {
-  on(IpcChannels.DevDbExportJson, () => {
-    const tables = [
-      Tables.ArtistAlbum,
-      Tables.Playlist,
-      Tables.Album,
-      Tables.Track,
-      Tables.Artist,
-      Tables.Audio,
-      Tables.AccountData,
-      Tables.Lyric,
-    ]
-    tables.forEach(table => {
-      const data = db.findAll(table)
+  /**
+   * 缓存封面颜色
+   */
+  on(IpcChannels.CacheCoverColor, (event, args) => {
+    const { id, color } = args
+    cache.set(APIs.CoverColor, { id, color })
+  })
 
-      fs.writeFile(`./tmp/${table}.json`, JSON.stringify(data), function (err) {
-        if (err) {
-          return console.log(err)
-        }
-        console.log('The file was saved!')
+  /**
+   * 导出tables到json文件，方便查看table大小（dev环境）
+   */
+  if (process.env.NODE_ENV === 'development') {
+    on(IpcChannels.DevDbExportJson, () => {
+      const tables = [
+        Tables.ArtistAlbum,
+        Tables.Playlist,
+        Tables.Album,
+        Tables.Track,
+        Tables.Artist,
+        Tables.Audio,
+        Tables.AccountData,
+        Tables.Lyric,
+      ]
+      tables.forEach(table => {
+        const data = db.findAll(table)
+
+        fs.writeFile(
+          `./tmp/${table}.json`,
+          JSON.stringify(data),
+          function (err) {
+            if (err) {
+              return console.log(err)
+            }
+            console.log('The file was saved!')
+          }
+        )
       })
     })
-  })
+  }
 }
