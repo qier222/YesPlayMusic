@@ -35,14 +35,14 @@ function setTitle(track) {
     ? `${track.name} · ${track.ar[0].name} - YesPlayMusic`
     : 'YesPlayMusic';
   if (isCreateTray) {
-    ipcRenderer.send('updateTrayTooltip', document.title);
+    ipcRenderer?.send('updateTrayTooltip', document.title);
   }
   store.commit('updateTitle', document.title);
 }
 
 function setTrayLikeState(isLiked) {
   if (isCreateTray) {
-    ipcRenderer.send('updateTrayLikeState', isLiked);
+    ipcRenderer?.send('updateTrayLikeState', isLiked);
   }
 }
 
@@ -223,7 +223,7 @@ export default class {
   _setPlaying(isPlaying) {
     this._playing = isPlaying;
     if (isCreateTray) {
-      ipcRenderer.send('updateTrayPlayState', this._playing);
+      ipcRenderer?.send('updateTrayPlayState', this._playing);
     }
   }
   _setIntervals() {
@@ -235,7 +235,7 @@ export default class {
       this._progress = this._howler.seek();
       localStorage.setItem('playerCurrentTrackTime', this._progress);
       if (isCreateMpris) {
-        ipcRenderer.send('playerCurrentTrackTime', this._progress);
+        ipcRenderer?.send('playerCurrentTrackTime', this._progress);
       }
     }, 1000);
   }
@@ -561,7 +561,7 @@ export default class {
 
     navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
     if (isCreateMpris) {
-      ipcRenderer.send('metadata', metadata);
+      ipcRenderer?.send('metadata', metadata);
     }
   }
   _updateMediaSessionPositionState() {
@@ -617,7 +617,7 @@ export default class {
     }
     let copyTrack = { ...track };
     copyTrack.dt -= seekTime * 1000;
-    ipcRenderer.send('playDiscordPresence', copyTrack);
+    ipcRenderer?.send('playDiscordPresence', copyTrack);
   }
   _pauseDiscordPresence(track) {
     if (
@@ -626,7 +626,7 @@ export default class {
     ) {
       return null;
     }
-    ipcRenderer.send('pauseDiscordPresence', track);
+    ipcRenderer?.send('pauseDiscordPresence', track);
   }
 
   currentTrackID() {
@@ -867,7 +867,7 @@ export default class {
   sendSelfToIpcMain() {
     if (process.env.IS_ELECTRON !== true) return false;
     let liked = store.state.liked.songs.includes(this.currentTrack.id);
-    ipcRenderer.send('player', {
+    ipcRenderer?.send('player', {
       playing: this.playing,
       likedCurrentTrack: liked,
     });
@@ -883,13 +883,13 @@ export default class {
       this.repeatMode = 'on';
     }
     if (isCreateMpris) {
-      ipcRenderer.send('switchRepeatMode', this.repeatMode);
+      ipcRenderer?.send('switchRepeatMode', this.repeatMode);
     }
   }
   switchShuffle() {
     this.shuffle = !this.shuffle;
     if (isCreateMpris) {
-      ipcRenderer.send('switchShuffle', this.shuffle);
+      ipcRenderer?.send('switchShuffle', this.shuffle);
     }
   }
   switchReversed() {

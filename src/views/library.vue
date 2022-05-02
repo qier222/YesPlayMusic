@@ -269,7 +269,7 @@ export default {
       // Pick 3 or fewer lyrics based on the lyric lines.
       const lyricsToPick = Math.min(lyricLine.length, 3);
 
-      // The upperbound of the lyric line to pick
+      // The upperBound of the lyric line to pick
       const randomUpperBound = lyricLine.length - lyricsToPick;
       const startLyricLineIndex = randomNum(0, randomUpperBound - 1);
 
@@ -294,7 +294,8 @@ export default {
     playHistoryList() {
       if (this.show && this.playHistoryMode === 'week') {
         return this.liked.playHistory.weekData;
-      } else if (this.show && this.playHistoryMode === 'all') {
+      }
+      if (this.show && this.playHistoryMode === 'all') {
         return this.liked.playHistory.allData;
       }
       return [];
