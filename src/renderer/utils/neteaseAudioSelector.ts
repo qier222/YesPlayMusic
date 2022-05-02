@@ -5,7 +5,7 @@ export enum AudioQualityTypes {
   Mid = '192Kbps',
   High = '320Kbps',
   SQ = 'SQ',
-  HiRes = 'Hi-Res',
+  HiRes = 'Hi - Res',
 }
 
 export interface NeteaseAudioSelecteResult {
@@ -60,4 +60,19 @@ export function SelectAudio(track: Track): NeteaseAudioSelecteResult {
     realBr,
     fetchParams: { id: track.id, br: getBr(quality) },
   }
+}
+
+export function GetQuality(
+  track: Track,
+  audioBr: number
+): AudioQualityTypes | null {
+  const datas = [
+    track.l?.br ?? 0,
+    track.m?.br ?? 0,
+    track.h?.br ?? 0,
+    track.sq?.br ?? 0,
+    track.hr?.br ?? 0,
+  ].map(br => Math.abs(br - audioBr))
+  const index = datas.indexOf(Math.min(...datas))
+  return index === -1 ? null : audioQualities[index]
 }

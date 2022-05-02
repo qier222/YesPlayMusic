@@ -13,7 +13,7 @@ import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
-import { SelectAudio } from '@/renderer/utils/neteaseAudioSelector'
+import { GetQuality, SelectAudio } from '@/renderer/utils/neteaseAudioSelector'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -46,6 +46,7 @@ export class Player {
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
   private _repeatMode: RepeatMode = RepeatMode.Off
+  private _audioQuality: string | null = null
 
   state: State = State.Initializing
   mode: Mode = Mode.TrackList
@@ -159,6 +160,10 @@ export class Player {
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
+  get audioQuality(): string | null {
+    return this._audioQuality
+  }
+
   private async _initFM() {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
 
@@ -189,13 +194,13 @@ export class Player {
    */
   private async _fetchAudioSource(trackID: TrackID) {
     const track = await this._fetchTrack(trackID)
-    if (!track) return { audio: null, id: 0, quality: null }
-    const { quality, fetchParams } = SelectAudio(track)
+    if (!track) return null
+    const { fetchParams } = SelectAudio(track)
     const response = await fetchAudioSourceWithReactQuery(fetchParams)
     return {
       audio: response.data?.[0]?.url,
       id: trackID,
-      quality,
+      quality: GetQuality(track, response.data?.[0]?.br),
     }
   }
 
@@ -221,12 +226,13 @@ export class Player {
    */
   private async _playAudio(autoplay: boolean = true) {
     this._progress = 0
-    const { audio, id } = await this._fetchAudioSource(this.trackID)
-    if (!audio) {
+    const source = await this._fetchAudioSource(this.trackID)
+    if (!source?.audio) {
       toast('无法播放此歌曲')
       this.nextTrack()
       return
     }
+    const { audio, id, quality } = source
     if (this.trackID !== id) return
     Howler.unload()
     const url = audio.includes('?')
@@ -242,6 +248,7 @@ export class Player {
     })
     _howler = howler
     window.howler = howler
+    this._audioQuality = quality
     if (autoplay) {
       this.play()
       this.state = State.Playing
