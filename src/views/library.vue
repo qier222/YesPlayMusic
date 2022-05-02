@@ -1,9 +1,11 @@
 <template>
   <div v-show="show" ref="library">
     <h1>
-      <img class="avatar" :src="data.user.avatarUrl | resizeImage" />{{
-        data.user.nickname
-      }}{{ $t('library.sLibrary') }}
+      <img
+        class="avatar"
+        :src="data.user.avatarUrl | resizeImage"
+        loading="lazy"
+      />{{ data.user.nickname }}{{ $t('library.sLibrary') }}
     </h1>
     <div class="section-one">
       <div class="liked-songs" @click="goToLikedSongsList">

@@ -17,7 +17,7 @@
         class="playlist"
         @click="addTrackToPlaylist(playlist.id)"
       >
-        <img :src="playlist.coverImgUrl | resizeImage(224)" />
+        <img :src="playlist.coverImgUrl | resizeImage(224)" loading="lazy" />
         <div class="info">
           <div class="title">{{ playlist.name }}</div>
           <div class="track-count">{{ playlist.trackCount }} 首</div>

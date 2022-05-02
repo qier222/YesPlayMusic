@@ -139,9 +139,12 @@
 
     <div v-if="isLikeSongsPage" class="user-info">
       <h1>
-        <img class="avatar" :src="data.user.avatarUrl | resizeImage" />{{
-          data.user.nickname
-        }}{{ $t('library.sLikedSongs') }}
+        <img
+          class="avatar"
+          :src="data.user.avatarUrl | resizeImage"
+          loading="lazy"
+        />
+        {{ data.user.nickname }}{{ $t('library.sLikedSongs') }}
       </h1>
       <div class="search-box-likepage" @click="searchInPlaylist()">
         <div class="container" :class="{ active: inputFocus }">
