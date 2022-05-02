@@ -31,7 +31,7 @@
     "test:types-shared": "tsc --noEmit --project src/shared/tsconfig.json",
     "netease": "npx NeteaseCloudMusicApi",
     "eslint": "eslint --ext .ts,.js ./",
-    "prettier": "prettier --write './**/*.{ts,js,tsx,jsx}'",
+    "prettier": "prettier --write ./**/*.{ts,js,tsx,jsx}",
     "analyze:css": "npx windicss-analysis",
     "analyze:js": "npm run build:renderer && open-cli bundle-stats-renderer.html"
   },

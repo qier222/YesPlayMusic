@@ -7,6 +7,7 @@ import fs from 'fs'
 import * as musicMetadata from 'music-metadata'
 import { APIs, APIsParams, APIsResponse } from '../shared/CacheAPIs'
 import { TablesStructures } from './db'
+import * as strtok3 from 'strtok3/lib/core'
 
 class Cache {
   constructor() {
@@ -247,8 +248,17 @@ class Cache {
     }
 
     const meta = await musicMetadata.parseBuffer(buffer)
-    const br =
-      meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0
+
+    let br = 0
+    if (meta?.format?.codec === 'OPUS') {
+      br = 165000
+    } else if (meta?.format?.lossless) {
+      // 如果是无损，meta 里拿到的 bitrate 和 netease API 传回的值不一致
+      // 自行计算 bitrate 以获得与 netease 一致的数据
+      Math.round((8 * strtok3.fromBuffer(buffer).fileInfo.size!) / meta.format.duration!)
+    } else {
+      br = meta.format.bitrate ?? 0
+    }
     const type =
       {
         'MPEG 1 Layer 3': 'mp3',
