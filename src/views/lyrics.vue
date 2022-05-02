@@ -225,7 +225,7 @@ import { formatTrackTime } from '@/utils/common';
 import { getLyric } from '@/api/track';
 import { lyricParser } from '@/utils/lyrics';
 import ButtonIcon from '@/components/ButtonIcon.vue';
-import * as Vibrant from 'node-vibrant';
+import * as Vibrant from 'node-vibrant/dist/vibrant.worker.min.js';
 import Color from 'color';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
 
@@ -431,13 +431,13 @@ export default {
     },
     getCoverColor() {
       if (this.settings.lyricsBackground !== true) return;
-      const cover = this.currentTrack.al?.picUrl + '?param=1024y1024';
+      const cover = this.currentTrack.al?.picUrl + '?param=256y256';
       Vibrant.from(cover, { colorCount: 1 })
         .getPalette()
         .then(palette => {
-          const orignColor = Color.rgb(palette.DarkMuted._rgb);
-          const color = orignColor.darken(0.1).rgb().string();
-          const color2 = orignColor.lighten(0.28).rotate(-30).rgb().string();
+          const originColor = Color.rgb(palette.DarkMuted._rgb);
+          const color = originColor.darken(0.1).rgb().string();
+          const color2 = originColor.lighten(0.28).rotate(-30).rgb().string();
           this.background = `linear-gradient(to top left, ${color}, ${color2})`;
         });
     },
