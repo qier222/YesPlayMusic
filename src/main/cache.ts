@@ -255,7 +255,7 @@ class Cache {
     } else if (meta?.format?.lossless) {
       // 如果是无损，meta 里拿到的 bitrate 和 netease API 传回的值不一致
       // 自行计算 bitrate 以获得与 netease 一致的数据
-      Math.round((8 * strtok3.fromBuffer(buffer).fileInfo.size!) / meta.format.duration!)
+      br = Math.round((8 * strtok3.fromBuffer(buffer).fileInfo.size!) / meta.format.duration!)
     } else {
       br = meta.format.bitrate ?? 0
     }
@@ -263,6 +263,7 @@ class Cache {
       {
         'MPEG 1 Layer 3': 'mp3',
         'Ogg Vorbis': 'ogg',
+        'MPEG-4/AAC': 'm4a',
         AAC: 'm4a',
         FLAC: 'flac',
         OPUS: 'opus',
