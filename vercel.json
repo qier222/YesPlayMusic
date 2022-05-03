@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://ncma.vercel.app/:match*"
+    }
+  ]
+}
