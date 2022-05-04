@@ -39,6 +39,15 @@ class Cache {
           updatedAt: Date.now(),
         }))
         db.upsertMany(Tables.Track, tracks)
+
+        if (data.privileges) {
+          const privileges = (data as FetchTracksResponse).privileges.map(t => ({
+            id: t.id,
+            json: JSON.stringify(t),
+            updatedAt: Date.now(),
+          }))
+          db.upsertMany(Tables.Privilege, privileges)
+        }
         break
       }
       case APIs.Album: {
@@ -132,6 +141,7 @@ class Cache {
         if (ids.includes(NaN)) return
 
         const tracksRaw = db.findMany(Tables.Track, ids)
+        const privilegesRaw = db.findMany(Tables.Privilege, ids)
 
         if (tracksRaw.length !== ids.length) {
           return
@@ -140,10 +150,14 @@ class Cache {
           const track = tracksRaw.find(t => t.id === Number(id)) as any
           return JSON.parse(track.json)
         })
+        const privileges = ids.map(id => {
+          const privilege = privilegesRaw.find(t => t.id === Number(id)) as any
+          return JSON.parse(privilege.json)
+        })
         return {
           code: 200,
           songs: tracks,
-          privileges: {},
+          privileges,
         }
       }
       case APIs.Album: {
@@ -275,7 +289,9 @@ class Cache {
     if (url.includes('migu.cn')) source = 'migu'
     if (url.includes('kuwo.cn')) source = 'kuwo'
     if (url.includes('bilivideo.com')) source = 'bilibili'
-    // TODO: missing kugou qq joox
+    if (url.includes('kugou.com')) source = 'kugou'
+    if (url.includes('qq.com')) source = 'qq'
+    // TODO: missing joox
 
     fs.writeFile(`${path}/${id}-${br}.${type}`, buffer, error => {
       if (error) {

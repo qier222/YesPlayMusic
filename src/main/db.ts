@@ -9,6 +9,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 export const enum Tables {
   Track = 'Track',
+  Privilege = "Privilege",
   Album = 'Album',
   Artist = 'Artist',
   Playlist = 'Playlist',
@@ -30,6 +31,7 @@ export interface TablesStructures {
   [Tables.Playlist]: CommonTableStructure
   [Tables.ArtistAlbum]: CommonTableStructure
   [Tables.Lyric]: CommonTableStructure
+  [Tables.Privilege]: CommonTableStructure
   [Tables.AccountData]: {
     id: string
     json: string

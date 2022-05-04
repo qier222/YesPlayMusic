@@ -121,6 +121,39 @@ declare interface Audio {
   sr: number
 }
 
+declare interface Privilege {
+  id: number
+  fee: number
+  payed: number
+  st: number
+  pl: number
+  dl: number
+  sp: number
+  cp: number
+  subp: number
+  cs: boolean
+  maxbr: number
+  fl: number
+  toast: boolean
+  flag: number
+  preSell: boolean
+  playMaxbr: number
+  downloadMaxbr: number
+  maxBrLevel: string
+  playMaxBrLevel: string
+  downloadMaxBrLevel: string
+  plLevel?: string
+  dlLevel?: string
+  flLevel?: string
+  rscl: unknown
+  freeTrialPrivilege: {
+    resConsumable: boolean
+    userConsumable: boolean
+    listenType?: string
+  }
+  chargeInfoList: unknown[]
+}
+
 declare interface Artist {
   alias: unknown[]
   id: number
