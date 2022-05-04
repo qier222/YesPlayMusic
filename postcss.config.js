@@ -2,7 +2,7 @@
 const { colord } = require('colord')
 const colors = require('tailwindcss/colors')
 
-const replaceBrandColorWithCssVar = () => {
+const replaceBrandColorWithCSSVar = () => {
   const blues = Object.entries(colors.blue).map(([key, value]) => {
     const c = colord(value).toRgb()
     return {
@@ -11,7 +11,7 @@ const replaceBrandColorWithCssVar = () => {
     }
   })
   return {
-    postcssPlugin: 'replaceBrandColorWithCssVar',
+    postcssPlugin: 'replaceBrandColorWithCSSVar',
     Declaration(decl) {
       let value = decl.value
       blues.forEach(blue => {
@@ -33,12 +33,12 @@ const replaceBrandColorWithCssVar = () => {
     },
   }
 }
-replaceBrandColorWithCssVar.postcss = true
+replaceBrandColorWithCSSVar.postcss = true
 
 module.exports = {
   plugins: [
     require('tailwindcss'),
     require('autoprefixer'),
-    replaceBrandColorWithCssVar,
+    replaceBrandColorWithCSSVar,
   ],
 }

@@ -35,10 +35,15 @@ const AccentColor = () => {
         {Object.entries(colors).map(([color, bg]) => (
           <div
             key={color}
-            className={classNames(bg, 'mr-2.5 h-5 w-5 rounded-full flex items-center justify-center')}
+            className={classNames(
+              bg,
+              'mr-2.5 flex h-5 w-5 items-center justify-center rounded-full'
+            )}
             onClick={() => changeColor(color)}
           >
-            {color === accentColor && <div className='bg-white h-1.5 w-1.5 rounded-full'></div>}
+            {color === accentColor && (
+              <div className='h-1.5 w-1.5 rounded-full bg-white'></div>
+            )}
           </div>
         ))}
       </div>
@@ -47,12 +52,12 @@ const AccentColor = () => {
 }
 
 const Theme = () => {
-  return  <div className='mt-4'>
-    <div className='mb-2 dark:text-white'>主题</div>
-    <div>
-      
+  return (
+    <div className='mt-4'>
+      <div className='mb-2 dark:text-white'>主题</div>
+      <div></div>
     </div>
-  </div>
+  )
 }
 
 const Appearance = () => {

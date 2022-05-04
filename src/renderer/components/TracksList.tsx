@@ -179,8 +179,6 @@ const TracksList = memo(
     isSkeleton?: boolean
     onTrackDoubleClick?: (trackID: number) => void
   }) => {
-    console.debug('Rendering TrackList.tsx TrackList')
-
     // Fake data when isLoading is true
     const skeletonTracks: Track[] = new Array(12).fill({})
 

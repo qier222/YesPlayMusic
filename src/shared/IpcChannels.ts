@@ -1,5 +1,6 @@
 import { APIs } from './CacheAPIs'
 import { RepeatMode } from './playerDataTypes'
+import { Store } from '@/shared/store'
 
 export const enum IpcChannels {
   ClearAPICache = 'clear-api-cache',
@@ -19,6 +20,7 @@ export const enum IpcChannels {
   Previous = 'previous',
   Like = 'like',
   Repeat = 'repeat',
+  SyncSettings = 'sync-settings',
 }
 
 // ipcMain.on params
@@ -51,6 +53,7 @@ export interface IpcChannelsParams {
   [IpcChannels.Repeat]: {
     mode: RepeatMode
   }
+  [IpcChannels.SyncSettings]: Store['settings']
 }
 
 // ipcRenderer.on params

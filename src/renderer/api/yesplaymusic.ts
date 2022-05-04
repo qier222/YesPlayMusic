@@ -12,7 +12,7 @@ const request: AxiosInstance = axios.create({
 
 export async function cacheAudio(id: number, audio: string) {
   const file = await axios.get(audio, { responseType: 'arraybuffer' })
-  if (file.status !== 200) return
+  if (file.status !== 200 && file.status !== 206) return
 
   const formData = new FormData()
   const blob = new Blob([file.data], { type: 'multipart/form-data' })

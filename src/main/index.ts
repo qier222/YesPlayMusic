@@ -15,19 +15,21 @@ import { initIpcMain } from './ipcMain'
 import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { createTaskbar, Thumbar } from './windowsTaskbar'
+import { Store as State, initialState } from '@/shared/store'
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
 const isLinux = process.platform === 'linux'
 const isDev = process.env.NODE_ENV === 'development'
 
-interface TypedElectronStore {
+export interface TypedElectronStore {
   window: {
     width: number
     height: number
     x?: number
     y?: number
   }
+  settings: State['settings']
 }
 
 class Main {
@@ -40,6 +42,7 @@ class Main {
         width: 1440,
         height: 960,
       },
+      settings: initialState.settings,
     },
   })
 
@@ -65,7 +68,7 @@ class Main {
       this.handleWindowEvents()
       this.createTray()
       this.createThumbar()
-      initIpcMain(this.win, this.tray, this.thumbar)
+      initIpcMain(this.win, this.tray, this.thumbar, this.store)
       this.initDevTools()
     })
   }
@@ -129,6 +132,51 @@ class Main {
       if (url.startsWith('https:')) shell.openExternal(url)
       return { action: 'deny' }
     })
+
+    this.disableCORS()
+  }
+
+  disableCORS() {
+    if (!this.win) return
+    function UpsertKeyValue(obj, keyToChange, value) {
+      const keyToChangeLower = keyToChange.toLowerCase()
+      for (const key of Object.keys(obj)) {
+        if (key.toLowerCase() === keyToChangeLower) {
+          // Reassign old key
+          obj[key] = value
+          // Done
+          return
+        }
+      }
+      // Insert at end instead
+      obj[keyToChange] = value
+    }
+
+    this.win.webContents.session.webRequest.onBeforeSendHeaders(
+      (details, callback) => {
+        const { requestHeaders, url } = details
+        UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*'])
+
+        if (url.includes('googlevideo.com')) {
+          requestHeaders['Sec-Fetch-Mode'] = 'no-cors'
+          requestHeaders['Sec-Fetch-Dest'] = 'audio'
+          requestHeaders['Range'] = 'bytes=0-'
+        }
+
+        callback({ requestHeaders })
+      }
+    )
+
+    this.win.webContents.session.webRequest.onHeadersReceived(
+      (details, callback) => {
+        const { responseHeaders } = details
+        UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*'])
+        UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*'])
+        callback({
+          responseHeaders,
+        })
+      }
+    )
   }
 
   handleWindowEvents() {

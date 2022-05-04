@@ -37,6 +37,7 @@ const options = {
     'electron',
     'NeteaseCloudMusicApi',
     'better-sqlite3',
+    '@unblockneteasemusic/rust-napi'
   ],
 }
 

@@ -86,7 +86,9 @@ const Header = ({
     return formatDuration(duration, 'zh-CN', 'hh[hr] mm[min]')
   }, [album?.songs])
 
-  const [isCoverError, setCoverError] = useState(coverUrl.includes('3132508627578625'))
+  const [isCoverError, setCoverError] = useState(
+    coverUrl.includes('3132508627578625')
+  )
 
   const { data: userAlbums } = useUserAlbums()
   const isThisAlbumLiked = useMemo(() => {
@@ -136,7 +138,7 @@ const Header = ({
             coverUrl && (
               <img
                 src={coverUrl}
-                className='rounded-2xl border w-full border-b-0 border-black border-opacity-5 dark:border-white dark:border-opacity-5'
+                className='w-full rounded-2xl border border-b-0 border-black border-opacity-5 dark:border-white dark:border-opacity-5'
                 onError={() => setCoverError(true)}
               />
             )
