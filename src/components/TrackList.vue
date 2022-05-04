@@ -226,9 +226,11 @@ export default {
       }
     },
     play() {
+      if (this.player._isPersonalFM) this.player._isPersonalFM = false;
       this.player.addTrackToPlayNext(this.rightClickedTrack.id, true);
     },
     addToQueue() {
+      if (this.player._isPersonalFM) this.player._isPersonalFM = false;
       this.player.addTrackToPlayNext(this.rightClickedTrack.id);
     },
     like() {
