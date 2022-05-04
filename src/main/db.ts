@@ -9,7 +9,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 export const enum Tables {
   Track = 'Track',
-  Privilege = "Privilege",
+  Privilege = 'Privilege',
   Album = 'Album',
   Artist = 'Artist',
   Playlist = 'Playlist',
