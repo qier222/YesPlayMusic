@@ -1,5 +1,5 @@
 import { app, dialog, globalShortcut, ipcMain } from 'electron';
-import match from '@unblockneteasemusic/server';
+import UNM from '@unblockneteasemusic/rust-napi';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
 import shortcuts from '@/utils/shortcuts';
@@ -88,10 +88,10 @@ function toBuffer(data) {
 }
 
 /**
- * Get the file URI from bilivideo.
+ * Get the file base64 data from bilivideo.
  *
  * @param {string} url The URL to fetch.
- * @returns {Promise<string>} The file URI.
+ * @returns {Promise<string>} The file base64 data.
  */
 async function getBiliVideoFile(url) {
   const axios = await import('axios').then(m => m.default);
@@ -106,61 +106,97 @@ async function getBiliVideoFile(url) {
   const buffer = toBuffer(response.data);
   const encodedData = buffer.toString('base64');
 
-  return `data:application/octet-stream;base64,${encodedData}`;
+  return encodedData;
 }
 
 /**
  * Parse the source string (`a, b`) to source list `['a', 'b']`.
  *
+ * @param {import("@unblockneteasemusic/rust-napi").Executor} executor
  * @param {string} sourceString The source string.
  * @returns {string[]} The source list.
  */
-function parseSourceStringToList(sourceString) {
-  return sourceString.split(',').map(s => s.trim());
+function parseSourceStringToList(executor, sourceString) {
+  const availableSource = executor.list();
+
+  return sourceString
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(s => {
+      const isAvailable = availableSource.includes(s);
+
+      if (!isAvailable) {
+        log(`This source is not one of the supported source: ${s}`);
+      }
+
+      return isAvailable;
+    });
 }
 
 export function initIpcMain(win, store, trayEventEmitter) {
-  ipcMain.handle('unblock-music', async (_, track, source) => {
-    // 兼容 unblockneteasemusic 所使用的 api 字段
-    track.alias = track.alia || [];
-    track.duration = track.dt || 0;
-    track.album = track.al || [];
-    track.artists = track.ar || [];
+  // WIP: Do not enable logging as it has some issues in non-blocking I/O environment.
+  // UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
+  const unmExecutor = new UNM.Executor();
 
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject('timeout');
-      }, 5000);
-    });
+  ipcMain.handle(
+    'unblock-music',
+    /**
+     *
+     * @param {*} _
+     * @param {string | null} sourceListString
+     * @param {Record<string, any>} ncmTrack
+     * @param {UNM.Context} context
+     */
+    async (_, sourceListString, ncmTrack, context) => {
+      // Formt the track input
+      // FIXME: Figure out the structure of Track
+      const song = {
+        id: ncmTrack.id && ncmTrack.id.toString(),
+        name: ncmTrack.name,
+        duration: ncmTrack.dt,
+        album: ncmTrack.al && {
+          id: ncmTrack.al.id && ncmTrack.al.id.toString(),
+          name: ncmTrack.al.name,
+        },
+        artists: ncmTrack.ar
+          ? ncmTrack.ar.map(({ id, name }) => ({
+              id: id && id.toString(),
+              name,
+            }))
+          : [],
+      };
 
-    const sourceList =
-      typeof source === 'string' ? parseSourceStringToList(source) : null;
-    log(`[UNM] using source: ${sourceList || '<default>'}`);
+      const sourceList =
+        typeof sourceListString === 'string'
+          ? parseSourceStringToList(unmExecutor, sourceListString)
+          : ['migu', 'ytdl', 'bilibili', 'pyncm', 'kugou'];
+      log(`[UNM] using source: ${sourceList.join(', ')}`);
+      log(`[UNM] using configuration: ${JSON.stringify(context)}`);
 
-    try {
-      const matchedAudio = await Promise.race([
+      try {
         // TODO: tell users to install yt-dlp.
-        // we passed "null" to source, to let UNM choose the default source.
-        match(track.id, sourceList, track),
-        timeoutPromise,
-      ]);
+        const matchedAudio = await unmExecutor.search(
+          sourceList,
+          song,
+          context
+        );
+        const retrievedSong = await unmExecutor.retrieve(matchedAudio, context);
 
-      if (!matchedAudio || !matchedAudio.url) {
-        throw new Error('no such a song found');
+        // bilibili's audio file needs some special treatment
+        if (retrievedSong.url.includes('bilivideo.com')) {
+          retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
+        }
+
+        log(`respond with retrieve song…`);
+        log(JSON.stringify(matchedAudio));
+        return retrievedSong;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
+        log(`UnblockNeteaseMusic failed: ${errorMessage}`);
+        return null;
       }
-
-      // bilibili's audio file needs some special treatment
-      if (matchedAudio.url.includes('bilivideo.com')) {
-        matchedAudio.url = await getBiliVideoFile(matchedAudio.url);
-      }
-
-      return matchedAudio;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
-      log(`UnblockNeteaseMusic failed: ${errorMessage}`);
-      return null;
     }
-  });
+  );
 
   ipcMain.on('close', e => {
     if (isMac) {
@@ -186,9 +222,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
   });
 
   ipcMain.on('maximizeOrUnmaximize', () => {
-    const isMaximized = win.isMaximized();
-    isMaximized ? win.unmaximize() : win.maximize();
-    win.webContents.send('isMaximized', isMaximized);
+    win.isMaximized() ? win.unmaximize() : win.maximize();
   });
 
   ipcMain.on('settings', (event, options) => {

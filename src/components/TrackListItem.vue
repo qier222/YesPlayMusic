@@ -10,6 +10,7 @@
     <img
       v-if="!isAlbum"
       :src="imgUrl"
+      loading="lazy"
       :class="{ hover: focus }"
       @click="goToAlbum"
     />
@@ -208,6 +209,7 @@ export default {
 
   methods: {
     goToAlbum() {
+      if (this.track.al.id === 0) return;
       this.$router.push({ path: '/album/' + this.track.al.id });
     },
     playTrack() {
@@ -272,7 +274,6 @@ button {
   }
 
   .explicit-symbol.before-artist {
-    margin-right: 2px;
     .svg-icon {
       margin-bottom: -3px;
     }
@@ -364,6 +365,11 @@ button {
     opacity: 0.88;
     color: var(--color-text);
   }
+  .count {
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 22px;
+  }
 }
 
 .track.focus {
@@ -425,7 +431,8 @@ button {
   }
   .title .featured,
   .artist,
-  .explicit-symbol {
+  .explicit-symbol,
+  .count {
     color: var(--color-primary);
     opacity: 0.88;
   }

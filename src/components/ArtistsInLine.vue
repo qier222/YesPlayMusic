@@ -2,11 +2,13 @@
   <span class="artist-in-line">
     {{ computedPrefix }}
     <span v-for="(ar, index) in filteredArtists" :key="index">
-      <router-link v-if="ar.id !== 0" :to="`/artist/${ar.id}`">
-        {{ ar.name }}
-      </router-link>
+      <router-link v-if="ar.id !== 0" :to="`/artist/${ar.id}`">{{
+        ar.name
+      }}</router-link>
       <span v-else>{{ ar.name }}</span>
-      <span v-if="index !== filteredArtists.length - 1">, </span>
+      <span v-if="index !== filteredArtists.length - 1" class="separator"
+        >,</span
+      >
     </span>
   </span>
 </template>
@@ -40,4 +42,12 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.separator {
+  /* make separator distinct enough in long list */
+  margin-left: 1px;
+  margin-right: 4px;
+  position: relative;
+  top: 0.5px;
+}
+</style>

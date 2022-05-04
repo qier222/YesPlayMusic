@@ -25,6 +25,8 @@ export default {
     this.svgStyle = {
       height: this.size + 'px',
       width: this.size + 'px',
+      position: 'relative',
+      left: '-1px',
     };
   },
 };

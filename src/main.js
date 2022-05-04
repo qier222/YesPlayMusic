@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueAnalytics from 'vue-analytics';
+import VueGtag from 'vue-gtag';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -28,10 +28,13 @@ console.log(
   'background:unset;color:unset;'
 );
 
-Vue.use(VueAnalytics, {
-  id: 'UA-180189423-1',
-  router,
-});
+Vue.use(
+  VueGtag,
+  {
+    config: { id: 'G-KMJJCFZDKF' },
+  },
+  router
+);
 Vue.config.productionTip = false;
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
