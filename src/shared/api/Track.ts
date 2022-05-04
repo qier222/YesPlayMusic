@@ -11,9 +11,7 @@ export interface FetchTracksParams {
 export interface FetchTracksResponse {
   code: number
   songs: Track[]
-  privileges: {
-    [key: string]: unknown
-  }
+  privileges: Privilege[]
 }
 
 // 获取音源URL
@@ -49,6 +47,12 @@ export interface FetchAudioSourceResponse {
     uf: null
     url: string | null
     urlSource: number
+    source?: string
+    unm?: {
+      source: string
+      song?: any
+      biliData?: string //base64
+    }
   }[]
 }
 

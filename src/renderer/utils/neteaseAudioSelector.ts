@@ -10,9 +10,9 @@ export enum AudioQualityTypes {
 
 export interface NeteaseAudioSelecteResult {
   /** 音质 */
-  quality: AudioQualityTypes
+  quality?: AudioQualityTypes
   /** 音源的实际比特率 */
-  realBr: number
+  realBr?: number
   /** 获取音源使用的参数 */
   fetchParams: FetchAudioSourceParams
 }
@@ -40,39 +40,57 @@ const audioQualities = [
   AudioQualityTypes.HiRes,
 ]
 
-export function SelectAudio(track: Track): NeteaseAudioSelecteResult {
-  const brs = [
-    track.l?.br ?? 0,
-    track.m?.br ?? 0,
-    track.h?.br ?? 0,
-    track.sq?.br ?? 0,
-    track.hr?.br ?? 0,
-  ]
-
-  const limitQuality = AudioQualityTypes.HiRes // TODO: 用户设置最大音质
-  const realBr = Math.max(
-    ...brs.slice(0, audioQualities.indexOf(limitQuality) + 1)
-  )
-  const quality = audioQualities[brs.indexOf(realBr)]
-
-  return {
-    quality,
-    realBr,
-    fetchParams: { id: track.id, br: getBr(quality) },
+export class NeteaseAudioSelector {
+  private _track: Track
+  private _privilege: Privilege | null // TODO: 用于之后判断登陆的用户是否可以播放
+  constructor(track: Track, privilege: Privilege | null) {
+    this._track = track
+    this._privilege = privilege?.id === track.id ? privilege : null
   }
-}
 
-export function GetQuality(
-  track: Track,
-  audioBr: number
-): AudioQualityTypes | null {
-  const datas = [
-    track.l?.br ?? 0,
-    track.m?.br ?? 0,
-    track.h?.br ?? 0,
-    track.sq?.br ?? 0,
-    track.hr?.br ?? 0,
-  ].map(br => Math.abs(br - audioBr))
-  const index = datas.indexOf(Math.min(...datas))
-  return index === -1 ? null : audioQualities[index]
+  private _getBrs(): number[] {
+    return [
+      this._track.l?.br ?? 0,
+      this._track.m?.br ?? 0,
+      this._track.h?.br ?? 0,
+      this._track.sq?.br ?? 0,
+      this._track.hr?.br ?? 0,
+    ]
+  }
+
+  selectAudio(): NeteaseAudioSelecteResult {
+    const limitQuality = AudioQualityTypes.HiRes // TODO: 用户设置最大音质
+    if (this._track.noCopyrightRcmd) {
+      return {
+        fetchParams: {
+          id: this._track.id,
+          br: getBr(limitQuality),
+        },
+      }
+    }
+
+    const brs = this._getBrs()
+    const realBr = Math.max(
+      ...brs.slice(0, audioQualities.indexOf(limitQuality) + 1)
+    )
+    const quality =
+      realBr === 0 ? limitQuality : audioQualities[brs.indexOf(realBr)]
+
+    return {
+      quality,
+      realBr,
+      fetchParams: {
+        id: this._track.id,
+        br: getBr(quality),
+      },
+    }
+  }
+
+  getQuality(audioBr: number): AudioQualityTypes | null {
+    if (this._track.noCopyrightRcmd) return null
+
+    const datas = this._getBrs().map(br => Math.abs(br - audioBr))
+    const index = datas.indexOf(Math.min(...datas))
+    return audioQualities[index]
+  }
 }

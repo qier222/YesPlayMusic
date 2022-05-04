@@ -5,7 +5,7 @@ import {
 } from '@/renderer/hooks/useTracks'
 import { fetchPersonalFMWithReactQuery } from '@/renderer/hooks/usePersonalFM'
 import { fmTrash } from '@/renderer/api/personalFM'
-import { cacheAudio } from '@/renderer/api/yesplaymusic'
+import { cacheAudio, cacheAudioWithBuffer } from '@/renderer/api/yesplaymusic'
 import { clamp } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
@@ -13,7 +13,8 @@ import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/renderer/hooks/useAlbum'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
-import { GetQuality, SelectAudio } from '@/renderer/utils/neteaseAudioSelector'
+import { NeteaseAudioSelector } from '@/renderer/utils/neteaseAudioSelector'
+import { decode as base642Buffer } from '@/renderer/utils/base64'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -39,6 +40,8 @@ export enum State {
 const PLAY_PAUSE_FADE_DURATION = 200
 
 let _howler = new Howl({ src: [''], format: ['mp3', 'flac'] })
+let _createdBlobRecords: string[] = []
+
 export class Player {
   private _track: Track | null = null
   private _trackIndex: number = 0
@@ -168,7 +171,7 @@ export class Player {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
 
     const trackId = this.fmTrackList[0]
-    const track = await this._fetchTrack(trackId)
+    const { track } = await this._fetchTrack(trackId)
     if (track) this.fmTrack = track
 
     this._loadMoreFMTracks()
@@ -185,7 +188,12 @@ export class Player {
    */
   private async _fetchTrack(trackID: TrackID) {
     const response = await fetchTracksWithReactQuery({ ids: [trackID] })
-    return response?.songs?.length ? response.songs[0] : null
+    const track = response?.songs?.length ? response.songs[0] : null
+    const privilege = response?.privileges?.length ? response.privileges[0] : null
+    return {
+      track,
+      privilege: privilege && track?.id === privilege.id ? privilege : null
+    }
   }
 
   /**
@@ -193,14 +201,21 @@ export class Player {
    * @param {TrackID} trackID
    */
   private async _fetchAudioSource(trackID: TrackID) {
-    const track = await this._fetchTrack(trackID)
+    const { track, privilege } = await this._fetchTrack(trackID)
     if (!track) return null
-    const { fetchParams } = SelectAudio(track)
+    const ncmSelector = new NeteaseAudioSelector(track, privilege)
+    const { fetchParams } = ncmSelector.selectAudio()
     const response = await fetchAudioSourceWithReactQuery(fetchParams)
+    const audioSource =
+      response.data?.[0]?.unm?.source || response.data?.[0].source
     return {
       audio: response.data?.[0]?.url,
       id: trackID,
-      quality: GetQuality(track, response.data?.[0]?.br),
+      quality:
+        audioSource && audioSource !== 'netease'
+          ? `unm - ${audioSource}`
+          : ncmSelector.getQuality(response.data?.[0]?.br),
+      biliData: response.data?.[0]?.unm?.biliData,
     }
   }
 
@@ -211,7 +226,7 @@ export class Player {
     const id = this.trackID
     if (!id) return
     this.state = State.Loading
-    const track = await this._fetchTrack(id)
+    const { track } = await this._fetchTrack(id)
     if (!track) {
       toast('加载歌曲信息失败')
       return
@@ -226,18 +241,29 @@ export class Player {
    */
   private async _playAudio(autoplay: boolean = true) {
     this._progress = 0
-    const source = await this._fetchAudioSource(this.trackID)
-    if (!source?.audio) {
+    const audioSource = await this._fetchAudioSource(this.trackID)
+    if (!audioSource?.audio) {
       toast('无法播放此歌曲')
       this.nextTrack()
       return
     }
-    const { audio, id, quality } = source
+    const { audio, id, quality, biliData } = audioSource
     if (this.trackID !== id) return
     Howler.unload()
-    const url = audio.includes('?')
-      ? `${audio}&ypm-id=${id}`
-      : `${audio}?ypm-id=${id}`
+    for (const url in _createdBlobRecords) {
+      URL.revokeObjectURL(url)
+    }
+    _createdBlobRecords = []
+    let url = ''
+    if (biliData) {
+      const buffer = base642Buffer(biliData)
+      url = URL.createObjectURL(new Blob([buffer]))
+      _createdBlobRecords = [url]
+    } else {
+      url = audio.includes('?')
+        ? `${audio}&ypm-id=${id}`
+        : `${audio}?ypm-id=${id}`
+    }
     const howler = new Howl({
       src: [url],
       format: ['mp3', 'flac', 'webm'],
@@ -254,7 +280,12 @@ export class Player {
       this.state = State.Playing
     }
     _howler.once('load', () => {
-      this._cacheAudio((_howler as any)._src)
+      const src = (_howler as any)._src
+      if (biliData) {
+        this._cacheAudio(audio, id, base642Buffer(biliData))
+      } else {
+        this._cacheAudio(src)
+      }
     })
 
     if (!this._progressInterval) {
@@ -271,17 +302,21 @@ export class Player {
     }
   }
 
-  private _cacheAudio(audio: string) {
+  private _cacheAudio(audio: string, id?: number, audioData?: ArrayBuffer) {
     if (audio.includes('yesplaymusic')) return
-    const id = Number(new URL(audio).searchParams.get('ypm-id'))
+    id = id ?? Number(new URL(audio).searchParams.get('ypm-id'))
     if (isNaN(id) || !id) return
-    cacheAudio(id, audio)
+    if (audioData) {
+      cacheAudioWithBuffer(id, audio, audioData)
+    } else {
+      cacheAudio(id, audio)
+    }
   }
 
   private async _nextFMTrack() {
     const prefetchNextTrack = async () => {
       const prefetchTrackID = this.fmTrackList[1]
-      const track = await this._fetchTrack(prefetchTrackID)
+      const { track } = await this._fetchTrack(prefetchTrackID)
       if (track?.al.picUrl) {
         axios.get(resizeImage(track.al.picUrl, 'md'))
         axios.get(resizeImage(track.al.picUrl, 'xs'))

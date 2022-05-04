@@ -11,9 +11,26 @@ import { app } from 'electron'
 import type { FetchAudioSourceResponse } from '@/shared/api/Track'
 import UNM from '@unblockneteasemusic/rust-napi'
 import { APIs as CacheAPIs } from '../shared/CacheAPIs'
+import axios from 'axios'
 
 const isDev = process.env.NODE_ENV === 'development'
 const isProd = process.env.NODE_ENV === 'production'
+
+async function getBiliVideo(url: string) {
+  const toBuffer = (data: any) =>
+    data instanceof Buffer ? data : Buffer.from(data)
+
+  const response = await axios.get(url, {
+    headers: {
+      Referer: 'https://www.bilibili.com/',
+      'User-Agent': 'okhttp/3.4.1',
+    },
+    responseType: 'arraybuffer',
+  })
+
+  const buffer = toBuffer(response.data)
+  return buffer.toString('base64')
+}
 
 class Server {
   port = Number(
@@ -180,7 +197,7 @@ class Server {
       }
 
       const sourceList = ['ytdl']
-      const context = {}
+      const context: UNM.Context = {}
       const matchedAudio = await unmExecutor.search(
         sourceList,
         trackForUNM,
@@ -189,6 +206,10 @@ class Server {
       const retrievedSong = await unmExecutor.retrieve(matchedAudio, context)
       const source =
         retrievedSong.source === 'ytdl' ? 'youtube' : retrievedSong.source
+      const biliData =
+        retrievedSong.source === 'bilibili'
+          ? await getBiliVideo(retrievedSong.url)
+          : null
       if (retrievedSong.url) {
         return {
           data: [
@@ -226,6 +247,7 @@ class Server {
               unm: {
                 source,
                 song: matchedAudio.song,
+                biliData,
               },
             },
           ],
@@ -243,21 +265,25 @@ class Server {
         })
       }
 
-      // try {
-      //   const fromCache = await getFromCache(id)
-      //   if (fromCache) {
-      //     res.status(200).send(fromCache)
-      //     return
-      //   }
-      // } catch (error) {
-      //   log.error(`[server] getFromCache failed: ${String(error)}`)
-      // }
+      try {
+        const fromCache = getFromCache(id)
+        if (fromCache) {
+          res.status(200).send(fromCache)
+          return
+        }
+      } catch (error) {
+        log.error(`[server] getFromCache failed: ${String(error)}`)
+      }
 
-      // const fromNetease = await getFromNetease(req)
-      // if (fromNetease?.code === 200 && !fromNetease?.data?.[0].freeTrialInfo) {
-      //   res.status(200).send(fromNetease)
-      //   return
-      // }
+      const fromNetease = await getFromNetease(req)
+      if (
+        fromNetease?.code === 200 &&
+        fromNetease?.data?.[0]?.url &&
+        !fromNetease?.data?.[0].freeTrialInfo
+      ) {
+        res.status(200).send(fromNetease)
+        return
+      }
 
       try {
         const fromUNM = await getFromUNM(id, req)
