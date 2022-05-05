@@ -6,7 +6,7 @@ import {
 import { fetchPersonalFMWithReactQuery } from '@/renderer/hooks/usePersonalFM'
 import { fmTrash } from '@/renderer/api/personalFM'
 import { cacheAudio } from '@/renderer/api/yesplaymusic'
-import { clamp } from 'lodash-es'
+import { clamp, shuffle } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
 import { fetchPlaylistWithReactQuery } from '@/renderer/hooks/usePlaylist'
@@ -19,9 +19,9 @@ export enum TrackListSourceType {
   Album = 'album',
   Playlist = 'playlist',
 }
-interface TrackListSource {
-  type: TrackListSourceType
-  id: number
+export interface TrackListSource {
+  type: TrackListSourceType,
+  id: number,
 }
 export enum Mode {
   TrackList = 'trackList',
@@ -45,13 +45,14 @@ export class Player {
   private _progressInterval: ReturnType<typeof setInterval> | undefined
   private _volume: number = 1 // 0 to 1
   private _repeatMode: RepeatMode = RepeatMode.Off
+  private _shuffle: boolean = false
+  private _trackListSource: TrackListSource | null = null
 
   state: State = State.Initializing
   mode: Mode = Mode.TrackList
   trackList: TrackID[] = []
-  trackListSource: TrackListSource | null = null
   fmTrackList: TrackID[] = []
-  shuffle: boolean = false
+  shuffleList: TrackID[] = []
   fmTrack: Track | null = null
 
   init(params: { [key: string]: any }) {
@@ -59,12 +60,13 @@ export class Player {
     if (params._trackIndex) this._trackIndex = params._trackIndex
     if (params._volume) this._volume = params._volume
     if (params._repeatMode) this._repeatMode = params._repeatMode
+    if (params._shuffle) this._shuffle = params._shuffle
     if (params.state) this.trackList = params.state
     if (params.mode) this.mode = params.mode
     if (params.trackList) this.trackList = params.trackList
-    if (params.trackListSource) this.trackListSource = params.trackListSource
+    if (params._trackListSource) this._trackListSource = params._trackListSource
     if (params.fmTrackList) this.fmTrackList = params.fmTrackList
-    if (params.shuffle) this.shuffle = params.shuffle
+    if (params.shuffleList) this.shuffleList = params.shuffleList
     if (params.fmTrack) this.fmTrack = params.fmTrack
 
     this.state = State.Ready
@@ -115,8 +117,8 @@ export class Player {
    */
   get trackID(): TrackID {
     if (this.mode === Mode.TrackList) {
-      const { trackList, _trackIndex } = this
-      return trackList[_trackIndex] ?? 0
+      const currentList = this.shuffle ? this.shuffleList : this.trackList
+      return currentList[this._trackIndex] ?? 0
     }
     return this.fmTrackList[0] ?? 0
   }
@@ -156,6 +158,31 @@ export class Player {
   set repeatMode(value) {
     this._repeatMode = value
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
+  }
+
+  /**
+   * Get/Set shuffle Mode
+   */
+  get shuffle(): boolean {
+    return this._shuffle
+  }
+
+  set shuffle(value) {
+    console.log('[player] [shuffle value]', value)
+    if (value) {
+      this.playShuffle(this.trackList, this.trackID)
+    } else {
+      this._trackIndex = this.trackList.findIndex(t => t === this.trackID)
+      console.log('[player] [_trackIndex]', this._trackIndex, '\n [trackID]', this.trackID, this.trackList.toString())
+    }
+    this._shuffle = value
+  }
+
+  /**
+   * Get/Set current tracklist
+   */
+  get trackListSource(): TrackListSource | null {
+    return this._trackListSource
   }
 
   private async _initFM() {
@@ -389,6 +416,7 @@ export class Player {
     this._trackIndex = autoPlayTrackID
       ? list.findIndex(t => t === autoPlayTrackID)
       : 0
+    if (this._shuffle) this.playShuffle(list)
     this._playTrack()
   }
 
@@ -400,7 +428,7 @@ export class Player {
   async playPlaylist(playlistID: number, autoPlayTrackID?: null | number) {
     const playlist = await fetchPlaylistWithReactQuery({ id: playlistID })
     if (!playlist?.playlist?.trackIds?.length) return
-    this.trackListSource = {
+    this._trackListSource = {
       type: TrackListSourceType.Playlist,
       id: playlistID,
     }
@@ -418,7 +446,7 @@ export class Player {
   async playAlbum(albumID: number, autoPlayTrackID?: null | number) {
     const album = await fetchAlbumWithReactQuery({ id: albumID })
     if (!album?.songs?.length) return
-    this.trackListSource = {
+    this._trackListSource = {
       type: TrackListSourceType.Album,
       id: albumID,
     }
@@ -459,10 +487,21 @@ export class Player {
    * Play track in trackList by id
    */
   async playTrack(trackID: TrackID) {
-    const index = this.trackList.findIndex(t => t === trackID)
+    const currentList = this.shuffle ? this.shuffleList : this.trackList
+    const index = currentList.findIndex(t => t === trackID)
     if (!index) toast('播放失败，歌曲不在列表内')
     this._trackIndex = index
     this._playTrack()
+  }
+
+  playShuffle(list: TrackID[], trackID?: TrackID) {
+    if (trackID) {
+      const shuffled = shuffle(list.filter(t => t !== trackID))
+      this._trackIndex = 0
+      this.shuffleList = [trackID, ...shuffled]
+    } else {
+      this.shuffleList = shuffle(this.trackList)
+    }
   }
 }
 

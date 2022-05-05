@@ -137,6 +137,7 @@ const MediaControls = () => {
 
 const Others = () => {
   const playerSnapshot = useSnapshot(player)
+  const shuffleMode = useMemo(() => playerSnapshot.shuffle, [playerSnapshot.shuffle])
 
   const switchRepeatMode = () => {
     if (playerSnapshot.repeatMode === PlayerRepeatMode.Off) {
@@ -174,10 +175,10 @@ const Others = () => {
         />
       </IconButton>
       <IconButton
-        onClick={() => toast('施工中...')}
+        onClick={() => player.shuffle = !shuffleMode }
         disabled={playerSnapshot.mode === PlayerMode.FM}
       >
-        <SvgIcon className='h-6 w-6' name='shuffle' />
+        <SvgIcon className={classNames('h-6 w-6', playerSnapshot.shuffle && 'text-brand-500' )} name='shuffle' />
       </IconButton>
       <IconButton onClick={() => toast('施工中...')}>
         <SvgIcon className='h-6 w-6' name='volume' />
