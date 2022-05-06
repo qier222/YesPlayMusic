@@ -187,6 +187,7 @@
               :key="index"
               class="line"
               :class="{
+                leaveHighlight: index === highlightLyricIndex - 1,
                 highlight: highlightLyricIndex === index,
               }"
               @click="clickLyricLine(line.time)"
@@ -693,12 +694,10 @@ export default {
       padding: 12px 18px;
       transition: 0.5s;
       border-radius: 12px;
+      width: 81%;
 
       &:hover {
         background: var(--color-secondary-bg-for-transparent);
-      }
-      &:active {
-        transform: scale(0.95);
       }
 
       span {
@@ -722,18 +721,91 @@ export default {
       margin-top: 0.1em;
     }
 
+    @keyframes highlightAnimation {
+      0% {
+        width: 81%;
+      }
+      100% {
+        width: 90%;
+      }
+    }
+
+    @keyframes highlightLyricAnimation {
+      0% {
+        font-size: 0.9em;
+      }
+      100% {
+        font-size: 1em;
+      }
+    }
+
+    @keyframes highlightTranslationAnimation {
+      0% {
+        font-size: 0.825em;
+      }
+      100% {
+        font-size: calc(0.825em / 0.9);
+      }
+    }
+
     .highlight {
-      transform-origin: center left;
-      transform: scale(1.05);
+      animation: highlightAnimation 0.5s;
+      animation-fill-mode: forwards;
     }
 
     .highlight span {
       opacity: 0.98;
       display: inline-block;
+      animation: highlightLyricAnimation 0.5s;
+      animation-fill-mode: forwards;
     }
 
     .highlight span.translation {
       opacity: 0.65;
+      animation: highlightTranslationAnimation 0.5s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes leaveHighlightAnimation {
+      0% {
+        width: 90%;
+      }
+      100% {
+        width: 81%;
+      }
+    }
+
+    @keyframes leaveHighlightLyricAnimation {
+      0% {
+        font-size: 1em;
+      }
+      100% {
+        font-size: 0.9em;
+      }
+    }
+
+    @keyframes leaveHighlightTranslationAnimation {
+      0% {
+        font-size: calc(0.825em / 0.9);
+      }
+      100% {
+        font-size: 0.825em;
+      }
+    }
+
+    .leaveHighlight {
+      animation: leaveHighlightAnimation 0.5s;
+      animation-fill-mode: forwards;
+    }
+
+    .leaveHighlight span {
+      animation: leaveHighlightLyricAnimation 0.5s;
+      animation-fill-mode: forwards;
+    }
+
+    .leaveHighlight span.translation {
+      animation: leaveHighlightTranslationAnimation 0.5s;
+      animation-fill-mode: forwards;
     }
   }
 
