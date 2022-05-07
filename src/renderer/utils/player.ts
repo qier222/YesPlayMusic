@@ -15,18 +15,22 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
 
 type TrackID = number
+
 export enum TrackListSourceType {
   Album = 'album',
   Playlist = 'playlist',
 }
+
 export interface TrackListSource {
-  type: TrackListSourceType ,
-  id: number,
+  type: TrackListSourceType
+  id: number
 }
+
 export enum Mode {
   TrackList = 'trackList',
   FM = 'fm',
 }
+
 export enum State {
   Initializing = 'initializing',
   Ready = 'ready',
@@ -38,6 +42,7 @@ export enum State {
 const PLAY_PAUSE_FADE_DURATION = 200
 
 let _howler = new Howl({ src: [''], format: ['mp3', 'flac'] })
+
 export class Player {
   private _track: Track | null = null
   private _trackIndex: number = 0
@@ -134,6 +139,7 @@ export class Player {
   get progress(): number {
     return this.state === State.Loading ? 0 : this._progress
   }
+
   set progress(value) {
     this._progress = value
     _howler.seek(value)
@@ -145,6 +151,7 @@ export class Player {
   get volume(): number {
     return this._volume
   }
+
   set volume(value) {
     this._volume = clamp(value, 0, 1)
     Howler.volume(this._volume)
@@ -153,6 +160,7 @@ export class Player {
   get repeatMode(): RepeatMode {
     return this._repeatMode
   }
+
   set repeatMode(value) {
     this._repeatMode = value
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
@@ -474,5 +482,5 @@ export class Player {
 }
 
 if (import.meta.env.DEV) {
-  (window as any).howler = _howler
+  window.howler = _howler
 }

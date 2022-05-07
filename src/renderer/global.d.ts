@@ -1,5 +1,6 @@
 import { IpcChannelsParams, IpcChannelsReturns } from '@/shared/IpcChannels'
 import { ElectronLog } from 'electron-log'
+import type { Howl } from 'howler'
 
 export {}
 
@@ -22,6 +23,7 @@ declare global {
         ) => void
       ) => void
     }
+    howler: Howl
     env?: {
       isElectron: boolean
       isEnableTitlebar: boolean

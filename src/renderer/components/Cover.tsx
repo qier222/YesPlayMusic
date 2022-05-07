@@ -25,18 +25,12 @@ const Cover = ({
 }) => {
   const [isError, setIsError] = useState(imageUrl.includes('3132508627578625'))
   const playerSnapshot = useSnapshot(player)
-  const trackListSource = useMemo(
-    () => playerSnapshot.trackListSource,
-    [playerSnapshot.trackListSource]
-  )
-  const isThisCoverPlaying = useMemo(
-    () =>
-      playerSnapshot.mode === Mode.TrackList &&
-      coverInfo &&
-      coverInfo.type === trackListSource?.type &&
-      coverInfo.id === trackListSource?.id,
-    [playerSnapshot.mode, coverInfo, trackListSource?.type, trackListSource?.id]
-  )
+  const trackListSource = playerSnapshot.trackListSource
+  const isThisCoverPlaying =
+    playerSnapshot.mode === Mode.TrackList &&
+    coverInfo &&
+    coverInfo.type === trackListSource?.type &&
+    coverInfo.id === trackListSource?.id
   const isPlaying =
     isThisCoverPlaying &&
     [State.Playing, State.Loading].includes(playerSnapshot.state)
