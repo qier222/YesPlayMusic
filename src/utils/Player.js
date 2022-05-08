@@ -14,6 +14,15 @@ import { decode as base642Buffer } from '@/utils/base64';
 
 const PLAY_PAUSE_FADE_DURATION = 200;
 
+/**
+ * @readonly
+ * @enum {string}
+ */
+const UNPLAYABLE_CONDITION = {
+  PLAY_NEXT_TRACK: 'playNextTrack',
+  PLAY_PREV_TRACK: 'playPrevTrack',
+};
+
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
 const ipcRenderer =
@@ -333,6 +342,8 @@ export default class {
         const t = this.progress;
         this._replaceCurrentTrackAudio(this.currentTrack, false, false).then(
           replaced => {
+            // 如果 replaced 为 false，代表当前的 track 已经不是这里想要替换的track
+            // 此时则不修改当前的歌曲进度
             if (replaced) {
               this._howler?.seek(t);
               this.play();
@@ -472,7 +483,7 @@ export default class {
   _replaceCurrentTrack(
     id,
     autoplay = true,
-    ifUnplayableThen = 'playNextTrack'
+    ifUnplayableThen = UNPLAYABLE_CONDITION.PLAY_NEXT_TRACK
   ) {
     if (autoplay && this._currentTrack.name) {
       this._scrobble(this.currentTrack, this._howler?.seek());
@@ -489,11 +500,14 @@ export default class {
       );
     });
   }
+  /**
+   * @returns 是否成功加载音频，并使用加载完成的音频替换了howler实例
+   */
   _replaceCurrentTrackAudio(
     track,
     autoplay,
     isCacheNextTrack,
-    ifUnplayableThen = 'playNextTrack'
+    ifUnplayableThen = UNPLAYABLE_CONDITION.PLAY_NEXT_TRACK
   ) {
     return this._getAudioSource(track).then(source => {
       if (source) {
@@ -508,10 +522,19 @@ export default class {
         return replaced;
       } else {
         store.dispatch('showToast', `无法播放 ${track.name}`);
-        if (ifUnplayableThen === 'playNextTrack') {
-          this._playNextTrack(this.isPersonalFM);
-        } else {
-          this.playPrevTrack();
+        switch (ifUnplayableThen) {
+          case UNPLAYABLE_CONDITION.PLAY_NEXT_TRACK:
+            this._playNextTrack(this.isPersonalFM);
+            break;
+          case UNPLAYABLE_CONDITION.PLAY_PREV_TRACK:
+            this.playPrevTrack();
+            break;
+          default:
+            store.dispatch(
+              'showToast',
+              `undefined Unplayable condition: ${ifUnplayableThen}`
+            );
+            break;
         }
         return false;
       }
@@ -730,7 +753,11 @@ export default class {
     const [trackID, index] = this._getPrevTrack();
     if (trackID === undefined) return false;
     this.current = index;
-    this._replaceCurrentTrack(trackID, true, 'playPrevTrack');
+    this._replaceCurrentTrack(
+      trackID,
+      true,
+      UNPLAYABLE_CONDITION.PLAY_PREV_TRACK
+    );
     return true;
   }
   saveSelfToLocalStorage() {
