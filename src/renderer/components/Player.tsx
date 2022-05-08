@@ -17,10 +17,7 @@ const PlayingTrack = () => {
   const navigate = useNavigate()
   const snappedPlayer = useSnapshot(player)
   const track = useMemo(() => snappedPlayer.track, [snappedPlayer.track])
-  const trackListSource = useMemo(
-    () => snappedPlayer.trackListSource,
-    [snappedPlayer.trackListSource]
-  )
+  const trackListSource = snappedPlayer.trackListSource
 
   // Liked songs ids
   const { data: userLikedSongs } = useUserLikedTracksIDs()
@@ -137,7 +134,6 @@ const MediaControls = () => {
 
 const Others = () => {
   const playerSnapshot = useSnapshot(player)
-  const shuffleMode = useMemo(() => playerSnapshot.shuffle, [playerSnapshot.shuffle])
 
   const switchRepeatMode = () => {
     if (playerSnapshot.repeatMode === PlayerRepeatMode.Off) {
@@ -148,6 +144,7 @@ const Others = () => {
       player.repeatMode = PlayerRepeatMode.Off
     }
   }
+  const shuffleMode = playerSnapshot.shuffle
 
   return (
     <div className='flex items-center justify-end gap-2 pr-2 text-black dark:text-white'>
@@ -175,10 +172,16 @@ const Others = () => {
         />
       </IconButton>
       <IconButton
-        onClick={() => player.shuffle = !shuffleMode }
+        onClick={() => (player.shuffle = !shuffleMode)}
         disabled={playerSnapshot.mode === PlayerMode.FM}
       >
-        <SvgIcon className={classNames('h-6 w-6', playerSnapshot.shuffle && 'text-brand-500' )} name='shuffle' />
+        <SvgIcon
+          className={classNames(
+            'h-6 w-6',
+            shuffleMode && 'text-brand-500'
+          )}
+          name='shuffle'
+        />
       </IconButton>
       <IconButton onClick={() => toast('施工中...')}>
         <SvgIcon className='h-6 w-6' name='volume' />

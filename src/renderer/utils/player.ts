@@ -170,7 +170,7 @@ export class Player {
   set shuffle(value) {
     console.log('[player] [shuffle value]', value)
     if (value) {
-      this.playShuffle(this.trackList, this.trackID)
+      this.playShuffleList(this.trackList, this.trackID)
     } else {
       this._trackIndex = this.trackList.findIndex(t => t === this.trackID)
       console.log('[player] [_trackIndex]', this._trackIndex, '\n [trackID]', this.trackID, this.trackList.toString())
@@ -416,7 +416,7 @@ export class Player {
     this._trackIndex = autoPlayTrackID
       ? list.findIndex(t => t === autoPlayTrackID)
       : 0
-    if (this._shuffle) this.playShuffle(list)
+    if (this._shuffle) this.playShuffleList(list, autoPlayTrackID)
     this._playTrack()
   }
 
@@ -494,11 +494,14 @@ export class Player {
     this._playTrack()
   }
 
-  playShuffle(list: TrackID[], trackID?: TrackID) {
-    if (trackID) {
-      const shuffled = shuffle(list.filter(t => t !== trackID))
+  /**
+   * Play track in shuffled trackList by id
+   */
+  playShuffleList(list: TrackID[], autoPlayTrackID?: null | number ) {
+    if (autoPlayTrackID) {
+      const shuffled = shuffle(list.filter(t => t !== autoPlayTrackID))
       this._trackIndex = 0
-      this.shuffleList = [trackID, ...shuffled]
+      this.shuffleList = [autoPlayTrackID, ...shuffled]
     } else {
       this.shuffleList = shuffle(this.trackList)
     }
@@ -506,5 +509,5 @@ export class Player {
 }
 
 if (import.meta.env.DEV) {
-  ;(window as any).howler = _howler
+  window.howler = _howler
 }
