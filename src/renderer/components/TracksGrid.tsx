@@ -4,6 +4,25 @@ import { player } from '@/renderer/store'
 import { resizeImage } from '@/renderer/utils/common'
 import SvgIcon from './SvgIcon'
 
+const TrackCover = ({ picUrl }: { picUrl: string }) => {
+  const [isError, setIsError] = useState(false)
+  return (
+    <>
+      {isError ? (
+        <div className='box-content flex aspect-square h-9 w-9 items-center justify-center rounded-md border border-black border-opacity-5  bg-gray-800 text-gray-300 '>
+          <SvgIcon name='music-note' className='h-1/2 w-1/2' />
+        </div>
+      ) : (
+        <img
+          src={resizeImage(picUrl, 'xs')}
+          className='box-content h-9 w-9 rounded-md border border-black border-opacity-[.03]'
+          onError={() => setIsError(true)}
+        />
+      )}
+    </>
+  )
+}
+
 const Track = ({
   track,
   isSkeleton = false,
@@ -34,10 +53,7 @@ const Track = ({
           {isSkeleton ? (
             <Skeleton className='mr-4 h-9 w-9 rounded-md border border-gray-100' />
           ) : (
-            <img
-              src={resizeImage(track.al.picUrl, 'xs')}
-              className='box-content h-9 w-9 rounded-md border border-black border-opacity-[.03]'
-            />
+            <TrackCover picUrl={track.al.picUrl} />
           )}
         </div>
 

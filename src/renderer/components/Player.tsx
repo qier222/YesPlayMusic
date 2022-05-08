@@ -17,16 +17,13 @@ const PlayingTrack = () => {
   const [isCoverError, setIsCoverError] = useState(false)
   const navigate = useNavigate()
   const snappedPlayer = useSnapshot(player)
-
-  const track = useMemo(() => {
-    setIsCoverError(false)
-    return snappedPlayer.track
-  }, [snappedPlayer.track])
-
+  const track = snappedPlayer.track
   const trackListSource = useMemo(
     () => snappedPlayer.trackListSource,
     [snappedPlayer.trackListSource]
   )
+
+  useEffect(() => setIsCoverError(false), [track])
 
   // Liked songs ids
   const { data: userLikedSongs } = useUserLikedTracksIDs()

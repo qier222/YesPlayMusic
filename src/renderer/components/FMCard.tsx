@@ -61,19 +61,19 @@ const FMCard = () => {
   const navigate = useNavigate()
 
   const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.fmTrack, [playerSnapshot.fmTrack])
+  const track = playerSnapshot.fmTrack
 
   const bgColor = useCoverColor(track?.al?.picUrl ?? '', '#262626')
 
   return (
     <div
-      className='relative h-[198px] overflow-hidden p-4 rounded-2xl grid grid-cols-[166px_auto] gap-x-4 bg-gray-100 dark:bg-gray-800'
+      className='relative grid h-[198px] grid-cols-[166px_auto] gap-x-4 overflow-hidden rounded-2xl bg-gray-100 p-4 dark:bg-gray-800'
       style={{
         background: `linear-gradient(to bottom, ${bgColor.from}, ${bgColor.to})`,
       }}
     >
       <Cover
-        imageUrl={ resizeImage(track?.al?.picUrl ?? '', 'md')}
+        imageUrl={resizeImage(track?.al?.picUrl ?? '', 'md')}
         onClick={() => track?.al?.id && navigate(`/album/${track?.al?.id}`)}
         showHover={false}
         roundedClass='rounded-lg border-0'
