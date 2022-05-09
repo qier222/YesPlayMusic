@@ -72,7 +72,7 @@
       </div>
     </div>
     <div v-if="tracksByDisc.length > 1">
-      <div v-for="(item, index) in tracksByDisc" :key="index">
+      <div v-for="item in tracksByDisc" :key="item.disc">
         <h2 class="disc">Disc {{ item.disc }}</h2>
         <TrackList
           :id="album.id"
@@ -224,20 +224,10 @@ export default {
     tracksByDisc() {
       if (this.tracks.length <= 1) return [];
       const pairs = toPairs(groupBy(this.tracks, 'cd'));
-      if (pairs.length === 1) {
-        return [
-          {
-            disc: pairs[0][0],
-            tracks: pairs[0][1],
-          },
-        ];
-      }
-      return sortBy(pairs, p => p[0]).map(items => {
-        return {
-          disc: items[0],
-          tracks: items[1],
-        };
-      });
+      return sortBy(pairs, p => p[0]).map(items => ({
+        disc: items[0],
+        tracks: items[1],
+      }));
     },
   },
   created() {
