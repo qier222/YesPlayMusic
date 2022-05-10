@@ -679,7 +679,7 @@
         <p class="version">v{{ version }}</p>
 
         <a
-          v-if="isElectron"
+          v-if="!isElectron"
           href="https://vercel.com/?utm_source=ypm&utm_campaign=oss"
         >
           <img
