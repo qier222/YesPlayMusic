@@ -27,7 +27,7 @@ declare global {
       isEnableTitlebar: boolean
       isLinux: boolean
       isMac: boolean
-      isWin: boolean
+      isWindows: boolean
     }
     log?: ElectronLog
   }

@@ -8,6 +8,7 @@ const pkg = require(`${process.cwd()}/package.json`)
 const axios = require('axios')
 const { execSync } = require('child_process')
 const path = require('path')
+const { isLinux, isWindows, isMac } = require('../utils')
 
 const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
 const betterSqlite3Version = pkg.dependencies['better-sqlite3'].replaceAll(
@@ -18,9 +19,6 @@ const electronModuleVersion = releases.find(r =>
   r.version.includes(electronVersion)
 )?.deps?.modules
 const argv = minimist(process.argv.slice(2))
-const isWin = process.platform === 'win32'
-const isMac = process.platform === 'darwin'
-const isLinux = process.platform === 'linux'
 
 const projectDir = path.resolve(process.cwd(), '../../')
 
@@ -119,7 +117,7 @@ const main = async () => {
     if (argv.arm64) await build('arm64')
     if (argv.arm) await build('arm')
   } else {
-    if (isWin || isMac) {
+    if (isWindows || isMac) {
       await build('x64')
       await build('arm64')
     } else if (isLinux) {

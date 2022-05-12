@@ -1,5 +1,4 @@
 import { proxy, subscribe } from 'valtio'
-import { devtools } from 'valtio/utils'
 import { Player } from '@/web/utils/player'
 import { merge } from 'lodash-es'
 import { IpcChannels } from '@/shared/IpcChannels'
@@ -34,7 +33,3 @@ subscribe(player, () => {
 if (import.meta.env.DEV) {
   ;(window as any).player = player
 }
-
-// Devtools
-devtools(state, 'state')
-devtools(player, 'player')

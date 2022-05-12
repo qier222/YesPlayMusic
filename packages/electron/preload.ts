@@ -1,9 +1,7 @@
 import log from './log'
 import path from 'path'
 import { app } from 'electron'
-import { createDirIfNotExist } from './utils'
-
-const isDev = process.env.NODE_ENV === 'development'
+import { createDirIfNotExist, isDev } from './utils'
 
 if (isDev) {
   const devUserDataPath = path.resolve(process.cwd(), '../../tmp/userData')

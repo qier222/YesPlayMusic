@@ -90,7 +90,7 @@ const Linux = () => {
 const TitleBar = () => {
   return (
     <div className='app-region-drag fixed z-30'>
-      {window.env?.isWin ? <Win /> : <Linux />}
+      {window.env?.isWindows ? <Win /> : <Linux />}
     </div>
   )
 }

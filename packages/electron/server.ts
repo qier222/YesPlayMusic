@@ -11,9 +11,7 @@ import { app } from 'electron'
 import type { FetchAudioSourceResponse } from '@/shared/api/Track'
 import UNM from '@unblockneteasemusic/rust-napi'
 import { APIs as CacheAPIs } from '../shared/CacheAPIs'
-
-const isDev = process.env.NODE_ENV === 'development'
-const isProd = process.env.NODE_ENV === 'production'
+import { isProd } from 'utils'
 
 class Server {
   port = Number(

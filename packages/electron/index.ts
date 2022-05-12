@@ -16,11 +16,7 @@ import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { Store as State, initialState } from '@/shared/store'
-
-const isWindows = process.platform === 'win32'
-const isMac = process.platform === 'darwin'
-const isLinux = process.platform === 'linux'
-const isDev = process.env.NODE_ENV === 'development'
+import { isDev, isWindows, isLinux, isMac } from './utils'
 
 export interface TypedElectronStore {
   window: {

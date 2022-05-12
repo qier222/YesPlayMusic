@@ -7,12 +7,14 @@
 
 import log from 'electron-log'
 import pc from 'picocolors'
+import { isDev } from './utils'
 
 Object.assign(console, log.functions)
 log.variables.process = 'main'
-log.transports.console.format = `[{process}] ${pc.dim(
-  '{h}:{i}:{s}{scope}'
-)} {level} › {text}`
+if (log.transports.ipc) log.transports.ipc.level = false
+log.transports.console.format = `${
+  isDev ? '' : pc.dim('{h}:{i}:{s}{scope} ')
+}{level} › {text}`
 log.transports.file.level = 'info'
 
 log.info(
