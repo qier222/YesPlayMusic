@@ -45,6 +45,10 @@ export default {
       show: false,
       afterCreateAddTrackID: 0,
     },
+    newCommentModal: {
+      show: false,
+      params: null,
+    },
   },
   dailyTracks: [],
   lastfm: JSON.parse(localStorage.getItem('lastfm')) || {},

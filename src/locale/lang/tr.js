@@ -107,6 +107,17 @@ export default {
     pause: 'Durdur',
     mute: 'Sesi kapat',
     nextUp: 'Sıradaki',
+    comment: 'Yorum',
+  },
+  comment: {
+    newComment: 'Yorum',
+    successSend: 'Yorum başarıyla gönderildi',
+    recommend: 'Tavsiye Etmek',
+    hot: 'Sıcaklık',
+    latest: 'Güncel',
+    like: 'beğenmek',
+    successLike:
+      'Beğen/beğenme başarılı, bu arayüzün gecikmesi nedeniyle, sonuçları görüntülemek için lütfen daha sonra yenileyin.',
   },
   modal: {
     close: 'Kapat',

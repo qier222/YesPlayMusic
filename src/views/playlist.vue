@@ -73,6 +73,14 @@
             @click.native="openMenu"
           >
           </ButtonTwoTone>
+          <ButtonTwoTone
+            icon-class="comment"
+            :icon-button="true"
+            :horizontal-padding="0"
+            color="grey"
+            @click.native="goToComment"
+          >
+          </ButtonTwoTone>
         </div>
       </div>
       <div v-if="displaySearchInPlaylist" class="search-box">
@@ -484,6 +492,15 @@ export default {
     },
     openMenu(e) {
       this.$refs.playlistMenu.openMenu(e);
+    },
+    goToComment() {
+      this.$router.push({
+        name: 'comment',
+        params: {
+          type: 2,
+          id: this.playlist.id,
+        },
+      });
     },
     deletePlaylist() {
       if (!isAccountLoggedIn()) {

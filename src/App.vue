@@ -18,6 +18,7 @@
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
+    <ModalNewComment />
     <transition v-if="enablePlayer" name="slide-up">
       <Lyrics v-show="showLyrics" />
     </transition>
@@ -27,6 +28,7 @@
 <script>
 import ModalAddTrackToPlaylist from './components/ModalAddTrackToPlaylist.vue';
 import ModalNewPlaylist from './components/ModalNewPlaylist.vue';
+import ModalNewComment from './components/ModalNewComment.vue';
 import Scrollbar from './components/Scrollbar.vue';
 import Navbar from './components/Navbar.vue';
 import Player from './components/Player.vue';
@@ -44,6 +46,7 @@ export default {
     Toast,
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
+    ModalNewComment,
     Lyrics,
     Scrollbar,
   },
