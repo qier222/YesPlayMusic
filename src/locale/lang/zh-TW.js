@@ -109,6 +109,16 @@ export default {
     pause: '暫停',
     mute: '靜音',
     nextUp: '播放清單',
+    comment: '評論',
+  },
+  comment: {
+    newComment: '發表評論',
+    successSend: '成功發送評論',
+    recommend: '推薦',
+    hot: '熱度',
+    latest: '最新',
+    like: '贊',
+    successLike: '點贊/取消點贊成功，由於該接口有延遲，請稍後刷新查看結果',
   },
   modal: {
     close: '關閉',

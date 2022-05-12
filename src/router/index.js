@@ -70,6 +70,12 @@ const routes = [
     },
   },
   {
+    path: '/comment',
+    name: 'comment',
+    props: true,
+    component: () => import('@/views/comment.vue'),
+  },
+  {
     path: '/search/:keywords?',
     name: 'search',
     component: () => import('@/views/search.vue'),

@@ -113,6 +113,16 @@ export default {
     pause: '暂停',
     mute: '静音',
     nextUp: '播放列表',
+    comment: '评论',
+  },
+  comment: {
+    newComment: '发表评论',
+    successSend: '成功发送评论',
+    recommend: '推荐',
+    hot: '热度',
+    latest: '最新',
+    like: '赞',
+    successLike: '点赞/取消点赞成功，由于该接口有延迟，请稍后刷新查看结果',
   },
   modal: {
     close: '关闭',

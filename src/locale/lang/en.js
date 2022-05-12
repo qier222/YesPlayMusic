@@ -112,6 +112,17 @@ export default {
     pause: 'Pause',
     mute: 'Mute',
     nextUp: 'Next Up',
+    comment: 'Comment',
+  },
+  comment: {
+    newComment: 'Post a comment',
+    successSend: 'Comment sent successfully',
+    recommend: 'Recommend',
+    hot: 'Hot',
+    latest: 'Latest',
+    like: 'like',
+    successLike:
+      'Like/dislike is successful, due to the delay of this interface, please refresh later to view the results',
   },
   modal: {
     close: 'Close',
