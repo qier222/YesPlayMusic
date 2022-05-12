@@ -7,3 +7,4 @@ CREATE TABLE IF NOT EXISTS "Lyric" ("id" integer NOT NULL,"json" text NOT NULL,"
 CREATE TABLE IF NOT EXISTS "Playlist" ("id" integer NOT NULL,"json" text NOT NULL,"updatedAt" int NOT NULL, PRIMARY KEY (id));
 CREATE TABLE IF NOT EXISTS "Track" ("id" integer NOT NULL,"json" text NOT NULL,"updatedAt" int NOT NULL, PRIMARY KEY (id));
 CREATE TABLE IF NOT EXISTS "CoverColor" ("id" integer NOT NULL,"color" text NOT NULL, PRIMARY KEY (id));
+CREATE TABLE IF NOT EXISTS "AppData" ("id" text NOT NULL,"value" text, PRIMARY KEY (id));

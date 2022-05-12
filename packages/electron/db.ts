@@ -4,8 +4,9 @@ import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
 import log from './log'
 import { createFileIfNotExist } from './utils'
-
-const isDev = process.env.NODE_ENV === 'development'
+import pkg from '../../package.json'
+import { compare, validate } from 'compare-versions'
+import { dirname } from './utils'
 
 export const enum Tables {
   Track = 'Track',
@@ -17,6 +18,7 @@ export const enum Tables {
   Audio = 'Audio',
   AccountData = 'AccountData',
   CoverColor = 'CoverColor',
+  AppData = 'AppData',
 }
 interface CommonTableStructure {
   id: number
@@ -55,9 +57,17 @@ export interface TablesStructures {
     id: number
     color: string
   }
+  [Tables.AppData]: {
+    id: 'appVersion' | 'skippedVersion'
+    value: string
+  }
 }
 
 type TableNames = keyof TablesStructures
+
+const readSqlFile = (filename: string) => {
+  return fs.readFileSync(path.join(dirname, `./migrations/${filename}`), 'utf8')
+}
 
 class DB {
   sqlite: SQLite3.Database
@@ -79,24 +89,48 @@ class DB {
     })
     this.sqlite.pragma('auto_vacuum = FULL')
     this.initTables()
+    this.migrate()
 
     log.info('[db] Database initialized')
   }
 
   initTables() {
-    const migration = fs.readFileSync(
-      isDev
-        ? path.join(process.cwd(), './migrations/init.sql')
-        : path.join(__dirname, './migrations/init.sql'),
-      'utf8'
-    )
-    this.sqlite.exec(migration)
+    const init = readSqlFile('init.sql')
+    this.sqlite.exec(init)
+  }
+
+  migrate() {
+    const key = 'appVersion'
+    const appVersion = this.find(Tables.AppData, key)
+    const updateAppVersionInDB = () => {
+      this.upsert(Tables.AppData, {
+        id: key,
+        value: pkg.version,
+      })
+    }
+
+    if (!appVersion?.value) {
+      updateAppVersionInDB()
+      return
+    }
+
+    const sqlFiles = fs.readdirSync(path.join(dirname, './migrations'))
+    sqlFiles.forEach((sqlFile: string) => {
+      const version = sqlFile.split('.').shift() || ''
+      if (!validate(version)) return
+      if (compare(version, pkg.version, '>')) {
+        const file = readSqlFile(sqlFile)
+        this.sqlite.exec(file)
+      }
+    })
+
+    updateAppVersionInDB()
   }
 
   find<T extends TableNames>(
     table: T,
     key: TablesStructures[T]['id']
-  ): TablesStructures[T] {
+  ): TablesStructures[T] | undefined {
     return this.sqlite
       .prepare(`SELECT * FROM ${table} WHERE id = ? LIMIT 1`)
       .get(key)
