@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "scripts": {
     "dev": "vite dev --host",
-    "build": "node ./scripts/build.web.mjs",
+    "build": "vite build",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",

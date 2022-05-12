@@ -24,8 +24,8 @@ const isLinux = process.platform === 'linux'
 
 const projectDir = path.resolve(process.cwd(), '../../')
 
-if (!fs.existsSync(`${projectDir}/src/main/dist`)) {
-  fs.mkdirSync(`${projectDir}/src/main/dist`, {
+if (!fs.existsSync(`${projectDir}/packages/electron/dist/binary`)) {
+  fs.mkdirSync(`${projectDir}/packages/electron/dist/binary`, {
     recursive: true,
   })
 }
@@ -70,7 +70,7 @@ const download = async arch => {
   try {
     fs.copyFileSync(
       `${dir}/build/Release/better_sqlite3.node`,
-      `${projectDir}/src/main/dist/better_sqlite3_${arch}.node`
+      `${projectDir}/packages/electron/dist/binary/better_sqlite3_${arch}.node`
     )
   } catch (e) {
     console.log(pc.red('Copy failed! Skip copy.', e))
@@ -93,8 +93,6 @@ const build = async arch => {
 
   console.log(pc.cyan(`Building for ${arch}...`))
   await rebuild({
-    // projectRootPath: projectDir,
-    // buildPath: process.cwd(),
     projectRootPath: projectDir,
     buildPath: process.cwd(),
     electronVersion,
@@ -106,7 +104,7 @@ const build = async arch => {
       console.info('Build succeeded')
       fs.copyFileSync(
         `${projectDir}/node_modules/better-sqlite3/build/Release/better_sqlite3.node`,
-        `${projectDir}/src/main/dist/better_sqlite3_${arch}.node`
+        `${projectDir}/packages/electron/dist/binary/better_sqlite3_${arch}.node`
       )
     })
     .catch(e => {

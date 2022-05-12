@@ -74,7 +74,7 @@ class DB {
     this.sqlite = new SQLite3(this.dbFilePath, {
       nativeBinding: path.join(
         __dirname,
-        `./better_sqlite3_${process.arch}.node`
+        `./binary/better_sqlite3_${process.arch}.node`
       ),
     })
     this.sqlite.pragma('auto_vacuum = FULL')

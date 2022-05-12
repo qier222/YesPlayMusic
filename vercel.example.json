@@ -1,4 +1,7 @@
 {
+  "github": {
+    "silent": true
+  },
   "rewrites": [
     {
       "source": "/netease/:match*",
