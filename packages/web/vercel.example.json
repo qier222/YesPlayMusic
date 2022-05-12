@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/netease/:match*",
+      "destination": "https://your-netease-api.example.com/:match*"
+    }
+  ]
+}

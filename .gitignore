@@ -51,3 +51,8 @@ release
 *.local
 .vscode/settings.json
 .turbo
+.env
+packages/web/bundle-stats-renderer.html
+packages/web/bundle-stats.html
+vercel.json
+.vercel

@@ -27,15 +27,15 @@ export default defineConfig({
   base: '/',
   build: {
     target: process.env.IS_ELECTRON ? 'esnext' : 'modules',
-    sourcemap: process.env.NODE_ENV === 'debug',
+    sourcemap: true,
     outDir: './dist',
     emptyOutDir: true,
     rollupOptions: {
       plugins: [
         visualizer({
-          filename: './bundle-stats-renderer.html',
+          filename: './bundle-stats.html',
           gzipSize: true,
-          projectRoot: 'src/renderer',
+          projectRoot: './',
           template: 'treemap',
         }),
       ],
