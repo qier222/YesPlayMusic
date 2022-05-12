@@ -83,12 +83,10 @@ export default {
     login: 'Giriş Yap',
     loginWithEmail: 'Email ile giriş yap',
     loginWithPhone: 'Phone ile giriş yap',
-    notice:
-        `YesPlayMusic hesabınızın hiçbir bilgisini kaydetmeyeceğine dair söz veriyor<br />
+    notice: `YesPlayMusic hesabınızın hiçbir bilgisini kaydetmeyeceğine dair söz veriyor<br />
       Şifren MD5 şifreleme ile yerel olarak şifrelenir ve daha sonra NetEase Müzik API'sine gönderilir<br />
       YesPlayMusic, NetEase Music'in resmi websitesi değildir, lütfen hesap bilgilerinizi girmeden önce dikkatlice düşününüz. Aynı zamanda, Kendi NetEase Musix API'nızı host etmek için <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic'in GitHub Repo'suna</a> gidebilirsiniz.`,
-    noticeElectron:
-        `YesPlayMusic hesabınızın hiçbir bilgisini kaydetmeyeceğine dair söz veriyor<br />
+    noticeElectron: `YesPlayMusic hesabınızın hiçbir bilgisini kaydetmeyeceğine dair söz veriyor<br />
       Şifren MD5 şifreleme ile yerel olarak şifrelenir ve daha sonra NetEase Müzik API'sine gönderilir<br />`,
   },
   mv: {
@@ -119,7 +117,7 @@ export default {
     latest: 'Güncel',
     like: 'beğenmek',
     successLike:
-        'Beğen/beğenme başarılı, bu arayüzün gecikmesi nedeniyle, sonuçları görüntülemek için lütfen daha sonra yenileyin.',
+      'Beğen/beğenme başarılı, bu arayüzün gecikmesi nedeniyle, sonuçları görüntülemek için lütfen daha sonra yenileyin.',
   },
   modal: {
     close: 'Kapat',
@@ -192,8 +190,7 @@ export default {
       },
       enableFlac: {
         title: 'Enable FLAC Sources',
-        desc:
-            'To take effect, it may be required to clear the cache after enabling this function.',
+        desc: 'To take effect, it may be required to clear the cache after enabling this function.',
       },
       searchMode: {
         title: 'Audio Search Mode',
@@ -210,7 +207,7 @@ export default {
       proxy: {
         title: 'Proxy Server for UNM',
         desc1:
-            'The proxy server to use for requesting services such as YouTube',
+          'The proxy server to use for requesting services such as YouTube',
         desc2: 'Leave empty to pick up the default value',
       },
     },
