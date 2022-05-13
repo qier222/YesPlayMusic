@@ -124,10 +124,11 @@ export default {
   }
 
   .item-right {
+    color: var(--color-text);
     margin-left: 100px;
     .item-right-username {
       font-weight: bold;
-      color: #61666d;
+      color: var(--color-secondary);
       font-size: 15px;
     }
 
@@ -137,7 +138,7 @@ export default {
     }
 
     .item-right-info {
-      color: #9499a0;
+      color: var(--color-secondary);
       font-size: 14px;
       .item-right-info-like {
         margin-left: 30px;

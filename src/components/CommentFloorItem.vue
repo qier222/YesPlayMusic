@@ -106,7 +106,7 @@ export default {
     margin-left: 70px;
     .item-right-username {
       font-weight: bold;
-      color: #61666d;
+      color: var(--color-secondary);
       font-size: 14px;
     }
 
@@ -116,7 +116,7 @@ export default {
     }
 
     .item-right-info {
-      color: #9499a0;
+      color: var(--color-secondary);
       font-size: 13px;
       margin-top: -8px;
       .item-right-info-like {
