@@ -23,13 +23,13 @@ const TAG = '[script/build.main.ts]'
 const spinner = ora(`${TAG} Main Process Building...`)
 
 const options = {
-  entryPoints: ['./index.ts', './rendererPreload.ts'],
+  entryPoints: ['./main/index.ts', './main/rendererPreload.ts'],
   outdir: './dist',
   platform: 'node',
   format: 'cjs',
   bundle: true,
-  sourcemap: true,
   define: envForEsbuild,
+  minify: true,
   external: [
     ...builtinModules.filter(
       x => !/^_|^(internal|v8|node-inspect)\/|\//.test(x)
@@ -95,7 +95,6 @@ if (argv.watch) {
       ...options.define,
       'process.env.NODE_ENV': '"production"',
     },
-    minify: true,
   })
     .then(() => {
       console.log(TAG, pc.green('Main Process Build Succeeded.'))

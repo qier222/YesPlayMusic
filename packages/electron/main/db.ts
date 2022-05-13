@@ -3,10 +3,9 @@ import { app } from 'electron'
 import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
 import log from './log'
-import { createFileIfNotExist } from './utils'
-import pkg from '../../package.json'
+import { createFileIfNotExist, dirname } from './utils'
+import pkg from '../../../package.json'
 import { compare, validate } from 'compare-versions'
-import { dirname } from './utils'
 
 export const enum Tables {
   Track = 'Track',

@@ -34,7 +34,7 @@ function createNativeImage(filename: string) {
 }
 
 function createMenuTemplate(win: BrowserWindow): MenuItemConstructorOptions[] {
-  let template: MenuItemConstructorOptions[] =
+  const template: MenuItemConstructorOptions[] =
     process.platform === 'linux'
       ? [
           {

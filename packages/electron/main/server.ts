@@ -6,12 +6,12 @@ import cache from './cache'
 import fileUpload from 'express-fileupload'
 import path from 'path'
 import fs from 'fs'
-import { db, Tables } from 'db'
+import { db, Tables } from './db'
 import { app } from 'electron'
 import type { FetchAudioSourceResponse } from '@/shared/api/Track'
 import UNM from '@unblockneteasemusic/rust-napi'
-import { APIs as CacheAPIs } from '../shared/CacheAPIs'
-import { isProd } from 'utils'
+import { APIs as CacheAPIs } from '@/shared/CacheAPIs'
+import { isProd } from './utils'
 
 class Server {
   port = Number(
@@ -241,21 +241,21 @@ class Server {
         })
       }
 
-      // try {
-      //   const fromCache = await getFromCache(id)
-      //   if (fromCache) {
-      //     res.status(200).send(fromCache)
-      //     return
-      //   }
-      // } catch (error) {
-      //   log.error(`[server] getFromCache failed: ${String(error)}`)
-      // }
+      try {
+        const fromCache = await getFromCache(id)
+        if (fromCache) {
+          res.status(200).send(fromCache)
+          return
+        }
+      } catch (error) {
+        log.error(`[server] getFromCache failed: ${String(error)}`)
+      }
 
-      // const fromNetease = await getFromNetease(req)
-      // if (fromNetease?.code === 200 && !fromNetease?.data?.[0].freeTrialInfo) {
-      //   res.status(200).send(fromNetease)
-      //   return
-      // }
+      const fromNetease = await getFromNetease(req)
+      if (fromNetease?.code === 200 && !fromNetease?.data?.[0].freeTrialInfo) {
+        res.status(200).send(fromNetease)
+        return
+      }
 
       try {
         const fromUNM = await getFromUNM(id, req)
@@ -267,11 +267,11 @@ class Server {
         log.error(`[server] getFromNetease failed: ${String(error)}`)
       }
 
-      // if (fromNetease?.data?.[0].freeTrialInfo) {
-      //   fromNetease.data[0].url = ''
-      // }
+      if (fromNetease?.data?.[0].freeTrialInfo) {
+        fromNetease.data[0].url = ''
+      }
 
-      // res.status(fromNetease?.code ?? 500).send(fromNetease)
+      res.status(fromNetease?.code ?? 500).send(fromNetease)
     }
 
     this.app.get('/netease/song/url', handler)

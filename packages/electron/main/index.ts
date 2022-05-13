@@ -15,6 +15,7 @@ import { initIpcMain } from './ipcMain'
 import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { createTaskbar, Thumbar } from './windowsTaskbar'
+import { createMenu } from './menu'
 import { Store as State, initialState } from '@/shared/store'
 import { isDev, isWindows, isLinux, isMac } from './utils'
 
@@ -63,6 +64,7 @@ class Main {
       this.handleAppEvents()
       this.handleWindowEvents()
       this.createTray()
+      createMenu(this.win!)
       this.createThumbar()
       initIpcMain(this.win, this.tray, this.thumbar, this.store)
       this.initDevTools()
@@ -76,13 +78,9 @@ class Main {
     const {
       default: installExtension,
       REACT_DEVELOPER_TOOLS,
-      REDUX_DEVTOOLS,
       // eslint-disable-next-line @typescript-eslint/no-var-requires
     } = require('electron-devtools-installer')
-    installExtension(REACT_DEVELOPER_TOOLS.id).catch((err: any) =>
-      log.info('An error occurred: ', err)
-    )
-    installExtension(REDUX_DEVTOOLS.id).catch((err: any) =>
+    installExtension(REACT_DEVELOPER_TOOLS.id).catch((err: unknown) =>
       log.info('An error occurred: ', err)
     )
 
@@ -134,25 +132,26 @@ class Main {
 
   disableCORS() {
     if (!this.win) return
-    function UpsertKeyValue(obj, keyToChange, value) {
-      const keyToChangeLower = keyToChange.toLowerCase()
-      for (const key of Object.keys(obj)) {
-        if (key.toLowerCase() === keyToChangeLower) {
-          // Reassign old key
-          obj[key] = value
-          // Done
-          return
+    const upsertKeyValue = (
+      object: Record<string, string | string[]>,
+      keyToChange: string,
+      value: string[]
+    ) => {
+      if (!object) return
+      for (const key of Object.keys(object)) {
+        if (key.toLowerCase() === keyToChange.toLowerCase()) {
+          object[key] = value
         }
       }
-      // Insert at end instead
-      obj[keyToChange] = value
+      object[keyToChange] = value
     }
 
     this.win.webContents.session.webRequest.onBeforeSendHeaders(
       (details, callback) => {
         const { requestHeaders, url } = details
-        UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*'])
+        upsertKeyValue(requestHeaders, 'access-control-allow-origin', ['*'])
 
+        // 不加这几个 header 的话，使用 axios 加载 YouTube 音频会很慢
         if (url.includes('googlevideo.com')) {
           requestHeaders['Sec-Fetch-Mode'] = 'no-cors'
           requestHeaders['Sec-Fetch-Dest'] = 'audio'
@@ -166,8 +165,10 @@ class Main {
     this.win.webContents.session.webRequest.onHeadersReceived(
       (details, callback) => {
         const { responseHeaders } = details
-        UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*'])
-        UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*'])
+        if (responseHeaders) {
+          upsertKeyValue(responseHeaders, 'access-control-allow-origin', ['*'])
+          upsertKeyValue(responseHeaders, 'access-control-allow-headers', ['*'])
+        }
         callback({
           responseHeaders,
         })

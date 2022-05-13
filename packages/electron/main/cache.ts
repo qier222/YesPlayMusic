@@ -5,7 +5,7 @@ import { Request, Response } from 'express'
 import log from './log'
 import fs from 'fs'
 import * as musicMetadata from 'music-metadata'
-import { APIs, APIsParams, APIsResponse } from '../shared/CacheAPIs'
+import { APIs, APIsParams, APIsResponse } from '@/shared/CacheAPIs'
 import { TablesStructures } from './db'
 
 class Cache {

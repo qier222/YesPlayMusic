@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node'
 import * as Tracing from '@sentry/tracing'
-import pkg from '../../package.json'
+import pkg from '../../../package.json'
 import log from './log'
 
 log.info(`[sentry] sentry initializing`)
