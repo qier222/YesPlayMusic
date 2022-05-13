@@ -18,12 +18,15 @@
     "build:web": "turbo run build:web",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md}\"",
+    "storybook": "pnpm -F web storybook",
+    "storybook:build": "pnpm -F web storybook:build"
   },
   "devDependencies": {
     "eslint": "^8.15.0",
     "prettier": "^2.6.2",
     "turbo": "^1.2.9",
     "typescript": "^4.6.4"
-  }
+  },
+  "dependencies": {}
 }

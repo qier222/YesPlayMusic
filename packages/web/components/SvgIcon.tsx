@@ -39,6 +39,7 @@ export type SvgName =
   | 'windows-maximize'
   | 'windows-un-maximize'
   | 'x'
+
 const SvgIcon = ({
   name,
   className,

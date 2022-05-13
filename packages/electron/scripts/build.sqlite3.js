@@ -8,7 +8,10 @@ const pkg = require(`${process.cwd()}/package.json`)
 const axios = require('axios')
 const { execSync } = require('child_process')
 const path = require('path')
-const { isLinux, isWindows, isMac } = require('../utils')
+
+const isWindows = process.platform === 'win32'
+const isMac = process.platform === 'darwin'
+const isLinux = process.platform === 'linux'
 
 const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
 const betterSqlite3Version = pkg.dependencies['better-sqlite3'].replaceAll(
