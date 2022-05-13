@@ -100,7 +100,7 @@
           <button-icon
             :title="$t('player.comment')"
             :class="{
-              active: commentIconHighLight,
+              active: commentIconHighLight && $route.name === 'comment',
             }"
             @click.native="goToComment"
             ><svg-icon icon-class="comment"
