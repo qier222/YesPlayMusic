@@ -9,6 +9,9 @@ import { TypedElectronStore } from './index'
 import { APIs } from '../shared/CacheAPIs'
 import { YPMTray } from './tray'
 import { Thumbar } from './windowsTaskbar'
+import fastFolderSize from 'fast-folder-size'
+import path from 'path'
+import prettyBytes from 'pretty-bytes'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -119,6 +122,20 @@ function initOtherIpcMain() {
   on(IpcChannels.CacheCoverColor, (event, args) => {
     const { id, color } = args
     cache.set(APIs.CoverColor, { id, color })
+  })
+
+  /**
+   * 获取音频缓存文件夹大小
+   */
+  on(IpcChannels.GetAudioCacheSize, event => {
+    fastFolderSize(
+      path.join(app.getPath('userData'), './audio_cache'),
+      (error, bytes) => {
+        if (error) throw error
+
+        event.returnValue = prettyBytes(bytes ?? 0)
+      }
+    )
   })
 
   /**

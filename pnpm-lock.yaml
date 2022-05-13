@@ -54,6 +54,7 @@ importers:
       picocolors: ^1.0.0
       prettier: '*'
       prettier-plugin-tailwindcss: ^0.1.10
+      pretty-bytes: ^6.0.0
       typescript: '*'
       wait-on: ^6.0.1
     dependencies:
@@ -69,6 +70,7 @@ importers:
       express: 4.18.1
       fast-folder-size: 1.6.2
       NeteaseCloudMusicApi: 4.5.14
+      pretty-bytes: 6.0.0
     devDependencies:
       '@electron/universal': 1.2.1
       '@types/better-sqlite3': 7.5.0
@@ -6889,6 +6891,11 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
+
+  /pretty-bytes/6.0.0:
+    resolution: {integrity: sha512-6UqkYefdogmzqAZWzJ7laYeJnaXDy2/J+ZqiiMtS7t7OfpXWTlaeGMwX8U6EFvPV/YWWEKRkS8hKS4k60WHTOg==}
+    engines: {node: ^14.13.1 || >=16.0.0}
+    dev: false
 
   /pretty-format/27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}

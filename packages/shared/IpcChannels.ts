@@ -3,24 +3,25 @@ import { RepeatMode } from './playerDataTypes'
 import { Store } from '@/shared/store'
 
 export const enum IpcChannels {
-  ClearAPICache = 'clear-api-cache',
-  Minimize = 'minimize',
-  MaximizeOrUnmaximize = 'maximize-or-unmaximize',
-  Close = 'close',
-  IsMaximized = 'is-maximized',
-  GetApiCacheSync = 'get-api-cache-sync',
-  DevDbExportJson = 'dev-db-export-json',
-  CacheCoverColor = 'cache-cover-color',
-  SetTrayTooltip = 'set-tray-tooltip',
+  ClearAPICache = 'ClearAPICache',
+  Minimize = 'Minimize',
+  MaximizeOrUnmaximize = 'MaximizeOrUnmaximize',
+  Close = 'Close',
+  IsMaximized = 'IsMaximized',
+  GetApiCacheSync = 'GetApiCacheSync',
+  DevDbExportJson = 'DevDbExportJson',
+  CacheCoverColor = 'CacheCoverColor',
+  SetTrayTooltip = 'SetTrayTooltip',
   // 准备三个播放相关channel, 为 mpris 预留接口
-  Play = 'play',
-  Pause = 'pause',
-  PlayOrPause = 'play-or-pause',
-  Next = 'next',
-  Previous = 'previous',
-  Like = 'like',
-  Repeat = 'repeat',
-  SyncSettings = 'sync-settings',
+  Play = 'Play',
+  Pause = 'Pause',
+  PlayOrPause = 'PlayOrPause',
+  Next = 'Next',
+  Previous = 'Previous',
+  Like = 'Like',
+  Repeat = 'Repeat',
+  SyncSettings = 'SyncSettings',
+  GetAudioCacheSize = 'GetAudioCacheSize',
 }
 
 // ipcMain.on params
@@ -54,6 +55,7 @@ export interface IpcChannelsParams {
     mode: RepeatMode
   }
   [IpcChannels.SyncSettings]: Store['settings']
+  [IpcChannels.GetAudioCacheSize]: void
 }
 
 // ipcRenderer.on params
@@ -74,4 +76,5 @@ export interface IpcChannelsReturns {
   [IpcChannels.Previous]: void
   [IpcChannels.Like]: void
   [IpcChannels.Repeat]: RepeatMode
+  [IpcChannels.GetAudioCacheSize]: void
 }

@@ -26,7 +26,8 @@
     "electron-log": "^4.4.6",
     "electron-store": "^8.0.1",
     "express": "^4.18.1",
-    "fast-folder-size": "^1.6.1"
+    "fast-folder-size": "^1.6.1",
+    "pretty-bytes": "^6.0.0"
   },
   "devDependencies": {
     "@electron/universal": "1.2.1",
