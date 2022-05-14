@@ -72,7 +72,6 @@ const routes = [
   {
     path: '/comment',
     name: 'comment',
-    props: true,
     component: () => import('@/views/comment.vue'),
   },
   {

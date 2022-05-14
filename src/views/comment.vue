@@ -66,14 +66,35 @@ export default {
       sortType: 1,
       timer: '',
       title: '',
+      type: this.$route.query.type,
+      id: this.$route.query.id,
     };
   },
   computed: {
     ...mapState(['player']),
   },
-  props: ['type', 'id'],
   watch: {
+    type: {
+      immediate: true,
+      handler() {
+        switch (this.type) {
+          case 0:
+            this.title = '歌曲';
+            break;
+          case 2:
+            this.title = '歌单';
+            break;
+          default:
+            this.$router.go(-1);
+        }
+      },
+    },
     sortType() {
+      this.timer = new Date().getTime();
+    },
+    $route() {
+      this.type = this.$route.query.type;
+      this.id = this.$route.query.id;
       this.timer = new Date().getTime();
     },
   },
@@ -101,17 +122,6 @@ export default {
         value: true,
       });
     },
-  },
-  mounted() {
-    if (typeof this.type === 'undefined') this.$router.go(-1);
-    switch (this.type) {
-      case 0:
-        this.title = '歌曲';
-        break;
-      case 2:
-        this.title = '歌单';
-        break;
-    }
   },
 };
 </script>

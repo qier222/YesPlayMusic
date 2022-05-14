@@ -496,7 +496,7 @@ export default {
     goToComment() {
       this.$router.push({
         name: 'comment',
-        params: {
+        query: {
           type: 2,
           id: this.playlist.id,
         },

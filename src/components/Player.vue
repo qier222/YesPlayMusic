@@ -100,7 +100,7 @@
           <button-icon
             :title="$t('player.comment')"
             :class="{
-              active: commentIconHighLight && $route.name === 'comment',
+              active: $route.fullPath.substring(0, 15) === '/comment?type=0',
             }"
             @click.native="goToComment"
             ><svg-icon icon-class="comment"
@@ -198,11 +198,6 @@ export default {
     ButtonIcon,
     VueSlider,
   },
-  data() {
-    return {
-      commentIconHighLight: false,
-    };
-  },
   computed: {
     ...mapState(['player', 'settings', 'data']),
     currentTrack() {
@@ -243,20 +238,15 @@ export default {
     },
     // 歌曲评论和歌单评论同路由不刷新页面暂未解决, 目前时判断同路由回退一级, 用户需要再点击一次评论按钮
     goToComment() {
-      if (this.$route.name === 'comment' && this.commentIconHighLight === false)
-        this.$router.go(-1);
-      else {
-        this.commentIconHighLight === true
-          ? this.$router.go(-1)
-          : this.$router.push({
-              name: 'comment',
-              params: {
-                type: 0,
-                id: this.player.currentTrack.id,
-              },
-            });
-        this.commentIconHighLight = !this.commentIconHighLight;
-      }
+      this.$route.fullPath.substring(0, 15) === '/comment?type=0'
+        ? this.$router.go(-1)
+        : this.$router.push({
+            name: 'comment',
+            query: {
+              type: 0,
+              id: this.player.currentTrack.id,
+            },
+          });
     },
     goToNextTracksPage() {
       if (this.player.isPersonalFM) return;
