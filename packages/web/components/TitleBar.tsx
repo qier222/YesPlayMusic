@@ -4,6 +4,7 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { useState, useMemo } from 'react'
 import { useSnapshot } from 'valtio'
+import cx from 'classnames'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
