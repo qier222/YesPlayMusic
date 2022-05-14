@@ -1,6 +1,7 @@
 import { IpcChannels } from '@/shared/IpcChannels'
 import { BrowserWindow, nativeImage, ThumbarButton } from 'electron'
 import path from 'path'
+import { dirname } from './utils'
 
 enum ItemKeys {
   Play = 'play',
@@ -11,10 +12,7 @@ enum ItemKeys {
 
 type ThumbarButtonMap = Map<ItemKeys, ThumbarButton>
 
-const iconDirRoot =
-  process.env.NODE_ENV === 'development'
-    ? path.join(process.cwd(), './src/main/assets/icons/taskbar')
-    : path.join(__dirname, './assets/icons/taskbar')
+const iconDirRoot = path.join(dirname, './assets/icons/taskbar')
 
 function createNativeImage(filename: string) {
   return nativeImage.createFromPath(path.join(iconDirRoot, filename))

@@ -50,7 +50,7 @@ class Main {
     if (release().startsWith('6.1')) app.disableHardwareAcceleration()
 
     // Set application name for Windows 10+ notifications
-    if (process.platform === 'win32') app.setAppUserModelId(app.getName())
+    if (isWindows) app.setAppUserModelId(app.getName())
 
     // Make sure the app only run on one instance
     if (!app.requestSingleInstanceLock()) {

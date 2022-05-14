@@ -25,8 +25,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
 contextBridge.exposeInMainWorld('env', {
   isElectron: true,
-  isEnableTitlebar:
-    process.platform === 'win32' || process.platform === 'linux',
+  isEnableTitlebar: isWindows || isLinux,
   isLinux,
   isMac,
   isWindows,

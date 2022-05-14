@@ -9,11 +9,9 @@ import {
 } from 'electron'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
+import { dirname } from './utils'
 
-const iconDirRoot =
-  process.env.NODE_ENV === 'development'
-    ? path.join(process.cwd(), './src/main/assets/icons/tray')
-    : path.join(__dirname, './assets/icons/tray')
+const iconDirRoot = path.join(dirname, './assets/icons/tray')
 
 enum MenuItemIDs {
   Play = 'play',
