@@ -20,7 +20,7 @@ const Topbar = () => {
         <div className='flex min-w-[284px] items-center rounded-full bg-[#E9E9E9] p-[10px] text-[#717171] dark:bg-[#0E0E0E]'>
           <SvgIcon name='search' className='mr-[10px] h-7 w-7' />
           <input
-            placeholder='Search Song Name'
+            placeholder='Artist, songs and more'
             className='bg-transparent placeholder:text-[#717171]'
           />
         </div>
