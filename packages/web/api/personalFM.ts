@@ -4,7 +4,7 @@ export enum PersonalFMApiNames {
   FetchPersonalFm = 'fetchPersonalFM',
 }
 
-export interface PersonalMusic {
+export interface PersonalAudio {
   name: null | string
   id: number
   size: number
@@ -56,10 +56,12 @@ export interface FetchPersonalFMResponse {
     single: number
     noCopyrightRcmd: null
     mvid: number
-    bMusic?: PersonalMusic
-    lMusic?: PersonalMusic
-    mMusic?: PersonalMusic
-    hMusic?: PersonalMusic
+    bMusic?: PersonalAudio
+    lMusic?: PersonalAudio
+    mMusic?: PersonalAudio
+    hMusic?: PersonalAudio
+    sqMusic?: PersonalAudio
+    hrMusic?: PersonalAudio
     reason: string
     privilege: {
       id: number

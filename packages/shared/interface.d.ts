@@ -80,12 +80,11 @@ declare interface Track {
   dt: number
   fee: number
   ftype: number
-  [key in ('h' | 'm' | 'l')]: {
-    br: number
-    fid: number
-    size: number
-    vd: number
-  }
+  l?: Audio
+  m?: Audio
+  h?: Audio
+  sq?: Audio
+  hr?: Audio
   mark: number
   mst: number
   mv: number
@@ -112,6 +111,13 @@ declare interface Track {
   v: number
   version: number
   tns: (string | null)[]
+}
+declare interface Audio {
+  br: number
+  fid: number
+  size: number
+  vd: number
+  sr: number
 }
 declare interface Artist {
   alias: unknown[]
