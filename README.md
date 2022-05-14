@@ -1,14 +1,14 @@
 <br />
 <p align="center">
-  <a href="https://music.qier222.com" target="blank">
+  <a href="https://music.oopstls.com" target="blank">
     <img src="images/logo.png" alt="Logo" width="156" height="156">
   </a>
   <h2 align="center" style="font-weight: 600">YesPlayMusic</h2>
 
   <p align="center">
-    高颜值的第三方网易云播放器
+    高颜值的第三方网易云播放器, 扩展评论功能
     <br />
-    <a href="https://music.qier222.com" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="https://music.oopstls.com" target="blank"><strong>🌎 访问DEMO</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     <a href="#%EF%B8%8F-安装" target="blank"><strong>📦️ 下载安装包</strong></a>&nbsp;&nbsp;|&nbsp;&nbsp;
     <a href="https://t.me/yesplaymusic" target="blank"><strong>💬 加入交流群</strong></a>
     <br />
@@ -16,7 +16,7 @@
   </p>
 </p>
 
-[![Library][library-screenshot]](https://music.qier222.com)
+[![Library][library-screenshot]](https://music.oopstls.com)
 
 ## ✨ 特性
 
@@ -42,14 +42,7 @@
 
 ## 📦️ 安装
 
-Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://github.com/qier222) 适配并维护，支持 macOS、Windows、Linux。
-
-访问本项目的 [Releases](https://github.com/qier222/YesPlayMusic/releases)
-页面下载安装包。
-
-- macOS 用户可以通过 Homebrew 来安装：`brew install --cask yesplaymusic`
-
-- Windows 用户可以通过 Scoop 来安装：`scoop install extras/yesplaymusic`
+访问本项目的 [Releases](https://github.com/oopstls/YesPlayMusic/releases) 页面下载安装包。
 
 ## ⚙️ 部署至 Vercel
 
@@ -94,7 +87,7 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 2. 克隆本仓库
 
 ```sh
-git clone --recursive https://github.com/qier222/YesPlayMusic.git
+git clone --recursive https://github.com/oopstls/YesPlayMusic.git
 ```
 
 3. 安装依赖
@@ -149,7 +142,7 @@ YesPlayMusic 地址为 `http://localhost`
 1. 打包 Electron 需要用到 Node.js 和 Yarn。可前往 [Node.js 官网](https://nodejs.org/zh-cn/) 下载安装包。安装 Node.js
    后可在终端里执行 `npm install -g yarn` 来安装 Yarn。
 
-2. 使用 `git clone --recursive https://github.com/qier222/YesPlayMusic.git` 克隆本仓库到本地。
+2. 使用 `git clone --recursive https://github.com/oopstls/YesPlayMusic.git` 克隆本仓库到本地。
 
 3. 使用 `yarn install` 安装项目依赖。
 
@@ -193,7 +186,7 @@ yarn netease_api:run
 
 ## ☑️ Todo
 
-查看 Todo 请访问本项目的 [Projects](https://github.com/qier222/YesPlayMusic/projects/1)
+查看 Todo 请访问本项目的 [Projects](https://github.com/oopstls/YesPlayMusic/projects/1)
 
 欢迎提 Issue 和 Pull request。
 
