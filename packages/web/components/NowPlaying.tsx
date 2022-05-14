@@ -2,7 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 import SvgIcon from './SvgIcon'
 
-export const NowPlaying = () => {
+const NowPlaying = () => {
   return (
     <div className='relative flex aspect-square w-full flex-col justify-end overflow-hidden rounded-3xl'>
       {/* Cover */}
@@ -38,10 +38,12 @@ export const NowPlaying = () => {
 
         {/* Controls */}
         <div className='mt-4 flex w-full items-center justify-between'>
-          <SvgIcon
-            name='shuffle'
-            className='h-7 w-7 text-black/90 dark:text-white/40'
-          />
+          <button>
+            <SvgIcon
+              name='shuffle'
+              className='h-7 w-7 text-black/90 dark:text-white/40'
+            />
+          </button>
 
           <div className='text-black/95 dark:text-white/80'>
             <button className='rounded-full bg-black/10 p-[10px] dark:bg-white/10'>
@@ -55,12 +57,16 @@ export const NowPlaying = () => {
             </button>
           </div>
 
-          <SvgIcon
-            name='repeat-1'
-            className='h-7 w-7 text-black/90 dark:text-white/40'
-          />
+          <button>
+            <SvgIcon
+              name='repeat-1'
+              className='h-7 w-7 text-black/90 dark:text-white/40'
+            />{' '}
+          </button>
         </div>
       </div>
     </div>
   )
 }
+
+export default NowPlaying
