@@ -138,12 +138,10 @@ class Main {
       value: string[]
     ) => {
       if (!object) return
-      for (const key of Object.keys(object)) {
-        if (key.toLowerCase() === keyToChange.toLowerCase()) {
-          object[key] = value
-        }
-      }
-      object[keyToChange] = value
+      const key = Object.keys(object).find(
+        k => k.toLowerCase() === keyToChange.toLowerCase()
+      )
+      object[key ?? keyToChange] = value
     }
 
     this.win.webContents.session.webRequest.onBeforeSendHeaders(
