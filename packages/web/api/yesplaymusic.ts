@@ -10,12 +10,20 @@ const request: AxiosInstance = axios.create({
   timeout: 15000,
 })
 
-export async function cacheAudio(id: number, audio: string) {
+export async function cacheAudio(id: number, audio: string, source: string) {
   const file = await axios.get(audio, { responseType: 'arraybuffer' })
   if (file.status !== 200 && file.status !== 206) return
+  cacheAudioBuffer(id, audio, source, file.data)
+}
 
+export async function cacheAudioBuffer(
+  id: number,
+  audio: string,
+  source: string,
+  buffer: ArrayBuffer
+) {
   const formData = new FormData()
-  const blob = new Blob([file.data], { type: 'multipart/form-data' })
+  const blob = new Blob([buffer], { type: 'multipart/form-data' })
   formData.append('file', blob)
 
   request.post(`/audio/${id}`, formData, {
@@ -24,6 +32,7 @@ export async function cacheAudio(id: number, audio: string) {
     },
     params: {
       url: audio,
+      source,
     },
   })
 }

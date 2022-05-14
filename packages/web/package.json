@@ -39,7 +39,8 @@
     "react-query": "^3.38.0",
     "react-router-dom": "^6.3.0",
     "react-use": "^17.3.2",
-    "valtio": "^1.6.0"
+    "valtio": "^1.6.0",
+    "base64-arraybuffer": "^1.0.2"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^6.4.22",

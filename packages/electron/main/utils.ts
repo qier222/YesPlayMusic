@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import pkg from '../../../package.json'
+import axios from 'axios'
 
 export const isDev = process.env.NODE_ENV === 'development'
 export const isProd = process.env.NODE_ENV === 'production'
@@ -30,4 +31,20 @@ export const createFileIfNotExist = (file: string) => {
   if (!fs.existsSync(file)) {
     fs.writeFileSync(file, '')
   }
+}
+
+export async function getBiliVideo(url: string) {
+  const toBuffer = (data: any) =>
+    data instanceof Buffer ? data : Buffer.from(data)
+
+  const response = await axios.get(url, {
+    headers: {
+      Referer: 'https://www.bilibili.com/',
+      'User-Agent': 'okhttp/3.4.1',
+    },
+    responseType: 'arraybuffer',
+  })
+
+  const buffer = toBuffer(response.data)
+  return buffer.toString('base64')
 }

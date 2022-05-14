@@ -8,10 +8,10 @@ import path from 'path'
 import fs from 'fs'
 import { db, Tables } from './db'
 import { app } from 'electron'
-import type { FetchAudioSourceResponse } from '@/shared/api/Track'
+import type { AudioSource, FetchAudioSourceResponse } from '@/shared/api/Track'
 import UNM from '@unblockneteasemusic/rust-napi'
 import { APIs as CacheAPIs } from '@/shared/CacheAPIs'
-import { isProd } from './utils'
+import { isProd, getBiliVideo } from './utils'
 
 class Server {
   port = Number(
@@ -187,6 +187,10 @@ class Server {
       const retrievedSong = await unmExecutor.retrieve(matchedAudio, context)
       const source =
         retrievedSong.source === 'ytdl' ? 'youtube' : retrievedSong.source
+      const biliData =
+        retrievedSong.source === 'bilibili'
+          ? await getBiliVideo(retrievedSong.url)
+          : null
       if (retrievedSong.url) {
         return {
           data: [
@@ -224,6 +228,7 @@ class Server {
               unm: {
                 source,
                 song: matchedAudio.song,
+                biliData,
               },
             },
           ],
@@ -252,7 +257,11 @@ class Server {
       }
 
       const fromNetease = await getFromNetease(req)
-      if (fromNetease?.code === 200 && !fromNetease?.data?.[0].freeTrialInfo) {
+      if (
+        fromNetease?.code === 200 &&
+        fromNetease?.data?.[0]?.url &&
+        !fromNetease?.data?.[0].freeTrialInfo
+      ) {
         res.status(200).send(fromNetease)
         return
       }
@@ -310,7 +319,7 @@ class Server {
         try {
           await cache.setAudio(req.files.file.data, {
             id,
-            url: String(req.query.url) || '',
+            source: String(req.query.source) as AudioSource,
           })
           res.status(200).send('Audio cached!')
         } catch (error) {

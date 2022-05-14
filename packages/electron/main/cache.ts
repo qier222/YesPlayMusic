@@ -1,5 +1,5 @@
 import { db, Tables } from './db'
-import type { FetchTracksResponse } from '@/shared/api/Track'
+import type { AudioSource, FetchTracksResponse } from '@/shared/api/Track'
 import { app } from 'electron'
 import { Request, Response } from 'express'
 import log from './log'
@@ -237,7 +237,7 @@ class Cache {
     }
   }
 
-  async setAudio(buffer: Buffer, { id, url }: { id: number; url: string }) {
+  async setAudio(buffer: Buffer, { id, source }: { id: number; source?: AudioSource }) {
     const path = `${app.getPath('userData')}/audio_cache`
 
     try {
@@ -258,14 +258,6 @@ class Cache {
         OPUS: 'opus',
       }[meta.format.codec ?? ''] ?? 'unknown'
 
-    let source: TablesStructures[Tables.Audio]['source'] = 'unknown'
-    if (url.includes('googlevideo.com')) source = 'youtube'
-    if (url.includes('126.net')) source = 'netease'
-    if (url.includes('migu.cn')) source = 'migu'
-    if (url.includes('kuwo.cn')) source = 'kuwo'
-    if (url.includes('bilivideo.com')) source = 'bilibili'
-    // TODO: missing kugou qq joox
-
     fs.writeFile(`${path}/${id}-${br}.${type}`, buffer, error => {
       if (error) {
         return log.error(`[cache] cacheAudio failed: ${error}`)
@@ -276,7 +268,7 @@ class Cache {
         id,
         br,
         type: type as TablesStructures[Tables.Audio]['type'],
-        source,
+        source: source ?? 'unknown',
         updatedAt: Date.now(),
       })
 

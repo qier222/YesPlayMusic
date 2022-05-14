@@ -49,6 +49,12 @@ export interface FetchAudioSourceResponse {
     uf: null
     url: string | null
     urlSource: number
+    source?: AudioSource
+    unm?: {
+      source: AudioSource
+      song?: any
+      biliData?: string // base64
+    }
   }[]
 }
 
@@ -102,3 +108,14 @@ export interface LikeATrackResponse {
   playlistId: number
   songs: Track[]
 }
+
+export type AudioSource =
+  | 'unknown'
+  | 'netease'
+  | 'migu'
+  | 'kuwo'
+  | 'kugou'
+  | 'youtube'
+  | 'qq'
+  | 'bilibili'
+  | 'joox'

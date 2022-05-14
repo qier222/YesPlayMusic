@@ -5,7 +5,7 @@ import {
 } from '@/web/hooks/useTracks'
 import { fetchPersonalFMWithReactQuery } from '@/web/hooks/usePersonalFM'
 import { fmTrash } from '@/web/api/personalFM'
-import { cacheAudio } from '@/web/api/yesplaymusic'
+import { cacheAudio, cacheAudioBuffer } from '@/web/api/yesplaymusic'
 import { clamp } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
@@ -13,6 +13,8 @@ import { fetchPlaylistWithReactQuery } from '@/web/hooks/usePlaylist'
 import { fetchAlbumWithReactQuery } from '@/web/hooks/useAlbum'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
+import { toast } from 'react-hot-toast'
+import { decode as base642Buffer } from 'base64-arraybuffer'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -38,6 +40,8 @@ export enum State {
 const PLAY_PAUSE_FADE_DURATION = 200
 
 let _howler = new Howl({ src: [''], format: ['mp3', 'flac'] })
+let _createdBlobRecords: string[] = []
+let _cacheDatas = {}
 export class Player {
   private _track: Track | null = null
   private _trackIndex: number = 0
@@ -191,6 +195,8 @@ export class Player {
     return {
       audio: response.data?.[0]?.url,
       id: trackID,
+      source: response.data?.[0]?.source ?? 'netease', // 从 ncm 获取音频时没有source
+      biliData: response.data?.[0]?.unm?.biliData,
     }
   }
 
@@ -215,18 +221,41 @@ export class Player {
    * Play audio via howler
    */
   private async _playAudio(autoplay: boolean = true) {
+    const revokeBlobRecords = () => {
+      for (const url in _createdBlobRecords) {
+        URL.revokeObjectURL(url)
+      }
+      _createdBlobRecords = []
+    }
+
     this._progress = 0
-    const { audio, id } = await this._fetchAudioSource(this.trackID)
+    const { audio, id, source, biliData } = await this._fetchAudioSource(
+      this.trackID
+    )
     if (!audio) {
       toast('无法播放此歌曲')
       this.nextTrack()
       return
     }
     if (this.trackID !== id) return
+    // 当音频是从 ncm 获取，并在长时间没有播放导致获取到的资源过期后
+    // 再次尝试播放或直接切歌会使 Howler 无法释放掉已有的 callback
+    // 会导致之后的音乐在音频播放完成后会调用两次或更多 onend (取决于进行上述操作的次数)
+    // 所以这里调用一次 off 来保证释放掉 onend callback
+    _howler?.off()
     Howler.unload()
-    const url = audio.includes('?')
-      ? `${audio}&ypm-id=${id}`
-      : `${audio}?ypm-id=${id}`
+    revokeBlobRecords()
+    let url = ''
+    let buffer: ArrayBuffer | null = null
+    if (biliData) {
+      buffer = base642Buffer(biliData)
+      url = URL.createObjectURL(new Blob([buffer]))
+      _createdBlobRecords = [url]
+    } else {
+      url = audio.includes('?')
+        ? `${audio}&ypm-id=${id}`
+        : `${audio}?ypm-id=${id}`
+    }
     const howler = new Howl({
       src: [url],
       format: ['mp3', 'flac', 'webm'],
@@ -237,12 +266,19 @@ export class Player {
     })
     _howler = howler
     window.howler = howler
+    _cacheDatas = {
+      audioUrl: biliData ? audio : url,
+      id,
+      source,
+      buffer,
+    }
     if (autoplay) {
       this.play()
       this.state = State.Playing
     }
     _howler.once('load', () => {
-      this._cacheAudio((_howler as any)._src)
+      this._cacheAudio(_cacheDatas)
+      _cacheDatas = {}
     })
 
     if (!this._progressInterval) {
@@ -259,11 +295,17 @@ export class Player {
     }
   }
 
-  private _cacheAudio(audio: string) {
+  private _cacheAudio(cacheDatas: any) {
+    const audio = cacheDatas.audioUrl
     if (audio.includes('yesplaymusic')) return
-    const id = Number(new URL(audio).searchParams.get('ypm-id'))
+    const id = cacheDatas.id
     if (isNaN(id) || !id) return
-    cacheAudio(id, audio)
+    const buffer = cacheDatas.buffer
+    if (buffer) {
+      cacheAudioBuffer(id, audio, cacheDatas.source, buffer)
+    } else {
+      cacheAudio(id, audio, cacheDatas.source)
+    }
   }
 
   private async _nextFMTrack() {
