@@ -15,8 +15,8 @@ import request from '@/utils/request';
  */
 export function getComment(params) {
   return request({
-    url : '/comment/new',
-    method : 'get',
+    url: '/comment/new',
+    method: 'get',
     params,
   });
 }
@@ -33,8 +33,8 @@ export function getComment(params) {
  */
 export function getFloorComment(params) {
   return request({
-    url : '/comment/floor',
-    method : 'get',
+    url: '/comment/floor',
+    method: 'get',
     params,
   });
 }
@@ -50,8 +50,8 @@ export function getFloorComment(params) {
  */
 export function sendOrReplyOrDeleteComment(params) {
   return request({
-    url : '/comment',
-    method : 'get',
+    url: '/comment',
+    method: 'get',
     params,
   });
 }
@@ -67,8 +67,8 @@ export function sendOrReplyOrDeleteComment(params) {
  */
 export function likeOrDislikeComment(params) {
   return request({
-    url : '/comment/like',
-    method : 'get',
+    url: '/comment/like',
+    method: 'get',
     params,
   });
 }
