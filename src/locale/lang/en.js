@@ -87,10 +87,12 @@ export default {
     login: 'Login',
     loginWithEmail: 'Login with Email',
     loginWithPhone: 'Login with Phone',
-    notice: `YesPlayMusic promises not to save any of your account information to the cloud.<br />
+    notice:
+        `YesPlayMusic promises not to save any of your account information to the cloud.<br />
       Your password will be MD5 encrypted locally and then transmitted to NetEase Music API.<br />
       YesPlayMusic is not the official website of NetEase Music, please consider carefully before entering account information. You can also go to <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic's GitHub repository</a> to build and use the self-hosted NetEase Music API.`,
-    noticeElectron: `Your password will be MD5 encrypted locally and then transmitted to NetEase Music API.<br />
+    noticeElectron:
+        `Your password will be MD5 encrypted locally and then transmitted to NetEase Music API.<br />
       YesPlayMusic promises not to save any of your account information to the cloud.<br />`,
   },
   mv: {
@@ -122,7 +124,7 @@ export default {
     latest: 'Latest',
     like: 'like',
     successLike:
-      'Like/dislike is successful, due to the delay of this interface, please refresh later to view the results',
+        'Like/dislike is successful, due to the delay of this interface, please refresh later to view the results',
   },
   modal: {
     close: 'Close',
@@ -196,7 +198,8 @@ export default {
       },
       enableFlac: {
         title: 'Enable FLAC Sources',
-        desc: 'To take effect, it may be required to clear the cache after enabling this function.',
+        desc:
+            'To take effect, it may be required to clear the cache after enabling this function.',
       },
       searchMode: {
         title: 'Audio Search Mode',
@@ -213,7 +216,7 @@ export default {
       proxy: {
         title: 'Proxy Server for UNM',
         desc1:
-          'The proxy server to use for requesting services such as YouTube',
+            'The proxy server to use for requesting services such as YouTube',
         desc2: 'Leave empty to pick up the default value',
       },
     },
