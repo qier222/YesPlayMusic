@@ -37,7 +37,7 @@
 - 🟥 支持 Last.fm Scrobble
 - ☁️ 支持音乐云盘
 - ⌨️ 自定义快捷键和全局快捷键
-- 🎧 支持Mpris
+- 🎧 支持 Mpris
 - 🛠 更多特性开发中
 
 ## 📦️ 安装
@@ -54,6 +54,10 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 ## ⚙️ 部署至 Vercel
 
 除了下载安装包使用，你还可以将本项目部署到 Vercel 或你的服务器上。下面是部署到 Vercel 的方法。
+
+本项目的 Demo (https://music.qier222.com) 就是部署在 Vercel 上的网站。
+
+[![Powered by Vercel](https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg)](https://vercel.com/?utm_source=ypm&utm_campaign=oss)
 
 1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://neteasecloudmusicapi.vercel.app/#/?id=%e5%ae%89%e8%a3%85)
    。你也可以将 API 部署到 Vercel。
