@@ -97,6 +97,10 @@ function createMenuTemplate(win) {
 // click在默认行为下会弹出一个contextMenu，里面的唯一选项才会调用click事件
 // setContextMenu应该是目前唯一能在linux下使用托盘菜单api
 // 但是无法区分鼠标左右键
+
+// 发现openSUSE KDE环境可以区分鼠标左右键
+// 添加左键支持
+// 2022.05.17
 class YPMTrayLinuxImpl {
   constructor(tray, win, emitter) {
     this.tray = tray;
@@ -127,6 +131,10 @@ class YPMTrayLinuxImpl {
   }
 
   handleEvents() {
+    this.tray.on('click', () => {
+      this.win.show();
+    });
+
     this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
     this.emitter.on('updatePlayState', isPlaying => {
       this.contextMenu.getMenuItemById('play').visible = !isPlaying;
