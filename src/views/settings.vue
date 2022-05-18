@@ -677,6 +677,16 @@
           <a href="http://github.com/qier222" target="_blank">QIER222</a></p
         >
         <p class="version">v{{ version }}</p>
+
+        <a
+          v-if="!isElectron"
+          href="https://vercel.com/?utm_source=ypm&utm_campaign=oss"
+        >
+          <img
+            height="36"
+            src="https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg"
+          />
+        </a>
       </div>
     </div>
   </div>
