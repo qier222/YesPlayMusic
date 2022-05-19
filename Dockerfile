@@ -25,6 +25,9 @@ RUN echo $'server { \n\
   } \n\
   \n\
   location /api/ { \n\
+  proxy_buffer_size 128k; \n\
+  proxy_buffers 16 32k; \n\
+  proxy_busy_buffers_size 128k; \n\
   proxy_set_header  Host $host; \n\
   proxy_set_header  X-Real-IP $remote_addr; \n\
   proxy_set_header  X-Forwarded-For $remote_addr; \n\

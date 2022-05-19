@@ -680,7 +680,7 @@
 
         <a
           v-if="!isElectron"
-          href="https://vercel.com/?utm_source=ypm&utm_campaign=oss"
+          href="https://vercel.com/?utm_source=ohmusic&utm_campaign=oss"
         >
           <img
             height="36"
