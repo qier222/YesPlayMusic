@@ -192,16 +192,18 @@
               @click="clickLyricLine(line.time)"
               @dblclick="clickLyricLine(line.time, true)"
             >
-              <span v-if="line.contents[0]">{{ line.contents[0] }}</span>
-              <br />
-              <span
-                v-if="
-                  line.contents[1] &&
-                  $store.state.settings.showLyricsTranslation
-                "
-                class="translation"
-                >{{ line.contents[1] }}</span
-              >
+              <div class="content">
+                <span v-if="line.contents[0]">{{ line.contents[0] }}</span>
+                <br />
+                <span
+                  v-if="
+                    line.contents[1] &&
+                    $store.state.settings.showLyricsTranslation
+                  "
+                  class="translation"
+                  >{{ line.contents[1] }}</span
+                >
+              </div>
             </div>
           </div>
         </transition>
@@ -697,20 +699,23 @@ export default {
       &:hover {
         background: var(--color-secondary-bg-for-transparent);
       }
-      &:active {
+
+      .content {
+        transform-origin: center left;
         transform: scale(0.95);
-      }
-
-      span {
-        opacity: 0.28;
-        cursor: default;
-        font-size: 0.9em;
         transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
 
-      span.translation {
-        opacity: 0.2;
-        font-size: 0.825em;
+        span {
+          opacity: 0.28;
+          cursor: default;
+          font-size: 1em;
+          transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        span.translation {
+          opacity: 0.2;
+          font-size: 0.925em;
+        }
       }
     }
 
@@ -722,18 +727,16 @@ export default {
       margin-top: 0.1em;
     }
 
-    .highlight {
-      transform-origin: center left;
-      transform: scale(1.05);
-    }
+    .highlight div.content {
+      transform: scale(1);
+      span {
+        opacity: 0.98;
+        display: inline-block;
+      }
 
-    .highlight span {
-      opacity: 0.98;
-      display: inline-block;
-    }
-
-    .highlight span.translation {
-      opacity: 0.65;
+      span.translation {
+        opacity: 0.65;
+      }
     }
   }
 
