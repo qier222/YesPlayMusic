@@ -1,14 +1,13 @@
 /* global __static */
+import {BrowserWindow, ipcMain, nativeImage, ThumbarButton} from 'electron';
 import path from 'path';
-import { BrowserWindow, nativeImage, ipcMain, ThumbarButton } from 'electron';
 
 /**
  * @param {string} filename
  */
 function createNativeImage(filename) {
   return nativeImage.createFromPath(
-    path.join(__static, `img/taskbar/${filename}`)
-  );
+      path.join(__static, `img/taskbar/${filename}`));
 }
 
 /**
@@ -19,34 +18,26 @@ function createThumbarButtons(win) {
    * @type {Map<string, ThumbarButton>} map
    */
   const map = new Map()
-    .set('play', {
-      icon: createNativeImage('play.png'),
-      tooltip: '播放',
-      click: () => {
-        win.webContents.send('play');
-      },
-    })
-    .set('pause', {
-      icon: createNativeImage('pause.png'),
-      tooltip: '暂停',
-      click: () => {
-        win.webContents.send('play');
-      },
-    })
-    .set('previous', {
-      icon: createNativeImage('previous.png'),
-      tooltip: '上一首',
-      click: () => {
-        win.webContents.send('previous');
-      },
-    })
-    .set('next', {
-      icon: createNativeImage('next.png'),
-      tooltip: '下一首',
-      click: () => {
-        win.webContents.send('next');
-      },
-    });
+                  .set('play', {
+                    icon : createNativeImage('play.png'),
+                    tooltip : '播放',
+                    click : () => { win.webContents.send('play'); },
+                  })
+                  .set('pause', {
+                    icon : createNativeImage('pause.png'),
+                    tooltip : '暂停',
+                    click : () => { win.webContents.send('play'); },
+                  })
+                  .set('previous', {
+                    icon : createNativeImage('previous.png'),
+                    tooltip : '上一首',
+                    click : () => { win.webContents.send('previous'); },
+                  })
+                  .set('next', {
+                    icon : createNativeImage('next.png'),
+                    tooltip : '下一首',
+                    click : () => { win.webContents.send('next'); },
+                  });
   return map;
 }
 
@@ -68,10 +59,11 @@ class YPMTaskbarImpl {
 
   handleEvents() {
     ipcMain.on('initTaskbar', (_, enabled) => {
-      if (enabled) this.updateThumbarButtons();
+      if (enabled)
+        this.updateThumbarButtons();
     });
 
-    ipcMain.on('player', (_, { playing }) => {
+    ipcMain.on('player', (_, {playing}) => {
       if (playing !== this.playing) {
         this.playing = playing;
         this.updateThumbarButtons();
@@ -83,6 +75,4 @@ class YPMTaskbarImpl {
 /**
  * @param {BrowserWindow} win
  */
-export function createTaskbar(win) {
-  return new YPMTaskbarImpl(win);
-}
+export function createTaskbar(win) { return new YPMTaskbarImpl(win); }
