@@ -1,44 +1,48 @@
-import {registerGlobalShortcut} from '@/electron/globalShortcut';
+import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import shortcuts from '@/utils/shortcuts';
 import UNM from '@unblockneteasemusic/rust-napi';
-import {app, dialog, globalShortcut, ipcMain} from 'electron';
+import { app, dialog, globalShortcut, ipcMain } from 'electron';
 import cloneDeep from 'lodash/cloneDeep';
 
-import {createMenu} from './menu';
+import { createMenu } from './menu';
 
 const clc = require('cli-color');
-const log =
-    text => { console.log(`${clc.blueBright('[ipcMain.js]')} ${text}`); };
+const log = text => {
+  console.log(`${clc.blueBright('[ipcMain.js]')} ${text}`);
+};
 
 const exitAsk = (e, win) => {
   e.preventDefault(); //阻止默认行为
   dialog
-      .showMessageBox({
-        type : 'info',
-        title : 'Information',
-        cancelId : 2,
-        defaultId : 0,
-        message : '确定要关闭吗？',
-        buttons : [ '最小化到托盘', '直接退出' ],
-        checkboxLabel : '记住我的选择',
-      })
-      .then(result => {
-        if (result.checkboxChecked && result.response !== 2) {
-          win.webContents.send('rememberCloseAppOption', result.response === 0
-                                                             ? 'minimizeToTray'
-                                                             : 'exit');
-        }
+    .showMessageBox({
+      type: 'info',
+      title: 'Information',
+      cancelId: 2,
+      defaultId: 0,
+      message: '确定要关闭吗？',
+      buttons: ['最小化到托盘', '直接退出'],
+      checkboxLabel: '记住我的选择',
+    })
+    .then(result => {
+      if (result.checkboxChecked && result.response !== 2) {
+        win.webContents.send(
+          'rememberCloseAppOption',
+          result.response === 0 ? 'minimizeToTray' : 'exit'
+        );
+      }
 
-        if (result.response === 0) {
-          e.preventDefault(); //阻止默认行为
-          win.hide();         //调用 最小化实例方法
-        } else if (result.response === 1) {
-          win = null;
-          // app.quit();
-          app.exit(); // exit()直接关闭客户端，不会执行quit();
-        }
-      })
-      .catch(err => { log(err); });
+      if (result.response === 0) {
+        e.preventDefault(); //阻止默认行为
+        win.hide(); //调用 最小化实例方法
+      } else if (result.response === 1) {
+        win = null;
+        // app.quit();
+        app.exit(); // exit()直接关闭客户端，不会执行quit();
+      }
+    })
+    .catch(err => {
+      log(err);
+    });
 };
 
 const client = require('discord-rich-presence')('818936529484906596');
@@ -66,11 +70,11 @@ function toBuffer(data) {
 async function getBiliVideoFile(url) {
   const axios = await import('axios').then(m => m.default);
   const response = await axios.get(url, {
-    headers : {
-      Referer : 'https://www.bilibili.com/',
-      'User-Agent' : 'okhttp/3.4.1',
+    headers: {
+      Referer: 'https://www.bilibili.com/',
+      'User-Agent': 'okhttp/3.4.1',
     },
-    responseType : 'arraybuffer',
+    responseType: 'arraybuffer',
   });
 
   const buffer = toBuffer(response.data);
@@ -89,15 +93,18 @@ async function getBiliVideoFile(url) {
 function parseSourceStringToList(executor, sourceString) {
   const availableSource = executor.list();
 
-  return sourceString.split(',').map(s => s.trim().toLowerCase()).filter(s => {
-    const isAvailable = availableSource.includes(s);
+  return sourceString
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(s => {
+      const isAvailable = availableSource.includes(s);
 
-    if (!isAvailable) {
-      log(`This source is not one of the supported source: ${s}`);
-    }
+      if (!isAvailable) {
+        log(`This source is not one of the supported source: ${s}`);
+      }
 
-    return isAvailable;
-  });
+      return isAvailable;
+    });
 }
 
 export function initIpcMain(win, store, trayEventEmitter) {
@@ -106,61 +113,64 @@ export function initIpcMain(win, store, trayEventEmitter) {
   const unmExecutor = new UNM.Executor();
 
   ipcMain.handle(
-      'unblock-music',
-      /**
-       *
-       * @param {*} _
-       * @param {string | null} sourceListString
-       * @param {Record<string, any>} ncmTrack
-       * @param {UNM.Context} context
-       */
-      async (_, sourceListString, ncmTrack, context) => {
-        // Formt the track input
-        // FIXME: Figure out the structure of Track
-        const song = {
-          id : ncmTrack.id && ncmTrack.id.toString(),
-          name : ncmTrack.name,
-          duration : ncmTrack.dt,
-          album : ncmTrack.al && {
-            id : ncmTrack.al.id && ncmTrack.al.id.toString(),
-            name : ncmTrack.al.name,
-          },
-          artists : ncmTrack.ar ? ncmTrack.ar.map(({id, name}) => ({
-                                                    id : id && id.toString(),
-                                                    name,
-                                                  }))
-                                : [],
-        };
+    'unblock-music',
+    /**
+     *
+     * @param {*} _
+     * @param {string | null} sourceListString
+     * @param {Record<string, any>} ncmTrack
+     * @param {UNM.Context} context
+     */
+    async (_, sourceListString, ncmTrack, context) => {
+      // Formt the track input
+      // FIXME: Figure out the structure of Track
+      const song = {
+        id: ncmTrack.id && ncmTrack.id.toString(),
+        name: ncmTrack.name,
+        duration: ncmTrack.dt,
+        album: ncmTrack.al && {
+          id: ncmTrack.al.id && ncmTrack.al.id.toString(),
+          name: ncmTrack.al.name,
+        },
+        artists: ncmTrack.ar
+          ? ncmTrack.ar.map(({ id, name }) => ({
+              id: id && id.toString(),
+              name,
+            }))
+          : [],
+      };
 
-        const sourceList =
-            typeof sourceListString === 'string'
-                ? parseSourceStringToList(unmExecutor, sourceListString)
-                : [ 'migu', 'ytdl', 'bilibili', 'pyncm', 'kugou' ];
-        log(`[UNM] using source: ${sourceList.join(', ')}`);
-        log(`[UNM] using configuration: ${JSON.stringify(context)}`);
+      const sourceList =
+        typeof sourceListString === 'string'
+          ? parseSourceStringToList(unmExecutor, sourceListString)
+          : ['migu', 'ytdl', 'bilibili', 'pyncm', 'kugou'];
+      log(`[UNM] using source: ${sourceList.join(', ')}`);
+      log(`[UNM] using configuration: ${JSON.stringify(context)}`);
 
-        try {
-          // TODO: tell users to install yt-dlp.
-          const matchedAudio =
-              await unmExecutor.search(sourceList, song, context);
-          const retrievedSong =
-              await unmExecutor.retrieve(matchedAudio, context);
+      try {
+        // TODO: tell users to install yt-dlp.
+        const matchedAudio = await unmExecutor.search(
+          sourceList,
+          song,
+          context
+        );
+        const retrievedSong = await unmExecutor.retrieve(matchedAudio, context);
 
-          // bilibili's audio file needs some special treatment
-          if (retrievedSong.url.includes('bilivideo.com')) {
-            retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
-          }
-
-          log(`respond with retrieve song…`);
-          log(JSON.stringify(matchedAudio));
-          return retrievedSong;
-        } catch (err) {
-          const errorMessage =
-              err instanceof Error ? `${err.message}` : `${err}`;
-          log(`UnblockNeteaseMusic failed: ${errorMessage}`);
-          return null;
+        // bilibili's audio file needs some special treatment
+        if (retrievedSong.url.includes('bilivideo.com')) {
+          retrievedSong.url = await getBiliVideoFile(retrievedSong.url);
         }
-      });
+
+        log(`respond with retrieve song…`);
+        log(JSON.stringify(matchedAudio));
+        return retrievedSong;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? `${err.message}` : `${err}`;
+        log(`UnblockNeteaseMusic failed: ${errorMessage}`);
+        return null;
+      }
+    }
+  );
 
   ipcMain.on('close', e => {
     let closeOpt = store.get('settings.closeAppOption');
@@ -176,10 +186,13 @@ export function initIpcMain(win, store, trayEventEmitter) {
     }
   });
 
-  ipcMain.on('minimize', () => { win.minimize(); });
+  ipcMain.on('minimize', () => {
+    win.minimize();
+  });
 
-  ipcMain.on('maximizeOrUnmaximize',
-             () => { win.isMaximized() ? win.unmaximize() : win.maximize(); });
+  ipcMain.on('maximizeOrUnmaximize', () => {
+    win.isMaximized() ? win.unmaximize() : win.maximize();
+  });
 
   ipcMain.on('settings', (event, options) => {
     store.set('settings', options);
@@ -193,36 +206,40 @@ export function initIpcMain(win, store, trayEventEmitter) {
 
   ipcMain.on('playDiscordPresence', (event, track) => {
     client.updatePresence({
-      details : track.name + ' - ' + track.ar.map(ar => ar.name).join(','),
-      state : track.al.name,
-      endTimestamp : Date.now() + track.dt,
-      largeImageKey : 'logo',
-      largeImageText : 'Listening ' + track.name,
-      smallImageKey : 'play',
-      smallImageText : 'Playing',
-      instance : true,
+      details: track.name + ' - ' + track.ar.map(ar => ar.name).join(','),
+      state: track.al.name,
+      endTimestamp: Date.now() + track.dt,
+      largeImageKey: 'logo',
+      largeImageText: 'Listening ' + track.name,
+      smallImageKey: 'play',
+      smallImageText: 'Playing',
+      instance: true,
     });
   });
 
   ipcMain.on('pauseDiscordPresence', (event, track) => {
     client.updatePresence({
-      details : track.name + ' - ' + track.ar.map(ar => ar.name).join(','),
-      state : track.al.name,
-      largeImageKey : 'logo',
-      largeImageText : 'YesPlayMusic',
-      smallImageKey : 'pause',
-      smallImageText : 'Pause',
-      instance : true,
+      details: track.name + ' - ' + track.ar.map(ar => ar.name).join(','),
+      state: track.al.name,
+      largeImageKey: 'logo',
+      largeImageText: 'YesPlayMusic',
+      smallImageKey: 'pause',
+      smallImageText: 'Pause',
+      instance: true,
     });
   });
 
   ipcMain.on('setProxy', (event, config) => {
     const proxyRules = `${config.protocol}://${config.server}:${config.port}`;
     store.set('proxy', proxyRules);
-    win.webContents.session.setProxy({
-      proxyRules,
-    },
-                                     () => { log('finished setProxy'); });
+    win.webContents.session.setProxy(
+      {
+        proxyRules,
+      },
+      () => {
+        log('finished setProxy');
+      }
+    );
   });
 
   ipcMain.on('removeProxy', (event, arg) => {
@@ -240,7 +257,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
     }
   });
 
-  ipcMain.on('updateShortcut', (e, {id, type, shortcut}) => {
+  ipcMain.on('updateShortcut', (e, { id, type, shortcut }) => {
     log('updateShortcut');
     let shortcuts = store.get('settings.shortcuts');
     let newShortcut = shortcuts.find(s => s.id === id);
