@@ -16,6 +16,7 @@ import {
   isDevelopment,
   isCreateTray,
   isCreateMpris,
+  isCreateTaskbar,
 } from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { startNeteaseMusicApi } from './electron/services';
@@ -27,11 +28,11 @@ import { createDockMenu } from './electron/dockMenu';
 import { registerGlobalShortcut } from './electron/globalShortcut';
 import { autoUpdater } from 'electron-updater';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import { EventEmitter } from 'events';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
 import Store from 'electron-store';
 import { createMpris } from '@/electron/mpris';
+import { createTaskbar } from './electron/windowsTaskbar';
 const clc = require('cli-color');
 const log = text => {
   console.log(`${clc.blueBright('[background.js]')} ${text}`);
@@ -206,7 +207,7 @@ class Background {
       let y = this.store.get('window.y');
 
       let displays = screen.getAllDisplays();
-      let isResetWindiw = false;
+      let isResetWindow = false;
       if (displays.length === 1) {
         let { bounds } = displays[0];
         if (
@@ -215,10 +216,10 @@ class Background {
           y < bounds.y ||
           y > bounds.y + bounds.height - 50
         ) {
-          isResetWindiw = true;
+          isResetWindow = true;
         }
       } else {
-        isResetWindiw = true;
+        isResetWindow = true;
         for (let i = 0; i < displays.length; i++) {
           let { bounds } = displays[i];
           if (
@@ -228,13 +229,13 @@ class Background {
             y < bounds.y - bounds.height
           ) {
             // 检测到APP窗口当前处于一个可用的屏幕里，break
-            isResetWindiw = false;
+            isResetWindow = false;
             break;
           }
         }
       }
 
-      if (!isResetWindiw) {
+      if (!isResetWindow) {
         options.x = x;
         options.y = y;
       }
@@ -379,19 +380,10 @@ class Background {
 
       // create window
       this.createWindow();
-      this.window.once('ready-to-show', () => {
-        this.window.show();
-      });
       this.handleWindowEvents();
 
-      // create tray
-      if (isCreateTray) {
-        this.trayEventEmitter = new EventEmitter();
-        this.ypmTrayImpl = createTray(this.window, this.trayEventEmitter);
-      }
-
       // init ipcMain
-      initIpcMain(this.window, this.store, this.trayEventEmitter);
+      initIpcMain(this.window, this.store);
 
       // set proxy
       const proxyRules = this.store.get('proxy');
@@ -414,6 +406,10 @@ class Background {
       // create touch bar
       const createdTouchBar = createTouchBar(this.window);
       if (createdTouchBar) this.window.setTouchBar(createdTouchBar);
+
+      if (isCreateTray) this.ypmTrayImpl = createTray(this.window);
+
+      if (isCreateTaskbar) this.ypmTaskbarImpl = createTaskbar(this.window);
 
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut') !== false) {

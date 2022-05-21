@@ -4,7 +4,6 @@ import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
 import shortcuts from '@/utils/shortcuts';
 import { createMenu } from './menu';
-import { isCreateTray, isMac } from '@/utils/platform';
 
 const clc = require('cli-color');
 const log = text => {
@@ -12,32 +11,6 @@ const log = text => {
 };
 
 const exitAsk = (e, win) => {
-  e.preventDefault(); //阻止默认行为
-  dialog
-    .showMessageBox({
-      type: 'info',
-      title: 'Information',
-      cancelId: 2,
-      defaultId: 0,
-      message: '确定要关闭吗？',
-      buttons: ['最小化', '直接退出'],
-    })
-    .then(result => {
-      if (result.response == 0) {
-        e.preventDefault(); //阻止默认行为
-        win.minimize(); //调用 最小化实例方法
-      } else if (result.response == 1) {
-        win = null;
-        //app.quit();
-        app.exit(); //exit()直接关闭客户端，不会执行quit();
-      }
-    })
-    .catch(err => {
-      log(err);
-    });
-};
-
-const exitAskWithoutMac = (e, win) => {
   e.preventDefault(); //阻止默认行为
   dialog
     .showMessageBox({
@@ -199,21 +172,16 @@ export function initIpcMain(win, store, trayEventEmitter) {
   );
 
   ipcMain.on('close', e => {
-    if (isMac) {
+    let closeOpt = store.get('settings.closeAppOption');
+    if (closeOpt === 'exit') {
+      win = null;
+      //app.quit();
+      app.exit(); //exit()直接关闭客户端，不会执行quit();
+    } else if (closeOpt === 'minimizeToTray') {
+      e.preventDefault();
       win.hide();
-      exitAsk(e, win);
     } else {
-      let closeOpt = store.get('settings.closeAppOption');
-      if (closeOpt === 'exit') {
-        win = null;
-        //app.quit();
-        app.exit(); //exit()直接关闭客户端，不会执行quit();
-      } else if (closeOpt === 'minimizeToTray') {
-        e.preventDefault();
-        win.hide();
-      } else {
-        exitAskWithoutMac(e, win);
-      }
+      exitAsk(e, win);
     }
   });
 
@@ -308,16 +276,4 @@ export function initIpcMain(win, store, trayEventEmitter) {
     globalShortcut.unregisterAll();
     registerGlobalShortcut(win, store);
   });
-
-  if (isCreateTray) {
-    ipcMain.on('updateTrayTooltip', (_, title) => {
-      trayEventEmitter.emit('updateTooltip', title);
-    });
-    ipcMain.on('updateTrayPlayState', (_, isPlaying) => {
-      trayEventEmitter.emit('updatePlayState', isPlaying);
-    });
-    ipcMain.on('updateTrayLikeState', (_, isLiked) => {
-      trayEventEmitter.emit('updateLikeState', isLiked);
-    });
-  }
 }

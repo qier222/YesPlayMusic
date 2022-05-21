@@ -219,6 +219,9 @@ export default class {
         return this._personalFMTrack;
       });
     }
+
+    // 直接初始化 windowsTaskbar 会导致 tumbar buttons 不显示
+    setTimeout(() => ipcRenderer?.send('initTaskbar', this._enabled), 1000);
   }
   _setPlaying(isPlaying) {
     this._playing = isPlaying;

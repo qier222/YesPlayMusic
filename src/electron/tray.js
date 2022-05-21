@@ -1,6 +1,6 @@
 /* global __static */
 import path from 'path';
-import { app, nativeImage, Tray, Menu } from 'electron';
+import { app, nativeImage, Tray, Menu, ipcMain } from 'electron';
 import { isLinux } from '@/utils/platform';
 
 function createMenuTemplate(win) {
@@ -102,10 +102,9 @@ function createMenuTemplate(win) {
 // 添加左键支持
 // 2022.05.17
 class YPMTrayLinuxImpl {
-  constructor(tray, win, emitter) {
+  constructor(tray, win) {
     this.tray = tray;
     this.win = win;
-    this.emitter = emitter;
     this.template = undefined;
     this.initTemplate();
     this.contextMenu = Menu.buildFromTemplate(this.template);
@@ -135,13 +134,13 @@ class YPMTrayLinuxImpl {
       this.win.show();
     });
 
-    this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
-    this.emitter.on('updatePlayState', isPlaying => {
+    ipcMain.on('updateTrayTooltip', (_, title) => this.tray.setToolTip(title));
+    ipcMain.on('updateTrayPlayState', (_, isPlaying) => {
       this.contextMenu.getMenuItemById('play').visible = !isPlaying;
       this.contextMenu.getMenuItemById('pause').visible = isPlaying;
       this.tray.setContextMenu(this.contextMenu);
     });
-    this.emitter.on('updateLikeState', isLiked => {
+    ipcMain.on('updateTrayLikeState', (_, isLiked) => {
       this.contextMenu.getMenuItemById('like').visible = !isLiked;
       this.contextMenu.getMenuItemById('unlike').visible = isLiked;
       this.tray.setContextMenu(this.contextMenu);
@@ -150,10 +149,9 @@ class YPMTrayLinuxImpl {
 }
 
 class YPMTrayWindowsImpl {
-  constructor(tray, win, emitter) {
+  constructor(tray, win) {
     this.tray = tray;
     this.win = win;
-    this.emitter = emitter;
     this.template = createMenuTemplate(win);
     this.contextMenu = Menu.buildFromTemplate(this.template);
 
@@ -187,16 +185,19 @@ class YPMTrayWindowsImpl {
       this.tray.popUpContextMenu(this.contextMenu);
     });
 
-    this.emitter.on('updateTooltip', title => this.tray.setToolTip(title));
-    this.emitter.on(
-      'updatePlayState',
-      isPlaying => (this.isPlaying = isPlaying)
-    );
-    this.emitter.on('updateLikeState', isLiked => (this.isLiked = isLiked));
+    ipcMain.on('updateTrayTooltip', (_, title) => {
+      this.tray.setToolTip(title);
+    });
+    ipcMain.on('updateTrayPlayState', (_, isPlaying) => {
+      this.isPlaying = isPlaying;
+    });
+    ipcMain.on('updateTrayLikeState', (_, isLiked) => {
+      this.isLiked = isLiked;
+    });
   }
 }
 
-export function createTray(win, eventEmitter) {
+export function createTray(win) {
   let icon = nativeImage
     .createFromPath(path.join(__static, 'img/icons/menu@88.png'))
     .resize({
@@ -206,8 +207,7 @@ export function createTray(win, eventEmitter) {
 
   let tray = new Tray(icon);
   tray.setToolTip('YesPlayMusic');
-
   return isLinux
-    ? new YPMTrayLinuxImpl(tray, win, eventEmitter)
-    : new YPMTrayWindowsImpl(tray, win, eventEmitter);
+    ? new YPMTrayLinuxImpl(tray, win)
+    : new YPMTrayWindowsImpl(tray, win);
 }
