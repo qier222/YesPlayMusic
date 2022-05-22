@@ -114,7 +114,7 @@
       <div v-show="currentTab === 'playlists'">
         <div v-if="liked.playlists.length > 1">
           <CoverRow
-            :items="filterPlaylists.slice(1)"
+            :items="filterPlaylists"
             type="playlist"
             sub-text="creator"
             :show-play-button="true"
@@ -282,7 +282,7 @@ export default {
       return this.data.libraryPlaylistFilter || 'all';
     },
     filterPlaylists() {
-      const playlists = this.liked.playlists;
+      const playlists = this.liked.playlists.slice(1);
       const userId = this.data.user.userId;
       if (this.playlistFilter === 'mine') {
         return playlists.filter(p => p.creator.userId === userId);
