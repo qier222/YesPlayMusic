@@ -3,7 +3,7 @@ import {
   getPlaylistDetail,
   recommendPlaylist,
 } from '@/api/playlist';
-import {isAccountLoggedIn} from '@/utils/auth';
+import { isAccountLoggedIn } from '@/utils/auth';
 
 import router from '../router';
 import state from '../store/state';
@@ -12,7 +12,9 @@ export function hasListSource() {
   return !state.player.isPersonalFM && state.player.playlistSource.id !== 0;
 }
 
-export function goToListSource() { router.push({path : getListSourcePath()}); }
+export function goToListSource() {
+  router.push({ path: getListSourcePath() });
+}
 
 export function getListSourcePath() {
   if (state.player.playlistSource.id === state.data.likedSongPlaylistID) {
@@ -22,8 +24,7 @@ export function getListSourcePath() {
   } else if (state.player.playlistSource.type === 'cloudDisk') {
     return '/library';
   } else {
-    return `/${state.player.playlistSource.type}/${
-        state.player.playlistSource.id}`;
+    return `/${state.player.playlistSource.type}/${state.player.playlistSource.id}`;
   }
 }
 
@@ -31,17 +32,16 @@ export async function getRecommendPlayList(limit, removePrivateRecommand) {
   if (isAccountLoggedIn()) {
     const playlists = await Promise.all([
       dailyRecommendPlaylist(),
-      recommendPlaylist({limit}),
+      recommendPlaylist({ limit }),
     ]);
     let recommend = playlists[0].recommend ?? [];
     if (recommend.length) {
-      if (removePrivateRecommand)
-        recommend = recommend.slice(1);
+      if (removePrivateRecommand) recommend = recommend.slice(1);
       await replaceRecommendResult(recommend);
     }
     return recommend.concat(playlists[1].result).slice(0, limit);
   } else {
-    const response = await recommendPlaylist({limit});
+    const response = await recommendPlaylist({ limit });
     return response.result.slice(0, limit);
   }
 }
@@ -59,4 +59,4 @@ async function replaceRecommendResult(recommend) {
   }
 }
 
-const specialPlaylist = [ 3136952023, 2829883282, 2829816518, 2829896389 ];
+const specialPlaylist = [3136952023, 2829883282, 2829816518, 2829896389];
