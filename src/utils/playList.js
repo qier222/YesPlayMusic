@@ -41,7 +41,7 @@ export async function getRecommendPlayList(limit, removePrivateRecommand) {
     return recommend.concat(playlists[1].result).slice(0, limit);
   } else {
     const response = await recommendPlaylist({ limit });
-    return response.result.slice(0, limit);
+    return response.result;
   }
 }
 
