@@ -188,6 +188,9 @@ class Server {
       const source =
         retrievedSong.source === 'ytdl' ? 'youtube' : retrievedSong.source
       if (retrievedSong.url) {
+        log.debug(
+          `[server] UMN match: ${matchedAudio.song?.name} (https://youtube.com/v/${matchedAudio.song?.id})`
+        )
         return {
           data: [
             {

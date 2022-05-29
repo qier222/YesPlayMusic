@@ -1,15 +1,15 @@
 import CoverRow, { Subtitle } from '@/web/components/CoverRow'
-import SvgIcon, { SvgName } from '@/web/components/SvgIcon'
-import useUserAlbums from '@/web/hooks/useUserAlbums'
-import useLyric from '@/web/hooks/useLyric'
-import usePlaylist from '@/web/hooks/usePlaylist'
-import useUser from '@/web/hooks/useUser'
-import useUserPlaylists from '@/web/hooks/useUserPlaylists'
+import Icon, { SvgName } from '@/web/components/Icon'
+import useUserAlbums from '@/web/api/hooks/useUserAlbums'
+import useLyric from '@/web/api/hooks/useLyric'
+import usePlaylist from '@/web/api/hooks/usePlaylist'
+import useUser from '@/web/api/hooks/useUser'
+import useUserPlaylists from '@/web/api/hooks/useUserPlaylists'
 import { player } from '@/web/store'
 import { resizeImage } from '@/web/utils/common'
 import { sample, chunk } from 'lodash-es'
-import useUserArtists from '@/web/hooks/useUserArtists'
-import cx from 'classnames'
+import useUserArtists from '@/web/api/hooks/useUserArtists'
+import { cx } from '@emotion/css'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
@@ -97,7 +97,7 @@ const LikedTracksCard = ({ className }: { className?: string }) => {
         onClick={handlePlay}
         className='btn-pressed-animation absolute bottom-6 right-6 grid h-11 w-11 cursor-default place-content-center rounded-full bg-brand-600 text-brand-50 shadow-lg dark:bg-white dark:text-brand-600'
       >
-        <SvgIcon name='play-fill' className='ml-0.5 h-6 w-6' />
+        <Icon name='play-fill' className='ml-0.5 h-6 w-6' />
       </button>
     </div>
   )
@@ -119,7 +119,7 @@ const OtherCard = ({
         className
       )}
     >
-      <SvgIcon name={icon} className='ml-3 mt-3 h-12 w-12' />
+      <Icon name={icon} className='ml-3 mt-3 h-12 w-12' />
       <span className='m-4'>{name}</span>
     </div>
   )

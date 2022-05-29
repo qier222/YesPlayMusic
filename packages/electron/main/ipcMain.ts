@@ -50,6 +50,11 @@ function initWindowIpcMain(win: BrowserWindow | null) {
   on(IpcChannels.Close, () => {
     app.exit()
   })
+
+  on(IpcChannels.ResetWindowSize, () => {
+    if (!win) return
+    win?.setSize(1440, 1024, true)
+  })
 }
 
 /**

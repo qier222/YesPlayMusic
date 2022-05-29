@@ -2,13 +2,13 @@ import { memo, useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
 import ArtistInline from '@/web/components/ArtistsInline'
 import Skeleton from '@/web/components/Skeleton'
-import SvgIcon from '@/web/components/SvgIcon'
+import Icon from '@/web/components/Icon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/web/hooks/useUserLikedTracksIDs'
+} from '@/web/api/hooks/useUserLikedTracksIDs'
 import { formatDuration, resizeImage } from '@/web/utils/common'
 import { player } from '@/web/store'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useSnapshot } from 'valtio'
 
 const Track = memo(
@@ -96,7 +96,7 @@ const Track = memo(
               ) : (
                 <span className='inline-flex items-center'>
                   {track.mark === 1318912 && (
-                    <SvgIcon
+                    <Icon
                       name='explicit'
                       className='mr-1 h-3.5 w-3.5 text-gray-300 dark:text-gray-500'
                     />
@@ -141,7 +141,7 @@ const Track = memo(
                 !isSkeleton && 'group-hover:opacity-100'
               )}
             >
-              <SvgIcon
+              <Icon
                 name={isLiked ? 'heart' : 'heart-outline'}
                 className='h-5 w-5'
               />

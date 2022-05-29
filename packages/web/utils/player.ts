@@ -2,17 +2,18 @@ import { Howl, Howler } from 'howler'
 import {
   fetchAudioSourceWithReactQuery,
   fetchTracksWithReactQuery,
-} from '@/web/hooks/useTracks'
-import { fetchPersonalFMWithReactQuery } from '@/web/hooks/usePersonalFM'
+} from '@/web/api/hooks/useTracks'
+import { fetchPersonalFMWithReactQuery } from '@/web/api/hooks/usePersonalFM'
 import { fmTrash } from '@/web/api/personalFM'
 import { cacheAudio } from '@/web/api/yesplaymusic'
 import { clamp } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
-import { fetchPlaylistWithReactQuery } from '@/web/hooks/usePlaylist'
-import { fetchAlbumWithReactQuery } from '@/web/hooks/useAlbum'
+import { fetchPlaylistWithReactQuery } from '@/web/api/hooks/usePlaylist'
+import { fetchAlbumWithReactQuery } from '@/web/api/hooks/useAlbum'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
+import toast from 'react-hot-toast'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -128,6 +129,10 @@ export class Player {
     return this.mode === Mode.FM ? this.fmTrack : this._track
   }
 
+  get trackIndex() {
+    return this._trackIndex
+  }
+
   /**
    * Get/Set progress of current track
    */
@@ -166,6 +171,11 @@ export class Player {
     if (track) this.fmTrack = track
 
     this._loadMoreFMTracks()
+  }
+
+  private setStateToLoading() {
+    this.state = State.Loading
+    _howler.pause()
   }
 
   private _setupProgressInterval() {
@@ -346,6 +356,7 @@ export class Player {
    * Play previous track
    */
   prevTrack() {
+    this.setStateToLoading()
     this._progress = 0
     if (this.mode === Mode.FM) {
       toast('Personal FM not support previous track')
@@ -363,6 +374,7 @@ export class Player {
    * Play next track
    */
   nextTrack(forceFM: boolean = false) {
+    this.setStateToLoading()
     this._progress = 0
     if (forceFM || this.mode === Mode.FM) {
       this.mode = Mode.FM
@@ -384,6 +396,7 @@ export class Player {
    * @param {null|number} autoPlayTrackID
    */
   playAList(list: TrackID[], autoPlayTrackID?: null | number) {
+    this.setStateToLoading()
     this.mode = Mode.TrackList
     this.trackList = list
     this._trackIndex = autoPlayTrackID
@@ -398,6 +411,7 @@ export class Player {
    * @param  {null|number=} autoPlayTrackID
    */
   async playPlaylist(playlistID: number, autoPlayTrackID?: null | number) {
+    this.setStateToLoading()
     const playlist = await fetchPlaylistWithReactQuery({ id: playlistID })
     if (!playlist?.playlist?.trackIds?.length) return
     this.trackListSource = {
@@ -416,6 +430,7 @@ export class Player {
    * @param  {null|number=} autoPlayTrackID
    */
   async playAlbum(albumID: number, autoPlayTrackID?: null | number) {
+    this.setStateToLoading()
     const album = await fetchAlbumWithReactQuery({ id: albumID })
     if (!album?.songs?.length) return
     this.trackListSource = {
@@ -433,6 +448,7 @@ export class Player {
    *  Play personal fm
    */
   async playFM() {
+    this.setStateToLoading()
     this.mode = Mode.FM
     if (
       this.fmTrackList.length > 0 &&
@@ -459,6 +475,7 @@ export class Player {
    * Play track in trackList by id
    */
   async playTrack(trackID: TrackID) {
+    this.setStateToLoading()
     const index = this.trackList.findIndex(t => t === trackID)
     if (!index) toast('播放失败，歌曲不在列表内')
     this._trackIndex = index

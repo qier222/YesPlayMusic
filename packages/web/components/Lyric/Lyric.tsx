@@ -1,10 +1,10 @@
-import useLyric from '@/web/hooks/useLyric'
+import useLyric from '@/web/api/hooks/useLyric'
 import { player } from '@/web/store'
 import { motion } from 'framer-motion'
 import { lyricParser } from '@/web/utils/lyric'
 import { useMemo } from 'react'
 import { useSnapshot } from 'valtio'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 
 const Lyric = ({ className }: { className?: string }) => {
   //   const ease = [0.5, 0.2, 0.2, 0.8]

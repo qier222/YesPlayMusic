@@ -1,7 +1,7 @@
 import { IpcChannels } from '@/shared/IpcChannels'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/web/hooks/useUserLikedTracksIDs'
+} from '@/web/api/hooks/useUserLikedTracksIDs'
 import { player } from '@/web/store'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { State as PlayerState } from '@/web/utils/player'

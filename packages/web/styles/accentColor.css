@@ -1,0 +1,220 @@
+:root {
+  --brand-color-50: 214 100% 97%;
+  --brand-color-100: 214 95% 93%;
+  --brand-color-200: 213 97% 87%;
+  --brand-color-300: 212 96% 78%;
+  --brand-color-400: 213 94% 68%;
+  --brand-color-500: 217 91% 60%;
+  --brand-color-600: 221 83% 53%;
+  --brand-color-700: 224 76% 48%;
+  --brand-color-800: 226 71% 40%;
+  --brand-color-900: 224 64% 33%;
+}
+
+[data-accent-color='red'] {
+  --brand-color-50: 0 86% 97%;
+  --brand-color-100: 0 93% 94%;
+  --brand-color-200: 0 96% 89%;
+  --brand-color-300: 0 94% 82%;
+  --brand-color-400: 0 91% 71%;
+  --brand-color-500: 0 84% 60%;
+  --brand-color-600: 0 72% 51%;
+  --brand-color-700: 0 74% 42%;
+  --brand-color-800: 0 70% 35%;
+  --brand-color-900: 0 63% 31%;
+}
+
+[data-accent-color='orange'] {
+  --brand-color-50: 33 100% 96%;
+  --brand-color-100: 34 100% 92%;
+  --brand-color-200: 32 98% 83%;
+  --brand-color-300: 31 97% 72%;
+  --brand-color-400: 27 96% 61%;
+  --brand-color-500: 25 95% 53%;
+  --brand-color-600: 21 90% 48%;
+  --brand-color-700: 17 88% 40%;
+  --brand-color-800: 15 79% 34%;
+  --brand-color-900: 15 75% 28%;
+}
+
+[data-accent-color='amber'] {
+  --brand-color-50: 48 100% 96%;
+  --brand-color-100: 48 96% 89%;
+  --brand-color-200: 48 97% 77%;
+  --brand-color-300: 46 97% 65%;
+  --brand-color-400: 43 96% 56%;
+  --brand-color-500: 38 92% 50%;
+  --brand-color-600: 32 95% 44%;
+  --brand-color-700: 26 90% 37%;
+  --brand-color-800: 23 82% 31%;
+  --brand-color-900: 22 78% 26%;
+}
+
+[data-accent-color='yellow'] {
+  --brand-color-50: 55 92% 95%;
+  --brand-color-100: 55 97% 88%;
+  --brand-color-200: 53 98% 77%;
+  --brand-color-300: 50 98% 64%;
+  --brand-color-400: 48 96% 53%;
+  --brand-color-500: 45 93% 47%;
+  --brand-color-600: 41 96% 40%;
+  --brand-color-700: 35 92% 33%;
+  --brand-color-800: 32 81% 29%;
+  --brand-color-900: 28 73% 26%;
+}
+
+[data-accent-color='lime'] {
+  --brand-color-50: 78 92% 95%;
+  --brand-color-100: 80 89% 89%;
+  --brand-color-200: 81 88% 80%;
+  --brand-color-300: 82 85% 67%;
+  --brand-color-400: 83 78% 55%;
+  --brand-color-500: 84 81% 44%;
+  --brand-color-600: 85 85% 35%;
+  --brand-color-700: 86 78% 27%;
+  --brand-color-800: 86 69% 23%;
+  --brand-color-900: 88 61% 20%;
+}
+
+[data-accent-color='green'] {
+  --brand-color-50: 138 76% 97%;
+  --brand-color-100: 141 84% 93%;
+  --brand-color-200: 141 79% 85%;
+  --brand-color-300: 142 77% 73%;
+  --brand-color-400: 142 69% 58%;
+  --brand-color-500: 142 71% 45%;
+  --brand-color-600: 142 76% 36%;
+  --brand-color-700: 142 72% 29%;
+  --brand-color-800: 143 64% 24%;
+  --brand-color-900: 144 61% 20%;
+}
+
+[data-accent-color='emerald'] {
+  --brand-color-50: 152 81% 96%;
+  --brand-color-100: 149 80% 90%;
+  --brand-color-200: 152 76% 80%;
+  --brand-color-300: 156 72% 67%;
+  --brand-color-400: 158 64% 52%;
+  --brand-color-500: 160 84% 39%;
+  --brand-color-600: 161 94% 30%;
+  --brand-color-700: 163 94% 24%;
+  --brand-color-800: 163 88% 20%;
+  --brand-color-900: 164 86% 16%;
+}
+
+[data-accent-color='teal'] {
+  --brand-color-50: 166 76% 97%;
+  --brand-color-100: 167 85% 89%;
+  --brand-color-200: 168 84% 78%;
+  --brand-color-300: 171 77% 64%;
+  --brand-color-400: 172 66% 50%;
+  --brand-color-500: 173 80% 40%;
+  --brand-color-600: 175 84% 32%;
+  --brand-color-700: 175 77% 26%;
+  --brand-color-800: 176 69% 22%;
+  --brand-color-900: 176 61% 19%;
+}
+
+[data-accent-color='cyan'] {
+  --brand-color-50: 183 100% 96%;
+  --brand-color-100: 185 96% 90%;
+  --brand-color-200: 186 94% 82%;
+  --brand-color-300: 187 92% 69%;
+  --brand-color-400: 188 86% 53%;
+  --brand-color-500: 189 94% 43%;
+  --brand-color-600: 192 91% 36%;
+  --brand-color-700: 193 82% 31%;
+  --brand-color-800: 194 70% 27%;
+  --brand-color-900: 196 64% 24%;
+}
+
+[data-accent-color='sky'] {
+  --brand-color-50: 204 100% 97%;
+  --brand-color-100: 204 94% 94%;
+  --brand-color-200: 201 94% 86%;
+  --brand-color-300: 199 95% 74%;
+  --brand-color-400: 198 93% 60%;
+  --brand-color-500: 199 89% 48%;
+  --brand-color-600: 200 98% 39%;
+  --brand-color-700: 201 96% 32%;
+  --brand-color-800: 201 90% 27%;
+  --brand-color-900: 202 80% 24%;
+}
+
+[data-accent-color='indigo'] {
+  --brand-color-50: 226 100% 97%;
+  --brand-color-100: 226 100% 94%;
+  --brand-color-200: 228 96% 89%;
+  --brand-color-300: 230 94% 82%;
+  --brand-color-400: 234 89% 74%;
+  --brand-color-500: 239 84% 67%;
+  --brand-color-600: 243 75% 59%;
+  --brand-color-700: 245 58% 51%;
+  --brand-color-800: 244 55% 41%;
+  --brand-color-900: 242 47% 34%;
+}
+
+[data-accent-color='violet'] {
+  --brand-color-50: 250 100% 98%;
+  --brand-color-100: 251 91% 95%;
+  --brand-color-200: 251 95% 92%;
+  --brand-color-300: 252 95% 85%;
+  --brand-color-400: 255 92% 76%;
+  --brand-color-500: 258 90% 66%;
+  --brand-color-600: 262 83% 58%;
+  --brand-color-700: 263 70% 50%;
+  --brand-color-800: 263 69% 42%;
+  --brand-color-900: 264 67% 35%;
+}
+
+[data-accent-color='purple'] {
+  --brand-color-50: 270 100% 98%;
+  --brand-color-100: 269 100% 95%;
+  --brand-color-200: 269 100% 92%;
+  --brand-color-300: 269 97% 85%;
+  --brand-color-400: 270 95% 75%;
+  --brand-color-500: 271 91% 65%;
+  --brand-color-600: 271 81% 56%;
+  --brand-color-700: 272 72% 47%;
+  --brand-color-800: 273 67% 39%;
+  --brand-color-900: 274 66% 32%;
+}
+
+[data-accent-color='fuchsia'] {
+  --brand-color-50: 289 100% 98%;
+  --brand-color-100: 287 100% 95%;
+  --brand-color-200: 288 96% 91%;
+  --brand-color-300: 291 93% 83%;
+  --brand-color-400: 292 91% 73%;
+  --brand-color-500: 292 84% 61%;
+  --brand-color-600: 293 69% 49%;
+  --brand-color-700: 295 72% 40%;
+  --brand-color-800: 295 70% 33%;
+  --brand-color-900: 297 64% 28%;
+}
+
+[data-accent-color='pink'] {
+  --brand-color-50: 327 73% 97%;
+  --brand-color-100: 326 78% 95%;
+  --brand-color-200: 326 85% 90%;
+  --brand-color-300: 327 87% 82%;
+  --brand-color-400: 329 86% 70%;
+  --brand-color-500: 330 81% 60%;
+  --brand-color-600: 333 71% 51%;
+  --brand-color-700: 335 78% 42%;
+  --brand-color-800: 336 74% 35%;
+  --brand-color-900: 336 69% 30%;
+}
+
+[data-accent-color='rose'] {
+  --brand-color-50: 356 100% 97%;
+  --brand-color-100: 356 100% 95%;
+  --brand-color-200: 353 96% 90%;
+  --brand-color-300: 353 96% 82%;
+  --brand-color-400: 351 95% 71%;
+  --brand-color-500: 350 89% 60%;
+  --brand-color-600: 347 77% 50%;
+  --brand-color-700: 345 83% 41%;
+  --brand-color-800: 343 80% 35%;
+  --brand-color-900: 342 75% 30%;
+}

@@ -22,6 +22,7 @@ export const enum IpcChannels {
   Repeat = 'Repeat',
   SyncSettings = 'SyncSettings',
   GetAudioCacheSize = 'GetAudioCacheSize',
+  ResetWindowSize = 'ResetWindowSize',
 }
 
 // ipcMain.on params
@@ -56,6 +57,7 @@ export interface IpcChannelsParams {
   }
   [IpcChannels.SyncSettings]: Store['settings']
   [IpcChannels.GetAudioCacheSize]: void
+  [IpcChannels.ResetWindowSize]: void
 }
 
 // ipcRenderer.on params

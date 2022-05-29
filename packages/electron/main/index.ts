@@ -37,7 +37,7 @@ class Main {
     defaults: {
       window: {
         width: 1440,
-        height: 960,
+        height: 1024,
       },
       settings: initialState.settings,
     },
@@ -105,11 +105,14 @@ class Main {
       },
       width: this.store.get('window.width'),
       height: this.store.get('window.height'),
-      minWidth: 1080,
-      minHeight: 720,
-      vibrancy: 'fullscreen-ui',
-      titleBarStyle: 'hiddenInset',
-      frame: !(isWindows || isLinux), // TODO: 适用于linux下独立的启用开关
+      minWidth: 1240,
+      minHeight: 848,
+      // vibrancy: 'fullscreen-ui',
+      titleBarStyle: 'customButtonsOnHover',
+      trafficLightPosition: { x: 24, y: 24 },
+      // frame: !(isWindows || isLinux), // TODO: 适用于linux下独立的启用开关
+      frame: false,
+      transparent: true,
     }
     if (this.store.get('window')) {
       options.x = this.store.get('window.x')
@@ -132,24 +135,21 @@ class Main {
 
   disableCORS() {
     if (!this.win) return
-    const upsertKeyValue = (
-      object: Record<string, string | string[]>,
-      keyToChange: string,
-      value: string[]
-    ) => {
-      if (!object) return
-      for (const key of Object.keys(object)) {
-        if (key.toLowerCase() === keyToChange.toLowerCase()) {
-          object[key] = value
-        }
+
+    const addCORSHeaders = (headers: Record<string, string | string[]>) => {
+      if (
+        headers['Access-Control-Allow-Origin']?.[0] !== '*' &&
+        headers['access-control-allow-origin']?.[0] !== '*'
+      ) {
+        headers['Access-Control-Allow-Origin'] = ['*']
       }
-      object[keyToChange] = value
+      return headers
     }
 
     this.win.webContents.session.webRequest.onBeforeSendHeaders(
       (details, callback) => {
         const { requestHeaders, url } = details
-        upsertKeyValue(requestHeaders, 'access-control-allow-origin', ['*'])
+        addCORSHeaders(requestHeaders)
 
         // 不加这几个 header 的话，使用 axios 加载 YouTube 音频会很慢
         if (url.includes('googlevideo.com')) {
@@ -164,14 +164,15 @@ class Main {
 
     this.win.webContents.session.webRequest.onHeadersReceived(
       (details, callback) => {
-        const { responseHeaders } = details
-        if (responseHeaders) {
-          upsertKeyValue(responseHeaders, 'access-control-allow-origin', ['*'])
-          upsertKeyValue(responseHeaders, 'access-control-allow-headers', ['*'])
+        const { responseHeaders, url } = details
+        if (url.includes('sentry.io')) {
+          callback({ responseHeaders })
+          return
         }
-        callback({
-          responseHeaders,
-        })
+        if (responseHeaders) {
+          addCORSHeaders(responseHeaders)
+        }
+        callback({ responseHeaders })
       }
     )
   }

@@ -3,14 +3,14 @@ import { ComponentStory, ComponentMeta } from '@storybook/react'
 import Topbar from './Topbar'
 
 export default {
-  title: 'Topbar',
+  title: 'Components/Topbar',
   component: Topbar,
 } as ComponentMeta<typeof Topbar>
 
 const Template: ComponentStory<typeof Topbar> = args => (
-  <div className='w-[calc(100vw_-_32px)] rounded-3xl bg-[#F8F8F8] px-11 dark:bg-black'>
+  <div className='w-[calc(100vw_-_32px)] rounded-24 bg-[#F8F8F8] px-11 dark:bg-black'>
     <Topbar />
   </div>
 )
 
-export const Primary = Template.bind({})
+export const Default = Template.bind({})

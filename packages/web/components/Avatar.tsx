@@ -1,7 +1,7 @@
 import { resizeImage } from '../utils/common'
-import useUser from '../hooks/useUser'
-import SvgIcon from './SvgIcon'
-import cx from 'classnames'
+import useUser from '@/web/api/hooks/useUser'
+import Icon from './Icon'
+import { cx } from '@emotion/css'
 import { useNavigate } from 'react-router-dom'
 
 const Avatar = ({ size }: { size?: string }) => {
@@ -25,7 +25,7 @@ const Avatar = ({ size }: { size?: string }) => {
         />
       ) : (
         <div onClick={() => navigate('/login')}>
-          <SvgIcon
+          <Icon
             name='user'
             className={cx(
               'rounded-full bg-black/[.06] p-1 text-gray-500 dark:bg-white/5',

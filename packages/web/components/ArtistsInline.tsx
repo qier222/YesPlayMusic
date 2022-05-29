@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import cx from 'classnames'
+import {cx} from '@emotion/css'
 
 const ArtistInline = ({
   artists,

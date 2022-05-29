@@ -3,7 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react'
 import Sidebar from './Sidebar'
 
 export default {
-  title: 'Sidebar',
+  title: 'Components/Sidebar',
   component: Sidebar,
 } as ComponentMeta<typeof Sidebar>
 
@@ -13,4 +13,4 @@ const Template: ComponentStory<typeof Sidebar> = args => (
   </div>
 )
 
-export const Primary = Template.bind({})
+export const Default = Template.bind({})

@@ -1,18 +1,15 @@
 import ArtistInline from './ArtistsInline'
 import IconButton from './IconButton'
 import Slider from './Slider'
-import SvgIcon from './SvgIcon'
+import Icon from './Icon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/web/hooks/useUserLikedTracksIDs'
+} from '@/web/api/hooks/useUserLikedTracksIDs'
 import { player, state } from '@/web/store'
 import { resizeImage } from '@/web/utils/common'
-import {
-  State as PlayerState,
-  Mode as PlayerMode,
-} from '@/web/utils/player'
+import { State as PlayerState, Mode as PlayerMode } from '@/web/utils/player'
 import { RepeatMode as PlayerRepeatMode } from '@/shared/playerDataTypes'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useSnapshot } from 'valtio'
 import { useMemo } from 'react'
 import toast from 'react-hot-toast'
@@ -60,7 +57,7 @@ const PlayingTrack = () => {
               onClick={toAlbum}
               className='flex aspect-square h-full items-center justify-center rounded-md bg-black/[.04] shadow-sm'
             >
-              <SvgIcon className='h-6 w-6 text-gray-300' name='music-note' />
+              <Icon className='h-6 w-6 text-gray-300' name='music-note' />
             </div>
           )}
 
@@ -82,7 +79,7 @@ const PlayingTrack = () => {
           <IconButton
             onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
           >
-            <SvgIcon
+            <Icon
               className='h-5 w-5 text-black dark:text-white'
               name={
                 track?.id && userLikedSongs?.ids?.includes(track.id)
@@ -111,12 +108,12 @@ const MediaControls = () => {
           onClick={() => track && player.prevTrack()}
           disabled={!track}
         >
-          <SvgIcon className='h-6 w-6' name='previous' />
+          <Icon className='h-6 w-6' name='previous' />
         </IconButton>
       )}
       {mode === PlayerMode.FM && (
         <IconButton onClick={() => player.fmTrash()}>
-          <SvgIcon className='h-6 w-6' name='dislike' />
+          <Icon className='h-6 w-6' name='dislike' />
         </IconButton>
       )}
       <IconButton
@@ -124,7 +121,7 @@ const MediaControls = () => {
         disabled={!track}
         className='after:rounded-xl'
       >
-        <SvgIcon
+        <Icon
           className='h-7 w-7'
           name={
             [PlayerState.Playing, PlayerState.Loading].includes(state)
@@ -134,7 +131,7 @@ const MediaControls = () => {
         />
       </IconButton>
       <IconButton onClick={() => track && player.nextTrack()} disabled={!track}>
-        <SvgIcon className='h-6 w-6' name='next' />
+        <Icon className='h-6 w-6' name='next' />
       </IconButton>
     </div>
   )
@@ -159,13 +156,13 @@ const Others = () => {
         onClick={() => toast('Work in progress')}
         disabled={playerSnapshot.mode === PlayerMode.FM}
       >
-        <SvgIcon className='h-6 w-6' name='playlist' />
+        <Icon className='h-6 w-6' name='playlist' />
       </IconButton>
       <IconButton
         onClick={switchRepeatMode}
         disabled={playerSnapshot.mode === PlayerMode.FM}
       >
-        <SvgIcon
+        <Icon
           className={cx(
             'h-6 w-6',
             playerSnapshot.repeatMode !== PlayerRepeatMode.Off &&
@@ -182,15 +179,15 @@ const Others = () => {
         onClick={() => toast('施工中...')}
         disabled={playerSnapshot.mode === PlayerMode.FM}
       >
-        <SvgIcon className='h-6 w-6' name='shuffle' />
+        <Icon className='h-6 w-6' name='shuffle' />
       </IconButton>
       <IconButton onClick={() => toast('施工中...')}>
-        <SvgIcon className='h-6 w-6' name='volume' />
+        <Icon className='h-6 w-6' name='volume' />
       </IconButton>
 
       {/* Lyric */}
       <IconButton onClick={() => (state.uiStates.showLyricPanel = true)}>
-        <SvgIcon className='h-6 w-6' name='lyrics' />
+        <Icon className='h-6 w-6' name='lyrics' />
       </IconButton>
     </div>
   )

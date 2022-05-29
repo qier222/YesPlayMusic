@@ -8,7 +8,7 @@ import {
   UserApiNames,
   FetchUserAlbumsResponse,
 } from '@/shared/api/User'
-import { fetchUserAlbums } from '../api/user'
+import { fetchUserAlbums } from '../user'
 
 export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
   const { data: user } = useUser()

@@ -1,10 +1,10 @@
 import Cover from '@/web/components/Cover'
 import Skeleton from '@/web/components/Skeleton'
-import SvgIcon from '@/web/components/SvgIcon'
-import { prefetchAlbum } from '@/web/hooks/useAlbum'
-import { prefetchPlaylist } from '@/web/hooks/usePlaylist'
+import Icon from '@/web/components/Icon'
+import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
+import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
 import { formatDate, resizeImage, scrollToTop } from '@/web/utils/common'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -180,7 +180,7 @@ const CoverRow = ({
                     >
                       {/* Playlist private icon */}
                       {(item as Playlist).privacy === 10 && (
-                        <SvgIcon
+                        <Icon
                           name='lock'
                           className='mr-1 mb-1 inline-block h-3 w-3 text-gray-300'
                         />
@@ -188,7 +188,7 @@ const CoverRow = ({
 
                       {/* Explicit icon */}
                       {(item as Album)?.mark === 1056768 && (
-                        <SvgIcon
+                        <Icon
                           name='explicit'
                           className='float-right mt-[2px] h-4 w-4 text-gray-300'
                         />

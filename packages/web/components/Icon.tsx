@@ -40,13 +40,7 @@ export type SvgName =
   | 'windows-un-maximize'
   | 'x'
 
-const SvgIcon = ({
-  name,
-  className,
-}: {
-  name: SvgName
-  className?: string
-}) => {
+const Icon = ({ name, className }: { name: SvgName; className?: string }) => {
   const symbolId = `#icon-${name}`
   return (
     <svg aria-hidden='true' className={className}>
@@ -55,4 +49,4 @@ const SvgIcon = ({
   )
 }
 
-export default SvgIcon
+export default Icon

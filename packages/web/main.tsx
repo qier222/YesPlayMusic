@@ -6,12 +6,14 @@ import { BrowserRouter } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import 'virtual:svg-icons-register'
-import './styles/global.scss'
-import './styles/accentColor.scss'
-import App from './App'
+import './styles/global.css'
+import './styles/accentColor.css'
+import App from './AppNew'
 import pkg from '../../package.json'
 import ReactGA from 'react-ga4'
 import { ipcRenderer } from './ipcRenderer'
+import { QueryClientProvider } from 'react-query'
+import reactQueryClient from '@/web/utils/reactQueryClient'
 
 ReactGA.initialize('G-KMJJCFZDKF')
 
@@ -35,7 +37,9 @@ const root = ReactDOMClient.createRoot(container)
 root.render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <QueryClientProvider client={reactQueryClient}>
+        <App />
+      </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
 )

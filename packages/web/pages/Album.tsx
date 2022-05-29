@@ -3,10 +3,10 @@ import { NavLink, useParams } from 'react-router-dom'
 import Button, { Color as ButtonColor } from '@/web/components/Button'
 import CoverRow, { Subtitle } from '@/web/components/CoverRow'
 import Skeleton from '@/web/components/Skeleton'
-import SvgIcon from '@/web/components/SvgIcon'
+import Icon from '@/web/components/Icon'
 import TracksAlbum from '@/web/components/TracksAlbum'
-import useAlbum from '@/web/hooks/useAlbum'
-import useArtistAlbums from '@/web/hooks/useArtistAlbums'
+import useAlbum from '@/web/api/hooks/useAlbum'
+import useArtistAlbums from '@/web/api/hooks/useArtistAlbums'
 import { player } from '@/web/store'
 import {
   Mode as PlayerMode,
@@ -19,10 +19,10 @@ import {
   resizeImage,
   scrollToTop,
 } from '@/web/utils/common'
-import useTracks from '@/web/hooks/useTracks'
+import useTracks from '@/web/api/hooks/useTracks'
 import useUserAlbums, {
   useMutationLikeAAlbum,
-} from '@/web/hooks/useUserAlbums'
+} from '@/web/api/hooks/useUserAlbums'
 import { useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSnapshot } from 'valtio'
@@ -64,7 +64,7 @@ const PlayButton = ({
 
   return (
     <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
-      <SvgIcon
+      <Icon
         name={isPlaying ? 'pause' : 'play'}
         className='mr-1 -ml-1 h-6 w-6'
       />
@@ -135,7 +135,7 @@ const Header = ({
           {!isLoading && isCoverError ? (
             // Fallback cover
             <div className='flex h-full w-full items-center justify-center rounded-2xl border border-black border-opacity-5 bg-gray-100 text-gray-300'>
-              <SvgIcon name='music-note' className='h-1/2 w-1/2' />
+              <Icon name='music-note' className='h-1/2 w-1/2' />
             </div>
           ) : (
             coverUrl && (
@@ -183,7 +183,7 @@ const Header = ({
           ) : (
             <div className='flex items-center text-sm text-gray-500 dark:text-gray-400'>
               {album?.mark === 1056768 && (
-                <SvgIcon
+                <Icon
                   name='explicit'
                   className='mt-px mr-1 h-4 w-4 text-gray-400 dark:text-gray-500'
                 />
@@ -216,7 +216,7 @@ const Header = ({
               isSkelton={isLoading}
               onClick={() => album?.id && mutationLikeAAlbum.mutate(album)}
             >
-              <SvgIcon
+              <Icon
                 name={isThisAlbumLiked ? 'heart' : 'heart-outline'}
                 className='h-6 w-6'
               />
@@ -228,7 +228,7 @@ const Header = ({
               isSkelton={isLoading}
               onClick={() => toast('施工中...')}
             >
-              <SvgIcon name='more' className='h-6 w-6' />
+              <Icon name='more' className='h-6 w-6' />
             </Button>
           </div>
         </div>

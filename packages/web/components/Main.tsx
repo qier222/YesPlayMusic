@@ -1,6 +1,6 @@
 import Router from './Router'
 import Topbar from './Topbar'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 
 const Main = () => {
   return (

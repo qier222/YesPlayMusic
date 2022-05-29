@@ -2,8 +2,8 @@ import ArtistInline from '@/web/components/ArtistsInline'
 import Skeleton from '@/web/components/Skeleton'
 import { player } from '@/web/store'
 import { resizeImage } from '@/web/utils/common'
-import SvgIcon from './SvgIcon'
-import cx from 'classnames'
+import Icon from './Icon'
+import { cx } from '@emotion/css'
 import { useMemo } from 'react'
 import { useSnapshot } from 'valtio'
 
@@ -65,7 +65,7 @@ const Track = ({
             ) : (
               <span className='flex items-center'>
                 {track.mark === 1318912 && (
-                  <SvgIcon
+                  <Icon
                     name='explicit'
                     className={cx(
                       'mr-1 h-3 w-3',

@@ -3,12 +3,12 @@ import { player, state } from '@/web/store'
 import { getCoverColor } from '@/web/utils/common'
 import { colord } from 'colord'
 import IconButton from '../IconButton'
-import SvgIcon from '../SvgIcon'
+import Icon from '../Icon'
 import Lyric from './Lyric'
 import { motion, AnimatePresence } from 'framer-motion'
 import Lyric2 from './Lyric2'
 import useCoverColor from '@/web/hooks/useCoverColor'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useMemo } from 'react'
 import { useSnapshot } from 'valtio'
 
@@ -56,7 +56,7 @@ const LyricPanel = () => {
 
           <div className='absolute bottom-3.5 right-7 text-white'>
             <IconButton onClick={() => (state.uiStates.showLyricPanel = false)}>
-              <SvgIcon className='h-6 w-6' name='lyrics' />
+              <Icon className='h-6 w-6' name='lyrics' />
             </IconButton>
           </div>
         </motion.div>

@@ -1,13 +1,10 @@
 import { player } from '@/web/store'
 import { resizeImage } from '@/web/utils/common'
-import SvgIcon from './SvgIcon'
+import Icon from './Icon'
 import ArtistInline from './ArtistsInline'
-import {
-  State as PlayerState,
-  Mode as PlayerMode,
-} from '@/web/utils/player'
+import { State as PlayerState, Mode as PlayerMode } from '@/web/utils/player'
 import useCoverColor from '../hooks/useCoverColor'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useNavigate } from 'react-router-dom'
 import { useSnapshot } from 'valtio'
 import { useMemo } from 'react'
@@ -34,11 +31,11 @@ const MediaControls = () => {
         className={classes}
         onClick={() => player.fmTrash()}
       >
-        <SvgIcon name='dislike' className='h-6 w-6' />
+        <Icon name='dislike' className='h-6 w-6' />
       </button>
 
       <button key='play' className={classes} onClick={playOrPause}>
-        <SvgIcon
+        <Icon
           className='h-6 w-6'
           name={
             playerSnapshot.mode === PlayerMode.FM &&
@@ -54,7 +51,7 @@ const MediaControls = () => {
         className={classes}
         onClick={() => player.nextTrack(true)}
       >
-        <SvgIcon name='next' className='h-6 w-6' />
+        <Icon name='next' className='h-6 w-6' />
       </button>
     </div>
   )
@@ -127,7 +124,7 @@ const FMCard = () => {
               track ? 'text-white ' : 'text-gray-700 dark:text-white'
             )}
           >
-            <SvgIcon name='fm' className='mr-1 h-6 w-6' />
+            <Icon name='fm' className='mr-1 h-6 w-6' />
             <span className='font-semibold'>私人FM</span>
           </div>
         </div>

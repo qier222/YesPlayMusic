@@ -6,11 +6,11 @@ import {
   loginWithEmail,
   loginWithPhone,
 } from '@/web/api/auth'
-import SvgIcon from '@/web/components/SvgIcon'
+import Icon from '@/web/components/Icon'
 import { state } from '@/web/store'
 import { setCookies } from '@/web/utils/cookie'
 import { useInterval } from 'react-use'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useState, useMemo, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useMutation, useQuery } from 'react-query'
@@ -113,10 +113,7 @@ const PasswordInput = ({
             onClick={() => setShowPassword(!showPassword)}
             className='dark:hover-text-white cursor-default  rounded-md p-1.5 text-gray-400 transition duration-300 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-600 dark:hover:text-white'
           >
-            <SvgIcon
-              className='h-5 w-5'
-              name={showPassword ? 'eye-off' : 'eye'}
-            />
+            <Icon className='h-5 w-5' name={showPassword ? 'eye-off' : 'eye'} />
           </button>
         </div>
       </div>
@@ -188,7 +185,7 @@ const OtherLoginMethods = ({
                 onClick={() => setMethod(id)}
                 className='flex w-full cursor-default items-center justify-center rounded-lg bg-gray-100 py-2 text-gray-600 transition duration-300 hover:bg-gray-200 hover:text-gray-800 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 dark:hover:text-gray-100'
               >
-                <SvgIcon className='mr-2 h-5 w-5' name={id} />
+                <Icon className='mr-2 h-5 w-5' name={id} />
                 <span>{name}</span>
               </button>
             )

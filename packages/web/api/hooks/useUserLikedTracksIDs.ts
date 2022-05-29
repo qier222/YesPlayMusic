@@ -3,7 +3,7 @@ import useUser from './useUser'
 import { useMutation, useQueryClient } from 'react-query'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { APIs } from '@/shared/CacheAPIs'
-import { fetchUserLikedTracksIDs } from '../api/user'
+import { fetchUserLikedTracksIDs } from '../user'
 import {
   FetchUserLikedTracksIDsResponse,
   UserApiNames,

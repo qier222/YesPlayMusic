@@ -1,14 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@mixin line-clamp($lines: 1) {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  word-break: break-all;
-  -webkit-line-clamp: $lines;
-}
 
 @layer components {
   .app-region-drag {
@@ -25,29 +20,44 @@
 
   .btn-pressed-animation {
     @apply transition-transform duration-300;
-    &:active {
-      @apply scale-95;
-    }
   }
+  .btn-pressed-animation:active {
+    @apply scale-95;
+  }
+
   .btn-hover-animation {
     @apply relative transform;
-    &::after {
-      @apply absolute top-0 left-0 z-[-1] h-full w-full scale-[.92] rounded-lg opacity-0 transition-all duration-300;
-      content: '';
-    }
+  }
+  .btn-hover-animation:after {
+    @apply absolute top-0 left-0 z-[-1] h-full w-full scale-[.92] rounded-lg opacity-0 transition-all duration-300;
+    content: '';
+  }
+  .btn-hover-animation:hover::after {
+    @apply scale-100 opacity-100;
+  }
 
-    &:hover::after {
-      @apply scale-100 opacity-100;
-    }
-  }
   .line-clamp-1 {
-    @include line-clamp(1);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    -webkit-line-clamp: 1;
   }
+
   .line-clamp-2 {
-    @include line-clamp(2);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    -webkit-line-clamp: 2;
   }
+
   .line-clamp-3 {
-    @include line-clamp(3);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    -webkit-line-clamp: 3;
   }
 }
 
@@ -88,11 +98,9 @@
     url('@/web/assets/fonts/Barlow-Black.ttf') format('truetype');
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
-
 body,
 input {
-  font-family: 'Roboto', 'Barlow', ui-sans-serif, system-ui, -apple-system,
+  font-family: Roboto, ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei,
     Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, microsoft uighur,
     sans-serif;
@@ -117,4 +125,8 @@ button {
 img,
 a {
   -webkit-user-drag: none;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
 }

@@ -7,12 +7,16 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
+const IS_ELECTRON = process.env.IS_ELECTRON
+
 /**
  * @see https://vitejs.dev/config/
  */
 export default defineConfig({
   mode: process.env.NODE_ENV,
   root: './',
+  base: '/',
+  clearScreen: IS_ELECTRON ? false : true,
   plugins: [
     react(),
 
@@ -24,9 +28,8 @@ export default defineConfig({
       symbolId: 'icon-[name]',
     }),
   ],
-  base: '/',
   build: {
-    target: process.env.IS_ELECTRON ? 'esnext' : 'modules',
+    target: IS_ELECTRON ? 'esnext' : 'modules',
     sourcemap: true,
     outDir: './dist',
     emptyOutDir: true,
@@ -46,15 +49,16 @@ export default defineConfig({
       '@': join(__dirname, '../'),
     },
   },
-  clearScreen: false,
   server: {
     port: Number(process.env['ELECTRON_WEB_SERVER_PORT'] || 42710),
+    strictPort: IS_ELECTRON ? true : false,
     proxy: {
       '/netease/': {
         target: `http://127.0.0.1:${
           process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
         }`,
         changeOrigin: true,
+        rewrite: path => (IS_ELECTRON ? path : path.replace(/^\/netease/, '')),
       },
       '/yesplaymusic/': {
         target: `http://127.0.0.1:${

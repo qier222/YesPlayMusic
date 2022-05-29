@@ -1,7 +1,6 @@
 const { mergeConfig } = require('vite')
 const { join } = require('path')
 const { createSvgIconsPlugin } = require('vite-plugin-svg-icons')
-console.log(join(__dirname, '../assets/icons'))
 
 module.exports = {
   stories: [
@@ -13,7 +12,6 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     '@storybook/addon-postcss',
-    '@storybook/addon-viewport',
     'storybook-tailwind-dark-mode',
   ],
   framework: '@storybook/react',
@@ -31,6 +29,11 @@ module.exports = {
           symbolId: 'icon-[name]',
         }),
       ],
+      resolve: {
+        alias: {
+          '@': join(__dirname, '../../'),
+        },
+      },
     })
   },
 }

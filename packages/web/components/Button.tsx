@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 
 export enum Color {
   Primary = 'primary',
@@ -28,7 +28,7 @@ const Button = ({
     <button
       onClick={onClick}
       className={cx(
-        'btn-pressed-animation flex cursor-default items-center rounded-lg  px-4 py-1.5 text-lg font-medium',
+        'btn-pressed-animation flex cursor-default items-center rounded-20  px-4 py-1.5 text-lg font-medium',
         {
           'bg-brand-100 dark:bg-brand-600': color === Color.Primary,
           'text-brand-500 dark:text-white': iconColor === Color.Primary,

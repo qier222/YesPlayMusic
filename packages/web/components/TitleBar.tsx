@@ -1,10 +1,10 @@
 import { player } from '@/web/store'
-import SvgIcon from './SvgIcon'
+import Icon from './Icon'
 import { IpcChannels } from '@/shared/IpcChannels'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { useState, useMemo } from 'react'
 import { useSnapshot } from 'valtio'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
@@ -31,13 +31,13 @@ const Controls = () => {
         onClick={minimize}
         className='flex w-[2.875rem] items-center justify-center hover:bg-[#e9e9e9]'
       >
-        <SvgIcon className='h-3 w-3' name='windows-minimize' />
+        <Icon className='h-3 w-3' name='windows-minimize' />
       </button>
       <button
         onClick={maxRestore}
         className='flex w-[2.875rem] items-center justify-center hover:bg-[#e9e9e9]'
       >
-        <SvgIcon
+        <Icon
           className='h-3 w-3'
           name={isMaximized ? 'windows-un-maximize' : 'windows-maximize'}
         />
@@ -46,7 +46,7 @@ const Controls = () => {
         onClick={close}
         className='flex w-[2.875rem] items-center justify-center hover:bg-[#c42b1c] hover:text-white'
       >
-        <SvgIcon className='h-3 w-3' name='windows-close' />
+        <Icon className='h-3 w-3' name='windows-close' />
       </button>
     </div>
   )

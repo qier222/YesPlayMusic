@@ -117,6 +117,7 @@ class Cache {
       case APIs.UserAccount:
       case APIs.Personalized:
       case APIs.RecommendResource:
+      case APIs.UserArtists:
       case APIs.Likelist: {
         const data = db.find(Tables.AccountData, api)
         if (data?.json) return JSON.parse(data.json)

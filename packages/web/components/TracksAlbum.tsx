@@ -1,14 +1,14 @@
 import { memo, useCallback, useMemo } from 'react'
 import ArtistInline from '@/web/components/ArtistsInline'
 import Skeleton from '@/web/components/Skeleton'
-import SvgIcon from '@/web/components/SvgIcon'
+import Icon from '@/web/components/Icon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/web/hooks/useUserLikedTracksIDs'
+} from '@/web/api/hooks/useUserLikedTracksIDs'
 import { player } from '@/web/store'
 import { formatDuration } from '@/web/utils/common'
 import { State as PlayerState } from '@/web/utils/player'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useSnapshot } from 'valtio'
 
 const PlayOrPauseButtonInTrack = memo(
@@ -31,7 +31,7 @@ const PlayOrPauseButtonInTrack = memo(
           !isHighlight && 'hidden group-hover:block'
         )}
       >
-        <SvgIcon
+        <Icon
           className='h-5 w-5 text-brand-500'
           name={isPlaying && isHighlight ? 'pause' : 'play'}
         />
@@ -118,7 +118,7 @@ const Track = memo(
                 <span className='flex items-center'>
                   {track.name}
                   {track.mark === 1318912 && (
-                    <SvgIcon
+                    <Icon
                       name='explicit'
                       className='ml-1.5 mt-[2px] h-4 w-4 text-gray-300 dark:text-gray-500'
                     />
@@ -169,7 +169,7 @@ const Track = memo(
                 !isSkeleton && 'group-hover:opacity-100'
               )}
             >
-              <SvgIcon
+              <Icon
                 name={isLiked ? 'heart' : 'heart-outline'}
                 className='h-5 w-5'
               />

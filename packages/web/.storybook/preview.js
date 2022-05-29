@@ -1,6 +1,6 @@
 import 'virtual:svg-icons-register'
-import '../styles/global.scss'
-import '../styles/accentColor.scss'
+import '../styles/global.css'
+import '../styles/accentColor.css'
 import viewports from './viewports'
 
 export const parameters = {

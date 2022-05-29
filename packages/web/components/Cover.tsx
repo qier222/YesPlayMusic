@@ -1,5 +1,5 @@
-import SvgIcon from '@/web/components/SvgIcon'
-import cx from 'classnames'
+import Icon from '@/web/components/Icon'
+import { cx } from '@emotion/css'
 import { useState } from 'react'
 
 const Cover = ({
@@ -38,7 +38,7 @@ const Cover = ({
       {/* Cover */}
       {isError ? (
         <div className='box-content flex aspect-square h-full w-full items-center justify-center rounded-xl border border-black border-opacity-5  bg-gray-800 text-gray-300 '>
-          <SvgIcon name='music-note' className='h-1/2 w-1/2' />
+          <Icon name='music-note' className='h-1/2 w-1/2' />
         </div>
       ) : (
         <img
@@ -55,7 +55,7 @@ const Cover = ({
       {showPlayButton && (
         <div className='absolute top-0 hidden h-full w-full place-content-center group-hover:grid'>
           <button className='btn-pressed-animation grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-            <SvgIcon className='ml-0.5 h-6 w-6' name='play-fill' />
+            <Icon className='ml-0.5 h-6 w-6' name='play-fill' />
           </button>
         </div>
       )}

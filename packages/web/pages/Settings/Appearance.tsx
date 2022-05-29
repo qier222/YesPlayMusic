@@ -1,7 +1,7 @@
 import { state } from '@/web/store'
 import { changeAccentColor } from '@/web/utils/theme'
 import { useSnapshot } from 'valtio'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 
 const AccentColor = () => {
   const colors = {

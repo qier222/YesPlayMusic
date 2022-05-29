@@ -1,17 +1,17 @@
 import { memo, useCallback, useEffect, useMemo } from 'react'
 import Button, { Color as ButtonColor } from '@/web/components/Button'
 import Skeleton from '@/web/components/Skeleton'
-import SvgIcon from '@/web/components/SvgIcon'
+import Icon from '@/web/components/Icon'
 import TracksList from '@/web/components/TracksList'
-import usePlaylist from '@/web/hooks/usePlaylist'
+import usePlaylist from '@/web/api/hooks/usePlaylist'
 import useScroll from '@/web/hooks/useScroll'
-import useTracksInfinite from '@/web/hooks/useTracksInfinite'
+import useTracksInfinite from '@/web/api/hooks/useTracksInfinite'
 import { player } from '@/web/store'
 import { formatDate, resizeImage } from '@/web/utils/common'
 import useUserPlaylists, {
   useMutationLikeAPlaylist,
-} from '@/web/hooks/useUserPlaylists'
-import useUser from '@/web/hooks/useUser'
+} from '@/web/api/hooks/useUserPlaylists'
+import useUser from '@/web/api/hooks/useUser'
 import {
   Mode as PlayerMode,
   TrackListSourceType,
@@ -58,7 +58,7 @@ const PlayButton = ({
 
   return (
     <Button onClick={wrappedHandlePlay} isSkelton={isLoading}>
-      <SvgIcon
+      <Icon
         name={isPlaying ? 'pause' : 'play'}
         className='-ml-1 mr-1 h-6 w-6'
       />
@@ -191,7 +191,7 @@ const Header = memo(
                     playlist?.id && mutationLikeAPlaylist.mutate(playlist)
                   }
                 >
-                  <SvgIcon
+                  <Icon
                     name={isThisPlaylistLiked ? 'heart' : 'heart-outline'}
                     className='h-6 w-6'
                   />
@@ -204,7 +204,7 @@ const Header = memo(
                 isSkelton={isLoading}
                 onClick={() => toast('施工中...')}
               >
-                <SvgIcon name='more' className='h-6 w-6' />
+                <Icon name='more' className='h-6 w-6' />
               </Button>
             </div>
           </div>

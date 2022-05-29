@@ -1,6 +1,6 @@
 import { FetchTracksParams, TrackApiNames } from '@/shared/api/Track'
 import { useInfiniteQuery } from 'react-query'
-import { fetchTracks } from '../api/track'
+import { fetchTracks } from '../track'
 
 // 100 tracks each page
 const offset = 100

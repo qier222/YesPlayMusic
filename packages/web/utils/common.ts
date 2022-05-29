@@ -23,8 +23,8 @@ export function resizeImage(
     lg: '1024',
   }
   return `${url}?param=${sizeMap[size]}y${sizeMap[size]}`.replace(
-    'http://',
-    'https://'
+    /http(s?):\/\/p\d.music.126.net/,
+    'https://p1.music.126.net'
   )
 }
 

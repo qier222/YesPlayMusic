@@ -4,10 +4,12 @@ const colors = require('tailwindcss/colors')
 
 const replaceBrandColorWithCSSVar = () => {
   const blues = Object.entries(colors.blue).map(([key, value]) => {
-    const c = colord(value).toRgb()
+    const rgb = colord(value).toHsl()
+    const hsl = colord(value).toHsl()
     return {
       key,
-      rgb: `${c.r} ${c.g} ${c.b}`,
+      hsl: `${hsl.h} ${hsl.s} ${hsl.l}`,
+      rgb: `${rgb.r} ${rgb.g} ${rgb.b}`,
     }
   })
   return {
@@ -20,7 +22,7 @@ const replaceBrandColorWithCSSVar = () => {
         }
         value = value.replace(
           `rgb(${blue.rgb}`,
-          `rgb(var(--brand-color-${blue.key})`
+          `hsl(var(--brand-color-${blue.key})`
         )
       })
       // if (decl.value !== value) {

@@ -1,6 +1,14 @@
-import SvgIcon from './SvgIcon'
-import style from './DailyTracksCard.module.scss'
-import cx from 'classnames'
+import Icon from './Icon'
+import { cx, css, keyframes } from '@emotion/css'
+
+const move = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+}
+`
 
 const DailyTracksCard = () => {
   return (
@@ -9,7 +17,10 @@ const DailyTracksCard = () => {
       <img
         className={cx(
           'absolute top-0 left-0 w-full will-change-transform',
-          style.animation
+          css`
+            animation: ${move} 38s infinite;
+            animation-direction: alternate;
+          `
         )}
         src='https://p2.music.126.net/QxJA2mr4hhb9DZyucIOIQw==/109951165422200291.jpg?param=1024y1024'
       />
@@ -25,7 +36,7 @@ const DailyTracksCard = () => {
 
       {/* Play button */}
       <button className='btn-pressed-animation absolute right-6 bottom-6 grid h-11 w-11 cursor-default place-content-center rounded-full border border-white border-opacity-[.08] bg-white bg-opacity-[.14] text-white backdrop-blur backdrop-filter transition-all hover:bg-opacity-[.44]'>
-        <SvgIcon name='play-fill' className='ml-0.5 h-6 w-6' />
+        <Icon name='play-fill' className='ml-0.5 h-6 w-6' />
       </button>
     </div>
   )

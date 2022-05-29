@@ -1,9 +1,9 @@
 import Avatar from '@/web/components/Avatar'
-import SvgIcon from '@/web/components/SvgIcon'
-import useUser from '@/web/hooks/useUser'
+import Icon from '@/web/components/Icon'
+import useUser from '@/web/api/hooks/useUser'
 import Appearance from './Appearance'
 import UnblockNeteaseMusic from './UnblockNeteaseMusic'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 
@@ -38,7 +38,7 @@ const UserCard = () => {
           className='btn-pressed-animation btn-hover-animation flex items-center px-4 py-3 text-lg font-medium text-gray-600 after:rounded-xl after:bg-black/[.06] dark:text-gray-300 dark:after:bg-white/5'
         >
           {/* TODO: 画登入登出图标 */}
-          <SvgIcon name='x' className='mr-1 h-6 w-6' />
+          <Icon name='x' className='mr-1 h-6 w-6' />
           {user?.profile ? '登出' : '登录'}
         </button>
       </div>

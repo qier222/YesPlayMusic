@@ -1,21 +1,18 @@
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
-} from '@/web/hooks/useUserLikedTracksIDs'
+} from '@/web/api/hooks/useUserLikedTracksIDs'
 import { player, state } from '@/web/store'
 import { resizeImage } from '@/web/utils/common'
 
 import ArtistInline from '../ArtistsInline'
 import Cover from '../Cover'
 import IconButton from '../IconButton'
-import SvgIcon from '../SvgIcon'
-import {
-  State as PlayerState,
-  Mode as PlayerMode,
-} from '@/web/utils/player'
+import Icon from '../Icon'
+import { State as PlayerState, Mode as PlayerMode } from '@/web/utils/player'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSnapshot } from 'valtio'
-import cx from 'classnames'
+import { cx } from '@emotion/css'
 
 const PlayingTrack = () => {
   const playerSnapshot = useSnapshot(player)
@@ -85,7 +82,7 @@ const LikeButton = ({ track }: { track: Track | undefined | null }) => {
       <IconButton
         onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
       >
-        <SvgIcon
+        <Icon
           className='h-6 w-6 text-white'
           name={
             track?.id && userLikedSongs?.ids?.includes(track.id)
@@ -111,12 +108,12 @@ const Controls = () => {
           onClick={() => track && player.prevTrack()}
           disabled={!track}
         >
-          <SvgIcon className='h-6 w-6' name='previous' />
+          <Icon className='h-6 w-6' name='previous' />
         </IconButton>
       )}
       {mode === PlayerMode.FM && (
         <IconButton onClick={() => player.fmTrash()}>
-          <SvgIcon className='h-6 w-6' name='dislike' />
+          <Icon className='h-6 w-6' name='dislike' />
         </IconButton>
       )}
       <IconButton
@@ -124,7 +121,7 @@ const Controls = () => {
         disabled={!track}
         className='after:rounded-xl'
       >
-        <SvgIcon
+        <Icon
           className='h-7 w-7'
           name={
             [PlayerState.Playing, PlayerState.Loading].includes(state)
@@ -134,7 +131,7 @@ const Controls = () => {
         />
       </IconButton>
       <IconButton onClick={() => track && player.nextTrack()} disabled={!track}>
-        <SvgIcon className='h-6 w-6' name='next' />
+        <Icon className='h-6 w-6' name='next' />
       </IconButton>
     </div>
   )
