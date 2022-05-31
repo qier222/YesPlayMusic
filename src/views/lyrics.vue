@@ -76,20 +76,44 @@
                   </span>
                 </div>
               </div>
-              <div class="buttons">
-                <button-icon
-                  :title="$t('player.like')"
-                  @click.native="likeATrack(player.currentTrack.id)"
-                >
-                  <svg-icon
-                    :icon-class="
-                      player.isCurrentTrackLiked ? 'heart-solid' : 'heart'
-                    "
-                  />
-                </button-icon>
-                <!-- <button-icon @click.native="openMenu" title="Menu"
-                  ><svg-icon icon-class="more"
-                /></button-icon> -->
+              <div class="top-right">
+                <div class="volume-control">
+                  <button-icon :title="$t('player.mute')" @click.native="mute">
+                    <svg-icon v-show="volume > 0.5" icon-class="volume" />
+                    <svg-icon v-show="volume === 0" icon-class="volume-mute" />
+                    <svg-icon
+                      v-show="volume <= 0.5 && volume !== 0"
+                      icon-class="volume-half"
+                    />
+                  </button-icon>
+                  <div class="volume-bar">
+                    <vue-slider
+                      v-model="volume"
+                      :min="0"
+                      :max="1"
+                      :interval="0.01"
+                      :drag-on-click="true"
+                      :duration="0"
+                      tooltip="none"
+                      :dot-size="12"
+                    ></vue-slider>
+                  </div>
+                </div>
+                <div class="buttons">
+                  <button-icon
+                    :title="$t('player.like')"
+                    @click.native="likeATrack(player.currentTrack.id)"
+                  >
+                    <svg-icon
+                      :icon-class="
+                        player.isCurrentTrackLiked ? 'heart-solid' : 'heart'
+                      "
+                    />
+                  </button-icon>
+                  <!-- <button-icon @click.native="openMenu" title="Menu"
+                    ><svg-icon icon-class="more"
+                  /></button-icon> -->
+                </div>
               </div>
             </div>
             <div class="progress-bar">
@@ -251,6 +275,14 @@ export default {
     ...mapState(['player', 'settings', 'showLyrics']),
     currentTrack() {
       return this.player.currentTrack;
+    },
+    volume: {
+      get() {
+        return this.player.volume;
+      },
+      set(value) {
+        this.player.volume = value;
+      },
     },
     imageUrl() {
       return this.player.currentTrack?.al?.picUrl + '?param=1024y1024';
@@ -566,17 +598,31 @@ export default {
       display: flex;
       justify-content: space-between;
 
-      .buttons {
+      .top-right {
         display: flex;
-        align-items: center;
+        justify-content: space-between;
 
-        button {
-          margin: 0 0 0 4px;
+        .volume-control {
+          margin: 0 10px;
+          display: flex;
+          align-items: center;
+          .volume-bar {
+            width: 84px;
+          }
         }
 
-        .svg-icon {
-          height: 18px;
-          width: 18px;
+        .buttons {
+          display: flex;
+          align-items: center;
+
+          button {
+            margin: 0 0 0 4px;
+          }
+
+          .svg-icon {
+            height: 18px;
+            width: 18px;
+          }
         }
       }
     }
