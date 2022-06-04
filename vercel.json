@@ -1,0 +1,11 @@
+{
+  "github": {
+    "silent": true
+  },
+  "rewrites": [
+    {
+      "source": "/netease/:match*",
+      "destination": "http://168.138.40.199:12835/:match*"
+    }
+  ]
+}
