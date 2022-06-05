@@ -32,7 +32,7 @@
 
       <div class="left-side">
         <div>
-          <div class="date">
+          <div v-if="settings.showLyricsTime" class="date">
             {{ date }}
           </div>
           <div class="cover">

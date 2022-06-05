@@ -166,6 +166,7 @@ export default {
     subTitleDefault: 'Show Alias for Subtitle by default',
     enableReversedMode: 'Enable Reversed Mode (Experimental)',
     enableCustomTitlebar: 'Enable custom title bar (Need restart)',
+    showLyricsTime: 'Display current time',
     lyricsBackground: {
       text: 'Show Lyrics Background',
       off: 'Off',
