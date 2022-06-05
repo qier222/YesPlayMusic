@@ -32,6 +32,9 @@
 
       <div class="left-side">
         <div>
+          <div class="date">
+            {{ date }}
+          </div>
           <div class="cover">
             <div class="cover-container">
               <img :src="imageUrl" loading="lazy" />
@@ -245,6 +248,7 @@ export default {
       highlightLyricIndex: -1,
       minimize: true,
       background: '',
+      date: this.formatTime(new Date()),
     };
   },
   computed: {
@@ -327,6 +331,12 @@ export default {
   created() {
     this.getLyric();
     this.getCoverColor();
+    this.initDate();
+  },
+  beforeDestroy: function () {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   },
   destroyed() {
     clearInterval(this.lyricsInterval);
@@ -334,6 +344,24 @@ export default {
   methods: {
     ...mapMutations(['toggleLyrics']),
     ...mapActions(['likeATrack']),
+    initDate() {
+      var _this = this;
+      this.timer = setInterval(function () {
+        _this.date = _this.formatTime(new Date());
+      }, 1000);
+    },
+    formatTime(value) {
+      let hour = value.getHours();
+      let minute = value.getMinutes();
+      let second = value.getSeconds();
+      return (
+        (hour >= 10 ? hour : '0' + hour) +
+        ':' +
+        (minute >= 10 ? minute : '0' + minute) +
+        ':' +
+        (second >= 10 ? second : '0' + second)
+      );
+    },
     playPrevTrack() {
       this.player.playPrevTrack();
     },
@@ -535,6 +563,20 @@ export default {
   transition: all 0.5s;
 
   z-index: 1;
+
+  .date {
+    max-width: 54vh;
+    margin: 24px 0;
+    color: var(--color-text);
+    text-align: center;
+    font-size: 4rem;
+    font-weight: 600;
+    opacity: 0.88;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
 
   .controls {
     max-width: 54vh;
