@@ -62,6 +62,47 @@ export function fetchUserLikedTracksIDs(
   })
 }
 
+// 听歌打卡
+export function scrobble(params: {
+  id: number // track id
+  sourceid: number // 歌单或专辑id
+  time?: number // 已听秒数
+}): Promise<null> {
+  return request({
+    url: '/scrobble',
+    method: 'post',
+    params: {
+      ...params,
+      timestamp: new Date().getTime(),
+    },
+  })
+}
+
+export interface FetchListenedRecordsParams {
+  uid: number // 用户id
+  type: number // type=1 时只返回 weekData, type=0 时返回 allData
+}
+export interface FetchListenedRecordsResponse {
+  code: number
+  weekData: {
+    playCount: number
+    score: number
+    song: Track
+  }[]
+}
+export function fetchListenedRecords(
+  params: FetchListenedRecordsParams
+): Promise<FetchListenedRecordsResponse> {
+  return request({
+    url: '/user/record',
+    method: 'get',
+    params: {
+      ...params,
+      timestamp: new Date().getTime(),
+    },
+  })
+}
+
 /**
  * 每日签到
  * 说明 : 调用此接口可签到获取积分

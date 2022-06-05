@@ -13,6 +13,12 @@ const fetch = (params: FetchPlaylistParams, noCache?: boolean) => {
   return fetchPlaylist(params, !!noCache)
 }
 
+export const fetchFromCache = (id: number): FetchPlaylistResponse | undefined =>
+  window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
+    api: APIs.Playlist,
+    query: { id },
+  })
+
 export default function usePlaylist(
   params: FetchPlaylistParams,
   noCache?: boolean
@@ -23,13 +29,7 @@ export default function usePlaylist(
     {
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
       refetchOnWindowFocus: true,
-      placeholderData: (): FetchPlaylistResponse | undefined =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.Playlist,
-          query: {
-            id: params.id,
-          },
-        }),
+      placeholderData: () => fetchFromCache(params.id),
     }
   )
 }
@@ -45,6 +45,7 @@ export function fetchPlaylistWithReactQuery(params: FetchPlaylistParams) {
 }
 
 export async function prefetchPlaylist(params: FetchPlaylistParams) {
+  if (fetchFromCache(params.id)) return
   await reactQueryClient.prefetchQuery(
     [PlaylistApiNames.FetchPlaylist, params],
     () => fetch(params),

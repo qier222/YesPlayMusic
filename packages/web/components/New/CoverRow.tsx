@@ -2,6 +2,8 @@ import { resizeImage } from '@/web/utils/common'
 import { cx } from '@emotion/css'
 import { useNavigate } from 'react-router-dom'
 import Image from './Image'
+import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
+import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
 
 const CoverRow = ({
   albums,
@@ -19,6 +21,11 @@ const CoverRow = ({
   const goTo = (id: number) => {
     if (albums) navigate(`/album/${id}`)
     if (playlists) navigate(`/playlist/${id}`)
+  }
+
+  const prefetch = (id: number) => {
+    if (albums) prefetchAlbum({ id })
+    if (playlists) prefetchPlaylist({ id })
   }
 
   return (
@@ -39,6 +46,7 @@ const CoverRow = ({
             alt={album.name}
             src={resizeImage(album?.picUrl || '', 'md')}
             className='aspect-square rounded-24'
+            onMouseOver={() => prefetch(album.id)}
           />
         ))}
         {playlists?.map(playlist => (
@@ -46,8 +54,12 @@ const CoverRow = ({
             onClick={() => goTo(playlist.id)}
             key={playlist.id}
             alt={playlist.name}
-            src={resizeImage(playlist?.picUrl || '', 'md')}
+            src={resizeImage(
+              playlist.coverImgUrl || playlist?.picUrl || '',
+              'md'
+            )}
             className='aspect-square rounded-24'
+            onMouseOver={() => prefetch(playlist.id)}
           />
         ))}
       </div>

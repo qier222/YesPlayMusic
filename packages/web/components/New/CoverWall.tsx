@@ -1,19 +1,16 @@
 import { css, cx } from '@emotion/css'
-import { sampleSize, shuffle } from 'lodash-es'
 import Image from './Image'
-import { covers } from '@/web/.storybook/mock/tracks'
 import { resizeImage } from '@/web/utils/common'
 import useBreakpoint from '@/web/hooks/useBreakpoint'
-import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 
-const CoverWall = () => {
-  const bigCover = useMemo(
-    () =>
-      shuffle(
-        sampleSize([...Array(covers.length).keys()], ~~(covers.length / 3))
-      ),
-    []
-  )
+const CoverWall = ({
+  albums,
+}: {
+  albums: { id: number; coverUrl: string; large: boolean }[]
+}) => {
+  const navigate = useNavigate()
   const breakpoint = useBreakpoint()
   const sizes = {
     small: {
@@ -23,7 +20,7 @@ const CoverWall = () => {
       xl: 'sm',
       '2xl': 'md',
     },
-    big: {
+    large: {
       sm: 'xs',
       md: 'sm',
       lg: 'md',
@@ -41,19 +38,21 @@ const CoverWall = () => {
         `
       )}
     >
-      {covers.map((cover, index) => (
+      {albums.map(album => (
         <Image
           src={resizeImage(
-            cover,
-            sizes[bigCover.includes(index) ? 'big' : 'small'][breakpoint]
+            album.coverUrl,
+            sizes[album.large ? 'large' : 'small'][breakpoint]
           )}
-          key={cover}
+          key={album.id}
           alt='Album Cover'
           placeholder={null}
           className={cx(
             'aspect-square h-full w-full rounded-24',
-            bigCover.includes(index) && 'col-span-2 row-span-2'
+            album.large && 'col-span-2 row-span-2'
           )}
+          onClick={() => navigate(`/album/${album.id}`)}
+          onMouseOver={() => prefetchAlbum({ id: album.id })}
         />
       ))}
     </div>

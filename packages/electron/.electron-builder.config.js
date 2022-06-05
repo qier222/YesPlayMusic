@@ -6,15 +6,15 @@
 module.exports = {
   appId: 'com.qier222.yesplaymusic',
   productName: 'YesPlayMusic',
-  copyright: 'Copyright © 2022 ${author}',
-  asar: true,
+  copyright: 'Copyright © 2022 qier222',
+  asar: false,
   directories: {
     output: 'release',
     buildResources: 'build',
   },
   npmRebuild: false,
   buildDependenciesFromSource: true,
-  files: ['./dist'],
+  electronVersion: '19.0.3',
   publish: [
     {
       provider: 'github',
@@ -98,16 +98,8 @@ module.exports = {
     icon: './build/icon.icns',
   },
   files: [
-    'dist/main/**/*',
-    'dist/renderer/**/*',
-    {
-      from: 'packages/electron/migrations',
-      to: 'dist/main/migrations',
-    },
-    {
-      from: 'src/main/assets',
-      to: 'dist/main/assets',
-    },
+    '!**/*.ts',
+    '!**/node_modules/better-sqlite3/{bin,build,deps}/**',
     '!**/node_modules/*/{*.MD,*.md,README,readme}',
     '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
     '!**/node_modules/*.d.ts',
@@ -120,5 +112,24 @@ module.exports = {
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
     '!**/*.{map,debug.min.js}',
+
+    '!**/dist/binary',
+    {
+      from: './dist',
+      to: './main',
+    },
+    {
+      from: '../web/dist',
+      to: './web',
+    },
+    {
+      from: './migrations',
+      to: 'main/migrations',
+    },
+    {
+      from: './assets',
+      to: 'main/assets',
+    },
+    './main',
   ],
 }

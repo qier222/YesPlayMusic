@@ -45,18 +45,21 @@ const Cover = () => {
   const duration = 150 // ms
 
   useEffect(() => {
-    const cover = resizeImage(playerSnapshot.track?.al.picUrl || '', 'lg')
+    const resizedCover = resizeImage(
+      playerSnapshot.track?.al.picUrl || '',
+      'lg'
+    )
     const animate = async () => {
       animationStartTime.current = Date.now()
       await controls.start({ opacity: 0 })
-      setCover(cover)
+      setCover(resizedCover)
     }
     animate()
   }, [controls, playerSnapshot.track?.al.picUrl])
 
   // 防止狂点下一首或上一首造成封面与歌曲不匹配的问题
   useEffect(() => {
-    const realCover = playerSnapshot.track?.al.picUrl ?? ''
+    const realCover = resizeImage(playerSnapshot.track?.al.picUrl ?? '', 'lg')
     if (cover !== realCover) setCover(realCover)
   }, [cover, playerSnapshot.track?.al.picUrl])
 
@@ -156,7 +159,7 @@ const NowPlaying = () => {
 
           <button>
             <Icon
-              name='repeat-1'
+              name='heart'
               className='h-7 w-7 text-black/90 dark:text-white/40'
             />
           </button>

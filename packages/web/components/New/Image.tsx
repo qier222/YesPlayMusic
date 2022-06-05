@@ -12,6 +12,7 @@ const Image = ({
   sizes,
   placeholder = 'blank',
   onClick,
+  onMouseOver,
 }: {
   src?: string
   srcSet?: string
@@ -21,6 +22,7 @@ const Image = ({
   lazyLoad?: boolean
   placeholder?: 'artist' | 'album' | 'playlist' | 'podcast' | 'blank' | null
   onClick?: (e: React.MouseEvent<HTMLImageElement>) => void
+  onMouseOver?: (e: React.MouseEvent<HTMLImageElement>) => void
 }) => {
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState(false)
@@ -57,6 +59,7 @@ const Image = ({
         initial={{ opacity: 0 }}
         transition={transition}
         onClick={onClick}
+        onMouseOver={onMouseOver}
       />
 
       {/* Placeholder / Error fallback */}

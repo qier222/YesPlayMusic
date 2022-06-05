@@ -82,7 +82,7 @@ const Topbar = () => {
   return (
     <div
       className={cx(
-        'app-region-drag fixed top-0 right-0 z-10 flex items-center justify-between  pt-11 pb-10 pr-6 pl-10 ',
+        'app-region-drag fixed top-0 right-0 z-20 flex items-center justify-between overflow-hidden rounded-tr-24 pt-11 pb-10 pr-6 pl-10 ',
         css`
           left: 104px;
         `,

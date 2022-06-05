@@ -9,18 +9,19 @@ import { useSnapshot } from 'valtio'
 
 const Layout = () => {
   const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.track, [playerSnapshot])
+  const showPlayer = useMemo(() => !!playerSnapshot.track, [playerSnapshot])
 
   return (
     <div
       id='layout'
       className={cx(
-        'grid h-screen select-none  overflow-hidden rounded-24 bg-white dark:bg-black',
+        'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black',
+        window.ipcRenderer && 'rounded-24',
         css`
           grid-template-columns: 6.5rem auto 358px;
           grid-template-rows: 132px auto;
         `,
-        track
+        showPlayer
           ? css`
               grid-template-areas:
                 'sidebar main -'
@@ -36,7 +37,7 @@ const Layout = () => {
       <Sidebar />
       <Topbar />
       <Main />
-      {track && <Player />}
+      {showPlayer && <Player />}
     </div>
   )
 }

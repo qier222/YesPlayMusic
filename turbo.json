@@ -12,8 +12,12 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
+    "pack": {
+      "dependsOn": ["build"],
+      "outputs": ["release/**"]
+    },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "outputs": []
     },
     "lint": {

@@ -1,6 +1,5 @@
 import { Route, RouteObject, Routes, useLocation } from 'react-router-dom'
 import Login from '@/web/pages/Login'
-import Playlist from '@/web/pages/Playlist'
 import Artist from '@/web/pages/Artist'
 import Search from '@/web/pages/Search'
 import Library from '@/web/pages/Library'
@@ -11,6 +10,7 @@ import React, { ReactNode, Suspense } from 'react'
 const My = React.lazy(() => import('@/web/pages/New/My'))
 const Discover = React.lazy(() => import('@/web/pages/New/Discover'))
 const Album = React.lazy(() => import('@/web/pages/New/Album'))
+const Playlist = React.lazy(() => import('@/web/pages/New/Playlist'))
 
 const routes: RouteObject[] = [
   {
@@ -71,6 +71,7 @@ const Router = () => {
         <Route path='/discover' element={lazy(<Discover />)} />
         <Route path='/login' element={lazy(<Login />)} />
         <Route path='/album/:id' element={lazy(<Album />)} />
+        <Route path='/playlist/:id' element={lazy(<Playlist />)} />
       </Routes>
     </AnimatePresence>
   )

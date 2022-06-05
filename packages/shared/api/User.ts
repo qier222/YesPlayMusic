@@ -4,6 +4,7 @@ export enum UserApiNames {
   FetchUserPlaylists = 'fetchUserPlaylists',
   FetchUserAlbums = 'fetchUserAlbums',
   FetchUserArtist = 'fetchUserArtists',
+  FetchListenedRecords = 'fetchListenedRecords',
 }
 
 // 获取账号详情

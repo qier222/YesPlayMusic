@@ -17,6 +17,12 @@ const fetch = async (params: FetchAlbumParams, noCache?: boolean) => {
   return album
 }
 
+const fetchFromCache = (id: number): FetchAlbumResponse =>
+  window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
+    api: APIs.Album,
+    query: { id },
+  })
+
 export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
   return useQuery(
     [AlbumApiNames.FetchAlbum, params.id],
@@ -24,13 +30,7 @@ export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
     {
       enabled: !!params.id,
       staleTime: 24 * 60 * 60 * 1000, // 24 hours
-      placeholderData: (): FetchAlbumResponse =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.Album,
-          query: {
-            id: params.id,
-          },
-        }),
+      placeholderData: () => fetchFromCache(params.id),
     }
   )
 }
@@ -46,6 +46,7 @@ export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
 }
 
 export async function prefetchAlbum(params: FetchAlbumParams) {
+  if (fetchFromCache(params.id)) return
   await reactQueryClient.prefetchQuery(
     [AlbumApiNames.FetchAlbum, params.id],
     () => fetch(params),

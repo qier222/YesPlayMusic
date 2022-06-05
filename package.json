@@ -14,8 +14,9 @@
   "packageManager": "pnpm@7.0.0",
   "scripts": {
     "install": "turbo run post-install --parallel --no-cache",
-    "build": "ross-env-shell IS_ELECTRON=yes turbo run build",
+    "build": "cross-env-shell IS_ELECTRON=yes turbo run build",
     "build:web": "turbo run build:web",
+    "pack": "turbo run build pack",
     "dev": "cross-env-shell IS_ELECTRON=yes turbo run dev --parallel",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md}\"",
@@ -24,9 +25,9 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "eslint": "^8.16.0",
+    "eslint": "^8.17.0",
     "prettier": "^2.6.2",
-    "turbo": "^1.2.14",
-    "typescript": "^4.7.2"
+    "turbo": "^1.2.16",
+    "typescript": "^4.7.3"
   }
 }
