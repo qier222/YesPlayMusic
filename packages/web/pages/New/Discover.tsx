@@ -4,8 +4,8 @@ import {
   fetchPlaylistWithReactQuery,
   fetchFromCache,
 } from '@/web/api/hooks/usePlaylist'
-import useTracks, { fetchTracksWithReactQuery } from '@/web/api/hooks/useTracks'
-import { useEffect, useMemo, useState } from 'react'
+import { fetchTracksWithReactQuery } from '@/web/api/hooks/useTracks'
+import { useEffect, useState } from 'react'
 import { sampleSize } from 'lodash-es'
 import { FetchPlaylistResponse } from '@/shared/api/Playlists'
 
@@ -39,7 +39,7 @@ const getAlbumsFromAPI = async () => {
             resolve(cache)
             return
           }
-          return fetchPlaylistWithReactQuery({ id })
+          resolve(fetchPlaylistWithReactQuery({ id }))
         })
     )
   )) as FetchPlaylistResponse[]
@@ -90,7 +90,7 @@ const Discover = () => {
         localStorage.getItem('discoverAlbumsTime')
       if (
         !albumsInLocalStorageTime ||
-        Date.now() - Number(albumsInLocalStorageTime) > 1000 * 60 * 60 * 2
+        Date.now() - Number(albumsInLocalStorageTime) > 1000 * 60 * 60 * 2 // 2小时刷新一次
       ) {
         setAlbums(await getAlbumsFromAPI())
       } else {

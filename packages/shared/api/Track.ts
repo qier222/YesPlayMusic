@@ -10,7 +10,7 @@ export interface FetchTracksParams {
 }
 export interface FetchTracksResponse {
   code: number
-  songs: Track[]
+  songs?: Track[]
   privileges: {
     [key: string]: unknown
   }

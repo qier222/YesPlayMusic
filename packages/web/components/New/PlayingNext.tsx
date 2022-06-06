@@ -79,7 +79,7 @@ const PlayingNext = ({ className }: { className?: string }) => {
               </motion.div>
             ))}
 
-            {(tracks?.songs.length || 0) >= 4 && (
+            {(tracks?.songs?.length || 0) >= 4 && (
               <div className='pointer-events-none sticky bottom-0 h-8 w-full bg-gradient-to-t from-black'></div>
             )}
           </AnimatePresence>
