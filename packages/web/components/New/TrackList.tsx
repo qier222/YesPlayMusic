@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { player } from '@/web/store'
 import { useSnapshot } from 'valtio'
 import Wave from './Wave'
+import Icon from '@/web/components/Icon'
 
 const TrackList = ({
   tracks,
@@ -35,21 +36,31 @@ const TrackList = ({
         <div
           key={track.id}
           onClick={e => handleClick(e, track.id)}
-          className='relative flex items-center py-2 text-18 font-medium text-night-50 transition duration-300 ease-in-out dark:hover:text-neutral-200'
+          className='group relative flex items-center py-2 text-16 font-medium text-neutral-200 transition duration-300 ease-in-out'
         >
           <div className='mr-6'>{String(track.no).padStart(2, '0')}</div>
-          <div className='flex-grow'>{track.name}</div>
-          <div className='h-10 w-10'></div>
+          <div className='flex flex-grow items-center'>
+            {track.name}
+            {playingTrack?.id === track.id && playing && (
+              <div className='ml-4'>
+                <Wave playing={playing} />
+              </div>
+            )}
+          </div>
+          <div className='mr-12 flex opacity-0 transition-opacity group-hover:opacity-100'>
+            <div className='mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-white/80'>
+              {/* <Icon name='play' className='h-7 w-7' /> */}
+            </div>
+            <div className='mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-night-900 text-white/80'>
+              {/* <Icon name='play' className='h-7 w-7' /> */}
+            </div>
+            <div className='flex h-10 w-10 items-center justify-center rounded-full bg-night-900 text-white/80'>
+              {/* <Icon name='play' className='h-7 w-7' /> */}
+            </div>
+          </div>
           <div className='text-right'>
             {formatDuration(track.dt, 'en', 'hh:mm:ss')}
           </div>
-
-          {/* The wave icon */}
-          {playingTrack?.id === track.id && playing && (
-            <div className='absolute -left-7'>
-              <Wave playing={playing} />
-            </div>
-          )}
         </div>
       ))}
     </div>

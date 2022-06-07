@@ -1,6 +1,6 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-import Sidebar from './Sidebar'
+import Sidebar from './MenuBar'
 
 export default {
   title: 'Components/Sidebar',

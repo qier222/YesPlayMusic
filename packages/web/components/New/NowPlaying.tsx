@@ -122,8 +122,8 @@ const NowPlaying = () => {
         <div className='mt-4 flex w-full items-center justify-between'>
           <button>
             <Icon
-              name='shuffle'
-              className='h-7 w-7 text-black/90 dark:text-white/40'
+              name='hide-list'
+              className='h-7 w-7 text-black/90  dark:text-white/40'
             />
           </button>
 

@@ -38,7 +38,7 @@ const CoverRow = ({
       )}
 
       {/* Items */}
-      <div className='grid grid-cols-3 gap-10 xl:grid-cols-4 2xl:grid-cols-5'>
+      <div className='grid grid-cols-3 gap-4 lg:gap-10 xl:grid-cols-4 2xl:grid-cols-5'>
         {albums?.map(album => (
           <Image
             onClick={() => goTo(album.id)}

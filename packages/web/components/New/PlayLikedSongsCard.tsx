@@ -73,7 +73,7 @@ const PlayLikedSongsCard = () => {
         `
       )}
     >
-      <div className='text-21 font-medium text-white/20'>
+      <div className='text-18 font-medium text-white/20 lg:text-21'>
         {lyricLines.map((line, index) => (
           <div key={`${index}-${line}`}>{line}</div>
         ))}

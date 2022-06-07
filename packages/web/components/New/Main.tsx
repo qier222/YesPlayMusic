@@ -5,13 +5,10 @@ const Main = () => {
   return (
     <main
       className={cx(
-        'overflow-y-auto pb-16 pr-6 pl-10',
+        'no-scrollbar overflow-y-auto pb-16 pr-6 pl-10',
         css`
           padding-top: 132px;
           grid-area: main;
-          &::-webkit-scrollbar {
-            display: none;
-          }
         `
       )}
     >

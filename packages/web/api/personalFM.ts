@@ -93,7 +93,7 @@ export interface FetchPersonalFMResponse {
 }
 export function fetchPersonalFM(): Promise<FetchPersonalFMResponse> {
   return request({
-    url: window.ipcRenderer ? '/personal/fm' : '/personal_fm',
+    url: window.env?.isElectron ? '/personal/fm' : '/personal_fm',
     method: 'get',
     params: {
       timestamp: Date.now(),

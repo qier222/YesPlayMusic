@@ -107,10 +107,8 @@ class Main {
       height: this.store.get('window.height'),
       minWidth: 1240,
       minHeight: 848,
-      // vibrancy: 'fullscreen-ui',
-      titleBarStyle: 'customButtonsOnHover',
+      titleBarStyle: isMac ? 'customButtonsOnHover' : 'hidden',
       trafficLightPosition: { x: 24, y: 24 },
-      // frame: !(isWindows || isLinux), // TODO: 适用于linux下独立的启用开关
       frame: false,
       transparent: true,
     }

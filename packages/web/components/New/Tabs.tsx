@@ -13,7 +13,7 @@ const Tabs = ({
   onChange: (id: string) => void
 }) => {
   return (
-    <div className='flex'>
+    <div className='no-scrollbar flex overflow-y-auto'>
       {tabs.map(tab => (
         <div
           key={tab.id}
@@ -23,6 +23,7 @@ const Tabs = ({
               ? 'bg-brand-700 text-white'
               : 'dark:bg-white/10 dark:text-white/20'
           )}
+          onClick={() => onChange(tab.id)}
         >
           {tab.name}
         </div>

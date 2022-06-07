@@ -6,6 +6,7 @@ import { css, cx } from '@emotion/css'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from './Image'
 import Wave from './Wave'
+import Icon from '@/web/components/Icon'
 
 const PlayingNext = ({ className }: { className?: string }) => {
   const playerSnapshot = useSnapshot(player)
@@ -15,22 +16,30 @@ const PlayingNext = ({ className }: { className?: string }) => {
     <>
       <div
         className={cx(
-          'absolute top-0 z-10 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300'
+          'absolute top-0 left-0 z-10 flex w-full items-center justify-between px-4 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300'
         )}
       >
-        PLAYING NEXT
+        <div className='flex'>
+          <div className='mr-2 h-4 w-1 bg-brand-700'></div>
+          PLAYING NEXT
+        </div>
+        <div className='flex'>
+          <div className='mr-2'>
+            <Icon name='repeat-1' className='h-7 w-7 opacity-40' />
+          </div>
+          <div className='mr-1'>
+            <Icon name='shuffle' className='h-7 w-7 opacity-40' />
+          </div>
+        </div>
       </div>
+
       <div
         className={cx(
-          'relative z-10 overflow-scroll',
+          'no-scrollbar relative z-10 overflow-scroll',
           className,
-          css``,
           css`
             padding-top: 42px;
             mask-image: linear-gradient(to bottom, transparent 0, black 42px);
-            &::-webkit-scrollbar {
-              display: none;
-            }
           `
         )}
       >
@@ -60,10 +69,17 @@ const PlayingNext = ({ className }: { className?: string }) => {
 
                 {/* Track info */}
                 <div className='mr-3 flex-grow'>
-                  <div className='line-clamp-1 text-18 font-medium text-neutral-700 dark:text-neutral-200'>
+                  <div
+                    className={cx(
+                      'line-clamp-1 text-16 font-medium ',
+                      playerSnapshot.trackIndex === index
+                        ? 'text-brand-700'
+                        : 'text-neutral-700 dark:text-neutral-200'
+                    )}
+                  >
                     {track.name}
                   </div>
-                  <div className='line-clamp-1 mt-1 text-16 font-bold text-neutral-200  dark:text-neutral-700'>
+                  <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  dark:text-neutral-700'>
                     {track.ar.map(a => a.name).join(', ')}
                   </div>
                 </div>
@@ -72,7 +88,7 @@ const PlayingNext = ({ className }: { className?: string }) => {
                 {playerSnapshot.trackIndex === index ? (
                   <Wave playing={playerSnapshot.state === 'playing'} />
                 ) : (
-                  <div className='text-18 font-medium text-neutral-700 dark:text-neutral-200'>
+                  <div className='text-16 font-medium text-neutral-700 dark:text-neutral-200'>
                     {String(index + 1).padStart(2, '0')}
                   </div>
                 )}

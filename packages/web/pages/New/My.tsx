@@ -66,12 +66,12 @@ const My = () => {
     <PageTransition>
       <div className='grid grid-cols-1 gap-10'>
         <PlayLikedSongsCard />
-        <div>
-          <ArtistRow
-            artists={recentListenedArtists?.map(a => a.artist)}
-            title='RECENTLY LISTENED'
-          />
-        </div>
+
+        <ArtistRow
+          artists={recentListenedArtists?.map(a => a.artist)}
+          placeholderRow={1}
+          title='RECENTLY LISTENED'
+        />
 
         <div>
           <Tabs
@@ -79,7 +79,13 @@ const My = () => {
             value={selectedTab}
             onChange={(id: string) => setSelectedTab(id)}
           />
-          <CoverRow playlists={playlists?.playlist} className='mt-6' />
+          <CoverRow
+            playlists={
+              selectedTab === 'playlists' ? playlists?.playlist : undefined
+            }
+            albums={selectedTab === 'albums' ? albums?.data : undefined}
+            className='mt-6'
+          />
         </div>
       </div>
     </PageTransition>

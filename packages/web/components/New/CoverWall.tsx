@@ -14,14 +14,14 @@ const CoverWall = ({
   const breakpoint = useBreakpoint()
   const sizes = {
     small: {
-      sm: 'xs',
-      md: 'xs',
+      sm: 'sm',
+      md: 'sm',
       lg: 'sm',
       xl: 'sm',
       '2xl': 'md',
     },
     large: {
-      sm: 'xs',
+      sm: 'sm',
       md: 'sm',
       lg: 'md',
       xl: 'md',
@@ -32,7 +32,7 @@ const CoverWall = ({
   return (
     <div
       className={cx(
-        'grid w-full grid-flow-row-dense grid-cols-8',
+        'grid w-full grid-flow-row-dense grid-cols-4 lg:grid-cols-8',
         css`
           gap: 13px;
         `
@@ -48,7 +48,7 @@ const CoverWall = ({
           alt='Album Cover'
           placeholder={null}
           className={cx(
-            'aspect-square h-full w-full rounded-24',
+            'aspect-square h-full w-full rounded-20 lg:rounded-24',
             album.large && 'col-span-2 row-span-2'
           )}
           onClick={() => navigate(`/album/${album.id}`)}

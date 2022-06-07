@@ -130,3 +130,7 @@ a {
 * {
   -webkit-font-smoothing: antialiased;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

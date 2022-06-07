@@ -10,13 +10,13 @@ const NavigationButtons = () => {
   const navigate = useNavigate()
   const controlsBack = useAnimation()
   const controlsForward = useAnimation()
-  const transition = { duration: 0.2, ease }
+  const transition = { duration: 0.18, ease }
 
   return (
     <>
       <button
-        onClick={async () => {
-          navigate(-1)
+        onClick={() => navigate(-1)}
+        onMouseDown={async () => {
           await controlsBack.start({ x: -5 })
           await controlsBack.start({ x: 0 })
         }}
@@ -29,6 +29,8 @@ const NavigationButtons = () => {
       <button
         onClick={async () => {
           navigate(1)
+        }}
+        onMouseDown={async () => {
           await controlsForward.start({ x: 5 })
           await controlsForward.start({ x: 0 })
         }}

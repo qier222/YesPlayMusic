@@ -1,6 +1,6 @@
 import Main from '@/web/components/New/Main'
 import Player from '@/web/components/New/Player'
-import Sidebar from '@/web/components/New/Sidebar'
+import MenuBar from '@/web/components/New/MenuBar'
 import Topbar from '@/web/components/New/Topbar'
 import { css, cx } from '@emotion/css'
 import { useMemo } from 'react'
@@ -16,7 +16,7 @@ const Layout = () => {
       id='layout'
       className={cx(
         'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black',
-        window.ipcRenderer && 'rounded-24',
+        window.env?.isElectron && 'rounded-24',
         css`
           grid-template-columns: 6.5rem auto 358px;
           grid-template-rows: 132px auto;
@@ -24,17 +24,17 @@ const Layout = () => {
         showPlayer
           ? css`
               grid-template-areas:
-                'sidebar main -'
-                'sidebar main player';
+                'menubar main -'
+                'menubar main player';
             `
           : css`
               grid-template-areas:
-                'sidebar main main'
-                'sidebar main main';
+                'menubar main main'
+                'menubar main main';
             `
       )}
     >
-      <Sidebar />
+      <MenuBar />
       <Topbar />
       <Main />
       {showPlayer && <Player />}

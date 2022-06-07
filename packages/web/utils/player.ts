@@ -250,7 +250,9 @@ export class Player {
     }
     if (this.trackID !== id) return
     Howler.unload()
-    const url = audio.includes('?') ? `${audio}&id=${id}` : `${audio}?id=${id}`
+    const url = audio.includes('?')
+      ? `${audio}&dash-id=${id}`
+      : `${audio}?dash-id=${id}`
     const howler = new Howl({
       src: [url],
       format: ['mp3', 'flac', 'webm'],
@@ -285,7 +287,7 @@ export class Player {
 
   private _cacheAudio(audio: string) {
     if (audio.includes('yesplaymusic') || !window.ipcRenderer) return
-    const id = Number(new URL(audio).searchParams.get('id'))
+    const id = Number(new URL(audio).searchParams.get('dash-id'))
     if (isNaN(id) || !id) return
     cacheAudio(id, audio)
   }
@@ -490,7 +492,7 @@ export class Player {
   async playTrack(trackID: TrackID) {
     this._setStateToLoading()
     const index = this.trackList.findIndex(t => t === trackID)
-    if (!index) toast('播放失败，歌曲不在列表内')
+    if (index === -1) toast('播放失败，歌曲不在列表内')
     this._trackIndex = index
     this._playTrack()
   }

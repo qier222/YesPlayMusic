@@ -86,8 +86,8 @@ const TrackListHeader = ({
             onClick={() => onPlay()}
             className='h-[72px] w-[170px] rounded-full dark:bg-brand-700'
           ></button>
-          <button className='ml-6 h-[72px] w-[72px] rounded-full dark:bg-night-50'></button>
-          <button className='ml-6 h-[72px] w-[72px] rounded-full dark:bg-night-50'></button>
+          <button className='ml-6 h-[72px] w-[72px] rounded-full dark:bg-white/10'></button>
+          <button className='ml-6 h-[72px] w-[72px] rounded-full dark:bg-white/10'></button>
         </div>
       </div>
     </div>
