@@ -84,15 +84,15 @@ export default {
     login: '登录',
     loginWithEmail: '邮箱登录',
     loginWithPhone: '手机号登录',
-    notice: `YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
+    notice: `YslMusic 承诺不会保存你的任何账号信息到云端。<br />
       你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
-      YesPlayMusic 并非网易云官方网站，输入账号信息前请慎重考虑。 你也可以前往
-      <a href="https://github.com/qier222/YesPlayMusic"
-        >YesPlayMusic 的 GitHub 源代码仓库</a
+      YslMusic 并非网易云官方网站，输入账号信息前请慎重考虑。 你也可以前往
+      <a href="https://github.com/yoosl/"
+        >YslMusic 的 GitHub 源代码仓库</a
       >
       自行构建并使用自托管的网易云 API。`,
     noticeElectron: `你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
-      YesPlayMusic 不会传输你的账号数据到任何非网易云音乐官方的服务器。<br />`,
+      YslMusic 不会传输你的账号数据到任何非网易云音乐官方的服务器。<br />`,
   },
   mv: {
     moreVideo: '更多视频',
