@@ -21,8 +21,8 @@ const CoverWall = ({
       '2xl': 'md',
     },
     large: {
-      sm: 'sm',
-      md: 'sm',
+      sm: 'md',
+      md: 'md',
       lg: 'md',
       xl: 'md',
       '2xl': 'lg',

@@ -6,26 +6,33 @@ import Icon from '@/web/components/Icon'
 import useCoverColor from '@/web/hooks/useCoverColor'
 import { resizeImage } from '@/web/utils/common'
 import { motion, PanInfo, useMotionValue } from 'framer-motion'
+import { useLockBodyScroll } from 'react-use'
+import { useState } from 'react'
 
 const PlayerMobile = () => {
   const playerSnapshot = useSnapshot(player)
   const bgColor = useCoverColor(playerSnapshot.track?.al?.picUrl ?? '')
+  const [locked, setLocked] = useState(false)
+
+  useLockBodyScroll(locked)
 
   const x = useMotionValue(0)
   const onDragEnd = (
     event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ) => {
+    console.log(JSON.stringify(info))
     const x = info.offset.x
     const offset = 100
-    if (x > offset) player.nextTrack()
-    if (x < -offset) player.prevTrack()
+    if (x > offset) player.prevTrack()
+    if (x < -offset) player.nextTrack()
+    setLocked(false)
   }
 
   return (
     <div
       className={cx(
-        'relative flex h-16 w-full items-center rounded-20 py-2.5 px-3',
+        'relative flex h-16 w-full items-center rounded-20 px-3',
         css`
           background-color: ${bgColor.to};
         `
@@ -40,21 +47,32 @@ const PlayerMobile = () => {
         )}
       ></div>
 
-      <Image
-        src={resizeImage(playerSnapshot.track?.al.picUrl || '', 'sm')}
-        alt='Cover'
-        className='z-10 aspect-square h-full rounded-lg'
-      />
+      <div className='h-full py-2.5'>
+        <Image
+          src={resizeImage(playerSnapshot.track?.al.picUrl || '', 'sm')}
+          alt='Cover'
+          className='z-10 aspect-square h-full rounded-lg'
+        />
+      </div>
 
-      <div className='relative flex-grow overflow-hidden px-3'>
+      <div className='relative flex h-full flex-grow items-center overflow-hidden px-3'>
         <motion.div
           drag='x'
           style={{ x }}
           dragConstraints={{ left: 0, right: 0 }}
+          onDragStart={() => setLocked(true)}
           onDragEnd={onDragEnd}
-          className='line-clamp-1 text-14 font-bold text-white'
+          className=' flex h-full flex-grow items-center '
         >
-          {playerSnapshot.track?.name}
+          <div className='flex-shrink-0'>
+            <div className='line-clamp-1 text-14 font-bold text-white'>
+              {playerSnapshot.track?.name}
+            </div>
+            <div className='line-clamp-1 mt-1 text-12 font-bold text-white/60'>
+              {playerSnapshot.track?.ar?.map(a => a.name).join(', ')}
+            </div>
+          </div>
+          <div className='h-full flex-grow'></div>
         </motion.div>
 
         <div

@@ -44,22 +44,23 @@ const getAlbumsFromAPI = async () => {
     )
   )) as FetchPlaylistResponse[]
 
-  const ids: number[] = []
+  let ids: number[] = []
   playlists.forEach(playlist =>
     playlist?.playlist?.trackIds?.forEach(t => ids.push(t.id))
   )
   if (!ids.length) {
     return []
   }
+  ids = sampleSize(ids, 100)
 
   const tracks = await fetchTracksWithReactQuery({ ids })
-  if (!tracks.songs.length) {
+  if (!tracks?.songs?.length) {
     return []
   }
 
   // 从歌单中抽出歌曲
   const pickedIds: number[] = []
-  let albums: DiscoverAlbum[] = []
+  const albums: DiscoverAlbum[] = []
   tracks.songs.forEach(t => {
     if (pickedIds.includes(t.al.id)) return
     pickedIds.push(t.al.id)
@@ -71,7 +72,6 @@ const getAlbumsFromAPI = async () => {
   })
 
   // 挑选出大图
-  albums = sampleSize(albums, 100)
   const largeCover = sampleSize([...Array(100).keys()], ~~(100 / 3))
   albums.map((album, index) => (album.large = largeCover.includes(index)))
 

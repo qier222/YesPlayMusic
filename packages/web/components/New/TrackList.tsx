@@ -41,7 +41,7 @@ const TrackList = ({
           <div className='mr-6'>{String(track.no).padStart(2, '0')}</div>
           <div className='flex flex-grow items-center'>
             {track.name}
-            {playingTrack?.id === track.id && playing && (
+            {playingTrack?.id === track.id && (
               <div className='ml-4'>
                 <Wave playing={playing} />
               </div>

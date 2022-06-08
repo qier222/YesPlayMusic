@@ -5,6 +5,7 @@ import path, { join } from 'path'
 import { defineConfig } from 'vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { VitePWA } from 'vite-plugin-pwa'
 
 dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
 const IS_ELECTRON = process.env.IS_ELECTRON
@@ -19,6 +20,36 @@ export default defineConfig({
   clearScreen: IS_ELECTRON ? false : true,
   plugins: [
     react(),
+
+    /**
+     * @see https://vite-plugin-pwa.netlify.app/guide/generate.html
+     */
+    VitePWA({
+      manifest: {
+        name: 'YesPlayMusic',
+        short_name: 'YPM',
+        description: 'Description of your app',
+        theme_color: '#000',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+        ],
+      },
+    }),
 
     /**
      * @see https://github.com/vbenjs/vite-plugin-svg-icons
@@ -54,7 +85,7 @@ export default defineConfig({
     strictPort: IS_ELECTRON ? true : false,
     proxy: {
       '/netease/': {
-        target: `http://127.0.0.1:${
+        target: `http://192.168.2.111:${
           process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
         }`,
         changeOrigin: true,
@@ -67,6 +98,9 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+  },
+  preview: {
+    port: Number(process.env['ELECTRON_WEB_SERVER_PORT'] || 42710),
   },
   test: {
     environment: 'jsdom',

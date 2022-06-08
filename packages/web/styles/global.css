@@ -129,8 +129,13 @@ a {
 
 * {
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+html {
+  background-color: black;
 }

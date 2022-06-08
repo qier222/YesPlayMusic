@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite dev --host",
     "build": "vite build",
+    "preview": "vite build && vite preview --host",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
@@ -82,6 +83,7 @@
     "tailwindcss": "^3.0.24",
     "typescript": "*",
     "vite": "^2.9.6",
+    "vite-plugin-pwa": "^0.12.0",
     "vite-plugin-svg-icons": "^2.0.1",
     "vitest": "^0.12.10"
   }

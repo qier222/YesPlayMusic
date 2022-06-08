@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
+import useIsMobile from '@/web/hooks/useIsMobile'
 
 const PageTransition = ({
   children,
@@ -8,6 +9,11 @@ const PageTransition = ({
   children: React.ReactNode
   disableEnterAnimation?: boolean
 }) => {
+  const isMobile = useIsMobile()
+  if (isMobile) {
+    return <>{children}</>
+  }
+
   return (
     <motion.div
       initial={{ opacity: disableEnterAnimation ? 1 : 0 }}

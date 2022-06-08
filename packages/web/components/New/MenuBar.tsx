@@ -79,8 +79,8 @@ const TabName = () => {
 
 const Tabs = () => {
   const navigate = useNavigate()
-  const location = useLocation()
   const controls = useAnimation()
+  const [active, setActive] = useState<string>(tabs[0].path)
 
   const animate = async (path: string) => {
     await controls.start((p: string) =>
@@ -97,7 +97,10 @@ const Tabs = () => {
           animate={controls}
           transition={{ ease, duration: 0.18 }}
           onMouseDown={() => animate(tab.path)}
-          onClick={() => navigate(tab.path)}
+          onClick={() => {
+            setActive(tab.path)
+            navigate(tab.path)
+          }}
           custom={tab.path}
           variants={{
             scale: { scale: 0.8 },
@@ -108,9 +111,9 @@ const Tabs = () => {
             name={tab.icon}
             className={cx(
               'app-region-no-drag h-10 w-10 transition-colors duration-500',
-              location.pathname === tab.path
+              active === tab.path
                 ? 'text-brand-600  dark:text-brand-700'
-                : 'hover:text-black dark:hover:text-white'
+                : 'lg:hover:text-black lg:dark:hover:text-white'
             )}
           />
         </motion.div>

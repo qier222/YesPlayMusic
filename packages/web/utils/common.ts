@@ -158,3 +158,9 @@ export async function calcCoverColor(coverUrl: string) {
     return c.toHex()
   })
 }
+
+export const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+export const isSafari = /Safari/.test(navigator.userAgent)
+export const isPWA =
+  (navigator as any).standalone ||
+  window.matchMedia('(display-mode: standalone)').matches

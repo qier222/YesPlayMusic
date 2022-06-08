@@ -5,6 +5,8 @@ import { player } from '@/web/store'
 import { useSnapshot } from 'valtio'
 import Router from '@/web/components/New/Router'
 import MenuBar from './MenuBar'
+import TopbarMobile from './Topbar/TopbarMobile'
+import { isIOS, isPWA, isSafari } from '@/web/utils/common'
 
 const LayoutMobile = () => {
   const playerSnapshot = useSnapshot(player)
@@ -13,21 +15,36 @@ const LayoutMobile = () => {
   return (
     <div id='layout' className='select-none bg-white pb-32 pt-3 dark:bg-black'>
       <main className='min-h-screen overflow-y-auto overflow-x-hidden px-2.5 pb-16'>
+        <TopbarMobile />
         <Router />
       </main>
-      {showPlayer && (
-        <div
-          className={cx(
-            'fixed left-7 right-7',
-            css`
-              bottom: 72px;
-            `
-          )}
-        >
-          <Player />
-        </div>
-      )}
-      <div className='fixed bottom-0 left-0 right-0 py-3 dark:bg-black'>
+      <div
+        className={cx(
+          'fixed bottom-0 left-0 right-0 pt-3 dark:bg-black',
+          css`
+            padding-bottom: calc(
+              ${isIOS && isSafari && isPWA
+                  ? '24px'
+                  : 'env(safe-area-inset-bottom)'} + 0.75rem
+            );
+          `
+        )}
+      >
+        {showPlayer && (
+          <div
+            className={cx(
+              'absolute left-7 right-7',
+              css`
+                top: calc(
+                  -100% - 6px + ${isIOS && isSafari && isPWA ? '24px' : 'env(safe-area-inset-bottom)'}
+                );
+              `
+            )}
+          >
+            <Player />
+          </div>
+        )}
+
         <MenuBar />
       </div>
     </div>
