@@ -78,13 +78,14 @@ const My = () => {
             tabs={tabs}
             value={selectedTab}
             onChange={(id: string) => setSelectedTab(id)}
+            className='px-2.5 lg:px-0'
           />
           <CoverRow
             playlists={
               selectedTab === 'playlists' ? playlists?.playlist : undefined
             }
             albums={selectedTab === 'albums' ? albums?.data : undefined}
-            className='mt-6'
+            className='mt-6 px-2.5 lg:px-0'
           />
         </div>
       </div>

@@ -38,19 +38,21 @@ const ArtistRow = ({
     <div className={className}>
       {/* Title */}
       {title && (
-        <h4 className='mb-6 text-12 font-medium uppercase dark:text-neutral-300 lg:text-14 lg:font-bold'>
+        <h4
+          className={cx(
+            'text-12 font-medium uppercase dark:text-neutral-300 lg:text-14',
+            'mx-2.5 mb-6 lg:mx-0 lg:font-bold'
+          )}
+        >
           {title}
         </h4>
       )}
 
       {/* Artists */}
       {artists && (
-        <div className='no-scrollbar -ml-2.5 flex w-screen snap-x overflow-x-scroll lg:ml-auto lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
+        <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
           {artists.map(artist => (
-            <div
-              className='mr-5 snap-start first-of-type:ml-2.5 last-of-type:mr-2.5 lg:mr-0'
-              key={artist.id}
-            >
+            <div className='snap-start px-2.5 lg:px-0' key={artist.id}>
               <Artist artist={artist} key={artist.id} />
             </div>
           ))}
@@ -59,12 +61,9 @@ const ArtistRow = ({
 
       {/* Placeholder */}
       {placeholderRow && !artists && (
-        <div className='no-scrollbar -ml-2.5 flex w-screen overflow-x-scroll lg:ml-auto lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
+        <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
           {[...new Array(placeholderRow * 5).keys()].map(i => (
-            <div
-              className='mr-5 first-of-type:ml-2.5 last-of-type:mr-2.5 lg:mr-0'
-              key={i}
-            >
+            <div className='snap-start px-2.5 lg:px-0' key={i}>
               <div
                 className='aspect-square w-full rounded-full bg-white dark:bg-neutral-800'
                 style={{

@@ -138,4 +138,5 @@ a {
 
 html {
   background-color: black;
+  min-height: calc(100% + env(safe-area-inset-top));
 }

@@ -25,7 +25,9 @@ const MoreByArtist = ({ album }: { album?: Album }) => {
       album =>
         ['专辑', 'EP/Single', 'EP'].includes(album.type) && album.size > 1
     )
-    const singles = allReleases.filter(album => album.type === 'Single')
+    const singles = allReleases.filter(
+      album => album.type === 'Single' || album.size === 1
+    )
 
     const qualifiedAlbums = [...filteredAlbums, ...singles]
 
@@ -63,17 +65,10 @@ const MoreByArtist = ({ album }: { album?: Album }) => {
   return (
     <div>
       {/* Dividing line */}
-      <div
-        className={cx(
-          'h-px bg-white/20',
-          css`
-            margin: 30px 0;
-          `
-        )}
-      ></div>
+      <div className={cx('mx-2.5 my-7.5 h-px bg-white/10 lg:mx-0')}></div>
 
       {/* Title */}
-      <div className='mb-5 text-14 font-bold text-neutral-300'>
+      <div className='mx-2.5 mb-5 text-14 font-bold text-neutral-300 lg:mx-0'>
         MORE BY{' '}
         <NavLink
           to={`/artist/${album?.artist.id}`}
@@ -83,7 +78,7 @@ const MoreByArtist = ({ album }: { album?: Album }) => {
         </NavLink>
       </div>
 
-      <CoverRow albums={filteredAlbums} />
+      <CoverRow albums={filteredAlbums} className='mx-2.5 lg:mx-0' />
     </div>
   )
 }
@@ -120,7 +115,7 @@ const Album = () => {
       <TrackListHeader album={album?.album} onPlay={onPlay} />
       <TrackList
         tracks={tracks?.songs || album?.songs || album?.album.songs}
-        className='z-10 mt-10'
+        className='z-10 mx-2.5 mt-3 lg:mx-0 lg:mt-10'
         onPlay={onPlay}
       />
       <MoreByArtist album={album?.album} />

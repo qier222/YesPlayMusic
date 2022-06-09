@@ -4,7 +4,7 @@ import SettingsButton from './SettingsButton'
 
 const TopbarMobile = () => {
   return (
-    <div className='mb-5 mt-7 flex'>
+    <div className='mb-5 mt-7 flex px-2.5'>
       <div className='flex-grow'>
         <SearchBox />
       </div>

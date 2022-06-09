@@ -1,9 +1,9 @@
 import useBreakpoint from '@/web/hooks/useBreakpoint'
 import { ReactQueryDevtools } from 'react-query/devtools'
+import useIsMobile from '@/web/hooks/useIsMobile'
 
 const Devtool = () => {
-  const breakpoint = useBreakpoint()
-  const isMobile = ['sm', 'md'].includes(breakpoint)
+  const isMobile = useIsMobile()
   return (
     <ReactQueryDevtools
       initialIsOpen={false}
@@ -12,7 +12,7 @@ const Devtool = () => {
           position: 'fixed',
           bottom: isMobile ? 'auto' : 0,
           right: 0,
-          top: isMobile ? 0 : 1,
+          top: isMobile ? 0 : 'auto',
           left: 'auto',
         },
       }}

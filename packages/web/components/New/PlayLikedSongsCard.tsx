@@ -67,7 +67,7 @@ const PlayLikedSongsCard = () => {
   return (
     <div
       className={cx(
-        'flex flex-col justify-between rounded-24 p-8 dark:bg-night-600',
+        'mx-2.5 flex flex-col justify-between rounded-24 p-8 dark:bg-white/10 lg:mx-0',
         css`
           height: 322px;
         `

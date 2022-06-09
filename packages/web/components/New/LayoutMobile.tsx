@@ -14,7 +14,7 @@ const LayoutMobile = () => {
 
   return (
     <div id='layout' className='select-none bg-white pb-32 pt-3 dark:bg-black'>
-      <main className='min-h-screen overflow-y-auto overflow-x-hidden px-2.5 pb-16'>
+      <main className='min-h-screen overflow-y-auto overflow-x-hidden pb-16'>
         <TopbarMobile />
         <Router />
       </main>
@@ -47,6 +47,19 @@ const LayoutMobile = () => {
 
         <MenuBar />
       </div>
+
+      {/* Notch background */}
+      {isIOS && isSafari && isPWA && (
+        <div
+          className={cx(
+            'fixed left-0 right-0 bg-black/30 backdrop-blur-sm',
+            css`
+              top: -50px;
+              height: 50px;
+            `
+          )}
+        ></div>
+      )}
     </div>
   )
 }
