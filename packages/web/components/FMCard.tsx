@@ -60,8 +60,7 @@ const MediaControls = () => {
 const FMCard = () => {
   const navigate = useNavigate()
 
-  const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.fmTrack, [playerSnapshot.fmTrack])
+  const { track } = useSnapshot(player)
   const coverUrl = useMemo(
     () => resizeImage(track?.al?.picUrl ?? '', 'md'),
     [track?.al?.picUrl]

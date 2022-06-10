@@ -17,19 +17,13 @@ import { useNavigate } from 'react-router-dom'
 
 const PlayingTrack = () => {
   const navigate = useNavigate()
-  const snappedPlayer = useSnapshot(player)
-  const track = useMemo(() => snappedPlayer.track, [snappedPlayer.track])
-  const trackListSource = useMemo(
-    () => snappedPlayer.trackListSource,
-    [snappedPlayer.trackListSource]
-  )
+  const { track, trackListSource, mode } = useSnapshot(player)
 
   // Liked songs ids
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const mutationLikeATrack = useMutationLikeATrack()
 
-  const hasTrackListSource =
-    snappedPlayer.mode !== PlayerMode.FM && trackListSource?.type
+  const hasTrackListSource = mode !== PlayerMode.FM && trackListSource?.type
 
   const toAlbum = () => {
     const id = track?.al?.id

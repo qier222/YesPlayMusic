@@ -102,7 +102,9 @@ const Discover = () => {
 
   return (
     <PageTransition disableEnterAnimation={true}>
-      <CoverWall albums={albums} />
+      <div className='mx-2.5 lg:mx-0'>
+        <CoverWall albums={albums} />
+      </div>
     </PageTransition>
   )
 }

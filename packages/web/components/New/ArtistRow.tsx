@@ -71,7 +71,7 @@ const ArtistRow = ({
                   minWidth: '96px',
                 }}
               />
-              <div className='mt-2.5 text-12 font-medium text-transparent lg:text-16 lg:font-bold'>
+              <div className='mt-2.5 text-12 font-medium text-transparent lg:text-14 lg:font-bold'>
                 PLACE
               </div>
             </div>

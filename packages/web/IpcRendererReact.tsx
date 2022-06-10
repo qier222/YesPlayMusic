@@ -5,15 +5,13 @@ import useUserLikedTracksIDs, {
 import { player } from '@/web/store'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { State as PlayerState } from '@/web/utils/player'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEffectOnce } from 'react-use'
 import { useSnapshot } from 'valtio'
 
 const IpcRendererReact = () => {
   const [isPlaying, setIsPlaying] = useState(false)
-  const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
-  const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
+  const { track, state } = useSnapshot(player)
   const trackIDRef = useRef(0)
 
   // Liked songs ids
@@ -51,7 +49,7 @@ const IpcRendererReact = () => {
 
   useEffectOnce(() => {
     // 用于显示 windows taskbar buttons
-    if (playerSnapshot.track?.id) {
+    if (track?.id) {
       window.ipcRenderer?.send(IpcChannels.Pause)
     }
   })

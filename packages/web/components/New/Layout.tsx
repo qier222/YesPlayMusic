@@ -3,13 +3,12 @@ import Player from '@/web/components/New/Player'
 import MenuBar from '@/web/components/New/MenuBar'
 import Topbar from '@/web/components/New/Topbar/TopbarDesktop'
 import { css, cx } from '@emotion/css'
-import { useMemo } from 'react'
 import { player } from '@/web/store'
 import { useSnapshot } from 'valtio'
 
 const Layout = () => {
   const playerSnapshot = useSnapshot(player)
-  const showPlayer = useMemo(() => !!playerSnapshot.track, [playerSnapshot])
+  const showPlayer = !!playerSnapshot.track
 
   return (
     <div

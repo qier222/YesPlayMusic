@@ -5,6 +5,23 @@ import useBreakpoint from '@/web/hooks/useBreakpoint'
 import { useNavigate } from 'react-router-dom'
 import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 
+const sizes = {
+  small: {
+    sm: 'sm',
+    md: 'sm',
+    lg: 'sm',
+    xl: 'sm',
+    '2xl': 'md',
+  },
+  large: {
+    sm: 'md',
+    md: 'md',
+    lg: 'md',
+    xl: 'md',
+    '2xl': 'lg',
+  },
+} as const
+
 const CoverWall = ({
   albums,
 }: {
@@ -12,22 +29,6 @@ const CoverWall = ({
 }) => {
   const navigate = useNavigate()
   const breakpoint = useBreakpoint()
-  const sizes = {
-    small: {
-      sm: 'sm',
-      md: 'sm',
-      lg: 'sm',
-      xl: 'sm',
-      '2xl': 'md',
-    },
-    large: {
-      sm: 'md',
-      md: 'md',
-      lg: 'md',
-      xl: 'md',
-      '2xl': 'lg',
-    },
-  } as const
 
   return (
     <div

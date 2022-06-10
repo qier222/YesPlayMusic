@@ -10,8 +10,8 @@ import { useLockBodyScroll } from 'react-use'
 import { useState } from 'react'
 
 const PlayerMobile = () => {
-  const playerSnapshot = useSnapshot(player)
-  const bgColor = useCoverColor(playerSnapshot.track?.al?.picUrl ?? '')
+  const { track, state } = useSnapshot(player)
+  const bgColor = useCoverColor(track?.al?.picUrl ?? '')
   const [locked, setLocked] = useState(false)
 
   useLockBodyScroll(locked)
@@ -49,7 +49,7 @@ const PlayerMobile = () => {
 
       <div className='h-full py-2.5'>
         <Image
-          src={resizeImage(playerSnapshot.track?.al.picUrl || '', 'sm')}
+          src={resizeImage(track?.al.picUrl || '', 'sm')}
           alt='Cover'
           className='z-10 aspect-square h-full rounded-lg'
         />
@@ -66,10 +66,10 @@ const PlayerMobile = () => {
         >
           <div className='flex-shrink-0'>
             <div className='line-clamp-1 text-14 font-bold text-white'>
-              {playerSnapshot.track?.name}
+              {track?.name}
             </div>
             <div className='line-clamp-1 mt-1 text-12 font-bold text-white/60'>
-              {playerSnapshot.track?.ar?.map(a => a.name).join(', ')}
+              {track?.ar?.map(a => a.name).join(', ')}
             </div>
           </div>
           <div className='h-full flex-grow'></div>
@@ -102,7 +102,7 @@ const PlayerMobile = () => {
         className='ml-2.5 flex items-center justify-center rounded-full bg-white/20 p-2.5'
       >
         <Icon
-          name={playerSnapshot.state === 'playing' ? 'pause' : 'play'}
+          name={state === 'playing' ? 'pause' : 'play'}
           className='h-6 w-6 text-white/80'
         />
       </button>

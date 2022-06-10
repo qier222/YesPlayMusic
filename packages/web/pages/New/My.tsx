@@ -30,12 +30,38 @@ const tabs = [
   },
 ]
 
-const My = () => {
-  const { data: artists } = useUserArtists()
-  const { data: playlists } = useUserPlaylists()
+const Albums = () => {
   const { data: albums } = useUserAlbums()
+
+  return <CoverRow albums={albums?.data} className='mt-6 px-2.5 lg:px-0' />
+}
+
+const Playlists = () => {
+  const { data: playlists } = useUserPlaylists()
+  return (
+    <CoverRow playlists={playlists?.playlist} className='mt-6 px-2.5 lg:px-0' />
+  )
+}
+
+const Collections = () => {
+  // const { data: artists } = useUserArtists()
   const [selectedTab, setSelectedTab] = useState(tabs[0].id)
 
+  return (
+    <div>
+      <Tabs
+        tabs={tabs}
+        value={selectedTab}
+        onChange={(id: string) => setSelectedTab(id)}
+        className='px-2.5 lg:px-0'
+      />
+      {selectedTab === 'albums' && <Albums />}
+      {selectedTab === 'playlists' && <Playlists />}
+    </div>
+  )
+}
+
+const RecentlyListened = () => {
   const { data: listenedRecords } = useUserListenedRecords({ type: 'week' })
   const recentListenedArtistsIDs = useMemo(() => {
     const artists: {
@@ -63,31 +89,21 @@ const My = () => {
   const { data: recentListenedArtists } = useArtists(recentListenedArtistsIDs)
 
   return (
+    <ArtistRow
+      artists={recentListenedArtists?.map(a => a.artist)}
+      placeholderRow={1}
+      title='RECENTLY LISTENED'
+    />
+  )
+}
+
+const My = () => {
+  return (
     <PageTransition>
       <div className='grid grid-cols-1 gap-10'>
         <PlayLikedSongsCard />
-
-        <ArtistRow
-          artists={recentListenedArtists?.map(a => a.artist)}
-          placeholderRow={1}
-          title='RECENTLY LISTENED'
-        />
-
-        <div>
-          <Tabs
-            tabs={tabs}
-            value={selectedTab}
-            onChange={(id: string) => setSelectedTab(id)}
-            className='px-2.5 lg:px-0'
-          />
-          <CoverRow
-            playlists={
-              selectedTab === 'playlists' ? playlists?.playlist : undefined
-            }
-            albums={selectedTab === 'albums' ? albums?.data : undefined}
-            className='mt-6 px-2.5 lg:px-0'
-          />
-        </div>
+        <RecentlyListened />
+        <Collections />
       </div>
     </PageTransition>
   )

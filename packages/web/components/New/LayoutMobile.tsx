@@ -10,7 +10,7 @@ import { isIOS, isPWA, isSafari } from '@/web/utils/common'
 
 const LayoutMobile = () => {
   const playerSnapshot = useSnapshot(player)
-  const showPlayer = useMemo(() => !!playerSnapshot.track, [playerSnapshot])
+  const showPlayer = !!playerSnapshot.track
 
   return (
     <div id='layout' className='select-none bg-white pb-32 pt-3 dark:bg-black'>

@@ -1,7 +1,8 @@
 import { css, cx } from '@emotion/css'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ease } from '@/web/utils/const'
+import useIsMobile from '@/web/hooks/useIsMobile'
 
 const Image = ({
   src,
@@ -13,6 +14,7 @@ const Image = ({
   placeholder = 'blank',
   onClick,
   onMouseOver,
+  animation = true,
 }: {
   src?: string
   srcSet?: string
@@ -23,53 +25,63 @@ const Image = ({
   placeholder?: 'artist' | 'album' | 'playlist' | 'podcast' | 'blank' | null
   onClick?: (e: React.MouseEvent<HTMLImageElement>) => void
   onMouseOver?: (e: React.MouseEvent<HTMLImageElement>) => void
+  animation?: boolean
 }) => {
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState(false)
   const animate = useAnimation()
-  const placeholderAnimate = useAnimation()
-  const transition = { duration: 0.6, ease }
-
+  const isMobile = useIsMobile()
+  const isAnimate = animation && !isMobile
   useEffect(() => setError(false), [src])
 
-  const onload = async () => {
+  const onLoad = async () => {
     setLoaded(true)
-    animate.start({ opacity: 1 })
+    if (isAnimate) animate.start({ opacity: 1 })
   }
   const onError = () => {
     setError(true)
   }
 
   const hidden = error || !loaded
+  const transition = { duration: 0.6, ease }
+  const motionProps = isAnimate
+    ? {
+        animate,
+        initial: { opacity: 0 },
+        transition,
+      }
+    : {}
+  const placeholderMotionProps = isAnimate
+    ? {
+        initial: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition,
+      }
+    : {}
 
   return (
     <div className={cx('relative overflow-hidden', className)}>
       {/* Image */}
       <motion.img
         alt={alt}
-        className={cx('absolute inset-0 h-full w-full')}
+        className='absolute inset-0 h-full w-full'
         src={src}
         srcSet={srcSet}
         sizes={sizes}
         decoding='async'
         loading={lazyLoad ? 'lazy' : undefined}
-        onLoad={onload}
         onError={onError}
-        animate={animate}
-        initial={{ opacity: 0 }}
-        transition={transition}
+        onLoad={onLoad}
         onClick={onClick}
         onMouseOver={onMouseOver}
+        {...motionProps}
       />
 
       {/* Placeholder / Error fallback */}
       <AnimatePresence>
         {hidden && placeholder && (
           <motion.div
-            animate={placeholderAnimate}
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={transition}
+            {...placeholderMotionProps}
             className='absolute inset-0 h-full w-full bg-white dark:bg-neutral-800'
           ></motion.div>
         )}

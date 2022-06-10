@@ -72,6 +72,7 @@ export class Player {
     this.state = State.Ready
     this._playAudio(false) // just load the audio, not play
     this._initFM()
+    this._initMediaSession()
 
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
@@ -180,7 +181,7 @@ export class Player {
     _howler.pause()
   }
 
-  private _setupProgressInterval() {
+  private async _setupProgressInterval() {
     this._progressInterval = setInterval(() => {
       if (this.state === State.Playing) this._progress = _howler.seek()
     }, 1000)
@@ -234,6 +235,7 @@ export class Player {
     }
     if (this.mode === Mode.TrackList) this._track = track
     if (this.mode === Mode.FM) this.fmTrack = track
+    this._updateMediaSessionMetaData()
     this._playAudio()
   }
 
@@ -495,6 +497,45 @@ export class Player {
     if (index === -1) toast('播放失败，歌曲不在列表内')
     this._trackIndex = index
     this._playTrack()
+  }
+
+  private async _initMediaSession() {
+    console.log('init')
+    if ('mediaSession' in navigator === false) return
+    navigator.mediaSession.setActionHandler('play', () => this.play())
+    navigator.mediaSession.setActionHandler('pause', () => this.pause())
+    navigator.mediaSession.setActionHandler('previoustrack', () =>
+      this.prevTrack()
+    )
+    navigator.mediaSession.setActionHandler('nexttrack', () => this.nextTrack())
+    navigator.mediaSession.setActionHandler('seekto', event => {
+      if (event.seekTime) this.progress = event.seekTime
+    })
+  }
+
+  private async _updateMediaSessionMetaData() {
+    if ('mediaSession' in navigator === false || !this.track) return
+    const track = this.track
+    const metadata = {
+      title: track.name,
+      artist: track.ar.map(a => a.name).join(', '),
+      album: track.al.name,
+      artwork: [
+        {
+          src: track.al.picUrl + '?param=256y256',
+          type: 'image/jpg',
+          sizes: '256x256',
+        },
+        {
+          src: track.al.picUrl + '?param=512y512',
+          type: 'image/jpg',
+          sizes: '512x512',
+        },
+      ],
+      length: this.progress,
+      trackId: track.id,
+    }
+    navigator.mediaSession.metadata = new window.MediaMetadata(metadata)
   }
 }
 

@@ -1,3 +1,4 @@
+import { css } from '@emotion/css'
 import Avatar from './Avatar'
 import SearchBox from './SearchBox'
 import SettingsButton from './SettingsButton'
@@ -9,7 +10,7 @@ const TopbarMobile = () => {
         <SearchBox />
       </div>
 
-      <div className='ml-6 flex'>
+      <div className='ml-6 flex flex-shrink-0'>
         <SettingsButton />
         <div className='ml-3'>
           <Avatar />

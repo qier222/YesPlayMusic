@@ -220,11 +220,7 @@ const TracksAlbum = ({
     [onTrackDoubleClick]
   )
 
-  const playerSnapshot = useSnapshot(player)
-  const playingTrack = useMemo(
-    () => playerSnapshot.track,
-    [playerSnapshot.track]
-  )
+  const { track } = useSnapshot(player)
 
   return (
     <div className='grid w-full'>
@@ -255,7 +251,7 @@ const TracksAlbum = ({
               onClick={handleClick}
               isLiked={userLikedSongs?.ids?.includes(track.id) ?? false}
               isSkeleton={false}
-              isHighlight={track.id === playingTrack?.id}
+              isHighlight={track.id === track?.id}
             />
           ))}
     </div>

@@ -10,12 +10,7 @@ import { animate, motion, useAnimation } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 
 const Progress = () => {
-  const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
-  const progress = useMemo(
-    () => playerSnapshot.progress,
-    [playerSnapshot.progress]
-  )
+  const { track, progress } = useSnapshot(player)
 
   return (
     <div className='mt-10 flex w-full flex-col'>
@@ -85,10 +80,7 @@ const Cover = () => {
 }
 
 const NowPlaying = () => {
-  const playerSnapshot = useSnapshot(player)
-
-  const state = useMemo(() => playerSnapshot.state, [playerSnapshot.state])
-  const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
+  const { state, track } = useSnapshot(player)
 
   return (
     <div

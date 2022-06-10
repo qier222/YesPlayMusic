@@ -16,11 +16,7 @@ const TrackList = ({
   onPlay: (id: number) => void
   className?: string
 }) => {
-  const playerSnapshot = useSnapshot(player)
-  const playingTrack = useMemo(
-    () => playerSnapshot.track,
-    [playerSnapshot.track]
-  )
+  const { track: playingTrack, state } = useSnapshot(player)
   const isMobile = useIsMobile()
 
   const handleClick = (e: React.MouseEvent<HTMLElement>, trackID: number) => {
@@ -31,10 +27,7 @@ const TrackList = ({
     }
   }
 
-  const playing = useMemo(
-    () => playerSnapshot.state === 'playing',
-    [playerSnapshot.state]
-  )
+  const playing = state === 'playing'
 
   return (
     <div className={className}>
@@ -51,11 +44,11 @@ const TrackList = ({
 
           {/* Track name */}
           <div className='flex flex-grow items-center'>
-            {track.name}
+            <span className='line-clamp-1 mr-4'>{track.name}</span>
             {playingTrack?.id === track.id && (
-              <div className='ml-4'>
+              <span className='mr-4 inline-block'>
                 <Wave playing={playing} />
-              </div>
+              </span>
             )}
           </div>
 
