@@ -39,7 +39,7 @@ RUN echo $'server { \n\
 
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv \
   && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main nodejs npm \
-  && npm i -g NeteaseCloudMusicApi
+  && npm i -g NeteaseCloudMusicApi@4.5.X
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
