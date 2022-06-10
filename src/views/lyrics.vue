@@ -346,20 +346,21 @@ export default {
     ...mapActions(['likeATrack']),
     initDate() {
       var _this = this;
+      clearInterval(this.timer);
       this.timer = setInterval(function () {
         _this.date = _this.formatTime(new Date());
       }, 1000);
     },
     formatTime(value) {
-      let hour = value.getHours();
-      let minute = value.getMinutes();
-      let second = value.getSeconds();
+      let hour = value.getHours().toString();
+      let minute = value.getMinutes().toString();
+      let second = value.getSeconds().toString();
       return (
-        (hour >= 10 ? hour : '0' + hour) +
+        hour.padStart(2, '0') +
         ':' +
-        (minute >= 10 ? minute : '0' + minute) +
+        minute.padStart(2, '0') +
         ':' +
-        (second >= 10 ? second : '0' + second)
+        second.padStart(2, '0')
       );
     },
     playPrevTrack() {
