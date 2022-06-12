@@ -22,7 +22,7 @@ const Image = ({
   className?: string
   alt: string
   lazyLoad?: boolean
-  placeholder?: 'artist' | 'album' | 'playlist' | 'podcast' | 'blank' | null
+  placeholder?: 'artist' | 'album' | 'playlist' | 'podcast' | 'blank' | false
   onClick?: (e: React.MouseEvent<HTMLImageElement>) => void
   onMouseOver?: (e: React.MouseEvent<HTMLImageElement>) => void
   animation?: boolean
@@ -48,6 +48,7 @@ const Image = ({
     ? {
         animate,
         initial: { opacity: 0 },
+        exit: { opacity: 0 },
         transition,
       }
     : {}
@@ -60,22 +61,30 @@ const Image = ({
     : {}
 
   return (
-    <div className={cx('relative overflow-hidden', className)}>
+    <div
+      className={cx(
+        'overflow-hidden',
+        className,
+        className?.includes('absolute') === false && 'relative'
+      )}
+    >
       {/* Image */}
-      <motion.img
-        alt={alt}
-        className='absolute inset-0 h-full w-full'
-        src={src}
-        srcSet={srcSet}
-        sizes={sizes}
-        decoding='async'
-        loading={lazyLoad ? 'lazy' : undefined}
-        onError={onError}
-        onLoad={onLoad}
-        onClick={onClick}
-        onMouseOver={onMouseOver}
-        {...motionProps}
-      />
+      <AnimatePresence>
+        <motion.img
+          alt={alt}
+          className='absolute inset-0 h-full w-full'
+          src={src}
+          srcSet={srcSet}
+          sizes={sizes}
+          decoding='async'
+          loading={lazyLoad ? 'lazy' : undefined}
+          onError={onError}
+          onLoad={onLoad}
+          onClick={onClick}
+          onMouseOver={onMouseOver}
+          {...motionProps}
+        />
+      </AnimatePresence>
 
       {/* Placeholder / Error fallback */}
       <AnimatePresence>

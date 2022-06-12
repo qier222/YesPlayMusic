@@ -8,6 +8,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from './Image'
 import Wave from './Wave'
 import Icon from '@/web/components/Icon'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { useRef } from 'react'
+import { useWindowSize } from 'react-use'
+import { playerWidth, topbarHeight } from '@/web/utils/const'
 
 const Header = () => {
   return (
@@ -46,13 +50,13 @@ const Track = ({
   return (
     <motion.div
       className='flex items-center justify-between'
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ x: '100%', opacity: 0 }}
-      transition={{
-        duration: 0.24,
-      }}
-      layout
+      // initial={{ opacity: 0 }}
+      // animate={{ opacity: 1 }}
+      // exit={{ x: '100%', opacity: 0 }}
+      // transition={{
+      //   duration: 0.24,
+      // }}
+      // layout
       onClick={e => {
         if (e.detail === 2 && track?.id) player.playTrack(track.id)
       }}
@@ -62,6 +66,8 @@ const Track = ({
         alt='Cover'
         className='mr-4 aspect-square h-14 w-14 flex-shrink-0 rounded-12'
         src={resizeImage(track?.al?.picUrl || '', 'sm')}
+        animation={false}
+        placeholder={false}
       />
 
       {/* Track info */}
@@ -93,41 +99,82 @@ const Track = ({
   )
 }
 
-const PlayingNext = ({ className }: { className?: string }) => {
+const TrackList = ({ className }: { className?: string }) => {
   const { trackList, trackIndex, state } = useSnapshot(player)
-  const { data: tracks } = useTracks({ ids: trackList })
+  const { data: tracksRaw } = useTracks({ ids: trackList })
+  const tracks = tracksRaw?.songs || []
+  const parentRef = useRef<HTMLDivElement>(null)
+  const { height } = useWindowSize()
+
+  const listHeight = height - topbarHeight - playerWidth - 24 - 20 // 24是封面与底部间距，20是list与封面间距
+
+  const rowVirtualizer = useVirtualizer({
+    count: tracks.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 76,
+    overscan: 5,
+  })
+
   return (
     <>
-      <Header />
-
       <div
+        ref={parentRef}
+        style={{
+          height: `${listHeight}px`,
+        }}
         className={cx(
-          'no-scrollbar relative z-10 overflow-scroll',
+          'no-scrollbar relative z-10 w-full overflow-auto',
           className,
           css`
             padding-top: 42px;
-            mask-image: linear-gradient(to bottom, transparent 0, black 42px);
+            mask-image: linear-gradient(
+              to bottom,
+              transparent 0,
+              black 42px
+            ); // 顶部渐变遮罩
           `
         )}
       >
-        <motion.div className='grid gap-4'>
-          <AnimatePresence>
-            {tracks?.songs?.map((track, index) => (
+        <div
+          className='relative w-full'
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((row: any) => (
+            <div
+              key={row.index}
+              className='absolute top-0 left-0 w-full'
+              style={{
+                height: `${row.size}px`,
+                transform: `translateY(${row.start}px)`,
+              }}
+            >
               <Track
-                key={track.id}
-                track={track}
-                index={index}
+                track={tracks?.[row.index]}
+                index={row.index}
                 playingTrackIndex={trackIndex}
                 state={state}
               />
-            ))}
-
-            {(tracks?.songs?.length || 0) >= 4 && (
-              <div className='pointer-events-none sticky bottom-0 h-8 w-full bg-gradient-to-t from-black'></div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* 底部渐变遮罩 */}
+      <div
+        className='pointer-events-none absolute right-0 left-0 z-20 h-14 bg-gradient-to-t from-black to-transparent'
+        style={{ top: `${listHeight - 56}px` }}
+      ></div>
+    </>
+  )
+}
+
+const PlayingNext = ({ className }: { className?: string }) => {
+  return (
+    <>
+      <Header />
+      <TrackList className={className} />
     </>
   )
 }

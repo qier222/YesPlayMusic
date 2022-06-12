@@ -11,6 +11,7 @@ import useArtistAlbums from '@/web/api/hooks/useArtistAlbums'
 import { css, cx } from '@emotion/css'
 import CoverRow from '@/web/components/New/CoverRow'
 import { useMemo } from 'react'
+import 'plyr-react/plyr.css'
 
 const MoreByArtist = ({ album }: { album?: Album }) => {
   const { data: albums } = useArtistAlbums({

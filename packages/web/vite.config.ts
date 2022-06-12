@@ -91,6 +91,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => (IS_ELECTRON ? path : path.replace(/^\/netease/, '')),
       },
+      '/yesplaymusic/video-cover': {
+        target: `http://168.138.40.199:51324`,
+        // target: `http://127.0.0.1:51324`,
+        changeOrigin: true,
+      },
       '/yesplaymusic/': {
         target: `http://127.0.0.1:${
           process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000

@@ -18,6 +18,7 @@ export const enum Tables {
   AccountData = 'AccountData',
   CoverColor = 'CoverColor',
   AppData = 'AppData',
+  VideoCover = 'VideoCover',
 }
 interface CommonTableStructure {
   id: number
@@ -50,15 +51,21 @@ export interface TablesStructures {
       | 'qq'
       | 'bilibili'
       | 'joox'
-    updatedAt: number
+    queriedAt: number
   }
   [Tables.CoverColor]: {
     id: number
     color: string
+    queriedAt: number
   }
   [Tables.AppData]: {
     id: 'appVersion' | 'skippedVersion'
     value: string
+  }
+  [Tables.VideoCover]: {
+    id: number
+    url: string
+    queriedAt: number
   }
 }
 

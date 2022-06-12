@@ -12,12 +12,23 @@ import { Thumbar } from './windowsTaskbar'
 import fastFolderSize from 'fast-folder-size'
 import path from 'path'
 import prettyBytes from 'pretty-bytes'
+import { getCoverVideo } from './appleMusic'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
   listener: (event: Electron.IpcMainEvent, params: IpcChannelsParams[T]) => void
 ) => {
   ipcMain.on(channel, listener)
+}
+
+const handle = <T extends keyof IpcChannelsParams>(
+  channel: T,
+  listener: (
+    event: Electron.IpcMainInvokeEvent,
+    params: IpcChannelsParams[T]
+  ) => void
+) => {
+  return ipcMain.handle(channel, listener)
 }
 
 export function initIpcMain(
@@ -141,6 +152,22 @@ function initOtherIpcMain() {
         event.returnValue = prettyBytes(bytes ?? 0)
       }
     )
+  })
+
+  /**
+   * 缓存动态专辑封面
+   */
+  on(IpcChannels.SetVideoCover, (event, args) => {
+    const { id, url } = args
+    cache.set(APIs.VideoCover, { id, url })
+  })
+
+  /**
+   * 获取动态专辑封面
+   */
+  on(IpcChannels.GetVideoCover, (event, args) => {
+    const { id } = args
+    event.returnValue = cache.get(APIs.VideoCover, { id })
   })
 
   /**

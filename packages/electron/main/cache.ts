@@ -31,8 +31,9 @@ class Cache {
         break
       }
       case APIs.Track: {
-        if (!data.songs) return
-        const tracks = (data as FetchTracksResponse).songs.map(t => ({
+        const res = data as FetchTracksResponse
+        if (!res.songs) return
+        const tracks = res.songs.map(t => ({
           id: t.id,
           json: JSON.stringify(t),
           updatedAt: Date.now(),
@@ -106,6 +107,16 @@ class Cache {
         db.upsert(Tables.CoverColor, {
           id: data.id,
           color: data.color,
+          queriedAt: Date.now(),
+        })
+        break
+      }
+      case APIs.VideoCover: {
+        if (!data.id) return
+        db.upsert(Tables.VideoCover, {
+          id: data.id,
+          url: data.url || 'no',
+          queriedAt: Date.now(),
         })
       }
     }
@@ -196,6 +207,10 @@ class Cache {
         if (isNaN(Number(params?.id))) return
         return db.find(Tables.CoverColor, params.id)?.color
       }
+      case APIs.VideoCover: {
+        if (isNaN(Number(params?.id))) return
+        return db.find(Tables.VideoCover, params.id)?.url
+      }
     }
   }
 
@@ -278,7 +293,7 @@ class Cache {
         br,
         type: type as TablesStructures[Tables.Audio]['type'],
         source,
-        updatedAt: Date.now(),
+        queriedAt: Date.now(),
       })
 
       log.info(`[cache] cacheAudio ${id}-${br}.${type}`)

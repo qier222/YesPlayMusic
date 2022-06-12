@@ -23,6 +23,8 @@ export const enum IpcChannels {
   SyncSettings = 'SyncSettings',
   GetAudioCacheSize = 'GetAudioCacheSize',
   ResetWindowSize = 'ResetWindowSize',
+  GetVideoCover = 'GetVideoCover',
+  SetVideoCover = 'SetVideoCover',
 }
 
 // ipcMain.on params
@@ -58,6 +60,8 @@ export interface IpcChannelsParams {
   [IpcChannels.SyncSettings]: Store['settings']
   [IpcChannels.GetAudioCacheSize]: void
   [IpcChannels.ResetWindowSize]: void
+  [IpcChannels.GetVideoCover]: { id: number }
+  [IpcChannels.SetVideoCover]: { id: number; url: string }
 }
 
 // ipcRenderer.on params
@@ -79,4 +83,6 @@ export interface IpcChannelsReturns {
   [IpcChannels.Like]: void
   [IpcChannels.Repeat]: RepeatMode
   [IpcChannels.GetAudioCacheSize]: void
+  [IpcChannels.GetVideoCover]: string | undefined
+  [IpcChannels.SetVideoCover]: void
 }

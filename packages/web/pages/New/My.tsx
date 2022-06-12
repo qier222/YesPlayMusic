@@ -39,7 +39,10 @@ const Albums = () => {
 const Playlists = () => {
   const { data: playlists } = useUserPlaylists()
   return (
-    <CoverRow playlists={playlists?.playlist} className='mt-6 px-2.5 lg:px-0' />
+    <CoverRow
+      playlists={playlists?.playlist?.slice(1)}
+      className='mt-6 px-2.5 lg:px-0'
+    />
   )
 }
 

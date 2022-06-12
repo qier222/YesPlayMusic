@@ -14,6 +14,7 @@ import ReactGA from 'react-ga4'
 import { ipcRenderer } from './ipcRenderer'
 import { QueryClientProvider } from 'react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
+import ReactDOM from 'react-dom'
 
 ReactGA.initialize('G-KMJJCFZDKF')
 
@@ -34,12 +35,23 @@ ipcRenderer()
 const container = document.getElementById('root') as HTMLElement
 const root = ReactDOMClient.createRoot(container)
 
-root.render(
+// root.render(
+//   <StrictMode>
+//     <BrowserRouter>
+//       <QueryClientProvider client={reactQueryClient}>
+//         <App />
+//       </QueryClientProvider>
+//     </BrowserRouter>
+//   </StrictMode>
+// )
+
+ReactDOM.render(
   <StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={reactQueryClient}>
         <App />
       </QueryClientProvider>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
+  document.getElementById('root')
 )

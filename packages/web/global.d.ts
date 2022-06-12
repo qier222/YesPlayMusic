@@ -10,6 +10,10 @@ declare global {
         channel: T,
         params?: IpcChannelsParams[T]
       ) => IpcChannelsReturns[T]
+      invoke: <T extends keyof IpcChannelsParams>(
+        channel: T,
+        params?: IpcChannelsParams[T]
+      ) => Promise<IpcChannelsReturns[T]>
       send: <T extends keyof IpcChannelsParams>(
         channel: T,
         params?: IpcChannelsParams[T]

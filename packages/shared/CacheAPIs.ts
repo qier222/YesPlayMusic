@@ -21,7 +21,6 @@ export const enum APIs {
   Album = 'album',
   Artist = 'artists',
   ArtistAlbum = 'artist/album',
-  CoverColor = 'cover_color',
   Likelist = 'likelist',
   Lyric = 'lyric',
   Personalized = 'personalized',
@@ -33,13 +32,16 @@ export const enum APIs {
   UserAlbums = 'album/sublist',
   UserArtists = 'artist/sublist',
   UserPlaylist = 'user/playlist',
+
+  // not netease api
+  CoverColor = 'cover_color',
+  VideoCover = 'video_cover',
 }
 
 export interface APIsParams {
   [APIs.Album]: { id: number }
   [APIs.Artist]: { id: number }
   [APIs.ArtistAlbum]: { id: number }
-  [APIs.CoverColor]: { id: number }
   [APIs.Likelist]: void
   [APIs.Lyric]: { id: number }
   [APIs.Personalized]: void
@@ -51,13 +53,14 @@ export interface APIsParams {
   [APIs.UserAlbums]: void
   [APIs.UserArtists]: void
   [APIs.UserPlaylist]: void
+  [APIs.CoverColor]: { id: number }
+  [APIs.VideoCover]: { id: number }
 }
 
 export interface APIsResponse {
   [APIs.Album]: FetchAlbumResponse
   [APIs.Artist]: FetchArtistResponse
   [APIs.ArtistAlbum]: FetchArtistAlbumsResponse
-  [APIs.CoverColor]: string | undefined
   [APIs.Likelist]: FetchUserLikedTracksIDsResponse
   [APIs.Lyric]: FetchLyricResponse
   [APIs.Personalized]: FetchRecommendedPlaylistsResponse
@@ -69,4 +72,6 @@ export interface APIsResponse {
   [APIs.UserAlbums]: FetchUserAlbumsResponse
   [APIs.UserArtists]: FetchUserArtistsResponse
   [APIs.UserPlaylist]: FetchUserPlaylistsResponse
+  [APIs.CoverColor]: string | undefined
+  [APIs.VideoCover]: string | undefined
 }

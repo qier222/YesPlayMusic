@@ -9,7 +9,7 @@
     "dev": "node scripts/build.main.mjs --watch",
     "build": "node scripts/build.main.mjs",
     "pack": "electron-builder build -c .electron-builder.config.js",
-    "test:types": "tsc --noEmit --project src/main/tsconfig.json",
+    "test:types": "tsc --noEmit --project ./tsconfig.json",
     "lint": "eslint --ext .ts,.js ./",
     "format": "prettier --write './**/*.{ts,js,tsx,jsx}'"
   },
@@ -29,6 +29,7 @@
     "electron-store": "^8.0.1",
     "express": "^4.18.1",
     "fast-folder-size": "^1.7.0",
+    "m3u8-parser": "^4.7.1",
     "pretty-bytes": "^6.0.0"
   },
   "devDependencies": {

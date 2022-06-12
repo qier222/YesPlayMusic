@@ -160,7 +160,9 @@ export async function calcCoverColor(coverUrl: string) {
 }
 
 export const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-export const isSafari = /Safari/.test(navigator.userAgent)
+export const isSafari = /^((?!chrome|android).)*safari/i.test(
+  navigator.userAgent
+)
 export const isPWA =
   (navigator as any).standalone ||
   window.matchMedia('(display-mode: standalone)').matches
