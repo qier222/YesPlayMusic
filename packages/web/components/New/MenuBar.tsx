@@ -78,9 +78,12 @@ const TabName = () => {
 }
 
 const Tabs = () => {
+  const location = useLocation()
   const navigate = useNavigate()
   const controls = useAnimation()
-  const [active, setActive] = useState<string>(tabs[0].path)
+  const [active, setActive] = useState<string>(
+    location.pathname || tabs[0].path
+  )
 
   const animate = async (path: string) => {
     await controls.start((p: string) =>
@@ -96,7 +99,12 @@ const Tabs = () => {
           key={tab.name}
           animate={controls}
           transition={{ ease, duration: 0.18 }}
-          onMouseDown={() => animate(tab.path)}
+          onMouseDown={() => {
+            if ('vibrate' in navigator) {
+              navigator.vibrate(20)
+            }
+            animate(tab.path)
+          }}
           onClick={() => {
             setActive(tab.path)
             navigate(tab.path)

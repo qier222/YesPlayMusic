@@ -5,6 +5,7 @@ import Topbar from '@/web/components/New/Topbar/TopbarDesktop'
 import { css, cx } from '@emotion/css'
 import { player } from '@/web/store'
 import { useSnapshot } from 'valtio'
+import Login from './Login'
 
 const Layout = () => {
   const playerSnapshot = useSnapshot(player)
@@ -36,6 +37,7 @@ const Layout = () => {
       <MenuBar />
       <Topbar />
       <Main />
+      <Login />
       {showPlayer && <Player />}
     </div>
   )

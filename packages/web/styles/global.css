@@ -59,6 +59,14 @@
     word-break: break-all;
     -webkit-line-clamp: 3;
   }
+
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-all;
+    -webkit-line-clamp: 4;
+  }
 }
 
 @font-face {
@@ -107,9 +115,12 @@ input {
 }
 
 body {
+  overscroll-behavior: contain;
 }
 
 html {
+  background-color: black;
+  min-height: calc(100% + env(safe-area-inset-top));
 }
 
 button,
@@ -134,9 +145,4 @@ a {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-html {
-  background-color: black;
-  min-height: calc(100% + env(safe-area-inset-top));
 }

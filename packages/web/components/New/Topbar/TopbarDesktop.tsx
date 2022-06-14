@@ -4,6 +4,7 @@ import Avatar from './Avatar'
 import SearchBox from './SearchBox'
 import SettingsButton from './SettingsButton'
 import NavigationButtons from './NavigationButtons'
+import topbarBackground from '@/web/assets/images/topbar-background.png'
 
 const TopbarDesktop = () => {
   const location = useLocation()
@@ -11,13 +12,16 @@ const TopbarDesktop = () => {
   return (
     <div
       className={cx(
-        'app-region-drag fixed top-0 right-0 z-20 flex items-center justify-between overflow-hidden rounded-tr-24 pt-11 pb-10 pr-6 pl-10 ',
+        'app-region-drag fixed top-0 right-0 z-20 flex items-center justify-between overflow-hidden rounded-tr-24 bg-contain pt-11 pb-10 pr-6 pl-10',
         css`
           left: 104px;
         `,
         !location.pathname.startsWith('/album/') &&
           !location.pathname.startsWith('/playlist/') &&
-          'bg-gradient-to-b from-white dark:from-black'
+          !location.pathname.startsWith('/browse') &&
+          css`
+            background-image: url(${topbarBackground});
+          `
       )}
     >
       {/* Left Part */}

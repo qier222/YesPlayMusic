@@ -45,7 +45,7 @@ const IpcRendererReact = () => {
 
     window.ipcRenderer?.send(playing ? IpcChannels.Play : IpcChannels.Pause)
     setIsPlaying(playing)
-  }, [state])
+  }, [isPlaying, state])
 
   useEffectOnce(() => {
     // 用于显示 windows taskbar buttons

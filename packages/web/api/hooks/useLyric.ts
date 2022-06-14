@@ -18,6 +18,7 @@ export default function useLyric(params: FetchLyricParams) {
     {
       enabled: !!params.id && params.id !== 0,
       refetchInterval: false,
+      refetchOnWindowFocus: false,
       staleTime: Infinity,
       initialData: (): FetchLyricResponse | undefined =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {

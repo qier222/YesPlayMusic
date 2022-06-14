@@ -26,6 +26,7 @@
     "@sentry/react": "^6.19.7",
     "@sentry/tracing": "^6.19.7",
     "@tanstack/react-virtual": "3.0.0-beta.2",
+    "ahooks": "^3.4.1",
     "axios": "^0.27.2",
     "color.js": "^1.2.0",
     "colord": "^2.9.2",

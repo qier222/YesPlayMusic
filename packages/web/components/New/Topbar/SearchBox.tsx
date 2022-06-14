@@ -20,7 +20,7 @@ const SearchBox = () => {
         className={cx(
           'flex-shrink bg-transparent font-medium  placeholder:text-neutral-500 dark:text-neutral-200',
           css`
-            @media (max-width: 360px) {
+            @media (max-width: 420px) {
               width: 142px;
             }
           `

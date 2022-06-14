@@ -1,5 +1,6 @@
 import { resizeImage } from '@/web/utils/common'
 import { css, cx } from '@emotion/css'
+import { memo } from 'react'
 import Image from './Image'
 
 const Artist = ({ artist }: { artist: Artist }) => {
@@ -82,4 +83,6 @@ const ArtistRow = ({
   )
 }
 
-export default ArtistRow
+const memoizedArtistRow = memo(ArtistRow)
+memoizedArtistRow.displayName = 'ArtistRow'
+export default memoizedArtistRow

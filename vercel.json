@@ -7,6 +7,10 @@
       "source": "/netease/:match*",
       "destination": "http://168.138.40.199:12835/:match*"
     },
-    {"source": "/(.*)", "destination": "/"}
+    {
+      "source": "/yesplaymusic/:match*",
+      "destination": "http://168.138.40.199:51324/yesplaymusic/:match*"
+    },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }

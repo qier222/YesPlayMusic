@@ -7,13 +7,14 @@ import Router from '@/web/components/New/Router'
 import MenuBar from './MenuBar'
 import TopbarMobile from './Topbar/TopbarMobile'
 import { isIOS, isPWA, isSafari } from '@/web/utils/common'
+import Login from './Login'
 
 const LayoutMobile = () => {
   const playerSnapshot = useSnapshot(player)
   const showPlayer = !!playerSnapshot.track
 
   return (
-    <div id='layout' className='select-none bg-white pb-32 pt-3 dark:bg-black'>
+    <div id='layout' className='select-none bg-white pb-28 pt-3 dark:bg-black'>
       <main className='min-h-screen overflow-y-auto overflow-x-hidden pb-16'>
         <TopbarMobile />
         <Router />
@@ -47,6 +48,8 @@ const LayoutMobile = () => {
 
         <MenuBar />
       </div>
+
+      <Login />
 
       {/* Notch background */}
       {isIOS && isSafari && isPWA && (

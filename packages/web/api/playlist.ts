@@ -39,7 +39,6 @@ export function fetchRecommendedPlaylists(
 }
 
 // 每日推荐歌单（需要登录）
-
 export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlaylistsResponse> {
   return request({
     url: '/recommend/resource',

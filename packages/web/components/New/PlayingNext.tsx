@@ -112,7 +112,7 @@ const TrackList = ({ className }: { className?: string }) => {
     count: tracks.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 76,
-    overscan: 5,
+    overscan: 10,
   })
 
   return (

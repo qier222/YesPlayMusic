@@ -14,10 +14,15 @@ const IS_ELECTRON = process.env.IS_ELECTRON
  * @see https://vitejs.dev/config/
  */
 export default defineConfig({
+  clearScreen: IS_ELECTRON ? false : true,
   mode: process.env.NODE_ENV,
   root: './',
   base: '/',
-  clearScreen: IS_ELECTRON ? false : true,
+  resolve: {
+    alias: {
+      '@': join(__dirname, '../'),
+    },
+  },
   plugins: [
     react(),
 
@@ -73,11 +78,6 @@ export default defineConfig({
           template: 'treemap',
         }),
       ],
-    },
-  },
-  resolve: {
-    alias: {
-      '@': join(__dirname, '../'),
     },
   },
   server: {

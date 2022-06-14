@@ -4,6 +4,48 @@ import { useNavigate } from 'react-router-dom'
 import Image from './Image'
 import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
+import { memo, useCallback } from 'react'
+
+const Album = ({ album }: { album: Album }) => {
+  const navigate = useNavigate()
+  const goTo = () => {
+    console.log('dsada')
+    navigate(`/album/${album.id}`)
+  }
+  const prefetch = () => {
+    prefetchAlbum({ id: album.id })
+  }
+
+  return (
+    <Image
+      onClick={goTo}
+      key={album.id}
+      src={resizeImage(album?.picUrl || '', 'md')}
+      className='aspect-square rounded-24'
+      onMouseOver={prefetch}
+    />
+  )
+}
+
+const Playlist = ({ playlist }: { playlist: Playlist }) => {
+  const navigate = useNavigate()
+  const goTo = useCallback(() => {
+    navigate(`/playlist/${playlist.id}`)
+  }, [navigate, playlist.id])
+  const prefetch = useCallback(() => {
+    prefetchPlaylist({ id: playlist.id })
+  }, [playlist.id])
+
+  return (
+    <Image
+      onClick={goTo}
+      key={playlist.id}
+      src={resizeImage(playlist.coverImgUrl || playlist?.picUrl || '', 'md')}
+      className='aspect-square rounded-24'
+      onMouseOver={prefetch}
+    />
+  )
+}
 
 const CoverRow = ({
   albums,
@@ -16,18 +58,6 @@ const CoverRow = ({
   albums?: Album[]
   playlists?: Playlist[]
 }) => {
-  const navigate = useNavigate()
-
-  const goTo = (id: number) => {
-    if (albums) navigate(`/album/${id}`)
-    if (playlists) navigate(`/playlist/${id}`)
-  }
-
-  const prefetch = (id: number) => {
-    if (albums) prefetchAlbum({ id })
-    if (playlists) prefetchPlaylist({ id })
-  }
-
   return (
     <div className={className}>
       {/* Title */}
@@ -38,33 +68,18 @@ const CoverRow = ({
       )}
 
       {/* Items */}
-      <div className='grid grid-cols-3 gap-4 lg:gap-10 xl:grid-cols-4 2xl:grid-cols-5'>
+      <div className='grid grid-cols-3 gap-4 lg:gap-6 xl:grid-cols-4 2xl:grid-cols-5'>
         {albums?.map(album => (
-          <Image
-            onClick={() => goTo(album.id)}
-            key={album.id}
-            alt={album.name}
-            src={resizeImage(album?.picUrl || '', 'md')}
-            className='aspect-square rounded-24'
-            onMouseOver={() => prefetch(album.id)}
-          />
+          <Album key={album.id} album={album} />
         ))}
         {playlists?.map(playlist => (
-          <Image
-            onClick={() => goTo(playlist.id)}
-            key={playlist.id}
-            alt={playlist.name}
-            src={resizeImage(
-              playlist.coverImgUrl || playlist?.picUrl || '',
-              'md'
-            )}
-            className='aspect-square rounded-24'
-            onMouseOver={() => prefetch(playlist.id)}
-          />
+          <Playlist key={playlist.id} playlist={playlist} />
         ))}
       </div>
     </div>
   )
 }
 
-export default CoverRow
+const memoizedCoverRow = memo(CoverRow)
+memoizedCoverRow.displayName = 'CoverRow'
+export default memoizedCoverRow

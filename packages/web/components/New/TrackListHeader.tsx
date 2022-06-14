@@ -12,7 +12,6 @@ import Image from './Image'
 import useIsMobile from '@/web/hooks/useIsMobile'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import Hls from 'hls.js'
-import Plyr, { APITypes, PlyrProps, PlyrInstance } from 'plyr-react'
 import useVideoCover from '@/web/hooks/useVideoCover'
 import { motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
@@ -26,42 +25,20 @@ injectGlobal`
 `
 
 const VideoCover = ({ source }: { source?: string }) => {
-  const ref = useRef<APITypes>(null)
-  useEffect(() => {
-    const loadVideo = async () => {
-      if (!source || !Hls.isSupported()) return
-      const video = document.getElementById('plyr') as HTMLVideoElement
-      const hls = new Hls()
-      hls.loadSource(source)
-      hls.attachMedia(video)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      ref.current!.plyr.media = video
+  const ref = useRef<HTMLVideoElement>(null)
+  const hls = useRef<Hls>(new Hls())
 
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // eslint-disable-next-line @typescript-eslint/no-extra-semi
-        ;(ref.current!.plyr as PlyrInstance).play()
-      })
+  useEffect(() => {
+    if (source && Hls.isSupported()) {
+      const video = document.querySelector('#video-cover') as HTMLVideoElement
+      hls.current.loadSource(source)
+      hls.current.attachMedia(video)
     }
-    loadVideo()
-  })
+  }, [source])
 
   return (
     <div className='z-10 aspect-square overflow-hidden rounded-24'>
-      <Plyr
-        id='plyr'
-        options={{
-          volume: 0,
-          controls: [],
-          autoplay: true,
-          clickToPlay: false,
-          loop: {
-            active: true,
-          },
-        }}
-        source={{} as PlyrProps['source']}
-        ref={ref}
-      />
+      <video id='video-cover' ref={ref} autoPlay muted loop />
     </div>
   )
 }
@@ -82,7 +59,6 @@ const Cover = memo(
           <Image
             className='absolute inset-0 h-full w-full'
             src={resizeImage(cover, 'lg')}
-            alt='Cover'
           />
 
           {videoCover && (

@@ -215,8 +215,12 @@ export class Player {
    */
   private async _fetchAudioSource(trackID: TrackID) {
     const response = await fetchAudioSourceWithReactQuery({ id: trackID })
+    let audio = response.data?.[0]?.url
+    if (audio && audio.includes('126.net')) {
+      audio = audio.replace('http://', 'https://')
+    }
     return {
-      audio: response.data?.[0]?.url,
+      audio,
       id: trackID,
     }
   }
