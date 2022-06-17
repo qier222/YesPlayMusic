@@ -481,6 +481,9 @@ export default {
     getListPath() {
       return getListSourcePath();
     },
+    mute() {
+      this.player.mute();
+    },
   },
 };
 </script>
