@@ -11,10 +11,13 @@
           }}</router-link>
           -
           {{ mv.data.name }}
-          <div class="like-button">
-            <button-icon @click.native="likeMV">
+          <div class="buttons">
+            <button-icon class="button" @click.native="likeMV">
               <svg-icon v-if="mv.subed" icon-class="heart-solid"></svg-icon>
               <svg-icon v-else icon-class="heart"></svg-icon>
+            </button-icon>
+            <button-icon class="button" @click.native="openMenu">
+              <svg-icon icon-class="more"></svg-icon>
             </button-icon>
           </div>
         </div>
@@ -28,6 +31,14 @@
       <div class="section-title">{{ $t('mv.moreVideo') }}</div>
       <MvRow :mvs="simiMvs" />
     </div>
+    <ContextMenu ref="mvMenu">
+      <div class="item" @click="copyUrl(mv.data.id)">{{
+        $t('contextMenu.copyUrl')
+      }}</div>
+      <div class="item" @click="openInBrowser(mv.data.id)">{{
+        $t('contextMenu.openInBrowser')
+      }}</div>
+    </ContextMenu>
   </div>
 </template>
 
@@ -40,6 +51,7 @@ import '@/assets/css/plyr.css';
 import Plyr from 'plyr';
 
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import ContextMenu from '@/components/ContextMenu.vue';
 import MvRow from '@/components/MvRow.vue';
 import { mapActions } from 'vuex';
 
@@ -48,6 +60,7 @@ export default {
   components: {
     MvRow,
     ButtonIcon,
+    ContextMenu,
   },
   beforeRouteUpdate(to, from, next) {
     this.getData(to.params.id);
@@ -127,6 +140,23 @@ export default {
         if (data.code === 200) this.mv.subed = !this.mv.subed;
       });
     },
+    openMenu(e) {
+      this.$refs.mvMenu.openMenu(e);
+    },
+    copyUrl(id) {
+      let showToast = this.showToast;
+      this.$copyText(`https://music.163.com/#/mv?id=${id}`)
+        .then(function () {
+          showToast(locale.t('toast.copied'));
+        })
+        .catch(error => {
+          showToast(`${locale.t('toast.copyFailed')}${error}`);
+        });
+    },
+    openInBrowser(id) {
+      const url = `https://music.163.com/#/mv?id=${id}`;
+      window.open(url);
+    },
   },
 };
 </script>
@@ -181,8 +211,11 @@ export default {
   }
 }
 
-.like-button {
+.buttons {
   display: inline-block;
+  .button {
+    display: inline-block;
+  }
   .svg-icon {
     height: 18px;
     width: 18px;

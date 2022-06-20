@@ -110,6 +110,12 @@
                       "
                     />
                   </button-icon>
+                  <button-icon
+                    :title="$t('contextMenu.addToPlaylist')"
+                    @click.native="addToPlaylist"
+                  >
+                    <svg-icon icon-class="plus" />
+                  </button-icon>
                   <!-- <button-icon @click.native="openMenu" title="Menu"
                     ><svg-icon icon-class="more"
                   /></button-icon> -->
@@ -253,7 +259,9 @@ import { lyricParser } from '@/utils/lyrics';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import * as Vibrant from 'node-vibrant/dist/vibrant.worker.min.js';
 import Color from 'color';
+import { isAccountLoggedIn } from '@/utils/auth';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
+import locale from '@/locale';
 
 export default {
   name: 'Lyrics',
@@ -364,8 +372,25 @@ export default {
     clearInterval(this.lyricsInterval);
   },
   methods: {
-    ...mapMutations(['toggleLyrics']),
+    ...mapMutations(['toggleLyrics', 'updateModal']),
     ...mapActions(['likeATrack']),
+    addToPlaylist() {
+      if (!isAccountLoggedIn()) {
+        this.showToast(locale.t('toast.needToLogin'));
+        return;
+      }
+      this.$store.dispatch('fetchLikedPlaylist');
+      this.updateModal({
+        modalName: 'addTrackToPlaylistModal',
+        key: 'show',
+        value: true,
+      });
+      this.updateModal({
+        modalName: 'addTrackToPlaylistModal',
+        key: 'selectedTrackID',
+        value: this.currentTrack?.id,
+      });
+    },
     playPrevTrack() {
       this.player.playPrevTrack();
     },

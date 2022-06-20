@@ -33,6 +33,9 @@
       <div class="container">
         <div class="title">
           {{ track.name }}
+          <span v-if="isSubTitle" :title="subTitle" class="sub-title">
+            ({{ subTitle }})
+          </span>
           <span v-if="isAlbum" class="featured">
             <ArtistsInLine
               :artists="track.ar"
@@ -42,9 +45,6 @@
           <span v-if="isAlbum && track.mark === 1318912" class="explicit-symbol"
             ><ExplicitSymbol
           /></span>
-          <span v-if="isSubTitle" :title="subTitle" class="sub-title">
-            ({{ subTitle }})
-          </span>
         </div>
         <div v-if="!isAlbum" class="artist">
           <span
@@ -317,7 +317,8 @@ button {
         opacity: 0.72;
       }
       .sub-title {
-        color: #aeaeae;
+        color: #7a7a7a;
+        opacity: 0.7;
         margin-left: 4px;
       }
     }

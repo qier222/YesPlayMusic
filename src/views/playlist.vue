@@ -318,6 +318,10 @@ const specialPlaylist = {
     name: '一周原创发现',
     gradient: 'gradient-blue-purple',
   },
+  2829883282: {
+    name: '华语私人雷达',
+    gradient: 'gradient-yellow-red',
+  },
   3136952023: {
     name: '私人雷达',
     gradient: 'gradient-radar',
