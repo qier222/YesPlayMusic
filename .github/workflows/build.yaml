@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: "recursive"
 
@@ -96,19 +96,19 @@ jobs:
 
           use_vue_cli: true
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: YesPlayMusic-mac
           path: dist_electron/*-universal.dmg
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: YesPlayMusic-win
           path: dist_electron/*Setup*.exe
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: YesPlayMusic-linux
           path: dist_electron/*.AppImage
