@@ -7,7 +7,7 @@ export async function startNeteaseMusicApi() {
 
   // Load the NCM API.
   await server.serveNcmApi({
-    port: 10754,
+    port: 35216,
     moduleDefs: require('../ncmModDef'),
   });
 }
