@@ -166,7 +166,7 @@ class Background {
           });
         });
     });
-    this.expressApp = expressApp.listen(27232, '127.0.0.1');
+    this.expressApp = expressApp.listen(41342, '127.0.0.1');
   }
 
   createWindow() {
@@ -257,8 +257,8 @@ class Background {
       createProtocol('app');
       this.window.loadURL(
         showLibraryDefault
-          ? 'http://localhost:27232/#/library'
-          : 'http://localhost:27232'
+          ? 'http://localhost:41342/#/library'
+          : 'http://localhost:41342'
       );
     }
   }
