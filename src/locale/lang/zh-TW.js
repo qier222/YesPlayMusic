@@ -164,6 +164,7 @@ export default {
     subTitleDefault: '副標題使用別名',
     enableReversedMode: '啟用倒序播放功能 (實驗性功能)',
     enableCustomTitlebar: '啟用自訂標題列（重新啟動後生效）',
+    showLyricsTime: '顯示目前時間',
     lyricsBackground: {
       text: '顯示歌詞背景',
       off: '關閉',
