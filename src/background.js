@@ -66,7 +66,7 @@ const closeOnLinux = (e, win, store) => {
           win.hide(); //调用 最小化实例方法
         } else if (result.response === 1) {
           win = null;
-          app.exit(); //exit()直接关闭客户端，不会执行quit();
+          app.exit(); // exit()直接关闭客户端，不会执行quit();
         }
       })
       .catch(err => {
