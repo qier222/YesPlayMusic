@@ -194,7 +194,7 @@ nav {
 
 @media (max-width: 1336px) {
   nav {
-    padding: 0 5vw;
+    padding: 0 7vw;
   }
 }
 
