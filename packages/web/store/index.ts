@@ -6,14 +6,13 @@ import { Store, initialState } from '@/shared/store'
 
 const stateInLocalStorage = localStorage.getItem('state')
 export const state = proxy<Store>(
-  merge(initialState, [
+  merge(
+    initialState,
     stateInLocalStorage ? JSON.parse(stateInLocalStorage) : {},
     {
-      uiStates: {
-        showLyricPanel: false,
-      },
-    },
-  ])
+      uiStates: initialState.uiStates,
+    }
+  )
 )
 subscribe(state, () => {
   localStorage.setItem('state', JSON.stringify(state))
@@ -31,5 +30,6 @@ subscribe(player, () => {
 })
 
 if (import.meta.env.DEV) {
+  // eslint-disable-next-line @typescript-eslint/no-extra-semi
   ;(window as any).player = player
 }

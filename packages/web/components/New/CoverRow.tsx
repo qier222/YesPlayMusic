@@ -9,7 +9,6 @@ import { memo, useCallback } from 'react'
 const Album = ({ album }: { album: Album }) => {
   const navigate = useNavigate()
   const goTo = () => {
-    console.log('dsada')
     navigate(`/album/${album.id}`)
   }
   const prefetch = () => {

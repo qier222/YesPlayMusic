@@ -16,7 +16,7 @@
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
     "generate:accent-color-css": "node ./scripts/generate.accent.color.css.js",
-    "api:netease": "npx NeteaseCloudMusicApi"
+    "api:netease": "npx NeteaseCloudMusicApi@latest"
   },
   "engines": {
     "node": "^14.13.1 || >=16.0.0"

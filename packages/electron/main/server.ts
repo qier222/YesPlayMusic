@@ -255,7 +255,11 @@ class Server {
       }
 
       const fromNetease = await getFromNetease(req)
-      if (fromNetease?.code === 200 && !fromNetease?.data?.[0].freeTrialInfo) {
+      if (
+        fromNetease?.code === 200 &&
+        !fromNetease?.data?.[0]?.freeTrialInfo &&
+        fromNetease?.data?.[0]?.url
+      ) {
         res.status(200).send(fromNetease)
         return
       }

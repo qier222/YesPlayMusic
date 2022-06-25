@@ -1,6 +1,7 @@
 export enum ArtistApiNames {
   FetchArtist = 'fetchArtist',
   FetchArtistAlbums = 'fetchArtistAlbums',
+  FetchSimilarArtists = 'fetchSimilarArtists',
 }
 
 // 歌手详情
@@ -25,4 +26,13 @@ export interface FetchArtistAlbumsResponse {
   hotAlbums: Album[]
   more: boolean
   artist: Artist
+}
+
+// 获取相似歌手
+export interface FetchSimilarArtistsParams {
+  id: number
+}
+export interface FetchSimilarArtistsResponse {
+  code: number
+  artists: Artist[]
 }

@@ -1,7 +1,11 @@
 export interface Store {
   uiStates: {
-    loginPhoneCountryCode: string
     showLyricPanel: boolean
+    showLoginPanel: boolean
+  }
+  persistedUiStates: {
+    loginPhoneCountryCode: string
+    loginType: 'phone' | 'email' | 'qrCode'
   }
   settings: {
     showSidebar: boolean
@@ -29,8 +33,12 @@ export interface Store {
 
 export const initialState: Store = {
   uiStates: {
-    loginPhoneCountryCode: '+86',
     showLyricPanel: false,
+    showLoginPanel: false,
+  },
+  persistedUiStates: {
+    loginPhoneCountryCode: '+86',
+    loginType: 'qrCode',
   },
   settings: {
     showSidebar: true,

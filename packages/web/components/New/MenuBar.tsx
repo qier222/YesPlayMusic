@@ -114,14 +114,16 @@ const Tabs = () => {
             scale: { scale: 0.8 },
             reset: { scale: 1 },
           }}
+          className={cx(
+            active === tab.path
+              ? 'text-brand-600  dark:text-brand-700'
+              : 'lg:hover:text-black lg:dark:hover:text-white'
+          )}
         >
           <Icon
             name={tab.icon}
             className={cx(
-              'app-region-no-drag h-10 w-10 transition-colors duration-500',
-              active === tab.path
-                ? 'text-brand-600  dark:text-brand-700'
-                : 'lg:hover:text-black lg:dark:hover:text-white'
+              'app-region-no-drag h-10 w-10 transition-colors duration-500'
             )}
           />
         </motion.div>
@@ -130,12 +132,13 @@ const Tabs = () => {
   )
 }
 
-const MenuBar = () => {
+const MenuBar = ({ className }: { className?: string }) => {
   const isMobile = useIsMobile()
   return (
     <div
       className={cx(
         'app-region-drag relative flex h-full w-full flex-col justify-center',
+        className,
         css`
           grid-area: menubar;
         `

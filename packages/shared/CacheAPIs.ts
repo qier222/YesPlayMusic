@@ -1,4 +1,8 @@
-import { FetchArtistAlbumsResponse, FetchArtistResponse } from './api/Artist'
+import {
+  FetchArtistAlbumsResponse,
+  FetchArtistResponse,
+  FetchSimilarArtistsResponse,
+} from './api/Artist'
 import { FetchAlbumResponse } from './api/Album'
 import {
   FetchUserAccountResponse,
@@ -32,6 +36,7 @@ export const enum APIs {
   UserAlbums = 'album/sublist',
   UserArtists = 'artist/sublist',
   UserPlaylist = 'user/playlist',
+  SimilarArtist = 'simi/artist',
 
   // not netease api
   CoverColor = 'cover_color',
@@ -53,6 +58,7 @@ export interface APIsParams {
   [APIs.UserAlbums]: void
   [APIs.UserArtists]: void
   [APIs.UserPlaylist]: void
+  [APIs.SimilarArtist]: { id: number }
   [APIs.CoverColor]: { id: number }
   [APIs.VideoCover]: { id: number }
 }
@@ -72,6 +78,7 @@ export interface APIsResponse {
   [APIs.UserAlbums]: FetchUserAlbumsResponse
   [APIs.UserArtists]: FetchUserArtistsResponse
   [APIs.UserPlaylist]: FetchUserPlaylistsResponse
+  [APIs.SimilarArtist]: FetchSimilarArtistsResponse
   [APIs.CoverColor]: string | undefined
   [APIs.VideoCover]: string | undefined
 }

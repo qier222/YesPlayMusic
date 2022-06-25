@@ -1,79 +1,150 @@
 import { cx, css } from '@emotion/css'
-import { useEffect, useRef, useState, useMemo } from 'react'
-import qrCode from 'qrcode'
+import { useEffect, useState } from 'react'
+import { state } from '@/web/store'
+import { useSnapshot } from 'valtio'
 
-const QRCode = ({ className, text }: { className?: string; text: string }) => {
-  const [image, setImage] = useState<string>('')
+import { AnimatePresence, motion, useAnimation } from 'framer-motion'
+import { ease } from '@/web/utils/const'
+import Icon from '@/web/components/Icon'
+import LoginWithPhoneOrEmail from './LoginWithPhoneOrEmail'
+import LoginWithQRCode from './LoginWithQRCode'
 
-  useEffect(() => {
-    if (text) {
-      qrCode
-        .toString(text, {
-          margin: 0,
-          color: { light: '#ffffff00' },
-          type: 'svg',
-        })
-        .then(image => {
-          setImage(image)
-          console.log(image)
-        })
-    }
-  }, [text])
-
-  const encodedImage = useMemo(() => encodeURIComponent(image), [image])
-
+const OR = ({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+}) => {
   return (
-    <img
-      className={cx('', className)}
-      src={`data:image/svg+xml;utf8,${encodedImage}`}
-    ></img>
+    <>
+      <div className='mt-4 flex items-center'>
+        <div className='h-px flex-grow bg-white/20'></div>
+        <div className='mx-2 text-16 font-medium text-white'>or</div>
+        <div className='h-px flex-grow bg-white/20'></div>
+      </div>
+
+      <div className='mt-4 flex justify-center'>
+        <button
+          className='text-16 font-medium text-night-50 transition-colors duration-300 hover:text-white'
+          onClick={onClick}
+        >
+          {children}
+        </button>
+      </div>
+    </>
   )
 }
 
 const Login = () => {
-  return <div></div>
+  const { uiStates, persistedUiStates } = useSnapshot(state)
+  const [cardType, setCardType] = useState<'qrCode' | 'phone/email'>(
+    persistedUiStates.loginType === 'qrCode' ? 'qrCode' : 'phone/email'
+  )
+
+  const animateCard = useAnimation()
+  const handleSwitchCard = async () => {
+    const transition = { duration: 0.36, ease }
+    await animateCard.start({
+      rotateY: 90,
+      opacity: 0,
+      transition,
+    })
+
+    setCardType(cardType === 'qrCode' ? 'phone/email' : 'qrCode')
+    state.persistedUiStates.loginType =
+      cardType === 'qrCode' ? 'phone' : 'qrCode'
+
+    await animateCard.start({
+      rotateY: 0,
+      opacity: 1,
+      transition,
+    })
+  }
+
   return (
-    <div className='fixed inset-0 z-30 flex justify-center rounded-24 bg-black/80 pt-56 backdrop-blur-3xl'>
-      <div className='flex flex-col items-center'>
-        <div
-          className={cx(
-            'rounded-48 bg-white/10 p-9',
-            css`
-              width: 392px;
-              height: fit-content;
-            `
-          )}
-        >
-          <div className='text-center text-18 font-medium text-night-600'>
-            Log in with NetEase QR
-          </div>
+    <>
+      {/* Blur bg */}
+      <AnimatePresence>
+        {uiStates.showLoginPanel && (
+          <motion.div
+            className='fixed inset-0 z-30 bg-black/80 backdrop-blur-3xl lg:rounded-24'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease }}
+          ></motion.div>
+        )}
+      </AnimatePresence>
 
-          <div className='mt-4 rounded-24 bg-white p-2.5'>
-            <QRCode
-              text='tetesoahfoahdodaoshdoaish'
-              className={css`
-                border-radius: 17px;
-              `}
-            />
-          </div>
+      {/* Content */}
+      <AnimatePresence>
+        {uiStates.showLoginPanel && (
+          <div className='fixed inset-0 z-30 flex justify-center rounded-24 pt-56'>
+            <motion.div
+              className='flex flex-col items-center'
+              variants={{
+                show: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.3,
+                    ease,
+                    delay: 0.2,
+                  },
+                },
+                hide: {
+                  opacity: 0,
+                  y: 100,
+                  transition: {
+                    duration: 0.3,
+                    ease,
+                  },
+                },
+              }}
+              initial='hide'
+              animate='show'
+              exit='hide'
+            >
+              {/* Login card */}
+              <AnimatePresence>
+                <motion.div
+                  animate={animateCard}
+                  className={cx(
+                    'relative rounded-48 bg-white/10 p-9',
+                    css`
+                      width: 392px;
+                      height: fit-content;
+                    `
+                  )}
+                >
+                  {cardType === 'qrCode' && <LoginWithQRCode />}
+                  {cardType === 'phone/email' && <LoginWithPhoneOrEmail />}
 
-          <div className='mt-4 flex items-center'>
-            <div className='h-px flex-grow bg-white/20'></div>
-            <div className='mx-2 text-16 font-medium text-white'>or</div>
-            <div className='h-px flex-grow bg-white/20'></div>
-          </div>
+                  <OR onClick={handleSwitchCard}>
+                    {cardType === 'qrCode'
+                      ? 'Use Phone or Email'
+                      : 'Scan QR Code'}
+                  </OR>
+                </motion.div>
+              </AnimatePresence>
 
-          <div className='mt-4 flex justify-center'>
-            <button className='text-16 font-medium text-night-50'>
-              Use Phone or Email
-            </button>
+              {/* Close button */}
+              <AnimatePresence>
+                <motion.div
+                  layout='position'
+                  transition={{ ease }}
+                  onClick={() => (state.uiStates.showLoginPanel = false)}
+                  className='mt-10 flex h-14 w-14 items-center justify-center rounded-full bg-white/10'
+                >
+                  <Icon name='x' className='h-7 w-7 text-white/50' />
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
           </div>
-        </div>
-
-        {/* Close */}
-        <div className='mt-10 h-14 w-14 rounded-full bg-white/10'></div>
-      </div>
-    </div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 

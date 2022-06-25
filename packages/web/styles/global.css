@@ -18,24 +18,6 @@
     -webkit-user-drag: none;
   }
 
-  .btn-pressed-animation {
-    @apply transition-transform duration-300;
-  }
-  .btn-pressed-animation:active {
-    @apply scale-95;
-  }
-
-  .btn-hover-animation {
-    @apply relative transform;
-  }
-  .btn-hover-animation:after {
-    @apply absolute top-0 left-0 z-[-1] h-full w-full scale-[.92] rounded-lg opacity-0 transition-all duration-300;
-    content: '';
-  }
-  .btn-hover-animation:hover::after {
-    @apply scale-100 opacity-100;
-  }
-
   .line-clamp-1 {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -48,7 +30,6 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    word-break: break-all;
     -webkit-line-clamp: 2;
   }
 
@@ -56,7 +37,6 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    word-break: break-all;
     -webkit-line-clamp: 3;
   }
 
@@ -64,7 +44,13 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    word-break: break-all;
+    -webkit-line-clamp: 4;
+  }
+
+  .line-clamp-5 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     -webkit-line-clamp: 4;
   }
 }
@@ -115,11 +101,11 @@ input {
 }
 
 body {
-  overscroll-behavior: contain;
+  @apply overscroll-contain;
 }
 
 html {
-  background-color: black;
+  @apply bg-black lg:bg-transparent;
   min-height: calc(100% + env(safe-area-inset-top));
 }
 
@@ -130,7 +116,7 @@ input {
 
 a,
 button {
-  cursor: default;
+  @apply cursor-default;
 }
 
 img,
@@ -144,5 +130,11 @@ a {
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+  @apply hidden;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  @apply m-0;
 }

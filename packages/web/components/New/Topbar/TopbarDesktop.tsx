@@ -19,6 +19,7 @@ const TopbarDesktop = () => {
         !location.pathname.startsWith('/album/') &&
           !location.pathname.startsWith('/playlist/') &&
           !location.pathname.startsWith('/browse') &&
+          !location.pathname.startsWith('/artist') &&
           css`
             background-image: url(${topbarBackground});
           `

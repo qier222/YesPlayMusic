@@ -8,6 +8,7 @@ import { fetchTracksWithReactQuery } from '@/web/api/hooks/useTracks'
 import { useEffect, useState } from 'react'
 import { sampleSize } from 'lodash-es'
 import { FetchPlaylistResponse } from '@/shared/api/Playlists'
+import { useQuery } from 'react-query'
 
 interface DiscoverAlbum {
   id: number
@@ -82,28 +83,31 @@ const getAlbumsFromAPI = async () => {
 }
 
 const Discover = () => {
-  const [albums, setAlbums] = useState<DiscoverAlbum[]>([])
-
-  useEffect(() => {
-    const get = async () => {
+  const { data: albums } = useQuery(
+    ['DiscoveryAlbums'],
+    async () => {
       const albumsInLocalStorageTime =
         localStorage.getItem('discoverAlbumsTime')
       if (
         !albumsInLocalStorageTime ||
         Date.now() - Number(albumsInLocalStorageTime) > 1000 * 60 * 60 * 2 // 2小时刷新一次
       ) {
-        setAlbums(await getAlbumsFromAPI())
+        return await getAlbumsFromAPI()
       } else {
-        setAlbums(JSON.parse(localStorage.getItem('discoverAlbums') || '[]'))
+        return JSON.parse(localStorage.getItem('discoverAlbums') || '[]')
       }
+    },
+    {
+      staleTime: 1000 * 60 * 60 * 2, // 2hr
+      refetchOnWindowFocus: false,
+      refetchInterval: 1000 * 60 * 60 * 2, // 2hr
     }
-    get()
-  }, [])
+  )
 
   return (
     <PageTransition disableEnterAnimation={true}>
       <div className='mx-2.5 pb-10 lg:mx-0 lg:pb-16'>
-        <CoverWall albums={albums} />
+        <CoverWall albums={albums || []} />
       </div>
     </PageTransition>
   )

@@ -5,23 +5,26 @@ import { player } from '@/web/store'
 import { useSnapshot } from 'valtio'
 import Router from '@/web/components/New/Router'
 import MenuBar from './MenuBar'
-import TopbarMobile from './Topbar/TopbarMobile'
+import Topbar from './Topbar/TopbarMobile'
 import { isIOS, isPWA, isSafari } from '@/web/utils/common'
 import Login from './Login'
+import { useLocation } from 'react-router-dom'
+import PlayingNext from './PlayingNextMobile'
 
 const LayoutMobile = () => {
   const playerSnapshot = useSnapshot(player)
   const showPlayer = !!playerSnapshot.track
+  const location = useLocation()
 
   return (
-    <div id='layout' className='select-none bg-white pb-28 pt-3 dark:bg-black'>
+    <div id='layout' className='select-none bg-white pb-28 dark:bg-black'>
       <main className='min-h-screen overflow-y-auto overflow-x-hidden pb-16'>
-        <TopbarMobile />
+        {location.pathname === '/' && <Topbar />}
         <Router />
       </main>
       <div
         className={cx(
-          'fixed bottom-0 left-0 right-0 pt-3 dark:bg-black',
+          'fixed bottom-0 left-0 right-0 z-20 pt-3 dark:bg-black',
           css`
             padding-bottom: calc(
               ${isIOS && isSafari && isPWA
@@ -34,7 +37,7 @@ const LayoutMobile = () => {
         {showPlayer && (
           <div
             className={cx(
-              'absolute left-7 right-7',
+              'absolute left-7 right-7 z-20',
               css`
                 top: calc(
                   -100% - 6px + ${isIOS && isSafari && isPWA ? '24px' : 'env(safe-area-inset-bottom)'}
@@ -47,6 +50,7 @@ const LayoutMobile = () => {
         )}
 
         <MenuBar />
+        {/* <PlayingNext /> */}
       </div>
 
       <Login />

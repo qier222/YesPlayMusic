@@ -4,6 +4,8 @@ import {
   FetchArtistResponse,
   FetchArtistAlbumsParams,
   FetchArtistAlbumsResponse,
+  FetchSimilarArtistsParams,
+  FetchSimilarArtistsResponse,
 } from '@/shared/api/Artist'
 
 // 歌手详情
@@ -26,6 +28,16 @@ export function fetchArtistAlbums(
 ): Promise<FetchArtistAlbumsResponse> {
   return request({
     url: 'artist/album',
+    method: 'get',
+    params,
+  })
+}
+
+export function fetchSimilarArtists(
+  params: FetchSimilarArtistsParams
+): Promise<FetchSimilarArtistsResponse> {
+  return request({
+    url: 'simi/artist',
     method: 'get',
     params,
   })

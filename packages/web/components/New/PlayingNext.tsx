@@ -163,7 +163,7 @@ const TrackList = ({ className }: { className?: string }) => {
 
       {/* 底部渐变遮罩 */}
       <div
-        className='pointer-events-none absolute right-0 left-0 z-20 h-14 bg-gradient-to-t from-black to-transparent'
+        className='pointer-events-none absolute right-0 left-0 z-20 hidden h-14 bg-gradient-to-t from-black to-transparent lg:block'
         style={{ top: `${listHeight - 56}px` }}
       ></div>
     </>

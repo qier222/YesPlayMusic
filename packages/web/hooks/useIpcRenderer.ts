@@ -1,12 +1,12 @@
-import { IpcChannelsParams, IpcChannelsReturns } from '@/shared/IpcChannels'
+import { IpcChannels, IpcChannelsReturns } from '@/shared/IpcChannels'
 import { useEffect } from 'react'
 
-const useIpcRenderer = <T extends keyof IpcChannelsParams>(
-  channcel: T,
+const useIpcRenderer = <T extends IpcChannels>(
+  channel: T,
   listener: (event: any, value: IpcChannelsReturns[T]) => void
 ) => {
   useEffect(() => {
-    return window.ipcRenderer?.on(channcel, listener)
+    return window.ipcRenderer?.on(channel, listener)
   }, [])
 }
 

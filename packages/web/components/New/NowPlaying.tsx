@@ -8,6 +8,10 @@ import { State as PlayerState, Mode as PlayerMode } from '@/web/utils/player'
 import Slider from './Slider'
 import { animate, motion, useAnimation } from 'framer-motion'
 import { ease } from '@/web/utils/const'
+import useUserLikedTracksIDs, {
+  useMutationLikeATrack,
+} from '@/web/api/hooks/useUserLikedTracksIDs'
+import ArtistInline from './ArtistsInLine'
 
 const Progress = () => {
   const { track, progress } = useSnapshot(player)
@@ -79,6 +83,24 @@ const Cover = () => {
   )
 }
 
+const HeartButton = () => {
+  const { track } = useSnapshot(player)
+  const { data: likedIDs } = useUserLikedTracksIDs()
+
+  const isLiked = !!likedIDs?.ids?.find(id => id === track?.id)
+
+  const likeATrack = useMutationLikeATrack()
+
+  return (
+    <button onClick={() => track?.id && likeATrack.mutateAsync(track.id)}>
+      <Icon
+        name={isLiked ? 'heart' : 'heart-outline'}
+        className='h-7 w-7 text-black/90 dark:text-white/40'
+      />
+    </button>
+  )
+}
+
 const NowPlaying = () => {
   const { state, track } = useSnapshot(player)
 
@@ -100,9 +122,11 @@ const NowPlaying = () => {
         <div className='line-clamp-1 text-lg text-black dark:text-white'>
           {track?.name}
         </div>
-        <div className='line-clamp-1 text-base text-black/30 dark:text-white/30'>
-          {track?.ar.map(a => a.name).join(', ')}
-        </div>
+        <ArtistInline
+          artists={track?.ar || []}
+          className='text-black/30 dark:text-white/30'
+          hoverClassName='hover:text-black/50 dark:hover:text-white/50 transition-colors duration-500'
+        />
 
         {/* Dividing line */}
         <div className='mt-2 h-px w-2/3 bg-black/10 dark:bg-white/10'></div>
@@ -149,12 +173,7 @@ const NowPlaying = () => {
             </button>
           </div>
 
-          <button>
-            <Icon
-              name='heart'
-              className='h-7 w-7 text-black/90 dark:text-white/40'
-            />
-          </button>
+          <HeartButton />
         </div>
       </div>
     </div>

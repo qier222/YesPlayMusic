@@ -6,6 +6,7 @@ import Devtool from '@/web/components/New/Devtool'
 import ErrorBoundary from '@/web/components/New/ErrorBoundary'
 import useIsMobile from '@/web/hooks/useIsMobile'
 import LayoutMobile from '@/web/components/New/LayoutMobile'
+import ScrollRestoration from '@/web/components/New/ScrollRestoration'
 
 const App = () => {
   const isMobile = useIsMobile()
@@ -16,6 +17,7 @@ const App = () => {
         {window.env?.isEnableTitlebar && <TitleBar />}
         {isMobile ? <LayoutMobile /> : <Layout />}
         <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />
+        <ScrollRestoration />
         <IpcRendererReact />
         <Devtool />
       </div>

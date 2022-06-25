@@ -1,13 +1,19 @@
 import { resizeImage } from '@/web/utils/common'
 import { css, cx } from '@emotion/css'
 import { memo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Image from './Image'
 
 const Artist = ({ artist }: { artist: Artist }) => {
+  const navigate = useNavigate()
+  const to = () => {
+    navigate(`/artist/${artist.id}`)
+  }
+
   return (
     <div className='text-center'>
       <Image
-        alt={artist.name}
+        onClick={to}
         src={resizeImage(artist.img1v1Url, 'md')}
         className={cx(
           'aspect-square rounded-full',
@@ -17,7 +23,10 @@ const Artist = ({ artist }: { artist: Artist }) => {
           `
         )}
       />
-      <div className='line-clamp-1 mt-2.5 text-12 font-medium text-neutral-700 dark:text-neutral-600 lg:text-14 lg:font-bold'>
+      <div
+        onClick={to}
+        className='line-clamp-1 mt-2.5 text-12 font-medium text-neutral-700 dark:text-neutral-600 lg:text-14 lg:font-bold'
+      >
         {artist.name}
       </div>
     </div>

@@ -9,6 +9,7 @@ import {
   FetchUserAlbumsResponse,
 } from '@/shared/api/User'
 import { fetchUserAlbums } from '../user'
+import toast from 'react-hot-toast'
 
 export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
   const { data: user } = useUser()

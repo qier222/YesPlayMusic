@@ -16,6 +16,7 @@ import useVideoCover from '@/web/hooks/useVideoCover'
 import { motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import { injectGlobal } from '@emotion/css'
+import { useNavigate } from 'react-router-dom'
 
 injectGlobal`
   .plyr__video-wrapper,
@@ -115,6 +116,7 @@ const TrackListHeader = ({
   playlist?: Playlist
   onPlay: () => void
 }) => {
+  const navigate = useNavigate()
   const isMobile = useIsMobile()
   const albumDuration = useMemo(() => {
     const duration = album?.songs?.reduce((acc, cur) => acc + cur.dt, 0) || 0
@@ -142,8 +144,15 @@ const TrackListHeader = ({
           </div>
 
           {/* Creator */}
-          <div className='mt-2.5 text-24 font-medium dark:text-night-400 lg:mt-6'>
-            {album?.artist.name || playlist?.creator.nickname}
+          <div className='mt-2.5 lg:mt-6'>
+            <span
+              onClick={() => {
+                if (album?.artist?.id) navigate(`/artist/${album?.artist?.id}`)
+              }}
+              className='text-24 font-medium transition-colors duration-300 dark:text-night-400 hover:dark:text-neutral-100 '
+            >
+              {album?.artist.name || playlist?.creator.nickname}
+            </span>
           </div>
 
           {/* Extra info */}

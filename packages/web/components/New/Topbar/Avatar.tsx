@@ -1,11 +1,10 @@
 import { css, cx } from '@emotion/css'
-import { useNavigate } from 'react-router-dom'
 import Icon from '../../Icon'
 import { resizeImage } from '@/web/utils/common'
 import useUser from '@/web/api/hooks/useUser'
+import { state } from '@/web/store'
 
 const Avatar = ({ className }: { className?: string }) => {
-  const navigate = useNavigate()
   const { data: user } = useUser()
 
   const avatarUrl = user?.profile?.avatarUrl
@@ -17,7 +16,7 @@ const Avatar = ({ className }: { className?: string }) => {
       {avatarUrl ? (
         <img
           src={avatarUrl}
-          onClick={() => navigate('/login')}
+          onClick={() => (state.uiStates.showLoginPanel = true)}
           className={cx(
             'app-region-no-drag rounded-full',
             className || 'h-12 w-12'
@@ -25,7 +24,7 @@ const Avatar = ({ className }: { className?: string }) => {
         />
       ) : (
         <div
-          onClick={() => navigate('/login')}
+          onClick={() => (state.uiStates.showLoginPanel = true)}
           className={cx(
             'rounded-full bg-day-600 p-2.5 dark:bg-night-600',
             className || 'h-12 w-12'

@@ -1,8 +1,13 @@
 import { css, cx } from '@emotion/css'
 import Icon from '../../Icon'
 import { breakpoint as bp } from '@/web/utils/const'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 const SearchBox = () => {
+  const navigate = useNavigate()
+  const [searchText, setSearchText] = useState('')
+
   return (
     <div
       className={cx(
@@ -25,6 +30,13 @@ const SearchBox = () => {
             }
           `
         )}
+        value={searchText}
+        onChange={e => setSearchText(e.target.value)}
+        onKeyDown={e => {
+          if (e.key !== 'Enter') return
+          e.preventDefault()
+          navigate(`/search/${searchText}`)
+        }}
       />
     </div>
   )

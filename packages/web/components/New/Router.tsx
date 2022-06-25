@@ -1,8 +1,5 @@
-import { Route, RouteObject, Routes, useLocation } from 'react-router-dom'
-import Login from '@/web/pages/Login'
-import Artist from '@/web/pages/Artist'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import Search from '@/web/pages/Search'
-import Library from '@/web/pages/Library'
 import Settings from '@/web/pages/Settings'
 import { AnimatePresence } from 'framer-motion'
 import React, { ReactNode, Suspense } from 'react'
@@ -12,54 +9,10 @@ const Discover = React.lazy(() => import('@/web/pages/New/Discover'))
 const Browse = React.lazy(() => import('@/web/pages/New/Browse'))
 const Album = React.lazy(() => import('@/web/pages/New/Album'))
 const Playlist = React.lazy(() => import('@/web/pages/New/Playlist'))
+const Artist = React.lazy(() => import('@/web/pages/New/Artist'))
 
-const routes: RouteObject[] = [
-  {
-    path: '/',
-    element: <My />,
-  },
-  {
-    path: '/discover',
-    element: <Discover />,
-  },
-  {
-    path: '/library',
-    element: <Library />,
-  },
-  {
-    path: '/settings',
-    element: <Settings />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/search/:keywords',
-    element: <Search />,
-    children: [
-      {
-        path: ':type',
-        element: <Search />,
-      },
-    ],
-  },
-  {
-    path: '/playlist/:id',
-    element: <Playlist />,
-  },
-  {
-    path: '/album/:id',
-    element: <Album />,
-  },
-  {
-    path: '/artist/:id',
-    element: <Artist />,
-  },
-]
-
-const lazy = (components: ReactNode) => {
-  return <Suspense>{components}</Suspense>
+const lazy = (component: ReactNode) => {
+  return <Suspense>{component}</Suspense>
 }
 
 const Router = () => {
@@ -71,9 +24,13 @@ const Router = () => {
         <Route path='/' element={lazy(<My />)} />
         <Route path='/discover' element={lazy(<Discover />)} />
         <Route path='/browse' element={lazy(<Browse />)} />
-        <Route path='/login' element={lazy(<Login />)} />
         <Route path='/album/:id' element={lazy(<Album />)} />
         <Route path='/playlist/:id' element={lazy(<Playlist />)} />
+        <Route path='/artist/:id' element={lazy(<Artist />)} />
+        <Route path='/settings' element={lazy(<Settings />)} />
+        <Route path='/search/:keywords' element={lazy(<Search />)}>
+          <Route path=':type' element={lazy(<Search />)} />
+        </Route>
       </Routes>
     </AnimatePresence>
   )

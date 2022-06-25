@@ -16,6 +16,7 @@ import topbarBackground from '@/web/assets/images/topbar-background.png'
 const reactQueryOptions = {
   refetchOnWindowFocus: false,
   refetchInterval: 1000 * 60 * 60, // 1 hour
+  refetchOnMount: false,
 }
 
 const Recommend = () => {
