@@ -8,15 +8,38 @@ import { resizeImage } from '@/web/utils/common'
 import { motion, PanInfo, useMotionValue } from 'framer-motion'
 import { useLockBodyScroll } from 'react-use'
 import { useState } from 'react'
+import useUserLikedTracksIDs, {
+  useMutationLikeATrack,
+} from '@/web/api/hooks/useUserLikedTracksIDs'
+import PlayingNextMobile from './PlayingNextMobile'
+
+const LikeButton = () => {
+  const { track } = useSnapshot(player)
+  const { data: likedIDs } = useUserLikedTracksIDs()
+
+  const isLiked = !!likedIDs?.ids?.find(id => id === track?.id)
+
+  const likeATrack = useMutationLikeATrack()
+
+  return (
+    <button
+      className='flex items-center h-full'
+      onClick={() => track?.id && likeATrack.mutateAsync(track.id)}
+    >
+      <Icon
+        name={isLiked ? 'heart' : 'heart-outline'}
+        className='h-7 w-7 text-white/10'
+      />
+    </button>
+  )
+}
 
 const PlayerMobile = () => {
   const { track, state } = useSnapshot(player)
   const bgColor = useCoverColor(track?.al?.picUrl ?? '')
   const [locked, setLocked] = useState(false)
-
   useLockBodyScroll(locked)
 
-  const x = useMotionValue(0)
   const onDragEnd = (
     event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
@@ -31,8 +54,6 @@ const PlayerMobile = () => {
     setLocked(false)
   }
 
-  const y = useMotionValue(0)
-
   return (
     <div
       className={cx(
@@ -42,53 +63,33 @@ const PlayerMobile = () => {
         `
       )}
     >
-      {/* Indictor */}
-      <motion.div
-        drag='y'
-        dragConstraints={{ top: 0, bottom: 0 }}
-        style={{ y: y.get() * 2 }}
-        className={cx(
-          'absolute flex items-center justify-center',
-          css`
-            --width: 60px;
-            --height: 26px;
-            left: calc((100% - var(--width)) / 2);
-            top: calc(var(--height) * -1);
-            height: var(--height);
-            width: var(--width);
-          `
-        )}
-      >
-        <div className='h-1.5 w-10 rounded-full bg-brand-700'></div>
-      </motion.div>
-
       {/* Cover */}
+
       <div className='h-full py-2.5'>
         <Image
           src={resizeImage(track?.al.picUrl || '', 'sm')}
-          className='z-10 aspect-square h-full rounded-lg'
+          className='z-10 h-full rounded-lg aspect-square'
         />
       </div>
 
       {/* Track info */}
-      <div className='relative flex h-full flex-grow items-center overflow-hidden px-3'>
+      <div className='relative flex items-center flex-grow h-full px-3 overflow-hidden'>
         <motion.div
           drag='x'
-          style={{ x }}
           dragConstraints={{ left: 0, right: 0 }}
           onDragStart={() => setLocked(true)}
           onDragEnd={onDragEnd}
-          className=' flex h-full flex-grow items-center '
+          className='flex items-center flex-grow h-full '
         >
           <div className='flex-shrink-0'>
-            <div className='line-clamp-1 text-14 font-bold text-white'>
+            <div className='font-bold text-white line-clamp-1 text-14'>
               {track?.name}
             </div>
-            <div className='line-clamp-1 mt-1 text-12 font-bold text-white/60'>
+            <div className='mt-1 font-bold line-clamp-1 text-12 text-white/60'>
               {track?.ar?.map(a => a.name).join(', ')}
             </div>
           </div>
-          <div className='h-full flex-grow'></div>
+          <div className='flex-grow h-full'></div>
         </motion.div>
 
         <div
@@ -110,9 +111,7 @@ const PlayerMobile = () => {
       </div>
 
       {/* Like */}
-      <button>
-        <Icon name='heart' className='h-7 w-7 text-white/10' />
-      </button>
+      <LikeButton />
 
       {/* Play or pause */}
       <button
@@ -121,7 +120,7 @@ const PlayerMobile = () => {
       >
         <Icon
           name={state === 'playing' ? 'pause' : 'play'}
-          className='h-6 w-6 text-white/80'
+          className='w-6 h-6 text-white/80'
         />
       </button>
     </div>

@@ -166,3 +166,4 @@ export const isSafari = /^((?!chrome|android).)*safari/i.test(
 export const isPWA =
   (navigator as any).standalone ||
   window.matchMedia('(display-mode: standalone)').matches
+export const isIosPwa = isIOS && isPWA && isSafari

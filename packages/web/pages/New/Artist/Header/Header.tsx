@@ -23,7 +23,7 @@ const Header = ({ artist }: { artist?: Artist }) => {
     >
       <Image
         className={cx(
-          'z-10 aspect-square lg:rounded-24',
+          'aspect-square lg:z-10 lg:rounded-24',
           css`
             grid-area: cover;
           `

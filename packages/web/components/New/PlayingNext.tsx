@@ -17,11 +17,11 @@ const Header = () => {
   return (
     <div
       className={cx(
-        'absolute top-0 left-0 z-10 flex w-full items-center justify-between px-4 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300'
+        'absolute top-0 left-0 z-10 flex w-full items-center justify-between px-7 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300 lg:px-4'
       )}
     >
       <div className='flex'>
-        <div className='mr-2 h-4 w-1 bg-brand-700'></div>
+        <div className='w-1 h-4 mr-2 bg-brand-700'></div>
         PLAYING NEXT
       </div>
       <div className='flex'>
@@ -64,14 +64,14 @@ const Track = ({
       {/* Cover */}
       <Image
         alt='Cover'
-        className='mr-4 aspect-square h-14 w-14 flex-shrink-0 rounded-12'
+        className='flex-shrink-0 mr-4 aspect-square h-14 w-14 rounded-12'
         src={resizeImage(track?.al?.picUrl || '', 'sm')}
         animation={false}
         placeholder={false}
       />
 
       {/* Track info */}
-      <div className='mr-3 flex-grow'>
+      <div className='flex-grow mr-3'>
         <div
           className={cx(
             'line-clamp-1 text-16 font-medium ',
@@ -82,7 +82,7 @@ const Track = ({
         >
           {track?.name}
         </div>
-        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  dark:text-neutral-700'>
+        <div className='mt-1 font-bold line-clamp-1 text-14 text-neutral-200 dark:text-neutral-700'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>
@@ -91,7 +91,7 @@ const Track = ({
       {playingTrackIndex === index ? (
         <Wave playing={state === 'playing'} />
       ) : (
-        <div className='text-16 font-medium text-neutral-700 dark:text-neutral-200'>
+        <div className='font-medium text-16 text-neutral-700 dark:text-neutral-200'>
           {String(index + 1).padStart(2, '0')}
         </div>
       )}
@@ -163,7 +163,7 @@ const TrackList = ({ className }: { className?: string }) => {
 
       {/* 底部渐变遮罩 */}
       <div
-        className='pointer-events-none absolute right-0 left-0 z-20 hidden h-14 bg-gradient-to-t from-black to-transparent lg:block'
+        className='absolute left-0 right-0 z-20 hidden pointer-events-none h-14 bg-gradient-to-t from-black to-transparent lg:block'
         style={{ top: `${listHeight - 56}px` }}
       ></div>
     </>
