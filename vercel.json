@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/netease/:match*",
-      "destination": "http://168.138.40.199:12835/:match*"
+      "destination": "https://netease-cloud-music-api-kohl-one-98.vercel.app/:match*"
     },
     {
       "source": "/yesplaymusic/:match*",
