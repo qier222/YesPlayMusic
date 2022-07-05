@@ -166,7 +166,7 @@
         </div>
       </div>
 
-      <h3>歌词</h3>
+      <h3> {{ $t('settings.lyrics') }} </h3>
       <div class="item">
         <div class="left">
           <div class="title">{{ $t('settings.showLyricsTranslation') }}</div>

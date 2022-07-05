@@ -165,6 +165,7 @@ export default {
     automaticallyCacheSongs: '自動快取歌曲',
     clearSongsCache: '清除歌曲快取',
     cacheCount: '已快取 {song} 首 ({size})',
+    lyrics: '歌詞',
     showLyricsTranslation: '顯示歌詞翻譯',
     minimizeToTray: '最小化到工作列角落',
     showPlaylistsByAppleMusic: '首頁顯示來自 Apple Music 的歌單',
