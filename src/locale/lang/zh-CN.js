@@ -219,6 +219,7 @@ export default {
         desc2: '留空则不进行相关设置',
       },
     },
+    thirdParty: '第三方',
   },
   contextMenu: {
     play: '播放',

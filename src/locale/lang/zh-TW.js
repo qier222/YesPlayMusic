@@ -216,6 +216,7 @@ export default {
         desc2: '留空則不進行相關設定',
       },
     },
+    thirdParty: '第三方',
   },
   contextMenu: {
     play: '播放',

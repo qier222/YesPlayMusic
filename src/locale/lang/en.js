@@ -219,6 +219,7 @@ export default {
         desc2: 'Leave empty to pick up the default value',
       },
     },
+    thirdParty: 'Third-Party',
   },
   contextMenu: {
     play: 'Play',

@@ -409,8 +409,8 @@
           </div>
         </div>
       </section>
-
-      <h3>第三方</h3>
+      
+      <h3> {{ $t('settings.thirdParty') }} </h3>
       <div class="item">
         <div class="left">
           <div class="title">

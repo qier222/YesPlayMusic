@@ -212,6 +212,7 @@ export default {
         desc2: 'Leave empty to pick up the default value',
       },
     },
+    thirdParty: 'Üçüncü Parti',
   },
   contextMenu: {
     play: 'Oynat',
