@@ -125,6 +125,7 @@ export default {
     logout: 'ÇIKIŞ YAP',
     language: 'Diller',
     musicQuality: {
+      title: 'Kalitesi',
       text: 'Müzik Kalitesi',
       low: 'Düşük',
       medium: 'Orta',

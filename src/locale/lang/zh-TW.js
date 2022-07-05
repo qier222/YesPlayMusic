@@ -127,6 +127,7 @@ export default {
     logout: '登出',
     language: '語言',
     musicQuality: {
+      title: '音質',
       text: '音質選擇',
       low: '普通',
       medium: '較高',

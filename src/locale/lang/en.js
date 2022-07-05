@@ -130,6 +130,7 @@ export default {
     logout: 'LOGOUT',
     language: 'Languages',
     musicQuality: {
+      title: 'Quality',
       text: 'Music Quality',
       low: 'Low',
       medium: 'Medium',

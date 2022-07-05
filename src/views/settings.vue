@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <h3>音质</h3>
+      <h3> {{ $t('settings.musicQuality.title') }} </h3>
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.musicQuality.text') }} </div>

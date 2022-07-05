@@ -131,6 +131,7 @@ export default {
     logout: '登出',
     language: '语言',
     musicQuality: {
+      title: '音质',
       text: '音质选择',
       low: '普通',
       medium: '较高',
