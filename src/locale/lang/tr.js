@@ -175,6 +175,7 @@ export default {
       text: 'Şarkı Sözleri Arka Planını Göster',
       off: 'kapalı',
       on: 'açık',
+      blur:'görünmez',
       dynamic: 'dinamik(Yüksek GPU kullanımı)',
     },
     closeAppOption: {

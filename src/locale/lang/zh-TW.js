@@ -180,6 +180,7 @@ export default {
       text: '顯示歌詞背景',
       off: '關閉',
       on: '開啟',
+      blur: '模糊封面',
       dynamic: '動態（GPU 占用較高）',
     },
     closeAppOption: {

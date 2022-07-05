@@ -182,6 +182,7 @@ export default {
       text: 'Show Lyrics Background',
       off: 'Off',
       on: 'On',
+      blur: 'Blur Cover',
       dynamic: 'Dynamic (High GPU usage)',
     },
     closeAppOption: {
