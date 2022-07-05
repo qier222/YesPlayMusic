@@ -58,15 +58,15 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> 音乐语种偏好 </div>
+          <div class="title"> {{ $t('settings.musicLanguage.text') }} </div>
         </div>
         <div class="right">
           <select v-model="musicLanguage">
-            <option value="all">无偏好</option>
-            <option value="zh">华语</option>
-            <option value="ea">欧美</option>
-            <option value="jp">日语</option>
-            <option value="kr">韩语</option>
+            <option value="all">{{ $t('settings.music.all') }}</option>
+            <option value="zh">{{ $t('settings.music.zh') }}</option>
+            <option value="ea">{{ $t('settings.music.ea') }}</option>
+            <option value="jp">{{ $t('settings.music.jp') }}</option>
+            <option value="kr">{{ $t('settings.music.kr') }}</option>
           </select>
         </div>
       </div>
