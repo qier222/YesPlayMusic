@@ -187,6 +187,7 @@ export default {
     },
     others: 'Others',
     proxy: 'Proxy',
+    shortcut: 'Shortcut',
     closeAppOption: {
       text: 'Close App...',
       ask: 'Ask',

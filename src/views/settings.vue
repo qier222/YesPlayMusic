@@ -606,7 +606,7 @@
       </div>
 
       <div v-if="isElectron">
-        <h3>快捷键</h3>
+        <h3> {{ $t('settings.shortcut') }} </h3>
         <div class="item">
           <div class="left">
             <div class="title"> {{ $t('settings.enableGlobalShortcut') }}</div>

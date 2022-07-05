@@ -185,6 +185,7 @@ export default {
     },
     others: '其他',
     proxy: '代理',
+    shortcut: '快速鍵',
     closeAppOption: {
       text: '關閉主面板時...',
       ask: '詢問',

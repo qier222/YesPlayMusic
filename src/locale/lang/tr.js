@@ -180,6 +180,7 @@ export default {
     },
     others: 'Diğerleri',
     proxy: 'proxy',
+    shortcut: 'kısayol',
     closeAppOption: {
       text: 'Close App...',
       ask: 'Ask',
