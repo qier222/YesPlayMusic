@@ -179,6 +179,7 @@ export default {
       dynamic: 'dinamik(Yüksek GPU kullanımı)',
     },
     others: 'Diğerleri',
+    proxy: 'proxy',
     closeAppOption: {
       text: 'Close App...',
       ask: 'Ask',

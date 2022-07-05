@@ -572,7 +572,7 @@
       </div>
 
       <div v-if="isElectron">
-        <h3>代理</h3>
+        <h3> {{ $t('settings.proxy') }} </h3>
         <div class="item">
           <div class="left">
             <div class="title"> 代理协议 </div>

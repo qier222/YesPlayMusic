@@ -187,6 +187,7 @@ export default {
     },
     showLyricsTime: '显示当前时间',
     others: '其他',
+    proxy: '代理',
     closeAppOption: {
       text: '关闭主面板时...',
       ask: '询问',

@@ -184,6 +184,7 @@ export default {
       dynamic: '動態（GPU 占用較高）',
     },
     others: '其他',
+    proxy: '代理',
     closeAppOption: {
       text: '關閉主面板時...',
       ask: '詢問',
