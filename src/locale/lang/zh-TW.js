@@ -183,6 +183,7 @@ export default {
       blur: '模糊封面',
       dynamic: '動態（GPU 占用較高）',
     },
+    others: '其他',
     closeAppOption: {
       text: '關閉主面板時...',
       ask: '詢問',

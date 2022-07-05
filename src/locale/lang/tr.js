@@ -178,6 +178,7 @@ export default {
       blur:'görünmez',
       dynamic: 'dinamik(Yüksek GPU kullanımı)',
     },
+    others: 'Diğerleri',
     closeAppOption: {
       text: 'Close App...',
       ask: 'Ask',

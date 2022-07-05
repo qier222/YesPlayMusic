@@ -185,6 +185,7 @@ export default {
       blur: 'Blur Cover',
       dynamic: 'Dynamic (High GPU usage)',
     },
+    others: 'Others',
     closeAppOption: {
       text: 'Close App...',
       ask: 'Ask',

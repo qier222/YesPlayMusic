@@ -447,7 +447,7 @@
         </div>
       </div>
 
-      <h3>其他</h3>
+      <h3> {{ $t('settings.others') }} </h3>
       <div v-if="isElectron && !isMac" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.closeAppOption.text') }} </div>

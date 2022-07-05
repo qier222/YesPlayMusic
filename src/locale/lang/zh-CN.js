@@ -186,6 +186,7 @@ export default {
       dynamic: '动态（GPU 占用较高）',
     },
     showLyricsTime: '显示当前时间',
+    others: '其他',
     closeAppOption: {
       text: '关闭主面板时...',
       ask: '询问',
