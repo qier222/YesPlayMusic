@@ -165,6 +165,7 @@ export default {
       jp: '日语',
       kr: '韩语',
     },
+    cache: '缓存',
     automaticallyCacheSongs: '自动缓存歌曲',
     clearSongsCache: '清除歌曲缓存',
     cacheCount: '已缓存 {song} 首 ({size})',

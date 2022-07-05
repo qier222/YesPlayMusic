@@ -159,6 +159,7 @@ export default {
       jp: 'Japon',
       kr: 'Kore',
     },
+    cache: 'Önbellek',
     automaticallyCacheSongs: 'Müzikleri otomatik çerezle',
     clearSongsCache: 'Müzik çerezlerini temizle',
     cacheCount: 'Çerezlenen {song} Müzikler ({size})',

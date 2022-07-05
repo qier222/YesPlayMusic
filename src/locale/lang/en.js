@@ -164,6 +164,7 @@ export default {
       jp: 'Japanese',
       kr: 'Korean',
     },
+    cache: 'Cache',
     automaticallyCacheSongs: 'Automatically cache songs',
     clearSongsCache: 'Clear Songs Cache',
     cacheCount: 'Cached {song} songs ({size})',

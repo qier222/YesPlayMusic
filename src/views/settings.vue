@@ -112,7 +112,7 @@
         </div>
       </div>
 
-      <h3 v-if="isElectron">缓存</h3>
+      <h3 v-if="isElectron"> {{ $t('settings.cache') }} </h3>
       <div v-if="isElectron" class="item">
         <div class="left">
           <div class="title">
