@@ -409,7 +409,7 @@
           </div>
         </div>
       </section>
-      
+
       <h3> {{ $t('settings.thirdParty') }} </h3>
       <div class="item">
         <div class="left">
