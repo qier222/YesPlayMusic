@@ -62,11 +62,11 @@
         </div>
         <div class="right">
           <select v-model="musicLanguage">
-            <option value="all">{{ $t('settings.music.all') }}</option>
-            <option value="zh">{{ $t('settings.music.zh') }}</option>
-            <option value="ea">{{ $t('settings.music.ea') }}</option>
-            <option value="jp">{{ $t('settings.music.jp') }}</option>
-            <option value="kr">{{ $t('settings.music.kr') }}</option>
+            <option value="all">{{ $t('settings.musicLanguage.all') }}</option>
+            <option value="zh">{{ $t('settings.musicLanguage.zh') }}</option>
+            <option value="ea">{{ $t('settings.musicLanguage.ea') }}</option>
+            <option value="jp">{{ $t('settings.musicLanguage.jp') }}</option>
+            <option value="kr">{{ $t('settings.musicLanguage.kr') }}</option>
           </select>
         </div>
       </div>

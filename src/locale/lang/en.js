@@ -168,7 +168,7 @@ export default {
     automaticallyCacheSongs: 'Automatically cache songs',
     clearSongsCache: 'Clear Songs Cache',
     cacheCount: 'Cached {song} songs ({size})',
-    lysics: 'Lyrics',
+    lyrics: 'Lyrics',
     showLyricsTranslation: 'Show lyrics translation',
     showPlaylistsByAppleMusic: 'Show playlists by Apple Music',
     enableDiscordRichPresence: 'Enable Discord Rich Presence',
