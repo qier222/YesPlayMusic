@@ -1,8 +1,8 @@
-
+{
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "https://netease-cloud-music-api-happyking.vercel.app/:match*"
+      "destination": "https://netease-cloud-music-api-roan-eight.vercel.app/:match*"
     }
   ]
 }
