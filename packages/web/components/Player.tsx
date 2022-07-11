@@ -5,7 +5,7 @@ import Icon from './Icon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/web/api/hooks/useUserLikedTracksIDs'
-import { player, state } from '@/web/store'
+import player from '@/web/states/player'
 import { resizeImage } from '@/web/utils/common'
 import { State as PlayerState, Mode as PlayerMode } from '@/web/utils/player'
 import { RepeatMode as PlayerRepeatMode } from '@/shared/playerDataTypes'
@@ -180,7 +180,11 @@ const Others = () => {
       </IconButton>
 
       {/* Lyric */}
-      <IconButton onClick={() => (state.uiStates.showLyricPanel = true)}>
+      <IconButton
+        onClick={() => {
+          //
+        }}
+      >
         <Icon className='h-6 w-6' name='lyrics' />
       </IconButton>
     </div>

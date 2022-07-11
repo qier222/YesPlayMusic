@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import useIsMobile from '@/web/hooks/useIsMobile'
-import scrollPositions from '@/web/store/scrollPositions'
+import scrollPositions from '@/web/states/scrollPositions'
 import { useLayoutEffect } from 'react'
 
 const PageTransition = ({

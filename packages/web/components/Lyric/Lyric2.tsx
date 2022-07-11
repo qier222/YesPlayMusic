@@ -1,5 +1,5 @@
 import useLyric from '@/web/api/hooks/useLyric'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { motion, useMotionValue } from 'framer-motion'
 import { lyricParser } from '@/web/utils/lyric'
 import { useWindowSize } from 'react-use'

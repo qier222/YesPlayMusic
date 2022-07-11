@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react'
-import scrollPositions from '@/web/store/scrollPositions'
+import scrollPositions from '@/web/states/scrollPositions'
 import { throttle } from 'lodash-es'
 
 const ScrollRestoration = () => {

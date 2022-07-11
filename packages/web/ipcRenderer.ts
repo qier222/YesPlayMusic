@@ -1,4 +1,4 @@
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import {
   IpcChannels,
   IpcChannelsReturns,

@@ -1,5 +1,5 @@
 import { resizeImage } from '@/web/utils/common'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { State as PlayerState } from '@/web/utils/player'
 import useTracks from '@/web/api/hooks/useTracks'
 import { css, cx } from '@emotion/css'

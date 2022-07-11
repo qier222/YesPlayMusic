@@ -1,6 +1,5 @@
 import { cx, css } from '@emotion/css'
 import { useState } from 'react'
-import { state } from '@/web/store'
 import { useMutation } from 'react-query'
 import { loginWithEmail, loginWithPhone } from '@/web/api/auth'
 import md5 from 'md5'
@@ -9,17 +8,20 @@ import { setCookies } from '@/web/utils/cookie'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import { useSnapshot } from 'valtio'
+import uiStates from '@/web/states/uiStates'
+import persistedUiStates from '@/web/states/persistedUiStates'
 
 const LoginWithPhoneOrEmail = () => {
-  const { persistedUiStates } = useSnapshot(state)
+  const { loginPhoneCountryCode, loginType: persistedLoginType } =
+    useSnapshot(persistedUiStates)
   const [email, setEmail] = useState<string>('')
   const [countryCode, setCountryCode] = useState<string>(
-    persistedUiStates.loginPhoneCountryCode || '+86'
+    loginPhoneCountryCode || '+86'
   )
   const [phone, setPhone] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loginType, setLoginType] = useState<'phone' | 'email'>(
-    persistedUiStates.loginType === 'email' ? 'email' : 'phone'
+    persistedLoginType === 'email' ? 'email' : 'phone'
   )
 
   const doEmailLogin = useMutation(
@@ -36,7 +38,7 @@ const LoginWithPhoneOrEmail = () => {
         }
         setCookies(result.cookie)
 
-        state.uiStates.showLoginPanel = false
+        uiStates.showLoginPanel = false
       },
       onError: error => {
         toast(`Login failed: ${error}`)
@@ -80,7 +82,7 @@ const LoginWithPhoneOrEmail = () => {
           return
         }
         setCookies(result.cookie)
-        state.uiStates.showLoginPanel = false
+        uiStates.showLoginPanel = false
       },
       onError: error => {
         toast(`Login failed: ${error}`)
@@ -132,7 +134,7 @@ const LoginWithPhoneOrEmail = () => {
           onClick={() => {
             const type = loginType === 'phone' ? 'email' : 'phone'
             setLoginType(type)
-            state.persistedUiStates.loginType = type
+            persistedUiStates.loginType = type
           }}
         >
           Phone
@@ -165,7 +167,7 @@ const LoginWithPhoneOrEmail = () => {
               <input
                 onChange={e => {
                   setCountryCode(e.target.value)
-                  state.persistedUiStates.loginPhoneCountryCode = e.target.value
+                  persistedUiStates.loginPhoneCountryCode = e.target.value
                 }}
                 className={cx(
                   'my-3.5 flex-shrink-0 bg-transparent',
@@ -181,7 +183,7 @@ const LoginWithPhoneOrEmail = () => {
                 onChange={e => setPhone(e.target.value)}
                 className='my-3.5 flex-grow appearance-none bg-transparent'
                 placeholder='Phone'
-                type='number'
+                type='tel'
                 value={phone}
               />
             </motion.div>
@@ -198,10 +200,11 @@ const LoginWithPhoneOrEmail = () => {
               initial='hidden'
               animate='show'
               exit='hidden'
+              className='w-full'
             >
               <input
                 onChange={e => setEmail(e.target.value)}
-                className='flex-grow appearance-none bg-transparent'
+                className='w-full flex-grow appearance-none bg-transparent'
                 placeholder='Email'
                 type='email'
                 value={email}
@@ -215,7 +218,7 @@ const LoginWithPhoneOrEmail = () => {
       <div className='mt-4 flex items-center rounded-12 bg-black/50 p-3 text-16 font-medium text-night-50'>
         <input
           onChange={e => setPassword(e.target.value)}
-          className='bg-transparent'
+          className='w-full bg-transparent'
           placeholder='Password'
           type='password'
           value={password}

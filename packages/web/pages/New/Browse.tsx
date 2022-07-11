@@ -82,7 +82,7 @@ const Browse = () => {
         tabs={categories}
         value={active}
         onChange={category => setActive(category)}
-        className='sticky top-0 z-10 px-2.5 lg:px-0'
+        className='sticky top-0 z-10 mt-2.5 px-2.5 lg:mt-0 lg:px-0'
       />
 
       <div className='relative mx-2.5 mt-5 lg:mx-0'>

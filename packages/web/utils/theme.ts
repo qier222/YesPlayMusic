@@ -1,8 +1,17 @@
+export const changeTheme = (theme: 'light' | 'dark') => {
+  document.body.setAttribute('class', theme)
+  if (!window.env?.isElectron) {
+    document.documentElement.style.background =
+      theme === 'dark' ? '#000' : '#fff'
+  }
+}
+
 export const changeAccentColor = (color: string) => {
   document.body.setAttribute('data-accent-color', color)
 }
 
-const stateString = localStorage.getItem('state')
-const stateInLocalStorage = stateString ? JSON.parse(stateString) : {}
+const settingsInStorage = localStorage.getItem('settings')
+const settings = settingsInStorage ? JSON.parse(settingsInStorage) : {}
 
-changeAccentColor(stateInLocalStorage?.settings?.accentColor || 'blue')
+changeTheme(settings.theme || 'dark')
+changeAccentColor(settings?.accentColor || 'green')

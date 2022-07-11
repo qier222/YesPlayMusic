@@ -1,13 +1,13 @@
 import { cx, css } from '@emotion/css'
 import { useEffect, useState } from 'react'
-import { state } from '@/web/store'
 import { useSnapshot } from 'valtio'
-
+import uiStates from '@/web/states/uiStates'
 import { AnimatePresence, motion, useAnimation } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import Icon from '@/web/components/Icon'
 import LoginWithPhoneOrEmail from './LoginWithPhoneOrEmail'
 import LoginWithQRCode from './LoginWithQRCode'
+import persistedUiStates from '@/web/states/persistedUiStates'
 
 const OR = ({
   children,
@@ -37,9 +37,10 @@ const OR = ({
 }
 
 const Login = () => {
-  const { uiStates, persistedUiStates } = useSnapshot(state)
+  const { loginType } = useSnapshot(persistedUiStates)
+  const { showLoginPanel } = useSnapshot(uiStates)
   const [cardType, setCardType] = useState<'qrCode' | 'phone/email'>(
-    persistedUiStates.loginType === 'qrCode' ? 'qrCode' : 'phone/email'
+    loginType === 'qrCode' ? 'qrCode' : 'phone/email'
   )
 
   const animateCard = useAnimation()
@@ -52,8 +53,7 @@ const Login = () => {
     })
 
     setCardType(cardType === 'qrCode' ? 'phone/email' : 'qrCode')
-    state.persistedUiStates.loginType =
-      cardType === 'qrCode' ? 'phone' : 'qrCode'
+    persistedUiStates.loginType = cardType === 'qrCode' ? 'phone' : 'qrCode'
 
     await animateCard.start({
       rotateY: 0,
@@ -66,7 +66,7 @@ const Login = () => {
     <>
       {/* Blur bg */}
       <AnimatePresence>
-        {uiStates.showLoginPanel && (
+        {showLoginPanel && (
           <motion.div
             className='fixed inset-0 z-30 bg-black/80 backdrop-blur-3xl lg:rounded-24'
             initial={{ opacity: 0 }}
@@ -79,7 +79,7 @@ const Login = () => {
 
       {/* Content */}
       <AnimatePresence>
-        {uiStates.showLoginPanel && (
+        {showLoginPanel && (
           <div className='fixed inset-0 z-30 flex justify-center rounded-24 pt-56'>
             <motion.div
               className='flex flex-col items-center'
@@ -134,7 +134,7 @@ const Login = () => {
                 <motion.div
                   layout='position'
                   transition={{ ease }}
-                  onClick={() => (state.uiStates.showLoginPanel = false)}
+                  onClick={() => (uiStates.showLoginPanel = false)}
                   className='mt-10 flex h-14 w-14 items-center justify-center rounded-full bg-white/10'
                 >
                   <Icon name='x' className='h-7 w-7 text-white/50' />

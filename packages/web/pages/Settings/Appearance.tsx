@@ -1,4 +1,4 @@
-import { state } from '@/web/store'
+import settings from '@/web/states/settings'
 import { changeAccentColor } from '@/web/utils/theme'
 import { useSnapshot } from 'valtio'
 import { cx } from '@emotion/css'
@@ -25,11 +25,11 @@ const AccentColor = () => {
   }
 
   const changeColor = (color: string) => {
-    state.settings.accentColor = color
+    settings.accentColor = color
     changeAccentColor(color)
   }
 
-  const accentColor = useSnapshot(state).settings.accentColor
+  const accentColor = useSnapshot(settings).accentColor
   return (
     <div className='mt-4'>
       <div className='mb-2 dark:text-white'>强调色</div>

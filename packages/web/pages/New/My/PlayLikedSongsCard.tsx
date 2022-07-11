@@ -1,7 +1,7 @@
 import useLyric from '@/web/api/hooks/useLyric'
 import usePlaylist from '@/web/api/hooks/usePlaylist'
 import useUserPlaylists from '@/web/api/hooks/useUserPlaylists'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { sample, chunk, sampleSize } from 'lodash-es'
 import { css, cx } from '@emotion/css'
 import { useState, useEffect, useMemo, useCallback, memo } from 'react'

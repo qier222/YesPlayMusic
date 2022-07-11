@@ -8,6 +8,8 @@ import {
   FetchUserAlbumsParams,
   FetchUserAlbumsResponse,
   FetchUserArtistsResponse,
+  FetchListenedRecordsParams,
+  FetchListenedRecordsResponse,
 } from '@/shared/api/User'
 
 /**
@@ -78,18 +80,7 @@ export function scrobble(params: {
   })
 }
 
-export interface FetchListenedRecordsParams {
-  uid: number // 用户id
-  type: number // type=1 时只返回 weekData, type=0 时返回 allData
-}
-export interface FetchListenedRecordsResponse {
-  code: number
-  weekData: {
-    playCount: number
-    score: number
-    song: Track
-  }[]
-}
+// 用户最近听歌排名
 export function fetchListenedRecords(
   params: FetchListenedRecordsParams
 ): Promise<FetchListenedRecordsResponse> {

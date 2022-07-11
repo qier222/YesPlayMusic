@@ -1,6 +1,6 @@
 import ArtistInline from '@/web/components/ArtistsInline'
 import Skeleton from '@/web/components/Skeleton'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { resizeImage } from '@/web/utils/common'
 import Icon from './Icon'
 import { cx } from '@emotion/css'

@@ -2,7 +2,7 @@ import { css, cx } from '@emotion/css'
 import Icon from '../../Icon'
 import { resizeImage } from '@/web/utils/common'
 import useUser from '@/web/api/hooks/useUser'
-import { state } from '@/web/store'
+import uiStates from '@/web/states/uiStates'
 
 const Avatar = ({ className }: { className?: string }) => {
   const { data: user } = useUser()
@@ -16,7 +16,7 @@ const Avatar = ({ className }: { className?: string }) => {
       {avatarUrl ? (
         <img
           src={avatarUrl}
-          onClick={() => (state.uiStates.showLoginPanel = true)}
+          onClick={() => (uiStates.showLoginPanel = true)}
           className={cx(
             'app-region-no-drag rounded-full',
             className || 'h-12 w-12'
@@ -24,7 +24,7 @@ const Avatar = ({ className }: { className?: string }) => {
         />
       ) : (
         <div
-          onClick={() => (state.uiStates.showLoginPanel = true)}
+          onClick={() => (uiStates.showLoginPanel = true)}
           className={cx(
             'rounded-full bg-day-600 p-2.5 dark:bg-night-600',
             className || 'h-12 w-12'

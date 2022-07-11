@@ -5,7 +5,7 @@ import Icon from '@/web/components/Icon'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/web/api/hooks/useUserLikedTracksIDs'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { formatDuration } from '@/web/utils/common'
 import { State as PlayerState } from '@/web/utils/player'
 import { cx } from '@emotion/css'

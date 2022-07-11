@@ -6,7 +6,7 @@ import TracksList from '@/web/components/TracksList'
 import usePlaylist from '@/web/api/hooks/usePlaylist'
 import useScroll from '@/web/hooks/useScroll'
 import useTracksInfinite from '@/web/api/hooks/useTracksInfinite'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { formatDate, resizeImage } from '@/web/utils/common'
 import useUserPlaylists, {
   useMutationLikeAPlaylist,

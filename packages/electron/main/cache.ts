@@ -21,6 +21,7 @@ class Cache {
       case APIs.RecommendResource:
       case APIs.UserAlbums:
       case APIs.UserArtists:
+      case APIs.ListenedRecords:
       case APIs.Likelist: {
         if (!data) return
         db.upsert(Tables.AccountData, {

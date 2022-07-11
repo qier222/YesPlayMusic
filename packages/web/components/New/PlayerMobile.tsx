@@ -1,17 +1,18 @@
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { css, cx } from '@emotion/css'
 import { useSnapshot } from 'valtio'
 import Image from '@/web/components/New/Image'
 import Icon from '@/web/components/Icon'
 import useCoverColor from '@/web/hooks/useCoverColor'
 import { resizeImage } from '@/web/utils/common'
-import { motion, PanInfo, useMotionValue } from 'framer-motion'
+import { motion, PanInfo } from 'framer-motion'
 import { useLockBodyScroll } from 'react-use'
 import { useState } from 'react'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/web/api/hooks/useUserLikedTracksIDs'
-import PlayingNextMobile from './PlayingNextMobile'
+import uiStates from '@/web/states/uiStates'
+import { ease } from '@/web/utils/const'
 
 const LikeButton = () => {
   const { track } = useSnapshot(player)
@@ -23,7 +24,7 @@ const LikeButton = () => {
 
   return (
     <button
-      className='flex items-center h-full'
+      className='flex h-full items-center'
       onClick={() => track?.id && likeATrack.mutateAsync(track.id)}
     >
       <Icon
@@ -39,6 +40,7 @@ const PlayerMobile = () => {
   const bgColor = useCoverColor(track?.al?.picUrl ?? '')
   const [locked, setLocked] = useState(false)
   useLockBodyScroll(locked)
+  const { mobileShowPlayingNext } = useSnapshot(uiStates)
 
   const onDragEnd = (
     event: MouseEvent | TouchEvent | PointerEvent,
@@ -63,33 +65,56 @@ const PlayerMobile = () => {
         `
       )}
     >
-      {/* Cover */}
+      {/* Handler */}
+      {!mobileShowPlayingNext && (
+        <motion.div
+          onClick={() => {
+            uiStates.mobileShowPlayingNext = true
+          }}
+          className={cx(
+            'absolute right-0 left-0 flex justify-center',
+            css`
+              --height: 20px;
+              height: var(--height);
+              top: calc(var(--height) * -1);
+            `
+          )}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ ease, duration: 0.2 }}
+        >
+          <Icon name='player-handler' className='h-2.5 text-brand-700' />
+        </motion.div>
+      )}
 
+      {/* Cover */}
       <div className='h-full py-2.5'>
         <Image
           src={resizeImage(track?.al.picUrl || '', 'sm')}
-          className='z-10 h-full rounded-lg aspect-square'
+          className='z-10 aspect-square h-full rounded-lg'
         />
       </div>
 
       {/* Track info */}
-      <div className='relative flex items-center flex-grow h-full px-3 overflow-hidden'>
+      <div className='relative flex h-full flex-grow items-center overflow-hidden px-3'>
         <motion.div
           drag='x'
           dragConstraints={{ left: 0, right: 0 }}
           onDragStart={() => setLocked(true)}
           onDragEnd={onDragEnd}
-          className='flex items-center flex-grow h-full '
+          dragDirectionLock={true}
+          className='flex h-full flex-grow items-center '
         >
           <div className='flex-shrink-0'>
-            <div className='font-bold text-white line-clamp-1 text-14'>
+            <div className='line-clamp-1 text-14 font-bold text-white'>
               {track?.name}
             </div>
-            <div className='mt-1 font-bold line-clamp-1 text-12 text-white/60'>
+            <div className='line-clamp-1 mt-1 text-12 font-bold text-white/60'>
               {track?.ar?.map(a => a.name).join(', ')}
             </div>
           </div>
-          <div className='flex-grow h-full'></div>
+          <div className='h-full flex-grow'></div>
         </motion.div>
 
         <div
@@ -120,7 +145,7 @@ const PlayerMobile = () => {
       >
         <Icon
           name={state === 'playing' ? 'pause' : 'play'}
-          className='w-6 h-6 text-white/80'
+          className='h-6 w-6 text-white/80'
         />
       </button>
     </div>

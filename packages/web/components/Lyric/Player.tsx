@@ -1,7 +1,7 @@
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/web/api/hooks/useUserLikedTracksIDs'
-import { player, state } from '@/web/store'
+import player from '@/web/states/player'
 import { resizeImage } from '@/web/utils/common'
 
 import ArtistInline from '../ArtistsInline'
@@ -23,7 +23,6 @@ const PlayingTrack = () => {
     const id = track?.al?.id
     if (!id) return
     navigate(`/album/${id}`)
-    state.uiStates.showLyricPanel = false
   }
 
   const trackListSource = useMemo(
@@ -38,12 +37,10 @@ const PlayingTrack = () => {
     if (!hasListSource) return
 
     navigate(`/${trackListSource.type}/${trackListSource.id}`)
-    state.uiStates.showLyricPanel = false
   }
 
   const toArtist = (id: number) => {
     navigate(`/artist/${id}`)
-    state.uiStates.showLyricPanel = false
   }
 
   return (

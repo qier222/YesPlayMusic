@@ -1,6 +1,5 @@
 import { APIs } from './CacheAPIs'
 import { RepeatMode } from './playerDataTypes'
-import { Store } from '@/shared/store'
 
 export const enum IpcChannels {
   ClearAPICache = 'ClearAPICache',
@@ -57,10 +56,10 @@ export interface IpcChannelsParams {
   [IpcChannels.Repeat]: {
     mode: RepeatMode
   }
-  [IpcChannels.SyncSettings]: Store['settings']
+  [IpcChannels.SyncSettings]: any
   [IpcChannels.GetAudioCacheSize]: void
   [IpcChannels.ResetWindowSize]: void
-  [IpcChannels.GetVideoCover]: { id: number }
+  [IpcChannels.GetVideoCover]: { id: number; name: string; artist: string }
   [IpcChannels.SetVideoCover]: { id: number; url: string }
 }
 

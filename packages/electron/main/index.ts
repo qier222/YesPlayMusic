@@ -16,7 +16,6 @@ import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { createMenu } from './menu'
-import { Store as State, initialState } from '@/shared/store'
 import { isDev, isWindows, isLinux, isMac } from './utils'
 
 export interface TypedElectronStore {
@@ -26,7 +25,7 @@ export interface TypedElectronStore {
     x?: number
     y?: number
   }
-  settings: State['settings']
+  // settings: State['settings']
 }
 
 class Main {
@@ -39,7 +38,7 @@ class Main {
         width: 1440,
         height: 1024,
       },
-      settings: initialState.settings,
+      // settings: initialState.settings,
     },
   })
 

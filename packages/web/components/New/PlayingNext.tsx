@@ -1,27 +1,25 @@
-import { resizeImage } from '@/web/utils/common'
-import { player } from '@/web/store'
+import { isIosPwa, resizeImage } from '@/web/utils/common'
+import player from '@/web/states/player'
 import { State as PlayerState } from '@/web/utils/player'
 import { useSnapshot } from 'valtio'
 import useTracks from '@/web/api/hooks/useTracks'
 import { css, cx } from '@emotion/css'
-import { AnimatePresence, motion } from 'framer-motion'
-import Image from './Image'
 import Wave from './Wave'
 import Icon from '@/web/components/Icon'
-import { useVirtualizer } from '@tanstack/react-virtual'
-import { useRef } from 'react'
 import { useWindowSize } from 'react-use'
 import { playerWidth, topbarHeight } from '@/web/utils/const'
+import useIsMobile from '@/web/hooks/useIsMobile'
+import { Virtuoso } from 'react-virtuoso'
 
 const Header = () => {
   return (
     <div
       className={cx(
-        'absolute top-0 left-0 z-10 flex w-full items-center justify-between px-7 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300 lg:px-4'
+        'absolute top-0 left-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300 lg:px-4'
       )}
     >
       <div className='flex'>
-        <div className='w-1 h-4 mr-2 bg-brand-700'></div>
+        <div className='mr-2 h-4 w-1 bg-brand-700'></div>
         PLAYING NEXT
       </div>
       <div className='flex'>
@@ -48,30 +46,21 @@ const Track = ({
   state: PlayerState
 }) => {
   return (
-    <motion.div
-      className='flex items-center justify-between'
-      // initial={{ opacity: 0 }}
-      // animate={{ opacity: 1 }}
-      // exit={{ x: '100%', opacity: 0 }}
-      // transition={{
-      //   duration: 0.24,
-      // }}
-      // layout
+    <div
+      className='mb-5 flex items-center justify-between'
       onClick={e => {
         if (e.detail === 2 && track?.id) player.playTrack(track.id)
       }}
     >
       {/* Cover */}
-      <Image
+      <img
         alt='Cover'
-        className='flex-shrink-0 mr-4 aspect-square h-14 w-14 rounded-12'
+        className='mr-4 aspect-square h-14 w-14 flex-shrink-0 rounded-12'
         src={resizeImage(track?.al?.picUrl || '', 'sm')}
-        animation={false}
-        placeholder={false}
       />
 
       {/* Track info */}
-      <div className='flex-grow mr-3'>
+      <div className='mr-3 flex-grow'>
         <div
           className={cx(
             'line-clamp-1 text-16 font-medium ',
@@ -82,7 +71,7 @@ const Track = ({
         >
           {track?.name}
         </div>
-        <div className='mt-1 font-bold line-clamp-1 text-14 text-neutral-200 dark:text-neutral-700'>
+        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200 dark:text-neutral-700'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>
@@ -91,11 +80,11 @@ const Track = ({
       {playingTrackIndex === index ? (
         <Wave playing={state === 'playing'} />
       ) : (
-        <div className='font-medium text-16 text-neutral-700 dark:text-neutral-200'>
+        <div className='text-16 font-medium text-neutral-700 dark:text-neutral-200'>
           {String(index + 1).padStart(2, '0')}
         </div>
       )}
-    </motion.div>
+    </div>
   )
 }
 
@@ -103,69 +92,57 @@ const TrackList = ({ className }: { className?: string }) => {
   const { trackList, trackIndex, state } = useSnapshot(player)
   const { data: tracksRaw } = useTracks({ ids: trackList })
   const tracks = tracksRaw?.songs || []
-  const parentRef = useRef<HTMLDivElement>(null)
   const { height } = useWindowSize()
+  const isMobile = useIsMobile()
 
-  const listHeight = height - topbarHeight - playerWidth - 24 - 20 // 24是封面与底部间距，20是list与封面间距
-
-  const rowVirtualizer = useVirtualizer({
-    count: tracks.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 76,
-    overscan: 10,
-  })
+  const listHeight = height - topbarHeight - playerWidth - 24 // 24是封面与底部间距
+  const listHeightMobile = height - 154 - 110 - (isIosPwa ? 34 : 0) // 154是列表距离底部的距离，110是顶部的距离
 
   return (
     <>
       <div
-        ref={parentRef}
-        style={{
-          height: `${listHeight}px`,
-        }}
-        className={cx(
-          'no-scrollbar relative z-10 w-full overflow-auto',
-          className,
-          css`
-            padding-top: 42px;
-            mask-image: linear-gradient(
-              to bottom,
-              transparent 0,
-              black 42px
-            ); // 顶部渐变遮罩
-          `
-        )}
+        className={css`
+          mask-image: linear-gradient(
+            to bottom,
+            transparent 22px,
+            black 42px
+          ); // 顶部渐变遮罩
+        `}
       >
-        <div
-          className='relative w-full'
+        <Virtuoso
           style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
+            height: `${isMobile ? listHeightMobile : listHeight}px`,
           }}
-        >
-          {rowVirtualizer.getVirtualItems().map((row: any) => (
-            <div
-              key={row.index}
-              className='absolute top-0 left-0 w-full'
-              style={{
-                height: `${row.size}px`,
-                transform: `translateY(${row.start}px)`,
-              }}
-            >
-              <Track
-                track={tracks?.[row.index]}
-                index={row.index}
-                playingTrackIndex={trackIndex}
-                state={state}
-              />
-            </div>
-          ))}
-        </div>
+          totalCount={tracks.length}
+          className={cx(
+            'no-scrollbar relative z-10 w-full overflow-auto',
+            className,
+            css`
+              mask-image: linear-gradient(
+                to top,
+                transparent 8px,
+                black 42px
+              ); // 底部渐变遮罩
+            `
+          )}
+          fixedItemHeight={76}
+          data={tracks}
+          overscan={10}
+          components={{
+            Header: () => <div className='h-8'></div>,
+            Footer: () => <div className='h-1'></div>,
+          }}
+          itemContent={(index, track) => (
+            <Track
+              key={index}
+              track={track}
+              index={index}
+              playingTrackIndex={trackIndex}
+              state={state}
+            />
+          )}
+        ></Virtuoso>
       </div>
-
-      {/* 底部渐变遮罩 */}
-      <div
-        className='absolute left-0 right-0 z-20 hidden pointer-events-none h-14 bg-gradient-to-t from-black to-transparent lg:block'
-        style={{ top: `${listHeight - 56}px` }}
-      ></div>
     </>
   )
 }

@@ -4,7 +4,7 @@ import useTracks from '@/web/api/hooks/useTracks'
 import { NavLink, useParams } from 'react-router-dom'
 import PageTransition from '@/web/components/New/PageTransition'
 import TrackList from '@/web/components/New/TrackList'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import toast from 'react-hot-toast'
 import { useSnapshot } from 'valtio'
 import useArtistAlbums from '@/web/api/hooks/useArtistAlbums'
@@ -113,9 +113,13 @@ const Album = () => {
 
   return (
     <PageTransition>
-      <TrackListHeader album={album?.album} onPlay={onPlay} />
+      <TrackListHeader
+        album={album?.album}
+        onPlay={onPlay}
+        className='mt-2.5 lg:mt-0'
+      />
       <TrackList
-        tracks={tracks?.songs || album?.songs || album?.album.songs}
+        tracks={tracks?.songs || album?.album.songs || album?.songs}
         className='z-10 mx-2.5 mt-3 lg:mx-0 lg:mt-10'
         onPlay={onPlay}
       />

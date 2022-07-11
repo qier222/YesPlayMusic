@@ -1,8 +1,5 @@
-import {
-  fetchListenedRecords,
-  FetchListenedRecordsParams,
-} from '@/web/api/user'
-import { UserApiNames } from '@/shared/api/User'
+import { fetchListenedRecords } from '@/web/api/user'
+import { UserApiNames, FetchListenedRecordsResponse } from '@/shared/api/User'
 import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useQuery } from 'react-query'
@@ -24,10 +21,10 @@ export default function useUserListenedRecords(params: {
     {
       refetchOnWindowFocus: false,
       enabled: !!uid,
-      // placeholderData: (): FetchUserArtistsResponse =>
-      //   window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-      //     api: APIs.UserArtists,
-      //   }),
+      placeholderData: (): FetchListenedRecordsResponse =>
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
+          api: APIs.UserArtists,
+        }),
     }
   )
 }

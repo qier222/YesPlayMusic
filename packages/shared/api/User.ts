@@ -107,3 +107,17 @@ export interface FetchUserArtistsResponse {
   count: number
   data: Artist[]
 }
+
+// 听歌排名
+export interface FetchListenedRecordsParams {
+  uid: number // 用户id
+  type: number // type=1 时只返回 weekData, type=0 时返回 allData
+}
+export interface FetchListenedRecordsResponse {
+  code: number
+  weekData: {
+    playCount: number
+    score: number
+    song: Track
+  }[]
+}

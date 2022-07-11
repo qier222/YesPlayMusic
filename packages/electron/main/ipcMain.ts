@@ -155,19 +155,17 @@ function initOtherIpcMain() {
   })
 
   /**
-   * 缓存动态专辑封面
+   * 获取动态封面
    */
-  on(IpcChannels.SetVideoCover, (event, args) => {
-    const { id, url } = args
-    cache.set(APIs.VideoCover, { id, url })
-  })
+  handle(IpcChannels.GetVideoCover, async (event, { id, name, artist }) => {
+    const fromCache = cache.get(APIs.VideoCover, { id })
+    if (fromCache) {
+      return fromCache === 'no' ? undefined : fromCache
+    }
 
-  /**
-   * 获取动态专辑封面
-   */
-  on(IpcChannels.GetVideoCover, (event, args) => {
-    const { id } = args
-    event.returnValue = cache.get(APIs.VideoCover, { id })
+    const fromApple = await getCoverVideo({ name, artist })
+    cache.set(APIs.VideoCover, { id, url: fromApple || 'no' })
+    return fromApple
   })
 
   /**

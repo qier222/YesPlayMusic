@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { css, cx } from '@emotion/css'
 import Icon from '../Icon'
 import { formatDuration, resizeImage } from '@/web/utils/common'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import { State as PlayerState, Mode as PlayerMode } from '@/web/utils/player'
 import Slider from './Slider'
@@ -17,7 +17,7 @@ const Progress = () => {
   const { track, progress } = useSnapshot(player)
 
   return (
-    <div className='flex flex-col w-full mt-10'>
+    <div className='mt-10 flex w-full flex-col'>
       <Slider
         min={0}
         max={(track?.dt ?? 100000) / 1000}
@@ -28,7 +28,7 @@ const Progress = () => {
         onlyCallOnChangeAfterDragEnded={true}
       />
 
-      <div className='flex justify-between mt-1 font-bold text-14 text-black/20 dark:text-white/20'>
+      <div className='mt-1 flex justify-between text-14 font-bold text-black/20 dark:text-white/20'>
         <span>{formatDuration(progress * 1000, 'en', 'hh:mm:ss')}</span>
         <span>{formatDuration(track?.dt || 0, 'en', 'hh:mm:ss')}</span>
       </div>
@@ -117,9 +117,9 @@ const NowPlaying = () => {
       <Cover />
 
       {/* Info & Controls */}
-      <div className='flex flex-col items-center p-5 m-3 font-medium rounded-20 bg-white/60 backdrop-blur-3xl dark:bg-black/70'>
+      <div className='m-3 flex flex-col items-center rounded-20 bg-white/60 p-5 font-medium backdrop-blur-3xl dark:bg-black/70'>
         {/* Track Info */}
-        <div className='text-lg text-black line-clamp-1 dark:text-white'>
+        <div className='line-clamp-1 text-lg text-black dark:text-white'>
           {track?.name}
         </div>
         <ArtistInline
@@ -129,13 +129,13 @@ const NowPlaying = () => {
         />
 
         {/* Dividing line */}
-        <div className='w-2/3 h-px mt-2 bg-black/10 dark:bg-white/10'></div>
+        <div className='mt-2 h-px w-2/3 bg-black/10 dark:bg-white/10'></div>
 
         {/* Progress */}
         <Progress />
 
         {/* Controls */}
-        <div className='flex items-center justify-between w-full mt-4'>
+        <div className='mt-4 flex w-full items-center justify-between'>
           <button>
             <Icon
               name='hide-list'
@@ -149,7 +149,7 @@ const NowPlaying = () => {
               disabled={!track}
               className='rounded-full bg-black/10 p-2.5 dark:bg-white/10'
             >
-              <Icon name='previous' className='w-6 h-6 ' />
+              <Icon name='previous' className='h-6 w-6 ' />
             </button>
             <button
               onClick={() => track && player.playOrPause()}
@@ -161,7 +161,7 @@ const NowPlaying = () => {
                     ? 'pause'
                     : 'play'
                 }
-                className='w-6 h-6 '
+                className='h-6 w-6 '
               />
             </button>
             <button
@@ -169,7 +169,7 @@ const NowPlaying = () => {
               disabled={!track}
               className='rounded-full bg-black/10 p-2.5 dark:bg-white/10'
             >
-              <Icon name='next' className='w-6 h-6 ' />
+              <Icon name='next' className='h-6 w-6 ' />
             </button>
           </div>
 

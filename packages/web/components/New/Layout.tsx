@@ -3,9 +3,10 @@ import Player from '@/web/components/New/Player'
 import MenuBar from '@/web/components/New/MenuBar'
 import Topbar from '@/web/components/New/Topbar/TopbarDesktop'
 import { css, cx } from '@emotion/css'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Login from './Login'
+import TrafficLight from './TrafficLight'
 
 const Layout = () => {
   const playerSnapshot = useSnapshot(player)
@@ -39,6 +40,12 @@ const Layout = () => {
       <Main />
       <Login />
       {showPlayer && <Player />}
+
+      {window.env?.isMac && (
+        <div className='fixed top-6 left-6 z-30 translate-y-0.5'>
+          <TrafficLight />
+        </div>
+      )}
     </div>
   )
 }

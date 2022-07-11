@@ -2,7 +2,7 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/web/api/hooks/useUserLikedTracksIDs'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { State as PlayerState } from '@/web/utils/player'
 import { useEffect, useRef, useState } from 'react'

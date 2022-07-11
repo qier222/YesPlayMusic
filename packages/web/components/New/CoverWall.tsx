@@ -46,8 +46,6 @@ const CoverWall = ({
             sizes[album.large ? 'large' : 'small'][breakpoint]
           )}
           key={album.id}
-          alt='Album Cover'
-          placeholder={null}
           className={cx(
             'aspect-square h-full w-full rounded-20 lg:rounded-24',
             album.large && 'col-span-2 row-span-2'

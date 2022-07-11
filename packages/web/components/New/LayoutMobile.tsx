@@ -1,7 +1,7 @@
 import Player from '@/web/components/New/PlayerMobile'
 import { css, cx } from '@emotion/css'
 import { useMemo } from 'react'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Router from '@/web/components/New/Router'
 import MenuBar from './MenuBar'
@@ -17,8 +17,8 @@ const LayoutMobile = () => {
   const location = useLocation()
 
   return (
-    <div id='layout' className='bg-white select-none pb-28 dark:bg-black'>
-      <main className='min-h-screen pb-16 overflow-x-hidden overflow-y-auto'>
+    <div id='layout' className='select-none bg-white pb-28 dark:bg-black'>
+      <main className='min-h-screen overflow-y-auto overflow-x-hidden pb-16 '>
         {location.pathname === '/' && <Topbar />}
         <Router />
       </main>
@@ -48,7 +48,7 @@ const LayoutMobile = () => {
         )}
 
         <MenuBar />
-        {/* <PlayingNext /> */}
+        <PlayingNext />
       </div>
 
       <Login />

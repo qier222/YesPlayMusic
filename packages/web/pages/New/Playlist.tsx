@@ -2,13 +2,13 @@ import TrackListHeader from '@/web/components/New/TrackListHeader'
 import { NavLink, useParams } from 'react-router-dom'
 import PageTransition from '@/web/components/New/PageTransition'
 import TrackList from '@/web/components/New/TrackList'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import toast from 'react-hot-toast'
 import { useSnapshot } from 'valtio'
 import { memo, useEffect, useMemo } from 'react'
 import usePlaylist from '@/web/api/hooks/usePlaylist'
 import useTracksInfinite from '@/web/api/hooks/useTracksInfinite'
-import useScroll from '@/web/hooks/useScroll'
+
 const Playlist = () => {
   const params = useParams()
   const { data: playlist, isLoading } = usePlaylist({
@@ -35,7 +35,11 @@ const Playlist = () => {
 
   return (
     <PageTransition>
-      <TrackListHeader playlist={playlist?.playlist} onPlay={onPlay} />
+      <TrackListHeader
+        playlist={playlist?.playlist}
+        onPlay={onPlay}
+        className='mt-2.5 lg:mt-0'
+      />
       <TrackList
         tracks={playlist?.playlist?.tracks ?? []}
         onPlay={onPlay}

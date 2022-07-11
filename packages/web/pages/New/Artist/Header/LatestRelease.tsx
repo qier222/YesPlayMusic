@@ -37,11 +37,11 @@ const Album = () => {
           `
         )}
       />
-      <div className='ml-2 flex-shrink-1'>
-        <div className='font-medium line-clamp-1 text-16 text-night-100'>
+      <div className='flex-shrink-1 ml-2'>
+        <div className='line-clamp-1 text-16 font-medium text-night-100'>
           {album.name}
         </div>
-        <div className='mt-1 font-bold text-14 text-night-500'>
+        <div className='mt-1 text-14 font-bold text-night-500'>
           {album.type}
           {album.size > 1 ? `· ${album.size} Tracks` : ''}
         </div>
@@ -69,8 +69,8 @@ const Video = () => {
           `
         )}
       />
-      <div className='ml-2 flex-shrink-1'>
-        <div className='font-medium line-clamp-2 text-16 text-night-100'>
+      <div className='flex-shrink-1 ml-2'>
+        <div className='line-clamp-2 text-16 font-medium text-night-100'>
           Swedish House Mafia & The Weeknd Live at C...
         </div>
         <div className='mt-1.5 text-12 font-medium text-night-500'>
@@ -84,7 +84,7 @@ const Video = () => {
 const LatestRelease = () => {
   return (
     <div className='mx-2.5 lg:mx-0'>
-      <div className='mb-3 font-bold mt-7 text-14 text-neutral-300'>
+      <div className='mb-3 mt-7 text-14 font-bold text-neutral-300'>
         Latest Releases
       </div>
 

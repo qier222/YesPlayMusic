@@ -1,7 +1,7 @@
 import { multiMatchSearch, search } from '@/web/api/search'
 import Cover from '@/web/components/Cover'
 import TrackGrid from '@/web/components/TracksGrid'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { resizeImage } from '@/web/utils/common'
 import { SearchTypes, SearchApiNames } from '@/shared/api/Search'
 import dayjs from 'dayjs'

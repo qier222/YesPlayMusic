@@ -13,7 +13,7 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <div className='dark'>
+      <div>
         {window.env?.isEnableTitlebar && <TitleBar />}
         {isMobile ? <LayoutMobile /> : <Layout />}
         <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />

@@ -1,4 +1,4 @@
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import Icon from './Icon'
 import { IpcChannels } from '@/shared/IpcChannels'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'

@@ -5,6 +5,8 @@ import { useMemo, useState } from 'react'
 import CoverRow from '@/web/components/New/CoverRow'
 import useUserPlaylists from '@/web/api/hooks/useUserPlaylists'
 import useUserAlbums from '@/web/api/hooks/useUserAlbums'
+import { useSnapshot } from 'valtio'
+import uiStates from '@/web/states/uiStates'
 
 const tabs = [
   {
@@ -39,7 +41,12 @@ const Playlists = () => {
 
 const Collections = () => {
   // const { data: artists } = useUserArtists()
-  const [selectedTab, setSelectedTab] = useState(tabs[0].id)
+  const { librarySelectedTab: selectedTab } = useSnapshot(uiStates)
+  const setSelectedTab = (
+    id: 'playlists' | 'albums' | 'artists' | 'videos'
+  ) => {
+    uiStates.librarySelectedTab = id
+  }
 
   return (
     <div>

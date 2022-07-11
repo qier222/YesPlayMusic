@@ -7,7 +7,7 @@ const ArtistInfo = ({ artist }: { artist?: Artist }) => {
       <div className='text-28 font-semibold text-night-50 lg:text-32'>
         {artist?.name}
       </div>
-      <div className='mt-2.5 text-24 font-medium text-night-400 lg:mt-6'>
+      <div className='text-white-400 mt-2.5 text-24 font-medium lg:mt-6'>
         Artist
       </div>
       <div className='mt-1 text-12 font-medium text-night-400'>

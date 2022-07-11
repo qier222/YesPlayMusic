@@ -13,22 +13,20 @@ export default function useVideoCover(props: {
     async () => {
       if (!id || !name || !artist) return
 
-      const fromCache = window.ipcRenderer?.sendSync(
+      const fromMainProcess = await window.ipcRenderer?.invoke(
         IpcChannels.GetVideoCover,
         {
           id,
+          name,
+          artist,
         }
       )
-      if (fromCache) {
-        return fromCache === 'no' ? undefined : fromCache
+      if (fromMainProcess) {
+        return fromMainProcess
       }
 
       const fromRemote = await axios.get('/yesplaymusic/video-cover', {
         params: props,
-      })
-      window.ipcRenderer?.send(IpcChannels.SetVideoCover, {
-        id,
-        url: fromRemote.data.url || '',
       })
       if (fromRemote?.data?.url) {
         return fromRemote.data.url

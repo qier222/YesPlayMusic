@@ -1,21 +1,11 @@
 import { cx, css } from '@emotion/css'
 import { useEffect, useState, useMemo } from 'react'
 import qrCode from 'qrcode'
-import { state } from '@/web/store'
-import { useSnapshot } from 'valtio'
-import { useMutation, useQuery } from 'react-query'
-import {
-  checkLoginQrCodeStatus,
-  fetchLoginQrCodeKey,
-  loginWithEmail,
-  loginWithPhone,
-} from '@/web/api/auth'
-import md5 from 'md5'
+import { useQuery } from 'react-query'
+import { checkLoginQrCodeStatus, fetchLoginQrCodeKey } from '@/web/api/auth'
 import toast from 'react-hot-toast'
 import { setCookies } from '@/web/utils/cookie'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ease } from '@/web/utils/const'
-import Icon from '@/web/components/Icon'
+import uiStates from '@/web/states/uiStates'
 
 const QRCode = ({ className, text }: { className?: string; text: string }) => {
   const [image, setImage] = useState<string>('')
@@ -90,7 +80,7 @@ const LoginWithQRCode = () => {
               break
             }
             setCookies(status.cookie)
-            state.uiStates.showLoginPanel = false
+            uiStates.showLoginPanel = false
             break
         }
       },

@@ -5,6 +5,7 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import { APIs } from '@/shared/CacheAPIs'
 import { fetchUserPlaylists } from '@/web/api/user'
 import { FetchUserPlaylistsResponse, UserApiNames } from '@/shared/api/User'
+import toast from 'react-hot-toast'
 
 export default function useUserPlaylists() {
   const { data: user } = useUser()

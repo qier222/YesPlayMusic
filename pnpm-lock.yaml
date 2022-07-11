@@ -117,7 +117,6 @@ importers:
       '@storybook/builder-vite': ^0.1.35
       '@storybook/react': ^6.5.5
       '@storybook/testing-library': ^0.0.11
-      '@tanstack/react-virtual': 3.0.0-beta.2
       '@testing-library/react': ^13.3.0
       '@types/howler': ^2.2.7
       '@types/js-cookie': ^3.0.2
@@ -163,6 +162,7 @@ importers:
       react-query: ^3.38.0
       react-router-dom: ^6.3.0
       react-use: ^17.4.0
+      react-virtuoso: ^2.16.1
       rollup-plugin-visualizer: ^5.6.0
       storybook-tailwind-dark-mode: ^1.0.12
       tailwindcss: ^3.0.24
@@ -176,7 +176,6 @@ importers:
       '@emotion/css': 11.9.0
       '@sentry/react': 6.19.7_react@18.1.0
       '@sentry/tracing': 6.19.7
-      '@tanstack/react-virtual': 3.0.0-beta.2
       ahooks: 3.4.1_react@18.1.0
       axios: 0.27.2
       color.js: 1.2.0
@@ -199,6 +198,7 @@ importers:
       react-query: 3.39.1_ef5jwxihqo6n7gxfmzogljlgcm
       react-router-dom: 6.3.0_ef5jwxihqo6n7gxfmzogljlgcm
       react-use: 17.4.0_ef5jwxihqo6n7gxfmzogljlgcm
+      react-virtuoso: 2.16.1_ef5jwxihqo6n7gxfmzogljlgcm
       valtio: 1.6.1_react@18.1.0+vite@2.9.9
     devDependencies:
       '@storybook/addon-actions': 6.5.5_ef5jwxihqo6n7gxfmzogljlgcm
@@ -4539,10 +4539,6 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
-  /@reach/observe-rect/1.2.0:
-    resolution: {integrity: sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==}
-    dev: false
-
   /@rollup/plugin-babel/5.3.1_4kojsos35jimftt7mhjohcqk6y:
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
     engines: {node: '>= 10.0.0'}
@@ -6402,13 +6398,6 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@tanstack/react-virtual/3.0.0-beta.2:
-    resolution: {integrity: sha512-pwA9URTHYXX/2PgIISoMcf1P77hxf5oI3L/IDQ19Q1xuAc76o2R2CwHv6vvl5fDhwVj5klOfBxJvuT61Lhy9/w==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@reach/observe-rect': 1.2.0
-    dev: false
-
   /@testing-library/dom/8.13.0:
     resolution: {integrity: sha512-9VHgfIatKNXQNaZTtLnalIy0jNZzY35a4S3oi08YAt9Hv1VsfZ/DfA45lM8D/UhtHBGJ4/lGwp0PZkVndRkoOQ==}
     engines: {node: '>=12'}
@@ -7149,6 +7138,20 @@ packages:
       '@babel/runtime': 7.18.3
       global: 4.4.0
       url-toolkit: 2.2.5
+    dev: false
+
+  /@virtuoso.dev/react-urx/0.2.13_react@18.1.0:
+    resolution: {integrity: sha512-MY0ugBDjFb5Xt8v2HY7MKcRGqw/3gTpMlLXId2EwQvYJoC8sP7nnXjAxcBtTB50KTZhO0SbzsFimaZ7pSdApwA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      '@virtuoso.dev/urx': 0.2.13
+      react: 18.1.0
+    dev: false
+
+  /@virtuoso.dev/urx/0.2.13:
+    resolution: {integrity: sha512-iirJNv92A1ZWxoOHHDYW/1KPoi83939o83iUBQHIim0i3tMeSKEh+bxhJdTHQ86Mr4uXx9xGUTq69cp52ZP8Xw==}
     dev: false
 
   /@vitejs/plugin-react/1.3.2:
@@ -16371,6 +16374,19 @@ packages:
       throttle-debounce: 3.0.1
       ts-easing: 0.2.0
       tslib: 2.4.0
+    dev: false
+
+  /react-virtuoso/2.16.1_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-WpcHZedUe00XYSQ56KcdYmWy/oaiPPuweTYemC9gl8CbjchLTKqLPCJa51Yv32U9oj1XPAEMfxuaXM7NTtjOiw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18'
+      react-dom: '>=16 || >=17 || >= 18'
+    dependencies:
+      '@virtuoso.dev/react-urx': 0.2.13_react@18.1.0
+      '@virtuoso.dev/urx': 0.2.13
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
     dev: false
 
   /react/18.1.0:

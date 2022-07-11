@@ -1,7 +1,7 @@
 import { formatDuration } from '@/web/utils/common'
 import { css, cx } from '@emotion/css'
 import { useMemo } from 'react'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Wave from './Wave'
 import Icon from '@/web/components/Icon'

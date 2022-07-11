@@ -7,7 +7,7 @@ import useUserLikedTracksIDs, {
   useMutationLikeATrack,
 } from '@/web/api/hooks/useUserLikedTracksIDs'
 import { formatDuration, resizeImage } from '@/web/utils/common'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { cx } from '@emotion/css'
 import { useSnapshot } from 'valtio'
 

@@ -1,5 +1,5 @@
 import Player from './Player'
-import { player, state } from '@/web/store'
+import player from '@/web/states/player'
 import { getCoverColor } from '@/web/utils/common'
 import { colord } from 'colord'
 import IconButton from '../IconButton'
@@ -13,7 +13,7 @@ import { useMemo } from 'react'
 import { useSnapshot } from 'valtio'
 
 const LyricPanel = () => {
-  const stateSnapshot = useSnapshot(state)
+  const stateSnapshot = useSnapshot(player)
   const playerSnapshot = useSnapshot(player)
   const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
 
@@ -55,7 +55,11 @@ const LyricPanel = () => {
           <Lyric2 className='col-span-7' />
 
           <div className='absolute bottom-3.5 right-7 text-white'>
-            <IconButton onClick={() => (state.uiStates.showLyricPanel = false)}>
+            <IconButton
+              onClick={() => {
+                //
+              }}
+            >
               <Icon className='h-6 w-6' name='lyrics' />
             </IconButton>
           </div>

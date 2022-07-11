@@ -12,7 +12,7 @@ const Player = () => {
         `
       )}
     >
-      <PlayingNext className='mb-3 h-full' />
+      <PlayingNext className='h-full' />
       <div className='pb-6'>
         <NowPlaying />
       </div>

@@ -85,7 +85,8 @@ export default defineConfig({
     strictPort: IS_ELECTRON ? true : false,
     proxy: {
       '/netease/': {
-        target: `http://192.168.2.111:${
+        target: `http://192.168.50.111:${
+          // target: `http://127.0.0.1:${
           process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
         }`,
         changeOrigin: true,
@@ -93,7 +94,6 @@ export default defineConfig({
       },
       '/yesplaymusic/video-cover': {
         target: `http://168.138.40.199:51324`,
-        // target: `http://127.0.0.1:51324`,
         changeOrigin: true,
       },
       '/yesplaymusic/': {

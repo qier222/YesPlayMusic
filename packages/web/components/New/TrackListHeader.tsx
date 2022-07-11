@@ -17,6 +17,7 @@ import { motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import { injectGlobal } from '@emotion/css'
 import { useNavigate } from 'react-router-dom'
+import BlurBackground from '@/web/components/New/BlurBackground'
 
 injectGlobal`
   .plyr__video-wrapper,
@@ -86,21 +87,7 @@ const Cover = memo(
         </div>
 
         {/* Blur bg */}
-        {!isMobile && (
-          <img
-            className={cx(
-              'absolute z-0 object-cover opacity-70',
-              css`
-                top: -400px;
-                left: -370px;
-                width: 1572px;
-                height: 528px;
-                filter: blur(256px) saturate(1.2);
-              `
-            )}
-            src={resizeImage(cover, 'sm')}
-          />
-        )}
+        <BlurBackground cover={cover} />
       </>
     )
   }
@@ -111,10 +98,12 @@ const TrackListHeader = ({
   album,
   playlist,
   onPlay,
+  className,
 }: {
   album?: Album
   playlist?: Playlist
   onPlay: () => void
+  className?: string
 }) => {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
@@ -126,6 +115,7 @@ const TrackListHeader = ({
   return (
     <div
       className={cx(
+        className,
         'z-10 mx-2.5 rounded-48 p-8 dark:bg-white/10',
         'lg:mx-0 lg:grid lg:grid-rows-1 lg:gap-10 lg:rounded-none lg:p-0 lg:dark:bg-transparent',
         !isMobile &&
@@ -182,7 +172,7 @@ const TrackListHeader = ({
 
           {/* Description */}
           {!isMobile && (
-            <div className='line-clamp-3  mt-6  whitespace-pre-wrap text-14 font-bold dark:text-night-400 '>
+            <div className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold dark:text-night-400 '>
               {album?.description || playlist?.description}
             </div>
           )}

@@ -1,5 +1,5 @@
 import useLyric from '@/web/api/hooks/useLyric'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import { motion } from 'framer-motion'
 import { lyricParser } from '@/web/utils/lyric'
 import { useMemo } from 'react'

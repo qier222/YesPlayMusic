@@ -144,11 +144,6 @@ const MenuBar = ({ className }: { className?: string }) => {
         `
       )}
     >
-      {window.env?.isMac && (
-        <div className='fixed top-6 left-6 translate-y-0.5'>
-          <TrafficLight />
-        </div>
-      )}
       <Tabs />
       {!isMobile && <TabName />}
     </div>

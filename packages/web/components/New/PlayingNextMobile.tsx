@@ -10,72 +10,81 @@ import { useLockBodyScroll } from 'react-use'
 import { isIosPwa } from '@/web/utils/common'
 import PlayingNext from './PlayingNext'
 import { ease } from '@/web/utils/const'
+import { useSnapshot } from 'valtio'
+import uiStates from '@/web/states/uiStates'
+import Icon from '@/web/components/Icon'
 
 const PlayingNextMobile = () => {
-  const [display, setDisplay] = useState(false)
+  const { mobileShowPlayingNext: display } = useSnapshot(uiStates)
   const [isDragging, setIsDragging] = useState(false)
-  useLockBodyScroll(isDragging || display)
+  useLockBodyScroll(isDragging)
 
   const dragControls = useDragControls()
-  const y = useMotionValue('82%')
 
   return (
     <AnimatePresence>
-      <motion.div
-        className='fixed inset-0 px-3 bg-black/80 backdrop-blur-3xl'
-        exit={{
-          y: '100%',
-          transition: {
-            duration: 0.6,
-            ease: 'easeOut',
-          },
-        }}
-        animate={{ opacity: 1 }}
-        initial={{ opacity: 0 }}
-        style={{
-          borderRadius: isDragging ? '24px' : '0px',
-          y,
-        }}
-        drag='y'
-        dragControls={dragControls}
-        dragListener={false}
-        dragConstraints={{ top: 0, bottom: 0 }}
-        dragDirectionLock={true}
-        onDrag={(event, info) => console.log(info.point.y)}
-      >
-        {/* Indictor */}
+      {display && (
         <motion.div
-          onPointerDown={e => {
-            setIsDragging(true)
-            dragControls.start(e)
+          className='fixed inset-0 bg-black/80 backdrop-blur-3xl'
+          exit={{
+            y: '100%',
+            borderRadius: '24px',
+            transition: {
+              ease: 'easeOut',
+              duration: 0.4,
+            },
           }}
-          onDragEnd={() => setIsDragging(false)}
+          animate={{ y: 0, borderRadius: 0 }}
+          initial={{ y: '100%', borderRadius: '24px' }}
+          transition={{ duration: 0.6, ease }}
+          dragControls={dragControls}
+          dragListener={false}
+          whileDrag={{
+            borderRadius: '24px',
+            transition: {
+              duration: 0.2,
+              ease: 'linear',
+            },
+          }}
           dragConstraints={{ top: 0, bottom: 0 }}
-          className={cx(
-            'mx-7 flex justify-center',
-            css`
-              --height: 30px;
-              bottom: calc(
-                70px + 64px +
-                  ${isIosPwa ? '24px' : 'env(safe-area-inset-bottom)'}
-              ); // 拖动条到导航栏的距离 + 导航栏高度 + safe-area-inset-bottom
-              height: var(--height);
-            `
-          )}
-          layout
+          dragDirectionLock={true}
+          onDragEnd={(event, info) => {
+            setIsDragging(false)
+            const offset = info.offset.y
+            if (offset > 150) {
+              uiStates.mobileShowPlayingNext = false
+            }
+          }}
+          drag='y'
         >
+          {/* Indictor */}
           <motion.div
-            className='mt-3.5 h-1.5 w-10 rounded-full bg-brand-700'
-            layout
-            style={{ width: isDragging || display ? '80px' : '40px' }}
-          ></motion.div>
-        </motion.div>
+            onPointerDown={e => {
+              setIsDragging(true)
+              dragControls.start(e)
+            }}
+            onClick={() => {
+              uiStates.mobileShowPlayingNext = false
+            }}
+            className={cx(
+              'flex flex-col justify-end',
+              css`
+                height: 108px;
+              `
+            )}
+          >
+            <Icon
+              name='player-handler'
+              className='mb-5 h-2.5 rotate-180 text-brand-700'
+            />
+          </motion.div>
 
-        {/* List */}
-        <div className='relative'>
-          <PlayingNext />
-        </div>
-      </motion.div>
+          {/* List */}
+          <div className='relative h-full px-7'>
+            <PlayingNext />
+          </div>
+        </motion.div>
+      )}
     </AnimatePresence>
   )
 }

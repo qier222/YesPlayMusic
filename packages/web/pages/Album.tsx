@@ -7,7 +7,7 @@ import Icon from '@/web/components/Icon'
 import TracksAlbum from '@/web/components/TracksAlbum'
 import useAlbum from '@/web/api/hooks/useAlbum'
 import useArtistAlbums from '@/web/api/hooks/useArtistAlbums'
-import { player } from '@/web/store'
+import player from '@/web/states/player'
 import {
   Mode as PlayerMode,
   State as PlayerState,
