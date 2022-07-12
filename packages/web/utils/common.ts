@@ -22,6 +22,12 @@ export function resizeImage(
     md: '512',
     lg: '1024',
   }
+
+  if (url.includes('mzstatic.com')) {
+    // from Apple Music
+    return url.replace('{w}', sizeMap[size]).replace('{h}', sizeMap[size])
+  }
+
   return `${url}?param=${sizeMap[size]}y${sizeMap[size]}`.replace(
     /http(s?):\/\/p\d.music.126.net/,
     'https://p1.music.126.net'

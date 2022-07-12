@@ -12,6 +12,7 @@ import type { FetchAudioSourceResponse } from '@/shared/api/Track'
 import UNM from '@unblockneteasemusic/rust-napi'
 import { APIs as CacheAPIs } from '@/shared/CacheAPIs'
 import { isProd } from './utils'
+import { APIs } from '@/shared/CacheAPIs'
 
 class Server {
   port = Number(
@@ -20,6 +21,8 @@ class Server {
       : process.env.ELECTRON_DEV_NETEASE_API_PORT ?? 3000
   )
   app = express()
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  netease = require('NeteaseCloudMusicApi') as any
 
   constructor() {
     log.info('[server] starting http server')
@@ -28,16 +31,16 @@ class Server {
     this.getAudioUrlHandler()
     this.neteaseHandler()
     this.cacheAudioHandler()
-    this.serveStaticForProd()
+    this.serveStaticForProduction()
     this.listen()
   }
 
   neteaseHandler() {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const neteaseApi = require('NeteaseCloudMusicApi') as (params: any) => any[]
-
-    Object.entries(neteaseApi).forEach(([name, handler]) => {
-      if (['serveNcmApi', 'getModulesDefinitions', 'song_url'].includes(name)) {
+    Object.entries(this.netease).forEach(([name, handler]: [string, any]) => {
+      // 例外处理
+      if (
+        ['serveNcmApi', 'getModulesDefinitions', APIs.SongUrl].includes(name)
+      ) {
         return
       }
 
@@ -72,7 +75,7 @@ class Server {
     })
   }
 
-  serveStaticForProd() {
+  serveStaticForProduction() {
     if (isProd) {
       this.app.use('/', express.static(path.join(__dirname, '../web/')))
     }

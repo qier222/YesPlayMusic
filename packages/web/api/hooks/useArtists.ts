@@ -15,13 +15,13 @@ export default function useArtists(ids: number[]) {
     {
       enabled: !!ids && ids.length > 0,
       staleTime: 5 * 60 * 1000, // 5 mins
-      // placeholderData: (): FetchArtistResponse[] =>
-      //   window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-      //     api: APIs.Artist,
-      //     query: {
-      //       ids,
-      //     },
-      //   }),
+      initialData: (): FetchArtistResponse[] =>
+        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
+          api: APIs.Artists,
+          query: {
+            ids,
+          },
+        }),
     }
   )
 }

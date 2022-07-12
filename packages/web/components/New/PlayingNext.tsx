@@ -130,7 +130,7 @@ const TrackList = ({ className }: { className?: string }) => {
           overscan={10}
           components={{
             Header: () => <div className='h-8'></div>,
-            Footer: () => <div className='h-1'></div>,
+            Footer: () => <div className='h-8'></div>,
           }}
           itemContent={(index, track) => (
             <Track

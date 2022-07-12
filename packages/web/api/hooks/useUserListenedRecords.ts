@@ -23,7 +23,7 @@ export default function useUserListenedRecords(params: {
       enabled: !!uid,
       placeholderData: (): FetchListenedRecordsResponse =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.UserArtists,
+          api: APIs.ListenedRecords,
         }),
     }
   )

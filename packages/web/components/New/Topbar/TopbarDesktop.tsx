@@ -8,14 +8,21 @@ import uiStates from '@/web/states/uiStates'
 import { useSnapshot } from 'valtio'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
+import { useLocation } from 'react-router-dom'
 
 const Background = () => {
   const { hideTopbarBackground } = useSnapshot(uiStates)
+  const location = useLocation()
+  const isPageHaveBlurBG =
+    location.pathname.startsWith('/album/') ||
+    location.pathname.startsWith('/artist/') ||
+    location.pathname.startsWith('/playlist/')
+  const show = !hideTopbarBackground || !isPageHaveBlurBG
 
   return (
     <>
       <AnimatePresence>
-        {!hideTopbarBackground && (
+        {show && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

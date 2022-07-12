@@ -33,6 +33,30 @@ const Artist = ({ artist }: { artist: Artist }) => {
   )
 }
 
+const Placeholder = ({ row }: { row: number }) => {
+  return (
+    <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
+      {[...new Array(row * 5).keys()].map(i => (
+        <div
+          className='flex snap-start flex-col items-center px-2.5 lg:px-0'
+          key={i}
+        >
+          <div
+            className='aspect-square w-full rounded-full bg-white dark:bg-neutral-800'
+            style={{
+              minHeight: '96px',
+              minWidth: '96px',
+            }}
+          />
+          <div className='line-clamp-1 mt-2.5 w-1/2 rounded-full text-12 font-medium text-transparent dark:bg-neutral-800 lg:text-14 lg:font-bold'>
+            NAME
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const ArtistRow = ({
   artists,
   title,
@@ -70,24 +94,7 @@ const ArtistRow = ({
       )}
 
       {/* Placeholder */}
-      {placeholderRow && !artists && (
-        <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
-          {[...new Array(placeholderRow * 5).keys()].map(i => (
-            <div className='snap-start px-2.5 lg:px-0' key={i}>
-              <div
-                className='aspect-square w-full rounded-full bg-white dark:bg-neutral-800'
-                style={{
-                  minHeight: '96px',
-                  minWidth: '96px',
-                }}
-              />
-              <div className='mt-2.5 text-12 font-medium text-transparent lg:text-14 lg:font-bold'>
-                PLACE
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {placeholderRow && !artists && <Placeholder row={placeholderRow} />}
     </div>
   )
 }

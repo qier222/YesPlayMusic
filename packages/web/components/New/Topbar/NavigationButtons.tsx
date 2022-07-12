@@ -18,10 +18,10 @@ const NavigationButtons = () => {
           await controlsBack.start({ x: -5 })
           await controlsBack.start({ x: 0 })
         }}
-        className='app-region-no-drag rounded-full bg-day-600 p-2.5 dark:bg-night-600'
+        className='app-region-no-drag rounded-full bg-white/10 p-2.5 text-white/40 backdrop-blur-3xl'
       >
         <motion.div animate={controlsBack} transition={transition}>
-          <Icon name='back' className='h-7 w-7 text-neutral-500' />
+          <Icon name='back' className='h-7 w-7 ' />
         </motion.div>
       </button>
       <button
@@ -32,10 +32,10 @@ const NavigationButtons = () => {
           await controlsForward.start({ x: 5 })
           await controlsForward.start({ x: 0 })
         }}
-        className='app-region-no-drag ml-2.5 rounded-full bg-day-600 p-2.5 dark:bg-night-600'
+        className='app-region-no-drag ml-2.5 rounded-full  bg-white/10 p-2.5 text-white/40 backdrop-blur-3xl'
       >
         <motion.div animate={controlsForward} transition={transition}>
-          <Icon name='forward' className='h-7 w-7 text-neutral-500' />
+          <Icon name='forward' className='h-7 w-7' />
         </motion.div>
       </button>
     </>

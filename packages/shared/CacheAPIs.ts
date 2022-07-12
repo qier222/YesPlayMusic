@@ -21,6 +21,7 @@ import {
   FetchPlaylistResponse,
   FetchRecommendedPlaylistsResponse,
 } from './api/Playlists'
+import { AppleMusicAlbum, AppleMusicArtist } from 'AppleMusic'
 
 export const enum APIs {
   Album = 'album',
@@ -41,8 +42,10 @@ export const enum APIs {
   ListenedRecords = 'user/record',
 
   // not netease api
+  Artists = 'artistsNotNetease',
   CoverColor = 'cover_color',
-  VideoCover = 'video_cover',
+  AppleMusicAlbum = 'apple_music_album',
+  AppleMusicArtist = 'apple_music_artist',
 }
 
 export interface APIsParams {
@@ -61,9 +64,12 @@ export interface APIsParams {
   [APIs.UserArtists]: void
   [APIs.UserPlaylist]: void
   [APIs.SimilarArtist]: { id: number }
-  [APIs.CoverColor]: { id: number }
-  [APIs.VideoCover]: { id: number }
   [APIs.ListenedRecords]: { id: number; type: number }
+
+  [APIs.Artists]: { ids: number[] }
+  [APIs.CoverColor]: { id: number }
+  [APIs.AppleMusicAlbum]: { id: number }
+  [APIs.AppleMusicArtist]: { id: number }
 }
 
 export interface APIsResponse {
@@ -82,7 +88,10 @@ export interface APIsResponse {
   [APIs.UserArtists]: FetchUserArtistsResponse
   [APIs.UserPlaylist]: FetchUserPlaylistsResponse
   [APIs.SimilarArtist]: FetchSimilarArtistsResponse
-  [APIs.CoverColor]: string | undefined
-  [APIs.VideoCover]: string | undefined
   [APIs.ListenedRecords]: FetchListenedRecordsResponse
+
+  [APIs.Artists]: FetchArtistResponse[]
+  [APIs.CoverColor]: string | undefined
+  [APIs.AppleMusicAlbum]: AppleMusicAlbum | 'no'
+  [APIs.AppleMusicArtist]: AppleMusicArtist | 'no'
 }

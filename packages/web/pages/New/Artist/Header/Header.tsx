@@ -6,8 +6,15 @@ import BlurBackground from '@/web/components/New/BlurBackground'
 import ArtistInfo from './ArtistInfo'
 import Actions from './Actions'
 import LatestRelease from './LatestRelease'
+import useAppleMusicArtist from '@/web/hooks/useAppleMusicArtist'
 
 const Header = ({ artist }: { artist?: Artist }) => {
+  const { data: artistFromApple, isLoading: isLoadingArtistFromApple } =
+    useAppleMusicArtist({
+      id: artist?.id,
+      name: artist?.name,
+    })
+
   return (
     <div
       className={cx(
@@ -27,10 +34,23 @@ const Header = ({ artist }: { artist?: Artist }) => {
             grid-area: cover;
           `
         )}
-        src={resizeImage(artist?.img1v1Url || '', 'lg')}
+        src={resizeImage(
+          isLoadingArtistFromApple
+            ? ''
+            : artistFromApple?.attributes?.artwork?.url ||
+                artist?.img1v1Url ||
+                '',
+          'lg'
+        )}
       />
 
-      <BlurBackground cover={artist?.img1v1Url} />
+      <BlurBackground
+        cover={
+          isLoadingArtistFromApple
+            ? ''
+            : artistFromApple?.attributes?.artwork?.url || artist?.img1v1Url
+        }
+      />
 
       <div
         className={cx(

@@ -18,6 +18,8 @@ import { ease } from '@/web/utils/const'
 import { injectGlobal } from '@emotion/css'
 import { useNavigate } from 'react-router-dom'
 import BlurBackground from '@/web/components/New/BlurBackground'
+import useAppleMusicAlbum from '@/web/hooks/useAppleMusicAlbum'
+import { AppleMusicAlbum } from '@/shared/AppleMusic'
 
 injectGlobal`
   .plyr__video-wrapper,
@@ -47,12 +49,20 @@ const VideoCover = ({ source }: { source?: string }) => {
 
 const Cover = memo(
   ({ album, playlist }: { album?: Album; playlist?: Playlist }) => {
-    const isMobile = useIsMobile()
-    const { data: videoCover } = useVideoCover({
+    const { data: albumFromApple } = useAppleMusicAlbum({
       id: album?.id,
       name: album?.name,
       artist: album?.artist.name,
     })
+    const { data: videoCoverFromRemote } = useVideoCover({
+      id: album?.id,
+      name: album?.name,
+      artist: album?.artist.name,
+      enabled: !window.env?.isElectron,
+    })
+    const videoCover =
+      albumFromApple?.attributes?.editorialVideo?.motionSquareVideo1x1?.video ||
+      videoCoverFromRemote
     const cover = album?.picUrl || playlist?.coverImgUrl || ''
 
     return (
@@ -111,6 +121,12 @@ const TrackListHeader = ({
     const duration = album?.songs?.reduce((acc, cur) => acc + cur.dt, 0) || 0
     return formatDuration(duration, 'en', 'hh[hr] mm[min]')
   }, [album?.songs])
+  const { data: albumFromApple, isLoading: isLoadingAlbumFromApple } =
+    useAppleMusicAlbum({
+      id: album?.id,
+      name: album?.name,
+      artist: album?.artist.name,
+    })
 
   return (
     <div
@@ -172,9 +188,17 @@ const TrackListHeader = ({
 
           {/* Description */}
           {!isMobile && (
-            <div className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold dark:text-night-400 '>
-              {album?.description || playlist?.description}
-            </div>
+            <div
+              className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold dark:text-night-400 '
+              dangerouslySetInnerHTML={{
+                __html: !isLoadingAlbumFromApple
+                  ? albumFromApple?.attributes?.editorialNotes?.standard ||
+                    album?.description ||
+                    playlist?.description ||
+                    ''
+                  : '',
+              }}
+            ></div>
           )}
         </div>
 

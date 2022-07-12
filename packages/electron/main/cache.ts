@@ -112,13 +112,23 @@ class Cache {
         })
         break
       }
-      case APIs.VideoCover: {
+      case APIs.AppleMusicAlbum: {
         if (!data.id) return
-        db.upsert(Tables.VideoCover, {
+        db.upsert(Tables.AppleMusicAlbum, {
           id: data.id,
-          url: data.url || 'no',
-          queriedAt: Date.now(),
+          json: data.album ? JSON.stringify(data.album) : 'no',
+          updatedAt: Date.now(),
         })
+        break
+      }
+      case APIs.AppleMusicArtist: {
+        if (!data) return
+        db.upsert(Tables.AppleMusicArtist, {
+          id: data.id,
+          json: data.artist ? JSON.stringify(data.artist) : 'no',
+          updatedAt: Date.now(),
+        })
+        break
       }
     }
   }
@@ -130,6 +140,7 @@ class Cache {
       case APIs.Personalized:
       case APIs.RecommendResource:
       case APIs.UserArtists:
+      case APIs.ListenedRecords:
       case APIs.Likelist: {
         const data = db.find(Tables.AccountData, api)
         if (data?.json) return JSON.parse(data.json)
@@ -179,8 +190,14 @@ class Cache {
       case APIs.Artist: {
         if (isNaN(Number(params?.id))) return
         const data = db.find(Tables.Artist, params.id)
-        if (data?.json) return JSON.parse(data.json)
-        break
+        const fromAppleData = db.find(Tables.AppleMusicArtist, params.id)
+        const fromApple = fromAppleData?.json && JSON.parse(fromAppleData.json)
+        const fromNetease = data?.json && JSON.parse(data.json)
+        if (fromNetease && fromApple && fromApple !== 'no') {
+          fromNetease.artist.img1v1Url = fromApple.attributes.artwork.url
+          fromNetease.artist.briefDesc = fromApple.attributes.artistBio
+        }
+        return fromNetease ? fromNetease : undefined
       }
       case APIs.ArtistAlbum: {
         if (isNaN(Number(params?.id))) return
@@ -208,9 +225,29 @@ class Cache {
         if (isNaN(Number(params?.id))) return
         return db.find(Tables.CoverColor, params.id)?.color
       }
-      case APIs.VideoCover: {
+      case APIs.Artists: {
+        if (!params.ids?.length) return
+        const artists = db.findMany(Tables.Artist, params.ids)
+        if (artists.length !== params.ids.length) return
+        const result = artists.map(a => JSON.parse(a.json))
+        result.sort((a, b) => {
+          const indexA: number = params.ids.indexOf(a.artist.id)
+          const indexB: number = params.ids.indexOf(b.artist.id)
+          return indexA - indexB
+        })
+        return result
+      }
+      case APIs.AppleMusicAlbum: {
         if (isNaN(Number(params?.id))) return
-        return db.find(Tables.VideoCover, params.id)?.url
+        const data = db.find(Tables.AppleMusicAlbum, params.id)
+        if (data?.json && data.json !== 'no') return JSON.parse(data.json)
+        break
+      }
+      case APIs.AppleMusicArtist: {
+        if (isNaN(Number(params?.id))) return
+        const data = db.find(Tables.AppleMusicArtist, params.id)
+        if (data?.json && data.json !== 'no') return JSON.parse(data.json)
+        break
       }
     }
   }

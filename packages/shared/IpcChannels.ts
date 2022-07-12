@@ -1,3 +1,4 @@
+import { AppleMusicAlbum, AppleMusicArtist } from './AppleMusic'
 import { APIs } from './CacheAPIs'
 import { RepeatMode } from './playerDataTypes'
 
@@ -22,8 +23,8 @@ export const enum IpcChannels {
   SyncSettings = 'SyncSettings',
   GetAudioCacheSize = 'GetAudioCacheSize',
   ResetWindowSize = 'ResetWindowSize',
-  GetVideoCover = 'GetVideoCover',
-  SetVideoCover = 'SetVideoCover',
+  GetAlbumFromAppleMusic = 'GetAlbumFromAppleMusic',
+  GetArtistFromAppleMusic = 'GetArtistFromAppleMusic',
 }
 
 // ipcMain.on params
@@ -59,8 +60,12 @@ export interface IpcChannelsParams {
   [IpcChannels.SyncSettings]: any
   [IpcChannels.GetAudioCacheSize]: void
   [IpcChannels.ResetWindowSize]: void
-  [IpcChannels.GetVideoCover]: { id: number; name: string; artist: string }
-  [IpcChannels.SetVideoCover]: { id: number; url: string }
+  [IpcChannels.GetAlbumFromAppleMusic]: {
+    id: number
+    name: string
+    artist: string
+  }
+  [IpcChannels.GetArtistFromAppleMusic]: { id: number; name: string }
 }
 
 // ipcRenderer.on params
@@ -82,6 +87,6 @@ export interface IpcChannelsReturns {
   [IpcChannels.Like]: void
   [IpcChannels.Repeat]: RepeatMode
   [IpcChannels.GetAudioCacheSize]: void
-  [IpcChannels.GetVideoCover]: string | undefined
-  [IpcChannels.SetVideoCover]: void
+  [IpcChannels.GetAlbumFromAppleMusic]: AppleMusicAlbum | undefined
+  [IpcChannels.GetArtistFromAppleMusic]: AppleMusicArtist | undefined
 }

@@ -12,7 +12,7 @@ import { Thumbar } from './windowsTaskbar'
 import fastFolderSize from 'fast-folder-size'
 import path from 'path'
 import prettyBytes from 'pretty-bytes'
-import { getCoverVideo } from './appleMusic'
+import { getArtist, getAlbum } from './appleMusic'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -155,17 +155,37 @@ function initOtherIpcMain() {
   })
 
   /**
-   * 获取动态封面
+   * 从Apple Music获取专辑信息
    */
-  handle(IpcChannels.GetVideoCover, async (event, { id, name, artist }) => {
-    const fromCache = cache.get(APIs.VideoCover, { id })
-    if (fromCache) {
-      return fromCache === 'no' ? undefined : fromCache
-    }
+  handle(
+    IpcChannels.GetAlbumFromAppleMusic,
+    async (event, { id, name, artist }) => {
+      const fromCache = cache.get(APIs.AppleMusicAlbum, { id })
+      if (fromCache) {
+        return fromCache === 'no' ? undefined : fromCache
+      }
 
-    const fromApple = await getCoverVideo({ name, artist })
-    cache.set(APIs.VideoCover, { id, url: fromApple || 'no' })
+      const fromApple = await getAlbum({ name, artist })
+      cache.set(APIs.AppleMusicAlbum, { id, album: fromApple })
+      return fromApple
+    }
+  )
+
+  /**
+   * 从Apple Music获取歌手信息
+   **/
+  handle(IpcChannels.GetArtistFromAppleMusic, async (event, { id, name }) => {
+    const fromApple = await getArtist(name)
+    cache.set(APIs.AppleMusicArtist, { id, artist: fromApple })
     return fromApple
+  })
+
+  /**
+   * 从缓存读取Apple Music歌手信息
+   */
+  on(IpcChannels.GetArtistFromAppleMusic, (event, { id }) => {
+    const artist = cache.get(APIs.AppleMusicArtist, id)
+    event.returnValue = artist === 'no' ? undefined : artist
   })
 
   /**

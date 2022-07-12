@@ -20,7 +20,6 @@ class ScrollPositions {
   }
 
   set(pathname: string, top: number) {
-    console.log('set', pathname, top)
     const nestedPath = `/${pathname.split('/')[1]}`
     const restPath = pathname.split('/').slice(2).join('/')
 

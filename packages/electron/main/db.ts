@@ -18,7 +18,8 @@ export const enum Tables {
   AccountData = 'AccountData',
   CoverColor = 'CoverColor',
   AppData = 'AppData',
-  VideoCover = 'VideoCover',
+  AppleMusicAlbum = 'AppleMusicAlbum',
+  AppleMusicArtist = 'AppleMusicArtist',
 }
 interface CommonTableStructure {
   id: number
@@ -62,11 +63,8 @@ export interface TablesStructures {
     id: 'appVersion' | 'skippedVersion'
     value: string
   }
-  [Tables.VideoCover]: {
-    id: number
-    url: string
-    queriedAt: number
-  }
+  [Tables.AppleMusicAlbum]: CommonTableStructure
+  [Tables.AppleMusicArtist]: CommonTableStructure
 }
 
 type TableNames = keyof TablesStructures
