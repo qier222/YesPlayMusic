@@ -142,6 +142,18 @@ docker-compose up -d
 
 YesPlayMusic 地址为 `http://localhost`
 
+## ⚙️ 部署至 Replit
+
+1. 新建 Repl，选择 Bash 模板
+
+2. 在 Replit shell 中运行以下命令
+
+```sh
+bash <(curl -s -L https://raw.githubusercontent.com/jbwfu/YesPlayMusic-Replit/main/install.sh)
+```
+
+3. 首次运行成功后，只需点击绿色按钮 `Run` 即可再次运行
+
 ## 👷‍♂️ 打包客户端
 
 如果在 Release 页面没有找到适合你的设备的安装包的话，你可以根据下面的步骤来打包自己的客户端。
