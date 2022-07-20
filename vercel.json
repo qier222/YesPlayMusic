@@ -1,0 +1,11 @@
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://netease-cloud-music-api1-amber.vercel.app/"
+    }
+  ]
+}
+```
