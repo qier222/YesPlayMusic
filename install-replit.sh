@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [  ! `cat replit.nix | grep yarn` ]; then
+if [  ! "$(cat replit.nix | grep yarn)" ]; then
 
 echo 'run = ["bash", "main.sh"]
 
