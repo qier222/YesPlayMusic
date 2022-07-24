@@ -149,10 +149,16 @@ YesPlayMusic 地址为 `http://localhost`
 2. 在 Replit shell 中运行以下命令
 
 ```sh
-bash <(curl -s -L https://raw.githubusercontent.com/jbwfu/YesPlayMusic-Replit/main/install.sh)
+bash <(curl -s -L https://raw.githubusercontent.com/qier222/YesPlayMusic/main/install-replit.sh)
 ```
 
 3. 首次运行成功后，只需点击绿色按钮 `Run` 即可再次运行
+
+4. 由于 replit 个人版限制内存为 1G（教育版为 3G），构建过程中可能会失败，请再次运行上述命令或运行以下命令：
+
+```sh
+cd /home/runner/${REPL_SLUG}/music && yarn installl && yarn run build
+```
 
 ## 👷‍♂️ 打包客户端
 
