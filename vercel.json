@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://musicapi.mimohan.top/:match*"
+    }
+  ]
+}
