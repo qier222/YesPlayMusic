@@ -8,6 +8,7 @@ export const enum IpcChannels {
   MaximizeOrUnmaximize = 'MaximizeOrUnmaximize',
   Close = 'Close',
   IsMaximized = 'IsMaximized',
+  FullscreenStateChange = 'FullscreenStateChange',
   GetApiCacheSync = 'GetApiCacheSync',
   DevDbExportJson = 'DevDbExportJson',
   CacheCoverColor = 'CacheCoverColor',
@@ -34,6 +35,7 @@ export interface IpcChannelsParams {
   [IpcChannels.MaximizeOrUnmaximize]: void
   [IpcChannels.Close]: void
   [IpcChannels.IsMaximized]: void
+  [IpcChannels.FullscreenStateChange]: void
   [IpcChannels.GetApiCacheSync]: {
     api: APIs
     query?: any
@@ -75,6 +77,7 @@ export interface IpcChannelsReturns {
   [IpcChannels.MaximizeOrUnmaximize]: void
   [IpcChannels.Close]: void
   [IpcChannels.IsMaximized]: boolean
+  [IpcChannels.FullscreenStateChange]: boolean
   [IpcChannels.GetApiCacheSync]: any
   [IpcChannels.DevDbExportJson]: void
   [IpcChannels.CacheCoverColor]: void

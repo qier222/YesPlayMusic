@@ -3,6 +3,7 @@ import { css, cx } from '@emotion/css'
 import { memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Image from './Image'
+import { prefetchArtist } from '@/web/api/hooks/useArtist'
 
 const Artist = ({ artist }: { artist: Artist }) => {
   const navigate = useNavigate()
@@ -11,7 +12,10 @@ const Artist = ({ artist }: { artist: Artist }) => {
   }
 
   return (
-    <div className='text-center'>
+    <div
+      className='text-center'
+      onMouseOver={() => prefetchArtist({ id: artist.id })}
+    >
       <Image
         onClick={to}
         src={resizeImage(artist.img1v1Url, 'md')}
@@ -72,19 +76,14 @@ const ArtistRow = ({
     <div className={className}>
       {/* Title */}
       {title && (
-        <h4
-          className={cx(
-            'text-12 font-medium uppercase dark:text-neutral-300 lg:text-14',
-            'mx-2.5 mb-6 lg:mx-0 lg:font-bold'
-          )}
-        >
+        <h4 className='mx-2.5 mb-6 text-12 font-medium uppercase dark:text-neutral-300 lg:mx-0 lg:text-14 lg:font-bold'>
           {title}
         </h4>
       )}
 
       {/* Artists */}
       {artists && (
-        <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
+        <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-x-10 lg:gap-y-8'>
           {artists.map(artist => (
             <div className='snap-start px-2.5 lg:px-0' key={artist.id}>
               <Artist artist={artist} key={artist.id} />

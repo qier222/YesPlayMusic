@@ -30,7 +30,7 @@ export interface LoginWithEmailParams {
   password?: string
   md5_password?: string
 }
-export interface loginWithEmailResponse extends FetchUserAccountResponse {
+export interface LoginWithEmailResponse extends FetchUserAccountResponse {
   code: number
   cookie: string
   loginType: number
@@ -49,7 +49,7 @@ export interface loginWithEmailResponse extends FetchUserAccountResponse {
 }
 export function loginWithEmail(
   params: LoginWithEmailParams
-): Promise<loginWithEmailResponse> {
+): Promise<LoginWithEmailResponse> {
   return request({
     url: '/login',
     method: 'post',
@@ -58,14 +58,14 @@ export function loginWithEmail(
 }
 
 // 生成二维码key
-export interface fetchLoginQrCodeKeyResponse {
+export interface FetchLoginQrCodeKeyResponse {
   code: number
   data: {
     code: number
     unikey: string
   }
 }
-export function fetchLoginQrCodeKey(): Promise<fetchLoginQrCodeKeyResponse> {
+export function fetchLoginQrCodeKey(): Promise<FetchLoginQrCodeKeyResponse> {
   return request({
     url: '/login/qr/key',
     method: 'get',

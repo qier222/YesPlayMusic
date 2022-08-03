@@ -35,19 +35,22 @@ const initSettings: Settings = {
   },
 }
 
-const settingsInLocalStorage = localStorage.getItem('settings')
-const settings = proxy<Settings>(
-  merge(
-    initSettings,
-    settingsInLocalStorage ? JSON.parse(settingsInLocalStorage) : {}
-  )
-)
+const STORAGE_KEY = 'settings'
+const statesInStorageString = localStorage.getItem(STORAGE_KEY)
+let statesInStorage = {}
+if (statesInStorageString) {
+  try {
+    statesInStorage = JSON.parse(statesInStorageString)
+  } catch {
+    // ignore
+  }
+}
+
+const settings = proxy<Settings>(merge(initSettings, statesInStorage))
 
 subscribe(settings, () => {
-  localStorage.setItem('settings', JSON.stringify(settings))
-})
-subscribe(settings, () => {
   window.ipcRenderer?.send(IpcChannels.SyncSettings, settings)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
 })
 
 export default settings

@@ -5,6 +5,7 @@ import Image from './Image'
 import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
 import { memo, useCallback } from 'react'
+import dayjs from 'dayjs'
 
 const Album = ({ album }: { album: Album }) => {
   const navigate = useNavigate()
@@ -16,13 +17,21 @@ const Album = ({ album }: { album: Album }) => {
   }
 
   return (
-    <Image
-      onClick={goTo}
-      key={album.id}
-      src={resizeImage(album?.picUrl || '', 'md')}
-      className='aspect-square rounded-24'
-      onMouseOver={prefetch}
-    />
+    <div>
+      <Image
+        onClick={goTo}
+        key={album.id}
+        src={resizeImage(album?.picUrl || '', 'md')}
+        className='aspect-square rounded-24'
+        onMouseOver={prefetch}
+      />
+      <div className='line-clamp-2 mt-2 text-14 font-medium text-neutral-300'>
+        {album.name}
+      </div>
+      <div className='mt-1 text-14 font-medium text-neutral-700'>
+        {dayjs(album.publishTime || 0).year()}
+      </div>
+    </div>
   )
 }
 

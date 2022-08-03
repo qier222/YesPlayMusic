@@ -1,13 +1,7 @@
 import { css, cx } from '@emotion/css'
-import {
-  motion,
-  useMotionValue,
-  useDragControls,
-  AnimatePresence,
-} from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { motion, useDragControls, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
-import { isIosPwa } from '@/web/utils/common'
 import PlayingNext from './PlayingNext'
 import { ease } from '@/web/utils/const'
 import { useSnapshot } from 'valtio'

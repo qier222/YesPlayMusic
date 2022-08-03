@@ -4,8 +4,11 @@ import Icon from '../Icon'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAnimation, motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
-import TrafficLight from './TrafficLight'
 import useIsMobile from '@/web/hooks/useIsMobile'
+import { breakpoint as bp } from '@/web/utils/const'
+import { useSnapshot } from 'valtio'
+import uiStates from '@/web/states/uiStates'
+import persistedUiStates from '@/web/states/persistedUiStates'
 
 const tabs = [
   {
@@ -132,15 +135,17 @@ const Tabs = () => {
   )
 }
 
-const MenuBar = ({ className }: { className?: string }) => {
+const MenuBar = () => {
   const isMobile = useIsMobile()
   return (
     <div
       className={cx(
         'app-region-drag relative flex h-full w-full flex-col justify-center',
-        className,
+        'lg:fixed lg:left-0 lg:top-0 lg:bottom-0',
         css`
-          grid-area: menubar;
+          ${bp.lg} {
+            width: 104px;
+          }
         `
       )}
     >

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, MotionConfig } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import useIsMobile from '@/web/hooks/useIsMobile'
 import scrollPositions from '@/web/states/scrollPositions'
@@ -26,14 +26,16 @@ const PageTransition = ({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: disableEnterAnimation ? 1 : 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.18, ease }}
-    >
-      {children}
-    </motion.div>
+    <MotionConfig transition={{ ease }}>
+      <motion.div
+        initial={{ opacity: disableEnterAnimation ? 1 : 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.18 }}
+      >
+        {children}
+      </motion.div>
+    </MotionConfig>
   )
 }
 

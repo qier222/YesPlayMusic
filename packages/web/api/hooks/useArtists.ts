@@ -6,7 +6,7 @@ import {
   ArtistApiNames,
   FetchArtistResponse,
 } from '@/shared/api/Artist'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useArtists(ids: number[]) {
   return useQuery(

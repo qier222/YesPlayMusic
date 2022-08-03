@@ -15,15 +15,21 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
 import toast from 'react-hot-toast'
 import { scrobble } from '@/web/api/user'
+import { fetchArtistWithReactQuery } from '../api/hooks/useArtist'
 
 type TrackID = number
 export enum TrackListSourceType {
   Album = 'album',
   Playlist = 'playlist',
+  Artist = 'artist',
 }
 interface TrackListSource {
   type: TrackListSourceType
   id: number
+}
+interface RemoteDevice {
+  protocol: 'airplay' | 'chromecast'
+  id: string
 }
 export enum Mode {
   TrackList = 'trackList',
@@ -55,6 +61,7 @@ export class Player {
   fmTrackList: TrackID[] = []
   shuffle: boolean = false
   fmTrack: Track | null = null
+  remoteDevice: RemoteDevice | null = null
 
   init(params: { [key: string]: any }) {
     if (params._track) this._track = params._track
@@ -70,7 +77,7 @@ export class Player {
     if (params.fmTrack) this.fmTrack = params.fmTrack
 
     this.state = State.Ready
-    this._playAudio(false) // just load the audio, not play
+    if (this.trackID) this._playAudio(false) // just load the audio, not play
     this._initFM()
     this._initMediaSession()
 
@@ -165,6 +172,10 @@ export class Player {
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
+  get _isAirplay() {
+    return this.remoteDevice?.protocol === 'airplay'
+  }
+
   private async _initFM() {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
 
@@ -182,9 +193,30 @@ export class Player {
   }
 
   private async _setupProgressInterval() {
-    this._progressInterval = setInterval(() => {
-      if (this.state === State.Playing) this._progress = _howler.seek()
-    }, 1000)
+    if (this.remoteDevice === null) {
+      // Howler
+      this._progressInterval = setInterval(() => {
+        if (this.state === State.Playing) this._progress = _howler.seek()
+      }, 1000)
+    } else if (this._isAirplay) {
+      // Airplay
+      let isFetchAirplayPlayingInfo = false
+      this._progressInterval = setInterval(async () => {
+        if (isFetchAirplayPlayingInfo) return
+
+        isFetchAirplayPlayingInfo = true
+
+        const playingInfo = await window?.ipcRenderer?.invoke(
+          'airplay-get-playing',
+          { deviceID: this.remoteDevice?.id }
+        )
+        if (playingInfo) {
+          this._progress = playingInfo.position || 0
+        }
+
+        isFetchAirplayPlayingInfo = false
+      }, 1000)
+    }
   }
 
   private async _scrobble() {
@@ -255,6 +287,19 @@ export class Player {
       return
     }
     if (this.trackID !== id) return
+    if (this._isAirplay) {
+      this._playAudioViaAirplay(audio)
+      return
+    } else {
+      this._playAudioViaHowler(audio, id, autoplay)
+    }
+  }
+
+  private async _playAudioViaHowler(
+    audio: string,
+    id: number,
+    autoplay: boolean = true
+  ) {
     Howler.unload()
     const url = audio.includes('?')
       ? `${audio}&dash-id=${id}`
@@ -280,6 +325,18 @@ export class Player {
     if (!this._progressInterval) {
       this._setupProgressInterval()
     }
+  }
+
+  private async _playAudioViaAirplay(audio: string) {
+    if (!this._isAirplay) {
+      console.log('No airplay device selected')
+      return
+    }
+    const result = await window.ipcRenderer?.invoke('airplay-play-url', {
+      deviceID: this.remoteDevice?.id,
+      url: audio,
+    })
+    console.log(result)
   }
 
   private _howlerOnEndCallback() {
@@ -432,7 +489,11 @@ export class Player {
    * @param  {number} id
    * @param  {null|number=} autoPlayTrackID
    */
-  async playPlaylist(id: number, autoPlayTrackID?: null | number) {
+  async playPlaylist(id: number | undefined, autoPlayTrackID?: null | number) {
+    if (!id) {
+      toast.error('无法播放: 歌单不存在')
+      return
+    }
     this._setStateToLoading()
     const playlist = await fetchPlaylistWithReactQuery({ id })
     if (!playlist?.playlist?.trackIds?.length) return
@@ -447,7 +508,7 @@ export class Player {
   }
 
   /**
-   * Play am album
+   * Play an album
    * @param  {number} id
    * @param  {null|number=} autoPlayTrackID
    */
@@ -461,6 +522,28 @@ export class Player {
     }
     this.playAList(
       album.songs.map(t => t.id),
+      autoPlayTrackID
+    )
+  }
+
+  /**
+   * Listen artist's popular tracks
+   * @param  {number} id
+   * @param  {null|number=} autoPlayTrackID
+   */
+  async playArtistPopularTracks(id: number, autoPlayTrackID?: null | number) {
+    this._setStateToLoading()
+    const artist = await fetchArtistWithReactQuery({ id })
+    if (!artist?.hotSongs.length) {
+      toast('无法播放: 没有热门歌曲')
+      return
+    }
+    this.trackListSource = {
+      type: TrackListSourceType.Artist,
+      id,
+    }
+    this.playAList(
+      artist.hotSongs.map(t => t.id),
       autoPlayTrackID
     )
   }
@@ -501,6 +584,21 @@ export class Player {
     if (index === -1) toast('播放失败，歌曲不在列表内')
     this._trackIndex = index
     this._playTrack()
+  }
+
+  async switchToThisComputer() {
+    this.remoteDevice = null
+    clearInterval(this._progressInterval)
+    this._setupProgressInterval()
+  }
+
+  async switchToAirplayDevice(deviceID: string) {
+    this.remoteDevice = {
+      protocol: 'airplay',
+      id: deviceID,
+    }
+    clearInterval(this._progressInterval)
+    this._setupProgressInterval()
   }
 
   private async _initMediaSession() {

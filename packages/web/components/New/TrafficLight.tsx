@@ -1,15 +1,10 @@
-import { useState } from 'react'
-import { IpcChannels } from '@/shared/IpcChannels'
-import useIpcRenderer from '@/web/hooks/useIpcRenderer'
+import { useSnapshot } from 'valtio'
+import uiStates from '@/web/states/uiStates'
 
 const TrafficLight = () => {
-  const [isMaximized, setIsMaximized] = useState(false)
+  const { fullscreen } = useSnapshot(uiStates)
 
-  useIpcRenderer(IpcChannels.IsMaximized, (e, value) => {
-    setIsMaximized(value)
-  })
-
-  if (isMaximized) {
+  if (fullscreen) {
     return <></>
   }
 

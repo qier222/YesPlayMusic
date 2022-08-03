@@ -90,6 +90,9 @@ module.exports = {
       margin: {
         7.5: '1.875rem',
       },
+      transitionDuration: {
+        400: '400ms',
+      },
     },
   },
   variants: {},

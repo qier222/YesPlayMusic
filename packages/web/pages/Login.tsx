@@ -13,7 +13,7 @@ import { useInterval } from 'react-use'
 import { cx } from '@emotion/css'
 import { useState, useMemo, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { useSnapshot } from 'valtio'
 
@@ -327,7 +327,7 @@ const LoginWithQRCode = () => {
     status: keyStatus,
     refetch: refetchKey,
   } = useQuery(
-    'qrCodeKey',
+    ['qrCodeKey'],
     async () => {
       const result = await fetchLoginQrCodeKey()
       if (result.data.code !== 200) {

@@ -92,7 +92,7 @@ const ImageDesktop = ({
         {placeholder && (
           <motion.div
             {...placeholderMotionProps}
-            className='absolute inset-0 h-full w-full bg-white dark:bg-neutral-800'
+            className='absolute inset-0 h-full w-full bg-white dark:bg-white/10'
           ></motion.div>
         )}
       </AnimatePresence>

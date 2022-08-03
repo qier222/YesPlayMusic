@@ -6,7 +6,7 @@ import {
   ArtistApiNames,
   FetchSimilarArtistsResponse,
 } from '@/shared/api/Artist'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useSimilarArtists(params: FetchSimilarArtistsParams) {
   return useQuery(
@@ -15,6 +15,7 @@ export default function useSimilarArtists(params: FetchSimilarArtistsParams) {
     {
       enabled: !!params.id && params.id > 0 && !isNaN(Number(params.id)),
       staleTime: 5 * 60 * 1000, // 5 mins
+      retry: 0,
       placeholderData: (): FetchSimilarArtistsResponse =>
         window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
           api: APIs.SimilarArtist,

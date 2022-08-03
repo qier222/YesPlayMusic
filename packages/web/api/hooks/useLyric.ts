@@ -7,7 +7,7 @@ import {
 } from '@/shared/api/Track'
 import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useLyric(params: FetchLyricParams) {
   return useQuery(

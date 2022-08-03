@@ -3,7 +3,7 @@ import reactQueryClient from '@/web/utils/reactQueryClient'
 
 export function fetchPersonalFMWithReactQuery() {
   return reactQueryClient.fetchQuery(
-    PersonalFMApiNames.FetchPersonalFm,
+    [PersonalFMApiNames.FetchPersonalFm],
     async () => {
       const data = await fetchPersonalFM()
       if (!data.data?.length) {

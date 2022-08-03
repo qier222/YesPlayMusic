@@ -2,7 +2,7 @@ import { fetchListenedRecords } from '@/web/api/user'
 import { UserApiNames, FetchListenedRecordsResponse } from '@/shared/api/User'
 import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import useUser from './useUser'
 
 export default function useUserListenedRecords(params: {

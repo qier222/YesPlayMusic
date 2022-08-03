@@ -1,5 +1,4 @@
-import useBreakpoint from '@/web/hooks/useBreakpoint'
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import useIsMobile from '@/web/hooks/useIsMobile'
 
 const Devtool = () => {
@@ -10,10 +9,19 @@ const Devtool = () => {
       toggleButtonProps={{
         style: {
           position: 'fixed',
-          bottom: isMobile ? 'auto' : 0,
-          right: 0,
-          top: isMobile ? 0 : 'auto',
-          left: 'auto',
+          ...(isMobile
+            ? {
+                top: 0,
+                right: 0,
+                bottom: 'auto',
+                left: 'atuo',
+              }
+            : {
+                top: 36,
+                right: 148,
+                bottom: 'atuo',
+                left: 'auto',
+              }),
         },
       }}
     />

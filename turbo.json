@@ -14,7 +14,8 @@
     },
     "pack": {
       "dependsOn": ["build"],
-      "outputs": ["release/**"]
+      "outputs": ["release/**"],
+      "cache": false
     },
     "test": {
       "dependsOn": ["build"],

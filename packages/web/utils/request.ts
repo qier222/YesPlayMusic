@@ -21,7 +21,7 @@ service.interceptors.request.use((config: AxiosRequestConfig) => {
 
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    const res = response //.data
+    const res = response
     return res
   },
   (error: AxiosError) => {

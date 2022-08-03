@@ -1,7 +1,7 @@
 import { AppleMusicArtist } from '@/shared/AppleMusic'
 import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useAppleMusicArtist(props: {
   id?: number

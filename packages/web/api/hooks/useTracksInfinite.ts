@@ -1,5 +1,5 @@
 import { FetchTracksParams, TrackApiNames } from '@/shared/api/Track'
-import { useInfiniteQuery } from 'react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchTracks } from '../track'
 
 // 100 tracks each page

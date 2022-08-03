@@ -1,5 +1,6 @@
 import useArtistAlbums from '@/web/api/hooks/useArtistAlbums'
 import CoverRow from '@/web/components/New/CoverRow'
+import React from 'react'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -11,7 +12,18 @@ const ArtistAlbum = () => {
     limit: 1000,
   })
 
-  const albums = useMemo(() => albumsRaw?.hotAlbums, [albumsRaw?.hotAlbums])
+  const pages = useMemo(() => {
+    const pages: Album[][] = []
+    albumsRaw?.hotAlbums.forEach((album, index) => {
+      const pageNo = Math.floor(index / 12)
+      if (!pages[pageNo]) {
+        pages[pageNo] = [album]
+      } else {
+        pages[pageNo].push(album)
+      }
+    })
+    return pages
+  }, [albumsRaw?.hotAlbums])
 
   return (
     <div>
@@ -19,9 +31,19 @@ const ArtistAlbum = () => {
         Albums
       </div>
 
-      <CoverRow albums={albums?.slice(0, 12)} />
+      <div className='no-scrollbar flex gap-6 overflow-y-hidden overflow-x-scroll'>
+        {pages.map((page, index) => (
+          <CoverRow
+            key={index}
+            albums={page}
+            className='h-full w-full flex-shrink-0'
+          />
+        ))}
+      </div>
     </div>
   )
 }
 
-export default ArtistAlbum
+const memoized = React.memo(ArtistAlbum)
+memoized.displayName = 'ArtistAlbum'
+export default memoized

@@ -2,6 +2,7 @@ export enum ArtistApiNames {
   FetchArtist = 'fetchArtist',
   FetchArtistAlbums = 'fetchArtistAlbums',
   FetchSimilarArtists = 'fetchSimilarArtists',
+  FetchArtistMV = 'fetchArtistMV',
 }
 
 // 歌手详情
@@ -35,4 +36,40 @@ export interface FetchSimilarArtistsParams {
 export interface FetchSimilarArtistsResponse {
   code: number
   artists: Artist[]
+}
+
+// 获取歌手MV
+export interface FetchArtistMVParams {
+  id: number
+  offset?: number
+  limit?: number
+}
+export interface FetchArtistMVResponse {
+  code: number
+  hasMore: boolean
+  time: number
+  mvs: {
+    artist: Artist
+    artistName: string
+    duration: number
+    id: number
+    imgurl: string
+    imgurl16v9: string
+    name: string
+    playCount: number
+    publishTime: string
+    status: number
+    subed: boolean
+  }[]
+}
+
+// 收藏歌手
+export interface LikeAArtistParams {
+  id: number
+  like: boolean
+}
+export interface LikeAArtistResponse {
+  code: number
+  data: null
+  message: string
 }

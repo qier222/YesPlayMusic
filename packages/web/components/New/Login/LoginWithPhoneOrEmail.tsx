@@ -1,7 +1,12 @@
 import { cx, css } from '@emotion/css'
 import { useState } from 'react'
-import { useMutation } from 'react-query'
-import { loginWithEmail, loginWithPhone } from '@/web/api/auth'
+import { useMutation } from '@tanstack/react-query'
+import {
+  loginWithEmail,
+  LoginWithEmailResponse,
+  loginWithPhone,
+  LoginWithPhoneResponse,
+} from '@/web/api/auth'
 import md5 from 'md5'
 import toast from 'react-hot-toast'
 import { setCookies } from '@/web/utils/cookie'
@@ -10,6 +15,8 @@ import { ease } from '@/web/utils/const'
 import { useSnapshot } from 'valtio'
 import uiStates from '@/web/states/uiStates'
 import persistedUiStates from '@/web/states/persistedUiStates'
+import reactQueryClient from '@/web/utils/reactQueryClient'
+import { UserApiNames } from '@/shared/api/User'
 
 const LoginWithPhoneOrEmail = () => {
   const { loginPhoneCountryCode, loginType: persistedLoginType } =
@@ -24,26 +31,36 @@ const LoginWithPhoneOrEmail = () => {
     persistedLoginType === 'email' ? 'email' : 'phone'
   )
 
+  const handleAfterLogin = (
+    result: LoginWithEmailResponse | LoginWithPhoneResponse
+  ) => {
+    if (result?.code !== 200) return
+    setCookies(result.cookie)
+    reactQueryClient.refetchQueries([UserApiNames.FetchUserAccount])
+    uiStates.showLoginPanel = false
+  }
+
+  const handleError = (data: any, error: any) => {
+    if (data?.code === 200) return
+    toast(
+      `Login failed: ${
+        data?.message ||
+        data?.msg ||
+        data?.error ||
+        error?.response?.data?.message ||
+        error?.response?.data?.msg ||
+        error
+      }`
+    )
+  }
+
   const doEmailLogin = useMutation(
     () =>
       loginWithEmail({
         email: email.trim(),
         md5_password: md5(password.trim()),
       }),
-    {
-      onSuccess: result => {
-        if (result?.code !== 200) {
-          toast(`Login failed: ${result.code}`)
-          return
-        }
-        setCookies(result.cookie)
-
-        uiStates.showLoginPanel = false
-      },
-      onError: error => {
-        toast(`Login failed: ${error}`)
-      },
-    }
+    { onSuccess: handleAfterLogin, onSettled: handleError }
   )
 
   const handleEmailLogin = () => {
@@ -75,19 +92,7 @@ const LoginWithPhoneOrEmail = () => {
         md5_password: md5(password.trim()),
       })
     },
-    {
-      onSuccess: result => {
-        if (result?.code !== 200) {
-          toast(`Login failed: ${result.code}`)
-          return
-        }
-        setCookies(result.cookie)
-        uiStates.showLoginPanel = false
-      },
-      onError: error => {
-        toast(`Login failed: ${error}`)
-      },
-    }
+    { onSuccess: handleAfterLogin, onSettled: handleError }
   )
 
   const handlePhoneLogin = () => {
@@ -124,12 +129,12 @@ const LoginWithPhoneOrEmail = () => {
 
   return (
     <>
-      <div className='text-center text-18 font-medium text-night-600'>
+      <div className='text-center text-18 font-medium text-white/20'>
         Log in with{' '}
         <span
           className={cx(
             'transition-colors duration-300',
-            loginType === 'phone' ? 'text-brand-600' : 'hover:text-night-50'
+            loginType === 'phone' ? 'text-brand-600' : 'hover:text-white/70'
           )}
           onClick={() => {
             const type = loginType === 'phone' ? 'email' : 'phone'
@@ -143,7 +148,7 @@ const LoginWithPhoneOrEmail = () => {
         <span
           className={cx(
             'transition-colors duration-300',
-            loginType === 'email' ? 'text-brand-600' : 'hover:text-night-50'
+            loginType === 'email' ? 'text-brand-600' : 'hover:text-white/70'
           )}
           onClick={() => {
             if (loginType !== 'email') setLoginType('email')

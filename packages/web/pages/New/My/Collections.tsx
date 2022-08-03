@@ -7,6 +7,7 @@ import useUserPlaylists from '@/web/api/hooks/useUserPlaylists'
 import useUserAlbums from '@/web/api/hooks/useUserAlbums'
 import { useSnapshot } from 'valtio'
 import uiStates from '@/web/states/uiStates'
+import ArtistRow from '@/web/components/New/ArtistRow'
 
 const tabs = [
   {
@@ -30,17 +31,21 @@ const tabs = [
 const Albums = () => {
   const { data: albums } = useUserAlbums()
 
-  return <CoverRow albums={albums?.data} className='mt-6 px-2.5 lg:px-0' />
+  return <CoverRow albums={albums?.data} />
 }
 
 const Playlists = () => {
   const { data: playlists } = useUserPlaylists()
   const p = useMemo(() => playlists?.playlist?.slice(1), [playlists])
-  return <CoverRow playlists={p} className='mt-6 px-2.5 lg:px-0' />
+  return <CoverRow playlists={p} />
+}
+
+const Artists = () => {
+  const { data: artists } = useUserArtists()
+  return <ArtistRow artists={artists?.data || []} />
 }
 
 const Collections = () => {
-  // const { data: artists } = useUserArtists()
   const { librarySelectedTab: selectedTab } = useSnapshot(uiStates)
   const setSelectedTab = (
     id: 'playlists' | 'albums' | 'artists' | 'videos'
@@ -56,8 +61,11 @@ const Collections = () => {
         onChange={(id: string) => setSelectedTab(id)}
         className='px-2.5 lg:px-0'
       />
-      {selectedTab === 'albums' && <Albums />}
-      {selectedTab === 'playlists' && <Playlists />}
+      <div className='mt-6 px-2.5 lg:px-0'>
+        {selectedTab === 'albums' && <Albums />}
+        {selectedTab === 'playlists' && <Playlists />}
+        {selectedTab === 'artists' && <Artists />}
+      </div>
     </div>
   )
 }

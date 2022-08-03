@@ -6,7 +6,7 @@ import { average } from 'color.js'
 import { colord } from 'colord'
 
 /**
- * @description 调整网易云封面图片大小
+ * @description 调整网易云和苹果音乐封面图片大小
  * @param  {string} url 封面图片URL
  * @param  {'xs'|'sm'|'md'|'lg'} size - 大小，值对应为 128px | 256px | 512px | 1024px
  */
@@ -173,3 +173,5 @@ export const isPWA =
   (navigator as any).standalone ||
   window.matchMedia('(display-mode: standalone)').matches
 export const isIosPwa = isIOS && isPWA && isSafari
+
+export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))

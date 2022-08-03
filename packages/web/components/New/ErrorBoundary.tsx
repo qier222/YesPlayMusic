@@ -1,42 +1,34 @@
 import { ReactNode } from 'react'
-import { ErrorBoundary as ErrorBoundaryRaw } from 'react-error-boundary'
-
-function ErrorFallback({
-  error,
-  resetErrorBoundary,
-}: {
-  error: Error
-  resetErrorBoundary: () => void
-}) {
-  return (
-    <div
-      role='alert'
-      className='app-region-drag flex h-screen w-screen items-center justify-center bg-white dark:bg-black'
-    >
-      <div className='app-region-no-drag'>
-        <p>Something went wrong:</p>
-        <pre>{error.message}</pre>
-        <button
-          onClick={resetErrorBoundary}
-          className='mt-4 rounded-full bg-brand-600 px-6 py-5 text-16 font-medium'
-        >
-          Try Again
-        </button>
-      </div>
-    </div>
-  )
-}
+import * as Sentry from '@sentry/react'
 
 const ErrorBoundary = ({ children }: { children: ReactNode }) => {
   return (
-    <ErrorBoundaryRaw
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        // reset the state of your app so the error doesn't happen again
-      }}
+    <Sentry.ErrorBoundary
+      fallback={({ error, componentStack }) => (
+        <div
+          role='alert'
+          className='app-region-drag flex h-screen w-screen items-center justify-center rounded-24 bg-white dark:bg-black'
+        >
+          <div className='app-region-no-drag'>
+            <p>Something went wrong:</p>
+            <pre className='mb-2 text-18 dark:text-white'>
+              {error.toString()}
+            </pre>
+            <div className='max-h-72 max-w-2xl overflow-scroll whitespace-pre-line rounded-12 border border-white/10 px-3 py-2 dark:text-white/50'>
+              {componentStack?.trim()}
+            </div>
+            <button
+              onClick={() => location.reload()}
+              className='mt-4 rounded-full bg-brand-600 px-6 py-5 text-16 font-medium'
+            >
+              Reload
+            </button>
+          </div>
+        </div>
+      )}
     >
       {children}
-    </ErrorBoundaryRaw>
+    </Sentry.ErrorBoundary>
   )
 }
 

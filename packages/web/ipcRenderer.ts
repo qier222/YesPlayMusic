@@ -4,6 +4,7 @@ import {
   IpcChannelsReturns,
   IpcChannelsParams,
 } from '@/shared/IpcChannels'
+import uiStates from './states/uiStates'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -35,5 +36,9 @@ export function ipcRenderer() {
 
   on(IpcChannels.Repeat, (e, mode) => {
     player.repeatMode = mode
+  })
+
+  on(IpcChannels.FullscreenStateChange, (e, isFullscreen) => {
+    uiStates.fullscreen = isFullscreen
   })
 }

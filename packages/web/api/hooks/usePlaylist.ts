@@ -7,10 +7,10 @@ import {
   PlaylistApiNames,
   FetchPlaylistResponse,
 } from '@/shared/api/Playlists'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
-const fetch = (params: FetchPlaylistParams, noCache?: boolean) => {
-  return fetchPlaylist(params, !!noCache)
+const fetch = (params: FetchPlaylistParams) => {
+  return fetchPlaylist(params)
 }
 
 export const fetchFromCache = (id: number): FetchPlaylistResponse | undefined =>
@@ -19,13 +19,10 @@ export const fetchFromCache = (id: number): FetchPlaylistResponse | undefined =>
     query: { id },
   })
 
-export default function usePlaylist(
-  params: FetchPlaylistParams,
-  noCache?: boolean
-) {
+export default function usePlaylist(params: FetchPlaylistParams) {
   return useQuery(
     [PlaylistApiNames.FetchPlaylist, params],
-    () => fetch(params, noCache),
+    () => fetch(params),
     {
       enabled: !!(params.id && params.id > 0 && !isNaN(Number(params.id))),
       refetchOnWindowFocus: true,

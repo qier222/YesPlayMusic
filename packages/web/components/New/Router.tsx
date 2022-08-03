@@ -10,6 +10,7 @@ const Browse = React.lazy(() => import('@/web/pages/New/Browse'))
 const Album = React.lazy(() => import('@/web/pages/New/Album'))
 const Playlist = React.lazy(() => import('@/web/pages/New/Playlist'))
 const Artist = React.lazy(() => import('@/web/pages/New/Artist'))
+const MV = React.lazy(() => import('@/web/pages/New/MV'))
 
 const lazy = (component: ReactNode) => {
   return <Suspense>{component}</Suspense>
@@ -27,6 +28,7 @@ const Router = () => {
         <Route path='/album/:id' element={lazy(<Album />)} />
         <Route path='/playlist/:id' element={lazy(<Playlist />)} />
         <Route path='/artist/:id' element={lazy(<Artist />)} />
+        <Route path='/mv/:id' element={lazy(<MV />)} />
         <Route path='/settings' element={lazy(<Settings />)} />
         <Route path='/search/:keywords' element={lazy(<Search />)}>
           <Route path=':type' element={lazy(<Search />)} />

@@ -3,7 +3,7 @@ export enum UserApiNames {
   FetchUserLikedTracksIds = 'fetchUserLikedTracksIDs',
   FetchUserPlaylists = 'fetchUserPlaylists',
   FetchUserAlbums = 'fetchUserAlbums',
-  FetchUserArtist = 'fetchUserArtists',
+  FetchUserArtists = 'fetchUserArtists',
   FetchListenedRecords = 'fetchListenedRecords',
 }
 

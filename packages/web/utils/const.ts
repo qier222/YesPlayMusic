@@ -10,5 +10,6 @@ export const breakpoint = {
   '2xl': '@media (min-width: 1536px)',
 }
 
+export const titleBarHeight = 32 // 桌面端标题栏高度 (px)
 export const topbarHeight = 132 // 桌面端顶栏高度 (px)
 export const playerWidth = 318 // 桌面端播放器宽度 (px)

@@ -8,7 +8,7 @@ import { fetchTracksWithReactQuery } from '@/web/api/hooks/useTracks'
 import { useEffect, useState } from 'react'
 import { sampleSize } from 'lodash-es'
 import { FetchPlaylistResponse } from '@/shared/api/Playlists'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 interface DiscoverAlbum {
   id: number

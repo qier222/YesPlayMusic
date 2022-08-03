@@ -7,7 +7,7 @@ import { SearchTypes, SearchApiNames } from '@/shared/api/Search'
 import dayjs from 'dayjs'
 import { useMemo, useCallback } from 'react'
 import toast from 'react-hot-toast'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const Artists = ({ artists }: { artists: Artist[] }) => {

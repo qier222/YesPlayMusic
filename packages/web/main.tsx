@@ -2,7 +2,14 @@ import './utils/initLog'
 import './utils/theme'
 import { StrictMode } from 'react'
 import * as ReactDOMClient from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
+import {
+  Routes,
+  BrowserRouter,
+  useLocation,
+  useNavigationType,
+  createRoutesFromChildren,
+  matchRoutes,
+} from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import 'virtual:svg-icons-register'
@@ -12,14 +19,25 @@ import App from './AppNew'
 import pkg from '../../package.json'
 import ReactGA from 'react-ga4'
 import { ipcRenderer } from './ipcRenderer'
-import { QueryClientProvider } from 'react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
+import React from 'react'
 
 ReactGA.initialize('G-KMJJCFZDKF')
 
 Sentry.init({
   dsn: 'https://7cc7879b42ba4bed9f66fb6752558475@o436528.ingest.sentry.io/6274630',
-  integrations: [new BrowserTracing()],
+  integrations: [
+    new BrowserTracing({
+      routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+        React.useEffect,
+        useLocation,
+        useNavigationType,
+        createRoutesFromChildren,
+        matchRoutes
+      ),
+    }),
+  ],
   release: `yesplaymusic@${pkg.version}`,
   environment: import.meta.env.MODE,
 

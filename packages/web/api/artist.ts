@@ -6,19 +6,20 @@ import {
   FetchArtistAlbumsResponse,
   FetchSimilarArtistsParams,
   FetchSimilarArtistsResponse,
+  FetchArtistMVParams,
+  FetchArtistMVResponse,
+  LikeAArtistParams,
+  LikeAArtistResponse,
 } from '@/shared/api/Artist'
 
 // 歌手详情
 export function fetchArtist(
-  params: FetchArtistParams,
-  noCache: boolean
+  params: FetchArtistParams
 ): Promise<FetchArtistResponse> {
-  const otherParams: { timestamp?: number } = {}
-  if (noCache) otherParams.timestamp = new Date().getTime()
   return request({
     url: '/artists',
     method: 'get',
-    params: { ...params, ...otherParams },
+    params: { ...params, timestamp: new Date().getTime() },
   })
 }
 
@@ -33,6 +34,7 @@ export function fetchArtistAlbums(
   })
 }
 
+// 获取相似歌手
 export function fetchSimilarArtists(
   params: FetchSimilarArtistsParams
 ): Promise<FetchSimilarArtistsResponse> {
@@ -40,5 +42,30 @@ export function fetchSimilarArtists(
     url: 'simi/artist',
     method: 'get',
     params,
+  })
+}
+
+// 获取歌手MV
+export function fetchArtistMV(
+  params: FetchArtistMVParams
+): Promise<FetchArtistMVResponse> {
+  return request({
+    url: '/artist/mv',
+    method: 'get',
+    params,
+  })
+}
+
+// 收藏歌手
+export function likeAArtist(
+  params: LikeAArtistParams
+): Promise<LikeAArtistResponse> {
+  return request({
+    url: 'artist/sub',
+    method: 'get',
+    params: {
+      id: params.id,
+      t: Number(params.like),
+    },
   })
 }

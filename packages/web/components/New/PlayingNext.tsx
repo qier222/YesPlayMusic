@@ -15,7 +15,7 @@ const Header = () => {
   return (
     <div
       className={cx(
-        'absolute top-0 left-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300 lg:px-4'
+        'absolute top-0 left-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300 lg:px-0'
       )}
     >
       <div className='flex'>
@@ -26,7 +26,7 @@ const Header = () => {
         <div className='mr-2'>
           <Icon name='repeat-1' className='h-7 w-7 opacity-40' />
         </div>
-        <div className='mr-1'>
+        <div>
           <Icon name='shuffle' className='h-7 w-7 opacity-40' />
         </div>
       </div>
@@ -147,11 +147,11 @@ const TrackList = ({ className }: { className?: string }) => {
   )
 }
 
-const PlayingNext = ({ className }: { className?: string }) => {
+const PlayingNext = () => {
   return (
     <>
       <Header />
-      <TrackList className={className} />
+      <TrackList />
     </>
   )
 }

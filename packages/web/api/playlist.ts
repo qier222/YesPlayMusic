@@ -11,18 +11,15 @@ import {
 
 // 歌单详情
 export function fetchPlaylist(
-  params: FetchPlaylistParams,
-  noCache: boolean
+  params: FetchPlaylistParams
 ): Promise<FetchPlaylistResponse> {
-  const otherParams: { timestamp?: number } = {}
-  if (noCache) otherParams.timestamp = new Date().getTime()
   if (!params.s) params.s = 0 // 网易云默认返回8个收藏者，这里设置为0，减少返回的JSON体积
   return request({
     url: '/playlist/detail',
     method: 'get',
     params: {
       ...params,
-      ...otherParams,
+      timestamp: new Date().getTime(),
     },
   })
 }

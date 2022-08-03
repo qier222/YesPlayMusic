@@ -8,15 +8,15 @@ import {
 
 // 专辑详情
 export function fetchAlbum(
-  params: FetchAlbumParams,
-  noCache: boolean
+  params: FetchAlbumParams
 ): Promise<FetchAlbumResponse> {
-  const otherParams: { timestamp?: number } = {}
-  if (noCache) otherParams.timestamp = new Date().getTime()
   return request({
     url: '/album',
     method: 'get',
-    params: { ...params, ...otherParams },
+    params: {
+      ...params,
+      timestamp: new Date().getTime(),
+    },
   })
 }
 

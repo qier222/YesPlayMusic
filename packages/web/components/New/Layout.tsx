@@ -7,9 +7,14 @@ import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Login from './Login'
 import TrafficLight from './TrafficLight'
+import BlurBackground from './BlurBackground'
+import Airplay from './Airplay'
+import TitleBar from './TitleBar'
+import uiStates from '@/web/states/uiStates'
 
 const Layout = () => {
   const playerSnapshot = useSnapshot(player)
+  const { fullscreen } = useSnapshot(uiStates)
   const showPlayer = !!playerSnapshot.track
 
   return (
@@ -17,24 +22,10 @@ const Layout = () => {
       id='layout'
       className={cx(
         'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black',
-        window.env?.isElectron && 'rounded-24',
-        css`
-          grid-template-columns: 6.5rem auto 358px;
-          grid-template-rows: 132px auto;
-        `,
-        showPlayer
-          ? css`
-              grid-template-areas:
-                'menubar main -'
-                'menubar main player';
-            `
-          : css`
-              grid-template-areas:
-                'menubar main main'
-                'menubar main main';
-            `
+        window.env?.isElectron && !fullscreen && 'rounded-24'
       )}
     >
+      <BlurBackground />
       <MenuBar />
       <Topbar />
       <Main />
@@ -46,6 +37,10 @@ const Layout = () => {
           <TrafficLight />
         </div>
       )}
+
+      {window.env?.isWindows && <TitleBar />}
+
+      {/* {window.env?.isElectron && <Airplay />} */}
     </div>
   )
 }

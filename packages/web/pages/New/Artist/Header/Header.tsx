@@ -1,19 +1,10 @@
-import { resizeImage } from '@/web/utils/common'
 import { cx, css } from '@emotion/css'
-import Image from '@/web/components/New/Image'
 import { breakpoint as bp } from '@/web/utils/const'
-import BlurBackground from '@/web/components/New/BlurBackground'
 import ArtistInfo from './ArtistInfo'
 import Actions from './Actions'
 import LatestRelease from './LatestRelease'
-import useAppleMusicArtist from '@/web/hooks/useAppleMusicArtist'
-
+import Cover from "./Cover"
 const Header = ({ artist }: { artist?: Artist }) => {
-  const { data: artistFromApple, isLoading: isLoadingArtistFromApple } =
-    useAppleMusicArtist({
-      id: artist?.id,
-      name: artist?.name,
-    })
 
   return (
     <div
@@ -27,30 +18,7 @@ const Header = ({ artist }: { artist?: Artist }) => {
         `
       )}
     >
-      <Image
-        className={cx(
-          'aspect-square lg:z-10 lg:rounded-24',
-          css`
-            grid-area: cover;
-          `
-        )}
-        src={resizeImage(
-          isLoadingArtistFromApple
-            ? ''
-            : artistFromApple?.attributes?.artwork?.url ||
-                artist?.img1v1Url ||
-                '',
-          'lg'
-        )}
-      />
-
-      <BlurBackground
-        cover={
-          isLoadingArtistFromApple
-            ? ''
-            : artistFromApple?.attributes?.artwork?.url || artist?.img1v1Url
-        }
-      />
+      <Cover artist={artist} />
 
       <div
         className={cx(

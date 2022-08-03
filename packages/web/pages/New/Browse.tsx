@@ -5,7 +5,7 @@ import {
 } from '@/web/api/playlist'
 import { PlaylistApiNames } from '@/shared/api/Playlists'
 import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import CoverRowVirtual from '@/web/components/New/CoverRowVirtual'
 import PageTransition from '@/web/components/New/PageTransition'
 import { playerWidth, topbarHeight } from '@/web/utils/const'
@@ -20,31 +20,27 @@ const reactQueryOptions = {
 }
 
 const Recommend = () => {
-  const { data: dailyRecommendPlaylists } = useQuery(
-    PlaylistApiNames.FetchDailyRecommendPlaylists,
+  const { data: dailyRecommendPlaylists, isLoading: isLoadingDaily } = useQuery(
+    [PlaylistApiNames.FetchDailyRecommendPlaylists],
     () => fetchDailyRecommendPlaylists(),
     reactQueryOptions
   )
-  const { data: recommendedPlaylists } = useQuery(
+  const { data: recommendedPlaylists, isLoading: isLoading } = useQuery(
     [PlaylistApiNames.FetchRecommendedPlaylists, { limit: 200 }],
     () => fetchRecommendedPlaylists({ limit: 200 }),
     reactQueryOptions
   )
-  const playlists = [
-    ...(dailyRecommendPlaylists?.recommend || []),
-    ...(recommendedPlaylists?.result || []),
-  ]
+  const playlists =
+    isLoadingDaily || isLoading
+      ? []
+      : [
+          ...(dailyRecommendPlaylists?.recommend || []),
+          ...(recommendedPlaylists?.result || []),
+        ]
 
-  // return (
-  //   <CoverRowVirtual
-  //     playlists={playlists}
-  //     containerStyle={{
-  //       height: `${document.body.clientHeight - topbarHeight - 44}px`,
-  //     }}
-  //   />
-  // )
+  return <CoverRowVirtual playlists={playlists} />
 
-  return <CoverRow playlists={playlists} />
+  // return <CoverRow playlists={playlists} />
 }
 
 const All = () => {
@@ -66,27 +62,29 @@ const Browse = () => {
 
   return (
     <PageTransition>
-      {/* Topbar background */}
-      <div
-        className={cx(
-          'pointer-events-none fixed top-0 left-0 z-10 hidden lg:block',
-          css`
-            height: 230px;
-            right: ${playerWidth + 32}px;
-            background-image: url(${topbarBackground});
-          `
-        )}
-      ></div>
+      <div className='relative'>
+        {/* Topbar background */}
+        <div
+          className={cx(
+            'pointer-events-none fixed top-0 left-10 z-10 hidden lg:block',
+            css`
+              height: 230px;
+              right: ${playerWidth + 32}px;
+              background-image: url(${topbarBackground});
+            `
+          )}
+        ></div>
 
-      <Tabs
-        tabs={categories}
-        value={active}
-        onChange={category => setActive(category)}
-        className='sticky top-0 z-10 mt-2.5 px-2.5 lg:mt-0 lg:px-0'
-      />
+        <Tabs
+          tabs={categories}
+          value={active}
+          onChange={category => setActive(category)}
+          className='absolute top-0 z-10 mt-2.5 px-2.5 lg:mt-0 lg:px-0'
+        />
 
-      <div className='relative mx-2.5 mt-5 lg:mx-0'>
-        {categories.find(c => c.id === active)?.component}
+        <div className='absolute inset-0 mx-2.5 mt-5 lg:mx-0 lg:mt-0'>
+          {categories.find(c => c.id === active)?.component}
+        </div>
       </div>
     </PageTransition>
   )

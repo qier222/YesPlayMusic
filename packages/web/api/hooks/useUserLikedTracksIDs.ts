@@ -1,6 +1,6 @@
 import { likeATrack } from '@/web/api/track'
 import useUser from './useUser'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { APIs } from '@/shared/CacheAPIs'
 import { fetchUserLikedTracksIDs } from '../user'
@@ -8,8 +8,9 @@ import {
   FetchUserLikedTracksIDsResponse,
   UserApiNames,
 } from '@/shared/api/User'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
+import reactQueryClient from '@/web/utils/reactQueryClient'
 
 export default function useUserLikedTracksIDs() {
   const { data: user } = useUser()
@@ -33,7 +34,6 @@ export default function useUserLikedTracksIDs() {
 }
 
 export const useMutationLikeATrack = () => {
-  const queryClient = useQueryClient()
   const { data: user } = useUser()
   const { data: userLikedSongs } = useUserLikedTracksIDs()
   const uid = user?.account?.id ?? 0
@@ -54,13 +54,13 @@ export const useMutationLikeATrack = () => {
     {
       onMutate: async trackID => {
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries(key)
+        await reactQueryClient.cancelQueries(key)
 
         // Snapshot the previous value
-        const previousData = queryClient.getQueryData(key)
+        const previousData = reactQueryClient.getQueryData(key)
 
         // Optimistically update to the new value
-        queryClient.setQueryData(key, old => {
+        reactQueryClient.setQueryData(key, old => {
           const likedSongs = old as FetchUserLikedTracksIDsResponse
           const ids = likedSongs.ids
           const newIds = ids.includes(trackID)
@@ -77,7 +77,7 @@ export const useMutationLikeATrack = () => {
       },
       // If the mutation fails, use the context returned from onMutate to roll back
       onError: (err, trackID, context) => {
-        queryClient.setQueryData(key, (context as any).previousData)
+        reactQueryClient.setQueryData(key, (context as any).previousData)
         toast((err as any).toString())
       },
     }

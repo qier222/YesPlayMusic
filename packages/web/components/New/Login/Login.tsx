@@ -8,6 +8,7 @@ import Icon from '@/web/components/Icon'
 import LoginWithPhoneOrEmail from './LoginWithPhoneOrEmail'
 import LoginWithQRCode from './LoginWithQRCode'
 import persistedUiStates from '@/web/states/persistedUiStates'
+import useUser from '@/web/api/hooks/useUser'
 
 const OR = ({
   children,
@@ -26,7 +27,7 @@ const OR = ({
 
       <div className='mt-4 flex justify-center'>
         <button
-          className='text-16 font-medium text-night-50 transition-colors duration-300 hover:text-white'
+          className='text-16 font-medium text-night-50 transition-colors duration-400 hover:text-white'
           onClick={onClick}
         >
           {children}
@@ -37,11 +38,19 @@ const OR = ({
 }
 
 const Login = () => {
+  const { data: user, isLoading: isLoadingUser } = useUser()
   const { loginType } = useSnapshot(persistedUiStates)
   const { showLoginPanel } = useSnapshot(uiStates)
   const [cardType, setCardType] = useState<'qrCode' | 'phone/email'>(
     loginType === 'qrCode' ? 'qrCode' : 'phone/email'
   )
+
+  // Show login panel when user first loads the page and not logged in
+  useEffect(() => {
+    if (!user?.account && !isLoadingUser) {
+      uiStates.showLoginPanel = true
+    }
+  }, [user?.account, isLoadingUser])
 
   const animateCard = useAnimation()
   const handleSwitchCard = async () => {
@@ -80,7 +89,7 @@ const Login = () => {
       {/* Content */}
       <AnimatePresence>
         {showLoginPanel && (
-          <div className='fixed inset-0 z-30 flex justify-center rounded-24 pt-56'>
+          <div className='fixed inset-0 z-30 flex items-center justify-center rounded-24 pt-24'>
             <motion.div
               className='flex flex-col items-center'
               variants={{
@@ -135,9 +144,9 @@ const Login = () => {
                   layout='position'
                   transition={{ ease }}
                   onClick={() => (uiStates.showLoginPanel = false)}
-                  className='mt-10 flex h-14 w-14 items-center justify-center rounded-full bg-white/10'
+                  className='mt-10 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white/50 transition-colors duration-300 hover:bg-white/20 hover:text-white/70'
                 >
-                  <Icon name='x' className='h-7 w-7 text-white/50' />
+                  <Icon name='x' className='h-7 w-7 ' />
                 </motion.div>
               </AnimatePresence>
             </motion.div>

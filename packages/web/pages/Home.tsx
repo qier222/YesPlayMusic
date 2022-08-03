@@ -8,14 +8,14 @@ import FMCard from '@/web/components/FMCard'
 import { PlaylistApiNames } from '@/shared/api/Playlists'
 import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function Home() {
   const {
     data: dailyRecommendPlaylists,
     isLoading: isLoadingDailyRecommendPlaylists,
   } = useQuery(
-    PlaylistApiNames.FetchDailyRecommendPlaylists,
+    [PlaylistApiNames.FetchDailyRecommendPlaylists],
     fetchDailyRecommendPlaylists,
     {
       retry: false,
@@ -30,7 +30,7 @@ export default function Home() {
     data: recommendedPlaylists,
     isLoading: isLoadingRecommendedPlaylists,
   } = useQuery(
-    PlaylistApiNames.FetchRecommendedPlaylists,
+    [PlaylistApiNames.FetchRecommendedPlaylists],
     () => {
       return fetchRecommendedPlaylists({})
     },

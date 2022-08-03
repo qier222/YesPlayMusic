@@ -7,37 +7,33 @@ import {
   AlbumApiNames,
   FetchAlbumResponse,
 } from '@/shared/api/Album'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
-const fetch = async (params: FetchAlbumParams, noCache?: boolean) => {
-  const album = await fetchAlbum(params, !!noCache)
+const fetch = async (params: FetchAlbumParams) => {
+  const album = await fetchAlbum(params)
   if (album?.album?.songs) {
     album.album.songs = album.songs
   }
   return album
 }
 
-const fetchFromCache = (id: number): FetchAlbumResponse =>
+const fetchFromCache = (params: FetchAlbumParams): FetchAlbumResponse =>
   window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
     api: APIs.Album,
-    query: { id },
+    query: params,
   })
 
-export default function useAlbum(params: FetchAlbumParams, noCache?: boolean) {
-  return useQuery(
-    [AlbumApiNames.FetchAlbum, params.id],
-    () => fetch(params, noCache),
-    {
-      enabled: !!params.id,
-      staleTime: 24 * 60 * 60 * 1000, // 24 hours
-      placeholderData: () => fetchFromCache(params.id),
-    }
-  )
+export default function useAlbum(params: FetchAlbumParams) {
+  return useQuery([AlbumApiNames.FetchAlbum, params], () => fetch(params), {
+    enabled: !!params.id,
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    placeholderData: () => fetchFromCache(params),
+  })
 }
 
 export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
   return reactQueryClient.fetchQuery(
-    [AlbumApiNames.FetchAlbum, params.id],
+    [AlbumApiNames.FetchAlbum, params],
     () => fetch(params),
     {
       staleTime: Infinity,
@@ -46,9 +42,9 @@ export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
 }
 
 export async function prefetchAlbum(params: FetchAlbumParams) {
-  if (fetchFromCache(params.id)) return
+  if (fetchFromCache(params)) return
   await reactQueryClient.prefetchQuery(
-    [AlbumApiNames.FetchAlbum, params.id],
+    [AlbumApiNames.FetchAlbum, params],
     () => fetch(params),
     {
       staleTime: Infinity,

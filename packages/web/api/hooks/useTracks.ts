@@ -9,7 +9,7 @@ import {
   TrackApiNames,
 } from '@/shared/api/Track'
 import { APIs } from '@/shared/CacheAPIs'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useTracks(params: FetchTracksParams) {
   return useQuery(

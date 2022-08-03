@@ -1,5 +1,5 @@
 import { IpcChannels } from '@/shared/IpcChannels'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default function useAppleMusicAlbum(props: {
   id?: number

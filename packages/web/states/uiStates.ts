@@ -1,3 +1,4 @@
+import { IpcChannels } from '@/shared/IpcChannels'
 import { proxy } from 'valtio'
 
 interface UIStates {
@@ -6,6 +7,8 @@ interface UIStates {
   hideTopbarBackground: boolean
   librarySelectedTab: 'playlists' | 'albums' | 'artists' | 'videos'
   mobileShowPlayingNext: boolean
+  blurBackgroundImage: string | null
+  fullscreen: boolean
 }
 
 const initUIStates: UIStates = {
@@ -14,6 +17,8 @@ const initUIStates: UIStates = {
   hideTopbarBackground: false,
   librarySelectedTab: 'playlists',
   mobileShowPlayingNext: false,
+  blurBackgroundImage: null,
+  fullscreen: window.ipcRenderer?.sendSync(IpcChannels.IsMaximized) || false,
 }
 
 export default proxy<UIStates>(initUIStates)

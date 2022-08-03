@@ -12,9 +12,11 @@ import { lyricParser } from '@/web/utils/lyric'
 import Image from '@/web/components/New/Image'
 import { resizeImage } from '@/web/utils/common'
 import { breakpoint as bp } from '@/web/utils/const'
+import useUser from '@/web/api/hooks/useUser'
 
 const Lyrics = ({ tracksIDs }: { tracksIDs: number[] }) => {
   const [id, setId] = useState(0)
+  const { data: user } = useUser()
 
   useEffect(() => {
     if (id === 0) {
@@ -37,7 +39,7 @@ const Lyrics = ({ tracksIDs }: { tracksIDs: number[] }) => {
   return (
     <div
       className={cx(
-        'line-clamp-4 text-18 font-medium text-white/20 lg:text-21',
+        'line-clamp-5',
         css`
           height: 86px;
           ${bp.lg} {
@@ -46,8 +48,16 @@ const Lyrics = ({ tracksIDs }: { tracksIDs: number[] }) => {
         `
       )}
     >
+      <div className='mb-3.5 text-18 font-medium text-white/70'>
+        {user?.profile?.nickname}&apos;S LIKED TRACKS
+      </div>
       {lyricLines.map((line, index) => (
-        <div key={`${index}-${line}`}>{line}</div>
+        <div
+          key={`${index}-${line}`}
+          className='text-18 font-medium text-white/20'
+        >
+          {line}
+        </div>
       ))}
     </div>
   )
@@ -136,7 +146,7 @@ const PlayLikedSongsCard = () => {
             navigate(`/playlist/${likedSongsPlaylist?.playlist.id}`)
           }
           className={cx(
-            'flex items-center justify-center rounded-full bg-white/10 text-night-400',
+            'flex items-center justify-center rounded-full bg-white/10 text-night-400 transition duration-400 hover:bg-white/20 hover:text-neutral-300',
             css`
               padding: 15.5px;
             `

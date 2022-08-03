@@ -1,19 +1,16 @@
 import { resizeImage } from '@/web/utils/common'
 import { cx } from '@emotion/css'
 import { useNavigate } from 'react-router-dom'
-import Image from './Image'
 import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
-import { useVirtualizer } from '@tanstack/react-virtual'
-import { CSSProperties, useRef } from 'react'
+import { Virtuoso } from 'react-virtuoso'
+import { CSSProperties } from 'react'
 
 const CoverRow = ({
   albums,
   playlists,
   title,
   className,
-  containerClassName,
-  containerStyle,
 }: {
   title?: string
   className?: string
@@ -34,9 +31,6 @@ const CoverRow = ({
     if (playlists) prefetchPlaylist({ id })
   }
 
-  // The scrollable element for your list
-  const parentRef = useRef<HTMLDivElement>(null)
-
   type Item = Album | Playlist
   const items: Item[] = albums || playlists || []
   const rows = items.reduce((rows: Item[][], item: Item, index: number) => {
@@ -49,29 +43,6 @@ const CoverRow = ({
     return rows
   }, [])
 
-  // The virtualizer
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => parentRef.current,
-    overscan: 5,
-    estimateSize: () => {
-      const containerWidth = parentRef.current?.clientWidth
-      console.log(parentRef.current?.clientWidth)
-      if (!containerWidth) {
-        return 192
-      }
-      const gridGapY = 24
-      const gridGapX = 40
-      const gridColumns = 4
-      console.log(
-        (containerWidth - (gridColumns - 1) * gridGapX) / gridColumns + gridGapY
-      )
-      return (
-        (containerWidth - (gridColumns - 1) * gridGapX) / gridColumns + gridGapY
-      )
-    },
-  })
-
   return (
     <div className={className}>
       {/* Title */}
@@ -81,46 +52,43 @@ const CoverRow = ({
         </h4>
       )}
 
-      <div
-        ref={parentRef}
-        className={cx('w-full overflow-auto', containerClassName)}
-        style={containerStyle}
-      >
-        <div
-          className='relative w-full'
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((row: any) => (
-            <div
-              key={row.index}
-              className='absolute top-0 left-0 grid w-full grid-cols-4 gap-4 lg:gap-10'
-              style={{
-                height: `${row.size}px`,
-                transform: `translateY(${row.start}px)`,
-              }}
-            >
-              {rows[row.index].map((item: Item) => (
-                <img
-                  onClick={() => goTo(item.id)}
-                  key={item.id}
-                  alt={item.name}
-                  src={resizeImage(
+      <Virtuoso
+        className='no-scrollbar'
+        style={{
+          height: 'calc(100vh - 132px)',
+        }}
+        data={rows}
+        overscan={5}
+        itemSize={el => el.getBoundingClientRect().height + 24}
+        totalCount={rows.length}
+        components={{
+          Header: () => <div className='h-16'></div>,
+          Footer: () => <div className='h-16'></div>,
+        }}
+        itemContent={(index, row) => (
+          <div
+            key={index}
+            className='grid w-full grid-cols-4 gap-4 lg:mb-6 lg:gap-6'
+          >
+            {row.map((item: Item) => (
+              <img
+                onClick={() => goTo(item.id)}
+                key={item.id}
+                alt={item.name}
+                src={resizeImage(
+                  item?.picUrl ||
+                    (item as Playlist)?.coverImgUrl ||
                     item?.picUrl ||
-                      (item as Playlist)?.coverImgUrl ||
-                      item?.picUrl ||
-                      '',
-                    'md'
-                  )}
-                  className='aspect-square rounded-24'
-                  onMouseOver={() => prefetch(item.id)}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+                    '',
+                  'md'
+                )}
+                className='rounded-24'
+                onMouseOver={() => prefetch(item.id)}
+              />
+            ))}
+          </div>
+        )}
+      />
     </div>
   )
 }
