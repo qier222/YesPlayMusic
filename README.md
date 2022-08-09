@@ -64,7 +64,7 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 2. 点击本仓库右上角的 Fork，复制本仓库到你的 GitHub 账号。
 
-3. 点击仓库的 Add File，选择 Create new file，输入 `vercel.json`，将下面的内容复制粘贴到文件中，并将 `https://your-netease-api.example.com` 替换为你刚刚部署的网易云 API 地址：（！！可选，尽量不用！！）
+3. 点击仓库的 Add File，选择 Create new file，输入 `vercel.json`，将下面的内容复制粘贴到文件中，并将 `https://your-netease-api.example.com` 替换为你刚刚部署的网易云 API 地址：`（！！可选，尽量不用！！）`
 
 ```json
 {
@@ -83,7 +83,7 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 6. 点击 PERSONAL ACCOUNT 旁边的 Select。
 
-7. 点击 Environment Variables，填写 Name 为 `VUE_APP_NETEASE_API_URL`，如果你进行了第三步 请将改 Value 为 `/api` 否则请输入您的 NeteaseCloudMusicApi Api地址，点击 Add。最后点击底部的 Deploy 就可以部署到
+7. 点击 Environment Variables，填写 Name 为 `VUE_APP_NETEASE_API_URL`，如果你进行了第三步 请将改 Value 为 `/api` 否则请输入您的 `NeteaseCloudMusicApi Api地址`，点击 Add。最后点击底部的 Deploy 就可以部署到
    Vercel 了。
 
 ## ⚙️ 部署到自己的服务器
