@@ -1,42 +1,28 @@
-#!/bin/bash
+ #!/usr/bin/bash
 
-if [  ! `cat replit.nix | grep yarn` ]; then
-
-echo 'run = ["bash", "main.sh"]
-
-entrypoint = "main.sh"'>.replit
-
-echo '{ pkgs }: {
-		deps = with pkgs; [
-				yarn
-				nodejs-16_x
-				nodePackages.typescript-language-server
-		];
-}'>replit.nix
-echo 初始化 replit.nix... 请再次运行此命令
-exit
+# 初始化 .replit 和 replit.nix
+if [[ $1 == i ]];then
+    echo -e 'run = ["bash", "main.sh"]\n\nentrypoint = "main.sh"' >.replit
+    echo -e "{ pkgs }: {\n\t\tdeps = [\n\t\t\tpkgs.nodejs-16_x\n\t\t\tpkgs.yarn\n\t\t\tpkgs.bashInteractive\n\t\t];\n}" > replit.nix
+    exit
 fi
 
-echo 个人版由于内存仅 1G 可能会构建失败
-echo 构建过程中若失败请尝试再次运行此命令
-sleep 1
-
-if [ ! -d "api" ]; then
-git clone https://github.com/Binaryify/NeteaseCloudMusicApi.git api
+# 安装
+if [[ ! -d api ]];then
+    mkdir api
+    git clone https://github.com/Binaryify/NeteaseCloudMusicApi ./api &&  \
+    cd api && npm install && cd ..
 fi
 
-if [ ! -d "music" ]; then
-git clone https://github.com/qier222/YesPlayMusic.git music
-cp ./music/.env.example ./music/.env
+if [[ ! -d music ]];then
+    mkdir music
+    git clone https://github.com/qier222/YesPlayMusic ./music && \
+    cd music && cp .env.example .env && npm install --force && npm run build && cd ..
 fi
 
-echo 'cd api
-node app.js &
-echo "api 运行成功，正在启动主程序..."
-cd ..
-cd music 
-npm run serve'>main.sh
+# 启动
+PID=`ps -ef | grep npm | awk '{print $2}' | sed '$d'`
 
-cd api && npm install; sleep 1
-cd ../music && yarn install && yarn run build && cd ..
-
+if [[ ! -z ${PID} ]];then echo $PID | xargs kill;fi
+nohup bash -c 'cd api && PORT=35216 node app.js' > api.log 2>&1
+nohup bash -c 'npx serve music/dist/' > music.log 2>&1
