@@ -78,7 +78,12 @@ const MoreByArtist = ({ album }: { album?: Album }) => {
         </NavLink>
       </div>
 
-      <CoverRow albums={filteredAlbums} className='mx-2.5 lg:mx-0' />
+      <CoverRow
+        albums={filteredAlbums}
+        itemTitle='name'
+        itemSubtitle='year'
+        className='mx-2.5 lg:mx-0'
+      />
     </div>
   )
 }

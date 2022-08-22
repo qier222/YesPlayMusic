@@ -36,6 +36,8 @@ const ArtistAlbum = () => {
           <CoverRow
             key={index}
             albums={page}
+            itemTitle='name'
+            itemSubtitle='year'
             className='h-full w-full flex-shrink-0'
           />
         ))}

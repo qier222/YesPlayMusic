@@ -1,10 +1,6 @@
-import { isIOS, isSafari, resizeImage } from '@/web/utils/common'
+import { resizeImage } from '@/web/utils/common'
 import Image from '@/web/components/New/Image'
 import { memo, useEffect } from 'react'
-import useVideoCover from '@/web/hooks/useVideoCover'
-import { motion } from 'framer-motion'
-import { ease } from '@/web/utils/const'
-import useAppleMusicAlbum from '@/web/hooks/useAppleMusicAlbum'
 import uiStates from '@/web/states/uiStates'
 import VideoCover from './VideoCover'
 

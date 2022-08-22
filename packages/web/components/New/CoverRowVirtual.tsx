@@ -82,7 +82,7 @@ const CoverRow = ({
                     '',
                   'md'
                 )}
-                className='rounded-24'
+                className='aspect-square w-full rounded-24'
                 onMouseOver={() => prefetch(item.id)}
               />
             ))}

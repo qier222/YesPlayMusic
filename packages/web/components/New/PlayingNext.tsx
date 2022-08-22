@@ -10,6 +10,8 @@ import { useWindowSize } from 'react-use'
 import { playerWidth, topbarHeight } from '@/web/utils/const'
 import useIsMobile from '@/web/hooks/useIsMobile'
 import { Virtuoso } from 'react-virtuoso'
+import toast from 'react-hot-toast'
+import { openContextMenu } from '@/web/states/contextMenus'
 
 const Header = () => {
   return (
@@ -23,10 +25,10 @@ const Header = () => {
         PLAYING NEXT
       </div>
       <div className='flex'>
-        <div className='mr-2'>
+        <div onClick={() => toast('开发中')} className='mr-2'>
           <Icon name='repeat-1' className='h-7 w-7 opacity-40' />
         </div>
-        <div>
+        <div onClick={() => toast('开发中')}>
           <Icon name='shuffle' className='h-7 w-7 opacity-40' />
         </div>
       </div>
@@ -51,6 +53,17 @@ const Track = ({
       onClick={e => {
         if (e.detail === 2 && track?.id) player.playTrack(track.id)
       }}
+      onContextMenu={event => {
+        track?.id &&
+          openContextMenu({
+            event,
+            type: 'track',
+            dataSourceID: track.id,
+            options: {
+              useCursorPosition: true,
+            },
+          })
+      }}
     >
       {/* Cover */}
       <img
@@ -71,7 +84,7 @@ const Track = ({
         >
           {track?.name}
         </div>
-        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200 dark:text-neutral-700'>
+        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200 dark:text-white/25'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>

@@ -7,7 +7,7 @@ import {
   AlbumApiNames,
   FetchAlbumResponse,
 } from '@/shared/api/Album'
-import { useQuery } from '@tanstack/react-query'
+import { QueryOptions, useQuery } from '@tanstack/react-query'
 
 const fetch = async (params: FetchAlbumParams) => {
   const album = await fetchAlbum(params)
@@ -23,11 +23,15 @@ const fetchFromCache = (params: FetchAlbumParams): FetchAlbumResponse =>
     query: params,
   })
 
-export default function useAlbum(params: FetchAlbumParams) {
+export default function useAlbum(
+  params: FetchAlbumParams
+  // queryOptions?: QueryOptions
+) {
   return useQuery([AlbumApiNames.FetchAlbum, params], () => fetch(params), {
     enabled: !!params.id,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
     placeholderData: () => fetchFromCache(params),
+    // ...queryOptions,
   })
 }
 

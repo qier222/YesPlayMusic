@@ -1,6 +1,7 @@
 export enum SearchApiNames {
   Search = 'search',
   MultiMatchSearch = 'multiMatchSearch',
+  FetchSearchSuggestions = 'fetchSearchSuggestions',
 }
 
 // 搜索
@@ -78,5 +79,21 @@ export interface MultiMatchSearchResponse {
     playlist: Playlist[]
     orpheus: unknown
     orders: Array<'artist' | 'album'>
+  }
+}
+
+// 搜索建议
+export interface FetchSearchSuggestionsParams {
+  keywords: string
+  type?: 'mobile'
+}
+export interface FetchSearchSuggestionsResponse {
+  code: number
+  result: {
+    albums?: Album[]
+    artists?: Artist[]
+    playlists?: Playlist[]
+    songs?: Track[]
+    order: Array<'songs' | 'artists' | 'albums' | 'playlists'>
   }
 }

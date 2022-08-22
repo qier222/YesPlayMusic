@@ -3,20 +3,21 @@
  * @see https://www.electron.build/configuration/configuration
  */
 
-const pkg = require('../../package.json')
+const pkg = require('./package.json')
+const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
 
 module.exports = {
   appId: 'com.qier222.yesplaymusic.alpha',
   productName: pkg.productName,
   copyright: 'Copyright © 2022 qier222',
-  asar: false,
+  asar: true,
   directories: {
     output: 'release',
     buildResources: 'build',
   },
   npmRebuild: false,
   buildDependenciesFromSource: true,
-  electronVersion: '19.0.3',
+  electronVersion,
   publish: [
     {
       provider: 'github',
@@ -32,14 +33,14 @@ module.exports = {
         target: 'nsis',
         arch: ['x64'],
       },
-      {
-        target: 'nsis',
-        arch: ['arm64'],
-      },
-      {
-        target: 'portable',
-        arch: ['x64'],
-      },
+      // {
+      //   target: 'nsis',
+      //   arch: ['arm64'],
+      // },
+      // {
+      //   target: 'portable',
+      //   arch: ['x64'],
+      // },
     ],
     publisherName: 'qier222',
     icon: 'build/icons/icon.ico',
@@ -58,7 +59,11 @@ module.exports = {
     target: [
       {
         target: 'dmg',
-        arch: ['x64', 'arm64', 'universal'],
+        arch: [
+          'x64',
+          'arm64',
+          // 'universal'
+        ],
       },
     ],
     artifactName: '${productName}-${version}-${os}-${arch}.${ext}',
@@ -72,28 +77,32 @@ module.exports = {
     target: [
       {
         target: 'deb',
-        arch: ['x64', 'arm64', 'armv7l'],
+        arch: [
+          'x64',
+          // 'arm64',
+          // 'armv7l'
+        ],
       },
       {
         target: 'AppImage',
         arch: ['x64'],
       },
-      {
-        target: 'snap',
-        arch: ['x64'],
-      },
-      {
-        target: 'pacman',
-        arch: ['x64'],
-      },
-      {
-        target: 'rpm',
-        arch: ['x64'],
-      },
-      {
-        target: 'tar.gz',
-        arch: ['x64'],
-      },
+      // {
+      //   target: 'snap',
+      //   arch: ['x64'],
+      // },
+      // {
+      //   target: 'pacman',
+      //   arch: ['x64'],
+      // },
+      // {
+      //   target: 'rpm',
+      //   arch: ['x64'],
+      // },
+      // {
+      //   target: 'tar.gz',
+      //   arch: ['x64'],
+      // },
     ],
     artifactName: '${productName}-${version}-${os}.${ext}',
     category: 'Music',
@@ -101,7 +110,7 @@ module.exports = {
   },
   files: [
     '!**/*.ts',
-    // '!**/node_modules/better-sqlite3/{bin,build,deps}/**',
+    '!**/node_modules/better-sqlite3/{bin,build,deps}/**',
     '!**/node_modules/*/{*.MD,*.md,README,readme}',
     '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
     '!**/node_modules/*.d.ts',

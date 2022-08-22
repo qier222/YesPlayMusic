@@ -333,7 +333,7 @@ class Server {
   }
 
   listen() {
-    this.app.listen(this.port, '0.0.0.0', () => {
+    this.app.listen(this.port, '127.0.0.1', () => {
       log.info(`[server] API server listening on port ${this.port}`)
     })
   }

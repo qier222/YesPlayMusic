@@ -3,8 +3,16 @@ import { breakpoint as bp } from '@/web/utils/const'
 import ArtistInfo from './ArtistInfo'
 import Actions from './Actions'
 import LatestRelease from './LatestRelease'
-import Cover from "./Cover"
-const Header = ({ artist }: { artist?: Artist }) => {
+import Cover from './Cover'
+import useArtist from '@/web/api/hooks/useArtist'
+import { useParams } from 'react-router-dom'
+
+const Header = () => {
+  const params = useParams()
+  const { data: artistRaw, isLoading } = useArtist({
+    id: Number(params.id) || 0,
+  })
+  const artist = artistRaw?.artist
 
   return (
     <div
@@ -39,8 +47,8 @@ const Header = ({ artist }: { artist?: Artist }) => {
             `
           )}
         >
-          <ArtistInfo artist={artist} />
-          <Actions />
+          <ArtistInfo isLoading={isLoading} artist={artist} />
+          <Actions isLoading={isLoading} />
         </div>
 
         <LatestRelease />

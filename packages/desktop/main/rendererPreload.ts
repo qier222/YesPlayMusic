@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { IpcChannels } from '@/shared/IpcChannels'
-import { isLinux, isMac, isWindows } from './utils'
+import { isLinux, isMac, isProd, isWindows } from './utils'
 const { contextBridge, ipcRenderer } = require('electron')
-const log = require('electron-log')
 
-log.transports.file.level = 'info'
-log.transports.ipc.level = false
-log.variables.process = 'renderer'
-contextBridge.exposeInMainWorld('log', log)
+if (isProd) {
+  const log = require('electron-log')
+  log.transports.file.level = 'info'
+  log.transports.ipc.level = false
+  log.variables.process = 'renderer'
+  contextBridge.exposeInMainWorld('log', log)
+}
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
   sendSync: ipcRenderer.sendSync,

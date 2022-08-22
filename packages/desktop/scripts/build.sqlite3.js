@@ -21,12 +21,22 @@ const betterSqlite3Version = pkg.dependencies['better-sqlite3'].replaceAll(
 const electronModuleVersion = releases.find(r =>
   r.version.includes(electronVersion)
 )?.deps?.modules
+if (!electronModuleVersion) {
+  console.error(
+    pc.red('Can not find electron module version in electron-releases')
+  )
+  process.exit(1)
+}
 const argv = minimist(process.argv.slice(2))
 
 const projectDir = path.resolve(process.cwd(), '../../')
+const distDir = `${projectDir}/packages/desktop/dist/binary`
+console.log(pc.cyan(`projectDir=${projectDir}`))
+console.log(pc.cyan(`distDir=${distDir}`))
 
-if (!fs.existsSync(`${projectDir}/packages/desktop/dist/binary`)) {
-  fs.mkdirSync(`${projectDir}/packages/desktop/dist/binary`, {
+if (!fs.existsSync(distDir)) {
+  console.log(pc.cyan(`Creating dist/binary directory: ${distDir}`))
+  fs.mkdirSync(distDir, {
     recursive: true,
   })
 }
@@ -37,12 +47,12 @@ const download = async arch => {
     console.log(pc.red('No electron module version found! Skip download.'))
     return false
   }
-  const dir = `${projectDir}/tmp/better-sqlite3`
+  const tmpDir = `${projectDir}/tmp/better-sqlite3`
   const fileName = `better-sqlite3-v${betterSqlite3Version}-electron-v${electronModuleVersion}-${process.platform}-${arch}`
   const zipFileName = `${fileName}.tar.gz`
   const url = `https://github.com/JoshuaWise/better-sqlite3/releases/download/v${betterSqlite3Version}/${zipFileName}`
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, {
+  if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir, {
       recursive: true,
     })
   }
@@ -53,7 +63,7 @@ const download = async arch => {
       url,
       responseType: 'stream',
     }).then(response => {
-      response.data.pipe(fs.createWriteStream(`${dir}/${zipFileName}`))
+      response.data.pipe(fs.createWriteStream(`${tmpDir}/${zipFileName}`))
       return true
     })
   } catch (e) {
@@ -62,7 +72,7 @@ const download = async arch => {
   }
 
   try {
-    execSync(`tar -xvzf ${dir}/${zipFileName} -C ${dir}`)
+    execSync(`tar -xvzf ${tmpDir}/${zipFileName} -C ${tmpDir}`)
   } catch (e) {
     console.log(pc.red('Extract failed! Skip extract.'))
     return false
@@ -70,8 +80,8 @@ const download = async arch => {
 
   try {
     fs.copyFileSync(
-      `${dir}/build/Release/better_sqlite3.node`,
-      `${projectDir}/packages/desktop/dist/binary/better_sqlite3_${arch}.node`
+      `${tmpDir}/build/Release/better_sqlite3.node`,
+      `${distDir}/better_sqlite3_${arch}.node`
     )
   } catch (e) {
     console.log(pc.red('Copy failed! Skip copy.', e))
@@ -79,7 +89,7 @@ const download = async arch => {
   }
 
   try {
-    fs.rmSync(`${dir}/build`, { recursive: true, force: true })
+    fs.rmSync(`${tmpDir}/build`, { recursive: true, force: true })
   } catch (e) {
     console.log(pc.red('Delete failed! Skip delete.'))
     return false
@@ -103,10 +113,10 @@ const build = async arch => {
   })
     .then(() => {
       console.info('Build succeeded')
-      fs.copyFileSync(
-        `${projectDir}/node_modules/better-sqlite3/build/Release/better_sqlite3.node`,
-        `${projectDir}/packages/desktop/dist/binary/better_sqlite3_${arch}.node`
-      )
+      const from = `${projectDir}/node_modules/better-sqlite3/build/Release/better_sqlite3.node`
+      const to = `${distDir}/better_sqlite3_${arch}.node`
+      console.info(`copy ${from} to ${to}`)
+      fs.copyFileSync(from, to)
     })
     .catch(e => {
       console.error(pc.red('Build failed!'))

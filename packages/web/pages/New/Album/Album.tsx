@@ -1,22 +1,17 @@
-import TrackListHeader from '@/web/components/New/TrackListHeader'
 import useAlbum from '@/web/api/hooks/useAlbum'
 import useTracks from '@/web/api/hooks/useTracks'
-import { NavLink, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import PageTransition from '@/web/components/New/PageTransition'
 import TrackList from '@/web/components/New/TrackList'
 import player from '@/web/states/player'
 import toast from 'react-hot-toast'
-import { useSnapshot } from 'valtio'
-import useArtistAlbums from '@/web/api/hooks/useArtistAlbums'
-import { css, cx } from '@emotion/css'
-import CoverRow from '@/web/components/New/CoverRow'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import MoreByArtist from './MoreByArtist'
 import Header from './Header'
 
 const Album = () => {
   const params = useParams()
-  const { data: album } = useAlbum({
+  const { data: album, isLoading } = useAlbum({
     id: Number(params.id),
   })
 
@@ -39,9 +34,18 @@ const Album = () => {
     <PageTransition>
       <Header />
       <TrackList
-        tracks={tracks?.songs || album?.album.songs || album?.songs}
+        tracks={
+          tracks?.songs?.length
+            ? tracks?.songs
+            : album?.album?.songs?.length
+            ? album?.album.songs
+            : album?.songs?.length
+            ? album.songs
+            : undefined
+        }
         className='z-10 mx-2.5 mt-3 lg:mx-0 lg:mt-10'
         onPlay={onPlay}
+        isLoading={isLoading}
       />
       <MoreByArtist album={album?.album} />
 

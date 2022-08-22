@@ -16,4 +16,4 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
   app.setPath('appData', portableUserDataPath)
 }
 
-log.info(`[index] userData path: ${app.getPath('userData')}`)
+log.info(`[preload] userData path: ${app.getPath('userData')}`)

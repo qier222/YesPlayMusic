@@ -6,6 +6,7 @@ import { defineConfig } from 'vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { VitePWA } from 'vite-plugin-pwa'
+import filenamesToType from './vitePluginFilenamesToType'
 
 dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
 const IS_ELECTRON = process.env.IS_ELECTRON
@@ -25,6 +26,12 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    filenamesToType([
+      {
+        dictionary: './assets/icons',
+        typeFile: './components/Icon/iconNamesType.ts',
+      },
+    ]),
 
     /**
      * @see https://vite-plugin-pwa.netlify.app/guide/generate.html
@@ -85,8 +92,8 @@ export default defineConfig({
     strictPort: IS_ELECTRON ? true : false,
     proxy: {
       '/netease/': {
-        target: `http://192.168.50.111:${
-          // target: `http://127.0.0.1:${
+        // target: `http://192.168.50.111:${
+        target: `http://127.0.0.1:${
           process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
         }`,
         changeOrigin: true,

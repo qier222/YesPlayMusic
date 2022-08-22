@@ -17,7 +17,7 @@ const Header = () => {
   const params = useParams()
   const { data: userLikedAlbums } = useUserAlbums()
 
-  const { data: albumRaw } = useAlbum({
+  const { data: albumRaw, isLoading: isLoadingAlbum } = useAlbum({
     id: Number(params.id),
   })
   const album = useMemo(() => albumRaw?.album, [albumRaw])
@@ -89,6 +89,7 @@ const Header = () => {
   return (
     <TrackListHeader
       {...{
+        isLoading: isLoadingAlbum,
         title,
         creatorName,
         creatorLink,

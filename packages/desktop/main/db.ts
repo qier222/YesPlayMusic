@@ -95,15 +95,19 @@ class DB {
     this.initTables()
     this.migrate()
 
-    log.info('[db] Database initialized')
+    log.info('[db] Database initialized.')
   }
 
   initTables() {
+    log.info('[db] Initializing database tables...')
     const init = readSqlFile('init.sql')
     this.sqlite.exec(init)
+    log.info('[db] Database tables initialized.')
   }
 
   migrate() {
+    log.info('[db] Migrating database..')
+
     const key = 'appVersion'
     const appVersion = this.find(Tables.AppData, key)
     const updateAppVersionInDB = () => {
@@ -129,6 +133,8 @@ class DB {
     })
 
     updateAppVersionInDB()
+
+    log.info('[db] Database migrated.')
   }
 
   find<T extends TableNames>(

@@ -93,6 +93,11 @@ module.exports = {
       transitionDuration: {
         400: '400ms',
       },
+      opacity: {
+        5: '0.05',
+        15: '.15',
+        25: '.25',
+      },
     },
   },
   variants: {},

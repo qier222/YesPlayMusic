@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query'
 export default function useArtists(ids: number[]) {
   return useQuery(
     ['fetchArtists', ids],
-    () => Promise.all(ids.map(id => fetchArtist({ id }, false))),
+    () => Promise.all(ids.map(id => fetchArtist({ id }))),
     {
       enabled: !!ids && ids.length > 0,
       staleTime: 5 * 60 * 1000, // 5 mins

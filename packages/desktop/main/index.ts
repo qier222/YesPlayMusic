@@ -17,7 +17,7 @@ import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { createMenu } from './menu'
 import { isDev, isWindows, isLinux, isMac } from './utils'
 import store from './store'
-import Airplay from './airplay'
+// import Airplay from './airplay'
 
 class Main {
   win: BrowserWindow | null = null
@@ -26,7 +26,6 @@ class Main {
 
   constructor() {
     log.info('[index] Main process start')
-
     // Disable GPU Acceleration for Windows 7
     if (release().startsWith('6.1')) app.disableHardwareAcceleration()
 
@@ -49,7 +48,7 @@ class Main {
       this.createThumbar()
       initIpcMain(this.win, this.tray, this.thumbar, store)
       this.initDevTools()
-      new Airplay(this.win)
+      // new Airplay(this.win)
     })
   }
 
@@ -92,7 +91,8 @@ class Main {
       titleBarStyle: isMac ? 'customButtonsOnHover' : 'hidden',
       trafficLightPosition: { x: 24, y: 24 },
       frame: false,
-      transparent: true,
+      backgroundColor: '#000',
+      show: false,
     }
     if (store.get('window')) {
       options.x = store.get('window.x')
@@ -108,6 +108,11 @@ class Main {
     this.win.webContents.setWindowOpenHandler(({ url }) => {
       if (url.startsWith('https:')) shell.openExternal(url)
       return { action: 'deny' }
+    })
+
+    // 减少显示空白窗口的时间
+    this.win.once('ready-to-show', () => {
+      this.win && this.win.show()
     })
 
     this.disableCORS()

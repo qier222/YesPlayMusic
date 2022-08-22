@@ -6,6 +6,7 @@ import React from 'react'
 
 interface Props {
   className?: string
+  isLoading?: boolean
   title?: string
   creatorName?: string
   creatorLink?: string
@@ -20,6 +21,7 @@ interface Props {
 
 const TrackListHeader = ({
   className,
+  isLoading,
   title,
   creatorName,
   creatorLink,
@@ -46,9 +48,16 @@ const TrackListHeader = ({
 
       <div className='flex flex-col justify-between'>
         <Info
-          {...{ title, creatorName, creatorLink, description, extraInfo }}
+          {...{
+            title,
+            creatorName,
+            creatorLink,
+            description,
+            extraInfo,
+            isLoading,
+          }}
         />
-        <Actions {...{ onPlay, onLike, isLiked }} />
+        <Actions {...{ onPlay, onLike, isLiked, isLoading }} />
       </div>
     </div>
   )

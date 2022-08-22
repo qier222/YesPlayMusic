@@ -110,9 +110,15 @@ export function formatDuration(
 }
 
 export function scrollToTop(smooth = false) {
-  const main = document.getElementById('mainContainer')
-  if (!main) return
-  main.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
+  document
+    .querySelector('#main')
+    ?.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
+}
+
+export function scrollToBottom(smooth = false) {
+  document
+    .querySelector('#main')
+    ?.scrollTo({ top: 100000, behavior: smooth ? 'smooth' : 'auto' })
 }
 
 export async function getCoverColor(coverUrl: string) {

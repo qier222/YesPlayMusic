@@ -4,6 +4,8 @@ import { State as PlayerState } from '@/web/utils/player'
 import useTracks from '@/web/api/hooks/useTracks'
 import { css, cx } from '@emotion/css'
 import Image from '@/web/components/New/Image'
+import useArtist from '@/web/api/hooks/useArtist'
+import { useParams } from 'react-router-dom'
 
 const Track = ({
   track,
@@ -49,7 +51,13 @@ const Track = ({
   )
 }
 
-const Popular = ({ tracks }: { tracks?: Track[] }) => {
+const Popular = () => {
+  const params = useParams()
+  const { data: artist, isLoading: isLoadingArtist } = useArtist({
+    id: Number(params.id) || 0,
+  })
+
+  const tracks = artist?.hotSongs || []
   const onPlay = (id: number) => {
     if (!tracks) return
     player.playAList(

@@ -56,7 +56,7 @@ const NowPlaying = () => {
         )}
       </AnimatePresence>
 
-      {/* Controls (for Animation) */}
+      {/* Controls */}
       <Controls />
     </>
   )

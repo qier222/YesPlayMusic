@@ -5,6 +5,8 @@ import {
   SearchTypes,
   MultiMatchSearchParams,
   MultiMatchSearchResponse,
+  FetchSearchSuggestionsParams,
+  FetchSearchSuggestionsResponse,
 } from '@/shared/api/Search'
 
 // 搜索
@@ -27,5 +29,16 @@ export function multiMatchSearch(
     url: '/search/multimatch',
     method: 'get',
     params: params,
+  })
+}
+
+// 搜索建议
+export function fetchSearchSuggestions(
+  params: FetchSearchSuggestionsParams
+): Promise<FetchSearchSuggestionsResponse> {
+  return request({
+    url: '/search/suggest',
+    method: 'get',
+    params,
   })
 }

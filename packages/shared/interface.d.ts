@@ -112,6 +112,7 @@ declare interface Track {
   v: number
   version: number
   tns: (string | null)[]
+  duration?: number
 }
 declare interface Artist {
   alias: unknown[]

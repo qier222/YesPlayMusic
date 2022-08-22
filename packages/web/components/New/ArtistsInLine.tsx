@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { cx } from '@emotion/css'
+import { openContextMenu } from '@/web/states/contextMenus'
 
 const ArtistInline = ({
   artists,
@@ -37,6 +38,16 @@ const ArtistInline = ({
         <span key={`${artist.id}-${artist.name}`}>
           <span
             onClick={() => handleClick(artist.id)}
+            onContextMenu={event => {
+              openContextMenu({
+                event,
+                type: 'artist',
+                dataSourceID: artist.id,
+                options: {
+                  useCursorPosition: true,
+                },
+              })
+            }}
             className={cx(!!artist.id && !disableLink && hoverClassName)}
           >
             {artist.name}

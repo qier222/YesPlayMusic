@@ -1,4 +1,3 @@
-import { Toaster } from 'react-hot-toast'
 import TitleBar from '@/web/components/TitleBar'
 import IpcRendererReact from '@/web/IpcRendererReact'
 import Layout from '@/web/components/New/Layout'
@@ -7,20 +6,18 @@ import ErrorBoundary from '@/web/components/New/ErrorBoundary'
 import useIsMobile from '@/web/hooks/useIsMobile'
 import LayoutMobile from '@/web/components/New/LayoutMobile'
 import ScrollRestoration from '@/web/components/New/ScrollRestoration'
+import Toaster from './components/New/Toaster'
 
 const App = () => {
   const isMobile = useIsMobile()
 
   return (
     <ErrorBoundary>
-      <div>
-        {window.env?.isEnableTitlebar && <TitleBar />}
-        {isMobile ? <LayoutMobile /> : <Layout />}
-        <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />
-        <ScrollRestoration />
-        <IpcRendererReact />
-        <Devtool />
-      </div>
+      {isMobile ? <LayoutMobile /> : <Layout />}
+      <Toaster />
+      <ScrollRestoration />
+      <IpcRendererReact />
+      <Devtool />
     </ErrorBoundary>
   )
 }

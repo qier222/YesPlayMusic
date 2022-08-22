@@ -17,6 +17,11 @@
       "outputs": ["release/**"],
       "cache": false
     },
+    "pack:test": {
+      "dependsOn": ["build"],
+      "outputs": ["release/**"],
+      "cache": false
+    },
     "test": {
       "dependsOn": ["build"],
       "outputs": []

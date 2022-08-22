@@ -1,11 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 
-const baseURL = String(
-  import.meta.env.DEV ? '/yesplaymusic' : `http://127.0.0.1:42710/yesplaymusic`
-)
-
 const request: AxiosInstance = axios.create({
-  baseURL,
+  baseURL: '/yesplaymusic',
   withCredentials: true,
   timeout: 15000,
 })

@@ -51,7 +51,6 @@ const Controls = () => {
           classNames,
           css`
             margin-right: 5px;
-            border-radius: 4px 20px 4px 4px;
           `
         )}
       >

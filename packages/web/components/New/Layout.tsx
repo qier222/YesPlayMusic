@@ -11,6 +11,7 @@ import BlurBackground from './BlurBackground'
 import Airplay from './Airplay'
 import TitleBar from './TitleBar'
 import uiStates from '@/web/states/uiStates'
+import ContextMenus from './ContextMenus/ContextMenus'
 
 const Layout = () => {
   const playerSnapshot = useSnapshot(player)
@@ -21,8 +22,8 @@ const Layout = () => {
     <div
       id='layout'
       className={cx(
-        'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black',
-        window.env?.isElectron && !fullscreen && 'rounded-24'
+        'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black'
+        // window.env?.isElectron && !fullscreen && 'rounded-24'
       )}
     >
       <BlurBackground />
@@ -38,7 +39,9 @@ const Layout = () => {
         </div>
       )}
 
-      {window.env?.isWindows && <TitleBar />}
+      {(window.env?.isWindows || window.env?.isLinux) && <TitleBar />}
+
+      <ContextMenus />
 
       {/* {window.env?.isElectron && <Airplay />} */}
     </div>

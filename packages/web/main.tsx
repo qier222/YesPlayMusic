@@ -3,7 +3,6 @@ import './utils/theme'
 import { StrictMode } from 'react'
 import * as ReactDOMClient from 'react-dom/client'
 import {
-  Routes,
   BrowserRouter,
   useLocation,
   useNavigationType,
