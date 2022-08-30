@@ -50,7 +50,11 @@
           </div>
           <div class="like-button">
             <button-icon
-              :title="$t('player.like')"
+              :title="
+                player.isCurrentTrackLiked
+                  ? $t('player.unlike')
+                  : $t('player.like')
+              "
               @click.native="likeATrack(player.currentTrack.id)"
             >
               <svg-icon

@@ -99,6 +99,7 @@ export default {
   },
   player: {
     like: '喜歡',
+    unlike: '取消喜歡',
     previous: '上一首',
     next: '下一首',
     repeat: '循環播放',
