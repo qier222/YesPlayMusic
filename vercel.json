@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "http://cloud-music.pl-fe.cn/:match*"
+      "destination": "https://netease.happyking.top/:match*"
     }
   ]
 }
