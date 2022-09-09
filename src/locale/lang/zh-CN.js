@@ -103,6 +103,7 @@ export default {
   },
   player: {
     like: '喜欢',
+    unlike: '取消喜欢',
     previous: '上一首',
     next: '下一首',
     repeat: '循环播放',

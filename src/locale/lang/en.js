@@ -102,6 +102,7 @@ export default {
   },
   player: {
     like: 'Like',
+    unlike: 'Unlike',
     previous: 'Previous Song',
     next: 'Next Song',
     repeat: 'Repeat',

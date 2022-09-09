@@ -98,6 +98,7 @@ export default {
   },
   player: {
     like: 'Beğen',
+    unlike: 'Aksine',
     previous: 'Önceki Müzik',
     next: 'Sonraki Müzik',
     repeat: 'Tekrarla',
