@@ -3,7 +3,7 @@ import { getArtist } from '@/api/artist';
 import { trackScrobble, trackUpdateNowPlaying } from '@/api/lastfm';
 import { fmTrash, personalFM } from '@/api/others';
 import { getPlaylistDetail, intelligencePlaylist } from '@/api/playlist';
-import { getMP3, getTrackDetail, scrobble } from '@/api/track';
+import { getLyric, getMP3, getTrackDetail, scrobble } from '@/api/track';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { cacheTrackSource, getTrackSource } from '@/utils/db';
@@ -616,8 +616,28 @@ export default class {
 
     navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
     if (isCreateMpris) {
-      ipcRenderer?.send('metadata', metadata);
+      this._updateMprisState(track, metadata);
     }
+  }
+  // OSDLyrics 会检测 Mpris 状态并寻找对应歌词文件，所以要在更新 Mpris 状态之前保证歌词下载完成
+  async _updateMprisState(track, metadata) {
+    if (!store.state.settings.enableOsdlyricsSupport) {
+      return ipcRenderer?.send('metadata', metadata);
+    }
+
+    let lyricName = track.ar.map(ar => ar.name).join(', ') + '-' + track.name;
+    let lyricContent = await getLyric(track.id);
+
+    if (!lyricContent.lrc.lyric) {
+      return ipcRenderer?.send('metadata', metadata);
+    }
+    ipcRenderer.send('saveLyric', {
+      name: lyricName,
+      lyric: lyricContent.lrc.lyric,
+    });
+    ipcRenderer.on('saveLyricFinished', () => {
+      ipcRenderer?.send('metadata', metadata);
+    });
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {

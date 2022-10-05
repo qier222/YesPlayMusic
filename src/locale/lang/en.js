@@ -180,6 +180,10 @@ export default {
       exit: 'Exit',
       minimizeToTray: 'Minimize to tray',
     },
+    enableOsdlyricsSupport: {
+      title: 'desktop lyrics support',
+      desc: 'Only takes effect under Linux. After enable, I will download the lyrics file to the local, and try to launch OSDLyrics at startup',
+    },
     unm: {
       enable: 'Enable',
       audioSource: {
