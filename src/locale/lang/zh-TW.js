@@ -179,8 +179,8 @@ export default {
       minimizeToTray: '最小化到工作列角落',
     },
     enableOsdlyricsSupport: {
-      title: '桌面歌詞支持',
-      desc: '僅 Linux 下生效，開啟後將會下載歌詞文件到本地，並會嘗試在啟動時拉起 OSDLyrics',
+      title: '啟用「桌面歌詞」支援',
+      desc: '只在 Linux 環境下生效。啟用後會將歌詞檔案下載至本機位置，並在開啟播放器時嘗試連帶啟動 OSDLyrics。',
     },
     unm: {
       enable: '啟用',
