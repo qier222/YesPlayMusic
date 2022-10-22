@@ -181,7 +181,7 @@ export default {
       minimizeToTray: 'Minimize to tray',
     },
     enableOsdlyricsSupport: {
-      title: '"Desktop Lyrics" support',
+      title: 'desktop lyrics support',
       desc: 'Only takes effect under Linux. After enabled, it downloads the lyrics file to the local, and tries to launch OSDLyrics at startup.',
     },
     unm: {
