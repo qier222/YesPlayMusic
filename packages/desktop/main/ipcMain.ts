@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain, app } from 'electron'
-import { db, Tables } from './db'
+// import { db, Tables } from './db'
 import { IpcChannels, IpcChannelsParams } from '@/shared/IpcChannels'
 import cache from './cache'
 import log from './log'
@@ -67,9 +67,9 @@ function initWindowIpcMain(win: BrowserWindow | null) {
     win?.setSize(1440, 1024, true)
   })
 
-  on(IpcChannels.IsMaximized, e => {
+  handle(IpcChannels.IsMaximized, () => {
     if (!win) return
-    e.returnValue = win.isMaximized()
+    return win.isMaximized()
   })
 }
 
@@ -118,23 +118,36 @@ function initOtherIpcMain() {
    * 清除API缓存
    */
   on(IpcChannels.ClearAPICache, () => {
-    db.truncate(Tables.Track)
-    db.truncate(Tables.Album)
-    db.truncate(Tables.Artist)
-    db.truncate(Tables.Playlist)
-    db.truncate(Tables.ArtistAlbum)
-    db.truncate(Tables.AccountData)
-    db.truncate(Tables.Audio)
-    db.vacuum()
+    // db.truncate(Tables.Track)
+    // db.truncate(Tables.Album)
+    // db.truncate(Tables.Artist)
+    // db.truncate(Tables.Playlist)
+    // db.truncate(Tables.ArtistAlbum)
+    // db.truncate(Tables.AccountData)
+    // db.truncate(Tables.Audio)
+    // db.vacuum()
   })
 
   /**
    * Get API cache
    */
-  on(IpcChannels.GetApiCacheSync, (event, args) => {
+  // on(IpcChannels.GetApiCache, (event, args) => {
+  //   const { api, query } = args
+  //   const data = cache.get(api, query)
+  //   event.returnValue = data
+  // })
+
+  handle(IpcChannels.GetApiCache, async (event, args) => {
     const { api, query } = args
-    const data = cache.get(api, query)
-    event.returnValue = data
+    if (api !== 'user/account') {
+      return null
+    }
+    try {
+      const data = await cache.get(api, query)
+      return data
+    } catch {
+      return null
+    }
   })
 
   /**
@@ -194,34 +207,41 @@ function initOtherIpcMain() {
   })
 
   /**
+   * 退出登陆
+   */
+  handle(IpcChannels.Logout, async () => {
+    // db.truncate(Tables.AccountData)
+    return true
+  })
+
+  /**
    * 导出tables到json文件，方便查看table大小（dev环境）
    */
   if (process.env.NODE_ENV === 'development') {
-    on(IpcChannels.DevDbExportJson, () => {
-      const tables = [
-        Tables.ArtistAlbum,
-        Tables.Playlist,
-        Tables.Album,
-        Tables.Track,
-        Tables.Artist,
-        Tables.Audio,
-        Tables.AccountData,
-        Tables.Lyric,
-      ]
-      tables.forEach(table => {
-        const data = db.findAll(table)
-
-        fs.writeFile(
-          `./tmp/${table}.json`,
-          JSON.stringify(data),
-          function (err) {
-            if (err) {
-              return console.log(err)
-            }
-            console.log('The file was saved!')
-          }
-        )
-      })
-    })
+    // on(IpcChannels.DevDbExportJson, () => {
+    //   const tables = [
+    //     Tables.ArtistAlbum,
+    //     Tables.Playlist,
+    //     Tables.Album,
+    //     Tables.Track,
+    //     Tables.Artist,
+    //     Tables.Audio,
+    //     Tables.AccountData,
+    //     Tables.Lyric,
+    //   ]
+    //   tables.forEach(table => {
+    //     const data = db.findAll(table)
+    //     fs.writeFile(
+    //       `./tmp/${table}.json`,
+    //       JSON.stringify(data),
+    //       function (err) {
+    //         if (err) {
+    //           return console.log(err)
+    //         }
+    //         console.log('The file was saved!')
+    //       }
+    //     )
+    //   })
+    // })
   }
 }

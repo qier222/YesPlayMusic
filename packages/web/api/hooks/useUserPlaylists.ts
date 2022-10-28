@@ -20,14 +20,30 @@ export default function useUserPlaylists() {
     limit: 2000,
   }
 
+  const key = [UserApiNames.FetchUserPlaylists, uid]
+
   return useQuery(
-    [UserApiNames.FetchUserPlaylists, uid],
+    key,
     async () => {
       if (!params.uid) {
         throw new Error('请登录后再请求用户收藏的歌单')
       }
-      const data = await fetchUserPlaylists(params)
-      return data
+
+      const existsQueryData = reactQueryClient.getQueryData(key)
+      if (!existsQueryData) {
+        window.ipcRenderer
+          ?.invoke(IpcChannels.GetApiCache, {
+            api: APIs.UserPlaylist,
+            query: {
+              uid: params.uid,
+            },
+          })
+          .then(cache => {
+            if (cache) reactQueryClient.setQueryData(key, cache)
+          })
+      }
+
+      return fetchUserPlaylists(params)
     },
     {
       enabled: !!(
@@ -36,13 +52,6 @@ export default function useUserPlaylists() {
         params.offset !== undefined
       ),
       refetchOnWindowFocus: true,
-      placeholderData: (): FetchUserPlaylistsResponse =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.UserPlaylist,
-          query: {
-            uid: params.uid,
-          },
-        }),
     }
   )
 }

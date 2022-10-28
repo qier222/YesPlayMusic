@@ -1,6 +1,4 @@
 import { multiMatchSearch, search } from '@/web/api/search'
-import Cover from '@/web/components/Cover'
-import TrackGrid from '@/web/components/TracksGrid'
 import player from '@/web/states/player'
 import { resizeImage } from '@/web/utils/common'
 import { SearchTypes, SearchApiNames } from '@/shared/api/Search'
@@ -9,6 +7,8 @@ import { useMemo, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
+import Image from '@/web/components/Image'
+import { cx } from '@emotion/css'
 
 const Artists = ({ artists }: { artists: Artist[] }) => {
   const navigate = useNavigate()
@@ -21,10 +21,9 @@ const Artists = ({ artists }: { artists: Artist[] }) => {
           className='btn-hover-animation flex items-center p-2.5 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
         >
           <div className='mr-4 h-14 w-14'>
-            <Cover
-              imageUrl={resizeImage(artist.img1v1Url, 'xs')}
-              roundedClass='rounded-full'
-              showHover={false}
+            <img
+              src={resizeImage(artist.img1v1Url, 'xs')}
+              className='h-12 w-12 rounded-full'
             />
           </div>
           <div>
@@ -52,10 +51,9 @@ const Albums = ({ albums }: { albums: Album[] }) => {
           className='btn-hover-animation flex items-center p-2.5 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
         >
           <div className='mr-4 h-14 w-14'>
-            <Cover
-              imageUrl={resizeImage(album.picUrl, 'xs')}
-              roundedClass='rounded-lg'
-              showHover={false}
+            <img
+              src={resizeImage(album.picUrl, 'xs')}
+              className='h-12 w-12 rounded-lg'
             />
           </div>
           <div>
@@ -69,6 +67,50 @@ const Albums = ({ albums }: { albums: Album[] }) => {
         </div>
       ))}
     </>
+  )
+}
+
+const Track = ({
+  track,
+  isPlaying,
+  onPlay,
+}: {
+  track?: Track
+  isPlaying?: boolean
+  onPlay: (id: number) => void
+}) => {
+  return (
+    <div
+      className='flex items-center justify-between'
+      onClick={e => {
+        if (e.detail === 2 && track?.id) onPlay(track.id)
+      }}
+    >
+      {/* Cover */}
+      <Image
+        className='mr-4 aspect-square h-14 w-14 flex-shrink-0 rounded-12'
+        src={resizeImage(track?.al?.picUrl || '', 'sm')}
+        animation={false}
+        placeholder={false}
+      />
+
+      {/* Track info */}
+      <div className='mr-3 flex-grow'>
+        <div
+          className={cx(
+            'line-clamp-1 text-16 font-medium ',
+            isPlaying
+              ? 'text-brand-700'
+              : 'text-neutral-700 dark:text-neutral-200'
+          )}
+        >
+          {track?.name}
+        </div>
+        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  dark:text-neutral-700'>
+          {track?.ar.map(a => a.name).join(', ')}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -145,10 +187,9 @@ const Search = () => {
                 className='btn-hover-animation flex items-center p-3 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
               >
                 <div className='mr-6 h-24 w-24'>
-                  <Cover
-                    imageUrl={resizeImage(match.picUrl, 'xs')}
-                    showHover={false}
-                    roundedClass='rounded-full'
+                  <img
+                    src={resizeImage(match.picUrl, 'xs')}
+                    className='h-12 w-12 rounded-full'
                   />
                 </div>
                 <div>
@@ -184,11 +225,11 @@ const Search = () => {
         {searchResult?.result?.song?.songs && (
           <div className='col-span-2'>
             <div className='mb-2 text-sm font-medium text-gray-400'>歌曲</div>
-            <TrackGrid
-              tracks={searchResult.result.song.songs}
-              cols={3}
-              onTrackDoubleClick={handlePlayTracks}
-            />
+            <div className='mt-4 grid grid-cols-3 grid-rows-3 gap-5 gap-y-6 overflow-hidden pb-12'>
+              {searchResult.result.song.songs.map(track => (
+                <Track key={track.id} track={track} onPlay={handlePlayTracks} />
+              ))}
+            </div>
           </div>
         )}
       </div>

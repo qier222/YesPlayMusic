@@ -36,6 +36,11 @@ export const openContextMenu = ({
   dataSourceID: ContextMenu['dataSourceID']
   options?: ContextMenu['options']
 }) => {
+  if (event.target === contextMenus.target) {
+    closeContextMenu()
+    return
+  }
+
   const target = event.target as HTMLElement
   contextMenus.target = ref(target)
 
@@ -48,8 +53,8 @@ export const openContextMenu = ({
   }
 }
 
-export const closeContextMenu = (event: MouseEvent) => {
-  if (event.target === contextMenus.target) {
+export const closeContextMenu = (event?: MouseEvent) => {
+  if (event?.target === contextMenus.target) {
     return
   }
   assign(contextMenus, initContextMenu)

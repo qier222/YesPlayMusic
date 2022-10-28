@@ -6,20 +6,20 @@ import cache from './cache'
 import fileUpload from 'express-fileupload'
 import path from 'path'
 import fs from 'fs'
-import { db, Tables } from './db'
+// import { db, Tables } from './db'
 import { app } from 'electron'
 import type { FetchAudioSourceResponse } from '@/shared/api/Track'
-import UNM from '@unblockneteasemusic/rust-napi'
 import { APIs as CacheAPIs } from '@/shared/CacheAPIs'
 import { isProd } from './utils'
 import { APIs } from '@/shared/CacheAPIs'
 import history from 'connect-history-api-fallback'
+import { db, Tables } from './db'
 
 class Server {
   port = Number(
     isProd
-      ? process.env.ELECTRON_WEB_SERVER_PORT ?? 42710
-      : process.env.ELECTRON_DEV_NETEASE_API_PORT ?? 3000
+      ? process.env.ELECTRON_WEB_SERVER_PORT || 42710
+      : process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
   )
   app = express()
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -152,7 +152,7 @@ class Server {
       }
     }
 
-    const unmExecutor = new UNM.Executor()
+    // const unmExecutor = new UNM.Executor()
     const getFromUNM = async (id: number, req: Request) => {
       log.debug('[server] Fetching audio url from UNM')
       let track: Track = cache.get(CacheAPIs.Track, { ids: String(id) })
@@ -269,15 +269,15 @@ class Server {
         return
       }
 
-      try {
-        const fromUNM = await getFromUNM(id, req)
-        if (fromUNM) {
-          res.status(200).send(fromUNM)
-          return
-        }
-      } catch (error) {
-        log.error(`[server] getFromUNM failed: ${String(error)}`)
-      }
+      // try {
+      //   const fromUNM = await getFromUNM(id, req)
+      //   if (fromUNM) {
+      //     res.status(200).send(fromUNM)
+      //     return
+      //   }
+      // } catch (error) {
+      //   log.error(`[server] getFromUNM failed: ${String(error)}`)
+      // }
 
       if (fromNetease?.data?.[0].freeTrialInfo) {
         fromNetease.data[0].url = ''

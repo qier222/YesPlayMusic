@@ -14,20 +14,23 @@ import { useQuery } from '@tanstack/react-query'
 export default function useTracks(params: FetchTracksParams) {
   return useQuery(
     [TrackApiNames.FetchTracks, params],
-    () => {
+    async () => {
+      // fetch from cache as initial data
+      const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
+        api: APIs.Track,
+        query: {
+          ids: params.ids.join(','),
+        },
+      })
+      if (cache) return cache
+
       return fetchTracks(params)
     },
     {
       enabled: params.ids.length !== 0,
       refetchInterval: false,
+      refetchOnWindowFocus: false,
       staleTime: Infinity,
-      initialData: (): FetchTracksResponse | undefined =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.Track,
-          query: {
-            ids: params.ids.join(','),
-          },
-        }),
     }
   )
 }
@@ -35,7 +38,14 @@ export default function useTracks(params: FetchTracksParams) {
 export function fetchTracksWithReactQuery(params: FetchTracksParams) {
   return reactQueryClient.fetchQuery(
     [TrackApiNames.FetchTracks, params],
-    () => {
+    async () => {
+      const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
+        api: APIs.Track,
+        query: {
+          ids: params.ids.join(','),
+        },
+      })
+      if (cache) return cache as FetchTracksResponse
       return fetchTracks(params)
     },
     {

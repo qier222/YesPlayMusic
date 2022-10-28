@@ -18,7 +18,11 @@ const initUIStates: UIStates = {
   librarySelectedTab: 'playlists',
   mobileShowPlayingNext: false,
   blurBackgroundImage: null,
-  fullscreen: window.ipcRenderer?.sendSync(IpcChannels.IsMaximized) || false,
+  fullscreen: false,
 }
+
+window.ipcRenderer
+  ?.invoke(IpcChannels.IsMaximized)
+  .then(isMaximized => (initUIStates.fullscreen = !!isMaximized))
 
 export default proxy<UIStates>(initUIStates)

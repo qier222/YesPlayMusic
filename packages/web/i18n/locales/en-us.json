@@ -1,0 +1,94 @@
+{
+  "common": {
+    "artist_one": "Artist",
+    "artist_other": "Artists",
+    "track_one": "Track",
+    "track_other": "Tracks",
+    "track-with-count_one": "{{count}} Track",
+    "track-with-count_other": "{{count}} Tracks",
+    "album_one": "Album",
+    "album_other": "Albums",
+    "album-with-count_one": "{{count}} Album",
+    "album-with-count_other": "{{count}} Albums",
+    "playlist_one": "Playlist",
+    "playlist_other": "Playlists",
+    "video_one": "Video",
+    "video_other": "Videos",
+    "video-with-count_one": "{{count}} Video",
+    "video-with-count_other": "{{count}} Videos"
+  },
+  "navigation": {
+    "goBack": "Go back",
+    "goForward": "Go forward"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "use-phone-or-email": "Use Phone or Email",
+    "scan-qr-code": "Scan QR Code",
+    "or": "or",
+    "login-with-netease-qr": "Login with NetEase QR",
+    "password": "Password",
+    "email": "Email",
+    "phone": "Phone"
+  },
+  "player": {
+    "play": "Play",
+    "pause": "Pause",
+    "next": "Next",
+    "previous": "Previous",
+    "enable-shuffle": "Enable shuffle",
+    "disable-shuffle": "Disable shuffle",
+    "enable-repeat": "Enable repeat",
+    "enable-repeat-one": "Enable repeat one",
+    "disable-repeat": "Disable repeat",
+    "mini-mode": "Mini Mode",
+    "exit-mini-mode": "Exit Mini Mode",
+    "queue": "Queue"
+  },
+  "toasts": {
+    "copied": "Copied",
+    "add-to-liked-tracks": "Added to liked tracks",
+    "added-to-library": "Added to library",
+    "added-to-playlist": "Added to playlist",
+    "remove-from-liked-tracks": "Removed from liked tracks",
+    "removed-from-library": "Removed from library",
+    "removed-from-playlist": "Removed from playlist"
+  },
+  "search": {
+    "search": "Search"
+  },
+  "my": {
+    "xxxs-liked-tracks": "{{nickname}}'s Liked Tracks",
+    "playNow": "Play Now",
+    "recently-listened": "RECENTLY LISTENED"
+  },
+  "settings": {
+    "settings": "Settings"
+  },
+  "context-menu": {
+    "share": "Share",
+    "copy-netease-link": "Copy Netease Link",
+    "add-to-playlist": "Add to playlist",
+    "add-to-liked-tracks": "Add to Liked Tracks",
+    "go-to-album": "Go to album",
+    "go-to-artist": "Go to artist",
+    "add-to-queue": "Add to Queue",
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "followed": "Followed",
+    "unfollowed": "Unfollowed"
+  },
+  "toast": {},
+  "artist": {
+    "listen": "Listen",
+    "latest-releases": "Latest Releases",
+    "popular": "Popular"
+  },
+  "menu-bar": {
+    "discover": "DISCOVER",
+    "explore": "EXPLORE",
+    "lyrics": "LYRICS",
+    "my-music": "MY MUSIC"
+  }
+}

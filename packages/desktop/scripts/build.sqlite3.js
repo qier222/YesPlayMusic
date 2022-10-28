@@ -7,7 +7,7 @@ const releases = require('electron-releases')
 const pkg = require(`${process.cwd()}/package.json`)
 const axios = require('axios')
 const { execSync } = require('child_process')
-const path = require('path')
+const { resolve } = require('path')
 
 const isWindows = process.platform === 'win32'
 const isMac = process.platform === 'darwin'
@@ -29,14 +29,15 @@ if (!electronModuleVersion) {
 }
 const argv = minimist(process.argv.slice(2))
 
-const projectDir = path.resolve(process.cwd(), '../../')
-const distDir = `${projectDir}/packages/desktop/dist/binary`
+const projectDir = resolve(process.cwd(), '../../')
+const tmpDir = resolve(projectDir, `./tmp/better-sqlite3`)
+const binDir = resolve(projectDir, `./tmp/bin`)
 console.log(pc.cyan(`projectDir=${projectDir}`))
-console.log(pc.cyan(`distDir=${distDir}`))
+console.log(pc.cyan(`binDir=${binDir}`))
 
-if (!fs.existsSync(distDir)) {
-  console.log(pc.cyan(`Creating dist/binary directory: ${distDir}`))
-  fs.mkdirSync(distDir, {
+if (!fs.existsSync(binDir)) {
+  console.log(pc.cyan(`Creating dist/binary directory: ${binDir}`))
+  fs.mkdirSync(binDir, {
     recursive: true,
   })
 }
@@ -47,7 +48,6 @@ const download = async arch => {
     console.log(pc.red('No electron module version found! Skip download.'))
     return false
   }
-  const tmpDir = `${projectDir}/tmp/better-sqlite3`
   const fileName = `better-sqlite3-v${betterSqlite3Version}-electron-v${electronModuleVersion}-${process.platform}-${arch}`
   const zipFileName = `${fileName}.tar.gz`
   const url = `https://github.com/JoshuaWise/better-sqlite3/releases/download/v${betterSqlite3Version}/${zipFileName}`
@@ -63,7 +63,9 @@ const download = async arch => {
       url,
       responseType: 'stream',
     }).then(response => {
-      response.data.pipe(fs.createWriteStream(`${tmpDir}/${zipFileName}`))
+      response.data.pipe(
+        fs.createWriteStream(resolve(tmpDir, `./${zipFileName}`))
+      )
       return true
     })
   } catch (e) {
@@ -80,8 +82,8 @@ const download = async arch => {
 
   try {
     fs.copyFileSync(
-      `${tmpDir}/build/Release/better_sqlite3.node`,
-      `${distDir}/better_sqlite3_${arch}.node`
+      resolve(tmpDir, './build/Release/better_sqlite3.node'),
+      resolve(binDir, `./better_sqlite3_${process.platform}_${arch}.node`)
     )
   } catch (e) {
     console.log(pc.red('Copy failed! Skip copy.', e))
@@ -89,7 +91,7 @@ const download = async arch => {
   }
 
   try {
-    fs.rmSync(`${tmpDir}/build`, { recursive: true, force: true })
+    fs.rmSync(resolve(tmpDir, `./build`), { recursive: true, force: true })
   } catch (e) {
     console.log(pc.red('Delete failed! Skip delete.'))
     return false
@@ -113,8 +115,15 @@ const build = async arch => {
   })
     .then(() => {
       console.info('Build succeeded')
-      const from = `${projectDir}/node_modules/better-sqlite3/build/Release/better_sqlite3.node`
-      const to = `${distDir}/better_sqlite3_${arch}.node`
+
+      const from = resolve(
+        projectDir,
+        `./node_modules/better-sqlite3/build/Release/better_sqlite3.node`
+      )
+      const to = resolve(
+        binDir,
+        `./better_sqlite3_${process.platform}_${arch}.node`
+      )
       console.info(`copy ${from} to ${to}`)
       fs.copyFileSync(from, to)
     })
@@ -130,7 +139,9 @@ const main = async () => {
     if (argv.arm64) await build('arm64')
     if (argv.arm) await build('arm')
   } else {
-    if (isWindows || isMac) {
+    if (isWindows) {
+      await build('x64')
+    } else if (isMac) {
       await build('x64')
       await build('arm64')
     } else if (isLinux) {

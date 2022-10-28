@@ -9,22 +9,32 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 
-const fetchFromCache = (id: number): FetchArtistResponse =>
-  window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
+const fetchFromCache = async (
+  params: FetchArtistParams
+): Promise<FetchArtistResponse | undefined> =>
+  window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
     api: APIs.Artist,
-    query: {
-      id,
-    },
+    query: params,
   })
 
 export default function useArtist(params: FetchArtistParams) {
+  const key = [ArtistApiNames.FetchArtist, params]
   return useQuery(
-    [ArtistApiNames.FetchArtist, params],
-    () => fetchArtist(params),
+    key,
+    () => {
+      // fetch from cache as placeholder
+      fetchFromCache(params).then(cache => {
+        const existsQueryData = reactQueryClient.getQueryData(key)
+        if (!existsQueryData && cache) {
+          reactQueryClient.setQueryData(key, cache)
+        }
+      })
+
+      return fetchArtist(params)
+    },
     {
       enabled: !!params.id && params.id > 0 && !isNaN(Number(params.id)),
       staleTime: 5 * 60 * 1000, // 5 mins
-      placeholderData: () => fetchFromCache(params.id),
     }
   )
 }
@@ -40,7 +50,7 @@ export function fetchArtistWithReactQuery(params: FetchArtistParams) {
 }
 
 export async function prefetchArtist(params: FetchArtistParams) {
-  if (fetchFromCache(params.id)) return
+  if (await fetchFromCache(params)) return
   await reactQueryClient.prefetchQuery(
     [ArtistApiNames.FetchArtist, params],
     () => fetchArtist(params),

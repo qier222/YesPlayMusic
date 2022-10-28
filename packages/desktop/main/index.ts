@@ -17,6 +17,7 @@ import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { createMenu } from './menu'
 import { isDev, isWindows, isLinux, isMac } from './utils'
 import store from './store'
+// import './surrealdb'
 // import Airplay from './airplay'
 
 class Main {
@@ -91,7 +92,7 @@ class Main {
       titleBarStyle: isMac ? 'customButtonsOnHover' : 'hidden',
       trafficLightPosition: { x: 24, y: 24 },
       frame: false,
-      backgroundColor: '#000',
+      transparent: true,
       show: false,
     }
     if (store.get('window')) {

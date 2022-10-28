@@ -1,44 +1,23 @@
-import { Toaster } from 'react-hot-toast'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
-import Player from '@/web/components/Player'
-import Sidebar from '@/web/components/Sidebar'
-import reactQueryClient from '@/web/utils/reactQueryClient'
-import Main from '@/web/components/Main'
-import TitleBar from '@/web/components/TitleBar'
-import Lyric from '@/web/components/Lyric'
 import IpcRendererReact from '@/web/IpcRendererReact'
+import Layout from '@/web/components/Layout'
+import Devtool from '@/web/components/Devtool'
+import ErrorBoundary from '@/web/components/ErrorBoundary'
+import useIsMobile from '@/web/hooks/useIsMobile'
+import LayoutMobile from '@/web/components/LayoutMobile'
+import ScrollRestoration from '@/web/components/ScrollRestoration'
+import Toaster from './components/Toaster'
 
 const App = () => {
+  const isMobile = useIsMobile()
+
   return (
-    <QueryClientProvider client={reactQueryClient}>
-      {window.env?.isEnableTitlebar && <TitleBar />}
-
-      <div id='layout' className='grid select-none grid-cols-[16rem_auto]'>
-        <Sidebar />
-        <Main />
-        <Player />
-      </div>
-
-      <Lyric />
-
-      <Toaster position='bottom-center' containerStyle={{ bottom: '5rem' }} />
-
+    <ErrorBoundary>
+      {isMobile ? <LayoutMobile /> : <Layout />}
+      <Toaster />
+      <ScrollRestoration />
       <IpcRendererReact />
-
-      {/* Devtool */}
-      <ReactQueryDevtools
-        initialIsOpen={false}
-        toggleButtonProps={{
-          style: {
-            position: 'fixed',
-            right: '0',
-            left: 'auto',
-            bottom: '4rem',
-          },
-        }}
-      />
-    </QueryClientProvider>
+      <Devtool />
+    </ErrorBoundary>
   )
 }
 

@@ -3,9 +3,10 @@ import { app } from 'electron'
 import fs from 'fs'
 import SQLite3 from 'better-sqlite3'
 import log from './log'
-import { createFileIfNotExist, dirname } from './utils'
+import { createFileIfNotExist, dirname, isProd } from './utils'
 import pkg from '../../../package.json'
 import { compare, validate } from 'compare-versions'
+import os from 'os'
 
 export const enum Tables {
   Track = 'Track',
@@ -83,19 +84,43 @@ class DB {
   constructor() {
     log.info('[db] Initializing database...')
 
-    createFileIfNotExist(this.dbFilePath)
+    try {
+      createFileIfNotExist(this.dbFilePath)
 
-    this.sqlite = new SQLite3(this.dbFilePath, {
-      nativeBinding: path.join(
-        __dirname,
-        `./binary/better_sqlite3_${process.arch}.node`
+      this.sqlite = new SQLite3(this.dbFilePath, {
+        nativeBinding: this.getBinPath(),
+      })
+      this.sqlite.pragma('auto_vacuum = FULL')
+      this.initTables()
+      this.migrate()
+
+      log.info('[db] Database initialized.')
+    } catch (e) {
+      log.error('[db] Database initialization failed.')
+      log.error(e)
+    }
+  }
+
+  private getBinPath() {
+    console
+    const devBinPath = path.resolve(
+      app.getPath('userData'),
+      `../../bin/better_sqlite3_${os.platform}_${os.arch}.node`
+    )
+    const prodBinPaths = {
+      darwin: path.resolve(
+        app.getPath('exe'),
+        `../../Resources/bin/better_sqlite3.node`
       ),
-    })
-    this.sqlite.pragma('auto_vacuum = FULL')
-    this.initTables()
-    this.migrate()
-
-    log.info('[db] Database initialized.')
+      win32: path.resolve(
+        app.getPath('exe'),
+        `../resources/bin/better_sqlite3.node`
+      ),
+      linux: '',
+    }
+    return isProd
+      ? prodBinPaths[os.platform as unknown as 'darwin' | 'win32' | 'linux']
+      : devBinPath
   }
 
   initTables() {

@@ -1,6 +1,5 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "baseBranch": "origin/react",
   "pipeline": {
     "post-install": {
       "cache": false
@@ -10,15 +9,14 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "cache": false
     },
     "pack": {
-      "dependsOn": ["build"],
       "outputs": ["release/**"],
       "cache": false
     },
     "pack:test": {
-      "dependsOn": ["build"],
       "outputs": ["release/**"],
       "cache": false
     },

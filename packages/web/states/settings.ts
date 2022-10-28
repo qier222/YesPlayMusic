@@ -1,9 +1,11 @@
 import { IpcChannels } from '@/shared/IpcChannels'
 import { merge } from 'lodash-es'
 import { proxy, subscribe } from 'valtio'
+import i18n, { getLanguage, supportedLanguages } from '../i18n/i18n'
 
 interface Settings {
   accentColor: string
+  language: typeof supportedLanguages[number]
   unm: {
     enabled: boolean
     sources: Array<
@@ -26,6 +28,7 @@ interface Settings {
 
 const initSettings: Settings = {
   accentColor: 'blue',
+  language: getLanguage(),
   unm: {
     enabled: true,
     sources: ['migu'],
@@ -36,19 +39,24 @@ const initSettings: Settings = {
 }
 
 const STORAGE_KEY = 'settings'
-const statesInStorageString = localStorage.getItem(STORAGE_KEY)
+
 let statesInStorage = {}
-if (statesInStorageString) {
-  try {
-    statesInStorage = JSON.parse(statesInStorageString)
-  } catch {
-    // ignore
-  }
+try {
+  statesInStorage = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+} catch {
+  // ignore
 }
 
 const settings = proxy<Settings>(merge(initSettings, statesInStorage))
 
 subscribe(settings, () => {
+  if (
+    settings.language !== i18n.language &&
+    supportedLanguages.includes(settings.language)
+  ) {
+    i18n.changeLanguage(settings.language)
+  }
+
   window.ipcRenderer?.send(IpcChannels.SyncSettings, settings)
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
 })

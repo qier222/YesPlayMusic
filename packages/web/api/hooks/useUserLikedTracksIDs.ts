@@ -15,20 +15,30 @@ import reactQueryClient from '@/web/utils/reactQueryClient'
 export default function useUserLikedTracksIDs() {
   const { data: user } = useUser()
   const uid = user?.account?.id ?? 0
+  const key = [UserApiNames.FetchUserLikedTracksIds, uid]
 
   return useQuery(
-    [UserApiNames.FetchUserLikedTracksIds, uid],
-    () => fetchUserLikedTracksIDs({ uid }),
+    key,
+    () => {
+      const existsQueryData = reactQueryClient.getQueryData(key)
+      if (!existsQueryData) {
+        window.ipcRenderer
+          ?.invoke(IpcChannels.GetApiCache, {
+            api: APIs.Likelist,
+            query: {
+              uid,
+            },
+          })
+          .then(cache => {
+            if (cache) reactQueryClient.setQueryData(key, cache)
+          })
+      }
+
+      return fetchUserLikedTracksIDs({ uid })
+    },
     {
       enabled: !!(uid && uid !== 0),
       refetchOnWindowFocus: true,
-      placeholderData: (): FetchUserLikedTracksIDsResponse | undefined =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.Likelist,
-          query: {
-            uid,
-          },
-        }),
     }
   )
 }

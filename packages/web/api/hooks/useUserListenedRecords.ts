@@ -4,27 +4,37 @@ import { APIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useQuery } from '@tanstack/react-query'
 import useUser from './useUser'
+import reactQueryClient from '@/web/utils/reactQueryClient'
 
 export default function useUserListenedRecords(params: {
   type: 'week' | 'all'
 }) {
   const { data: user } = useUser()
   const uid = user?.account?.id || 0
+  const key = [UserApiNames.FetchListenedRecords]
 
   return useQuery(
-    [UserApiNames.FetchListenedRecords],
-    () =>
-      fetchListenedRecords({
+    key,
+    () => {
+      const existsQueryData = reactQueryClient.getQueryData(key)
+      if (!existsQueryData) {
+        window.ipcRenderer
+          ?.invoke(IpcChannels.GetApiCache, {
+            api: APIs.ListenedRecords,
+          })
+          .then(cache => {
+            if (cache) reactQueryClient.setQueryData(key, cache)
+          })
+      }
+
+      return fetchListenedRecords({
         uid,
         type: params.type === 'week' ? 1 : 0,
-      }),
+      })
+    },
     {
       refetchOnWindowFocus: false,
       enabled: !!uid,
-      placeholderData: (): FetchListenedRecordsResponse =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.ListenedRecords,
-        }),
     }
   )
 }

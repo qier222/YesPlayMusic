@@ -7,7 +7,7 @@ import {
   AlbumApiNames,
   FetchAlbumResponse,
 } from '@/shared/api/Album'
-import { QueryOptions, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 const fetch = async (params: FetchAlbumParams) => {
   const album = await fetchAlbum(params)
@@ -17,22 +17,34 @@ const fetch = async (params: FetchAlbumParams) => {
   return album
 }
 
-const fetchFromCache = (params: FetchAlbumParams): FetchAlbumResponse =>
-  window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
+const fetchFromCache = async (
+  params: FetchAlbumParams
+): Promise<FetchAlbumResponse | undefined> =>
+  window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
     api: APIs.Album,
     query: params,
   })
 
-export default function useAlbum(
-  params: FetchAlbumParams
-  // queryOptions?: QueryOptions
-) {
-  return useQuery([AlbumApiNames.FetchAlbum, params], () => fetch(params), {
-    enabled: !!params.id,
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours
-    placeholderData: () => fetchFromCache(params),
-    // ...queryOptions,
-  })
+export default function useAlbum(params: FetchAlbumParams) {
+  const key = [AlbumApiNames.FetchAlbum, params]
+  return useQuery(
+    key,
+    () => {
+      // fetch from cache as placeholder
+      fetchFromCache(params).then(cache => {
+        const existsQueryData = reactQueryClient.getQueryData(key)
+        if (!existsQueryData && cache) {
+          reactQueryClient.setQueryData(key, cache)
+        }
+      })
+
+      return fetch(params)
+    },
+    {
+      enabled: !!params.id,
+      staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    }
+  )
 }
 
 export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
@@ -46,7 +58,7 @@ export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
 }
 
 export async function prefetchAlbum(params: FetchAlbumParams) {
-  if (fetchFromCache(params)) return
+  if (await fetchFromCache(params)) return
   await reactQueryClient.prefetchQuery(
     [AlbumApiNames.FetchAlbum, params],
     () => fetch(params),

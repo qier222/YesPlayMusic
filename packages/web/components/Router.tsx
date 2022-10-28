@@ -1,63 +1,42 @@
-import type { RouteObject } from 'react-router-dom'
-import { useRoutes } from 'react-router-dom'
-import Album from '@/web/pages/Album'
-import Home from '@/web/pages/Home'
-import Login from '@/web/pages/Login'
-import Playlist from '@/web/pages/Playlist'
-import Artist from '@/web/pages/Artist'
-import Search from '@/web/pages/Search'
-import Library from '@/web/pages/Library'
-import Podcast from '@/web/pages/Podcast'
-import Settings from '@/web/pages/Settings'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
+import React, { ReactNode, Suspense } from 'react'
 
-const routes: RouteObject[] = [
-  {
-    path: '/',
-    element: <Home />,
-  },
-  {
-    path: '/podcast',
-    element: <Podcast />,
-  },
-  {
-    path: '/library',
-    element: <Library />,
-  },
-  {
-    path: '/settings',
-    element: <Settings />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/search/:keywords',
-    element: <Search />,
-    children: [
-      {
-        path: ':type',
-        element: <Search />,
-      },
-    ],
-  },
-  {
-    path: '/playlist/:id',
-    element: <Playlist />,
-  },
-  {
-    path: '/album/:id',
-    element: <Album />,
-  },
-  {
-    path: '/artist/:id',
-    element: <Artist />,
-  },
-]
+const My = React.lazy(() => import('@/web/pages/My'))
+const Discover = React.lazy(() => import('@/web/pages/Discover'))
+const Browse = React.lazy(() => import('@/web/pages/Browse'))
+const Album = React.lazy(() => import('@/web/pages/Album'))
+const Playlist = React.lazy(() => import('@/web/pages/Playlist'))
+const Artist = React.lazy(() => import('@/web/pages/Artist'))
+const MV = React.lazy(() => import('@/web/pages/MV'))
+const Lyrics = React.lazy(() => import('@/web/pages/Lyrics'))
+const Search = React.lazy(() => import('@/web/pages/Search'))
+
+const lazy = (component: ReactNode) => {
+  return <Suspense>{component}</Suspense>
+}
 
 const Router = () => {
-  const element = useRoutes(routes)
-  return <>{element}</>
+  const location = useLocation()
+
+  return (
+    <AnimatePresence exitBeforeEnter>
+      <Routes location={location} key={location.pathname}>
+        <Route path='/' element={lazy(<My />)} />
+        <Route path='/discover' element={lazy(<Discover />)} />
+        <Route path='/browse' element={lazy(<Browse />)} />
+        <Route path='/album/:id' element={lazy(<Album />)} />
+        <Route path='/playlist/:id' element={lazy(<Playlist />)} />
+        <Route path='/artist/:id' element={lazy(<Artist />)} />
+        <Route path='/mv/:id' element={lazy(<MV />)} />
+        {/* <Route path='/settings' element={lazy(<Settings />)} /> */}
+        <Route path='/lyrics' element={lazy(<Lyrics />)} />
+        <Route path='/search/:keywords' element={lazy(<Search />)}>
+          <Route path=':type' element={lazy(<Search />)} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  )
 }
 
 export default Router

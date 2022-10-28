@@ -8,7 +8,6 @@ const Slider = ({
   onChange,
   onlyCallOnChangeAfterDragEnded = false,
   orientation = 'horizontal',
-  alwaysShowTrack = false,
   alwaysShowThumb = false,
 }: {
   value: number
@@ -95,7 +94,6 @@ const Slider = ({
       if (!isDragging) return
       setIsDragging(false)
       if (onlyCallOnChangeAfterDragEnded) {
-        console.log('draggingValue', draggingValue)
         onChange(draggingValue)
       }
     }
@@ -141,41 +139,36 @@ const Slider = ({
       {/* Track */}
       <div
         className={cx(
-          'absolute bg-gray-500 bg-opacity-10',
-          orientation === 'horizontal' && 'h-[2px] w-full',
-          orientation === 'vertical' && 'h-full w-[2px]'
+          'absolute overflow-hidden rounded-full bg-black/10 bg-opacity-10 dark:bg-white/10',
+          orientation === 'horizontal' && 'h-[3px] w-full',
+          orientation === 'vertical' && 'h-full w-[3px]'
         )}
-      ></div>
-
-      {/* Passed track */}
-      <div
-        className={cx(
-          'absolute  group-hover:bg-brand-500',
-          isDragging || alwaysShowTrack
-            ? 'bg-brand-500'
-            : 'bg-gray-300 dark:bg-gray-500',
-          orientation === 'horizontal' && 'h-[2px]',
-          orientation === 'vertical' && 'bottom-0 w-[2px]'
-        )}
-        style={usedTrackStyle}
-      ></div>
+      >
+        {/* Passed track */}
+        <div
+          className={cx(
+            'bg-black dark:bg-white',
+            orientation === 'horizontal' && 'h-full rounded-r-full',
+            orientation === 'vertical' && 'bottom-0 w-full rounded-t-full'
+          )}
+          style={usedTrackStyle}
+        ></div>
+      </div>
 
       {/* Thumb */}
       <div
         className={cx(
-          'absolute flex h-5 w-5 items-center justify-center rounded-full bg-brand-500 bg-opacity-20 transition-opacity',
+          'absolute flex h-2 w-2 items-center justify-center rounded-full bg-black bg-opacity-20 transition-opacity dark:bg-white',
           isDragging || alwaysShowThumb
             ? 'opacity-100'
             : 'opacity-0 group-hover:opacity-100',
-          orientation === 'horizontal' && '-translate-x-2.5',
-          orientation === 'vertical' && 'translate-y-2.5'
+          orientation === 'horizontal' && '-translate-x-1',
+          orientation === 'vertical' && 'translate-y-1'
         )}
         style={thumbStyle}
         onClick={e => e.stopPropagation()}
         onPointerDown={handlePointerDown}
-      >
-        <div className='absolute h-2 w-2 rounded-full bg-brand-500'></div>
-      </div>
+      ></div>
     </div>
   )
 }

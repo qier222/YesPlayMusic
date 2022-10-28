@@ -14,13 +14,14 @@ import { BrowserTracing } from '@sentry/tracing'
 import 'virtual:svg-icons-register'
 import './styles/global.css'
 import './styles/accentColor.css'
-import App from './AppNew'
+import App from './App'
 import pkg from '../../package.json'
 import ReactGA from 'react-ga4'
 import { ipcRenderer } from './ipcRenderer'
 import { QueryClientProvider } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 import React from 'react'
+import './i18n/i18n'
 
 ReactGA.initialize('G-KMJJCFZDKF')
 

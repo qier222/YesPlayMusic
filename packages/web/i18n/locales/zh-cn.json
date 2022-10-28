@@ -1,0 +1,94 @@
+{
+  "common": {
+    "album_one": "专辑",
+    "album_other": "专辑",
+    "album-with-count_one": "{{count}} 张专辑",
+    "album-with-count_other": "{{count}} 张专辑",
+    "artist_one": "艺人",
+    "artist_other": "艺人",
+    "playlist_one": "歌单",
+    "playlist_other": "歌单",
+    "track_one": "歌曲",
+    "track_other": "歌曲",
+    "track-with-count_one": "{{count}} 首歌曲",
+    "track-with-count_other": "{{count}} 首歌曲",
+    "video_one": "视频",
+    "video_other": "视频",
+    "video-with-count_one": "{{count}} 个视频",
+    "video-with-count_other": "{{count}} 个视频"
+  },
+  "navigation": {
+    "goBack": "返回",
+    "goForward": "前进"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出登录",
+    "scan-qr-code": "扫码登录",
+    "use-phone-or-email": "使用手机或邮箱登录",
+    "or": "或者",
+    "password": "密码",
+    "email": "邮箱",
+    "phone": "手机",
+    "login-with-netease-qr": "扫描二维码登录"
+  },
+  "player": {
+    "play": "播放",
+    "pause": "暂停",
+    "next": "下一首",
+    "previous": "上一首",
+    "enable-shuffle": "开启随机播放",
+    "disable-shuffle": "关闭随机播放",
+    "enable-repeat": "开启列表循环",
+    "enable-repeat-one": "开启单曲循环",
+    "disable-repeat": "关闭循环",
+    "mini-mode": "Mini模式",
+    "exit-mini-mode": "退出Mini模式",
+    "queue": "播放列表"
+  },
+  "toasts": {
+    "copied": "已复制",
+    "add-to-liked-tracks": "已添加到喜欢的歌曲",
+    "added-to-library": "已添加到音乐库",
+    "added-to-playlist": "已添加到歌单",
+    "remove-from-liked-tracks": "已从喜欢的歌曲中移除",
+    "removed-from-library": "已从音乐库中移除",
+    "removed-from-playlist": "已从歌单中移除"
+  },
+  "search": {
+    "search": "搜索"
+  },
+  "my": {
+    "xxxs-liked-tracks": "{{nickname}}喜欢的音乐",
+    "playNow": "立即播放",
+    "recently-listened": "最近播放"
+  },
+  "settings": {
+    "settings": "设置"
+  },
+  "context-menu": {
+    "share": "分享",
+    "copy-netease-link": "复制网易云链接",
+    "add-to-playlist": "收藏到歌单",
+    "add-to-liked-tracks": "收藏到喜欢的音乐",
+    "go-to-album": "查看专辑",
+    "go-to-artist": "查看艺人",
+    "add-to-queue": "下一首播放",
+    "unfollow": "取消关注",
+    "follow": "关注",
+    "followed": "已关注",
+    "unfollowed": "已取消关注"
+  },
+  "toast": {},
+  "artist": {
+    "listen": "播放",
+    "latest-releases": "最新发行",
+    "popular": "热门歌曲"
+  },
+  "menu-bar": {
+    "discover": "发现",
+    "explore": "浏览",
+    "lyrics": "歌词",
+    "my-music": "我的"
+  }
+}

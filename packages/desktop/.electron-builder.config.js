@@ -16,8 +16,10 @@ module.exports = {
     buildResources: 'build',
   },
   npmRebuild: false,
-  buildDependenciesFromSource: true,
+  buildDependenciesFromSource: false,
   electronVersion,
+  afterPack: './scripts/copySQLite3.js',
+  forceCodeSigning: false,
   publish: [
     {
       provider: 'github',
@@ -33,10 +35,6 @@ module.exports = {
         target: 'nsis',
         arch: ['x64'],
       },
-      // {
-      //   target: 'nsis',
-      //   arch: ['arm64'],
-      // },
       // {
       //   target: 'portable',
       //   arch: ['x64'],
@@ -59,16 +57,13 @@ module.exports = {
     target: [
       {
         target: 'dmg',
-        arch: [
-          'x64',
-          'arm64',
-          // 'universal'
-        ],
+        arch: ['x64', 'arm64', 'universal'],
       },
     ],
     artifactName: '${productName}-${version}-${os}-${arch}.${ext}',
     darkModeSupport: true,
     category: 'public.app-category.music',
+    identity: null,
   },
   dmg: {
     icon: 'build/icons/icon.icns',
@@ -124,7 +119,6 @@ module.exports = {
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
     '!**/*.{map,debug.min.js}',
 
-    '!**/dist/binary',
     {
       from: './dist',
       to: './main',

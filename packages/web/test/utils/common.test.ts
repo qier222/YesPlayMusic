@@ -144,7 +144,7 @@ describe('getCoverColor', () => {
   test('hit cache', async () => {
     vi.stubGlobal('ipcRenderer', {
       sendSync: (channel: IpcChannels, ...args: any[]) => {
-        expect(channel).toBe(IpcChannels.GetApiCacheSync)
+        expect(channel).toBe(IpcChannels.GetApiCache)
         expect(args[0].api).toBe(APIs.CoverColor)
         expect(args[0].query).toEqual({
           id: '109951165911363',
@@ -168,7 +168,7 @@ describe('getCoverColor', () => {
   test('did not hit cache', async () => {
     vi.stubGlobal('ipcRenderer', {
       sendSync: (channel: IpcChannels, ...args: any[]) => {
-        expect(channel).toBe(IpcChannels.GetApiCacheSync)
+        expect(channel).toBe(IpcChannels.GetApiCache)
         expect(args[0].api).toBe(APIs.CoverColor)
         expect(args[0].query).toEqual({
           id: '109951165911363',

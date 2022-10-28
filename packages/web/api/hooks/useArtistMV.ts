@@ -18,13 +18,6 @@ export default function useArtistMV(params: FetchArtistMVParams) {
     {
       enabled: !!params.id && params.id !== 0,
       staleTime: 3600000,
-      // placeholderData: (): FetchArtistMVResponse =>
-      //   window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-      //     api: APIs.ArtistAlbum,
-      //     query: {
-      //       id: params.id,
-      //     },
-      //   }),
     }
   )
 }

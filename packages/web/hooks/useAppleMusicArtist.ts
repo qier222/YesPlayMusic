@@ -12,6 +12,16 @@ export default function useAppleMusicArtist(props: {
     ['useAppleMusicArtist', props],
     async () => {
       if (!id || !name) return
+
+      const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
+        api: APIs.AppleMusicArtist,
+        query: {
+          id,
+        },
+      })
+
+      if (cache) return cache
+
       return window.ipcRenderer?.invoke(IpcChannels.GetArtistFromAppleMusic, {
         id,
         name,
@@ -21,13 +31,6 @@ export default function useAppleMusicArtist(props: {
       enabled: !!id && !!name,
       refetchOnWindowFocus: false,
       refetchInterval: false,
-      initialData: (): AppleMusicArtist =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.AppleMusicArtist,
-          query: {
-            id,
-          },
-        }),
     }
   )
 }

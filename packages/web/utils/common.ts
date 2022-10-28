@@ -4,6 +4,7 @@ import duration from 'dayjs/plugin/duration'
 import { APIs } from '@/shared/CacheAPIs'
 import { average } from 'color.js'
 import { colord } from 'colord'
+import { supportedLanguages } from '../i18n/i18n'
 
 /**
  * @description 调整网易云和苹果音乐封面图片大小
@@ -71,7 +72,7 @@ export function formatDate(
  */
 export function formatDuration(
   milliseconds: number,
-  locale: 'en' | 'zh-TW' | 'zh-CN' = 'zh-CN',
+  locale: typeof supportedLanguages[number] = 'zh-CN',
   format: 'hh:mm:ss' | 'hh[hr] mm[min]' = 'hh:mm:ss'
 ): string {
   dayjs.extend(duration)
@@ -87,7 +88,7 @@ export function formatDuration(
       : `${mins}:${seconds}`
   } else {
     const units = {
-      en: {
+      'en-US': {
         hours: 'hr',
         mins: 'min',
       },
@@ -99,7 +100,7 @@ export function formatDuration(
         hours: '小時',
         mins: '分鐘',
       },
-    }
+    } as const
 
     return hours !== '0'
       ? `${hours} ${units[locale].hours}${
@@ -129,15 +130,15 @@ export async function getCoverColor(coverUrl: string) {
     return
   }
 
-  const colorFromCache = window.ipcRenderer?.sendSync(
-    IpcChannels.GetApiCacheSync,
+  const colorFromCache: string | undefined = await window.ipcRenderer?.invoke(
+    IpcChannels.GetApiCache,
     {
       api: APIs.CoverColor,
       query: {
         id,
       },
     }
-  ) as string | undefined
+  )
   return colorFromCache || calcCoverColor(coverUrl)
 }
 

@@ -4,7 +4,7 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { useState, useMemo } from 'react'
 import { useSnapshot } from 'valtio'
-import { cx } from '@emotion/css'
+import { css, cx } from '@emotion/css'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
@@ -25,18 +25,21 @@ const Controls = () => {
     window.ipcRenderer?.send(IpcChannels.Close)
   }
 
+  const classNames = cx(
+    'flex items-center justify-center text-white/80 hover:text-white hover:bg-white/20 transition duration-400',
+    css`
+      height: 28px;
+      width: 48px;
+      border-radius: 4px;
+    `
+  )
+
   return (
-    <div className='app-region-no-drag flex h-full'>
-      <button
-        onClick={minimize}
-        className='flex w-[2.875rem] items-center justify-center hover:bg-[#e9e9e9]'
-      >
+    <div className='app-region-no-drag flex h-full items-center'>
+      <button onClick={minimize} className={classNames}>
         <Icon className='h-3 w-3' name='windows-minimize' />
       </button>
-      <button
-        onClick={maxRestore}
-        className='flex w-[2.875rem] items-center justify-center hover:bg-[#e9e9e9]'
-      >
+      <button onClick={maxRestore} className={classNames}>
         <Icon
           className='h-3 w-3'
           name={isMaximized ? 'windows-un-maximize' : 'windows-maximize'}
@@ -44,7 +47,12 @@ const Controls = () => {
       </button>
       <button
         onClick={close}
-        className='flex w-[2.875rem] items-center justify-center hover:bg-[#c42b1c] hover:text-white'
+        className={cx(
+          classNames,
+          css`
+            margin-right: 5px;
+          `
+        )}
       >
         <Icon className='h-3 w-3' name='windows-close' />
       </button>
@@ -52,46 +60,13 @@ const Controls = () => {
   )
 }
 
-const Title = ({ className }: { className?: string }) => {
-  const playerSnapshot = useSnapshot(player)
-  const track = useMemo(() => playerSnapshot.track, [playerSnapshot.track])
-
-  return (
-    <div className={cx('text-sm text-gray-500', className)}>
-      {track?.name && (
-        <>
-          <span>{track.name}</span>
-          <span className='mx-2'>-</span>
-        </>
-      )}
-      <span>YesPlayMusic</span>
-    </div>
-  )
-}
-
-const Win = () => {
-  return (
-    <div className='flex h-8 w-screen items-center justify-between bg-gray-50'>
-      <Title className='ml-3' />
-      <Controls />
-    </div>
-  )
-}
-
-const Linux = () => {
-  return (
-    <div className='flex h-8 w-screen items-center justify-between bg-gray-50'>
-      <div></div>
-      <Title className='text-center' />
-      <Controls />
-    </div>
-  )
-}
-
 const TitleBar = () => {
   return (
     <div className='app-region-drag fixed z-30'>
-      {window.env?.isWindows ? <Win /> : <Linux />}
+      <div className='flex h-9 w-screen items-center justify-between'>
+        <div></div>
+        <Controls />
+      </div>
     </div>
   )
 }

@@ -9,7 +9,7 @@ export const enum IpcChannels {
   Close = 'Close',
   IsMaximized = 'IsMaximized',
   FullscreenStateChange = 'FullscreenStateChange',
-  GetApiCacheSync = 'GetApiCacheSync',
+  GetApiCache = 'GetApiCache',
   DevDbExportJson = 'DevDbExportJson',
   CacheCoverColor = 'CacheCoverColor',
   SetTrayTooltip = 'SetTrayTooltip',
@@ -26,6 +26,7 @@ export const enum IpcChannels {
   ResetWindowSize = 'ResetWindowSize',
   GetAlbumFromAppleMusic = 'GetAlbumFromAppleMusic',
   GetArtistFromAppleMusic = 'GetArtistFromAppleMusic',
+  Logout = 'Logout',
 }
 
 // ipcMain.on params
@@ -36,7 +37,7 @@ export interface IpcChannelsParams {
   [IpcChannels.Close]: void
   [IpcChannels.IsMaximized]: void
   [IpcChannels.FullscreenStateChange]: void
-  [IpcChannels.GetApiCacheSync]: {
+  [IpcChannels.GetApiCache]: {
     api: APIs
     query?: any
   }
@@ -68,6 +69,7 @@ export interface IpcChannelsParams {
     artist: string
   }
   [IpcChannels.GetArtistFromAppleMusic]: { id: number; name: string }
+  [IpcChannels.Logout]: void
 }
 
 // ipcRenderer.on params
@@ -78,7 +80,7 @@ export interface IpcChannelsReturns {
   [IpcChannels.Close]: void
   [IpcChannels.IsMaximized]: boolean
   [IpcChannels.FullscreenStateChange]: boolean
-  [IpcChannels.GetApiCacheSync]: any
+  [IpcChannels.GetApiCache]: any
   [IpcChannels.DevDbExportJson]: void
   [IpcChannels.CacheCoverColor]: void
   [IpcChannels.SetTrayTooltip]: void
@@ -92,4 +94,5 @@ export interface IpcChannelsReturns {
   [IpcChannels.GetAudioCacheSize]: void
   [IpcChannels.GetAlbumFromAppleMusic]: AppleMusicAlbum | undefined
   [IpcChannels.GetArtistFromAppleMusic]: AppleMusicArtist | undefined
+  [IpcChannels.Logout]: void
 }

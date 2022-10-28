@@ -12,7 +12,6 @@ if (isProd) {
 }
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
-  sendSync: ipcRenderer.sendSync,
   invoke: ipcRenderer.invoke,
   send: ipcRenderer.send,
   on: (

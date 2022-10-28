@@ -13,13 +13,6 @@ export default function useMV(params: FetchMVParams) {
   return useQuery([MVApiNames.FetchMV, params], () => fetchMV(params), {
     enabled: !!params.mvid && params.mvid > 0 && !isNaN(Number(params.mvid)),
     staleTime: 5 * 60 * 1000, // 5 mins
-    //   placeholderData: (): FetchMVResponse =>
-    //     window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-    //       api: APIs.SimilarArtist,
-    //       query: {
-    //         id: params.id,
-    //       },
-    //     }),
   })
 }
 

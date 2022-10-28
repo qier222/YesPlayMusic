@@ -17,16 +17,26 @@ import { AlbumApiNames, FetchAlbumResponse } from '@/shared/api/Album'
 export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
   const { data: user } = useUser()
   const uid = user?.profile?.userId ?? 0
+  const key = [UserApiNames.FetchUserAlbums, uid]
   return useQuery(
-    [UserApiNames.FetchUserAlbums, uid],
-    () => fetchUserAlbums(params),
+    key,
+    () => {
+      const existsQueryData = reactQueryClient.getQueryData(key)
+      if (!existsQueryData) {
+        window.ipcRenderer
+          ?.invoke(IpcChannels.GetApiCache, {
+            api: APIs.UserAlbums,
+            query: params,
+          })
+          .then(cache => {
+            if (cache) reactQueryClient.setQueryData(key, cache)
+          })
+      }
+
+      return fetchUserAlbums(params)
+    },
     {
       refetchOnWindowFocus: true,
-      placeholderData: (): FetchUserAlbumsResponse | undefined =>
-        window.ipcRenderer?.sendSync(IpcChannels.GetApiCacheSync, {
-          api: APIs.UserAlbums,
-          query: params,
-        }),
     }
   )
 }
