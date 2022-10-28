@@ -146,7 +146,7 @@ export default class {
   }
   set volume(volume) {
     this._volume = volume;
-    Howler.volume(volume);
+    this._howler?.volume(volume);
   }
   get list() {
     return this.shuffle ? this._shuffledList : this._list;
