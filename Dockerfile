@@ -39,9 +39,10 @@ RUN echo $'server { \n\
 
 COPY --from=build /app/package.json /usr/local/lib/
 
-RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv jq \
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main libuv \
   && apk add --no-cache --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.14/main nodejs npm \
-  && npm i -g NeteaseCloudMusicApi@"$(jq -r '.dependencies.NeteaseCloudMusicApi' /usr/local/lib/package.json)"
+  && npm i -g $(awk -F \" '{if($2=="NeteaseCloudMusicApi") print $2"@"$4}' /usr/local/lib/package.json) \
+  && rm -f /usr/local/lib/package.json
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
