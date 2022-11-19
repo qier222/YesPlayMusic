@@ -4,6 +4,9 @@ services:
       context: .
     image: yesplaymusic
     container_name: YesPlayMusic
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     ports:
       - 80:80
     restart: always
