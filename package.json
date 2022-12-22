@@ -24,7 +24,7 @@
   "main": "background.js",
   "dependencies": {
     "@unblockneteasemusic/rust-napi": "^0.3.0-pre.1",
-    "NeteaseCloudMusicApi": "^4.5.2",
+    "NeteaseCloudMusicApi": "^4.8.4",
     "axios": "^0.26.1",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",
