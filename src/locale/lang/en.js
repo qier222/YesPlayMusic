@@ -38,6 +38,7 @@ export default {
     },
     userProfileMenu: {
       settings: 'Settings',
+      themes: 'themes',
       logout: 'Logout',
     },
   },

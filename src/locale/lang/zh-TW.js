@@ -35,6 +35,7 @@ export default {
     },
     userProfileMenu: {
       settings: '設定',
+      themes: '配色',
       logout: '登出',
     },
   },

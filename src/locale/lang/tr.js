@@ -38,6 +38,7 @@ export default {
     },
     userProfileMenu: {
       settings: 'Ayarlar',
+      themes: 'themes',
       logout: 'Çıkış Yap',
     },
   },

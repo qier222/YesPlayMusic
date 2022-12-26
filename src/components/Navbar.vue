@@ -46,13 +46,18 @@
         <img
           class="avatar"
           :src="avatarUrl"
-          @click="showUserProfileMenu"
           loading="lazy"
+          @click="showUserProfileMenu"
         />
       </div>
     </nav>
 
     <ContextMenu ref="userProfileMenu">
+      <div class="item" @click="toggleThemes">
+        <svg-icon icon-class="circle-half-stroke" />
+        {{ $t('library.userProfileMenu.themes') }}
+      </div>
+      <hr />
       <div class="item" @click="toSettings">
         <svg-icon icon-class="settings" />
         {{ $t('library.userProfileMenu.settings') }}
@@ -77,6 +82,7 @@
 <script>
 import { mapState } from 'vuex';
 import { isLooseLoggedIn, doLogout } from '@/utils/auth';
+import { changeAppearance } from '@/utils/common';
 
 // import icons for win32 title bar
 // icons by https://github.com/microsoft/vscode-codicons
@@ -156,6 +162,18 @@ export default {
     },
     toSettings() {
       this.$router.push({ name: 'settings' });
+    },
+    toggleThemes() {
+      let value = 'dark';
+      // light => dark
+      if (this.$store.state.settings.appearance === 'light') value = 'dark';
+      else value = 'light';
+
+      this.$store.commit('updateSettings', {
+        key: 'appearance',
+        value,
+      });
+      changeAppearance(value);
     },
     toGitHub() {
       window.open('https://github.com/qier222/YesPlayMusic');
