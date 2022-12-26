@@ -36,6 +36,7 @@
 }
 
 :root {
+  --color-lyric: #002415;
   --color-body-bg: #ffffff;
   --color-text: #000;
   --color-primary: #335eea;
@@ -49,6 +50,7 @@
 }
 
 [data-theme='dark'] {
+  --color-lyric: #f5fdaf;
   --color-body-bg: #222222;
   --color-text: #ffffff;
   --color-primary: #335eea;
@@ -75,6 +77,7 @@ html {
   overflow-y: var(--html-overflow-y);
   min-width: 768px;
   overscroll-behavior: none;
+  -web-kit-overscroll-behavior: none;
 }
 
 select,
@@ -86,6 +89,7 @@ button {
   border: none;
   cursor: pointer;
   user-select: none;
+  -web-kit-user-select: none;
 }
 input,
 button {
@@ -132,4 +136,5 @@ a {
 
 .user-select-none {
   user-select: none;
+  -web-kit-user-select: none;
 }

@@ -793,12 +793,13 @@ export default {
 .right-side {
   flex: 1;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-lyric);
   margin-right: 24px;
   z-index: 0;
 
   .lyrics-container {
-    height: 100%;
+    margin-top: 80px;
+    height: 85%;
     display: flex;
     flex-direction: column;
     padding-left: 78px;
@@ -806,6 +807,17 @@ export default {
     overflow-y: auto;
     transition: 0.5s;
     scrollbar-width: none; // firefox
+    mask-image: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.3) 10%,
+      rgba(255, 255, 255, 0.6) 20%,
+      rgba(255, 255, 255, 1) 30%,
+      rgba(255, 255, 255, 1) 70%,
+      rgba(255, 255, 255, 0.6) 80%,
+      rgba(255, 255, 255, 0.3) 90%,
+      rgba(255, 255, 255, 0) 100%
+    );
 
     .line {
       margin: 2px 0;
@@ -823,14 +835,14 @@ export default {
         transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
         span {
-          opacity: 0.28;
+          opacity: 0.58;
           cursor: default;
           font-size: 1em;
           transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         span.translation {
-          opacity: 0.2;
+          opacity: 0.5;
           font-size: 0.925em;
         }
       }
@@ -852,7 +864,7 @@ export default {
       }
 
       span.translation {
-        opacity: 0.65;
+        opacity: 0.8;
       }
     }
   }
