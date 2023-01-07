@@ -1,12 +1,7 @@
 import './preload' // must be first
 import './sentry'
 import './server'
-import {
-  BrowserWindow,
-  BrowserWindowConstructorOptions,
-  app,
-  shell,
-} from 'electron'
+import { BrowserWindow, BrowserWindowConstructorOptions, app, shell } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
 import log from './log'
@@ -15,7 +10,7 @@ import { createTray, YPMTray } from './tray'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { createMenu } from './menu'
-import { isDev, isWindows, isLinux, isMac } from './utils'
+import { isDev, isWindows, isLinux, isMac, appName } from './env'
 import store from './store'
 // import './surrealdb'
 // import Airplay from './airplay'
@@ -81,7 +76,7 @@ class Main {
 
   createWindow() {
     const options: BrowserWindowConstructorOptions = {
-      title: 'YesPlayMusic',
+      title: appName,
       webPreferences: {
         preload: join(__dirname, 'rendererPreload.js'),
       },
@@ -93,6 +88,7 @@ class Main {
       trafficLightPosition: { x: 24, y: 24 },
       frame: false,
       transparent: true,
+      backgroundColor: 'rgba(0, 0, 0, 0)',
       show: false,
     }
     if (store.get('window')) {
@@ -132,35 +128,31 @@ class Main {
       return headers
     }
 
-    this.win.webContents.session.webRequest.onBeforeSendHeaders(
-      (details, callback) => {
-        const { requestHeaders, url } = details
-        addCORSHeaders(requestHeaders)
+    this.win.webContents.session.webRequest.onBeforeSendHeaders((details, callback) => {
+      const { requestHeaders, url } = details
+      addCORSHeaders(requestHeaders)
 
-        // 不加这几个 header 的话，使用 axios 加载 YouTube 音频会很慢
-        if (url.includes('googlevideo.com')) {
-          requestHeaders['Sec-Fetch-Mode'] = 'no-cors'
-          requestHeaders['Sec-Fetch-Dest'] = 'audio'
-          requestHeaders['Range'] = 'bytes=0-'
-        }
-
-        callback({ requestHeaders })
+      // 不加这几个 header 的话，使用 axios 加载 YouTube 音频会很慢
+      if (url.includes('googlevideo.com')) {
+        requestHeaders['Sec-Fetch-Mode'] = 'no-cors'
+        requestHeaders['Sec-Fetch-Dest'] = 'audio'
+        requestHeaders['Range'] = 'bytes=0-'
       }
-    )
 
-    this.win.webContents.session.webRequest.onHeadersReceived(
-      (details, callback) => {
-        const { responseHeaders, url } = details
-        if (url.includes('sentry.io')) {
-          callback({ responseHeaders })
-          return
-        }
-        if (responseHeaders) {
-          addCORSHeaders(responseHeaders)
-        }
+      callback({ requestHeaders })
+    })
+
+    this.win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+      const { responseHeaders, url } = details
+      if (url.includes('sentry.io')) {
         callback({ responseHeaders })
+        return
       }
-    )
+      if (responseHeaders) {
+        addCORSHeaders(responseHeaders)
+      }
+      callback({ responseHeaders })
+    })
   }
 
   handleWindowEvents() {
@@ -176,13 +168,11 @@ class Main {
     })
 
     this.win.on('enter-full-screen', () => {
-      this.win &&
-        this.win.webContents.send(IpcChannels.FullscreenStateChange, true)
+      this.win && this.win.webContents.send(IpcChannels.FullscreenStateChange, true)
     })
 
     this.win.on('leave-full-screen', () => {
-      this.win &&
-        this.win.webContents.send(IpcChannels.FullscreenStateChange, false)
+      this.win && this.win.webContents.send(IpcChannels.FullscreenStateChange, false)
     })
 
     // Save window position

@@ -9,6 +9,7 @@ import persistedUiStates from '@/web/states/persistedUiStates'
 import { motion, useAnimation } from 'framer-motion'
 import { sleep } from '@/web/utils/common'
 import player from '@/web/states/player'
+import VideoPlayer from './VideoPlayer'
 
 const Main = () => {
   const playerSnapshot = useSnapshot(player)

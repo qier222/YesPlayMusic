@@ -77,7 +77,10 @@
     "unfollow": "取消关注",
     "follow": "关注",
     "followed": "已关注",
-    "unfollowed": "已取消关注"
+    "unfollowed": "已取消关注",
+    "add-to-library": "添加到音乐库",
+    "remove-from-library": "从音乐库中移除",
+    "copy-r3play-link": "复制R3PLAY链接"
   },
   "toast": {},
   "artist": {

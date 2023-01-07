@@ -9,6 +9,7 @@ import dotenv from 'dotenv'
 import pc from 'picocolors'
 import minimist from 'minimist'
 
+const isDev = process.env.NODE_ENV === 'development'
 const env = dotenv.config({
   path: path.resolve(process.cwd(), '../../.env'),
 })

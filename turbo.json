@@ -8,23 +8,30 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**"
+      ],
       "cache": false
     },
     "pack": {
-      "outputs": ["release/**"],
+      "outputs": [
+        "release/**"
+      ],
       "cache": false
     },
     "pack:test": {
-      "outputs": ["release/**"],
+      "outputs": [
+        "release/**"
+      ],
       "cache": false
     },
     "test": {
-      "dependsOn": ["build"],
-      "outputs": []
-    },
-    "lint": {
+      "dependsOn": [
+        "build"
+      ],
       "outputs": []
     }
   }

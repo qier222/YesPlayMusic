@@ -1,6 +1,4 @@
-import useUserAlbums, {
-  useMutationLikeAAlbum,
-} from '@/web/api/hooks/useUserAlbums'
+import useUserAlbums, { useMutationLikeAAlbum } from '@/web/api/hooks/useUserAlbums'
 import contextMenus, { closeContextMenu } from '@/web/states/contextMenus'
 import player from '@/web/states/player'
 import { AnimatePresence } from 'framer-motion'
@@ -14,16 +12,15 @@ import BasicContextMenu from './BasicContextMenu'
 const AlbumContextMenu = () => {
   const { t } = useTranslation()
 
-  const { cursorPosition, type, dataSourceID, target, options } =
-    useSnapshot(contextMenus)
+  const { cursorPosition, type, dataSourceID, target, options } = useSnapshot(contextMenus)
   const likeAAlbum = useMutationLikeAAlbum()
   const [, copyToClipboard] = useCopyToClipboard()
 
   const { data: likedAlbums } = useUserAlbums()
   const addToLibraryLabel = useMemo(() => {
     return likedAlbums?.data?.find(a => a.id === Number(dataSourceID))
-      ? 'Remove from Library'
-      : 'Add to Library'
+      ? t`context-menu.remove-from-library`
+      : t`context-menu.add-to-library`
   }, [dataSourceID, likedAlbums?.data])
 
   return (
@@ -82,19 +79,15 @@ const AlbumContextMenu = () => {
                   type: 'item',
                   label: t`context-menu.copy-netease-link`,
                   onClick: () => {
-                    copyToClipboard(
-                      `https://music.163.com/#/album?id=${dataSourceID}`
-                    )
+                    copyToClipboard(`https://music.163.com/#/album?id=${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },
                 {
                   type: 'item',
-                  label: 'Copy YPM Link',
+                  label: t`context-menu.copy-r3play-link`,
                   onClick: () => {
-                    copyToClipboard(
-                      `${window.location.origin}/album/${dataSourceID}`
-                    )
+                    copyToClipboard(`${window.location.origin}/album/${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },

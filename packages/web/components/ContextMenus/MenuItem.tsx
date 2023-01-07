@@ -1,13 +1,7 @@
 import { css, cx } from '@emotion/css'
 import { ForwardedRef, forwardRef, useRef, useState } from 'react'
 import Icon from '../Icon'
-
-export interface ContextMenuItem {
-  type: 'item' | 'submenu' | 'divider'
-  label?: string
-  onClick?: (e: MouseEvent) => void
-  items?: ContextMenuItem[]
-}
+import { ContextMenuItem } from './types'
 
 const MenuItem = ({
   item,
@@ -63,7 +57,7 @@ const MenuItem = ({
         onSubmenuClose()
       }}
       className={cx(
-        'relative',
+        'relative cursor-default',
         className,
         css`
           padding-right: 9px;

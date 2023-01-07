@@ -15,6 +15,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { scrollToBottom } from '@/web/utils/common'
 import { throttle } from 'lodash-es'
 import { useTranslation } from 'react-i18next'
+import VideoRow from '@/web/components/VideoRow'
+import useUserVideos from '@/web/api/hooks/useUserVideos'
 
 const Albums = () => {
   const { data: albums } = useUserAlbums()
@@ -33,6 +35,11 @@ const Playlists = () => {
 const Artists = () => {
   const { data: artists } = useUserArtists()
   return <ArtistRow artists={artists?.data || []} />
+}
+
+const Videos = () => {
+  const { data: videos } = useUserVideos()
+  return <VideoRow videos={videos?.data || []} />
 }
 
 const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
@@ -130,6 +137,7 @@ const Collections = () => {
         {selectedTab === 'albums' && <Albums />}
         {selectedTab === 'playlists' && <Playlists />}
         {selectedTab === 'artists' && <Artists />}
+        {selectedTab === 'videos' && <Videos />}
       </div>
       <div ref={observePoint}></div>
     </div>

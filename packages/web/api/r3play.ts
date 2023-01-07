@@ -1,7 +1,8 @@
 import axios, { AxiosInstance } from 'axios'
+import { appName } from '../utils/const'
 
 const request: AxiosInstance = axios.create({
-  baseURL: '/yesplaymusic',
+  baseURL: `/${appName.toLowerCase()}`,
   withCredentials: true,
   timeout: 15000,
 })

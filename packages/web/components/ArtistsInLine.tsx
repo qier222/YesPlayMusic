@@ -52,7 +52,7 @@ const ArtistInline = ({
           >
             {artist.name}
           </span>
-          {index < artists.length - 1 ? ', ' : ''}&nbsp;
+          {index < artists.length - 1 ? ', ' : ''}
         </span>
       ))}
     </div>

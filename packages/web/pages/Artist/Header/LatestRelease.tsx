@@ -8,6 +8,7 @@ import { useMemo } from 'react'
 import useArtistMV from '@/web/api/hooks/useArtistMV'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import uiStates from '@/web/states/uiStates'
 
 const Album = ({ album }: { album?: Album }) => {
   const navigate = useNavigate()
@@ -49,14 +50,12 @@ const Album = ({ album }: { album?: Album }) => {
 }
 
 const Video = ({ video }: { video?: any }) => {
-  const navigate = useNavigate()
-
   return (
     <>
       {video && (
         <div
           className='group mt-4 flex rounded-24 bg-white/10 p-2.5 transition-colors duration-400 hover:bg-white/20'
-          onClick={() => navigate(`/mv/${video.id}`)}
+          onClick={() => (uiStates.playingVideoID = video.id)}
         >
           <img
             src={video.imgurl16v9}

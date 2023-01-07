@@ -5,6 +5,7 @@ export enum UserApiNames {
   FetchUserAlbums = 'fetchUserAlbums',
   FetchUserArtists = 'fetchUserArtists',
   FetchListenedRecords = 'fetchListenedRecords',
+  FetchUserVideos = 'fetchUserVideos',
 }
 
 // 获取账号详情
@@ -106,6 +107,14 @@ export interface FetchUserArtistsResponse {
   hasMore: boolean
   count: number
   data: Artist[]
+}
+// 获取收藏的MV
+export interface FetchUserVideosParams {}
+export interface FetchUserVideosResponse {
+  code: number
+  hasMore: boolean
+  count: number
+  data: Video[]
 }
 
 // 听歌排名

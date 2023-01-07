@@ -7,7 +7,7 @@
 
 import log from 'electron-log'
 import pc from 'picocolors'
-import { isDev } from './utils'
+import { isDev } from './env'
 
 Object.assign(console, log.functions)
 log.variables.process = 'main'

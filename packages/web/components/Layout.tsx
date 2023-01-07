@@ -2,13 +2,12 @@ import Main from '@/web/components/Main'
 import Player from '@/web/components/Player'
 import MenuBar from '@/web/components/MenuBar'
 import Topbar from '@/web/components/Topbar/TopbarDesktop'
-import { css, cx } from '@emotion/css'
+import { cx } from '@emotion/css'
 import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Login from './Login'
 import TrafficLight from './TrafficLight'
 import BlurBackground from './BlurBackground'
-import Airplay from './Airplay'
 import TitleBar from './TitleBar'
 import uiStates from '@/web/states/uiStates'
 import ContextMenus from './ContextMenus/ContextMenus'
@@ -39,7 +38,11 @@ const Layout = () => {
         </div>
       )}
 
-      {(window.env?.isWindows || window.env?.isLinux) && <TitleBar />}
+      {(window.env?.isWindows ||
+        window.env?.isLinux ||
+        window.localStorage.getItem('showWindowsTitleBar') === 'true') && (
+        <TitleBar />
+      )}
 
       <ContextMenus />
 

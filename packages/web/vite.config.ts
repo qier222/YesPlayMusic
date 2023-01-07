@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 import dotenv from 'dotenv'
 import path, { join } from 'path'
 import { defineConfig } from 'vite'
@@ -7,6 +7,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { VitePWA } from 'vite-plugin-pwa'
 import filenamesToType from './vitePluginFilenamesToType'
+import { appName } from './utils/const'
 
 dotenv.config({ path: path.resolve(process.cwd(), '../../.env') })
 const IS_ELECTRON = process.env.IS_ELECTRON
@@ -21,7 +22,7 @@ export default defineConfig({
   base: '/',
   resolve: {
     alias: {
-      '@': join(__dirname, '../'),
+      '@': join(__dirname, '..'),
     },
   },
   plugins: [
@@ -36,32 +37,33 @@ export default defineConfig({
     /**
      * @see https://vite-plugin-pwa.netlify.app/guide/generate.html
      */
-    VitePWA({
-      manifest: {
-        name: 'YesPlayMusic',
-        short_name: 'YPM',
-        description: 'Description of your app',
-        theme_color: '#000',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
-    }),
+    // VitePWA({
+    //   registerType: 'autoUpdate',
+    //   manifest: {
+    //     name: appName,
+    //     short_name: appName,
+    //     description: 'Description of your app',
+    //     theme_color: '#000',
+    //     icons: [
+    //       {
+    //         src: 'pwa-192x192.png',
+    //         sizes: '192x192',
+    //         type: 'image/png',
+    //       },
+    //       {
+    //         src: 'pwa-512x512.png',
+    //         sizes: '512x512',
+    //         type: 'image/png',
+    //       },
+    //       {
+    //         src: 'pwa-512x512.png',
+    //         sizes: '512x512',
+    //         type: 'image/png',
+    //         purpose: 'any maskable',
+    //       },
+    //     ],
+    //   },
+    // }),
 
     /**
      * @see https://github.com/vbenjs/vite-plugin-svg-icons
@@ -78,12 +80,12 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       plugins: [
-        visualizer({
-          filename: './bundle-stats.html',
-          gzipSize: true,
-          projectRoot: './',
-          template: 'treemap',
-        }),
+        // visualizer({
+        //   filename: './bundle-stats.html',
+        //   gzipSize: true,
+        //   projectRoot: './',
+        //   template: 'treemap',
+        // }),
       ],
     },
   },
@@ -93,20 +95,16 @@ export default defineConfig({
     proxy: {
       '/netease/': {
         // target: `http://192.168.50.111:${
-        target: `http://127.0.0.1:${
-          process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
-        }`,
+        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
         changeOrigin: true,
         rewrite: path => (IS_ELECTRON ? path : path.replace(/^\/netease/, '')),
       },
-      '/yesplaymusic/video-cover': {
+      [`/${appName.toLowerCase()}/video-cover`]: {
         target: `http://168.138.40.199:51324`,
         changeOrigin: true,
       },
-      '/yesplaymusic/': {
-        target: `http://127.0.0.1:${
-          process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
-        }`,
+      [`/${appName.toLowerCase()}/`]: {
+        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
         changeOrigin: true,
       },
     },

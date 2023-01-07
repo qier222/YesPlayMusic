@@ -2,7 +2,7 @@ import { resizeImage } from '@/web/utils/common'
 import Image from '@/web/components/Image'
 import { memo, useEffect } from 'react'
 import uiStates from '@/web/states/uiStates'
-import VideoCover from './VideoCover'
+import VideoCover from '@/web/components/VideoCover'
 
 const Cover = memo(
   ({ cover, videoCover }: { cover?: string; videoCover?: string }) => {
@@ -18,7 +18,7 @@ const Cover = memo(
             src={resizeImage(cover || '', 'lg')}
           />
 
-          {videoCover && <VideoCover videoCover={videoCover} />}
+          {videoCover && <VideoCover source={videoCover} />}
         </div>
       </>
     )

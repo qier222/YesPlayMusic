@@ -9,6 +9,7 @@ import {
 } from 'electron'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
+import { appName } from './env'
 
 const iconDirRoot =
   process.env.NODE_ENV === 'development'
@@ -134,7 +135,7 @@ class YPMTrayImpl implements YPMTray {
     this._contextMenu = Menu.buildFromTemplate(this._template)
 
     this._updateContextMenu()
-    this.setTooltip('YesPlayMusic')
+    this.setTooltip(appName)
 
     this._tray.on('click', () => win.show())
   }

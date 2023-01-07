@@ -93,10 +93,9 @@
 
 body,
 input {
-  font-family: Roboto, ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei,
-    Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, microsoft uighur,
-    sans-serif;
+  font-family: Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Helvetica Neue,
+    PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei,
+    microsoft uighur, sans-serif;
 }
 
 body {

@@ -5,7 +5,6 @@ import {
   fetchFromCache,
 } from '@/web/api/hooks/usePlaylist'
 import { fetchTracksWithReactQuery } from '@/web/api/hooks/useTracks'
-import { useEffect, useState } from 'react'
 import { sampleSize } from 'lodash-es'
 import { FetchPlaylistResponse } from '@/shared/api/Playlists'
 import { useQuery } from '@tanstack/react-query'
@@ -31,27 +30,19 @@ const getAlbumsFromAPI = async () => {
     7463185187, // 开发者夹带私货
   ]
 
-  const playlists = (await Promise.all(
-    sampleSize(playlistsIds, 5).map(
-      id =>
-        new Promise(resolve => {
-          const cache = fetchFromCache(id)
-          if (cache) {
-            resolve(cache)
-            return
-          }
-          resolve(fetchPlaylistWithReactQuery({ id }))
-        })
-    )
-  )) as FetchPlaylistResponse[]
+  const playlists: FetchPlaylistResponse[] = await Promise.all(
+    sampleSize(playlistsIds, 5).map(async id => {
+      const cache = await fetchFromCache({ id })
+      if (cache) return cache
+      return fetchPlaylistWithReactQuery({ id })
+    })
+  )
 
   let ids: number[] = []
   playlists.forEach(playlist =>
     playlist?.playlist?.trackIds?.forEach(t => ids.push(t.id))
   )
-  if (!ids.length) {
-    return []
-  }
+  if (!ids.length) return []
   ids = sampleSize(ids, 100)
 
   const tracks = await fetchTracksWithReactQuery({ ids })

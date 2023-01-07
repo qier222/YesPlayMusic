@@ -10,6 +10,7 @@ module.exports = {
   htmlWhitespaceSensitivity: 'strict',
   singleQuote: true,
   jsxSingleQuote: true,
+  printWidth: 100,
 
   // Tailwind CSS
   plugins: [require('prettier-plugin-tailwindcss')],

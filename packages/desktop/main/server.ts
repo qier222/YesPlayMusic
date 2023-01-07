@@ -10,7 +10,7 @@ import fs from 'fs'
 import { app } from 'electron'
 import type { FetchAudioSourceResponse } from '@/shared/api/Track'
 import { APIs as CacheAPIs } from '@/shared/CacheAPIs'
-import { isProd } from './utils'
+import { appName, isProd } from './env'
 import { APIs } from '@/shared/CacheAPIs'
 import history from 'connect-history-api-fallback'
 import { db, Tables } from './db'
@@ -19,7 +19,7 @@ class Server {
   port = Number(
     isProd
       ? process.env.ELECTRON_WEB_SERVER_PORT || 42710
-      : process.env.ELECTRON_DEV_NETEASE_API_PORT || 3000
+      : process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001
   )
   app = express()
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -39,9 +39,7 @@ class Server {
   neteaseHandler() {
     Object.entries(this.netease).forEach(([name, handler]: [string, any]) => {
       // 例外处理
-      if (
-        ['serveNcmApi', 'getModulesDefinitions', APIs.SongUrl].includes(name)
-      ) {
+      if (['serveNcmApi', 'getModulesDefinitions', APIs.SongUrl].includes(name)) {
         return
       }
 
@@ -103,7 +101,7 @@ class Server {
           {
             source: cache.source,
             id: cache.id,
-            url: `http://127.0.0.1:42710/yesplaymusic/audio/${audioFileName}`,
+            url: `http://127.0.0.1:42710/${appName.toLowerCase()}/audio/${audioFileName}`,
             br: cache.br,
             size: 0,
             md5: '',
@@ -137,9 +135,7 @@ class Server {
       }
     }
 
-    const getFromNetease = async (
-      req: Request
-    ): Promise<FetchAudioSourceResponse | undefined> => {
+    const getFromNetease = async (req: Request): Promise<FetchAudioSourceResponse | undefined> => {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const getSongUrl = (require('NeteaseCloudMusicApi') as any).song_url
@@ -155,12 +151,10 @@ class Server {
     // const unmExecutor = new UNM.Executor()
     const getFromUNM = async (id: number, req: Request) => {
       log.debug('[server] Fetching audio url from UNM')
-      let track: Track = cache.get(CacheAPIs.Track, { ids: String(id) })
-        ?.songs?.[0]
+      let track: Track = cache.get(CacheAPIs.Track, { ids: String(id) })?.songs?.[0]
       if (!track) {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const getSongDetail = (require('NeteaseCloudMusicApi') as any)
-          .song_detail
+        const getSongDetail = (require('NeteaseCloudMusicApi') as any).song_detail
 
         track = await getSongDetail({ ...req.query, cookie: req.cookies })
       }
@@ -184,14 +178,9 @@ class Server {
 
       const sourceList = ['ytdl']
       const context = {}
-      const matchedAudio = await unmExecutor.search(
-        sourceList,
-        trackForUNM,
-        context
-      )
+      const matchedAudio = await unmExecutor.search(sourceList, trackForUNM, context)
       const retrievedSong = await unmExecutor.retrieve(matchedAudio, context)
-      const source =
-        retrievedSong.source === 'ytdl' ? 'youtube' : retrievedSong.source
+      const source = retrievedSong.source === 'ytdl' ? 'youtube' : retrievedSong.source
       if (retrievedSong.url) {
         log.debug(
           `[server] UMN match: ${matchedAudio.song?.name} (https://youtube.com/v/${matchedAudio.song?.id})`
@@ -291,45 +280,38 @@ class Server {
 
   cacheAudioHandler() {
     this.app.get(
-      '/yesplaymusic/audio/:filename',
+      `/${appName.toLowerCase()}/audio/:filename`,
       async (req: Request, res: Response) => {
         cache.getAudio(req.params.filename, res)
       }
     )
-    this.app.post(
-      '/yesplaymusic/audio/:id',
-      async (req: Request, res: Response) => {
-        const id = Number(req.params.id)
-        const { url } = req.query
-        if (isNaN(id)) {
-          return res.status(400).send({ error: 'Invalid param id' })
-        }
-        if (!url) {
-          return res.status(400).send({ error: 'Invalid query url' })
-        }
-
-        if (
-          !req.files ||
-          Object.keys(req.files).length === 0 ||
-          !req.files.file
-        ) {
-          return res.status(400).send('No audio were uploaded.')
-        }
-        if ('length' in req.files.file) {
-          return res.status(400).send('Only can upload one audio at a time.')
-        }
-
-        try {
-          await cache.setAudio(req.files.file.data, {
-            id,
-            url: String(req.query.url) || '',
-          })
-          res.status(200).send('Audio cached!')
-        } catch (error) {
-          res.status(500).send({ error })
-        }
+    this.app.post(`/${appName.toLowerCase()}/audio/:id`, async (req: Request, res: Response) => {
+      const id = Number(req.params.id)
+      const { url } = req.query
+      if (isNaN(id)) {
+        return res.status(400).send({ error: 'Invalid param id' })
       }
-    )
+      if (!url) {
+        return res.status(400).send({ error: 'Invalid query url' })
+      }
+
+      if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
+        return res.status(400).send('No audio were uploaded.')
+      }
+      if ('length' in req.files.file) {
+        return res.status(400).send('Only can upload one audio at a time.')
+      }
+
+      try {
+        await cache.setAudio(req.files.file.data, {
+          id,
+          url: String(req.query.url) || '',
+        })
+        res.status(200).send('Audio cached!')
+      } catch (error) {
+        res.status(500).send({ error })
+      }
+    })
   }
 
   listen() {

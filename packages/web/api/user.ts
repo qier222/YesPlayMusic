@@ -10,6 +10,8 @@ import {
   FetchUserArtistsResponse,
   FetchListenedRecordsParams,
   FetchListenedRecordsResponse,
+  FetchUserVideosResponse,
+  FetchUserVideosParams,
 } from '@/shared/api/User'
 
 /**
@@ -135,20 +137,18 @@ export function fetchUserArtists(): Promise<FetchUserArtistsResponse> {
   })
 }
 
-/**
- * 获取收藏的MV（需要登录）
- * 说明 : 调用此接口可获取到用户收藏的MV
- */
-// export function likedMVs(params) {
-//   return request({
-//     url: '/mv/sublist',
-//     method: 'get',
-//     params: {
-//       limit: params.limit,
-//       timestamp: new Date().getTime(),
-//     },
-//   })
-// }
+// 获取收藏的MV
+export function fetchUserVideos(): Promise<FetchUserVideosResponse> {
+  return request({
+    url: '/mv/sublist',
+    method: 'get',
+    params: {
+      limit: 1000,
+      // offset: 1,
+      timestamp: new Date().getTime(),
+    },
+  })
+}
 
 /**
  * 上传歌曲到云盘（需要登录）

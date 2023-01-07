@@ -77,7 +77,10 @@
     "follow": "Follow",
     "unfollow": "Unfollow",
     "followed": "Followed",
-    "unfollowed": "Unfollowed"
+    "unfollowed": "Unfollowed",
+    "add-to-library": "Add to library",
+    "remove-from-library": "Remove from library",
+    "copy-r3play-link": "Copy R3PLAY Link"
   },
   "toast": {},
   "artist": {

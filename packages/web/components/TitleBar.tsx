@@ -1,9 +1,7 @@
-import player from '@/web/states/player'
 import Icon from './Icon'
 import { IpcChannels } from '@/shared/IpcChannels'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
-import { useState, useMemo } from 'react'
-import { useSnapshot } from 'valtio'
+import { useState } from 'react'
 import { css, cx } from '@emotion/css'
 
 const Controls = () => {
@@ -50,7 +48,8 @@ const Controls = () => {
         className={cx(
           classNames,
           css`
-            margin-right: 5px;
+            border-radius: 4px 22px 4px 4px;
+            margin-right: 4px;
           `
         )}
       >

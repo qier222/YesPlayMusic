@@ -4,6 +4,8 @@ import useLockMainScroll from '@/web/hooks/useLockMainScroll'
 import useMeasure from 'react-use-measure'
 import { ContextMenuItem } from './MenuItem'
 import MenuPanel from './MenuPanel'
+import { createPortal } from 'react-dom'
+import { ContextMenuPosition } from './types'
 
 const BasicContextMenu = ({
   onClose,
@@ -19,15 +21,14 @@ const BasicContextMenu = ({
   cursorPosition: { x: number; y: number }
   options?: {
     useCursorPosition?: boolean
+    fixedPosition?: `${'top' | 'bottom'}-${'left' | 'right'}`
   } | null
   classNames?: string
 }) => {
   const menuRef = useRef<HTMLDivElement>(null)
   const [measureRef, menu] = useMeasure()
 
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(
-    null
-  )
+  const [position, setPosition] = useState<ContextMenuPosition | null>(null)
 
   useClickAway(menuRef, onClose)
   useLockMainScroll(!!position)
@@ -41,6 +42,22 @@ const BasicContextMenu = ({
       const position = {
         x: leftX + menu.width < window.innerWidth ? leftX : rightX,
         y: bottomY + menu.height < window.innerHeight ? bottomY : topY,
+      }
+      setPosition(position)
+    } else if (options?.fixedPosition) {
+      const [vertical, horizontal] = options.fixedPosition.split('-') as [
+        'top' | 'bottom',
+        'left' | 'right'
+      ]
+      const button = target.getBoundingClientRect()
+      const leftX = button.x
+      const rightX = button.x - menu.width + button.width
+      const bottomY = button.y + button.height + 8
+      const topY = button.y - menu.height - 8
+      const position: ContextMenuPosition = {
+        x: horizontal === 'left' ? leftX : rightX,
+        y: vertical === 'bottom' ? bottomY : topY,
+        transformOrigin: `origin-${options.fixedPosition}`,
       }
       setPosition(position)
     } else {
@@ -57,7 +74,7 @@ const BasicContextMenu = ({
     }
   }, [target, menu, options?.useCursorPosition, cursorPosition])
 
-  return (
+  return createPortal(
     <>
       <MenuPanel
         position={{ x: 99999, y: 99999 }}
@@ -78,7 +95,8 @@ const BasicContextMenu = ({
           classNames={classNames}
         />
       )}
-    </>
+    </>,
+    document.body
   )
 }
 

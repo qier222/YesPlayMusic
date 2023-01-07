@@ -35,6 +35,10 @@ export function resizeImage(
   )
 }
 
+export function toHttps(url: string | undefined): string {
+  return url ? url.replace(/^http:/, 'https:') : ''
+}
+
 export const storage = {
   get(key: string): object | [] | null {
     const text = localStorage.getItem(key)

@@ -6,7 +6,8 @@ import {
   MenuItemConstructorOptions,
   shell,
 } from 'electron'
-import { logsPath, isMac } from './utils'
+import { isMac } from './env'
+import { logsPath } from './utils'
 import { exec } from 'child_process'
 
 export const createMenu = (win: BrowserWindow) => {

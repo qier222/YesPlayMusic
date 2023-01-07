@@ -8,6 +8,7 @@ import { State as PlayerState } from '@/web/utils/player'
 import { useEffect, useRef, useState } from 'react'
 import { useEffectOnce } from 'react-use'
 import { useSnapshot } from 'valtio'
+import { appName } from './utils/const'
 
 const IpcRendererReact = () => {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -26,7 +27,7 @@ const IpcRendererReact = () => {
   useEffect(() => {
     trackIDRef.current = track?.id ?? 0
 
-    const text = track?.name ? `${track.name} - YesPlayMusic` : 'YesPlayMusic'
+    const text = track?.name ? `${track.name} - ${appName}` : appName
     window.ipcRenderer?.send(IpcChannels.SetTrayTooltip, {
       text,
     })

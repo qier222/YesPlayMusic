@@ -5,7 +5,7 @@ import {
 } from '@/web/api/hooks/useTracks'
 import { fetchPersonalFMWithReactQuery } from '@/web/api/hooks/usePersonalFM'
 import { fmTrash } from '@/web/api/personalFM'
-import { cacheAudio } from '@/web/api/yesplaymusic'
+import { cacheAudio } from '@/web/api/r3play'
 import { clamp } from 'lodash-es'
 import axios from 'axios'
 import { resizeImage } from './common'
@@ -16,6 +16,7 @@ import { RepeatMode } from '@/shared/playerDataTypes'
 import toast from 'react-hot-toast'
 import { scrobble } from '@/web/api/user'
 import { fetchArtistWithReactQuery } from '../api/hooks/useArtist'
+import { appName } from './const'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -200,22 +201,19 @@ export class Player {
       }, 1000)
     } else if (this._isAirplay) {
       // Airplay
-      let isFetchAirplayPlayingInfo = false
-      this._progressInterval = setInterval(async () => {
-        if (isFetchAirplayPlayingInfo) return
-
-        isFetchAirplayPlayingInfo = true
-
-        const playingInfo = await window?.ipcRenderer?.invoke(
-          'airplay-get-playing',
-          { deviceID: this.remoteDevice?.id }
-        )
-        if (playingInfo) {
-          this._progress = playingInfo.position || 0
-        }
-
-        isFetchAirplayPlayingInfo = false
-      }, 1000)
+      // let isFetchAirplayPlayingInfo = false
+      // this._progressInterval = setInterval(async () => {
+      //   if (isFetchAirplayPlayingInfo) return
+      //   isFetchAirplayPlayingInfo = true
+      //   const playingInfo = await window?.ipcRenderer?.invoke(
+      //     'airplay-get-playing',
+      //     { deviceID: this.remoteDevice?.id }
+      //   )
+      //   if (playingInfo) {
+      //     this._progress = playingInfo.position || 0
+      //   }
+      //   isFetchAirplayPlayingInfo = false
+      // }, 1000)
     }
   }
 
@@ -328,15 +326,15 @@ export class Player {
   }
 
   private async _playAudioViaAirplay(audio: string) {
-    if (!this._isAirplay) {
-      console.log('No airplay device selected')
-      return
-    }
-    const result = await window.ipcRenderer?.invoke('airplay-play-url', {
-      deviceID: this.remoteDevice?.id,
-      url: audio,
-    })
-    console.log(result)
+    // if (!this._isAirplay) {
+    //   console.log('No airplay device selected')
+    //   return
+    // }
+    // const result = await window.ipcRenderer?.invoke('airplay-play-url', {
+    //   deviceID: this.remoteDevice?.id,
+    //   url: audio,
+    // })
+    // console.log(result)
   }
 
   private _howlerOnEndCallback() {
@@ -349,7 +347,7 @@ export class Player {
   }
 
   private _cacheAudio(audio: string) {
-    if (audio.includes('yesplaymusic') || !window.ipcRenderer) return
+    if (audio.includes(appName.toLowerCase()) || !window.ipcRenderer) return
     const id = Number(new URL(audio).searchParams.get('dash-id'))
     if (isNaN(id) || !id) return
     cacheAudio(id, audio)

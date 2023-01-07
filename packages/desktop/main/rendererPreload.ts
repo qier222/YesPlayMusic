@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { IpcChannels } from '@/shared/IpcChannels'
-import { isLinux, isMac, isProd, isWindows } from './utils'
+import { isLinux, isMac, isProd, isWindows } from './env'
 const { contextBridge, ipcRenderer } = require('electron')
 
-if (isProd) {
-  const log = require('electron-log')
-  log.transports.file.level = 'info'
-  log.transports.ipc.level = false
-  log.variables.process = 'renderer'
-  contextBridge.exposeInMainWorld('log', log)
-}
+// if (isProd) {
+//   const log = require('electron-log')
+//   log.transports.file.level = 'info'
+//   log.transports.ipc.level = false
+//   log.variables.process = 'renderer'
+//   contextBridge.exposeInMainWorld('log', log)
+// }
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
   invoke: ipcRenderer.invoke,
@@ -27,8 +27,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
 contextBridge.exposeInMainWorld('env', {
   isElectron: true,
-  isEnableTitlebar:
-    process.platform === 'win32' || process.platform === 'linux',
+  isEnableTitlebar: process.platform === 'win32' || process.platform === 'linux',
   isLinux,
   isMac,
   isWindows,

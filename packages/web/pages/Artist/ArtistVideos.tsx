@@ -1,11 +1,11 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import useArtistMV from '@/web/api/hooks/useArtistMV'
 import { useTranslation } from 'react-i18next'
+import uiStates from '@/web/states/uiStates'
 
-const ArtistMVs = () => {
+const ArtistVideos = () => {
   const { t } = useTranslation()
   const params = useParams()
-  const navigate = useNavigate()
   const { data: videos } = useArtistMV({ id: Number(params.id) || 0 })
 
   return (
@@ -16,10 +16,13 @@ const ArtistMVs = () => {
 
       <div className='grid grid-cols-3 gap-6'>
         {videos?.mvs?.slice(0, 6)?.map(video => (
-          <div key={video.id} onClick={() => navigate(`/mv/${video.id}`)}>
+          <div
+            key={video.id}
+            onClick={() => (uiStates.playingVideoID = video.id)}
+          >
             <img
               src={video.imgurl16v9}
-              className='aspect-video w-full rounded-24 object-contain'
+              className='aspect-video w-full rounded-24 border border-white/5 object-contain'
             />
             <div className='mt-2 text-12 font-medium text-neutral-600'>
               {video.name}
@@ -31,4 +34,4 @@ const ArtistMVs = () => {
   )
 }
 
-export default ArtistMVs
+export default ArtistVideos

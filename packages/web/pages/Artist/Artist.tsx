@@ -2,7 +2,7 @@ import Header from './Header'
 import Popular from './Popular'
 import ArtistAlbum from './ArtistAlbums'
 import FansAlsoLike from './FansAlsoLike'
-import ArtistMVs from './ArtistMVs'
+import ArtistVideos from './ArtistVideos'
 
 const Artist = () => {
   return (
@@ -12,7 +12,7 @@ const Artist = () => {
       <div className='mt-10 mb-7.5 h-px w-full bg-white/20'></div>
       <Popular />
       <ArtistAlbum />
-      <ArtistMVs />
+      <ArtistVideos />
       <FansAlsoLike />
 
       {/* Page padding */}

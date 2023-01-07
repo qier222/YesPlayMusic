@@ -8,7 +8,7 @@ const fontSizeDefault = {
 }
 
 module.exports = {
-  content: ['./index.html', './**/*.{vue,js,ts,jsx,tsx}'],
+  content: ['./index.html', './**/*.{vue,js,ts,jsx,tsx}', '!./node_modules/**/*'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -110,7 +110,15 @@ module.exports = {
         15: '.15',
         25: '.25',
       },
+      backdropBlur: {
+        sm: '2px',
+        DEFAULT: '4px',
+        md: '6px',
+        lg: '8px',
+        xl: '12px',
+        '2xl': '20px',
+        '3xl': '45px',
+      }
     },
   },
-  variants: {},
 }

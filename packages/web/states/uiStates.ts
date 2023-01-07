@@ -9,6 +9,7 @@ interface UIStates {
   mobileShowPlayingNext: boolean
   blurBackgroundImage: string | null
   fullscreen: boolean
+  playingVideoID: number | null
 }
 
 const initUIStates: UIStates = {
@@ -19,10 +20,16 @@ const initUIStates: UIStates = {
   mobileShowPlayingNext: false,
   blurBackgroundImage: null,
   fullscreen: false,
+  playingVideoID: null,
 }
 
 window.ipcRenderer
   ?.invoke(IpcChannels.IsMaximized)
   .then(isMaximized => (initUIStates.fullscreen = !!isMaximized))
 
-export default proxy<UIStates>(initUIStates)
+const uiStates = proxy<UIStates>(initUIStates)
+export default uiStates
+
+export const closeVideoPlayer = () => {
+  uiStates.playingVideoID = null
+}

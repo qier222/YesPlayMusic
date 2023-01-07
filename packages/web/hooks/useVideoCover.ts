@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
+import { appName } from '../utils/const'
 
 export default function useVideoCover(props: {
   id?: number
@@ -13,9 +14,12 @@ export default function useVideoCover(props: {
     async () => {
       if (!id || !name || !artist) return
 
-      const fromRemote = await axios.get('/yesplaymusic/video-cover', {
-        params: props,
-      })
+      const fromRemote = await axios.get(
+        `/${appName.toLowerCase()}/video-cover`,
+        {
+          params: props,
+        }
+      )
       if (fromRemote?.data?.url) {
         return fromRemote.data.url
       }

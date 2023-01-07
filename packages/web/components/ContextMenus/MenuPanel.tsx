@@ -7,14 +7,11 @@ import {
   useState,
 } from 'react'
 import { motion } from 'framer-motion'
-import MenuItem, { ContextMenuItem } from './MenuItem'
+import MenuItem from './MenuItem'
+import { ContextMenuItem, ContextMenuPosition } from './types'
 
 interface PanelProps {
-  position: {
-    x: number
-    y: number
-    transformOrigin?: `origin-${'top' | 'bottom'}-${'left' | 'right'}`
-  }
+  position: ContextMenuPosition
   items: ContextMenuItem[]
   onClose: (e: MouseEvent) => void
   forMeasure?: boolean
@@ -36,33 +33,33 @@ const MenuPanel = forwardRef(
 
     return (
       // Container (to add padding for submenus)
-      <motion.div
-        initial={{ opacity: 0, scale: forMeasure ? 1 : 0.96 }}
-        animate={{
-          opacity: 1,
-          scale: 1,
-          transition: {
-            duration: 0.1,
-          },
-        }}
-        exit={{ opacity: 0, scale: 0.96 }}
-        transition={{ duration: 0.2 }}
+      <div
         ref={ref}
         className={cx(
-          'fixed',
-          position.transformOrigin || 'origin-top-left',
-          isSubmenu ? 'submenu z-20 px-1' : 'z-10'
+          'fixed select-none',
+          isSubmenu ? 'submenu z-30 px-1' : 'z-20'
         )}
         style={{ left: position.x, top: position.y }}
       >
         {/* The real panel */}
-        <div
+        <motion.div
+          initial={{ opacity: 0, scale: forMeasure ? 1 : 0.96 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            transition: {
+              duration: 0.1,
+            },
+          }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ duration: 0.2 }}
           className={cx(
             'rounded-12 border border-white/[.06] bg-gray-900/95 p-px py-2.5 shadow-xl outline outline-1 outline-black backdrop-blur-3xl',
             css`
               min-width: 200px;
             `,
-            classNames
+            classNames,
+            position.transformOrigin || 'origin-top-left'
           )}
         >
           {items.map((item, index) => (
@@ -76,7 +73,7 @@ const MenuPanel = forwardRef(
               className={isSubmenu ? 'submenu' : ''}
             />
           ))}
-        </div>
+        </motion.div>
 
         {/* Submenu */}
         <SubMenu
@@ -86,7 +83,7 @@ const MenuPanel = forwardRef(
           itemRect={submenuProps?.itemRect}
           onClose={onClose}
         />
-      </motion.div>
+      </div>
     )
   }
 )

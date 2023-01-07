@@ -2,18 +2,18 @@
 import Fastify from 'fastify'
 import fp from 'fastify-plugin'
 import App from '../src/app'
-import * as tap from 'tap';
+import * as tap from 'tap'
 
-export type Test = typeof tap['Test']['prototype'];
+export type Test = typeof tap['Test']['prototype']
 
 // Fill in this config with all the configurations
 // needed for testing the application
-async function config () {
+async function config() {
   return {}
 }
 
 // Automatically build and tear down our instance
-async function build (t: Test) {
+async function build(t: Test) {
   const app = Fastify()
 
   // fastify-plugin ensures that all decorators
@@ -21,7 +21,7 @@ async function build (t: Test) {
   // different from the production setup
   void app.register(fp(App), await config())
 
-  await app.ready();
+  await app.ready()
 
   // Tear down our app after we are done
   t.teardown(() => void app.close())
@@ -29,7 +29,4 @@ async function build (t: Test) {
   return app
 }
 
-export {
-  config,
-  build
-}
+export { config, build }

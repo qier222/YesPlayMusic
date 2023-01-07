@@ -7,7 +7,7 @@ const pkg = require('./package.json')
 const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
 
 module.exports = {
-  appId: 'com.qier222.yesplaymusic.alpha',
+  appId: 'app.r3play',
   productName: pkg.productName,
   copyright: 'Copyright © 2022 qier222',
   asar: true,

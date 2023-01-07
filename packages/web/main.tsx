@@ -22,6 +22,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 import React from 'react'
 import './i18n/i18n'
+import { appName } from './utils/const'
 
 ReactGA.initialize('G-KMJJCFZDKF')
 
@@ -38,7 +39,7 @@ Sentry.init({
       ),
     }),
   ],
-  release: `yesplaymusic@${pkg.version}`,
+  release: `${appName}@${pkg.version}`,
   environment: import.meta.env.MODE,
 
   // Set tracesSampleRate to 1.0 to capture 100%

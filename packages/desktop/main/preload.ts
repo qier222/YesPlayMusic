@@ -1,10 +1,10 @@
 import log from './log'
 import { app } from 'electron'
+import { isDev } from './env'
 import {
   createDirIfNotExist,
-  devUserDataPath,
-  isDev,
   portableUserDataPath,
+  devUserDataPath,
 } from './utils'
 
 if (isDev) {

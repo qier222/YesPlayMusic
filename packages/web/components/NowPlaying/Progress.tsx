@@ -19,8 +19,8 @@ const Progress = () => {
       />
 
       <div className='mt-1 flex justify-between text-14 font-bold text-black/20 dark:text-white/20'>
-        <span>{formatDuration(progress * 1000, 'en', 'hh:mm:ss')}</span>
-        <span>{formatDuration(track?.dt || 0, 'en', 'hh:mm:ss')}</span>
+        <span>{formatDuration(progress * 1000, 'en-US', 'hh:mm:ss')}</span>
+        <span>{formatDuration(track?.dt || 0, 'en-US', 'hh:mm:ss')}</span>
       </div>
     </div>
   )

@@ -6,12 +6,10 @@ import { useQuery } from '@tanstack/react-query'
 import useUser from './useUser'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 
-export default function useUserListenedRecords(params: {
-  type: 'week' | 'all'
-}) {
+export default function useUserListenedRecords(params: { type: 'week' | 'all' }) {
   const { data: user } = useUser()
   const uid = user?.account?.id || 0
-  const key = [UserApiNames.FetchListenedRecords]
+  const key = [UserApiNames.FetchListenedRecords, uid]
 
   return useQuery(
     key,

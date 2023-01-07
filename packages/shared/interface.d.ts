@@ -206,3 +206,19 @@ declare interface User {
   anchor: boolean
   avatarImgId_str: string
 }
+
+declare interface Video {
+  alg: null
+  aliaName: string
+  coverUrl: string
+  creator: { userId: number; userName: string }[]
+  userId: number
+  userName: string
+  durationms: number
+  markTypes: null
+  playTime: number
+  title: string
+  transName: string
+  type: number
+  vid: string
+}
