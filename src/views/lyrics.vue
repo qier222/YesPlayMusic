@@ -1,11 +1,10 @@
 <template>
-  <transition name="slide-up">
-    <div
+  <transition name="slide-up"
+    ><div
       class="lyrics-page"
       :class="{ 'no-lyric': noLyric }"
       :data-theme="theme"
-    >
-      <div
+      ><div
         v-if="
           (settings.lyricsBackground === 'blur') |
             (settings.lyricsBackground === 'dynamic')
@@ -14,121 +13,99 @@
         :class="{
           'dynamic-background': settings.lyricsBackground === 'dynamic',
         }"
-      >
-        <div
+        ><div
           class="top-right"
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
-        />
-        <div
+        ></div
+        ><div
           class="bottom-left"
           :style="{ backgroundImage: `url(${bgImageUrl})` }"
-        />
-      </div>
-      <div
+        ></div></div
+      ><div
         v-if="settings.lyricsBackground === true"
         class="gradient-background"
         :style="{ background }"
-      ></div>
-
-      <div class="left-side">
-        <div>
-          <div v-if="settings.showLyricsTime" class="date">
-            {{ date }}
-          </div>
-          <div class="cover">
-            <div class="cover-container">
-              <img :src="imageUrl" loading="lazy" />
-              <div
+      ></div
+      ><div class="left-side"
+        ><div
+          ><div v-if="settings.showLyricsTime" class="date">{{ date }}</div
+          ><div class="cover"
+            ><div class="cover-container"
+              ><img :src="imageUrl" loading="lazy" /><div
                 class="shadow"
                 :style="{ backgroundImage: `url(${imageUrl})` }"
-              ></div>
-            </div>
-          </div>
-          <div class="controls">
-            <div class="top-part">
-              <div class="track-info">
-                <div class="title" :title="currentTrack.name">
-                  <router-link
+              ></div></div></div
+          ><div class="controls"
+            ><div class="top-part"
+              ><div class="track-info"
+                ><div class="title" :title="currentTrack.name"
+                  ><router-link
                     v-if="hasList()"
                     :to="`${getListPath()}`"
                     @click.native="toggleLyrics"
-                    >{{ currentTrack.name }}
-                  </router-link>
-                  <span v-else>
-                    {{ currentTrack.name }}
-                  </span>
-                </div>
-                <div class="subtitle">
-                  <router-link
+                    >{{ currentTrack.name }}</router-link
+                  ><span v-else>{{ currentTrack.name }}</span></div
+                ><div class="subtitle"
+                  ><router-link
                     v-if="artist.id !== 0"
                     :to="`/artist/${artist.id}`"
                     @click.native="toggleLyrics"
-                    >{{ artist.name }}
-                  </router-link>
-                  <span v-else>
-                    {{ artist.name }}
-                  </span>
-                  <span v-if="album.id !== 0">
-                    -
-                    <router-link
+                    >{{ artist.name }}</router-link
+                  ><span v-else>{{ artist.name }}</span
+                  ><span v-if="album.id !== 0"
+                    >-<router-link
                       :to="`/album/${album.id}`"
                       :title="album.name"
                       @click.native="toggleLyrics"
-                      >{{ album.name }}
-                    </router-link>
-                  </span>
-                </div>
-              </div>
-              <div class="top-right">
-                <div class="volume-control">
-                  <button-icon :title="$t('player.mute')" @click.native="mute">
-                    <svg-icon v-show="volume > 0.5" icon-class="volume" />
-                    <svg-icon v-show="volume === 0" icon-class="volume-mute" />
-                    <svg-icon
-                      v-show="volume <= 0.5 && volume !== 0"
-                      icon-class="volume-half"
-                    />
-                  </button-icon>
-                  <div class="volume-bar">
-                    <vue-slider
-                      v-model="volume"
-                      :min="0"
-                      :max="1"
-                      :interval="0.01"
-                      :drag-on-click="true"
-                      :duration="0"
-                      tooltip="none"
-                      :dot-size="12"
-                    ></vue-slider>
-                  </div>
-                </div>
-                <div class="buttons">
-                  <button-icon
+                      >{{ album.name }}</router-link
+                    ></span
+                  ></div
+                ></div
+              ><div class="top-right"
+                ><div class="buttons"
+                  ><button-icon
                     :title="$t('player.like')"
                     @click.native="likeATrack(player.currentTrack.id)"
-                  >
-                    <svg-icon
+                    ><svg-icon
                       :icon-class="
                         player.isCurrentTrackLiked ? 'heart-solid' : 'heart'
                       "
-                    />
-                  </button-icon>
-                  <button-icon
+                    ></svg-icon></button-icon
+                  ><button-icon
                     :title="$t('contextMenu.addToPlaylist')"
                     @click.native="addToPlaylist"
-                  >
-                    <svg-icon icon-class="plus" />
-                  </button-icon>
-                  <!-- <button-icon @click.native="openMenu" title="Menu"
-                    ><svg-icon icon-class="more"
-                  /></button-icon> -->
-                </div>
-              </div>
-            </div>
-            <div class="progress-bar">
-              <span>{{ formatTrackTime(player.progress) || '0:00' }}</span>
-              <div class="slider">
-                <vue-slider
+                    ><svg-icon icon-class="plus"></svg-icon></button-icon
+                  ><!--<button-icon @click.native="openMenu" title="Menu"
+><svg-icon icon-class="more"
+/></button-icon> --></div
+                ></div
+              ></div
+            ><div class="volume-control"
+              ><button-icon :title="$t('player.mute')" @click.native="mute"
+                ><svg-icon v-show="volume > 0.5" icon-class="volume"></svg-icon
+                ><svg-icon
+                  v-show="volume === 0"
+                  icon-class="volume-mute"
+                ></svg-icon
+                ><svg-icon
+                  v-show="volume <= 0.5 && volume !== 0"
+                  icon-class="volume-half"
+                ></svg-icon></button-icon
+              ><div class="volume-bar"
+                ><vue-slider
+                  v-model="volume"
+                  :min="0"
+                  :max="1"
+                  :interval="0.01"
+                  :drag-on-click="true"
+                  :duration="0"
+                  tooltip="none"
+                  :dot-size="12"
+                ></vue-slider></div></div
+            ><div class="progress-bar"
+              ><span>{{ formatTrackTime(player.progress) || '0:00' }}</span
+              ><div class="slider"
+                ><vue-slider
                   v-model="player.progress"
                   :min="0"
                   :max="player.currentTrackDuration"
@@ -140,12 +117,12 @@
                   :tooltip-formatter="formatTrackTime"
                   :lazy="true"
                   :silent="true"
-                ></vue-slider>
-              </div>
-              <span>{{ formatTrackTime(player.currentTrackDuration) }}</span>
-            </div>
-            <div class="media-controls">
-              <button-icon
+                ></vue-slider></div
+              ><span>{{
+                formatTrackTime(player.currentTrackDuration)
+              }}</span></div
+            ><div class="media-controls"
+              ><button-icon
                 v-show="!player.isPersonalFM"
                 :title="
                   player.repeatMode === 'one'
@@ -154,67 +131,53 @@
                 "
                 :class="{ active: player.repeatMode !== 'off' }"
                 @click.native="switchRepeatMode"
-              >
-                <svg-icon
+                ><svg-icon
                   v-show="player.repeatMode !== 'one'"
                   icon-class="repeat"
-                />
-                <svg-icon
+                ></svg-icon
+                ><svg-icon
                   v-show="player.repeatMode === 'one'"
                   icon-class="repeat-1"
-                />
-              </button-icon>
-              <div class="middle">
-                <button-icon
+                ></svg-icon></button-icon
+              ><div class="middle"
+                ><button-icon
                   v-show="!player.isPersonalFM"
                   :title="$t('player.previous')"
                   @click.native="playPrevTrack"
-                >
-                  <svg-icon icon-class="previous" />
-                </button-icon>
-                <button-icon
+                  ><svg-icon icon-class="previous"></svg-icon></button-icon
+                ><button-icon
                   v-show="player.isPersonalFM"
                   title="不喜欢"
                   @click.native="moveToFMTrash"
-                >
-                  <svg-icon icon-class="thumbs-down" />
-                </button-icon>
-                <button-icon
+                  ><svg-icon icon-class="thumbs-down"></svg-icon></button-icon
+                ><button-icon
                   id="play"
                   :title="$t(player.playing ? 'player.pause' : 'player.play')"
                   @click.native="playOrPause"
-                >
-                  <svg-icon :icon-class="player.playing ? 'pause' : 'play'" />
-                </button-icon>
-                <button-icon
+                  ><svg-icon
+                    :icon-class="player.playing ? 'pause' : 'play'"
+                  ></svg-icon></button-icon
+                ><button-icon
                   :title="$t('player.next')"
                   @click.native="playNextTrack"
-                >
-                  <svg-icon icon-class="next" />
-                </button-icon>
-              </div>
-              <button-icon
+                  ><svg-icon icon-class="next"></svg-icon></button-icon></div
+              ><button-icon
                 v-show="!player.isPersonalFM"
                 :title="$t('player.shuffle')"
                 :class="{ active: player.shuffle }"
                 @click.native="switchShuffle"
-              >
-                <svg-icon icon-class="shuffle" />
-              </button-icon>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="right-side">
-        <transition name="slide-fade">
-          <div
+                ><svg-icon
+                  icon-class="shuffle"
+                ></svg-icon></button-icon></div></div></div></div
+      ><div class="right-side"
+        ><transition name="slide-fade"
+          ><div
             v-show="!noLyric"
             ref="lyricsContainer"
             class="lyrics-container"
             :style="lyricFontSize"
-          >
-            <div id="line-1" class="line"></div>
-            <div
+            ><div id="line-1" class="line"></div
+            ><div
               v-for="(line, index) in lyricWithTranslation"
               :id="`line${index}`"
               :key="index"
@@ -224,30 +187,24 @@
               }"
               @click="clickLyricLine(line.time)"
               @dblclick="clickLyricLine(line.time, true)"
-            >
-              <div class="content">
-                <span v-if="line.contents[0]">{{ line.contents[0] }}</span>
-                <br />
-                <span
+              ><div class="content"
+                ><span v-if="line.contents[0]">{{ line.contents[0] }}</span
+                ><br /><span
                   v-if="
                     line.contents[1] &&
                     $store.state.settings.showLyricsTranslation
                   "
                   class="translation"
                   >{{ line.contents[1] }}</span
-                >
-              </div>
-            </div>
-          </div>
-        </transition>
-      </div>
-      <div class="close-button" @click="toggleLyrics">
-        <button>
-          <svg-icon icon-class="arrow-down" />
-        </button>
-      </div>
-    </div>
-  </transition>
+                ></div
+              ></div
+            ></div
+          ></transition
+        ></div
+      ><div class="close-button" @click="toggleLyrics"
+        ><button
+          ><svg-icon icon-class="arrow-down"></svg-icon></button></div></div
+  ></transition>
 </template>
 
 <script>
@@ -673,15 +630,6 @@ export default {
         display: flex;
         justify-content: space-between;
 
-        .volume-control {
-          margin: 0 10px;
-          display: flex;
-          align-items: center;
-          .volume-bar {
-            width: 84px;
-          }
-        }
-
         .buttons {
           display: flex;
           align-items: center;
@@ -695,6 +643,18 @@ export default {
             width: 18px;
           }
         }
+      }
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 0 75%;
+      .volume-bar {
+        width: 100%;
+        flex-grow: grow;
+        padding: 0 10px;
       }
     }
 
