@@ -81,6 +81,7 @@
     "@vue/cli-plugin-pwa": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/runtime-dom": "^3.2.45",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^8.1.0",
@@ -116,9 +117,9 @@
       "ipcRenderer": "off"
     },
     "rules": {
-      "no-unused-vars":"off",
-      "vue/no-v-html":"off",
-      "vue/require-default-prop":"off"
+      "no-unused-vars": "off",
+      "vue/no-v-html": "off",
+      "vue/require-default-prop": "off"
     }
   },
   "browserslist": [
