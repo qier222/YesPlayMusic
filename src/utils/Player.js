@@ -141,6 +141,15 @@ export default class {
     console.log('changing reversed to:', reversed);
     this._reversed = reversed;
   }
+  get volume() {
+    return this._volume;
+  }
+  set volume(volume) {
+    this._volume = volume;
+    if (this._howler) {
+      this._howler.volume(volume)
+    }
+  }
   get list() {
     return this.shuffle ? this._shuffledList : this._list;
   }
@@ -200,7 +209,7 @@ export default class {
 
   _init() {
     this._loadSelfFromLocalStorage();
-    this._howler?.volume(this.volume);
+    this._howler.volume(this.volume);
 
     if (this._enabled) {
       // 恢复当前播放歌曲
@@ -763,14 +772,6 @@ export default class {
     localStorage.setItem('player', JSON.stringify(player));
   }
   
-  get volume() {
-    return this._volume;
-  }
-  set volume(volume) {
-    this._volume = volume;
-    this._howler?.volume(volume)
-  }
-
   pause() {
     this._howler?.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
 
