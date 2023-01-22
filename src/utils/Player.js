@@ -141,13 +141,6 @@ export default class {
     console.log('changing reversed to:', reversed);
     this._reversed = reversed;
   }
-  get volume() {
-    return this._volume;
-  }
-  set volume(volume) {
-    this._volume = volume;
-    Howler.volume(volume);
-  }
   get list() {
     return this.shuffle ? this._shuffledList : this._list;
   }
@@ -768,6 +761,14 @@ export default class {
     }
 
     localStorage.setItem('player', JSON.stringify(player));
+  }
+  
+  get volume() {
+    return this._volume;
+  }
+  set volume(volume) {
+    this._volume = volume;
+    this._howler?.volume(volume)
   }
 
   pause() {
