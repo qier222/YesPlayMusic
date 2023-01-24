@@ -1,6 +1,6 @@
 import './preload' // must be first
 import './sentry'
-import './server'
+// import './server'
 import { BrowserWindow, BrowserWindowConstructorOptions, app, shell } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
@@ -12,8 +12,7 @@ import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { createMenu } from './menu'
 import { isDev, isWindows, isLinux, isMac, appName } from './env'
 import store from './store'
-// import './surrealdb'
-// import Airplay from './airplay'
+import './appServer/appServer'
 
 class Main {
   win: BrowserWindow | null = null
@@ -83,10 +82,12 @@ class Main {
       width: store.get('window.width'),
       height: store.get('window.height'),
       minWidth: 1240,
-      minHeight: 848,
+      minHeight: 800,
       titleBarStyle: isMac ? 'customButtonsOnHover' : 'hidden',
       trafficLightPosition: { x: 24, y: 24 },
       frame: false,
+      fullscreenable: true,
+      resizable: true,
       transparent: true,
       backgroundColor: 'rgba(0, 0, 0, 0)',
       show: false,

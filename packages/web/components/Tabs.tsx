@@ -5,6 +5,7 @@ const Tabs = ({
   value,
   onChange,
   className,
+  style,
 }: {
   tabs: {
     id: string
@@ -13,9 +14,10 @@ const Tabs = ({
   value: string
   onChange: (id: string) => void
   className?: string
+  style?: React.CSSProperties
 }) => {
   return (
-    <div className={cx('no-scrollbar flex overflow-y-auto', className)}>
+    <div className={cx('no-scrollbar flex overflow-y-auto', className)} style={style}>
       {tabs.map(tab => (
         <div
           key={tab.id}

@@ -32,13 +32,10 @@ const options = {
   define: envForEsbuild,
   minify: true,
   external: [
-    ...builtinModules.filter(
-      x => !/^_|^(internal|v8|node-inspect)\/|\//.test(x)
-    ),
+    ...builtinModules.filter(x => !/^_|^(internal|v8|node-inspect)\/|\//.test(x)),
     'electron',
     'NeteaseCloudMusicApi',
     'better-sqlite3',
-    // '@unblockneteasemusic/rust-napi',
   ],
 }
 
@@ -55,9 +52,7 @@ const runApp = () => {
 if (argv.watch) {
   waitOn(
     {
-      resources: [
-        `http://127.0.0.1:${process.env.ELECTRON_WEB_SERVER_PORT}/index.html`,
-      ],
+      resources: [`http://127.0.0.1:${process.env.ELECTRON_WEB_SERVER_PORT}/index.html`],
       timeout: 5000,
     },
     err => {
@@ -101,11 +96,7 @@ if (argv.watch) {
       console.log(TAG, pc.green('Main Process Build Succeeded.'))
     })
     .catch(error => {
-      console.log(
-        `\n${TAG} ${pc.red('Main Process Build Failed')}\n`,
-        error,
-        '\n'
-      )
+      console.log(`\n${TAG} ${pc.red('Main Process Build Failed')}\n`, error, '\n')
     })
     .finally(() => {
       spinner.stop()

@@ -1,6 +1,6 @@
 {
   "name": "desktop",
-  "productName": "R3Play",
+  "productName": "R3PLAY",
   "private": true,
   "version": "2.0.0",
   "main": "./main/index.js",
@@ -20,8 +20,10 @@
     "node": "^14.13.1 || >=16.0.0"
   },
   "dependencies": {
+    "@fastify/cookie": "^8.3.0",
+    "@fastify/http-proxy": "^8.4.0",
     "@sentry/electron": "^3.0.7",
-    "NeteaseCloudMusicApi": "^4.8.4",
+    "NeteaseCloudMusicApi": "^4.8.7",
     "better-sqlite3": "8.0.1",
     "change-case": "^4.1.2",
     "compare-versions": "^4.1.3",
@@ -57,9 +59,9 @@
     "ora": "^6.1.2",
     "picocolors": "^1.0.0",
     "prettier": "*",
+    "tsx": "*",
     "typescript": "*",
     "vitest": "^0.20.3",
-    "wait-on": "^7.0.1",
-    "tsx": "*"
+    "wait-on": "^7.0.1"
   }
 }

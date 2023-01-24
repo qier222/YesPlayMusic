@@ -2,7 +2,7 @@ import Main from '@/web/components/Main'
 import Player from '@/web/components/Player'
 import MenuBar from '@/web/components/MenuBar'
 import Topbar from '@/web/components/Topbar/TopbarDesktop'
-import { cx } from '@emotion/css'
+import { css, cx } from '@emotion/css'
 import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Login from './Login'
@@ -22,7 +22,10 @@ const Layout = () => {
       id='layout'
       className={cx(
         'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black',
-        window.env?.isElectron && !fullscreen && 'rounded-24'
+        window.env?.isElectron && !fullscreen && 'rounded-24',
+        css`
+          min-width: 720px;
+        `
       )}
     >
       <BlurBackground />
@@ -40,9 +43,7 @@ const Layout = () => {
 
       {(window.env?.isWindows ||
         window.env?.isLinux ||
-        window.localStorage.getItem('showWindowsTitleBar') === 'true') && (
-        <TitleBar />
-      )}
+        window.localStorage.getItem('showWindowsTitleBar') === 'true') && <TitleBar />}
 
       <ContextMenus />
 

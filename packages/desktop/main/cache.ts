@@ -147,9 +147,7 @@ class Cache {
         break
       }
       case APIs.Track: {
-        const ids: number[] = params?.ids
-          .split(',')
-          .map((id: string) => Number(id))
+        const ids: number[] = params?.ids.split(',').map((id: string) => Number(id))
         if (ids.length === 0) return
 
         if (ids.includes(NaN)) return
@@ -252,17 +250,6 @@ class Cache {
     }
   }
 
-  getForExpress(api: string, req: Request) {
-    // Get track detail cache
-    if (api === APIs.Track) {
-      const cache = this.get(api, req.query)
-      if (cache) {
-        log.debug(`[cache] Cache hit for ${req.path}`)
-        return cache
-      }
-    }
-  }
-
   getAudio(fileName: string, res: Response) {
     if (!fileName) {
       return res.status(400).send({ error: 'No filename provided' })
@@ -281,10 +268,7 @@ class Cache {
         .status(206)
         .setHeader('Accept-Ranges', 'bytes')
         .setHeader('Connection', 'keep-alive')
-        .setHeader(
-          'Content-Range',
-          `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`
-        )
+        .setHeader('Content-Range', `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`)
         .send(audio)
     } catch (error) {
       res.status(500).send({ error })
@@ -301,8 +285,7 @@ class Cache {
     }
 
     const meta = await musicMetadata.parseBuffer(buffer)
-    const br =
-      meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0
+    const br = meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0
     const type =
       {
         'MPEG 1 Layer 3': 'mp3',

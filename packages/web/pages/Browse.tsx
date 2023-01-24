@@ -1,8 +1,5 @@
 import Tabs from '@/web/components/Tabs'
-import {
-  fetchDailyRecommendPlaylists,
-  fetchRecommendedPlaylists,
-} from '@/web/api/playlist'
+import { fetchDailyRecommendPlaylists, fetchRecommendedPlaylists } from '@/web/api/playlist'
 import { PlaylistApiNames } from '@/shared/api/Playlists'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -33,10 +30,7 @@ const Recommend = () => {
   const playlists =
     isLoadingDaily || isLoading
       ? []
-      : [
-          ...(dailyRecommendPlaylists?.recommend || []),
-          ...(recommendedPlaylists?.result || []),
-        ]
+      : [...(dailyRecommendPlaylists?.recommend || []), ...(recommendedPlaylists?.result || [])]
 
   return <CoverRowVirtual playlists={playlists} />
 
@@ -69,10 +63,12 @@ const Browse = () => {
             'pointer-events-none fixed top-0 left-10 z-10 hidden lg:block',
             css`
               height: 230px;
-              right: ${playerWidth + 32}px;
-              background-image: url(${topbarBackground});
             `
           )}
+          style={{
+            right: `${playerWidth + 32}px`,
+            backgroundImage: `url(${topbarBackground})`,
+          }}
         ></div>
 
         <Tabs

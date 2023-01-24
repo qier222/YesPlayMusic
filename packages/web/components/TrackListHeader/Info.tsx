@@ -67,14 +67,14 @@ const Info = ({
       )}
 
       {/* Description */}
-      {!isMobile && (
+      {!isMobile && description && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
           className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold dark:text-white/40'
           dangerouslySetInnerHTML={{
-            __html: description || '',
+            __html: description,
           }}
         ></motion.div>
       )}

@@ -12,7 +12,6 @@ import { Thumbar } from './windowsTaskbar'
 import fastFolderSize from 'fast-folder-size'
 import path from 'path'
 import prettyBytes from 'pretty-bytes'
-import { getArtist, getAlbum } from './appleMusic'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -23,10 +22,7 @@ const on = <T extends keyof IpcChannelsParams>(
 
 const handle = <T extends keyof IpcChannelsParams>(
   channel: T,
-  listener: (
-    event: Electron.IpcMainInvokeEvent,
-    params: IpcChannelsParams[T]
-  ) => void
+  listener: (event: Electron.IpcMainInvokeEvent, params: IpcChannelsParams[T]) => void
 ) => {
   return ipcMain.handle(channel, listener)
 }
@@ -162,49 +158,46 @@ function initOtherIpcMain() {
    * 获取音频缓存文件夹大小
    */
   on(IpcChannels.GetAudioCacheSize, event => {
-    fastFolderSize(
-      path.join(app.getPath('userData'), './audio_cache'),
-      (error, bytes) => {
-        if (error) throw error
+    fastFolderSize(path.join(app.getPath('userData'), './audio_cache'), (error, bytes) => {
+      if (error) throw error
 
-        event.returnValue = prettyBytes(bytes ?? 0)
-      }
-    )
+      event.returnValue = prettyBytes(bytes ?? 0)
+    })
   })
 
   /**
    * 从Apple Music获取专辑信息
    */
-  handle(
-    IpcChannels.GetAlbumFromAppleMusic,
-    async (event, { id, name, artist }) => {
-      const fromCache = cache.get(APIs.AppleMusicAlbum, { id })
-      if (fromCache) {
-        return fromCache === 'no' ? undefined : fromCache
-      }
+  // handle(
+  //   IpcChannels.GetAlbumFromAppleMusic,
+  //   async (event, { id, name, artist }) => {
+  //     const fromCache = cache.get(APIs.AppleMusicAlbum, { id })
+  //     if (fromCache) {
+  //       return fromCache === 'no' ? undefined : fromCache
+  //     }
 
-      const fromApple = await getAlbum({ name, artist })
-      cache.set(APIs.AppleMusicAlbum, { id, album: fromApple })
-      return fromApple
-    }
-  )
+  //     const fromApple = await getAlbum({ name, artist })
+  //     cache.set(APIs.AppleMusicAlbum, { id, album: fromApple })
+  //     return fromApple
+  //   }
+  // )
 
-  /**
-   * 从Apple Music获取歌手信息
-   **/
-  handle(IpcChannels.GetArtistFromAppleMusic, async (event, { id, name }) => {
-    const fromApple = await getArtist(name)
-    cache.set(APIs.AppleMusicArtist, { id, artist: fromApple })
-    return fromApple
-  })
+  // /**
+  //  * 从Apple Music获取歌手信息
+  //  **/
+  // handle(IpcChannels.GetArtistFromAppleMusic, async (event, { id, name }) => {
+  //   const fromApple = await getArtist(name)
+  //   cache.set(APIs.AppleMusicArtist, { id, artist: fromApple })
+  //   return fromApple
+  // })
 
-  /**
-   * 从缓存读取Apple Music歌手信息
-   */
-  on(IpcChannels.GetArtistFromAppleMusic, (event, { id }) => {
-    const artist = cache.get(APIs.AppleMusicArtist, id)
-    event.returnValue = artist === 'no' ? undefined : artist
-  })
+  // /**
+  //  * 从缓存读取Apple Music歌手信息
+  //  */
+  // on(IpcChannels.GetArtistFromAppleMusic, (event, { id }) => {
+  //   const artist = cache.get(APIs.AppleMusicArtist, id)
+  //   event.returnValue = artist === 'no' ? undefined : artist
+  // })
 
   /**
    * 退出登陆

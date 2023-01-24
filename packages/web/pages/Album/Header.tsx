@@ -1,10 +1,7 @@
 import useAlbum from '@/web/api/hooks/useAlbum'
-import useUserAlbums, {
-  useMutationLikeAAlbum,
-} from '@/web/api/hooks/useUserAlbums'
+import useUserAlbums, { useMutationLikeAAlbum } from '@/web/api/hooks/useUserAlbums'
 import Icon from '@/web/components/Icon'
 import TrackListHeader from '@/web/components/TrackListHeader'
-import useAppleMusicAlbum from '@/web/hooks/useAppleMusicAlbum'
 import useVideoCover from '@/web/hooks/useVideoCover'
 import player from '@/web/states/player'
 import { formatDuration } from '@/web/utils/common'
@@ -13,6 +10,7 @@ import { useMemo } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import useAppleMusicAlbum from '@/web/api/hooks/useAppleMusicAlbum'
 
 const Header = () => {
   const { t, i18n } = useTranslation()
@@ -25,51 +23,31 @@ const Header = () => {
   })
   const album = useMemo(() => albumRaw?.album, [albumRaw])
 
-  const { data: albumFromApple, isLoading: isLoadingAlbumFromApple } =
-    useAppleMusicAlbum({
-      id: album?.id,
-      name: album?.name,
-      artist: album?.artist.name,
-    })
-
-  const { data: videoCoverFromRemote } = useVideoCover({
-    id: album?.id,
-    name: album?.name,
-    artist: album?.artist.name,
-    enabled: !window.env?.isElectron,
-  })
+  const { data: appleMusicAlbum, isLoading: isLoadingAppleMusicAlbum } = useAppleMusicAlbum(
+    album?.id || 0
+  )
 
   // For <Cover />
   const cover = album?.picUrl
-  const videoCover =
-    albumFromApple?.attributes?.editorialVideo?.motionSquareVideo1x1?.video ||
-    videoCoverFromRemote?.video
+  const videoCover = appleMusicAlbum?.editorialVideo
 
   // For <Info />
   const title = album?.name
   const creatorName = album?.artist.name
   const creatorLink = `/artist/${album?.artist.id}`
-  const description = isLoadingAlbumFromApple
+  const description = isLoadingAppleMusicAlbum
     ? ''
-    : albumFromApple?.attributes?.editorialNotes?.standard || album?.description
+    : appleMusicAlbum?.editorialNote?.[i18n.language.replace('-', '_')] || album?.description
   const extraInfo = useMemo(() => {
     const duration = album?.songs?.reduce((acc, cur) => acc + cur.dt, 0) || 0
-    const albumDuration = formatDuration(
-      duration,
-      i18n.language,
-      'hh[hr] mm[min]'
-    )
+    const albumDuration = formatDuration(duration, i18n.language, 'hh[hr] mm[min]')
     return (
       <>
         {album?.mark === 1056768 && (
-          <Icon
-            name='explicit'
-            className='mb-px mr-1 h-3 w-3 lg:h-3.5 lg:w-3.5'
-          />
+          <Icon name='explicit' className='mb-px mr-1 h-3 w-3 lg:h-3.5 lg:w-3.5' />
         )}{' '}
         {dayjs(album?.publishTime || 0).year()} ·{' '}
-        {t('common.track-with-count', { count: album?.songs?.length })},{' '}
-        {albumDuration}
+        {t('common.track-with-count', { count: album?.songs?.length })}, {albumDuration}
       </>
     )
   }, [album?.mark, album?.publishTime, album?.songs, i18n.language, t])

@@ -30,11 +30,9 @@ const Background = () => {
             transition={{ ease }}
             className={cx(
               'absolute inset-0 z-0 bg-contain bg-repeat-x',
-              window.env?.isElectron && 'rounded-t-24',
-              css`
-                background-image: url(${topbarBackground});
-              `
+              window.env?.isElectron && 'rounded-t-24'
             )}
+            style={{ backgroundImage: `url(${topbarBackground})` }}
           ></motion.div>
         )}
       </AnimatePresence>

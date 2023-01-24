@@ -1,4 +1,0 @@
-test-env: [
-  TS_NODE_FILES=true,
-  TS_NODE_PROJECT=./test/tsconfig.json
-]

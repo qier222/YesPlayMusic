@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Album {
+  id                Int                 @id @unique
+  neteaseId         Int                 @unique
+  name              String              @db.Text
+  neteaseName       String              @db.Text
+  artistName        String              @db.Text
+  neteaseArtistName String              @db.Text
+  copyright         String?             @db.Text
+  editorialVideo    String?             @db.Text
+  artwork           String?             @db.Text
+  editorialNote     AlbumEditorialNote?
+}
+
+model AlbumEditorialNote {
+  id    Int     @id @unique
+  album Album   @relation(fields: [id], references: [id])
+  en_US String? @map("en-US") @db.Text
+  zh_CN String? @map("zh-CN") @db.Text
+}
+
+model Artist {
+  id             Int        @id @unique
+  neteaseId      Int        @unique
+  name           String     @db.Text
+  artwork        String?    @db.Text
+  editorialVideo String?    @db.Text
+  artistBio      ArtistBio?
+}
+
+model ArtistBio {
+  id     Int     @id @unique
+  artist Artist  @relation(fields: [id], references: [id])
+  en_US  String? @map("en-US") @db.Text
+  zh_CN  String? @map("zh-CN") @db.Text
+}

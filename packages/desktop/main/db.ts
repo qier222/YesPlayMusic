@@ -77,10 +77,7 @@ const readSqlFile = (filename: string) => {
 
 class DB {
   sqlite: SQLite3.Database
-  dbFilePath: string = path.resolve(
-    app.getPath('userData'),
-    './api_cache/db.sqlite'
-  )
+  dbFilePath: string = path.resolve(app.getPath('userData'), './api_cache/db.sqlite')
 
   constructor() {
     log.info('[db] Initializing database...')
@@ -109,14 +106,8 @@ class DB {
       `../../bin/better_sqlite3_${os.platform}_${os.arch}.node`
     )
     const prodBinPaths = {
-      darwin: path.resolve(
-        app.getPath('exe'),
-        `../../Resources/bin/better_sqlite3.node`
-      ),
-      win32: path.resolve(
-        app.getPath('exe'),
-        `../resources/bin/better_sqlite3.node`
-      ),
+      darwin: path.resolve(app.getPath('exe'), `../../Resources/bin/better_sqlite3.node`),
+      win32: path.resolve(app.getPath('exe'), `../resources/bin/better_sqlite3.node`),
       linux: '',
     }
     return isProd
@@ -128,6 +119,7 @@ class DB {
     log.info('[db] Initializing database tables...')
     const init = readSqlFile('init.sql')
     this.sqlite.exec(init)
+    this.sqlite.pragma('journal_mode=WAL')
     log.info('[db] Database tables initialized.')
   }
 
@@ -167,9 +159,7 @@ class DB {
     table: T,
     key: TablesStructures[T]['id']
   ): TablesStructures[T] | undefined {
-    return this.sqlite
-      .prepare(`SELECT * FROM ${table} WHERE id = ? LIMIT 1`)
-      .get(key)
+    return this.sqlite.prepare(`SELECT * FROM ${table} WHERE id = ? LIMIT 1`).get(key)
   }
 
   findMany<T extends TableNames>(
@@ -184,11 +174,7 @@ class DB {
     return this.sqlite.prepare(`SELECT * FROM ${table}`).all()
   }
 
-  create<T extends TableNames>(
-    table: T,
-    data: TablesStructures[T],
-    skipWhenExist: boolean = true
-  ) {
+  create<T extends TableNames>(table: T, data: TablesStructures[T], skipWhenExist: boolean = true) {
     if (skipWhenExist && db.find(table, data.id)) return
     return this.sqlite.prepare(`INSERT INTO ${table} VALUES (?)`).run(data)
   }
@@ -202,9 +188,7 @@ class DB {
       .map(key => `:${key}`)
       .join(', ')
     const insert = this.sqlite.prepare(
-      `INSERT ${
-        skipWhenExist ? 'OR IGNORE' : ''
-      } INTO ${table} VALUES (${valuesQuery})`
+      `INSERT ${skipWhenExist ? 'OR IGNORE' : ''} INTO ${table} VALUES (${valuesQuery})`
     )
     const insertMany = this.sqlite.transaction((rows: any[]) => {
       rows.forEach((row: any) => insert.run(row))
@@ -216,18 +200,14 @@ class DB {
     const valuesQuery = Object.keys(data)
       .map(key => `:${key}`)
       .join(', ')
-    return this.sqlite
-      .prepare(`INSERT OR REPLACE INTO ${table} VALUES (${valuesQuery})`)
-      .run(data)
+    return this.sqlite.prepare(`INSERT OR REPLACE INTO ${table} VALUES (${valuesQuery})`).run(data)
   }
 
   upsertMany<T extends TableNames>(table: T, data: TablesStructures[T][]) {
     const valuesQuery = Object.keys(data[0])
       .map(key => `:${key}`)
       .join(', ')
-    const upsert = this.sqlite.prepare(
-      `INSERT OR REPLACE INTO ${table} VALUES (${valuesQuery})`
-    )
+    const upsert = this.sqlite.prepare(`INSERT OR REPLACE INTO ${table} VALUES (${valuesQuery})`)
     const upsertMany = this.sqlite.transaction((rows: any[]) => {
       rows.forEach((row: any) => upsert.run(row))
     })
@@ -238,10 +218,7 @@ class DB {
     return this.sqlite.prepare(`DELETE FROM ${table} WHERE id = ?`).run(key)
   }
 
-  deleteMany<T extends TableNames>(
-    table: T,
-    keys: TablesStructures[T]['id'][]
-  ) {
+  deleteMany<T extends TableNames>(table: T, keys: TablesStructures[T]['id'][]) {
     const idsQuery = keys.map(key => `id = ${key}`).join(' OR ')
     return this.sqlite.prepare(`DELETE FROM ${table} WHERE ${idsQuery}`).run()
   }

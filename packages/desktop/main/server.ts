@@ -14,6 +14,7 @@ import { appName, isProd } from './env'
 import { APIs } from '@/shared/CacheAPIs'
 import history from 'connect-history-api-fallback'
 import { db, Tables } from './db'
+import axios from 'axios'
 
 class Server {
   port = Number(
@@ -30,10 +31,30 @@ class Server {
     this.app.use(cookieParser())
     this.app.use(fileUpload())
     this.getAudioUrlHandler()
+    this.r3playApiHandler()
     this.neteaseHandler()
     this.cacheAudioHandler()
     this.serveStaticForProduction()
     this.listen()
+  }
+
+  r3playApiHandler() {
+    this.app.get(`/r3play/apple-music/:endpoint`, async (req: Request, res: Response) => {
+      log.debug(`[server] Handling request: ${req.path}`)
+      const { endpoint } = req.params
+      const { query } = req
+      axios
+        .get(`https://r3play.app/r3play/apple-music/${endpoint}`, {
+          params: query,
+        })
+        .then(response => {
+          console.log(response.data)
+          res.send(response.data)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    })
   }
 
   neteaseHandler() {

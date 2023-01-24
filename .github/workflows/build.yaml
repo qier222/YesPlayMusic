@@ -71,20 +71,20 @@ jobs:
       - name: Upload Artifact (macOS)
         uses: actions/upload-artifact@v3
         with:
-          name: R3Play-mac
+          name: R3PLAY-mac
           path: release/*-universal.dmg
           if-no-files-found: ignore
 
       - name: Upload Artifact (Windows)
         uses: actions/upload-artifact@v3
         with:
-          name: R3Play-win
+          name: R3PLAY-win
           path: release/*x64-Setup.exe
           if-no-files-found: ignore
 
       - name: Upload Artifact (Linux)
         uses: actions/upload-artifact@v3
         with:
-          name: R3Play-linux
+          name: R3PLAY-linux
           path: release/*.AppImage
           if-no-files-found: ignore

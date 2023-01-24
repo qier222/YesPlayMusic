@@ -1,16 +1,24 @@
 {
+  "buildCommand": "pnpm -F web build",
+  "devCommand": "pnpm -F web dev",
+  "installCommand": "pnpm -F web install",
+  "outputDirectory": "packages/web/dist",
+  "framework": "vite",
   "github": {
     "silent": true
   },
   "rewrites": [
     {
       "source": "/netease/:match*",
-      "destination": "https://netease-cloud-music-api-kohl-one-98.vercel.app/:match*"
+      "destination": "http://168.138.174.244:30001/:match*"
     },
     {
-      "source": "/yesplaymusic/:match*",
-      "destination": "http://168.138.40.199:51324/yesplaymusic/:match*"
+      "source": "/r3play/:match*",
+      "destination": "http://168.138.174.244:35530/:match*"
     },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }

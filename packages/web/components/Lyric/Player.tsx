@@ -1,6 +1,4 @@
-import useUserLikedTracksIDs, {
-  useMutationLikeATrack,
-} from '@/web/api/hooks/useUserLikedTracksIDs'
+import useUserLikedTracksIDs, { useMutationLikeATrack } from '@/web/api/hooks/useUserLikedTracksIDs'
 import player from '@/web/states/player'
 import { resizeImage } from '@/web/utils/common'
 
@@ -30,8 +28,7 @@ const PlayingTrack = () => {
     [playerSnapshot.trackListSource]
   )
 
-  const hasListSource =
-    playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
+  const hasListSource = playerSnapshot.mode !== PlayerMode.FM && trackListSource?.type
 
   const toTrackListSource = () => {
     if (!hasListSource) return
@@ -76,16 +73,10 @@ const LikeButton = ({ track }: { track: Track | undefined | null }) => {
 
   return (
     <div className='mr-1 '>
-      <IconButton
-        onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}
-      >
+      <IconButton onClick={() => track?.id && mutationLikeATrack.mutate(track.id)}>
         <Icon
           className='h-6 w-6 text-white'
-          name={
-            track?.id && userLikedSongs?.ids?.includes(track.id)
-              ? 'heart'
-              : 'heart-outline'
-          }
+          name={track?.id && userLikedSongs?.ids?.includes(track.id) ? 'heart' : 'heart-outline'}
         />
       </IconButton>
     </div>
@@ -101,10 +92,7 @@ const Controls = () => {
   return (
     <div className='flex items-center justify-center gap-2 text-white'>
       {mode === PlayerMode.TrackList && (
-        <IconButton
-          onClick={() => track && player.prevTrack()}
-          disabled={!track}
-        >
+        <IconButton onClick={() => track && player.prevTrack()} disabled={!track}>
           <Icon className='h-6 w-6' name='previous' />
         </IconButton>
       )}
@@ -120,11 +108,7 @@ const Controls = () => {
       >
         <Icon
           className='h-7 w-7'
-          name={
-            [PlayerState.Playing, PlayerState.Loading].includes(state)
-              ? 'pause'
-              : 'play'
-          }
+          name={[PlayerState.Playing, PlayerState.Loading].includes(state) ? 'pause' : 'play'}
         />
       </IconButton>
       <IconButton onClick={() => track && player.nextTrack()} disabled={!track}>

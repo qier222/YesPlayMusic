@@ -1,4 +1,9 @@
 {
+  "buildCommand": "pnpm -F web build --debug",
+  "devCommand": "pnpm -F web dev",
+  "installCommand": "pnpm -F web install",
+  "outputDirectory": "packages/web/dist",
+  "framework": "vite",
   "github": {
     "silent": true
   },
@@ -6,6 +11,14 @@
     {
       "source": "/netease/:match*",
       "destination": "https://your-netease-api.example.com/:match*"
+    },
+    {
+      "source": "/r3play/:match*",
+      "destination": "http://168.138.40.199:51324/r3play/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }

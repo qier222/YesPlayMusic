@@ -8,11 +8,12 @@ import ScrollRestoration from '@/web/components/ScrollRestoration'
 import Toaster from './components/Toaster'
 
 const App = () => {
-  const isMobile = useIsMobile()
+  // const isMobile = useIsMobile()
 
   return (
     <ErrorBoundary>
-      {isMobile ? <LayoutMobile /> : <Layout />}
+      {/* {isMobile ? <LayoutMobile /> : <Layout />} */}
+      <Layout />
       <Toaster />
       <ScrollRestoration />
       <IpcRendererReact />

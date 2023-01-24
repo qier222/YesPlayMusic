@@ -2,7 +2,7 @@ import { css, cx } from '@emotion/css'
 import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import { AnimatePresence, motion } from 'framer-motion'
-import ArtistInline from '@/web/components/ArtistsInline'
+import ArtistInline from '../ArtistsInline'
 import persistedUiStates from '@/web/states/persistedUiStates'
 import Controls from './Controls'
 import Cover from './Cover'
@@ -34,9 +34,7 @@ const NowPlaying = () => {
             {/* Info & Controls */}
             <div className='m-3 flex flex-col items-center rounded-20 bg-white/60 p-5 font-medium backdrop-blur-3xl dark:bg-black/70'>
               {/* Track Info */}
-              <div className='line-clamp-1 text-lg text-black dark:text-white'>
-                {track?.name}
-              </div>
+              <div className='line-clamp-1 text-lg text-black dark:text-white'>{track?.name}</div>
               <ArtistInline
                 artists={track?.ar || []}
                 className='text-black/30 dark:text-white/30'

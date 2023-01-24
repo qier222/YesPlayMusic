@@ -11,9 +11,7 @@ import {
 } from '@/shared/api/Track'
 
 // 获取歌曲详情
-export function fetchTracks(
-  params: FetchTracksParams
-): Promise<FetchTracksResponse> {
+export function fetchTracks(params: FetchTracksParams): Promise<FetchTracksResponse> {
   return request({
     url: '/song/detail',
     method: 'get',
@@ -28,16 +26,18 @@ export function fetchAudioSource(
   params: FetchAudioSourceParams
 ): Promise<FetchAudioSourceResponse> {
   return request({
-    url: '/song/url',
+    url: '/song/url/v1',
     method: 'get',
-    params,
+    params: {
+      level: 'exhigh',
+      ...params,
+      timestamp: Date.now(),
+    },
   })
 }
 
 // 获取歌词
-export function fetchLyric(
-  params: FetchLyricParams
-): Promise<FetchLyricResponse> {
+export function fetchLyric(params: FetchLyricParams): Promise<FetchLyricResponse> {
   return request({
     url: '/lyric',
     method: 'get',
@@ -46,9 +46,7 @@ export function fetchLyric(
 }
 
 // 收藏歌曲
-export function likeATrack(
-  params: LikeATrackParams
-): Promise<LikeATrackResponse> {
+export function likeATrack(params: LikeATrackParams): Promise<LikeATrackResponse> {
   return request({
     url: '/like',
     method: 'post',

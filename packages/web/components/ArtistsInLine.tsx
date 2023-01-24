@@ -28,12 +28,7 @@ const ArtistInline = ({
   if (!artists) return <div></div>
 
   return (
-    <div
-      className={cx(
-        !className?.includes('line-clamp') && 'line-clamp-1',
-        className
-      )}
-    >
+    <div className={cx(!className?.includes('line-clamp') && 'line-clamp-1', className)}>
       {artists.map((artist, index) => (
         <span key={`${artist.id}-${artist.name}`}>
           <span

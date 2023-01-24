@@ -6,7 +6,7 @@ import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
 import { memo, useCallback } from 'react'
 import dayjs from 'dayjs'
-import ArtistInline from './ArtistsInLine'
+import ArtistInline from './ArtistsInline'
 
 type ItemTitle = undefined | 'name'
 type ItemSubTitle = undefined | 'artist' | 'year'
@@ -56,15 +56,9 @@ const Album = ({
         onMouseOver={prefetch}
       />
       {title && (
-        <div className='line-clamp-2 mt-2 text-14 font-medium text-neutral-300'>
-          {title}
-        </div>
+        <div className='line-clamp-2 mt-2 text-14 font-medium text-neutral-300'>{title}</div>
       )}
-      {subtitle && (
-        <div className='mt-1 text-14 font-medium text-neutral-700'>
-          {subtitle}
-        </div>
-      )}
+      {subtitle && <div className='mt-1 text-14 font-medium text-neutral-700'>{subtitle}</div>}
     </div>
   )
 }
@@ -107,21 +101,12 @@ const CoverRow = ({
   return (
     <div className={className}>
       {/* Title */}
-      {title && (
-        <h4 className='mb-6 text-14 font-bold uppercase dark:text-neutral-300'>
-          {title}
-        </h4>
-      )}
+      {title && <h4 className='mb-6 text-14 font-bold uppercase dark:text-neutral-300'>{title}</h4>}
 
       {/* Items */}
       <div className='grid grid-cols-3 gap-4 lg:gap-6 xl:grid-cols-4 2xl:grid-cols-5'>
         {albums?.map(album => (
-          <Album
-            key={album.id}
-            album={album}
-            itemTitle={itemTitle}
-            itemSubtitle={itemSubtitle}
-          />
+          <Album key={album.id} album={album} itemTitle={itemTitle} itemSubtitle={itemSubtitle} />
         ))}
         {playlists?.map(playlist => (
           <Playlist key={playlist.id} playlist={playlist} />

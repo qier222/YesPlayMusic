@@ -17,13 +17,12 @@ import { throttle } from 'lodash-es'
 import { useTranslation } from 'react-i18next'
 import VideoRow from '@/web/components/VideoRow'
 import useUserVideos from '@/web/api/hooks/useUserVideos'
+import persistedUiStates from '@/web/states/persistedUiStates'
 
 const Albums = () => {
   const { data: albums } = useUserAlbums()
 
-  return (
-    <CoverRow albums={albums?.data} itemTitle='name' itemSubtitle='artist' />
-  )
+  return <CoverRow albums={albums?.data} itemTitle='name' itemSubtitle='artist' />
 }
 
 const Playlists = () => {
@@ -65,9 +64,8 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
   ]
 
   const { librarySelectedTab: selectedTab } = useSnapshot(uiStates)
-  const setSelectedTab = (
-    id: 'playlists' | 'albums' | 'artists' | 'videos'
-  ) => {
+  const { minimizePlayer } = useSnapshot(persistedUiStates)
+  const setSelectedTab = (id: 'playlists' | 'albums' | 'artists' | 'videos') => {
     uiStates.librarySelectedTab = id
   }
 
@@ -81,13 +79,16 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={cx(
-              'pointer-events-none fixed top-0 left-10 z-10 hidden lg:block',
+              'pointer-events-none fixed top-0 right-0 left-10 z-10 hidden lg:block',
               css`
                 height: 230px;
-                right: ${playerWidth + 32}px;
-                background-image: url(${topbarBackground});
+                background-repeat: repeat;
               `
             )}
+            style={{
+              right: `${minimizePlayer ? 0 : playerWidth + 32}px`,
+              backgroundImage: `url(${topbarBackground})`,
+            }}
           ></motion.div>
         )}
       </AnimatePresence>
@@ -99,12 +100,10 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
           setSelectedTab(id)
           scrollToBottom(true)
         }}
-        className={cx(
-          'sticky z-10 -mb-10 px-2.5 lg:px-0',
-          css`
-            top: ${topbarHeight}px;
-          `
-        )}
+        className={cx('sticky z-10 -mb-10 px-2.5 lg:px-0')}
+        style={{
+          top: `${topbarHeight}px`,
+        }}
       />
     </>
   )
@@ -114,8 +113,7 @@ const Collections = () => {
   const { librarySelectedTab: selectedTab } = useSnapshot(uiStates)
 
   const observePoint = useRef<HTMLDivElement | null>(null)
-  const { onScreen: isScrollReachBottom } =
-    useIntersectionObserver(observePoint)
+  const { onScreen: isScrollReachBottom } = useIntersectionObserver(observePoint)
 
   const onScroll = throttle(() => {
     if (isScrollReachBottom) return
@@ -126,13 +124,11 @@ const Collections = () => {
     <div>
       <CollectionTabs showBg={isScrollReachBottom} />
       <div
-        className={cx(
-          'no-scrollbar overflow-y-auto px-2.5 pt-16 pb-16 lg:px-0',
-          css`
-            height: calc(100vh - ${topbarHeight}px);
-          `
-        )}
+        className={cx('no-scrollbar overflow-y-auto px-2.5 pt-16 pb-16 lg:px-0')}
         onScroll={onScroll}
+        style={{
+          height: `calc(100vh - ${topbarHeight}px)`,
+        }}
       >
         {selectedTab === 'albums' && <Albums />}
         {selectedTab === 'playlists' && <Playlists />}

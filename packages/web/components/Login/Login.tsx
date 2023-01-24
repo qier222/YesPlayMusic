@@ -11,13 +11,7 @@ import persistedUiStates from '@/web/states/persistedUiStates'
 import useUser from '@/web/api/hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
-const OR = ({
-  children,
-  onClick,
-}: {
-  children: React.ReactNode
-  onClick: () => void
-}) => {
+const OR = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => {
   const { t } = useTranslation()
 
   return (
@@ -125,10 +119,9 @@ const Login = () => {
                 <motion.div
                   animate={animateCard}
                   className={cx(
-                    'relative rounded-48 bg-white/10 p-9',
+                    'relative h-fit rounded-48 bg-white/10 p-9',
                     css`
                       width: 392px;
-                      height: fit-content;
                     `
                   )}
                 >
@@ -136,9 +129,7 @@ const Login = () => {
                   {cardType === 'phone/email' && <LoginWithPhoneOrEmail />}
 
                   <OR onClick={handleSwitchCard}>
-                    {cardType === 'qrCode'
-                      ? t`auth.use-phone-or-email`
-                      : t`auth.scan-qr-code`}
+                    {cardType === 'qrCode' ? t`auth.use-phone-or-email` : t`auth.scan-qr-code`}
                   </OR>
                 </motion.div>
               </AnimatePresence>

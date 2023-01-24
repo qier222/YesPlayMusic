@@ -1,46 +1,112 @@
 import { FastifyPluginAsync } from 'fastify'
 import appleMusicRequest from '../../utils/appleMusicRequest'
+import { artist_detail as getArtistDetail } from 'NeteaseCloudMusicApi'
 
-const example: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+type ResponseSchema = {
+  id: number
+  neteaseId: number
+  editorialVideo: string
+  artwork: string
+  name: string
+  artistBio: {
+    en_US: string
+    zh_CN: string
+  }
+}
+
+const artist: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.get<{
     Querystring: {
-      name: string
-      lang: 'zh-CN' | 'en-US'
+      neteaseId: string
+      lang?: 'zh-CN' | 'en-US'
     }
-  }>('/artist', async function (request, reply) {
-    const { name, lang } = request.query
+  }>('/artist', async function (request, reply): Promise<ResponseSchema | undefined> {
+    const { neteaseId: neteaseIdString, lang = 'en-US' } = request.query
 
-    if (!name) {
-      return {
-        code: 400,
-        message: 'params "name" is required',
-      }
+    // validate neteaseId
+    const neteaseId = Number(neteaseIdString)
+    if (isNaN(neteaseId)) {
+      reply.code(400).send('params "neteaseId" is required')
+      return
+    }
+
+    // get from database
+    const fromDB = await fastify.prisma.artist.findFirst({
+      where: { neteaseId: neteaseId },
+      include: { artistBio: { select: { en_US: true, zh_CN: true } } },
+    })
+    if (fromDB) {
+      return fromDB as ResponseSchema
+    }
+
+    // get from netease
+    const { body: neteaseArtist } = (await getArtistDetail({ id: neteaseId })) as any
+    const artistName = neteaseArtist?.data?.artist?.name
+    if (!artistName) {
+      return
     }
 
     const fromApple = await appleMusicRequest({
       method: 'GET',
       url: '/search',
       params: {
-        term: name,
+        term: artistName,
         types: 'artists',
         'fields[artists]': 'url,name,artwork,editorialVideo,artistBio',
         'omit[resource:artists]': 'relationships',
         platform: 'web',
-        limit: '1',
-        l: lang?.toLowerCase() || 'en-us',
-        with: 'serverBubbles',
+        limit: '5',
+        l: lang?.toLowerCase(),
       },
     })
 
     const artist = fromApple?.results?.artist?.data?.[0]
-
-    if (
-      artist &&
-      artist?.attributes?.name?.toLowerCase() === name.toLowerCase()
-    ) {
-      return artist
+    if (artist?.attributes?.name?.toLowerCase() !== artistName.toLowerCase()) {
+      return
     }
+
+    // get ArtistBio
+    const artistBio = {
+      en_US: lang === 'en-US' ? artist.attributes.artistBio : '',
+      zh_CN: lang === 'zh-CN' ? artist.attributes.artistBio : '',
+    }
+    const otherLangArtistBioResult = await appleMusicRequest({
+      method: 'GET',
+      url: `/artists/${artist.id}`,
+      params: {
+        'fields[artists]': 'artistBio',
+        'omit[resource:artists]': 'relationships',
+        l: lang === 'zh-CN' ? 'en-US' : 'zh-CN',
+      },
+    })
+    const otherLangArtistBio = otherLangArtistBioResult?.data?.[0]?.attributes?.artistBio
+    if (lang === 'zh-CN') {
+      artistBio.en_US = otherLangArtistBio
+    } else if (lang === 'en-US') {
+      artistBio.zh_CN = otherLangArtistBio
+    }
+
+    const data: ResponseSchema = {
+      id: Number(artist.id),
+      neteaseId: neteaseId,
+      name: artist.attributes.name,
+      artistBio,
+      editorialVideo: artist?.attributes.editorialVideo?.motionArtistSquare1x1?.video,
+      artwork: artist?.attributes?.artwork?.url,
+    }
+
+    reply.send(data)
+
+    // save to database
+    await fastify.prisma.artist
+      .create({
+        data: {
+          ...data,
+          artistBio: { create: artistBio },
+        },
+      })
+      .catch(e => console.error(e))
   })
 }
 
-export default example
+export default artist

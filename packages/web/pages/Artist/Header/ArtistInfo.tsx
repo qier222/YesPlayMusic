@@ -1,23 +1,16 @@
 import useIsMobile from '@/web/hooks/useIsMobile'
-import useAppleMusicArtist from '@/web/hooks/useAppleMusicArtist'
+import useAppleMusicArtist from '@/web/api/hooks/useAppleMusicArtist'
 import { cx, css } from '@emotion/css'
 import { useTranslation } from 'react-i18next'
+import i18next from 'i18next'
 
-const ArtistInfo = ({
-  artist,
-  isLoading,
-}: {
-  artist?: Artist
-  isLoading: boolean
-}) => {
-  const { t } = useTranslation()
+const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean }) => {
+  const { t, i18n } = useTranslation()
 
   const isMobile = useIsMobile()
-  const { data: artistFromApple, isLoading: isLoadingArtistFromApple } =
-    useAppleMusicArtist({
-      id: artist?.id,
-      name: artist?.name,
-    })
+  const { data: artistFromApple, isLoading: isLoadingArtistFromApple } = useAppleMusicArtist(
+    artist?.id || 0
+  )
 
   return (
     <div>
@@ -27,9 +20,7 @@ const ArtistInfo = ({
           <span className='rounded-full bg-white/10'>PLACEHOLDER</span>
         </div>
       ) : (
-        <div className='text-28 font-semibold text-white/70 lg:text-32'>
-          {artist?.name}
-        </div>
+        <div className='text-28 font-semibold text-white/70 lg:text-32'>{artist?.name}</div>
       )}
 
       {/* Type */}
@@ -38,9 +29,7 @@ const ArtistInfo = ({
           <span className='rounded-full bg-white/10'>Artist</span>
         </div>
       ) : (
-        <div className='mt-2.5 text-24 font-medium text-white/40 lg:mt-6'>
-          Artist
-        </div>
+        <div className='mt-2.5 text-24 font-medium text-white/40 lg:mt-6'>Artist</div>
       )}
 
       {/* Counts */}
@@ -67,9 +56,7 @@ const ArtistInfo = ({
               `
             )}
           >
-            <span className='rounded-full bg-white/10'>
-              PLACEHOLDER1234567890
-            </span>
+            <span className='rounded-full bg-white/10'>PLACEHOLDER1234567890</span>
           </div>
         ) : (
           <div
@@ -80,7 +67,7 @@ const ArtistInfo = ({
               `
             )}
           >
-            {artistFromApple?.attributes?.artistBio || artist?.briefDesc}
+            {artistFromApple?.artistBio?.[i18n.language.replace('-', '_')] || artist?.briefDesc}
           </div>
         ))}
     </div>

@@ -20,7 +20,7 @@ export interface FetchTracksResponse {
 
 export interface FetchAudioSourceParams {
   id: number
-  br?: number // bitrate, default 999000，320000 = 320kbps
+  level?: 'standard' | 'higher' | 'exhigh' | 'lossless' | 'hires' // 128kbps 192kbps 320kbps Lossless Hi-Res
 }
 export interface FetchAudioSourceResponse {
   code: number
