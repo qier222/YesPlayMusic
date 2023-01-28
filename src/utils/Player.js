@@ -146,7 +146,7 @@ export default class {
   }
   set volume(volume) {
     this._volume = volume;
-    this._howler?.volume(volume)
+    this._howler?.volume(volume);
   }
   get list() {
     return this.shuffle ? this._shuffledList : this._list;
@@ -437,7 +437,7 @@ export default class {
       'unblock-music',
       store.state.settings.unmSource,
       track,
-      /** @type {import("@unblockneteasemusic/rust-napi").Context} */ ({
+      /** @type {import("@unblockneteasemusic/rust-napi").Context} */({
         enableFlac: store.state.settings.unmEnableFlac || null,
         proxyUri: store.state.settings.unmProxyUri || null,
         searchMode: determineSearchMode(store.state.settings.unmSearchMode),
