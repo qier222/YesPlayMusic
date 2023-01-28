@@ -432,12 +432,11 @@ export default class {
       }
     };
 
-    /** @type {import("@unblockneteasemusic/rust-napi").RetrievedSongInfo | null} */
     const retrieveSongInfo = await ipcRenderer.invoke(
       'unblock-music',
       store.state.settings.unmSource,
       track,
-      /** @type {import("@unblockneteasemusic/rust-napi").Context} */({
+      {
         enableFlac: store.state.settings.unmEnableFlac || null,
         proxyUri: store.state.settings.unmProxyUri || null,
         searchMode: determineSearchMode(store.state.settings.unmSearchMode),
@@ -446,7 +445,7 @@ export default class {
           'qq:cookie': store.state.settings.unmQQCookie || null,
           'ytdl:exe': store.state.settings.unmYtDlExe || null,
         },
-      })
+      }
     );
 
     if (store.state.settings.automaticallyCacheSongs && retrieveSongInfo?.url) {
