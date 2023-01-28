@@ -1,7 +1,7 @@
 import { fetchLyric } from '@/web/api/track'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 import { FetchLyricParams, TrackApiNames } from '@/shared/api/Track'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useQuery } from '@tanstack/react-query'
 
@@ -12,7 +12,7 @@ export default function useLyric(params: FetchLyricParams) {
     async () => {
       // fetch from cache as initial data
       const cache = window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
-        api: APIs.Lyric,
+        api: CacheAPIs.Lyric,
         query: {
           id: params.id,
         },

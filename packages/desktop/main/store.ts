@@ -8,11 +8,6 @@ export interface TypedElectronStore {
     y?: number
   }
   // settings: State['settings']
-  airplay: {
-    credentials: {
-      [key: string]: string
-    }
-  }
 }
 
 const store = new Store<TypedElectronStore>({
@@ -22,9 +17,6 @@ const store = new Store<TypedElectronStore>({
       height: 1024,
     },
     // settings: initialState.settings,
-    airplay: {
-      credentials: {},
-    },
   },
 })
 

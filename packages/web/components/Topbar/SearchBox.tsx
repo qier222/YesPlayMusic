@@ -128,13 +128,15 @@ const SearchBox = () => {
   const [searchText, setSearchText] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const { t } = useTranslation()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   return (
     <div className='relative'>
       {/* Input */}
       <div
+        onClick={() => inputRef.current?.focus()}
         className={cx(
-          'app-region-no-drag flex items-center rounded-full bg-white/10 p-2.5 text-white/40 backdrop-blur-3xl',
+          'app-region-no-drag flex cursor-text items-center rounded-full bg-white/10 p-2.5 text-white/40 backdrop-blur-3xl',
           css`
             ${bp.lg} {
               min-width: 284px;
@@ -144,6 +146,7 @@ const SearchBox = () => {
       >
         <Icon name='search' className='mr-2.5 h-7 w-7' />
         <input
+          ref={inputRef}
           placeholder={t`search.search`}
           className={cx(
             'flex-shrink bg-transparent font-medium  placeholder:text-white/40 dark:text-white/80',

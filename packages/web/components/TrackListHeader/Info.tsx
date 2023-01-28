@@ -3,8 +3,9 @@ import Icon from '@/web/components/Icon'
 import dayjs from 'dayjs'
 import { useNavigate } from 'react-router-dom'
 import useIsMobile from '@/web/hooks/useIsMobile'
-import { ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { ReactNode, useState } from 'react'
+import { motion } from 'framer-motion'
+import DescriptionViewer from '../DescriptionViewer'
 
 const Info = ({
   title,
@@ -23,6 +24,7 @@ const Info = ({
 }) => {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+  const [isOpenDescription, setIsOpenDescription] = useState(false)
 
   return (
     <div>
@@ -72,12 +74,20 @@ const Info = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold dark:text-white/40'
+          className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold transition-colors duration-300 dark:text-white/40 dark:hover:text-white/60'
           dangerouslySetInnerHTML={{
             __html: description,
           }}
+          onClick={() => setIsOpenDescription(true)}
         ></motion.div>
       )}
+
+      <DescriptionViewer
+        description={description || ''}
+        isOpen={isOpenDescription}
+        onClose={() => setIsOpenDescription(false)}
+        title={title || ''}
+      />
     </div>
   )
 }

@@ -87,7 +87,10 @@ const AlbumContextMenu = () => {
                   type: 'item',
                   label: t`context-menu.copy-r3play-link`,
                   onClick: () => {
-                    copyToClipboard(`${window.location.origin}/album/${dataSourceID}`)
+                    const baseUrl = window.env?.isElectron
+                      ? 'https://r3play.app'
+                      : window.location.origin
+                    copyToClipboard(`${baseUrl}/album/${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },

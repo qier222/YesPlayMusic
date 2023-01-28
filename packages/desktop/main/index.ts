@@ -1,6 +1,5 @@
 import './preload' // must be first
 import './sentry'
-// import './server'
 import { BrowserWindow, BrowserWindowConstructorOptions, app, shell } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
@@ -39,11 +38,10 @@ class Main {
       this.handleAppEvents()
       this.handleWindowEvents()
       this.createTray()
-      createMenu(this.win)
+      createMenu(this.win!)
       this.createThumbar()
       initIpcMain(this.win, this.tray, this.thumbar, store)
       this.initDevTools()
-      // new Airplay(this.win)
     })
   }
 

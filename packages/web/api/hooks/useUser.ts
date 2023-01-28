@@ -1,6 +1,6 @@
 import { fetchUserAccount } from '@/web/api/user'
 import { UserApiNames, FetchUserAccountResponse } from '@/shared/api/User'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { logout } from '../auth'
@@ -16,7 +16,7 @@ export default function useUser() {
       if (!existsQueryData) {
         window.ipcRenderer
           ?.invoke(IpcChannels.GetApiCache, {
-            api: APIs.UserAccount,
+            api: CacheAPIs.UserAccount,
           })
           .then(cache => {
             if (cache) reactQueryClient.setQueryData(key, cache)

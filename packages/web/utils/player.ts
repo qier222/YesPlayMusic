@@ -28,10 +28,7 @@ interface TrackListSource {
   type: TrackListSourceType
   id: number
 }
-interface RemoteDevice {
-  protocol: 'airplay' | 'chromecast'
-  id: string
-}
+
 export enum Mode {
   TrackList = 'trackList',
   FM = 'fm',
@@ -62,7 +59,6 @@ export class Player {
   fmTrackList: TrackID[] = []
   shuffle: boolean = false
   fmTrack: Track | null = null
-  remoteDevice: RemoteDevice | null = null
 
   init(params: { [key: string]: any }) {
     if (params._track) this._track = params._track
@@ -173,10 +169,6 @@ export class Player {
     window.ipcRenderer?.send(IpcChannels.Repeat, { mode: this._repeatMode })
   }
 
-  get _isAirplay() {
-    return this.remoteDevice?.protocol === 'airplay'
-  }
-
   private async _initFM() {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
 
@@ -194,27 +186,9 @@ export class Player {
   }
 
   private async _setupProgressInterval() {
-    if (this.remoteDevice === null) {
-      // Howler
-      this._progressInterval = setInterval(() => {
-        if (this.state === State.Playing) this._progress = _howler.seek()
-      }, 1000)
-    } else if (this._isAirplay) {
-      // Airplay
-      // let isFetchAirplayPlayingInfo = false
-      // this._progressInterval = setInterval(async () => {
-      //   if (isFetchAirplayPlayingInfo) return
-      //   isFetchAirplayPlayingInfo = true
-      //   const playingInfo = await window?.ipcRenderer?.invoke(
-      //     'airplay-get-playing',
-      //     { deviceID: this.remoteDevice?.id }
-      //   )
-      //   if (playingInfo) {
-      //     this._progress = playingInfo.position || 0
-      //   }
-      //   isFetchAirplayPlayingInfo = false
-      // }, 1000)
-    }
+    this._progressInterval = setInterval(() => {
+      if (this.state === State.Playing) this._progress = _howler.seek()
+    }, 1000)
   }
 
   private async _scrobble() {
@@ -285,23 +259,12 @@ export class Player {
       return
     }
     if (this.trackID !== id) return
-    if (this._isAirplay) {
-      this._playAudioViaAirplay(audio)
-      return
-    } else {
-      this._playAudioViaHowler(audio, id, autoplay)
-    }
+    this._playAudioViaHowler(audio, id, autoplay)
   }
 
-  private async _playAudioViaHowler(
-    audio: string,
-    id: number,
-    autoplay: boolean = true
-  ) {
+  private async _playAudioViaHowler(audio: string, id: number, autoplay: boolean = true) {
     Howler.unload()
-    const url = audio.includes('?')
-      ? `${audio}&dash-id=${id}`
-      : `${audio}?dash-id=${id}`
+    const url = audio.includes('?') ? `${audio}&dash-id=${id}` : `${audio}?dash-id=${id}`
     const howler = new Howl({
       src: [url],
       format: ['mp3', 'flac', 'webm'],
@@ -323,18 +286,6 @@ export class Player {
     if (!this._progressInterval) {
       this._setupProgressInterval()
     }
-  }
-
-  private async _playAudioViaAirplay(audio: string) {
-    // if (!this._isAirplay) {
-    //   console.log('No airplay device selected')
-    //   return
-    // }
-    // const result = await window.ipcRenderer?.invoke('airplay-play-url', {
-    //   deviceID: this.remoteDevice?.id,
-    //   url: audio,
-    // })
-    // console.log(result)
   }
 
   private _howlerOnEndCallback() {
@@ -367,18 +318,14 @@ export class Player {
     if (this.fmTrackList.length === 0) await this._loadMoreFMTracks()
     this._playTrack()
 
-    this.fmTrackList.length <= 1
-      ? await this._loadMoreFMTracks()
-      : this._loadMoreFMTracks()
+    this.fmTrackList.length <= 1 ? await this._loadMoreFMTracks() : this._loadMoreFMTracks()
     prefetchNextTrack()
   }
 
   private async _loadMoreFMTracks() {
     if (this.fmTrackList.length <= 5) {
       const response = await fetchPersonalFMWithReactQuery()
-      const ids = (response?.data?.map(r => r.id) ?? []).filter(
-        r => !this.fmTrackList.includes(r)
-      )
+      const ids = (response?.data?.map(r => r.id) ?? []).filter(r => !this.fmTrackList.includes(r))
       this.fmTrackList.push(...ids)
     }
   }
@@ -476,9 +423,7 @@ export class Player {
     this._setStateToLoading()
     this.mode = Mode.TrackList
     this.trackList = list
-    this._trackIndex = autoPlayTrackID
-      ? list.findIndex(t => t === autoPlayTrackID)
-      : 0
+    this._trackIndex = autoPlayTrackID ? list.findIndex(t => t === autoPlayTrackID) : 0
     this._playTrack()
   }
 
@@ -552,10 +497,7 @@ export class Player {
   async playFM() {
     this._setStateToLoading()
     this.mode = Mode.FM
-    if (
-      this.fmTrackList.length > 0 &&
-      this.fmTrack?.id === this.fmTrackList[0]
-    ) {
+    if (this.fmTrackList.length > 0 && this.fmTrack?.id === this.fmTrackList[0]) {
       this._track = this.fmTrack
       this._playAudio()
     } else {
@@ -584,29 +526,12 @@ export class Player {
     this._playTrack()
   }
 
-  async switchToThisComputer() {
-    this.remoteDevice = null
-    clearInterval(this._progressInterval)
-    this._setupProgressInterval()
-  }
-
-  async switchToAirplayDevice(deviceID: string) {
-    this.remoteDevice = {
-      protocol: 'airplay',
-      id: deviceID,
-    }
-    clearInterval(this._progressInterval)
-    this._setupProgressInterval()
-  }
-
   private async _initMediaSession() {
     console.log('init')
     if ('mediaSession' in navigator === false) return
     navigator.mediaSession.setActionHandler('play', () => this.play())
     navigator.mediaSession.setActionHandler('pause', () => this.pause())
-    navigator.mediaSession.setActionHandler('previoustrack', () =>
-      this.prevTrack()
-    )
+    navigator.mediaSession.setActionHandler('previoustrack', () => this.prevTrack())
     navigator.mediaSession.setActionHandler('nexttrack', () => this.nextTrack())
     navigator.mediaSession.setActionHandler('seekto', event => {
       if (event.seekTime) this.progress = event.seekTime

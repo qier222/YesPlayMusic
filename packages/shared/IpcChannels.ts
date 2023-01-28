@@ -1,5 +1,5 @@
 import { AppleMusicAlbum, AppleMusicArtist } from './AppleMusic'
-import { APIs } from './CacheAPIs'
+import { CacheAPIs } from './CacheAPIs'
 import { RepeatMode } from './playerDataTypes'
 
 export const enum IpcChannels {
@@ -38,7 +38,7 @@ export interface IpcChannelsParams {
   [IpcChannels.IsMaximized]: void
   [IpcChannels.FullscreenStateChange]: void
   [IpcChannels.GetApiCache]: {
-    api: APIs
+    api: CacheAPIs
     query?: any
   }
   [IpcChannels.DevDbExportJson]: void

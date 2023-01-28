@@ -1,12 +1,6 @@
 import { fetchMV, fetchMVUrl } from '@/web/api/mv'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
-import {
-  MVApiNames,
-  FetchMVParams,
-  FetchMVResponse,
-  FetchMVUrlParams,
-} from '@/shared/api/MV'
+import { MVApiNames, FetchMVParams, FetchMVResponse, FetchMVUrlParams } from '@/shared/api/MV'
 import { useQuery } from '@tanstack/react-query'
 
 export default function useMV(params: FetchMVParams) {

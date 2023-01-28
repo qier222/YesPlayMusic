@@ -1,7 +1,7 @@
 import { fetchPlaylist } from '@/web/api/playlist'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import {
   FetchPlaylistParams,
   PlaylistApiNames,
@@ -17,7 +17,7 @@ export const fetchFromCache = async (
   params: FetchPlaylistParams
 ): Promise<FetchPlaylistResponse | undefined> =>
   window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
-    api: APIs.Playlist,
+    api: CacheAPIs.Playlist,
     query: params,
   })
 

@@ -1,11 +1,7 @@
 import { fetchArtistMV } from '@/web/api/artist'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
-import {
-  FetchArtistMVParams,
-  ArtistApiNames,
-  FetchArtistMVResponse,
-} from '@/shared/api/Artist'
+import { CacheAPIs } from '@/shared/CacheAPIs'
+import { FetchArtistMVParams, ArtistApiNames, FetchArtistMVResponse } from '@/shared/api/Artist'
 import { useQuery } from '@tanstack/react-query'
 
 export default function useArtistMV(params: FetchArtistMVParams) {

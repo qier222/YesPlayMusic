@@ -1,6 +1,6 @@
 import { fetchUserArtists } from '@/web/api/user'
 import { UserApiNames, FetchUserArtistsResponse } from '@/shared/api/User'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -18,7 +18,7 @@ export default function useUserArtists() {
       if (!existsQueryData) {
         window.ipcRenderer
           ?.invoke(IpcChannels.GetApiCache, {
-            api: APIs.UserArtists,
+            api: CacheAPIs.UserArtists,
           })
           .then(cache => {
             if (cache) reactQueryClient.setQueryData(key, cache)
@@ -59,32 +59,24 @@ export const useMutationLikeAArtist = () => {
         }
 
         // Snapshot the previous value
-        const previousData = reactQueryClient.getQueryData(
-          key
-        ) as FetchUserArtistsResponse
+        const previousData = reactQueryClient.getQueryData(key) as FetchUserArtistsResponse
 
         const isLiked = !!previousData?.data.find(a => a.id === artistID)
         const newLikedArtists = cloneDeep(previousData!)
 
         if (isLiked) {
-          newLikedArtists.data = previousData.data.filter(
-            a => a.id !== artistID
-          )
+          newLikedArtists.data = previousData.data.filter(a => a.id !== artistID)
         } else {
           // 从react-query缓存获取歌手信息
-          const artistFromCache: FetchArtistResponse | undefined =
-            reactQueryClient.getQueryData([
-              ArtistApiNames.FetchArtist,
-              { id: artistID },
-            ])
+          const artistFromCache: FetchArtistResponse | undefined = reactQueryClient.getQueryData([
+            ArtistApiNames.FetchArtist,
+            { id: artistID },
+          ])
 
           // 从api获取歌手信息
           const artist: FetchArtistResponse | undefined = artistFromCache
             ? artistFromCache
-            : await reactQueryClient.fetchQuery([
-                ArtistApiNames.FetchArtist,
-                { id: artistID },
-              ])
+            : await reactQueryClient.fetchQuery([ArtistApiNames.FetchArtist, { id: artistID }])
 
           if (!artist?.artist) {
             toast.error('Failed to like artist: unable to fetch artist info')

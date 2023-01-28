@@ -1,7 +1,7 @@
 import { IpcChannels } from '@/shared/IpcChannels'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { average } from 'color.js'
 import { colord } from 'colord'
 import { supportedLanguages } from '../i18n/i18n'
@@ -11,10 +11,7 @@ import { supportedLanguages } from '../i18n/i18n'
  * @param  {string} url 封面图片URL
  * @param  {'xs'|'sm'|'md'|'lg'} size - 大小，值对应为 128px | 256px | 512px | 1024px
  */
-export function resizeImage(
-  url: string,
-  size: 'xs' | 'sm' | 'md' | 'lg'
-): string {
+export function resizeImage(url: string, size: 'xs' | 'sm' | 'md' | 'lg'): string {
   if (!url) return ''
 
   const sizeMap = {
@@ -87,9 +84,7 @@ export function formatDuration(
   const seconds = time.seconds().toString().padStart(2, '0')
 
   if (format === 'hh:mm:ss') {
-    return hours !== '0'
-      ? `${hours}:${mins.padStart(2, '0')}:${seconds}`
-      : `${mins}:${seconds}`
+    return hours !== '0' ? `${hours}:${mins.padStart(2, '0')}:${seconds}` : `${mins}:${seconds}`
   } else {
     const units = {
       'en-US': {
@@ -107,23 +102,17 @@ export function formatDuration(
     } as const
 
     return hours !== '0'
-      ? `${hours} ${units[locale].hours}${
-          mins === '0' ? '' : ` ${mins} ${units[locale].mins}`
-        }`
+      ? `${hours} ${units[locale].hours}${mins === '0' ? '' : ` ${mins} ${units[locale].mins}`}`
       : `${mins} ${units[locale].mins}`
   }
 }
 
 export function scrollToTop(smooth = false) {
-  document
-    .querySelector('#main')
-    ?.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
+  document.querySelector('#main')?.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
 }
 
 export function scrollToBottom(smooth = false) {
-  document
-    .querySelector('#main')
-    ?.scrollTo({ top: 100000, behavior: smooth ? 'smooth' : 'auto' })
+  document.querySelector('#main')?.scrollTo({ top: 100000, behavior: smooth ? 'smooth' : 'auto' })
 }
 
 export async function getCoverColor(coverUrl: string) {
@@ -137,7 +126,7 @@ export async function getCoverColor(coverUrl: string) {
   const colorFromCache: string | undefined = await window.ipcRenderer?.invoke(
     IpcChannels.GetApiCache,
     {
-      api: APIs.CoverColor,
+      api: CacheAPIs.CoverColor,
       query: {
         id,
       },
@@ -177,12 +166,9 @@ export async function calcCoverColor(coverUrl: string) {
 }
 
 export const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-export const isSafari = /^((?!chrome|android).)*safari/i.test(
-  navigator.userAgent
-)
+export const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 export const isPWA =
-  (navigator as any).standalone ||
-  window.matchMedia('(display-mode: standalone)').matches
+  (navigator as any).standalone || window.matchMedia('(display-mode: standalone)').matches
 export const isIosPwa = isIOS && isPWA && isSafari
 
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))

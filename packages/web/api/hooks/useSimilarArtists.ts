@@ -1,6 +1,6 @@
 import { fetchSimilarArtists } from '@/web/api/artist'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { FetchSimilarArtistsParams, ArtistApiNames } from '@/shared/api/Artist'
 import { useQuery } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
@@ -12,7 +12,7 @@ export default function useSimilarArtists(params: FetchSimilarArtistsParams) {
     () => {
       window.ipcRenderer
         ?.invoke(IpcChannels.GetApiCache, {
-          api: APIs.SimilarArtist,
+          api: CacheAPIs.SimilarArtist,
           query: {
             id: params.id,
           },

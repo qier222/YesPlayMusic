@@ -1,158 +1,149 @@
-import { db, Tables } from './db'
-import type { FetchTracksResponse } from '@/shared/api/Track'
+import prisma from './prisma'
 import { app } from 'electron'
-import { Request, Response } from 'express'
 import log from './log'
 import fs from 'fs'
 import * as musicMetadata from 'music-metadata'
-import { APIs, APIsParams } from '@/shared/CacheAPIs'
-import { TablesStructures } from './db'
+import { CacheAPIs, CacheAPIsParams, CacheAPIsResponse } from '@/shared/CacheAPIs'
+import { FastifyReply } from 'fastify'
 
 class Cache {
   constructor() {
     //
   }
 
-  async set(api: string, data: any, query: any = {}) {
+  async set<T extends CacheAPIs>(
+    api: T,
+    data: CacheAPIsResponse[T],
+    query: { [key: string]: string } = {}
+  ) {
+    if (!data) return
     switch (api) {
-      case APIs.UserPlaylist:
-      case APIs.UserAccount:
-      case APIs.Personalized:
-      case APIs.RecommendResource:
-      case APIs.UserAlbums:
-      case APIs.UserArtists:
-      case APIs.ListenedRecords:
-      case APIs.Likelist: {
-        if (!data) return
-        db.upsert(Tables.AccountData, {
-          id: api,
-          json: JSON.stringify(data),
-          updatedAt: Date.now(),
-        })
+      case CacheAPIs.UserPlaylist:
+      case CacheAPIs.UserAccount:
+      case CacheAPIs.Personalized:
+      case CacheAPIs.RecommendResource:
+      case CacheAPIs.UserAlbums:
+      case CacheAPIs.UserArtists:
+      case CacheAPIs.ListenedRecords:
+      case CacheAPIs.Likelist: {
+        const id = api
+        const row = { id, json: JSON.stringify(data) }
+        await prisma.accountData.upsert({ where: { id }, create: row, update: row })
         break
       }
-      case APIs.Track: {
-        const res = data as FetchTracksResponse
+      case CacheAPIs.Track: {
+        const res = data as CacheAPIsResponse[CacheAPIs.Track]
         if (!res.songs) return
-        const tracks = res.songs.map(t => ({
-          id: t.id,
-          json: JSON.stringify(t),
-          updatedAt: Date.now(),
-        }))
-        db.upsertMany(Tables.Track, tracks)
-        break
-      }
-      case APIs.Album: {
-        if (!data.album) return
-        data.album.songs = data.songs
-        db.upsert(Tables.Album, {
-          id: data.album.id,
-          json: JSON.stringify(data.album),
-          updatedAt: Date.now(),
-        })
-        break
-      }
-      case APIs.Playlist: {
-        if (!data.playlist) return
-        db.upsert(Tables.Playlist, {
-          id: data.playlist.id,
-          json: JSON.stringify(data),
-          updatedAt: Date.now(),
-        })
-        break
-      }
-      case APIs.Artist: {
-        if (!data.artist) return
-        db.upsert(Tables.Artist, {
-          id: data.artist.id,
-          json: JSON.stringify(data),
-          updatedAt: Date.now(),
-        })
-        break
-      }
-      case APIs.ArtistAlbum: {
-        if (!data.hotAlbums) return
-        db.createMany(
-          Tables.Album,
-          data.hotAlbums.map((a: Album) => ({
-            id: a.id,
-            json: JSON.stringify(a),
-            updatedAt: Date.now(),
-          }))
+        await Promise.all(
+          res.songs.map(t => {
+            const id = t.id
+            const row = { id, json: JSON.stringify(t) }
+            return prisma.track.upsert({ where: { id }, create: row, update: row })
+          })
         )
-        const modifiedData = {
-          ...data,
-          hotAlbums: data.hotAlbums.map((a: Album) => a.id),
-        }
-        db.upsert(Tables.ArtistAlbum, {
-          id: data.artist.id,
-          json: JSON.stringify(modifiedData),
-          updatedAt: Date.now(),
-        })
         break
       }
-      case APIs.Lyric: {
+      case CacheAPIs.Album: {
+        const res = data as CacheAPIsResponse[CacheAPIs.Album]
+        if (!res.album) return
+        res.album.songs = data.songs
+        const id = data.album.id
+        const row = { id, json: JSON.stringify(data.album) }
+        await prisma.album.upsert({ where: { id }, update: row, create: row })
+        break
+      }
+      case CacheAPIs.Playlist: {
+        if (!data.playlist) return
+        const id = data.playlist.id
+        const row = { id, json: JSON.stringify(data) }
+        await prisma.playlist.upsert({ where: { id }, update: row, create: row })
+        break
+      }
+      case CacheAPIs.Artist: {
+        if (!data.artist) return
+        const id = data.artist.id
+        const row = { id, json: JSON.stringify(data) }
+        await prisma.artist.upsert({ where: { id }, update: row, create: row })
+        break
+      }
+      case CacheAPIs.ArtistAlbum: {
+        const res = data as CacheAPIsResponse[CacheAPIs.ArtistAlbum]
+        if (!res.hotAlbums) return
+
+        const id = data.artist.id
+        const row = { id, hotAlbums: res.hotAlbums.map(a => a.id).join(',') }
+        await prisma.artistAlbum.upsert({ where: { id }, update: row, create: row })
+        await Promise.all(
+          res.hotAlbums.map(async album => {
+            const id = album.id
+            const existAlbum = await prisma.album.findUnique({ where: { id } })
+            if (!existAlbum) {
+              await prisma.album.create({ data: { id, json: JSON.stringify(album) } })
+            }
+          })
+        )
+        break
+      }
+      case CacheAPIs.Lyric: {
         if (!data.lrc) return
-        db.upsert(Tables.Lyric, {
-          id: query.id,
-          json: JSON.stringify(data),
-          updatedAt: Date.now(),
-        })
+        const id = Number(query.id)
+        const row = { id, json: JSON.stringify(data) }
+        await prisma.lyrics.upsert({ where: { id }, update: row, create: row })
         break
       }
-      case APIs.CoverColor: {
-        if (!data.id || !data.color) return
-        if (/^#([a-fA-F0-9]){3}$|[a-fA-F0-9]{6}$/.test(data.color) === false) {
-          return
-        }
-        db.upsert(Tables.CoverColor, {
-          id: data.id,
-          color: data.color,
-          queriedAt: Date.now(),
-        })
-        break
-      }
-      case APIs.AppleMusicAlbum: {
+      // case CacheAPIs.CoverColor: {
+      //   if (!data.id || !data.color) return
+      //   if (/^#([a-fA-F0-9]){3}$|[a-fA-F0-9]{6}$/.test(data.color) === false) {
+      //     return
+      //   }
+      //   db.upsert(Tables.CoverColor, {
+      //     id: data.id,
+      //     color: data.color,
+      //     queriedAt: Date.now(),
+      //   })
+      //   break
+      // }
+      case CacheAPIs.AppleMusicAlbum: {
         if (!data.id) return
-        db.upsert(Tables.AppleMusicAlbum, {
-          id: data.id,
-          json: data.album ? JSON.stringify(data.album) : 'no',
-          updatedAt: Date.now(),
-        })
+        const id = data.id
+        const row = { id, json: JSON.stringify(data) }
+        await prisma.appleMusicAlbum.upsert({ where: { id }, update: row, create: row })
         break
       }
-      case APIs.AppleMusicArtist: {
+      case CacheAPIs.AppleMusicArtist: {
         if (!data) return
-        db.upsert(Tables.AppleMusicArtist, {
-          id: data.id,
-          json: data.artist ? JSON.stringify(data.artist) : 'no',
-          updatedAt: Date.now(),
-        })
+        const id = data.id
+        const row = { id, json: JSON.stringify(data) }
+        await prisma.artist.upsert({ where: { id }, update: row, create: row })
         break
       }
     }
   }
 
-  get<T extends keyof APIsParams>(api: T, params: any): any {
+  async get<T extends CacheAPIs>(
+    api: T,
+    query: CacheAPIsParams[T]
+  ): Promise<CacheAPIsResponse[T] | undefined> {
     switch (api) {
-      case APIs.UserPlaylist:
-      case APIs.UserAccount:
-      case APIs.Personalized:
-      case APIs.RecommendResource:
-      case APIs.UserArtists:
-      case APIs.ListenedRecords:
-      case APIs.Likelist: {
-        const data = db.find(Tables.AccountData, api)
+      case CacheAPIs.UserPlaylist:
+      case CacheAPIs.UserAccount:
+      case CacheAPIs.Personalized:
+      case CacheAPIs.RecommendResource:
+      case CacheAPIs.UserArtists:
+      case CacheAPIs.ListenedRecords:
+      case CacheAPIs.Likelist: {
+        const data = await prisma.accountData.findUnique({ where: { id: api } })
         if (data?.json) return JSON.parse(data.json)
         break
       }
-      case APIs.Track: {
-        const ids: number[] = params?.ids.split(',').map((id: string) => Number(id))
+      case CacheAPIs.Track: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.Track]
+        const ids: number[] = typedQuery?.ids.split(',').map((id: string) => Number(id))
         if (ids.length === 0) return
 
         if (ids.includes(NaN)) return
 
-        const tracksRaw = db.findMany(Tables.Track, ids)
+        const tracksRaw = await prisma.track.findMany({ where: { id: { in: ids } } })
 
         if (tracksRaw.length !== ids.length) {
           return
@@ -167,9 +158,11 @@ class Cache {
           privileges: {},
         }
       }
-      case APIs.Album: {
-        if (isNaN(Number(params?.id))) return
-        const data = db.find(Tables.Album, params.id)
+      case CacheAPIs.Album: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.Album]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+        const data = await prisma.album.findUnique({ where: { id } })
         if (data?.json)
           return {
             resourceState: true,
@@ -179,99 +172,94 @@ class Cache {
           }
         break
       }
-      case APIs.Playlist: {
-        if (isNaN(Number(params?.id))) return
-        const data = db.find(Tables.Playlist, params.id)
+      case CacheAPIs.Playlist: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.Playlist]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+        const data = await prisma.playlist.findUnique({ where: { id } })
         if (data?.json) return JSON.parse(data.json)
         break
       }
-      case APIs.Artist: {
-        if (isNaN(Number(params?.id))) return
-        const data = db.find(Tables.Artist, params.id)
-        const fromAppleData = db.find(Tables.AppleMusicArtist, params.id)
-        const fromApple = fromAppleData?.json && JSON.parse(fromAppleData.json)
-        const fromNetease = data?.json && JSON.parse(data.json)
-        if (fromNetease && fromApple && fromApple !== 'no') {
-          fromNetease.artist.img1v1Url = fromApple.attributes.artwork.url
-          fromNetease.artist.briefDesc = fromApple.attributes.artistBio
-        }
-        return fromNetease ? fromNetease : undefined
-      }
-      case APIs.ArtistAlbum: {
-        if (isNaN(Number(params?.id))) return
-
-        const artistAlbumsRaw = db.find(Tables.ArtistAlbum, params.id)
-        if (!artistAlbumsRaw?.json) return
-        const artistAlbums = JSON.parse(artistAlbumsRaw.json)
-
-        const albumsRaw = db.findMany(Tables.Album, artistAlbums.hotAlbums)
-        if (albumsRaw.length !== artistAlbums.hotAlbums.length) return
-        const albums = albumsRaw.map(a => JSON.parse(a.json))
-
-        artistAlbums.hotAlbums = artistAlbums.hotAlbums.map((id: number) =>
-          albums.find(a => a.id === id)
-        )
-        return artistAlbums
-      }
-      case APIs.Lyric: {
-        if (isNaN(Number(params?.id))) return
-        const data = db.find(Tables.Lyric, params.id)
+      case CacheAPIs.Artist: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.Artist]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+        const data = await prisma.artist.findUnique({ where: { id } })
         if (data?.json) return JSON.parse(data.json)
         break
       }
-      case APIs.CoverColor: {
-        if (isNaN(Number(params?.id))) return
-        return db.find(Tables.CoverColor, params.id)?.color
-      }
-      case APIs.Artists: {
-        if (!params.ids?.length) return
-        const artists = db.findMany(Tables.Artist, params.ids)
-        if (artists.length !== params.ids.length) return
-        const result = artists.map(a => JSON.parse(a.json))
-        result.sort((a, b) => {
-          const indexA: number = params.ids.indexOf(a.artist.id)
-          const indexB: number = params.ids.indexOf(b.artist.id)
-          return indexA - indexB
+      case CacheAPIs.ArtistAlbum: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.ArtistAlbum]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+
+        const artistAlbums = await prisma.artistAlbum.findUnique({ where: { id } })
+        if (!artistAlbums?.hotAlbums) return
+        const ids = artistAlbums.hotAlbums.split(',').map(Number)
+
+        const albumsRaw = await prisma.album.findMany({
+          where: { id: { in: ids } },
         })
-        return result
+        if (albumsRaw.length !== ids.length) return
+        const albums = albumsRaw.map(a => JSON.parse(a.json))
+        return {
+          hotAlbums: ids.map((id: number) => albums.find(a => a.id === id)),
+        }
       }
-      case APIs.AppleMusicAlbum: {
-        if (isNaN(Number(params?.id))) return
-        const data = db.find(Tables.AppleMusicAlbum, params.id)
-        if (data?.json && data.json !== 'no') return JSON.parse(data.json)
+      case CacheAPIs.Lyric: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.Lyric]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+        const data = await prisma.lyrics.findUnique({ where: { id } })
+        if (data?.json) return JSON.parse(data.json)
         break
       }
-      case APIs.AppleMusicArtist: {
-        if (isNaN(Number(params?.id))) return
-        const data = db.find(Tables.AppleMusicArtist, params.id)
-        if (data?.json && data.json !== 'no') return JSON.parse(data.json)
+      case CacheAPIs.CoverColor: {
+        // if (isNaN(Number(params?.id))) return
+        // return db.find(Tables.CoverColor, params.id)?.color
+      }
+      case CacheAPIs.AppleMusicAlbum: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.AppleMusicAlbum]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+        const data = await prisma.appleMusicAlbum.findUnique({ where: { id } })
+        if (data?.json) return JSON.parse(data.json)
+        break
+      }
+      case CacheAPIs.AppleMusicArtist: {
+        const typedQuery = query as CacheAPIsParams[CacheAPIs.AppleMusicArtist]
+        const id = Number(typedQuery?.id)
+        if (isNaN(id)) return
+        const data = await prisma.appleMusicArtist.findUnique({ where: { id } })
+        if (data?.json) return JSON.parse(data.json)
         break
       }
     }
+    return
   }
 
-  getAudio(fileName: string, res: Response) {
-    if (!fileName) {
-      return res.status(400).send({ error: 'No filename provided' })
+  getAudio(filename: string, reply: FastifyReply) {
+    if (!filename) {
+      return reply.status(400).send({ error: 'No filename provided' })
     }
-    const id = Number(fileName.split('-')[0])
+    const id = Number(filename.split('-')[0])
 
     try {
-      const path = `${app.getPath('userData')}/audio_cache/${fileName}`
+      const path = `${app.getPath('userData')}/audio_cache/${filename}`
       const audio = fs.readFileSync(path)
       if (audio.byteLength === 0) {
-        db.delete(Tables.Audio, id)
+        prisma.audio.delete({ where: { id } })
         fs.unlinkSync(path)
-        return res.status(404).send({ error: 'Audio not found' })
+        return reply.status(404).send({ error: 'Audio not found' })
       }
-      res
+      reply
         .status(206)
-        .setHeader('Accept-Ranges', 'bytes')
-        .setHeader('Connection', 'keep-alive')
-        .setHeader('Content-Range', `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`)
+        .header('Accept-Ranges', 'bytes')
+        .header('Connection', 'keep-alive')
+        .header('Content-Range', `bytes 0-${audio.byteLength - 1}/${audio.byteLength}`)
         .send(audio)
     } catch (error) {
-      res.status(500).send({ error })
+      reply.status(500).send({ error })
     }
   }
 
@@ -285,8 +273,8 @@ class Cache {
     }
 
     const meta = await musicMetadata.parseBuffer(buffer)
-    const br = meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0
-    const type =
+    const bitRate = (meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0) / 1000
+    const format =
       {
         'MPEG 1 Layer 3': 'mp3',
         'Ogg Vorbis': 'ogg',
@@ -295,29 +283,23 @@ class Cache {
         OPUS: 'opus',
       }[meta.format.codec ?? ''] ?? 'unknown'
 
-    let source: TablesStructures[Tables.Audio]['source'] = 'unknown'
+    let source = 'unknown'
     if (url.includes('googlevideo.com')) source = 'youtube'
     if (url.includes('126.net')) source = 'netease'
-    if (url.includes('migu.cn')) source = 'migu'
-    if (url.includes('kuwo.cn')) source = 'kuwo'
-    if (url.includes('bilivideo.com')) source = 'bilibili'
-    // TODO: missing kugou qq joox
 
-    fs.writeFile(`${path}/${id}-${br}.${type}`, buffer, error => {
+    fs.writeFile(`${path}/${id}-${bitRate}.${format}`, buffer, async error => {
       if (error) {
         return log.error(`[cache] cacheAudio failed: ${error}`)
       }
-      log.info(`Audio file ${id}-${br}.${type} cached!`)
 
-      db.upsert(Tables.Audio, {
-        id,
-        br,
-        type: type as TablesStructures[Tables.Audio]['type'],
-        source,
-        queriedAt: Date.now(),
+      const row = { id, bitRate, format, source }
+      await prisma.audio.upsert({
+        where: { id },
+        create: row,
+        update: row,
       })
 
-      log.info(`[cache] cacheAudio ${id}-${br}.${type}`)
+      log.info(`Audio file ${id}-${bitRate}.${format} cached!`)
     })
   }
 }

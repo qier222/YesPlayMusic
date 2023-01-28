@@ -8,7 +8,7 @@ import {
   FetchTracksResponse,
   TrackApiNames,
 } from '@/shared/api/Track'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { useQuery } from '@tanstack/react-query'
 
 export default function useTracks(params: FetchTracksParams) {
@@ -17,7 +17,7 @@ export default function useTracks(params: FetchTracksParams) {
     async () => {
       // fetch from cache as initial data
       const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
-        api: APIs.Track,
+        api: CacheAPIs.Track,
         query: {
           ids: params.ids.join(','),
         },
@@ -40,7 +40,7 @@ export function fetchTracksWithReactQuery(params: FetchTracksParams) {
     [TrackApiNames.FetchTracks, params],
     async () => {
       const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
-        api: APIs.Track,
+        api: CacheAPIs.Track,
         query: {
           ids: params.ids.join(','),
         },

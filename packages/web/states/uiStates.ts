@@ -10,6 +10,7 @@ interface UIStates {
   blurBackgroundImage: string | null
   fullscreen: boolean
   playingVideoID: number | null
+  isPauseVideos: boolean
 }
 
 const initUIStates: UIStates = {
@@ -21,6 +22,7 @@ const initUIStates: UIStates = {
   blurBackgroundImage: null,
   fullscreen: false,
   playingVideoID: null,
+  isPauseVideos: false,
 }
 
 window.ipcRenderer

@@ -22,14 +22,14 @@ const VideoCover = ({ source, onPlay }: { source?: string; onPlay?: () => void }
   }, [source])
 
   // Pause video cover when playing another video
-  const { playingVideoID } = useSnapshot(uiStates)
+  const { playingVideoID, isPauseVideos } = useSnapshot(uiStates)
   useEffect(() => {
-    if (playingVideoID) {
+    if (playingVideoID || isPauseVideos) {
       videoRef?.current?.pause()
     } else {
       videoRef?.current?.play()
     }
-  }, [playingVideoID])
+  }, [playingVideoID, isPauseVideos])
 
   return (
     <motion.div

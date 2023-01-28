@@ -16,15 +16,19 @@ export const logsPath = {
   win32: `%USERPROFILE%\\AppData\\Roaming\\${pkg.productName}\\logs`,
 }[process.platform as 'darwin' | 'win32' | 'linux']
 
+export const isFileExist = (file: string) => {
+  return fs.existsSync(file)
+}
+
 export const createDirIfNotExist = (dir: string) => {
-  if (!fs.existsSync(dir)) {
+  if (!isFileExist(dir)) {
     fs.mkdirSync(dir, { recursive: true })
   }
 }
 
 export const createFileIfNotExist = (file: string) => {
   createDirIfNotExist(path.dirname(file))
-  if (!fs.existsSync(file)) {
+  if (!isFileExist(file)) {
     fs.writeFileSync(file, '')
   }
 }

@@ -1,11 +1,7 @@
 import { fetchArtist } from '@/web/api/artist'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
-import {
-  FetchArtistParams,
-  ArtistApiNames,
-  FetchArtistResponse,
-} from '@/shared/api/Artist'
+import { CacheAPIs } from '@/shared/CacheAPIs'
+import { FetchArtistParams, ArtistApiNames, FetchArtistResponse } from '@/shared/api/Artist'
 import { useQuery } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 
@@ -13,7 +9,7 @@ const fetchFromCache = async (
   params: FetchArtistParams
 ): Promise<FetchArtistResponse | undefined> =>
   window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
-    api: APIs.Artist,
+    api: CacheAPIs.Artist,
     query: params,
   })
 

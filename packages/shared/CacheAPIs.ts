@@ -12,18 +12,11 @@ import {
   FetchUserLikedTracksIDsResponse,
   FetchUserPlaylistsResponse,
 } from './api/User'
-import {
-  FetchAudioSourceResponse,
-  FetchLyricResponse,
-  FetchTracksResponse,
-} from './api/Track'
-import {
-  FetchPlaylistResponse,
-  FetchRecommendedPlaylistsResponse,
-} from './api/Playlists'
+import { FetchAudioSourceResponse, FetchLyricResponse, FetchTracksResponse } from './api/Track'
+import { FetchPlaylistResponse, FetchRecommendedPlaylistsResponse } from './api/Playlists'
 import { AppleMusicAlbum, AppleMusicArtist } from 'AppleMusic'
 
-export const enum APIs {
+export enum CacheAPIs {
   Album = 'album',
   Artist = 'artists',
   ArtistAlbum = 'artist/album',
@@ -32,7 +25,7 @@ export const enum APIs {
   Personalized = 'personalized',
   Playlist = 'playlist/detail',
   RecommendResource = 'recommend/resource',
-  SongUrl = 'song/url',
+  SongUrl = 'song/url/v1',
   Track = 'song/detail',
   UserAccount = 'user/account',
   UserAlbums = 'album/sublist',
@@ -42,56 +35,53 @@ export const enum APIs {
   ListenedRecords = 'user/record',
 
   // not netease api
-  Artists = 'artistsNotNetease',
   CoverColor = 'cover_color',
   AppleMusicAlbum = 'apple_music_album',
   AppleMusicArtist = 'apple_music_artist',
 }
 
-export interface APIsParams {
-  [APIs.Album]: { id: number }
-  [APIs.Artist]: { id: number }
-  [APIs.ArtistAlbum]: { id: number }
-  [APIs.Likelist]: void
-  [APIs.Lyric]: { id: number }
-  [APIs.Personalized]: void
-  [APIs.Playlist]: { id: number }
-  [APIs.RecommendResource]: void
-  [APIs.SongUrl]: { id: string }
-  [APIs.Track]: { ids: string }
-  [APIs.UserAccount]: void
-  [APIs.UserAlbums]: void
-  [APIs.UserArtists]: void
-  [APIs.UserPlaylist]: void
-  [APIs.SimilarArtist]: { id: number }
-  [APIs.ListenedRecords]: { id: number; type: number }
+export interface CacheAPIsParams {
+  [CacheAPIs.Album]: { id: number }
+  [CacheAPIs.Artist]: { id: number }
+  [CacheAPIs.ArtistAlbum]: { id: number }
+  [CacheAPIs.Likelist]: void
+  [CacheAPIs.Lyric]: { id: number }
+  [CacheAPIs.Personalized]: void
+  [CacheAPIs.Playlist]: { id: number }
+  [CacheAPIs.RecommendResource]: void
+  [CacheAPIs.SongUrl]: { id: string }
+  [CacheAPIs.Track]: { ids: string }
+  [CacheAPIs.UserAccount]: void
+  [CacheAPIs.UserAlbums]: void
+  [CacheAPIs.UserArtists]: void
+  [CacheAPIs.UserPlaylist]: void
+  [CacheAPIs.SimilarArtist]: { id: number }
+  [CacheAPIs.ListenedRecords]: { id: number; type: number }
 
-  [APIs.Artists]: { ids: number[] }
-  [APIs.CoverColor]: { id: number }
-  [APIs.AppleMusicAlbum]: { id: number }
-  [APIs.AppleMusicArtist]: { id: number }
+  [CacheAPIs.CoverColor]: { id: number }
+  [CacheAPIs.AppleMusicAlbum]: { id: number }
+  [CacheAPIs.AppleMusicArtist]: { id: number }
 }
 
-export interface APIsResponse {
-  [APIs.Album]: FetchAlbumResponse
-  [APIs.Artist]: FetchArtistResponse
-  [APIs.ArtistAlbum]: FetchArtistAlbumsResponse
-  [APIs.Likelist]: FetchUserLikedTracksIDsResponse
-  [APIs.Lyric]: FetchLyricResponse
-  [APIs.Personalized]: FetchRecommendedPlaylistsResponse
-  [APIs.Playlist]: FetchPlaylistResponse
-  [APIs.RecommendResource]: FetchRecommendedPlaylistsResponse
-  [APIs.SongUrl]: FetchAudioSourceResponse
-  [APIs.Track]: FetchTracksResponse
-  [APIs.UserAccount]: FetchUserAccountResponse
-  [APIs.UserAlbums]: FetchUserAlbumsResponse
-  [APIs.UserArtists]: FetchUserArtistsResponse
-  [APIs.UserPlaylist]: FetchUserPlaylistsResponse
-  [APIs.SimilarArtist]: FetchSimilarArtistsResponse
-  [APIs.ListenedRecords]: FetchListenedRecordsResponse
+export interface CacheAPIsResponse {
+  [CacheAPIs.Album]: FetchAlbumResponse
+  [CacheAPIs.Artist]: FetchArtistResponse
+  [CacheAPIs.ArtistAlbum]: FetchArtistAlbumsResponse
+  [CacheAPIs.Likelist]: FetchUserLikedTracksIDsResponse
+  [CacheAPIs.Lyric]: FetchLyricResponse
+  [CacheAPIs.Personalized]: FetchRecommendedPlaylistsResponse
+  [CacheAPIs.Playlist]: FetchPlaylistResponse
+  [CacheAPIs.RecommendResource]: FetchRecommendedPlaylistsResponse
+  [CacheAPIs.SongUrl]: FetchAudioSourceResponse
+  [CacheAPIs.Track]: FetchTracksResponse
+  [CacheAPIs.UserAccount]: FetchUserAccountResponse
+  [CacheAPIs.UserAlbums]: FetchUserAlbumsResponse
+  [CacheAPIs.UserArtists]: FetchUserArtistsResponse
+  [CacheAPIs.UserPlaylist]: FetchUserPlaylistsResponse
+  [CacheAPIs.SimilarArtist]: FetchSimilarArtistsResponse
+  [CacheAPIs.ListenedRecords]: FetchListenedRecordsResponse
 
-  [APIs.Artists]: FetchArtistResponse[]
-  [APIs.CoverColor]: string | undefined
-  [APIs.AppleMusicAlbum]: AppleMusicAlbum | 'no'
-  [APIs.AppleMusicArtist]: AppleMusicArtist | 'no'
+  [CacheAPIs.CoverColor]: string | undefined
+  [CacheAPIs.AppleMusicAlbum]: AppleMusicAlbum | 'no'
+  [CacheAPIs.AppleMusicArtist]: AppleMusicArtist | 'no'
 }

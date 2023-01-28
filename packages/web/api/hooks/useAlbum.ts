@@ -1,12 +1,8 @@
 import { fetchAlbum } from '@/web/api/album'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
-import {
-  FetchAlbumParams,
-  AlbumApiNames,
-  FetchAlbumResponse,
-} from '@/shared/api/Album'
+import { CacheAPIs } from '@/shared/CacheAPIs'
+import { FetchAlbumParams, AlbumApiNames, FetchAlbumResponse } from '@/shared/api/Album'
 import { useQuery } from '@tanstack/react-query'
 
 const fetch = async (params: FetchAlbumParams) => {
@@ -17,11 +13,9 @@ const fetch = async (params: FetchAlbumParams) => {
   return album
 }
 
-const fetchFromCache = async (
-  params: FetchAlbumParams
-): Promise<FetchAlbumResponse | undefined> =>
+const fetchFromCache = async (params: FetchAlbumParams): Promise<FetchAlbumResponse | undefined> =>
   window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
-    api: APIs.Album,
+    api: CacheAPIs.Album,
     query: params,
   })
 
@@ -48,22 +42,14 @@ export default function useAlbum(params: FetchAlbumParams) {
 }
 
 export function fetchAlbumWithReactQuery(params: FetchAlbumParams) {
-  return reactQueryClient.fetchQuery(
-    [AlbumApiNames.FetchAlbum, params],
-    () => fetch(params),
-    {
-      staleTime: Infinity,
-    }
-  )
+  return reactQueryClient.fetchQuery([AlbumApiNames.FetchAlbum, params], () => fetch(params), {
+    staleTime: Infinity,
+  })
 }
 
 export async function prefetchAlbum(params: FetchAlbumParams) {
   if (await fetchFromCache(params)) return
-  await reactQueryClient.prefetchQuery(
-    [AlbumApiNames.FetchAlbum, params],
-    () => fetch(params),
-    {
-      staleTime: Infinity,
-    }
-  )
+  await reactQueryClient.prefetchQuery([AlbumApiNames.FetchAlbum, params], () => fetch(params), {
+    staleTime: Infinity,
+  })
 }

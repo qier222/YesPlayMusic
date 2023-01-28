@@ -2,12 +2,8 @@ import { likeAAlbum } from '@/web/api/album'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import useUser from './useUser'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
-import {
-  FetchUserAlbumsParams,
-  UserApiNames,
-  FetchUserAlbumsResponse,
-} from '@/shared/api/User'
+import { CacheAPIs } from '@/shared/CacheAPIs'
+import { FetchUserAlbumsParams, UserApiNames, FetchUserAlbumsResponse } from '@/shared/api/User'
 import { fetchUserAlbums } from '../user'
 import toast from 'react-hot-toast'
 import reactQueryClient from '@/web/utils/reactQueryClient'
@@ -25,7 +21,7 @@ export default function useUserAlbums(params: FetchUserAlbumsParams = {}) {
       if (!existsQueryData) {
         window.ipcRenderer
           ?.invoke(IpcChannels.GetApiCache, {
-            api: APIs.UserAlbums,
+            api: CacheAPIs.UserAlbums,
             query: params,
           })
           .then(cache => {
@@ -72,9 +68,7 @@ export const useMutationLikeAAlbum = () => {
         }
 
         // Snapshot the previous value
-        const previousData = reactQueryClient.getQueryData(
-          key
-        ) as FetchUserAlbumsResponse
+        const previousData = reactQueryClient.getQueryData(key) as FetchUserAlbumsResponse
 
         const isLiked = !!previousData?.data.find(a => a.id === albumID)
         const newAlbums = cloneDeep(previousData!)
@@ -88,21 +82,17 @@ export const useMutationLikeAAlbum = () => {
 
           console.log({ albumID })
 
-          const albumFromCache: FetchAlbumResponse | undefined =
-            reactQueryClient.getQueryData([
-              AlbumApiNames.FetchAlbum,
-              { id: albumID },
-            ])
+          const albumFromCache: FetchAlbumResponse | undefined = reactQueryClient.getQueryData([
+            AlbumApiNames.FetchAlbum,
+            { id: albumID },
+          ])
 
           console.log({ albumFromCache })
 
           // 从api获取专辑
           const album: FetchAlbumResponse | undefined = albumFromCache
             ? albumFromCache
-            : await reactQueryClient.fetchQuery([
-                AlbumApiNames.FetchAlbum,
-                { id: albumID },
-              ])
+            : await reactQueryClient.fetchQuery([AlbumApiNames.FetchAlbum, { id: albumID }])
 
           if (!album?.album) {
             toast.error('Failed to like album: unable to fetch album info')

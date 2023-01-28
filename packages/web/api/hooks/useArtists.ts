@@ -1,6 +1,6 @@
 import { fetchArtist } from '@/web/api/artist'
 import { IpcChannels } from '@/shared/IpcChannels'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { ArtistApiNames } from '@/shared/api/Artist'
 import { useQuery } from '@tanstack/react-query'
 import reactQueryClient from '@/web/utils/reactQueryClient'
@@ -11,21 +11,15 @@ export default function useArtists(ids: number[]) {
     () =>
       Promise.all(
         ids.map(async id => {
-          const queryData = reactQueryClient.getQueryData([
-            ArtistApiNames.FetchArtist,
-            { id },
-          ])
+          const queryData = reactQueryClient.getQueryData([ArtistApiNames.FetchArtist, { id }])
           if (queryData) return queryData
 
-          const cache = await window.ipcRenderer?.invoke(
-            IpcChannels.GetApiCache,
-            {
-              api: APIs.Artist,
-              query: {
-                id,
-              },
-            }
-          )
+          const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
+            api: CacheAPIs.Artist,
+            query: {
+              id,
+            },
+          })
           if (cache) return cache
 
           return fetchArtist({ id })

@@ -1,5 +1,6 @@
 interface FetchAppleMusicAlbumParams {
   neteaseId: number | string
+  lang?: 'zh-CN' | 'en-US'
 }
 
 interface FetchAppleMusicAlbumResponse {
@@ -17,6 +18,7 @@ interface FetchAppleMusicAlbumResponse {
 
 interface FetchAppleMusicArtistParams {
   neteaseId: number | string
+  lang?: 'zh-CN' | 'en-US'
 }
 
 interface FetchAppleMusicArtistResponse {

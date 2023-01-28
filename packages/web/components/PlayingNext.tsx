@@ -23,7 +23,7 @@ const Header = () => {
       )}
     >
       <div className='flex'>
-        <div className='mr-2 h-4 w-1 bg-brand-700'></div>
+        <div className='mr-2 h-4 w-1 rounded-full bg-brand-700'></div>
         {t`player.queue`}
       </div>
       <div className='flex'>
@@ -117,11 +117,7 @@ const TrackList = ({ className }: { className?: string }) => {
     <>
       <div
         className={css`
-          mask-image: linear-gradient(
-            to bottom,
-            transparent 22px,
-            black 42px
-          ); // 顶部渐变遮罩
+          mask-image: linear-gradient(to bottom, transparent 22px, black 42px); // 顶部渐变遮罩
         `}
       >
         <Virtuoso
@@ -133,11 +129,7 @@ const TrackList = ({ className }: { className?: string }) => {
             'no-scrollbar relative z-10 w-full overflow-auto',
             className,
             css`
-              mask-image: linear-gradient(
-                to top,
-                transparent 8px,
-                black 42px
-              ); // 底部渐变遮罩
+              mask-image: linear-gradient(to top, transparent 8px, black 42px); // 底部渐变遮罩
             `
           )}
           fixedItemHeight={76}

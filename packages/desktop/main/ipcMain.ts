@@ -6,7 +6,7 @@ import log from './log'
 import fs from 'fs'
 import Store from 'electron-store'
 import { TypedElectronStore } from './store'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { YPMTray } from './tray'
 import { Thumbar } from './windowsTaskbar'
 import fastFolderSize from 'fast-folder-size'
@@ -151,7 +151,7 @@ function initOtherIpcMain() {
    */
   on(IpcChannels.CacheCoverColor, (event, args) => {
     const { id, color } = args
-    cache.set(APIs.CoverColor, { id, color })
+    cache.set(CacheAPIs.CoverColor, { id, color })
   })
 
   /**

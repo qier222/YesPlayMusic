@@ -5,12 +5,13 @@
 
 const pkg = require('./package.json')
 const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
+const isDev = process.env.NODE_ENV === 'development'
 
 module.exports = {
   appId: 'app.r3play',
   productName: pkg.productName,
   copyright: 'Copyright © 2022 qier222',
-  asar: true,
+  asar: isDev ? true : false,
   directories: {
     output: 'release',
     buildResources: 'build',
@@ -118,6 +119,17 @@ module.exports = {
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
     '!**/*.{map,debug.min.js}',
+
+    // copy prisma
+    {
+      from: './prisma',
+      to: 'main/prisma',
+    },
+    {
+      from: './prisma',
+      to: 'main',
+      filter: '*.prisma' // only copy prisma schema
+    },
 
     {
       from: './dist',

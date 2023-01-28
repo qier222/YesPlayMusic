@@ -3,6 +3,8 @@ import useAppleMusicArtist from '@/web/api/hooks/useAppleMusicArtist'
 import { cx, css } from '@emotion/css'
 import { useTranslation } from 'react-i18next'
 import i18next from 'i18next'
+import { useState } from 'react'
+import DescriptionViewer from '@/web/components/DescriptionViewer'
 
 const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean }) => {
   const { t, i18n } = useTranslation()
@@ -11,6 +13,10 @@ const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean
   const { data: artistFromApple, isLoading: isLoadingArtistFromApple } = useAppleMusicArtist(
     artist?.id || 0
   )
+
+  const [isOpenDescription, setIsOpenDescription] = useState(false)
+  const description =
+    artistFromApple?.artistBio?.[i18n.language.replace('-', '_')] || artist?.briefDesc
 
   return (
     <div>
@@ -61,15 +67,23 @@ const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean
         ) : (
           <div
             className={cx(
-              'line-clamp-5 mt-6 text-14 font-bold text-white/40',
-              css`
-                height: 86px;
-              `
+              'line-clamp-5 mt-6 overflow-hidden whitespace-pre-wrap text-14 font-bold text-white/40 transition-colors duration-500 hover:text-white/60'
+              // css`
+              //   height: 86px;
+              // `
             )}
+            onClick={() => setIsOpenDescription(true)}
           >
-            {artistFromApple?.artistBio?.[i18n.language.replace('-', '_')] || artist?.briefDesc}
+            {description}
           </div>
         ))}
+
+      <DescriptionViewer
+        description={description || ''}
+        isOpen={isOpenDescription}
+        onClose={() => setIsOpenDescription(false)}
+        title={artist?.name || ''}
+      />
     </div>
   )
 }

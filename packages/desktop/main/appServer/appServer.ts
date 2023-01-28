@@ -1,24 +1,28 @@
-import fastify from 'fastify'
-import fastifyStatic from '@fastify/static'
-import path from 'path'
 import fastifyCookie from '@fastify/cookie'
+import fastifyMultipart from '@fastify/multipart'
+import fastifyStatic from '@fastify/static'
+import fastify from 'fastify'
+import path from 'path'
 import { isProd } from '../env'
 import log from '../log'
-import netease from './routes/netease'
+import netease from './routes/netease/netease'
 import appleMusic from './routes/r3play/appleMusic'
+import audio from './routes/r3play/audio'
 
 const server = fastify({
   ignoreTrailingSlash: true,
 })
 
 server.register(fastifyCookie)
+server.register(fastifyMultipart)
 if (isProd) {
   server.register(fastifyStatic, {
     root: path.join(__dirname, '../web'),
   })
 }
 
-server.register(netease, { prefix: '/netease' })
+server.register(netease)
+server.register(audio)
 server.register(appleMusic)
 
 const port = Number(

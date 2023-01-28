@@ -3,7 +3,7 @@ import {
   FetchListenedRecordsResponse,
   FetchUserVideosResponse,
 } from '@/shared/api/User'
-import { APIs } from '@/shared/CacheAPIs'
+import { CacheAPIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import useUser from './useUser'
@@ -25,7 +25,7 @@ export default function useUserVideos() {
       //   if (!existsQueryData) {
       //     window.ipcRenderer
       //       ?.invoke(IpcChannels.GetApiCache, {
-      //         api: APIs.Likelist,
+      //         api: CacheAPIs.Likelist,
       //         query: {
       //           uid,
       //         },

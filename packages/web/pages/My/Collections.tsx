@@ -79,7 +79,7 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={cx(
-              'pointer-events-none fixed top-0 right-0 left-10 z-10 hidden lg:block',
+              'pointer-events-none fixed top-0 right-0 left-10 z-10',
               css`
                 height: 230px;
                 background-repeat: repeat;
