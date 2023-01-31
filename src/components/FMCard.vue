@@ -67,6 +67,11 @@ export default {
       )}?param=512y512`;
     },
   },
+  watch: {
+    track() {
+      this.getColor();
+    },
+  },
   created() {
     this.getColor();
     window.ok = this.getColor;
@@ -76,11 +81,7 @@ export default {
       this.player.playPersonalFM();
     },
     next() {
-      this.player.playNextFMTrack().then(result => {
-        if (result) {
-          this.getColor();
-        }
-      });
+      this.player.playNextFMTrack();
     },
     goToAlbum() {
       if (this.track.album.id === 0) return;
@@ -88,7 +89,6 @@ export default {
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
-      this.getColor();
     },
     getColor() {
       if (!this.player.personalFMTrack?.album?.picUrl) return;

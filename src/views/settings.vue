@@ -204,6 +204,22 @@
       </div>
       <div class="item">
         <div class="left">
+          <div class="title"> {{ $t('settings.showLyricsTime') }} </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="show-lyrics-time"
+              v-model="showLyricsTime"
+              type="checkbox"
+              name="show-lyrics-time"
+            />
+            <label for="show-lyrics-time"></label>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="left">
           <div class="title"> {{ $t('settings.lyricFontSize.text') }} </div>
         </div>
         <div class="right">
@@ -680,7 +696,7 @@
 
         <a
           v-if="!isElectron"
-          href="https://vercel.com/?utm_source=ypm&utm_campaign=oss"
+          href="https://vercel.com/?utm_source=ohmusic&utm_campaign=oss"
         >
           <img
             height="36"
@@ -932,6 +948,17 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'lyricsBackground',
+          value,
+        });
+      },
+    },
+    showLyricsTime: {
+      get() {
+        return this.settings.showLyricsTime;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'showLyricsTime',
           value,
         });
       },

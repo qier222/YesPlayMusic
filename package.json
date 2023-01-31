@@ -1,6 +1,6 @@
 {
   "name": "yesplaymusic",
-  "version": "0.4.5",
+  "version": "0.4.7",
   "private": true,
   "description": "A third party music player for Netease Music",
   "author": "qier222<qier222@outlook.com>",
@@ -23,8 +23,8 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@unblockneteasemusic/rust-napi": "^0.3.0-pre.1",
-    "NeteaseCloudMusicApi": "^4.5.2",
+    "@unblockneteasemusic/rust-napi": "^0.4.0",
+    "NeteaseCloudMusicApi": "^4.8.7",
     "axios": "^0.26.1",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",

@@ -103,6 +103,7 @@ export default {
   },
   player: {
     like: '喜欢',
+    unlike: '取消喜欢',
     previous: '上一首',
     next: '下一首',
     repeat: '循环播放',
@@ -173,6 +174,7 @@ export default {
       on: '打开',
       dynamic: '动态（GPU 占用较高）',
     },
+    showLyricsTime: '显示当前时间',
     closeAppOption: {
       text: '关闭主面板时...',
       ask: '询问',

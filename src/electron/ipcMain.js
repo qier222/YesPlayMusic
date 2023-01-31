@@ -169,7 +169,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
       const sourceList =
         typeof sourceListString === 'string'
           ? parseSourceStringToList(unmExecutor, sourceListString)
-          : ['migu', 'ytdl', 'bilibili', 'pyncm', 'kugou'];
+          : ['ytdl', 'bilibili', 'pyncm', 'kugou'];
       log(`[UNM] using source: ${sourceList.join(', ')}`);
       log(`[UNM] using configuration: ${JSON.stringify(context)}`);
 
