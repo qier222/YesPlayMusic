@@ -102,7 +102,12 @@ const artist: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       .create({
         data: {
           ...data,
-          artistBio: { create: artistBio },
+          artistBio: {
+            connectOrCreate: {
+              where: { id: data.id },
+              create: artistBio,
+            },
+          },
         },
       })
       .catch(e => console.error(e))

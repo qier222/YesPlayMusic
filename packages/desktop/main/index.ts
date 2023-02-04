@@ -11,7 +11,8 @@ import { createTaskbar, Thumbar } from './windowsTaskbar'
 import { createMenu } from './menu'
 import { isDev, isWindows, isLinux, isMac, appName } from './env'
 import store from './store'
-import './appServer/appServer'
+import initAppServer from './appServer/appServer'
+import { initDatabase } from './prisma'
 
 class Main {
   win: BrowserWindow | null = null
@@ -32,8 +33,10 @@ class Main {
       process.exit(0)
     }
 
-    app.whenReady().then(() => {
+    app.whenReady().then(async () => {
       log.info('[index] App ready')
+      await initDatabase()
+      await initAppServer()
       this.createWindow()
       this.handleAppEvents()
       this.handleWindowEvents()

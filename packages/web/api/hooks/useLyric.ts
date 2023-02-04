@@ -11,7 +11,7 @@ export default function useLyric(params: FetchLyricParams) {
     key,
     async () => {
       // fetch from cache as initial data
-      const cache = window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
+      const cache = await window.ipcRenderer?.invoke(IpcChannels.GetApiCache, {
         api: CacheAPIs.Lyric,
         query: {
           id: params.id,

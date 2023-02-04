@@ -37,7 +37,9 @@ const Header = () => {
   const creatorLink = `/artist/${album?.artist.id}`
   const description = isLoadingAppleMusicAlbum
     ? ''
-    : appleMusicAlbum?.editorialNote?.[i18n.language.replace('-', '_')] || album?.description
+    : appleMusicAlbum?.editorialNote?.[i18n.language.replace('-', '_')] ||
+      album?.description ||
+      appleMusicAlbum?.editorialNote?.en_US
   const extraInfo = useMemo(() => {
     const duration = album?.songs?.reduce((acc, cur) => acc + cur.dt, 0) || 0
     const albumDuration = formatDuration(duration, i18n.language, 'hh[hr] mm[min]')

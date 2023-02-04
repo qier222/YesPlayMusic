@@ -5,13 +5,12 @@
 
 const pkg = require('./package.json')
 const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
-const isDev = process.env.NODE_ENV === 'development'
 
 module.exports = {
   appId: 'app.r3play',
   productName: pkg.productName,
   copyright: 'Copyright © 2022 qier222',
-  asar: isDev ? true : false,
+  asar: true,
   directories: {
     output: 'release',
     buildResources: 'build',

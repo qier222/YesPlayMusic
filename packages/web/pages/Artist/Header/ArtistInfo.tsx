@@ -16,7 +16,9 @@ const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean
 
   const [isOpenDescription, setIsOpenDescription] = useState(false)
   const description =
-    artistFromApple?.artistBio?.[i18n.language.replace('-', '_')] || artist?.briefDesc
+    artistFromApple?.artistBio?.[i18n.language.replace('-', '_')] ||
+    artist?.briefDesc ||
+    artistFromApple?.artistBio?.en_US
 
   return (
     <div>

@@ -6,7 +6,7 @@
   "main": "./main/index.js",
   "author": "*",
   "scripts": {
-    "post-install": "tsx scripts/build.sqlite3.ts",
+    "postinstall": "prisma generate",
     "dev": "tsx scripts/build.main.ts --watch",
     "build": "tsx scripts/build.main.ts",
     "pack": "electron-builder build -c .electron-builder.config.js",
@@ -25,6 +25,7 @@
     "@fastify/cookie": "^8.3.0",
     "@fastify/http-proxy": "^8.4.0",
     "@fastify/multipart": "^7.4.0",
+    "@fastify/static": "^6.6.1",
     "@prisma/client": "^4.8.1",
     "@prisma/engines": "^4.9.0",
     "@sentry/electron": "^3.0.7",
@@ -35,6 +36,7 @@
     "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
     "fast-folder-size": "^1.7.1",
+    "fastify": "^4.5.3",
     "pretty-bytes": "^6.0.0",
     "prisma": "^4.8.1",
     "ytdl-core": "^4.11.2"
@@ -44,7 +46,7 @@
     "axios": "^1.2.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
-    "electron": "^22.0.0",
+    "electron": "^22.1.0",
     "electron-builder": "23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.9",

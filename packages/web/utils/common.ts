@@ -21,8 +21,8 @@ export function resizeImage(url: string, size: 'xs' | 'sm' | 'md' | 'lg'): strin
     lg: '1024',
   }
 
+  // from Apple Music
   if (url.includes('mzstatic.com')) {
-    // from Apple Music
     return url.replace('{w}', sizeMap[size]).replace('{h}', sizeMap[size])
   }
 

@@ -82,7 +82,6 @@ const album: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       method: 'GET',
       url: `/albums/${album.id}`,
       params: {
-        'fields[albums]': 'editorialNotes',
         'omit[resource:albums]': 'relationships',
         l: lang === 'zh-CN' ? 'en-US' : 'zh-CN',
       },
@@ -114,7 +113,12 @@ const album: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       .create({
         data: {
           ...data,
-          editorialNote: { create: editorialNote },
+          editorialNote: {
+            connectOrCreate: {
+              where: { id: data.id },
+              create: editorialNote,
+            },
+          },
         },
       })
       .catch(e => console.error(e))

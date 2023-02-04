@@ -1,13 +1,15 @@
 import { app } from 'electron'
 import path from 'path'
 import { PrismaClient } from '../prisma/client'
-import { isDev } from './env'
+import { isDev, isWindows } from './env'
 import log from './log'
 import { createFileIfNotExist, dirname, isFileExist } from './utils'
 import fs from 'fs'
+import { dialog } from 'electron'
 
 export const dbPath = path.join(app.getPath('userData'), 'r3play.db')
-export const dbUrl = 'file://' + dbPath
+export const dbUrl = 'file:' + (isWindows ? '' : '//') + dbPath
+log.info('[prisma] dbUrl', dbUrl)
 
 const extraResourcesPath = app.getAppPath().replace('app.asar', '') // impacted by extraResources setting in electron-builder.yml
 function getPlatformName(): string {
@@ -49,16 +51,9 @@ log.info('[prisma] dbUrl', dbUrl)
 // the dbUrl into the prisma client constructor in datasources.db.url
 process.env.DATABASE_URL = dbUrl
 
-const isInitialized = isFileExist(dbPath)
-if (!isInitialized) {
-  const from = isDev ? path.join(dirname, './prisma/r3play.db') : path.join(dirname, './r3play.db')
-  log.info(`[prisma] copy r3play.db file from ${from} to ${dbPath}`)
-  fs.copyFileSync(from, dbPath)
-  log.info('[prisma] Database tables initialized.')
-} else {
-  log.info('[prisma] Database tables already initialized before.')
-}
+createFileIfNotExist(dbPath)
 
+// @ts-expect-error
 let prisma: PrismaClient = null
 try {
   prisma = new PrismaClient({
@@ -79,6 +74,29 @@ try {
   log.info('[prisma] prisma initialized')
 } catch (e) {
   log.error('[prisma] failed to init prisma', e)
+  dialog.showErrorBox('Failed to init prisma', String(e))
+  app.exit()
+}
+
+export const initDatabase = async () => {
+  try {
+    const initSQLFile = fs
+      .readFileSync(path.join(dirname, 'migrations/init.sql'), 'utf-8')
+      .toString()
+    const tables = initSQLFile.split(';')
+    await Promise.all(
+      tables.map(sql => {
+        if (!sql.trim()) return
+        return prisma.$executeRawUnsafe(sql.trim()).catch(() => {
+          log.error('[prisma] failed to execute init sql >>> ', sql.trim())
+        })
+      })
+    )
+  } catch (e) {
+    dialog.showErrorBox('Failed to init prisma database', String(e))
+    app.exit()
+  }
+  log.info('[prisma] database initialized')
 }
 
 export default prisma

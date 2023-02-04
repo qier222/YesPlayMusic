@@ -24,6 +24,7 @@
     "@emotion/css": "^11.10.5",
     "@sentry/react": "^7.29.0",
     "@sentry/tracing": "^7.29.0",
+    "@tailwindcss/container-queries": "^0.1.0",
     "@tanstack/react-query": "^4.20.9",
     "@tanstack/react-query-devtools": "^4.20.9",
     "ahooks": "^3.7.4",

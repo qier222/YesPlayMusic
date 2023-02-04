@@ -3,12 +3,12 @@ import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload'
 import { FastifyPluginAsync } from 'fastify'
 
 const app: FastifyPluginAsync<AutoloadPluginOptions> = async (fastify, opts) => {
-  void fastify.register(AutoLoad, {
+  fastify.register(AutoLoad, {
     dir: join(__dirname, 'plugins'),
     options: opts,
   })
 
-  void fastify.register(AutoLoad, {
+  fastify.register(AutoLoad, {
     dir: join(__dirname, 'routes'),
     options: opts,
   })

@@ -12,10 +12,7 @@ const Artist = ({ artist }: { artist: Artist }) => {
   }
 
   return (
-    <div
-      className='text-center'
-      onMouseOver={() => prefetchArtist({ id: artist.id })}
-    >
+    <div className='text-center' onMouseOver={() => prefetchArtist({ id: artist.id })}>
       <Image
         onClick={to}
         src={resizeImage(artist.img1v1Url, 'md')}
@@ -41,10 +38,7 @@ const Placeholder = ({ row }: { row: number }) => {
   return (
     <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-10'>
       {[...new Array(row * 5).keys()].map(i => (
-        <div
-          className='flex snap-start flex-col items-center px-2.5 lg:px-0'
-          key={i}
-        >
+        <div className='flex snap-start flex-col items-center px-2.5 lg:px-0' key={i}>
           <div
             className='aspect-square w-full rounded-full bg-white dark:bg-neutral-800'
             style={{
@@ -73,7 +67,7 @@ const ArtistRow = ({
   placeholderRow?: number
 }) => {
   return (
-    <div className={className}>
+    <div className={cx('@container', className)}>
       {/* Title */}
       {title && (
         <h4 className='mx-2.5 mb-6 text-12 font-medium uppercase dark:text-neutral-300 lg:mx-0 lg:text-14 lg:font-bold'>
@@ -83,7 +77,7 @@ const ArtistRow = ({
 
       {/* Artists */}
       {artists && (
-        <div className='no-scrollbar flex snap-x overflow-x-scroll lg:grid lg:w-auto lg:grid-cols-5 lg:gap-x-10 lg:gap-y-8'>
+        <div className='no-scrollbar grid w-auto grid-cols-4 gap-x-10 gap-y-8 @3xl:grid-cols-5 @7xl:grid-cols-7'>
           {artists.map(artist => (
             <div className='snap-start px-2.5 lg:px-0' key={artist.id}>
               <Artist artist={artist} key={artist.id} />

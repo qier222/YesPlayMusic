@@ -99,12 +99,12 @@ const CoverRow = ({
   itemSubtitle?: ItemSubTitle
 }) => {
   return (
-    <div className={className}>
+    <div className={cx('@container', className)}>
       {/* Title */}
       {title && <h4 className='mb-6 text-14 font-bold uppercase dark:text-neutral-300'>{title}</h4>}
 
       {/* Items */}
-      <div className='grid grid-cols-3 gap-4 lg:gap-6 xl:grid-cols-4 2xl:grid-cols-5'>
+      <div className='grid grid-cols-3 gap-4 @lg:gap-6 @4xl:grid-cols-4 @7xl:grid-cols-5'>
         {albums?.map(album => (
           <Album key={album.id} album={album} itemTitle={itemTitle} itemSubtitle={itemSubtitle} />
         ))}
