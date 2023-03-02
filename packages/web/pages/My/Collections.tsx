@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css'
 import useUserArtists from '@/web/api/hooks/useUserArtists'
 import Tabs from '@/web/components/Tabs'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import CoverRow from '@/web/components/CoverRow'
 import useUserPlaylists from '@/web/api/hooks/useUserPlaylists'
 import useUserAlbums from '@/web/api/hooks/useUserAlbums'
@@ -18,6 +18,10 @@ import { useTranslation } from 'react-i18next'
 import VideoRow from '@/web/components/VideoRow'
 import useUserVideos from '@/web/api/hooks/useUserVideos'
 import persistedUiStates from '@/web/states/persistedUiStates'
+import settings from '@/web/states/settings'
+
+const collections = ['playlists', 'albums', 'artists', 'videos'] as const
+type Collection = typeof collections[number]
 
 const Albums = () => {
   const { data: albums } = useUserAlbums()
@@ -43,8 +47,9 @@ const Videos = () => {
 
 const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
   const { t } = useTranslation()
+  const { displayPlaylistsFromNeteaseMusic } = useSnapshot(settings)
 
-  const tabs = [
+  const tabs: { id: Collection; name: string }[] = [
     {
       id: 'playlists',
       name: t`common.playlist_other`,
@@ -63,10 +68,10 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
     },
   ]
 
-  const { librarySelectedTab: selectedTab } = useSnapshot(uiStates)
+  const { librarySelectedTab: selectedTab } = useSnapshot(persistedUiStates)
   const { minimizePlayer } = useSnapshot(persistedUiStates)
-  const setSelectedTab = (id: 'playlists' | 'albums' | 'artists' | 'videos') => {
-    uiStates.librarySelectedTab = id
+  const setSelectedTab = (id: Collection) => {
+    persistedUiStates.librarySelectedTab = id
   }
 
   return (
@@ -94,9 +99,14 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
       </AnimatePresence>
 
       <Tabs
-        tabs={tabs}
+        tabs={tabs.filter(tab => {
+          if (!displayPlaylistsFromNeteaseMusic && tab.id === 'playlists') {
+            return false
+          }
+          return true
+        })}
         value={selectedTab}
-        onChange={(id: string) => {
+        onChange={(id: Collection) => {
           setSelectedTab(id)
           scrollToBottom(true)
         }}
@@ -110,7 +120,7 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
 }
 
 const Collections = () => {
-  const { librarySelectedTab: selectedTab } = useSnapshot(uiStates)
+  const { librarySelectedTab: selectedTab } = useSnapshot(persistedUiStates)
 
   const observePoint = useRef<HTMLDivElement | null>(null)
   const { onScreen: isScrollReachBottom } = useIntersectionObserver(observePoint)

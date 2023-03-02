@@ -1,6 +1,4 @@
-import useUserArtists, {
-  useMutationLikeAArtist,
-} from '@/web/api/hooks/useUserArtists'
+import useUserArtists, { useMutationLikeAArtist } from '@/web/api/hooks/useUserArtists'
 import contextMenus, { closeContextMenu } from '@/web/states/contextMenus'
 import { AnimatePresence } from 'framer-motion'
 import { useMemo, useState } from 'react'
@@ -13,8 +11,7 @@ import BasicContextMenu from './BasicContextMenu'
 const ArtistContextMenu = () => {
   const { t } = useTranslation()
 
-  const { cursorPosition, type, dataSourceID, target, options } =
-    useSnapshot(contextMenus)
+  const { cursorPosition, type, dataSourceID, target, options } = useSnapshot(contextMenus)
   const likeAArtist = useMutationLikeAArtist()
   const [, copyToClipboard] = useCopyToClipboard()
 
@@ -63,19 +60,15 @@ const ArtistContextMenu = () => {
                   type: 'item',
                   label: t`context-menu.copy-netease-link`,
                   onClick: () => {
-                    copyToClipboard(
-                      `https://music.163.com/#/artist?id=${dataSourceID}`
-                    )
+                    copyToClipboard(`https://music.163.com/#/artist?id=${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },
                 {
                   type: 'item',
-                  label: 'Copy YPM Link',
+                  label: t`context-menu.copy-r3play-link`,
                   onClick: () => {
-                    copyToClipboard(
-                      `${window.location.origin}/artist/${dataSourceID}`
-                    )
+                    copyToClipboard(`${window.location.origin}/artist/${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },

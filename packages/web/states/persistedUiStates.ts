@@ -5,12 +5,14 @@ interface PersistedUiStates {
   loginPhoneCountryCode: string
   loginType: 'phone' | 'email' | 'qrCode'
   minimizePlayer: boolean
+  librarySelectedTab: 'playlists' | 'albums' | 'artists' | 'videos'
 }
 
 const initPersistedUiStates: PersistedUiStates = {
   loginPhoneCountryCode: '+86',
   loginType: 'qrCode',
   minimizePlayer: false,
+  librarySelectedTab: 'albums',
 }
 
 const STORAGE_KEY = 'persistedUiStates'
@@ -24,9 +26,7 @@ if (statesInStorage) {
   }
 }
 
-const persistedUiStates = proxy<PersistedUiStates>(
-  merge(initPersistedUiStates, sates)
-)
+const persistedUiStates = proxy<PersistedUiStates>(merge(initPersistedUiStates, sates))
 
 subscribe(persistedUiStates, () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(persistedUiStates))

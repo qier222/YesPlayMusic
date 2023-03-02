@@ -17,6 +17,7 @@ import toast from 'react-hot-toast'
 import { scrobble } from '@/web/api/user'
 import { fetchArtistWithReactQuery } from '../api/hooks/useArtist'
 import { appName } from './const'
+import { FetchAudioSourceResponse } from '@/shared/api/Track'
 
 type TrackID = number
 export enum TrackListSourceType {
@@ -218,14 +219,23 @@ export class Player {
    * @param {TrackID} trackID
    */
   private async _fetchAudioSource(trackID: TrackID) {
-    const response = await fetchAudioSourceWithReactQuery({ id: trackID })
-    let audio = response.data?.[0]?.url
-    if (audio && audio.includes('126.net')) {
-      audio = audio.replace('http://', 'https://')
-    }
-    return {
-      audio,
-      id: trackID,
+    try {
+      console.log(`[player] fetchAudioSourceWithReactQuery `, trackID)
+      const response = await fetchAudioSourceWithReactQuery({ id: trackID })
+      console.log(`[player] fetchAudioSourceWithReactQuery `, response)
+      let audio = response.data?.[0]?.url
+      if (audio && audio.includes('126.net')) {
+        audio = audio.replace('http://', 'https://')
+      }
+      return {
+        audio,
+        id: trackID,
+      }
+    } catch {
+      return {
+        audio: null,
+        id: trackID,
+      }
     }
   }
 
@@ -274,7 +284,7 @@ export class Player {
       onend: () => this._howlerOnEndCallback(),
     })
     _howler = howler
-    window.howler = howler
+    ;(window as any).howler = howler
     if (autoplay) {
       this.play()
       this.state = State.Playing
@@ -297,11 +307,12 @@ export class Player {
     }
   }
 
-  private _cacheAudio(audio: string) {
+  private async _cacheAudio(audio: string) {
     if (audio.includes(appName.toLowerCase()) || !window.ipcRenderer) return
     const id = Number(new URL(audio).searchParams.get('dash-id'))
     if (isNaN(id) || !id) return
-    cacheAudio(id, audio)
+    const response = await fetchAudioSourceWithReactQuery({ id })
+    cacheAudio(id, audio, response?.data?.[0]?.br)
   }
 
   private async _nextFMTrack() {

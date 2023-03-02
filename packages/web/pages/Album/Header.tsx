@@ -2,7 +2,6 @@ import useAlbum from '@/web/api/hooks/useAlbum'
 import useUserAlbums, { useMutationLikeAAlbum } from '@/web/api/hooks/useUserAlbums'
 import Icon from '@/web/components/Icon'
 import TrackListHeader from '@/web/components/TrackListHeader'
-import useVideoCover from '@/web/hooks/useVideoCover'
 import player from '@/web/states/player'
 import { formatDuration } from '@/web/utils/common'
 import dayjs from 'dayjs'
@@ -11,6 +10,7 @@ import toast from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import useAppleMusicAlbum from '@/web/api/hooks/useAppleMusicAlbum'
+import { SupportedLanguage } from '@/web/i18n/i18n'
 
 const Header = () => {
   const { t, i18n } = useTranslation()
@@ -35,14 +35,21 @@ const Header = () => {
   const title = album?.name
   const creatorName = album?.artist.name
   const creatorLink = `/artist/${album?.artist.id}`
-  const description = isLoadingAppleMusicAlbum
-    ? ''
-    : appleMusicAlbum?.editorialNote?.[i18n.language.replace('-', '_')] ||
-      album?.description ||
-      appleMusicAlbum?.editorialNote?.en_US
+  const description = useMemo(() => {
+    if (isLoadingAppleMusicAlbum) return ''
+    const fromApple =
+      appleMusicAlbum?.editorialNote?.[i18n.language.replace('-', '_') as 'zh_CN' | 'en_US']
+    if (fromApple) return fromApple
+    if (i18n.language === 'zh-CN' && album?.description) return album?.description
+    return appleMusicAlbum?.editorialNote?.en_US
+  }, [isLoadingAppleMusicAlbum, appleMusicAlbum, i18n.language, appleMusicAlbum])
   const extraInfo = useMemo(() => {
     const duration = album?.songs?.reduce((acc, cur) => acc + cur.dt, 0) || 0
-    const albumDuration = formatDuration(duration, i18n.language, 'hh[hr] mm[min]')
+    const albumDuration = formatDuration(
+      duration,
+      i18n.language as SupportedLanguage,
+      'hh[hr] mm[min]'
+    )
     return (
       <>
         {album?.mark === 1056768 && (
@@ -58,7 +65,7 @@ const Header = () => {
   const isLiked = useMemo(() => {
     const id = Number(params.id)
     if (!id) return false
-    return !!userLikedAlbums?.data.find(item => item.id === id)
+    return !!userLikedAlbums?.data?.find(item => item.id === id)
   }, [params.id, userLikedAlbums?.data])
 
   const onPlay = async (trackID: number | null = null) => {

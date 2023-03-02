@@ -8,7 +8,7 @@ import Icon from '@/web/components/Icon'
 import LoginWithPhoneOrEmail from './LoginWithPhoneOrEmail'
 import LoginWithQRCode from './LoginWithQRCode'
 import persistedUiStates from '@/web/states/persistedUiStates'
-import useUser from '@/web/api/hooks/useUser'
+import useUser, { useIsLoggedIn } from '@/web/api/hooks/useUser'
 import { useTranslation } from 'react-i18next'
 
 const OR = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => {
@@ -38,6 +38,7 @@ const Login = () => {
   const { t } = useTranslation()
 
   const { data: user, isLoading: isLoadingUser } = useUser()
+  const isLoggedIn = useIsLoggedIn()
   const { loginType } = useSnapshot(persistedUiStates)
   const { showLoginPanel } = useSnapshot(uiStates)
   const [cardType, setCardType] = useState<'qrCode' | 'phone/email'>(
@@ -46,10 +47,10 @@ const Login = () => {
 
   // Show login panel when user first loads the page and not logged in
   useEffect(() => {
-    if (!user?.account && !isLoadingUser) {
+    if (!isLoggedIn) {
       uiStates.showLoginPanel = true
     }
-  }, [user?.account, isLoadingUser])
+  }, [isLoggedIn])
 
   const animateCard = useAnimation()
   const handleSwitchCard = async () => {

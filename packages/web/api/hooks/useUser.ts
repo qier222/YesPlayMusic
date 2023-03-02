@@ -3,7 +3,7 @@ import { UserApiNames, FetchUserAccountResponse } from '@/shared/api/User'
 import { CacheAPIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { logout } from '../auth'
+import { logout as logoutAPI } from '../auth'
 import { removeAllCookies } from '@/web/utils/cookie'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 
@@ -31,12 +31,19 @@ export default function useUser() {
   )
 }
 
+export const useIsLoggedIn = () => {
+  const { data, isLoading } = useUser()
+  if (isLoading) return true
+  return !!data?.profile?.userId
+}
+
+export const logout = async () => {
+  await logoutAPI()
+  removeAllCookies()
+  await window.ipcRenderer?.invoke(IpcChannels.Logout)
+  await reactQueryClient.refetchQueries([UserApiNames.FetchUserAccount])
+}
+
 export const useMutationLogout = () => {
-  const { refetch } = useUser()
-  return useMutation(async () => {
-    await logout()
-    removeAllCookies()
-    await window.ipcRenderer?.invoke(IpcChannels.Logout)
-    await refetch()
-  })
+  return useMutation(logout)
 }

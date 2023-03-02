@@ -1,6 +1,6 @@
 import { cx } from '@emotion/css'
 
-const Tabs = ({
+function Tabs<T>({
   tabs,
   value,
   onChange,
@@ -8,19 +8,19 @@ const Tabs = ({
   style,
 }: {
   tabs: {
-    id: string
+    id: T
     name: string
   }[]
   value: string
-  onChange: (id: string) => void
+  onChange: (id: T) => void
   className?: string
   style?: React.CSSProperties
-}) => {
+}) {
   return (
     <div className={cx('no-scrollbar flex overflow-y-auto', className)} style={style}>
       {tabs.map(tab => (
         <div
-          key={tab.id}
+          key={tab.id as string}
           className={cx(
             'mr-2.5 rounded-12 py-3 px-6 text-16 font-medium backdrop-blur transition duration-500',
             value === tab.id

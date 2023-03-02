@@ -13,6 +13,7 @@
   },
   "packageManager": "pnpm@7.20.0",
   "scripts": {
+    "postinstall": "turbo run post-install --parallel --no-cache",
     "install": "turbo run post-install --parallel --no-cache",
     "build": "cross-env-shell IS_ELECTRON=yes turbo run build",
     "build:web": "turbo run build:web",
@@ -20,16 +21,14 @@
     "pack:test": "turbo run build && turbo run pack:test",
     "dev": "cross-env-shell IS_ELECTRON=yes turbo run dev --parallel",
     "lint": "eslint .",
-    "format": "prettier --write \"**/*.{ts,tsx,mjs,js,jsx,md,css}\"",
-    "storybook": "pnpm -F web storybook",
-    "storybook:build": "pnpm -F web storybook:build"
+    "format": "prettier --write \"**/*.{ts,tsx,mjs,js,jsx,md,css}\""
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "eslint": "^8.31.0",
     "prettier": "^2.8.1",
     "turbo": "^1.6.3",
-    "typescript": "^4.9.4",
+    "typescript": "^4.9.5",
     "tsx": "^3.12.1",
     "prettier-plugin-tailwindcss": "^0.2.1"
   }

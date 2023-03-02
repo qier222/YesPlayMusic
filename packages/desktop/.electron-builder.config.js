@@ -18,7 +18,6 @@ module.exports = {
   npmRebuild: false,
   buildDependenciesFromSource: false,
   electronVersion,
-  afterPack: './scripts/copySQLite3.js',
   forceCodeSigning: false,
   publish: [
     {

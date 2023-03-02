@@ -13,26 +13,74 @@ import { Virtuoso } from 'react-virtuoso'
 import toast from 'react-hot-toast'
 import { openContextMenu } from '@/web/states/contextMenus'
 import { useTranslation } from 'react-i18next'
+import useHoverLightSpot from '../hooks/useHoverLightSpot'
+import { motion } from 'framer-motion'
+import { useState } from 'react'
+
+const RepeatButton = () => {
+  const { buttonRef, buttonStyle } = useHoverLightSpot()
+  const [repeat, setRepeat] = useState(false)
+
+  return (
+    <motion.button
+      ref={buttonRef}
+      onClick={() => {
+        setRepeat(!repeat)
+        toast('开发中')
+      }}
+      className={cx(
+        'group relative transition duration-300 ease-linear',
+        repeat
+          ? 'text-brand-700 hover:text-brand-400'
+          : 'text-neutral-300 opacity-40 hover:opacity-100'
+      )}
+      style={buttonStyle}
+    >
+      <div className='absolute top-1/2  left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 blur group-hover:opacity-100'></div>
+      <Icon name='repeat-1' className='h-7 w-7' />
+    </motion.button>
+  )
+}
+
+const ShuffleButton = () => {
+  const { buttonRef, buttonStyle } = useHoverLightSpot()
+  const [shuffle, setShuffle] = useState(false)
+  return (
+    <motion.button
+      ref={buttonRef}
+      onClick={() => {
+        setShuffle(!shuffle)
+        toast('开发中')
+      }}
+      className={cx(
+        'group relative transition duration-300 ease-linear',
+        shuffle
+          ? 'text-brand-700 hover:text-brand-400'
+          : 'text-neutral-300 opacity-40 hover:opacity-100'
+      )}
+      style={buttonStyle}
+    >
+      <Icon name='shuffle' className='h-7 w-7' />
+      <div className='absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 blur group-hover:opacity-100'></div>
+    </motion.button>
+  )
+}
 
 const Header = () => {
   const { t } = useTranslation()
   return (
     <div
       className={cx(
-        'absolute top-0 left-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold text-neutral-700 dark:text-neutral-300 lg:px-0'
+        'absolute top-0 left-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold lg:px-0'
       )}
     >
-      <div className='flex'>
+      <div className='flex text-neutral-300'>
         <div className='mr-2 h-4 w-1 rounded-full bg-brand-700'></div>
         {t`player.queue`}
       </div>
-      <div className='flex'>
-        <div onClick={() => toast('开发中')} className='mr-2'>
-          <Icon name='repeat-1' className='h-7 w-7 opacity-40' />
-        </div>
-        <div onClick={() => toast('开发中')}>
-          <Icon name='shuffle' className='h-7 w-7 opacity-40' />
-        </div>
+      <div className='flex gap-2'>
+        <RepeatButton />
+        <ShuffleButton />
       </div>
     </div>
   )

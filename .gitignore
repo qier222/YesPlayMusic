@@ -57,3 +57,4 @@ vercel.json
 packages/web/bundle-stats-renderer.html
 packages/web/bundle-stats.html
 packages/web/storybook-static
+packages/desktop/prisma/client

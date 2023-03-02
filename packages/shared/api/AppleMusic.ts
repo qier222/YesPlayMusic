@@ -1,9 +1,9 @@
-interface FetchAppleMusicAlbumParams {
+export interface FetchAppleMusicAlbumParams {
   neteaseId: number | string
   lang?: 'zh-CN' | 'en-US'
 }
 
-interface FetchAppleMusicAlbumResponse {
+export interface FetchAppleMusicAlbumResponse {
   id: number
   neteaseId: number
   name: string
@@ -16,12 +16,12 @@ interface FetchAppleMusicAlbumResponse {
   }
 }
 
-interface FetchAppleMusicArtistParams {
+export interface FetchAppleMusicArtistParams {
   neteaseId: number | string
   lang?: 'zh-CN' | 'en-US'
 }
 
-interface FetchAppleMusicArtistResponse {
+export interface FetchAppleMusicArtistResponse {
   id: number
   neteaseId: number
   editorialVideo: string

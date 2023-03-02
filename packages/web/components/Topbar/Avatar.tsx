@@ -8,10 +8,12 @@ import BasicContextMenu from '../ContextMenus/BasicContextMenu'
 import { AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const Avatar = ({ className }: { className?: string }) => {
   const { data: user } = useUser()
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   const avatarUrl = user?.profile?.avatarUrl
     ? resizeImage(user?.profile?.avatarUrl ?? '', 'sm')
@@ -36,10 +38,7 @@ const Avatar = ({ className }: { className?: string }) => {
               }
               setShowMenu(true)
             }}
-            className={cx(
-              'app-region-no-drag rounded-full',
-              className || 'h-12 w-12'
-            )}
+            className={cx('app-region-no-drag rounded-full', className || 'h-12 w-12')}
           />
           <AnimatePresence>
             {avatarRef.current && showMenu && (
@@ -63,7 +62,7 @@ const Avatar = ({ className }: { className?: string }) => {
                     type: 'item',
                     label: t`settings.settings`,
                     onClick: () => {
-                      toast('开发中')
+                      navigate('/settings')
                     },
                   },
                   {

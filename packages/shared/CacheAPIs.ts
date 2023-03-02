@@ -14,7 +14,7 @@ import {
 } from './api/User'
 import { FetchAudioSourceResponse, FetchLyricResponse, FetchTracksResponse } from './api/Track'
 import { FetchPlaylistResponse, FetchRecommendedPlaylistsResponse } from './api/Playlists'
-import { AppleMusicAlbum, AppleMusicArtist } from 'AppleMusic'
+import { AppleMusicAlbum, AppleMusicArtist } from './AppleMusic'
 
 export enum CacheAPIs {
   Album = 'album',

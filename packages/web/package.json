@@ -12,13 +12,11 @@
     "test:types": "tsc --noEmit --project ./tsconfig.json",
     "analyze:css": "npx windicss-analysis",
     "analyze:js": "npm run build && open-cli bundle-stats-renderer.html",
-    "storybook": "start-storybook -p 6006",
-    "storybook:build": "build-storybook",
     "generate:accent-color-css": "node ./scripts/generate.accent.color.css.js",
     "api:netease": "npx NeteaseCloudMusicApi@latest"
   },
   "engines": {
-    "node": "^14.13.1 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "@emotion/css": "^11.10.5",
@@ -35,7 +33,7 @@
     "framer-motion": "^8.1.7",
     "hls.js": "^1.2.9",
     "howler": "^2.2.3",
-    "i18next": "^21.9.1",
+    "i18next": "^22.4.9",
     "js-cookie": "^3.0.1",
     "lodash-es": "^4.17.21",
     "md5": "^2.3.0",
@@ -44,7 +42,7 @@
     "react-dom": "^18.2.0",
     "react-ga4": "^1.4.1",
     "react-hot-toast": "^2.4.0",
-    "react-i18next": "^11.18.4",
+    "react-i18next": "^12.1.5",
     "react-router-dom": "^6.6.1",
     "react-use": "^17.4.0",
     "react-use-measure": "^2.1.1",
@@ -52,15 +50,6 @@
     "valtio": "^1.8.0"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.5.5",
-    "@storybook/addon-essentials": "^6.5.5",
-    "@storybook/addon-interactions": "^6.5.5",
-    "@storybook/addon-links": "^6.5.5",
-    "@storybook/addon-postcss": "^2.0.0",
-    "@storybook/addon-viewport": "^6.5.5",
-    "@storybook/builder-vite": "^0.1.35",
-    "@storybook/react": "^6.5.5",
-    "@storybook/testing-library": "^0.0.11",
     "@testing-library/react": "^13.3.0",
     "@types/howler": "^2.2.7",
     "@types/js-cookie": "^3.0.2",
@@ -80,7 +69,6 @@
     "prettier": "*",
     "prettier-plugin-tailwindcss": "*",
     "rollup-plugin-visualizer": "^5.9.0",
-    "storybook-tailwind-dark-mode": "^1.0.12",
     "tailwindcss": "^3.2.4",
     "typescript": "*",
     "vite": "^4.0.4",

@@ -4,6 +4,7 @@
   "description": "This project was bootstrapped with Fastify-CLI.",
   "main": "app.ts",
   "scripts": {
+    "postinstall": "prisma generate",
     "start": "fastify start --port 35530 --address 0.0.0.0 -l info dist/app.js",
     "build": "tsc",
     "watch": "tsc -w",

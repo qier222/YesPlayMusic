@@ -18,21 +18,12 @@ const Artists = ({ artists }: { artists: Artist[] }) => {
         <div
           onClick={() => navigate(`/artist/${artist.id}`)}
           key={artist.id}
-          className='btn-hover-animation flex items-center p-2.5 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
+          className='flex items-center py-2.5'
         >
-          <div className='mr-4 h-14 w-14'>
-            <img
-              src={resizeImage(artist.img1v1Url, 'xs')}
-              className='h-12 w-12 rounded-full'
-            />
-          </div>
+          <img src={resizeImage(artist.img1v1Url, 'xs')} className='mr-4 h-14 w-14 rounded-full' />
           <div>
-            <div className='text-lg font-semibold dark:text-white'>
-              {artist.name}
-            </div>
-            <div className='mt-0.5 text-sm font-medium text-gray-500 dark:text-gray-400'>
-              艺人
-            </div>
+            <div className='text-lg font-semibold text-neutral-200'>{artist.name}</div>
+            <div className='mt-0.5 text-sm font-semibold text-white/30'>艺人</div>
           </div>
         </div>
       ))}
@@ -48,19 +39,12 @@ const Albums = ({ albums }: { albums: Album[] }) => {
         <div
           onClick={() => navigate(`/album/${album.id}`)}
           key={album.id}
-          className='btn-hover-animation flex items-center p-2.5 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
+          className='flex items-center py-2.5 text-neutral-200'
         >
-          <div className='mr-4 h-14 w-14'>
-            <img
-              src={resizeImage(album.picUrl, 'xs')}
-              className='h-12 w-12 rounded-lg'
-            />
-          </div>
+          <img src={resizeImage(album.picUrl, 'xs')} className='mr-4 h-14 w-14 rounded-lg' />
           <div>
-            <div className='text-lg font-semibold dark:text-white'>
-              {album.name}
-            </div>
-            <div className='mt-0.5 text-sm font-medium text-gray-500  dark:text-gray-400'>
+            <div className='text-lg font-semibold text-neutral-200'>{album.name}</div>
+            <div className='mt-0.5 text-sm font-semibold text-white/30'>
               专辑 · {album?.artist.name} · {dayjs(album.publishTime).year()}
             </div>
           </div>
@@ -99,14 +83,12 @@ const Track = ({
         <div
           className={cx(
             'line-clamp-1 text-16 font-medium ',
-            isPlaying
-              ? 'text-brand-700'
-              : 'text-neutral-700 dark:text-neutral-200'
+            isPlaying ? 'text-brand-700' : 'text-neutral-700 dark:text-neutral-200'
           )}
         >
           {track?.name}
         </div>
-        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  dark:text-neutral-700'>
+        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  text-white/30'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>
@@ -118,9 +100,7 @@ const Search = () => {
   const { keywords = '', type = 'all' } = useParams()
 
   const searchType: keyof typeof SearchTypes =
-    type.toUpperCase() in SearchTypes
-      ? (type.toUpperCase() as keyof typeof SearchTypes)
-      : 'All'
+    type.toUpperCase() in SearchTypes ? (type.toUpperCase() as keyof typeof SearchTypes) : 'All'
 
   const { data: bestMatchRaw, isLoading: isLoadingBestMatch } = useQuery(
     [SearchApiNames.MultiMatchSearch, keywords],
@@ -172,32 +152,37 @@ const Search = () => {
   return (
     <div>
       <div className='mt-6 mb-8 text-4xl font-semibold dark:text-white'>
-        <span className='text-gray-500'>搜索</span> &quot;{keywords}&quot;
+        <span className='text-white/40'>搜索</span> &quot;{keywords}&quot;
       </div>
 
       {/* Best match */}
       {bestMatch.length !== 0 && (
         <div className='mb-6'>
-          <div className='mb-2 text-sm font-medium text-gray-400'>最佳匹配</div>
+          {/* mx-2.5 mb-6 text-12 font-medium uppercase dark:text-neutral-300 lg:mx-0 lg:text-14
+          lg:font-bold */}
+          <div className='mb-2 text-14 font-bold uppercase text-neutral-300'>最佳匹配</div>
           <div className='grid grid-cols-2'>
             {bestMatch.map(match => (
               <div
                 onClick={() => navigateBestMatch(match)}
                 key={`${match.id}${match.picUrl}`}
-                className='btn-hover-animation flex items-center p-3 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
+                className='btn-hover-animation flex items-center py-3 after:rounded-xl after:bg-gray-100 dark:after:bg-white/10'
               >
-                <div className='mr-6 h-24 w-24'>
-                  <img
-                    src={resizeImage(match.picUrl, 'xs')}
-                    className='h-12 w-12 rounded-full'
-                  />
-                </div>
+                <img
+                  src={resizeImage(match.picUrl, 'xs')}
+                  className={cx(
+                    'mr-6 h-20 w-20',
+                    (match as Artist).occupation === '歌手' ? 'rounded-full' : 'rounded-xl'
+                  )}
+                />
                 <div>
-                  <div className='text-xl font-semibold dark:text-white'>
-                    {match.name}
-                  </div>
-                  <div className='mt-0.5 font-medium text-gray-500 dark:text-gray-400'>
-                    {(match as Artist).occupation === '歌手' ? '艺人' : '专辑'}
+                  <div className='text-xl font-semibold text-neutral-200'>{match.name}</div>
+                  <div className='mt-0.5 font-medium text-white/30'>
+                    {(match as Artist).occupation === '歌手'
+                      ? '艺人'
+                      : `专辑 · ${(match as Album).artist.name} · ${dayjs(
+                          match.publishTime
+                        ).year()}`}
                   </div>
                 </div>
               </div>
@@ -210,21 +195,21 @@ const Search = () => {
       <div className='grid grid-cols-2 gap-6'>
         {searchResult?.result?.artist?.artists && (
           <div>
-            <div className='mb-2 text-sm font-medium text-gray-400'>艺人</div>
+            <div className='mb-2 text-14 font-bold uppercase text-neutral-300'>艺人</div>
             <Artists artists={searchResult.result.artist.artists} />
           </div>
         )}
 
         {searchResult?.result?.album?.albums && (
           <div>
-            <div className='mb-2 text-sm font-medium text-gray-400'>专辑</div>
+            <div className='mb-2 text-14 font-bold uppercase text-neutral-300'>专辑</div>
             <Albums albums={searchResult.result.album.albums} />
           </div>
         )}
 
         {searchResult?.result?.song?.songs && (
           <div className='col-span-2'>
-            <div className='mb-2 text-sm font-medium text-gray-400'>歌曲</div>
+            <div className='mb-2 text-14 font-bold uppercase text-neutral-300'>歌曲</div>
             <div className='mt-4 grid grid-cols-3 grid-rows-3 gap-5 gap-y-6 overflow-hidden pb-12'>
               {searchResult.result.song.songs.map(track => (
                 <Track key={track.id} track={track} onPlay={handlePlayTracks} />

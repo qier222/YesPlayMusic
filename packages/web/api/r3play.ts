@@ -7,8 +7,8 @@ const request: AxiosInstance = axios.create({
   timeout: 15000,
 })
 
-export async function cacheAudio(id: number, audio: string) {
-  const file = await axios.get(audio, { responseType: 'arraybuffer' })
+export async function cacheAudio(id: number, audioUrl: string, bitrate?: number) {
+  const file = await axios.get(audioUrl, { responseType: 'arraybuffer' })
   if (file.status !== 200 && file.status !== 206) return
 
   const formData = new FormData()
@@ -20,7 +20,8 @@ export async function cacheAudio(id: number, audio: string) {
       'Content-Type': 'multipart/form-data',
     },
     params: {
-      url: audio,
+      url: audioUrl,
+      bitrate,
     },
   })
 }

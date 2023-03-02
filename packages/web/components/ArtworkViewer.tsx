@@ -3,17 +3,18 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import uiStates from '../states/uiStates'
+import { resizeImage } from '../utils/common'
 import { ease } from '../utils/const'
 import Icon from './Icon'
 
-function DescriptionViewer({
-  description,
-  title,
+function ArtworkViewer({
+  type,
+  artwork,
   isOpen,
   onClose,
 }: {
-  description: string
-  title: string
+  type: 'album' | 'playlist'
+  artwork: string
   isOpen: boolean
   onClose: () => void
 }) {
@@ -45,38 +46,20 @@ function DescriptionViewer({
             exit={{ opacity: 0, transition: { duration: 0.3 } }}
             transition={{ ease }}
             className={cx('fixed inset-0 z-30 flex flex-col items-center justify-center')}
+            onClick={onClose}
           >
             <div className='relative'>
-              {/* Title */}
-              <div className='line-clamp-1 absolute -top-8 mx-44 max-w-2xl select-none text-32 font-extrabold text-neutral-100'>
-                {title}
-              </div>
-
-              {/* Description */}
-              <div
-                className={css`
-                  mask-image: linear-gradient(to top, transparent 0px, black 32px); // 底部渐变遮罩
-                `}
-              >
-                <div
-                  className={cx(
-                    'no-scrollbar relative mx-44 max-w-2xl overflow-scroll',
-                    css`
-                      max-height: 60vh;
-                      mask-image: linear-gradient(
-                        to bottom,
-                        transparent 12px,
-                        black 32px
-                      ); // 顶部渐变遮罩
-                    `
-                  )}
-                >
-                  <p
-                    dangerouslySetInnerHTML={{ __html: description }}
-                    className='mt-8 whitespace-pre-wrap pb-8 text-16 font-bold leading-6 text-neutral-200'
-                  ></p>
-                </div>
-              </div>
+              <img
+                src={resizeImage(artwork, 'lg')}
+                className={cx(
+                  'rounded-24',
+                  css`
+                    height: 65vh;
+                    width: 65vh;
+                  `
+                )}
+                onClick={e => e.stopPropagation()}
+              />
 
               {/* Close button */}
               <div className='absolute -bottom-24 flex w-full justify-center'>
@@ -96,4 +79,4 @@ function DescriptionViewer({
   )
 }
 
-export default DescriptionViewer
+export default ArtworkViewer

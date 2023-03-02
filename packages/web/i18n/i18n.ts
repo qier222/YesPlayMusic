@@ -2,12 +2,21 @@ import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import zhCN from './locales/zh-cn.json'
 import enUS from './locales/en-us.json'
-import { subscribe } from 'valtio'
-import settings from '../states/settings'
 
 export const supportedLanguages = ['zh-CN', 'en-US'] as const
+export type SupportedLanguage = typeof supportedLanguages[number]
 
-export const getLanguage = () => {
+declare module 'react-i18next' {
+  interface CustomTypeOptions {
+    returnNull: false
+    resources: {
+      'en-US': typeof enUS
+      'zh-CN': typeof enUS
+    }
+  }
+}
+
+export const getInitLanguage = () => {
   // Get language from settings
   try {
     const settings = JSON.parse(localStorage.getItem('settings') || '{}')
@@ -28,13 +37,14 @@ export const getLanguage = () => {
 }
 
 i18next.use(initReactI18next).init({
+  returnNull: false,
   resources: {
     'en-US': { translation: enUS },
     'zh-CN': { translation: zhCN },
   },
-  lng: getLanguage(),
-  // lng: 'zh-CN',
+  lng: getInitLanguage(),
   fallbackLng: 'en-US',
+  supportedLngs: supportedLanguages,
   interpolation: {
     escapeValue: false,
   },

@@ -1,17 +1,20 @@
 import { useEffect, useRef } from 'react'
 import Hls from 'hls.js'
-import { injectGlobal } from '@emotion/css'
 import { isIOS, isSafari } from '@/web/utils/common'
 import { motion } from 'framer-motion'
 import { useSnapshot } from 'valtio'
 import uiStates from '../states/uiStates'
+import useWindowFocus from '../hooks/useWindowFocus'
+import useSettings from '../hooks/useSettings'
 
 const VideoCover = ({ source, onPlay }: { source?: string; onPlay?: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const hls = useRef<Hls>()
+  const windowFocus = useWindowFocus()
+  const { playAnimatedArtworkFromApple } = useSettings()
 
   useEffect(() => {
-    if (source && Hls.isSupported() && videoRef.current) {
+    if (source && Hls.isSupported() && videoRef.current && playAnimatedArtworkFromApple) {
       if (hls.current) hls.current.destroy()
       hls.current = new Hls()
       hls.current.loadSource(source)
@@ -24,12 +27,12 @@ const VideoCover = ({ source, onPlay }: { source?: string; onPlay?: () => void }
   // Pause video cover when playing another video
   const { playingVideoID, isPauseVideos } = useSnapshot(uiStates)
   useEffect(() => {
-    if (playingVideoID || isPauseVideos) {
+    if (playingVideoID || isPauseVideos || !windowFocus) {
       videoRef?.current?.pause()
     } else {
       videoRef?.current?.play()
     }
-  }, [playingVideoID, isPauseVideos])
+  }, [playingVideoID, isPauseVideos, windowFocus])
 
   return (
     <motion.div

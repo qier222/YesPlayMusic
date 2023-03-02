@@ -1,16 +1,16 @@
 import { formatDuration } from '@/web/utils/common'
-import { cx } from '@emotion/css'
+import { css, cx } from '@emotion/css'
 import player from '@/web/states/player'
 import { useSnapshot } from 'valtio'
 import Wave from './Wave'
 import Icon from '@/web/components/Icon'
 import useIsMobile from '@/web/hooks/useIsMobile'
-import useUserLikedTracksIDs, {
-  useMutationLikeATrack,
-} from '@/web/api/hooks/useUserLikedTracksIDs'
+import useUserLikedTracksIDs, { useMutationLikeATrack } from '@/web/api/hooks/useUserLikedTracksIDs'
 import toast from 'react-hot-toast'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import contextMenus, { openContextMenu } from '@/web/states/contextMenus'
+import regexifyString from 'regexify-string'
+import { NavLink } from 'react-router-dom'
 
 const Actions = ({ track }: { track: Track }) => {
   const { data: likedTracksIDs } = useUserLikedTracksIDs()
@@ -81,13 +81,80 @@ const Actions = ({ track }: { track: Track }) => {
           className='flex h-10 w-10 items-center justify-center rounded-full text-white/40 transition duration-400 hover:bg-white/20 hover:text-white/70'
         >
           <Icon
-            name={
-              likedTracksIDs?.ids.includes(track.id) ? 'heart' : 'heart-outline'
-            }
+            name={likedTracksIDs?.ids.includes(track.id) ? 'heart' : 'heart-outline'}
             className='h-5 w-5'
           />
         </div>
       </button>
+    </div>
+  )
+}
+
+function Track({
+  track,
+  handleClick,
+}: {
+  track: Track
+  handleClick: (e: React.MouseEvent<HTMLElement>, trackID: number) => void
+}) {
+  const { track: playingTrack, state } = useSnapshot(player)
+
+  return (
+    <div
+      key={track.id}
+      onClick={e => handleClick(e, track.id)}
+      onContextMenu={e => handleClick(e, track.id)}
+      className='group relative flex h-14 items-center py-2 text-16 font-medium text-neutral-200 transition duration-300'
+    >
+      {/* Track no */}
+      <div className='mr-3 lg:mr-6'>
+        {playingTrack?.id === track.id ? (
+          <span className='inline-block'>
+            <Wave playing={state === 'playing'} />
+          </span>
+        ) : (
+          String(track.no).padStart(2, '0')
+        )}
+      </div>
+
+      {/* Track name */}
+      <div className='flex flex-grow items-center'>
+        <span className='line-clamp-1'>{track?.name}</span>
+        {/* Explicit symbol */}
+        {[1318912, 1310848].includes(track.mark) && (
+          <Icon name='explicit' className='ml-2 mr-1 mt-px h-3.5 w-3.5 text-white/20' />
+        )}
+        {/* Other artists */}
+        {track?.ar?.length > 1 && (
+          <div className='text-white/20'>
+            <span className='px-1'>-</span>
+            {track.ar.slice(1).map((artist, index) => (
+              <span key={artist.id}>
+                <NavLink
+                  to={`/artist/${artist.id}`}
+                  className='text-white/20 transition duration-300 hover:text-white/40'
+                >
+                  {artist.name}
+                </NavLink>
+                {index !== track.ar.length - 2 && ', '}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop menu  */}
+      <Actions track={track} />
+
+      {/* Mobile menu */}
+      <div className='lg:hidden'>
+        <div className='h-10 w-10 rounded-full bg-night-900'></div>
+      </div>
+
+      {/* Track duration */}
+      <div className='hidden text-right lg:block'>
+        {formatDuration(track.dt, 'en-US', 'hh:mm:ss')}
+      </div>
     </div>
   )
 }
@@ -105,7 +172,6 @@ const TrackList = ({
   isLoading?: boolean
   placeholderRows?: number
 }) => {
-  const { track: playingTrack, state } = useSnapshot(player)
   const isMobile = useIsMobile()
 
   const handleClick = (e: React.MouseEvent<HTMLElement>, trackID: number) => {
@@ -133,66 +199,27 @@ const TrackList = ({
   return (
     <div className={className}>
       {(isLoading ? [] : tracks)?.map(track => (
+        <Track key={track.id} track={track} handleClick={handleClick} />
+      ))}
+      {(isLoading ? Array.from(new Array(placeholderRows).keys()) : []).map(index => (
         <div
-          key={track.id}
-          onClick={e => handleClick(e, track.id)}
-          onContextMenu={e => handleClick(e, track.id)}
-          className='group relative flex h-14 items-center py-2 text-16 font-medium text-neutral-200 transition duration-300'
+          key={index}
+          className='group relative flex h-14 items-center py-2 text-16 font-medium text-neutral-200 transition duration-300 ease-in-out'
         >
           {/* Track no */}
-          <div className='mr-3 lg:mr-6'>
-            {String(track.no).padStart(2, '0')}
-          </div>
+          <div className='mr-3 rounded-full bg-white/10 text-transparent lg:mr-6'>00</div>
 
           {/* Track name */}
-          <div className='flex flex-grow items-center'>
-            <span className='line-clamp-1 mr-4'>{track.name}</span>
-            {playingTrack?.id === track.id && (
-              <span className='mr-4 inline-block'>
-                <Wave playing={state === 'playing'} />
-              </span>
-            )}
-          </div>
-
-          {/* Desktop menu  */}
-          <Actions track={track} />
-
-          {/* Mobile menu */}
-          <div className='lg:hidden'>
-            <div className='h-10 w-10 rounded-full bg-night-900'></div>
+          <div className='flex flex-grow items-center text-transparent'>
+            <span className='mr-4 rounded-full bg-white/10'>PLACEHOLDER1234567</span>
           </div>
 
           {/* Track duration */}
-          <div className='hidden text-right lg:block'>
-            {formatDuration(track.dt, 'en-US', 'hh:mm:ss')}
+          <div className='hidden text-right text-transparent lg:block'>
+            <span className='rounded-full bg-white/10'>00:00</span>
           </div>
         </div>
       ))}
-      {(isLoading ? Array.from(new Array(placeholderRows).keys()) : []).map(
-        index => (
-          <div
-            key={index}
-            className='group relative flex h-14 items-center py-2 text-16 font-medium text-neutral-200 transition duration-300 ease-in-out'
-          >
-            {/* Track no */}
-            <div className='mr-3 rounded-full bg-white/10 text-transparent lg:mr-6'>
-              00
-            </div>
-
-            {/* Track name */}
-            <div className='flex flex-grow items-center text-transparent'>
-              <span className='mr-4 rounded-full bg-white/10'>
-                PLACEHOLDER1234567
-              </span>
-            </div>
-
-            {/* Track duration */}
-            <div className='hidden text-right text-transparent lg:block'>
-              <span className='rounded-full bg-white/10'>00:00</span>
-            </div>
-          </div>
-        )
-      )}
     </div>
   )
 }

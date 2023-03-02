@@ -6,6 +6,8 @@ import { useAnimation, motion } from 'framer-motion'
 import { ease } from '@/web/utils/const'
 import useIsMobile from '@/web/hooks/useIsMobile'
 import { breakpoint as bp } from '@/web/utils/const'
+import { useSnapshot } from 'valtio'
+import settings from '../states/settings'
 
 const tabs = [
   {
@@ -81,9 +83,8 @@ const Tabs = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const controls = useAnimation()
-  const [active, setActive] = useState<string>(
-    location.pathname || tabs[0].path
-  )
+  const { displayPlaylistsFromNeteaseMusic } = useSnapshot(settings)
+  const [active, setActive] = useState<string>(location.pathname || tabs[0].path)
 
   const animate = async (path: string) => {
     await controls.start((p: string) =>
@@ -94,40 +95,45 @@ const Tabs = () => {
 
   return (
     <div className='grid grid-cols-4 justify-items-center text-black/10	dark:text-white/20 lg:grid-cols-1 lg:gap-12'>
-      {tabs.map(tab => (
-        <motion.div
-          key={tab.name}
-          animate={controls}
-          transition={{ ease, duration: 0.18 }}
-          onMouseDown={() => {
-            if ('vibrate' in navigator) {
-              navigator.vibrate(20)
-            }
-            animate(tab.path)
-          }}
-          onClick={() => {
-            setActive(tab.path)
-            navigate(tab.path)
-          }}
-          custom={tab.path}
-          variants={{
-            scale: { scale: 0.8 },
-            reset: { scale: 1 },
-          }}
-          className={cx(
-            active === tab.path
-              ? 'text-brand-600  dark:text-brand-700'
-              : 'lg:hover:text-black lg:dark:hover:text-white'
-          )}
-        >
-          <Icon
-            name={tab.icon}
+      {tabs
+        .filter(tab => {
+          if (!displayPlaylistsFromNeteaseMusic && tab.name === 'BROWSE') {
+            return false
+          }
+          return true
+        })
+        .map(tab => (
+          <motion.div
+            key={tab.name}
+            animate={controls}
+            transition={{ ease, duration: 0.18 }}
+            onMouseDown={() => {
+              if ('vibrate' in navigator) {
+                navigator.vibrate(20)
+              }
+              animate(tab.path)
+            }}
+            onClick={() => {
+              setActive(tab.path)
+              navigate(tab.path)
+            }}
+            custom={tab.path}
+            variants={{
+              scale: { scale: 0.8 },
+              reset: { scale: 1 },
+            }}
             className={cx(
-              'app-region-no-drag h-10 w-10 transition-colors duration-500'
+              active === tab.path
+                ? 'text-brand-600  dark:text-brand-700'
+                : 'lg:hover:text-black lg:dark:hover:text-white'
             )}
-          />
-        </motion.div>
-      ))}
+          >
+            <Icon
+              name={tab.icon}
+              className={cx('app-region-no-drag h-10 w-10 transition-colors duration-500')}
+            />
+          </motion.div>
+        ))}
     </div>
   )
 }

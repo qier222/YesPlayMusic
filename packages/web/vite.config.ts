@@ -102,20 +102,6 @@ export default defineConfig({
         target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
         changeOrigin: true,
       },
-      // [`/${appName.toLowerCase()}/apple-music/`]: {
-      //   target: `http://168.138.174.244:35530/`,
-      //   changeOrigin: true,
-      //   rewrite: path => path.replace(/^\/r3play/, ''),
-      // },
-      // [`/${appName.toLowerCase()}/`]: {
-      //   target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
-      //   changeOrigin: true,
-      // },
-      // '/': {
-      //   target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
-      //   changeOrigin: true,
-      //   // rewrite: path => (IS_ELECTRON ? path : path.replace(/^\/netease/, '')),
-      // },
     },
   },
   preview: {

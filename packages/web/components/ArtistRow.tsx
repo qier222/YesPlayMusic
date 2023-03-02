@@ -62,7 +62,7 @@ const ArtistRow = ({
   placeholderRow,
 }: {
   artists: Artist[] | undefined
-  title?: string
+  title?: string | null
   className?: string
   placeholderRow?: number
 }) => {

@@ -65,7 +65,7 @@ export function fetchAudioSourceWithReactQuery(params: FetchAudioSourceParams) {
       return fetchAudioSource(params)
     },
     {
-      retry: 3,
+      retry: 1,
       staleTime: 0, // TODO: Web版1小时缓存
     }
   )

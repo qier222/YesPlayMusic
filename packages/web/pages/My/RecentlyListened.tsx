@@ -32,18 +32,9 @@ const RecentlyListened = () => {
       .map(artist => artist.id)
   }, [listenedRecords])
   const { data: recentListenedArtists } = useArtists(recentListenedArtistsIDs)
-  const artist = useMemo(
-    () => recentListenedArtists?.map(a => a.artist),
-    [recentListenedArtists]
-  )
+  const artist = useMemo(() => recentListenedArtists?.map(a => a.artist), [recentListenedArtists])
 
-  return (
-    <ArtistRow
-      artists={artist}
-      placeholderRow={1}
-      title={t`my.recently-listened`}
-    />
-  )
+  return <ArtistRow artists={artist} placeholderRow={1} title={t`my.recently-listened`} />
 }
 
 export default RecentlyListened

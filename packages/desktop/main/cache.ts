@@ -238,7 +238,7 @@ class Cache {
     return
   }
 
-  getAudio(filename: string, reply: FastifyReply) {
+  async getAudio(filename: string, reply: FastifyReply) {
     if (!filename) {
       return reply.status(400).send({ error: 'No filename provided' })
     }
@@ -252,6 +252,7 @@ class Cache {
         fs.unlinkSync(path)
         return reply.status(404).send({ error: 'Audio not found' })
       }
+      await prisma.audio.update({ where: { id }, data: { updatedAt: new Date() } })
       reply
         .status(206)
         .header('Accept-Ranges', 'bytes')
@@ -263,7 +264,10 @@ class Cache {
     }
   }
 
-  async setAudio(buffer: Buffer, { id, url }: { id: number; url: string }) {
+  async setAudio(
+    buffer: Buffer,
+    { id, url, bitrate }: { id: number; url: string; bitrate: number }
+  ) {
     const path = `${app.getPath('userData')}/audio_cache`
 
     try {
@@ -273,7 +277,7 @@ class Cache {
     }
 
     const meta = await musicMetadata.parseBuffer(buffer)
-    const bitRate = (meta?.format?.codec === 'OPUS' ? 165000 : meta.format.bitrate ?? 0) / 1000
+    const bitRate = ~~((meta.format.bitrate || bitrate || 0) / 1000)
     const format =
       {
         'MPEG 1 Layer 3': 'mp3',

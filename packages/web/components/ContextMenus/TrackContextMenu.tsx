@@ -15,8 +15,7 @@ const TrackContextMenu = () => {
 
   const [, copyToClipboard] = useCopyToClipboard()
 
-  const { type, dataSourceID, target, cursorPosition, options } =
-    useSnapshot(contextMenus)
+  const { type, dataSourceID, target, cursorPosition, options } = useSnapshot(contextMenus)
 
   return (
     <AnimatePresence>
@@ -84,19 +83,15 @@ const TrackContextMenu = () => {
                   type: 'item',
                   label: t`context-menu.copy-netease-link`,
                   onClick: () => {
-                    copyToClipboard(
-                      `https://music.163.com/#/album?id=${dataSourceID}`
-                    )
+                    copyToClipboard(`https://music.163.com/#/album?id=${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },
                 {
                   type: 'item',
-                  label: 'Copy YPM Link',
+                  label: t`context-menu.copy-r3play-link`,
                   onClick: () => {
-                    copyToClipboard(
-                      `${window.location.origin}/album/${dataSourceID}`
-                    )
+                    copyToClipboard(`${window.location.origin}/album/${dataSourceID}`)
                     toast.success(t`toasts.copied`)
                   },
                 },

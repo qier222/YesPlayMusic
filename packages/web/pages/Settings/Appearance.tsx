@@ -37,15 +37,10 @@ const AccentColor = () => {
         {Object.entries(colors).map(([color, bg]) => (
           <div
             key={color}
-            className={cx(
-              bg,
-              'mr-2.5 flex h-5 w-5 items-center justify-center rounded-full'
-            )}
+            className={cx(bg, 'mr-2.5 flex h-5 w-5 items-center justify-center rounded-full')}
             onClick={() => changeColor(color)}
           >
-            {color === accentColor && (
-              <div className='h-1.5 w-1.5 rounded-full bg-white'></div>
-            )}
+            {color === accentColor && <div className='h-1.5 w-1.5 rounded-full bg-white'></div>}
           </div>
         ))}
       </div>
@@ -55,23 +50,19 @@ const AccentColor = () => {
 
 const Theme = () => {
   return (
-    <div className='mt-4'>
-      <div className='mb-2 dark:text-white'>主题</div>
-      <div></div>
-    </div>
+    <>
+      <div className='text-xl font-medium text-gray-800 dark:text-white/70'>主题</div>
+      <div className='mt-3 h-px w-full bg-black/5 dark:bg-white/10'></div>
+      <AccentColor />
+    </>
   )
 }
 
 const Appearance = () => {
   return (
     <div>
-      <div className='text-xl font-medium text-gray-800 dark:text-white/70'>
-        主题
-      </div>
-      <div className='mt-3 h-px w-full bg-black/5 dark:bg-white/10'></div>
-
-      <AccentColor />
-      <Theme />
+      <span className='text-white'>开发中</span>
+      {/* <Theme /> */}
     </div>
   )
 }

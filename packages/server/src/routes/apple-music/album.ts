@@ -23,9 +23,10 @@ const album: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     Querystring: {
       neteaseId: string
       lang?: 'zh-CN' | 'en-US'
+      noCache?: boolean
     }
   }>('/album', opts, async function (request, reply): Promise<ResponseSchema | undefined> {
-    const { neteaseId: neteaseIdString, lang = 'en-US' } = request.query
+    const { neteaseId: neteaseIdString, lang = 'en-US', noCache = false } = request.query
 
     // validate neteaseAlbumID
     const neteaseId = Number(neteaseIdString)
@@ -35,12 +36,14 @@ const album: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     }
 
     // get from database
-    const fromDB = await fastify.prisma.album.findFirst({
-      where: { neteaseId: neteaseId },
-      include: { editorialNote: { select: { en_US: true, zh_CN: true } } },
-    })
-    if (fromDB) {
-      return fromDB as ResponseSchema
+    if (!noCache) {
+      const fromDB = await fastify.prisma.album.findFirst({
+        where: { neteaseId: neteaseId },
+        include: { editorialNote: { select: { en_US: true, zh_CN: true } } },
+      })
+      if (fromDB) {
+        return fromDB as ResponseSchema
+      }
     }
 
     // get from netease
@@ -106,11 +109,10 @@ const album: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       neteaseName: albumName,
       neteaseArtistName: artist,
     }
-    reply.send(data)
 
     // save to database
-    await fastify.prisma.album
-      .create({
+    if (!noCache) {
+      await fastify.prisma.album.create({
         data: {
           ...data,
           editorialNote: {
@@ -121,9 +123,9 @@ const album: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
           },
         },
       })
-      .catch(e => console.error(e))
+    }
 
-    return
+    return data
   })
 }
 

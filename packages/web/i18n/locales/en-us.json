@@ -64,7 +64,14 @@
     "recently-listened": "RECENTLY LISTENED"
   },
   "settings": {
-    "settings": "Settings"
+    "settings": "Settings",
+    "general": "General",
+    "appearance": "Appearance",
+    "player": "Player",
+    "lyrics": "Lyrics",
+    "lab": "Lab",
+    "general-choose-language": "Choose Language",
+    "player-youtube-unlock": "YouTube Unlock"
   },
   "context-menu": {
     "share": "Share",

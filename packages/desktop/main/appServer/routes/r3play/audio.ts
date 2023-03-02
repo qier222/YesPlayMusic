@@ -9,6 +9,7 @@ import fs from 'fs'
 import youtube from '@/desktop/main/youtube'
 import { CacheAPIs } from '@/shared/CacheAPIs'
 import { FetchTracksResponse } from '@/shared/api/Track'
+import store from '@/desktop/main/store'
 
 const getAudioFromCache = async (id: number) => {
   // get from cache
@@ -76,47 +77,51 @@ const getAudioFromYouTube = async (id: number) => {
   const track = fetchTrackResult?.songs?.[0]
   if (!track) return
 
-  const data = await youtube.matchTrack(track.ar[0].name, track.name)
-  if (!data) return
-  return {
-    data: [
-      {
-        source: 'youtube',
-        id,
-        url: data.url,
-        br: data.bitRate,
-        size: 0,
-        md5: '',
-        code: 200,
-        expi: 0,
-        type: 'opus',
-        gain: 0,
-        fee: 8,
-        uf: null,
-        payed: 0,
-        flag: 4,
-        canExtend: false,
-        freeTrialInfo: null,
-        level: 'standard',
-        encodeType: 'opus',
-        freeTrialPrivilege: {
-          resConsumable: false,
-          userConsumable: false,
-          listenType: null,
+  try {
+    const data = await youtube.matchTrack(track.ar[0].name, track.name)
+    if (!data) return
+    return {
+      data: [
+        {
+          source: 'youtube',
+          id,
+          url: data.url,
+          br: data.bitRate,
+          size: 0,
+          md5: '',
+          code: 200,
+          expi: 0,
+          type: 'opus',
+          gain: 0,
+          fee: 8,
+          uf: null,
+          payed: 0,
+          flag: 4,
+          canExtend: false,
+          freeTrialInfo: null,
+          level: 'standard',
+          encodeType: 'opus',
+          freeTrialPrivilege: {
+            resConsumable: false,
+            userConsumable: false,
+            listenType: null,
+          },
+          freeTimeTrialPrivilege: {
+            resConsumable: false,
+            userConsumable: false,
+            type: 0,
+            remainTime: 0,
+          },
+          urlSource: 0,
+          r3play: {
+            youtube: data,
+          },
         },
-        freeTimeTrialPrivilege: {
-          resConsumable: false,
-          userConsumable: false,
-          type: 0,
-          remainTime: 0,
-        },
-        urlSource: 0,
-        r3play: {
-          youtube: data,
-        },
-      },
-    ],
-    code: 200,
+      ],
+      code: 200,
+    }
+  } catch (e) {
+    log.error('getAudioFromYouTube error', id, e)
   }
 }
 
@@ -154,9 +159,11 @@ async function audio(fastify: FastifyInstance) {
         return
       }
 
-      const fromYoutube = getAudioFromYouTube(id)
-      if (fromYoutube) {
-        return fromYoutube
+      if (store.get('settings.enableFindTrackOnYouTube')) {
+        const fromYoutube = getAudioFromYouTube(id)
+        if (fromYoutube) {
+          return fromYoutube
+        }
       }
 
       // 是试听歌曲就把url删掉
@@ -181,11 +188,14 @@ async function audio(fastify: FastifyInstance) {
   fastify.post(
     `/${appName.toLowerCase()}/audio/:id`,
     async (
-      req: FastifyRequest<{ Params: { id: string }; Querystring: { url: string } }>,
+      req: FastifyRequest<{
+        Params: { id: string }
+        Querystring: { url: string; bitrate: number }
+      }>,
       reply
     ) => {
       const id = Number(req.params.id)
-      const { url } = req.query
+      const { url, bitrate } = req.query
       if (isNaN(id)) {
         return reply.status(400).send({ error: 'Invalid param id' })
       }
@@ -200,7 +210,7 @@ async function audio(fastify: FastifyInstance) {
       }
 
       try {
-        await cache.setAudio(await data.toBuffer(), { id, url })
+        await cache.setAudio(await data.toBuffer(), { id, url, bitrate })
         reply.status(200).send('Audio cached!')
       } catch (error) {
         reply.status(500).send({ error })

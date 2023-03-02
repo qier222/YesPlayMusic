@@ -1,4 +1,4 @@
-import { css, cx } from '@emotion/css'
+import { css, cx, keyframes } from '@emotion/css'
 import Icon from '../Icon'
 import { breakpoint as bp } from '@/web/utils/const'
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +9,20 @@ import { SearchApiNames } from '@/shared/api/Search'
 import { useClickAway, useDebounce } from 'react-use'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+
+const bounce = keyframes`
+  from { transform: rotate(0deg) translateX(1px) rotate(0deg) }
+  to { transform: rotate(360deg) translateX(1px) rotate(-360deg) }
+`
+function SearchIcon({ isSearching }: { isSearching: boolean }) {
+  return (
+    <div
+    // style={{ animation: `${bounce} 1.2s linear infinite` }}
+    >
+      <Icon name='search' className='mr-2.5 h-7 w-7' />
+    </div>
+  )
+}
 
 const SearchSuggestions = ({
   searchText,
@@ -144,7 +158,7 @@ const SearchBox = () => {
           `
         )}
       >
-        <Icon name='search' className='mr-2.5 h-7 w-7' />
+        <SearchIcon />
         <input
           ref={inputRef}
           placeholder={t`search.search`}

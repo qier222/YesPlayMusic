@@ -64,7 +64,13 @@
     "recently-listened": "最近播放"
   },
   "settings": {
-    "settings": "设置"
+    "settings": "设置",
+    "appearance": "外观",
+    "general": "通用",
+    "lab": "实验室",
+    "lyrics": "歌词",
+    "player": "播放",
+    "general-choose-language": "选择语言"
   },
   "context-menu": {
     "share": "分享",

@@ -1,3 +1,9 @@
+import {
+  FetchAppleMusicAlbumParams,
+  FetchAppleMusicAlbumResponse,
+  FetchAppleMusicArtistParams,
+  FetchAppleMusicArtistResponse,
+} from '@/shared/api/AppleMusic'
 import request from '../utils/request'
 
 // AppleMusic专辑

@@ -41,23 +41,17 @@ const Lyrics = ({ tracksIDs }: { tracksIDs: number[] }) => {
   return (
     <div
       className={cx(
-        'line-clamp-5',
-        css`
-          height: 86px;
-          ${bp.lg} {
-            height: auto;
-          }
-        `
+        'line-clamp-4'
+        // css`
+        //   height: 86px;
+        // `
       )}
     >
       <div className='mb-3.5 text-18 font-medium text-white/70'>
         {t('my.xxxs-liked-tracks', { nickname: user?.profile?.nickname })}
       </div>
       {lyricLines.map((line, index) => (
-        <div
-          key={`${index}-${line}`}
-          className='text-18 font-medium text-white/20'
-        >
+        <div key={`${index}-${line}`} className='text-18 font-medium text-white/20'>
           {line}
         </div>
       ))}
@@ -66,21 +60,15 @@ const Lyrics = ({ tracksIDs }: { tracksIDs: number[] }) => {
 }
 
 const Covers = memo(({ tracks }: { tracks: Track[] }) => {
+  const navigate = useNavigate()
   return (
     <div className='mt-6 grid w-full flex-shrink-0 grid-cols-3 gap-2.5 lg:mt-0 lg:ml-8 lg:w-auto'>
       {tracks.map(track => (
         <Image
           src={resizeImage(track.al.picUrl || '', 'md')}
-          className={cx(
-            'aspect-square rounded-24',
-            css`
-              ${bp.lg} {
-                height: 125px;
-                width: 125px;
-              }
-            `
-          )}
+          className={cx('aspect-square rounded-24 lg:h-32 lg:w-32')}
           key={track.id}
+          onClick={() => navigate(`/album/${track.al.id}`)}
         />
       ))}
     </div>
@@ -142,9 +130,7 @@ const PlayLikedSongsCard = () => {
           {t`my.playNow`}
         </button>
         <button
-          onClick={() =>
-            navigate(`/playlist/${likedSongsPlaylist?.playlist.id}`)
-          }
+          onClick={() => navigate(`/playlist/${likedSongsPlaylist?.playlist.id}`)}
           className={cx(
             'flex items-center justify-center rounded-full bg-white/10 text-night-400 transition duration-400 hover:bg-white/20 hover:text-neutral-300',
             css`

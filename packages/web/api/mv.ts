@@ -19,9 +19,7 @@ export function fetchMV(params: FetchMVParams): Promise<FetchMVResponse> {
 }
 
 // mv 地址
-export function fetchMVUrl(
-  params: FetchMVUrlParams
-): Promise<FetchMVUrlResponse> {
+export function fetchMVUrl(params: FetchMVUrlParams): Promise<FetchMVUrlResponse> {
   return request({
     url: '/mv/url',
     method: 'get',
@@ -34,7 +32,7 @@ export function fetchMVUrl(
  * 说明 : 调用此接口 , 传入 mvid 可获取相似 mv
  * @param {number} mvid
  */
-export function simiMv(mvid) {
+export function simiMv(mvid: string | number) {
   return request({
     url: '/simi/mv',
     method: 'get',

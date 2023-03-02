@@ -12,7 +12,6 @@ export interface ReplayTableStructures {
   [ReplayTables.CoverColor]: {
     id: number
     color: string
-    queriedAt: number
   }
   [ReplayTables.AppData]: {
     value: string

@@ -2,7 +2,6 @@ import useIsMobile from '@/web/hooks/useIsMobile'
 import useAppleMusicArtist from '@/web/api/hooks/useAppleMusicArtist'
 import { cx, css } from '@emotion/css'
 import { useTranslation } from 'react-i18next'
-import i18next from 'i18next'
 import { useState } from 'react'
 import DescriptionViewer from '@/web/components/DescriptionViewer'
 
@@ -17,7 +16,7 @@ const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean
   const [isOpenDescription, setIsOpenDescription] = useState(false)
   const description =
     artistFromApple?.artistBio?.[i18n.language.replace('-', '_')] ||
-    artist?.briefDesc ||
+    (i18n.language === 'zh-CN' && artist?.briefDesc) ||
     artistFromApple?.artistBio?.en_US
 
   return (

@@ -19,7 +19,7 @@
     "prisma:db-push": "prisma db push"
   },
   "engines": {
-    "node": "^14.13.1 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "@fastify/cookie": "^8.3.0",
@@ -37,6 +37,7 @@
     "electron-store": "^8.1.0",
     "fast-folder-size": "^1.7.1",
     "fastify": "^4.5.3",
+    "http-proxy-agent": "^5.0.0",
     "pretty-bytes": "^6.0.0",
     "prisma": "^4.8.1",
     "ytdl-core": "^4.11.2"

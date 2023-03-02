@@ -12,6 +12,7 @@ import { Thumbar } from './windowsTaskbar'
 import fastFolderSize from 'fast-folder-size'
 import path from 'path'
 import prettyBytes from 'pretty-bytes'
+import prisma from './prisma'
 
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
@@ -203,7 +204,7 @@ function initOtherIpcMain() {
    * 退出登陆
    */
   handle(IpcChannels.Logout, async () => {
-    // db.truncate(Tables.AccountData)
+    await prisma.accountData.deleteMany({})
     return true
   })
 

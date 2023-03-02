@@ -23,21 +23,16 @@ const LoginWithPhoneOrEmail = () => {
   const { t, i18n } = useTranslation()
   const isZH = i18n.language.startsWith('zh')
 
-  const { loginPhoneCountryCode, loginType: persistedLoginType } =
-    useSnapshot(persistedUiStates)
+  const { loginPhoneCountryCode, loginType: persistedLoginType } = useSnapshot(persistedUiStates)
   const [email, setEmail] = useState<string>('')
-  const [countryCode, setCountryCode] = useState<string>(
-    loginPhoneCountryCode || '+86'
-  )
+  const [countryCode, setCountryCode] = useState<string>(loginPhoneCountryCode || '+86')
   const [phone, setPhone] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loginType, setLoginType] = useState<'phone' | 'email'>(
     persistedLoginType === 'email' ? 'email' : 'phone'
   )
 
-  const handleAfterLogin = (
-    result: LoginWithEmailResponse | LoginWithPhoneResponse
-  ) => {
+  const handleAfterLogin = (result: LoginWithEmailResponse | LoginWithPhoneResponse) => {
     if (result?.code !== 200) return
     setCookies(result.cookie)
     reactQueryClient.refetchQueries([UserApiNames.FetchUserAccount])
@@ -76,11 +71,7 @@ const LoginWithPhoneOrEmail = () => {
       toast.error('Please enter password')
       return
     }
-    if (
-      email.match(
-        /^[^\s@]+@(126|163|yeah|188|vip\.163|vip\.126)\.(com|net)$/
-      ) == null
-    ) {
+    if (email.match(/^[^\s@]+@(126|163|yeah|188|vip\.163|vip\.126)\.(com|net)$/) == null) {
       toast.error('Please use netease email')
       return
     }
@@ -238,9 +229,7 @@ const LoginWithPhoneOrEmail = () => {
 
       {/* Login button */}
       <div
-        onClick={() =>
-          loginType === 'phone' ? handlePhoneLogin() : handleEmailLogin()
-        }
+        onClick={() => (loginType === 'phone' ? handlePhoneLogin() : handleEmailLogin())}
         className='mt-4 rounded-full bg-brand-700 p-4 text-center text-16 font-medium text-white'
       >
         {t`auth.login`}

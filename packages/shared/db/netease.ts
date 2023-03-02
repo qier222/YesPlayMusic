@@ -36,7 +36,6 @@ export interface NeteaseTablesStructures {
       | 'qq'
       | 'bilibili'
       | 'joox'
-    queriedAt: number
   }
   [NeteaseTables.Lyric]: CommonTableStructure
   [NeteaseTables.Playlist]: CommonTableStructure

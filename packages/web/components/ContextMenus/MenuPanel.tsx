@@ -1,11 +1,5 @@
 import { css, cx } from '@emotion/css'
-import {
-  ForwardedRef,
-  forwardRef,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { ForwardedRef, forwardRef, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import MenuItem from './MenuItem'
 import { ContextMenuItem, ContextMenuPosition } from './types'
@@ -36,7 +30,7 @@ const MenuPanel = forwardRef(
       <div
         ref={ref}
         className={cx(
-          'fixed select-none',
+          'app-region-no-drag fixed select-none',
           isSubmenu ? 'submenu z-30 px-1' : 'z-20'
         )}
         style={{ left: position.x, top: position.y }}
@@ -77,9 +71,7 @@ const MenuPanel = forwardRef(
 
         {/* Submenu */}
         <SubMenu
-          items={
-            submenuProps?.index ? items[submenuProps?.index]?.items : undefined
-          }
+          items={submenuProps?.index ? items[submenuProps?.index]?.items : undefined}
           itemRect={submenuProps?.itemRect}
           onClose={onClose}
         />
@@ -118,9 +110,7 @@ const SubMenu = ({
     const x = isRightSide ? item.x + item.width : item.x - submenu.width
 
     const isTopSide = item.y - 10 + submenu.height <= window.innerHeight
-    const y = isTopSide
-      ? item.y - 10
-      : item.y + item.height + 10 - submenu.height
+    const y = isTopSide ? item.y - 10 : item.y + item.height + 10 - submenu.height
 
     const transformOriginTable = {
       top: {
@@ -137,9 +127,7 @@ const SubMenu = ({
       x,
       y,
       transformOrigin:
-        transformOriginTable[isTopSide ? 'top' : 'bottom'][
-          isRightSide ? 'right' : 'left'
-        ],
+        transformOriginTable[isTopSide ? 'top' : 'bottom'][isRightSide ? 'right' : 'left'],
     })
   }, [itemRect])
 

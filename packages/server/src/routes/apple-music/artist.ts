@@ -19,9 +19,10 @@ const artist: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     Querystring: {
       neteaseId: string
       lang?: 'zh-CN' | 'en-US'
+      noCache?: boolean
     }
   }>('/artist', async function (request, reply): Promise<ResponseSchema | undefined> {
-    const { neteaseId: neteaseIdString, lang = 'en-US' } = request.query
+    const { neteaseId: neteaseIdString, lang = 'en-US', noCache = false } = request.query
 
     // validate neteaseId
     const neteaseId = Number(neteaseIdString)
@@ -31,12 +32,14 @@ const artist: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     }
 
     // get from database
-    const fromDB = await fastify.prisma.artist.findFirst({
-      where: { neteaseId: neteaseId },
-      include: { artistBio: { select: { en_US: true, zh_CN: true } } },
-    })
-    if (fromDB) {
-      return fromDB as ResponseSchema
+    if (!noCache) {
+      const fromDB = await fastify.prisma.artist.findFirst({
+        where: { neteaseId: neteaseId },
+        include: { artistBio: { select: { en_US: true, zh_CN: true } } },
+      })
+      if (fromDB) {
+        return fromDB as ResponseSchema
+      }
     }
 
     // get from netease
@@ -95,11 +98,9 @@ const artist: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       artwork: artist?.attributes?.artwork?.url,
     }
 
-    reply.send(data)
-
     // save to database
-    await fastify.prisma.artist
-      .create({
+    if (!noCache) {
+      await fastify.prisma.artist.create({
         data: {
           ...data,
           artistBio: {
@@ -110,7 +111,9 @@ const artist: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
           },
         },
       })
-      .catch(e => console.error(e))
+    }
+
+    return data
   })
 }
 
