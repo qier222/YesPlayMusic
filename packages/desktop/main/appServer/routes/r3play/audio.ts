@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import NeteaseCloudMusicApi, { SoundQualityType } from 'NeteaseCloudMusicApi'
-import prisma from '@/desktop/main/prisma'
 import { app } from 'electron'
 import log from '@/desktop/main/log'
 import { appName } from '@/desktop/main/env'
@@ -10,10 +9,11 @@ import youtube from '@/desktop/main/youtube'
 import { CacheAPIs } from '@/shared/CacheAPIs'
 import { FetchTracksResponse } from '@/shared/api/Track'
 import store from '@/desktop/main/store'
+import { db, Tables } from '@/desktop/main/db'
 
 const getAudioFromCache = async (id: number) => {
   // get from cache
-  const cache = await prisma.audio.findUnique({ where: { id } })
+  const cache = await db.find(Tables.Audio, id)
   if (!cache) return
 
   const audioFileName = `${cache.id}-${cache.bitRate}.${cache.format}`

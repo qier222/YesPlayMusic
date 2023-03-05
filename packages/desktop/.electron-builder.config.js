@@ -19,6 +19,7 @@ module.exports = {
   buildDependenciesFromSource: false,
   electronVersion,
   forceCodeSigning: false,
+  afterPack: './scripts/copySQLite3.js',
   publish: [
     {
       provider: 'github',
@@ -117,17 +118,6 @@ module.exports = {
     '!**/{appveyor.yml,.travis.yml,circle.yml}',
     '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
     '!**/*.{map,debug.min.js}',
-
-    // copy prisma
-    {
-      from: './prisma',
-      to: 'main/prisma',
-    },
-    {
-      from: './prisma',
-      to: 'main',
-      filter: '*.prisma' // only copy prisma schema
-    },
 
     {
       from: './dist',

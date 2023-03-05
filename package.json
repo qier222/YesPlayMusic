@@ -13,7 +13,6 @@
   },
   "packageManager": "pnpm@7.20.0",
   "scripts": {
-    "postinstall": "turbo run post-install --parallel --no-cache",
     "install": "turbo run post-install --parallel --no-cache",
     "build": "cross-env-shell IS_ELECTRON=yes turbo run build",
     "build:web": "turbo run build:web",
