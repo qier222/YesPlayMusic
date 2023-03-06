@@ -6,7 +6,7 @@ import { prefetchAlbum } from '@/web/api/hooks/useAlbum'
 import { prefetchPlaylist } from '@/web/api/hooks/usePlaylist'
 import { memo, useCallback } from 'react'
 import dayjs from 'dayjs'
-import ArtistInline from './ArtistsInline'
+import ArtistInline from './ArtistsInLine'
 
 type ItemTitle = undefined | 'name'
 type ItemSubTitle = undefined | 'artist' | 'year'
