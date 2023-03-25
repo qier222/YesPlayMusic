@@ -7,6 +7,7 @@ import persistedUiStates from '@/web/states/persistedUiStates'
 import Controls from './Controls'
 import Cover from './Cover'
 import Progress from './Progress'
+import { ease } from '@/web/utils/const'
 
 const NowPlaying = () => {
   const { track } = useSnapshot(player)
@@ -21,6 +22,7 @@ const NowPlaying = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ ease, duration: 0.4 }}
             className={cx(
               'relative flex aspect-square h-full w-full flex-col justify-end overflow-hidden rounded-24 border',
               css`

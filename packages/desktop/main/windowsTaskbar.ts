@@ -1,6 +1,9 @@
 import { IpcChannels } from '@/shared/IpcChannels'
 import { BrowserWindow, nativeImage, ThumbarButton } from 'electron'
 import path from 'path'
+import log from './log'
+
+log.info('[electron] windowsTaskbar.ts')
 
 enum ItemKeys {
   Play = 'play',
@@ -66,15 +69,11 @@ class ThumbarImpl implements Thumbar {
   }
 
   private _updateThumbarButtons(clear: boolean) {
-    this._win.setThumbarButtons(
-      clear ? [] : [this._previous, this._playOrPause, this._next]
-    )
+    this._win.setThumbarButtons(clear ? [] : [this._previous, this._playOrPause, this._next])
   }
 
   setPlayState(isPlaying: boolean) {
-    this._playOrPause = this._buttons.get(
-      isPlaying ? ItemKeys.Pause : ItemKeys.Play
-    )!
+    this._playOrPause = this._buttons.get(isPlaying ? ItemKeys.Pause : ItemKeys.Play)!
     this._updateThumbarButtons(false)
   }
 }

@@ -1,9 +1,5 @@
 import player from '@/web/states/player'
-import {
-  IpcChannels,
-  IpcChannelsReturns,
-  IpcChannelsParams,
-} from '@/shared/IpcChannels'
+import { IpcChannels, IpcChannelsReturns, IpcChannelsParams } from '@/shared/IpcChannels'
 import uiStates from './states/uiStates'
 
 const on = <T extends keyof IpcChannelsParams>(

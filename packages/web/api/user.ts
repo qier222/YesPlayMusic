@@ -12,14 +12,10 @@ import {
   FetchListenedRecordsResponse,
   FetchUserVideosResponse,
   FetchUserVideosParams,
+  DailyCheckInResponse,
 } from '@/shared/api/User'
 
-/**
- * 获取用户详情
- * 说明 : 登录后调用此接口 , 传入用户 id, 可以获取用户详情
- * - uid : 用户 id
- * @param {number} uid
- */
+// 获取用户详情
 export function userDetail(uid: number) {
   return request({
     url: '/user/detail',
@@ -53,6 +49,7 @@ export function fetchUserPlaylists(
   })
 }
 
+// 获取用户收藏的歌曲ID列表
 export function fetchUserLikedTracksIDs(
   params: FetchUserLikedTracksIDsParams
 ): Promise<FetchUserLikedTracksIDsResponse> {
@@ -102,9 +99,9 @@ export function fetchListenedRecords(
  * -  type: 签到类型 , 默认 0, 其中 0 为安卓端签到 ,1 为 web/PC 签到
  * @param {number} type
  */
-export function dailySignin(type = 0) {
+export function dailyCheckIn(type = 0): Promise<DailyCheckInResponse> {
   return request({
-    url: '/daily_signin',
+    url: '/daily/signin',
     method: 'post',
     params: {
       type,
@@ -113,9 +110,7 @@ export function dailySignin(type = 0) {
   })
 }
 
-export function fetchUserAlbums(
-  params: FetchUserAlbumsParams
-): Promise<FetchUserAlbumsResponse> {
+export function fetchUserAlbums(params: FetchUserAlbumsParams): Promise<FetchUserAlbumsResponse> {
   return request({
     url: '/album/sublist',
     method: 'get',

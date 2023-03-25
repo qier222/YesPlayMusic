@@ -94,10 +94,7 @@ const LoginWithQRCode = () => {
   )
 
   const text = useMemo(
-    () =>
-      key?.data?.unikey
-        ? `https://music.163.com/login?codekey=${key.data.unikey}`
-        : '',
+    () => (key?.data?.unikey ? `https://music.163.com/login?codekey=${key.data.unikey}` : ''),
     [key?.data?.unikey]
   )
 

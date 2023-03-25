@@ -73,13 +73,21 @@ const Playlist = ({ playlist }: { playlist: Playlist }) => {
   }, [playlist.id])
 
   return (
-    <Image
-      onClick={goTo}
-      key={playlist.id}
-      src={resizeImage(playlist.coverImgUrl || playlist?.picUrl || '', 'md')}
-      className='aspect-square rounded-24'
-      onMouseOver={prefetch}
-    />
+    <div className='group relative'>
+      <Image
+        onClick={goTo}
+        key={playlist.id}
+        src={resizeImage(playlist.coverImgUrl || playlist?.picUrl || '', 'md')}
+        className='aspect-square rounded-24'
+        onMouseOver={prefetch}
+      />
+      {/* Hover mask layer */}
+      <div className='pointer-events-none absolute inset-0 w-full bg-gradient-to-b from-transparent to-black opacity-0 transition-all duration-400 group-hover:opacity-100 '></div>
+      {/* Name */}
+      <div className='pointer-events-none absolute bottom-0 p-3 text-sm font-medium  text-neutral-300 opacity-0 transition-all duration-400 group-hover:opacity-100'>
+        {playlist.name}
+      </div>
+    </div>
   )
 }
 

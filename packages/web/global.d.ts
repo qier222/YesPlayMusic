@@ -14,16 +14,10 @@ declare global {
         channel: T,
         params?: IpcChannelsParams[T]
       ) => Promise<IpcChannelsReturns[T]>
-      send: <T extends keyof IpcChannelsParams>(
-        channel: T,
-        params?: IpcChannelsParams[T]
-      ) => void
+      send: <T extends keyof IpcChannelsParams>(channel: T, params?: IpcChannelsParams[T]) => void
       on: <T extends keyof IpcChannelsParams>(
         channel: T,
-        listener: (
-          event: Electron.IpcRendererEvent,
-          value: IpcChannelsReturns[T]
-        ) => void
+        listener: (event: Electron.IpcRendererEvent, value: IpcChannelsReturns[T]) => void
       ) => void
     }
     env?: {

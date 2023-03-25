@@ -68,9 +68,11 @@
     "appearance": "外观",
     "general": "通用",
     "lab": "实验室",
-    "lyrics": "歌词",
     "player": "播放",
-    "general-choose-language": "选择语言"
+    "general-choose-language": "选择语言",
+    "player-find-alternative-track-on-youtube-if-not-available-on-netease": "当播放的歌曲无版权或无法播放时，自动从 YouTube 寻找替代音频。",
+    "player-youtube-unlock": "YouTube 解锁",
+    "about": "关于"
   },
   "context-menu": {
     "share": "分享",
@@ -93,11 +95,5 @@
     "listen": "播放",
     "latest-releases": "最新发行",
     "popular": "热门歌曲"
-  },
-  "menu-bar": {
-    "discover": "发现",
-    "explore": "浏览",
-    "lyrics": "歌词",
-    "my-music": "我的"
   }
 }

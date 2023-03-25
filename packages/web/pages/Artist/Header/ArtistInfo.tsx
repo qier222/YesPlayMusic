@@ -59,7 +59,7 @@ const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean
             className={cx(
               'line-clamp-5 mt-6 text-14 font-bold text-transparent',
               css`
-                height: 86px;
+                min-height: 85px;
               `
             )}
           >
@@ -68,15 +68,14 @@ const ArtistInfo = ({ artist, isLoading }: { artist?: Artist; isLoading: boolean
         ) : (
           <div
             className={cx(
-              'line-clamp-5 mt-6 overflow-hidden whitespace-pre-wrap text-14 font-bold text-white/40 transition-colors duration-500 hover:text-white/60'
-              // css`
-              //   height: 86px;
-              // `
+              'line-clamp-5 mt-6 overflow-hidden whitespace-pre-wrap text-14 font-bold text-white/40 transition-colors duration-500 hover:text-white/60',
+              css`
+                height: 85px;
+              `
             )}
             onClick={() => setIsOpenDescription(true)}
-          >
-            {description}
-          </div>
+            dangerouslySetInnerHTML={{ __html: description }}
+          ></div>
         ))}
 
       <DescriptionViewer

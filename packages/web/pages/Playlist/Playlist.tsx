@@ -4,12 +4,20 @@ import TrackList from './TrackList'
 import player from '@/web/states/player'
 import usePlaylist from '@/web/api/hooks/usePlaylist'
 import Header from './Header'
+import useTracks from '@/web/api/hooks/useTracks'
 
 const Playlist = () => {
   const params = useParams()
   const { data: playlist } = usePlaylist({
     id: Number(params.id),
   })
+
+  // TODO: 分页加载
+  const { data: playlistTracks } = useTracks({
+    ids: playlist?.playlist?.trackIds?.map(t => t.id) ?? [],
+  })
+
+  console.log(playlistTracks)
 
   const onPlay = async (trackID: number | null = null) => {
     await player.playPlaylist(playlist?.playlist?.id, trackID)
@@ -20,7 +28,7 @@ const Playlist = () => {
       <Header />
       <div className='pb-10'>
         <TrackList
-          tracks={playlist?.playlist?.tracks ?? []}
+          tracks={playlistTracks?.songs ?? playlist?.playlist?.tracks ?? []}
           onPlay={onPlay}
           className='z-10 mt-10'
         />

@@ -1,9 +1,6 @@
 import CoverWall from '@/web/components/CoverWall'
 import PageTransition from '@/web/components/PageTransition'
-import {
-  fetchPlaylistWithReactQuery,
-  fetchFromCache,
-} from '@/web/api/hooks/usePlaylist'
+import { fetchPlaylistWithReactQuery, fetchFromCache } from '@/web/api/hooks/usePlaylist'
 import { fetchTracksWithReactQuery } from '@/web/api/hooks/useTracks'
 import { sampleSize } from 'lodash-es'
 import { FetchPlaylistResponse } from '@/shared/api/Playlists'
@@ -39,9 +36,7 @@ const getAlbumsFromAPI = async () => {
   )
 
   let ids: number[] = []
-  playlists.forEach(playlist =>
-    playlist?.playlist?.trackIds?.forEach(t => ids.push(t.id))
-  )
+  playlists.forEach(playlist => playlist?.playlist?.trackIds?.forEach(t => ids.push(t.id)))
   if (!ids.length) return []
   ids = sampleSize(ids, 100)
 
@@ -77,8 +72,7 @@ const Discover = () => {
   const { data: albums } = useQuery(
     ['DiscoveryAlbums'],
     async () => {
-      const albumsInLocalStorageTime =
-        localStorage.getItem('discoverAlbumsTime')
+      const albumsInLocalStorageTime = localStorage.getItem('discoverAlbumsTime')
       if (
         !albumsInLocalStorageTime ||
         Date.now() - Number(albumsInLocalStorageTime) > 1000 * 60 * 60 * 2 // 2小时刷新一次

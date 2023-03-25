@@ -101,8 +101,7 @@ const ImageDesktop = ({
 }
 
 const ImageMobile = (props: Props) => {
-  const { src, className, srcSet, sizes, lazyLoad, onClick, onMouseOver } =
-    props
+  const { src, className, srcSet, sizes, lazyLoad, onClick, onMouseOver } = props
   return (
     <div
       onClick={onClick}

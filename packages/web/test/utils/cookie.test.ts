@@ -24,11 +24,7 @@ describe('parseCookies', () => {
   })
 
   test('parse cookies with empty value, expires and double semicolon', () => {
-    expect(
-      parseCookies(
-        'test=; test2=test2; Expires=Wed, 21 Oct 2015 07:28:00 GMT;;'
-      )
-    ).toEqual([
+    expect(parseCookies('test=; test2=test2; Expires=Wed, 21 Oct 2015 07:28:00 GMT;;')).toEqual([
       {
         key: 'test',
         value: '',
@@ -153,9 +149,7 @@ describe('setCookies', () => {
     )
     expect(Cookies.get('__remember_me')).toBe('true')
     expect(Cookies.get('__csrf')).toBe('78328f711c179391b096a67ad9d0f08b')
-    expect(Cookies.get('NMTID')).toBe(
-      '00OEhPKoaEluGvd9kgutai-iADpQkEAAAGAJz_PTQ'
-    )
+    expect(Cookies.get('NMTID')).toBe('00OEhPKoaEluGvd9kgutai-iADpQkEAAAGAJz_PTQ')
     expect(Cookies.get('MUSIC_R_T')).toBe(undefined) // because of path is not /
     expect(Cookies.get('MUSIC_A_T')).toBe(undefined) // because of path is not /
   })

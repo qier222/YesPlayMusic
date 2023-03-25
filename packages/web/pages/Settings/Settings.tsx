@@ -1,7 +1,7 @@
 import useUser from '@/web/api/hooks/useUser'
 import Appearance from './Appearance'
 import { css, cx } from '@emotion/css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UserCard from './UserCard'
 import { useTranslation } from 'react-i18next'
 import { motion, useAnimationControls } from 'framer-motion'
@@ -10,7 +10,7 @@ import Player from './Player'
 import PageTransition from '@/web/components/PageTransition'
 import { ease } from '@/web/utils/const'
 
-export const categoryIds = ['general', 'appearance', 'player', 'lyrics', 'lab'] as const
+export const categoryIds = ['general', 'appearance', 'player', 'lab', 'about'] as const
 export type Category = typeof categoryIds[number]
 
 const Sidebar = ({
@@ -25,22 +25,22 @@ const Sidebar = ({
     { name: t`settings.general`, id: 'general' },
     { name: t`settings.appearance`, id: 'appearance' },
     { name: t`settings.player`, id: 'player' },
-    { name: t`settings.lyrics`, id: 'lyrics' },
     { name: t`settings.lab`, id: 'lab' },
+    { name: t`settings.about`, id: 'about' },
   ]
-  const animation = useAnimationControls()
 
-  const onClick = (categoryId: Category) => {
-    setActiveCategory(categoryId)
-    const index = categories.findIndex(category => category.id === categoryId)
-    animation.start({ y: index * 40 + 11.5 })
-  }
+  // Indicator animation
+  const indicatorAnimation = useAnimationControls()
+  useEffect(() => {
+    const index = categories.findIndex(category => category.id === activeCategory)
+    indicatorAnimation.start({ y: index * 40 + 11.5 })
+  }, [activeCategory])
 
   return (
     <div className='relative'>
       <motion.div
         initial={{ y: 11.5 }}
-        animate={animation}
+        animate={indicatorAnimation}
         transition={{ type: 'spring', duration: 0.6, bounce: 0.36 }}
         className='absolute top-0 left-3 mr-2 h-4 w-1 rounded-full bg-brand-700'
       ></motion.div>
@@ -48,7 +48,7 @@ const Sidebar = ({
       {categories.map(category => (
         <motion.div
           key={category.id}
-          onClick={() => onClick(category.id)}
+          onClick={() => setActiveCategory(category.id)}
           initial={{ x: activeCategory === category.id ? 12 : 0 }}
           animate={{ x: activeCategory === category.id ? 12 : 0 }}
           className={cx(
@@ -71,8 +71,8 @@ const Settings = () => {
     { id: 'general', component: <General /> },
     { id: 'appearance', component: <Appearance /> },
     { id: 'player', component: <Player /> },
-    { id: 'lyrics', component: <span className='text-white'>开发中</span> },
     { id: 'lab', component: <span className='text-white'>开发中</span> },
+    { id: 'about', component: <span className='text-white'>开发中</span> },
   ]
 
   return (

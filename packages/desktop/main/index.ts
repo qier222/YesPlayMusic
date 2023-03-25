@@ -13,6 +13,8 @@ import { isDev, isWindows, isLinux, isMac, appName } from './env'
 import store from './store'
 import initAppServer from './appServer/appServer'
 
+log.info('[electron] index.ts')
+
 class Main {
   win: BrowserWindow | null = null
   tray: YPMTray | null = null
@@ -103,7 +105,7 @@ class Main {
 
     // Make all links open with the browser, not with the application
     this.win.webContents.setWindowOpenHandler(({ url }) => {
-      if (url.startsWith('https:')) shell.openExternal(url)
+      if (url.startsWith('https://')) shell.openExternal(url)
       return { action: 'deny' }
     })
 

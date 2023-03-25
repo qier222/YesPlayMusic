@@ -49,6 +49,10 @@ API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryif
 
 任何基于此项目开发的项目都必须遵守开源协议，在项目 README/应用内的关于页面和介绍网站中明确说明基于此项目开发，并附上此项目 GitHub 页面的链接。
 
+## Credit
+
+Designed by [JACKCRING](https://jackcring.com)
+
 <!-- ## 🖼️ 截图 -->
 
 <!-- ![lyrics][lyrics-screenshot]

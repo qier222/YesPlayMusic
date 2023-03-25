@@ -14,12 +14,9 @@ const MoreByArtist = ({ album }: { album?: Album }) => {
     if (!albums) return []
     const allReleases = albums?.hotAlbums || []
     const filteredAlbums = allReleases.filter(
-      album =>
-        ['专辑', 'EP/Single', 'EP'].includes(album.type) && album.size > 1
+      album => ['专辑', 'EP/Single', 'EP'].includes(album.type) && album.size > 1
     )
-    const singles = allReleases.filter(
-      album => album.type === 'Single' || album.size === 1
-    )
+    const singles = allReleases.filter(album => album.type === 'Single' || album.size === 1)
 
     const qualifiedAlbums = [...filteredAlbums, ...singles]
 
@@ -41,10 +38,7 @@ const MoreByArtist = ({ album }: { album?: Album }) => {
       }
 
       // 去除 remix 专辑
-      if (
-        a.name.toLowerCase().includes('remix)') ||
-        a.name.toLowerCase().includes('remixes)')
-      ) {
+      if (a.name.toLowerCase().includes('remix)') || a.name.toLowerCase().includes('remixes)')) {
         return
       }
 

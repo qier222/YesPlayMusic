@@ -5,6 +5,7 @@ import player from '@/web/states/player'
 import { formatDuration, resizeImage } from '@/web/utils/common'
 import { State as PlayerState } from '@/web/utils/player'
 import { css, cx } from '@emotion/css'
+import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSnapshot } from 'valtio'
 
@@ -58,7 +59,17 @@ const Track = ({
             )}
           </div>
           <div className='line-clamp-1 mt-1 text-14 font-bold text-white/30'>
-            {track?.ar.map(a => a.name).join(', ')}
+            {track?.ar.map((a, index) => (
+              <Fragment key={a.id}>
+                {index > 0 && ', '}
+                <NavLink
+                  className='transition-all duration-300 hover:text-white/70'
+                  to={`/artist/${a.id}`}
+                >
+                  {a.name}
+                </NavLink>
+              </Fragment>
+            ))}
           </div>
         </div>
 
@@ -102,7 +113,7 @@ function TrackList({
   placeholderRows?: number
 }) {
   const { trackID, state } = useSnapshot(player)
-  const playingTrackIndex = tracks?.findIndex(track => track.id === trackID) ?? -1
+  const playingTrack = tracks?.find(track => track.id === trackID)
 
   const handleClick = (e: React.MouseEvent<HTMLElement>, trackID: number) => {
     if (isLoading) return
@@ -129,7 +140,7 @@ function TrackList({
           key={track.id}
           track={track}
           index={index}
-          playingTrackIndex={playingTrackIndex}
+          playingTrackID={playingTrack?.id || 0}
           state={state}
           handleClick={handleClick}
         />

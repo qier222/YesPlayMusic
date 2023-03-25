@@ -20,10 +20,7 @@ const replaceBrandColorWithCSSVar = () => {
         if (decl?.parent?.selector?.includes('-blue-')) {
           return
         }
-        value = value.replace(
-          `rgb(${blue.rgb}`,
-          `hsl(var(--brand-color-${blue.key})`
-        )
+        value = value.replace(`rgb(${blue.rgb}`, `hsl(var(--brand-color-${blue.key})`)
       })
       // if (decl.value !== value) {
       //   console.log({

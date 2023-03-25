@@ -67,10 +67,7 @@ const PlayingNextMobile = () => {
               `
             )}
           >
-            <Icon
-              name='player-handler'
-              className='mb-5 h-2.5 rotate-180 text-brand-700'
-            />
+            <Icon name='player-handler' className='mb-5 h-2.5 rotate-180 text-brand-700' />
           </motion.div>
 
           {/* List */}

@@ -118,10 +118,8 @@ module.exports = {
         xl: '12px',
         '2xl': '20px',
         '3xl': '45px',
-      }
+      },
     },
   },
-  plugins: [
-    require('@tailwindcss/container-queries'),
-  ],
+  plugins: [require('@tailwindcss/container-queries')],
 }

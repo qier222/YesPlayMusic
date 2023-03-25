@@ -11,6 +11,8 @@ import { appName } from './utils/const'
 
 dotenv.config({ path: join(__dirname, '../../.env') })
 const IS_ELECTRON = process.env.IS_ELECTRON
+const ELECTRON_DEV_NETEASE_API_PORT = Number(process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001)
+const ELECTRON_WEB_SERVER_PORT = Number(process.env.ELECTRON_WEB_SERVER_PORT || 42710)
 
 /**
  * @see https://vitejs.dev/config/
@@ -23,6 +25,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': join(__dirname, '..'),
+      'hls.js': 'hls.js/dist/hls.min.js',
     },
   },
   plugins: [
@@ -37,33 +40,35 @@ export default defineConfig({
     /**
      * @see https://vite-plugin-pwa.netlify.app/guide/generate.html
      */
-    VitePWA({
-      registerType: 'autoUpdate',
-      manifest: {
-        name: appName,
-        short_name: appName,
-        description: 'Description of your app',
-        theme_color: '#000',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
+    IS_ELECTRON
+      ? VitePWA({
+          registerType: 'autoUpdate',
+          manifest: {
+            name: appName,
+            short_name: appName,
+            description: 'Description of your app',
+            theme_color: '#000',
+            icons: [
+              {
+                src: 'pwa-192x192.png',
+                sizes: '192x192',
+                type: 'image/png',
+              },
+              {
+                src: 'pwa-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+              },
+              {
+                src: 'pwa-512x512.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'any maskable',
+              },
+            ],
           },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
-    }),
+        })
+      : undefined,
 
     /**
      * @see https://github.com/vbenjs/vite-plugin-svg-icons
@@ -90,22 +95,22 @@ export default defineConfig({
     },
   },
   server: {
-    port: Number(process.env.ELECTRON_WEB_SERVER_PORT || 42710),
+    port: ELECTRON_WEB_SERVER_PORT,
     strictPort: IS_ELECTRON ? true : false,
     proxy: {
       '/netease/': {
-        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
+        target: `http://127.0.0.1:${ELECTRON_DEV_NETEASE_API_PORT}`,
         changeOrigin: true,
         rewrite: path => (IS_ELECTRON ? path : path.replace(/^\/netease/, '')),
       },
       '/r3play/': {
-        target: `http://127.0.0.1:${process.env.ELECTRON_DEV_NETEASE_API_PORT || 30001}`,
+        target: `http://127.0.0.1:${ELECTRON_DEV_NETEASE_API_PORT}`,
         changeOrigin: true,
       },
     },
   },
   preview: {
-    port: Number(process.env.ELECTRON_WEB_SERVER_PORT || 42710),
+    port: ELECTRON_WEB_SERVER_PORT,
   },
   test: {
     environment: 'jsdom',

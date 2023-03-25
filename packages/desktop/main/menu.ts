@@ -1,14 +1,10 @@
-import {
-  app,
-  BrowserWindow,
-  Menu,
-  MenuItem,
-  MenuItemConstructorOptions,
-  shell,
-} from 'electron'
+import { app, BrowserWindow, Menu, MenuItem, MenuItemConstructorOptions, shell } from 'electron'
 import { isMac } from './env'
 import { logsPath } from './utils'
 import { exec } from 'child_process'
+import log from './log'
+
+log.info('[electron] menu.ts')
 
 export const createMenu = (win: BrowserWindow) => {
   const template: Array<MenuItemConstructorOptions | MenuItem> = [
@@ -51,9 +47,7 @@ export const createMenu = (win: BrowserWindow) => {
         {
           label: '反馈问题',
           click: async () => {
-            await shell.openExternal(
-              'https://github.com/qier222/YesPlayMusic/issues/new'
-            )
+            await shell.openExternal('https://github.com/qier222/YesPlayMusic/issues/new')
           },
         },
         { type: 'separator' },
@@ -66,17 +60,13 @@ export const createMenu = (win: BrowserWindow) => {
         {
           label: '访问论坛',
           click: async () => {
-            await shell.openExternal(
-              'https://github.com/qier222/YesPlayMusic/discussions'
-            )
+            await shell.openExternal('https://github.com/qier222/YesPlayMusic/discussions')
           },
         },
         {
           label: '加入交流群',
           click: async () => {
-            await shell.openExternal(
-              'https://github.com/qier222/YesPlayMusic/discussions'
-            )
+            await shell.openExternal('https://github.com/qier222/YesPlayMusic/discussions')
           },
         },
       ],

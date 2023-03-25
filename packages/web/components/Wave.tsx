@@ -13,7 +13,7 @@ const delay = ['-100ms', '-500ms', '-1200ms', '-1000ms', '-700ms']
 
 const Wave = ({ playing }: { playing: boolean }) => {
   return (
-    <div className='grid h-3 grid-cols-5 items-end gap-0.5'>
+    <div className='grid h-3 flex-shrink-0 grid-cols-5 items-end gap-0.5'>
       {[...new Array(5).keys()].map(i => (
         <div
           key={i}

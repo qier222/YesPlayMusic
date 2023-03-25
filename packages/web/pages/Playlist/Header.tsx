@@ -1,8 +1,6 @@
 import usePlaylist from '@/web/api/hooks/usePlaylist'
 import useUser from '@/web/api/hooks/useUser'
-import useUserPlaylists, {
-  useMutationLikeAPlaylist,
-} from '@/web/api/hooks/useUserPlaylists'
+import useUserPlaylists, { useMutationLikeAPlaylist } from '@/web/api/hooks/useUserPlaylists'
 import TrackListHeader from '@/web/components/TrackListHeader'
 import player from '@/web/states/player'
 import { formatDate } from '@/web/utils/common'
@@ -32,8 +30,7 @@ const Header = () => {
   const extraInfo = useMemo(() => {
     return (
       <>
-        Updated at {formatDate(playlist?.updateTime || 0, 'en')} ·{' '}
-        {playlist?.trackCount} tracks
+        Updated at {formatDate(playlist?.updateTime || 0, 'en')} · {playlist?.trackCount} tracks
       </>
     )
   }, [playlist])
@@ -64,8 +61,7 @@ const Header = () => {
         extraInfo,
         cover,
         isLiked,
-        onLike:
-          user?.account?.id === playlist?.creator?.userId ? undefined : onLike,
+        onLike: user?.account?.id === playlist?.creator?.userId ? undefined : onLike,
         onPlay,
       }}
     />

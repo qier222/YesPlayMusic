@@ -10,21 +10,13 @@ export type Conversion = {
 const filenamesToType = (conversions: Conversion[]): Plugin => {
   const generateTypes = async (conversion: Conversion) => {
     const filenames = await fs.readdir(conversion.dictionary).catch(reason => {
-      console.error(
-        'vite-plugin-filenames-to-type: unable to read directory. ',
-        reason
-      )
+      console.error('vite-plugin-filenames-to-type: unable to read directory. ', reason)
       return []
     })
     if (!filenames.length) return
 
-    const iconNames = filenames.map(
-      fileName => `'${fileName.replace(/\.[^.]+$/, '')}'`
-    )
-    await fs.writeFile(
-      conversion.typeFile,
-      `export type IconNames = ${iconNames.join(' | ')}`
-    )
+    const iconNames = filenames.map(fileName => `'${fileName.replace(/\.[^.]+$/, '')}'`)
+    await fs.writeFile(conversion.typeFile, `export type IconNames = ${iconNames.join(' | ')}`)
   }
 
   const findConversion = (filePath: string) => {

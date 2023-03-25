@@ -21,11 +21,8 @@ const Layout = () => {
     <div
       id='layout'
       className={cx(
-        'relative grid h-screen select-none overflow-hidden bg-white dark:bg-black',
-        window.env?.isElectron && !fullscreen && 'rounded-24',
-        css`
-          min-width: 720px;
-        `
+        'relative grid h-screen select-none overflow-hidden bg-black',
+        window.env?.isElectron && !fullscreen && 'rounded-24'
       )}
     >
       <BlurBackground />
@@ -47,7 +44,15 @@ const Layout = () => {
 
       <ContextMenus />
 
-      {/* {window.env?.isElectron && <Airplay />} */}
+      {/* Border */}
+      <div
+        className={cx(
+          'pointer-events-none fixed inset-0 z-50 rounded-24',
+          css`
+            box-shadow: inset 0px 0px 0px 1px rgba(255, 255, 255, 0.06);
+          `
+        )}
+      ></div>
     </div>
   )
 }

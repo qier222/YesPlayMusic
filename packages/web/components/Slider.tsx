@@ -23,8 +23,7 @@ const Slider = ({
   const [isDragging, setIsDragging] = useState(false)
   const [draggingValue, setDraggingValue] = useState(value)
   const memoedValue = useMemo(
-    () =>
-      isDragging && onlyCallOnChangeAfterDragEnded ? draggingValue : value,
+    () => (isDragging && onlyCallOnChangeAfterDragEnded ? draggingValue : value),
     [isDragging, draggingValue, value, onlyCallOnChangeAfterDragEnded]
   )
 
@@ -50,8 +49,7 @@ const Slider = ({
    * Handle slider click event
    */
   const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) =>
-      onChange(getNewValue({ x: e.clientX, y: e.clientY })),
+    (e: React.MouseEvent<HTMLDivElement>) => onChange(getNewValue({ x: e.clientX, y: e.clientY })),
     [getNewValue, onChange]
   )
 
@@ -69,22 +67,14 @@ const Slider = ({
     const handlePointerMove = (e: { clientX: number; clientY: number }) => {
       if (!isDragging) return
       const newValue = getNewValue({ x: e.clientX, y: e.clientY })
-      onlyCallOnChangeAfterDragEnded
-        ? setDraggingValue(newValue)
-        : onChange(newValue)
+      onlyCallOnChangeAfterDragEnded ? setDraggingValue(newValue) : onChange(newValue)
     }
     document.addEventListener('pointermove', handlePointerMove)
 
     return () => {
       document.removeEventListener('pointermove', handlePointerMove)
     }
-  }, [
-    isDragging,
-    onChange,
-    setDraggingValue,
-    onlyCallOnChangeAfterDragEnded,
-    getNewValue,
-  ])
+  }, [isDragging, onChange, setDraggingValue, onlyCallOnChangeAfterDragEnded, getNewValue])
 
   /**
    * Handle pointer up events
@@ -102,28 +92,18 @@ const Slider = ({
     return () => {
       document.removeEventListener('pointerup', handlePointerUp)
     }
-  }, [
-    isDragging,
-    setIsDragging,
-    onlyCallOnChangeAfterDragEnded,
-    draggingValue,
-    onChange,
-  ])
+  }, [isDragging, setIsDragging, onlyCallOnChangeAfterDragEnded, draggingValue, onChange])
 
   /**
    * Track and thumb styles
    */
   const usedTrackStyle = useMemo(() => {
     const percentage = `${(memoedValue / max) * 100}%`
-    return orientation === 'horizontal'
-      ? { width: percentage }
-      : { height: percentage }
+    return orientation === 'horizontal' ? { width: percentage } : { height: percentage }
   }, [max, memoedValue, orientation])
   const thumbStyle = useMemo(() => {
     const percentage = `${(memoedValue / max) * 100}%`
-    return orientation === 'horizontal'
-      ? { left: percentage }
-      : { bottom: percentage }
+    return orientation === 'horizontal' ? { left: percentage } : { bottom: percentage }
   }, [max, memoedValue, orientation])
 
   return (
@@ -159,9 +139,7 @@ const Slider = ({
       <div
         className={cx(
           'absolute flex h-2 w-2 items-center justify-center rounded-full bg-black bg-opacity-20 transition-opacity dark:bg-white',
-          isDragging || alwaysShowThumb
-            ? 'opacity-100'
-            : 'opacity-0 group-hover:opacity-100',
+          isDragging || alwaysShowThumb ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           orientation === 'horizontal' && '-translate-x-1',
           orientation === 'vertical' && 'translate-y-1'
         )}

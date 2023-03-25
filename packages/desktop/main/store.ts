@@ -1,4 +1,7 @@
 import Store from 'electron-store'
+import log from './log'
+
+log.info('[electron] store.ts')
 
 export interface TypedElectronStore {
   window: {

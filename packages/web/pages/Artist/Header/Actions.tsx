@@ -1,11 +1,8 @@
-import useUserArtists, {
-  useMutationLikeAArtist,
-} from '@/web/api/hooks/useUserArtists'
+import useUserArtists, { useMutationLikeAArtist } from '@/web/api/hooks/useUserArtists'
 import Icon from '@/web/components/Icon'
 import { openContextMenu } from '@/web/states/contextMenus'
 import player from '@/web/states/player'
 import { cx } from '@emotion/css'
-import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 
@@ -50,10 +47,7 @@ const Actions = ({ isLoading }: { isLoading: boolean }) => {
               : 'text-white/40 hover:text-white/70  hover:dark:bg-white/30 '
           )}
         >
-          <Icon
-            name={isLiked ? 'heart' : 'heart-outline'}
-            className='h-7 w-7'
-          />
+          <Icon name={isLiked ? 'heart' : 'heart-outline'} className='h-7 w-7' />
         </button>
       </div>
 

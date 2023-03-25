@@ -1,8 +1,7 @@
 export const changeTheme = (theme: 'light' | 'dark') => {
   document.body.setAttribute('class', theme)
   if (!window.env?.isElectron) {
-    document.documentElement.style.background =
-      theme === 'dark' ? '#000' : '#fff'
+    document.documentElement.style.background = theme === 'dark' ? '#000' : '#fff'
   }
 }
 

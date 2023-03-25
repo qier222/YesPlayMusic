@@ -6,9 +6,7 @@ import { MotionConfig, motion } from 'framer-motion'
 import { useSnapshot } from 'valtio'
 import Icon from '../Icon'
 import { State as PlayerState } from '@/web/utils/player'
-import useUserLikedTracksIDs, {
-  useMutationLikeATrack,
-} from '@/web/api/hooks/useUserLikedTracksIDs'
+import useUserLikedTracksIDs, { useMutationLikeATrack } from '@/web/api/hooks/useUserLikedTracksIDs'
 
 const LikeButton = () => {
   const { track } = useSnapshot(player)
@@ -38,9 +36,7 @@ const Controls = () => {
       <motion.div
         className={cx(
           'fixed bottom-0 right-0 flex',
-          mini
-            ? 'flex-col items-center justify-between'
-            : 'items-center justify-between',
+          mini ? 'flex-col items-center justify-between' : 'items-center justify-between',
           mini
             ? css`
                 right: 24px;
@@ -85,11 +81,7 @@ const Controls = () => {
             className='rounded-full bg-black/10 p-2.5 transition-colors duration-400 dark:bg-white/10 hover:dark:bg-white/20'
           >
             <Icon
-              name={
-                [PlayerState.Playing, PlayerState.Loading].includes(state)
-                  ? 'pause'
-                  : 'play'
-              }
+              name={[PlayerState.Playing, PlayerState.Loading].includes(state) ? 'pause' : 'play'}
               className='h-6 w-6 '
             />
           </motion.button>

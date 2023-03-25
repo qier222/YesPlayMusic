@@ -12,8 +12,7 @@ export function lyricParser(lrc: FetchLyricResponse) {
 /**
  * @see {@link https://regexr.com/6e52n}
  */
-const extractLrcRegex =
-  /^(?<lyricTimestamps>(?:\[.+?\])+)(?!\[)(?<content>.+)$/gm
+const extractLrcRegex = /^(?<lyricTimestamps>(?:\[.+?\])+)(?!\[)(?<content>.+)$/gm
 const extractTimestampRegex = /\[(?<min>\d+):(?<sec>\d+)(?:\.|:)*(?<ms>\d+)*\]/g
 
 interface ParsedLyric {

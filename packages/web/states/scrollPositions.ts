@@ -11,9 +11,7 @@ class ScrollPositions {
     const nestedPath = `/${pathname.split('/')[1]}`
     const restPath = pathname.split('/').slice(2).join('/')
     if (this._nestedPaths.includes(nestedPath)) {
-      return this._positions?.[nestedPath]?.find(
-        ({ path }) => path === restPath
-      )?.top
+      return this._positions?.[nestedPath]?.find(({ path }) => path === restPath)?.top
     } else {
       return this._generalPositions?.[pathname]
     }
@@ -30,14 +28,10 @@ class ScrollPositions {
     }
 
     // set nested position
-    const existsPath = this._positions[nestedPath].find(
-      p => p.path === restPath
-    )
+    const existsPath = this._positions[nestedPath].find(p => p.path === restPath)
     if (existsPath) {
       existsPath.top = top
-      this._positions[nestedPath] = this._positions[nestedPath].filter(
-        p => p.path !== restPath
-      )
+      this._positions[nestedPath] = this._positions[nestedPath].filter(p => p.path !== restPath)
       this._positions[nestedPath].push(existsPath)
     } else {
       this._positions[nestedPath].push({ path: restPath, top })

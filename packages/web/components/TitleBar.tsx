@@ -3,12 +3,14 @@ import { IpcChannels } from '@/shared/IpcChannels'
 import useIpcRenderer from '@/web/hooks/useIpcRenderer'
 import { useState } from 'react'
 import { css, cx } from '@emotion/css'
+import uiStates from '../states/uiStates'
 
 const Controls = () => {
   const [isMaximized, setIsMaximized] = useState(false)
 
   useIpcRenderer(IpcChannels.IsMaximized, (e, value) => {
     setIsMaximized(value)
+    uiStates.fullscreen = value
   })
 
   const minimize = () => {
@@ -38,10 +40,7 @@ const Controls = () => {
         <Icon className='h-3 w-3' name='windows-minimize' />
       </button>
       <button onClick={maxRestore} className={classNames}>
-        <Icon
-          className='h-3 w-3'
-          name={isMaximized ? 'windows-un-maximize' : 'windows-maximize'}
-        />
+        <Icon className='h-3 w-3' name={isMaximized ? 'windows-un-maximize' : 'windows-maximize'} />
       </button>
       <button
         onClick={close}

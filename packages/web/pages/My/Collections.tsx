@@ -19,6 +19,7 @@ import VideoRow from '@/web/components/VideoRow'
 import useUserVideos from '@/web/api/hooks/useUserVideos'
 import persistedUiStates from '@/web/states/persistedUiStates'
 import settings from '@/web/states/settings'
+import useUser from '@/web/api/hooks/useUser'
 
 const collections = ['playlists', 'albums', 'artists', 'videos'] as const
 type Collection = typeof collections[number]
@@ -31,8 +32,37 @@ const Albums = () => {
 
 const Playlists = () => {
   const { data: playlists } = useUserPlaylists()
-  const p = useMemo(() => playlists?.playlist?.slice(1), [playlists])
-  return <CoverRow playlists={p} />
+  const user = useUser()
+  const myPlaylists = useMemo(
+    () => playlists?.playlist?.slice(1).filter(p => p.userId === user?.data?.account?.id),
+    [playlists, user]
+  )
+  const otherPlaylists = useMemo(
+    () => playlists?.playlist?.slice(1).filter(p => p.userId !== user?.data?.account?.id),
+    [playlists, user]
+  )
+  return (
+    <div>
+      {/* My playlists */}
+      {myPlaylists && (
+        <>
+          <div className='mb-4 mt-2 text-14 font-medium uppercase text-neutral-400'>
+            Created BY ME
+          </div>
+          <CoverRow playlists={myPlaylists} />
+        </>
+      )}
+      {/* Other playlists */}
+      {otherPlaylists && (
+        <>
+          <div className='mb-4 mt-8 text-14 font-medium uppercase text-neutral-400'>
+            Created BY OTHERS
+          </div>
+          <CoverRow playlists={otherPlaylists} />
+        </>
+      )}
+    </div>
+  )
 }
 
 const Artists = () => {
@@ -51,12 +81,12 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
 
   const tabs: { id: Collection; name: string }[] = [
     {
-      id: 'playlists',
-      name: t`common.playlist_other`,
-    },
-    {
       id: 'albums',
       name: t`common.album_other`,
+    },
+    {
+      id: 'playlists',
+      name: t`common.playlist_other`,
     },
     {
       id: 'artists',
@@ -75,7 +105,7 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
   }
 
   return (
-    <>
+    <div className='relative'>
       {/* Topbar background */}
       <AnimatePresence>
         {showBg && (
@@ -84,14 +114,14 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={cx(
-              'pointer-events-none fixed top-0 right-0 left-10 z-10',
+              'pointer-events-none absolute right-0 left-0 z-10',
               css`
                 height: 230px;
                 background-repeat: repeat;
               `
             )}
             style={{
-              right: `${minimizePlayer ? 0 : playerWidth + 32}px`,
+              top: '-132px',
               backgroundImage: `url(${topbarBackground})`,
             }}
           ></motion.div>
@@ -115,7 +145,7 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
           top: `${topbarHeight}px`,
         }}
       />
-    </>
+    </div>
   )
 }
 
@@ -131,7 +161,7 @@ const Collections = () => {
   }, 500)
 
   return (
-    <div>
+    <motion.div layout>
       <CollectionTabs showBg={isScrollReachBottom} />
       <div
         className={cx('no-scrollbar overflow-y-auto px-2.5 pt-16 pb-16 lg:px-0')}
@@ -146,7 +176,7 @@ const Collections = () => {
         {selectedTab === 'videos' && <Videos />}
       </div>
       <div ref={observePoint}></div>
-    </div>
+    </motion.div>
   )
 }
 

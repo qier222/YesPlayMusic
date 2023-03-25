@@ -11,6 +11,8 @@ import { FetchTracksResponse } from '@/shared/api/Track'
 import store from '@/desktop/main/store'
 import { db, Tables } from '@/desktop/main/db'
 
+log.info('[electron] appServer/routes/r3play/audio.ts')
+
 const getAudioFromCache = async (id: number) => {
   // get from cache
   const cache = await db.find(Tables.Audio, id)

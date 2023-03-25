@@ -22,11 +22,7 @@ const sizes = {
   },
 } as const
 
-const CoverWall = ({
-  albums,
-}: {
-  albums: { id: number; coverUrl: string; large: boolean }[]
-}) => {
+const CoverWall = ({ albums }: { albums: { id: number; coverUrl: string; large: boolean }[] }) => {
   const navigate = useNavigate()
   const breakpoint = useBreakpoint()
 
@@ -41,10 +37,7 @@ const CoverWall = ({
     >
       {albums.map(album => (
         <Image
-          src={resizeImage(
-            album.coverUrl,
-            sizes[album.large ? 'large' : 'small'][breakpoint]
-          )}
+          src={resizeImage(album.coverUrl, sizes[album.large ? 'large' : 'small'][breakpoint])}
           key={album.id}
           className={cx(
             'aspect-square h-full w-full rounded-20 lg:rounded-24',

@@ -39,10 +39,11 @@ exports.default = async function (context) {
     }
   }
 
-  if (platform === 'win32') {
-    if (arch !== 'x64') return // Skip other archs
+  // Windows and Linux
+  if (platform === 'win32' || platform === 'linux') {
+    if (platform === 'win32' && arch !== 'x64') return // Skip windows arm
 
-    const from = `${binDir}/better_sqlite3_win32_${arch}.node`
+    const from = `${binDir}/better_sqlite3_${platform}_${arch}.node`
     const to = `${context.appOutDir}/resources/bin/better_sqlite3.node`
     console.info(`copy ${from} to ${to}`)
 

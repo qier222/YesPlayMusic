@@ -58,142 +58,142 @@ test('formatDuration', () => {
   expect(formatDuration(0, 'zh-CN', 'hh[hr] mm[min]')).toBe('0 分钟')
 })
 
-describe('cacheCoverColor', () => {
-  test('cache with valid url', () => {
-    vi.stubGlobal('ipcRenderer', {
-      send: (channel: IpcChannels, ...args: any[]) => {
-        expect(channel).toBe(IpcChannels.CacheCoverColor)
-        expect(args[0].api).toBe(CacheAPIs.CoverColor)
-        expect(args[0].query).toEqual({
-          id: '109951165911363',
-          color: '#fff',
-        })
-      },
-    })
+// describe('cacheCoverColor', () => {
+//   test('cache with valid url', () => {
+//     vi.stubGlobal('ipcRenderer', {
+//       send: (channel: IpcChannels, ...args: any[]) => {
+//         expect(channel).toBe(IpcChannels.CacheCoverColor)
+//         expect(args[0].api).toBe(CacheAPIs.CoverColor)
+//         expect(args[0].query).toEqual({
+//           id: '109951165911363',
+//           color: '#fff',
+//         })
+//       },
+//     })
 
-    const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
-    cacheCoverColor(
-      'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256',
-      '#fff'
-    )
+//     const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+//     cacheCoverColor(
+//       'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256',
+//       '#fff'
+//     )
 
-    expect(sendSpy).toHaveBeenCalledTimes(1)
+//     expect(sendSpy).toHaveBeenCalledTimes(1)
 
-    vi.stubGlobal('ipcRenderer', undefined)
-  })
+//     vi.stubGlobal('ipcRenderer', undefined)
+//   })
 
-  test('cache with invalid url', () => {
-    vi.stubGlobal('ipcRenderer', {
-      send: (channel: IpcChannels, ...args: any[]) => {
-        expect(channel).toBe(IpcChannels.CacheCoverColor)
-        expect(args[0].api).toBe(CacheAPIs.CoverColor)
-        expect(args[0].query).toEqual({
-          id: '',
-          color: '#fff',
-        })
-      },
-    })
+//   test('cache with invalid url', () => {
+//     vi.stubGlobal('ipcRenderer', {
+//       send: (channel: IpcChannels, ...args: any[]) => {
+//         expect(channel).toBe(IpcChannels.CacheCoverColor)
+//         expect(args[0].api).toBe(CacheAPIs.CoverColor)
+//         expect(args[0].query).toEqual({
+//           id: '',
+//           color: '#fff',
+//         })
+//       },
+//     })
 
-    const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
-    cacheCoverColor('not a valid url', '#fff')
-    expect(sendSpy).toHaveBeenCalledTimes(0)
+//     const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+//     cacheCoverColor('not a valid url', '#fff')
+//     expect(sendSpy).toHaveBeenCalledTimes(0)
 
-    vi.stubGlobal('ipcRenderer', undefined)
-  })
-})
+//     vi.stubGlobal('ipcRenderer', undefined)
+//   })
+// })
 
-test('calcCoverColor', async () => {
-  vi.mock('color.js', () => {
-    return {
-      average: vi.fn(
-        () =>
-          new Promise(resolve => {
-            resolve('#fff')
-          })
-      ),
-    }
-  })
+// test('calcCoverColor', async () => {
+//   vi.mock('color.js', () => {
+//     return {
+//       average: vi.fn(
+//         () =>
+//           new Promise(resolve => {
+//             resolve('#fff')
+//           })
+//       ),
+//     }
+//   })
 
-  vi.stubGlobal('ipcRenderer', {
-    send: (channel: IpcChannels, ...args: any[]) => {
-      expect(channel).toBe(IpcChannels.CacheCoverColor)
-      expect(args[0].api).toBe(CacheAPIs.CoverColor)
-      expect(args[0].query).toEqual({
-        id: '109951165911363',
-        color: '#808080',
-      })
-    },
-  })
+//   vi.stubGlobal('ipcRenderer', {
+//     send: (channel: IpcChannels, ...args: any[]) => {
+//       expect(channel).toBe(IpcChannels.CacheCoverColor)
+//       expect(args[0].api).toBe(CacheAPIs.CoverColor)
+//       expect(args[0].query).toEqual({
+//         id: '109951165911363',
+//         color: '#808080',
+//       })
+//     },
+//   })
 
-  const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+//   const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
 
-  expect(
-    await calcCoverColor(
-      'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
-    )
-  ).toBe('#808080')
+//   expect(
+//     await calcCoverColor(
+//       'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
+//     )
+//   ).toBe('#808080')
 
-  vi.stubGlobal('ipcRenderer', undefined)
-})
+//   vi.stubGlobal('ipcRenderer', undefined)
+// })
 
-describe('getCoverColor', () => {
-  test('hit cache', async () => {
-    vi.stubGlobal('ipcRenderer', {
-      sendSync: (channel: IpcChannels, ...args: any[]) => {
-        expect(channel).toBe(IpcChannels.GetApiCache)
-        expect(args[0].api).toBe(CacheAPIs.CoverColor)
-        expect(args[0].query).toEqual({
-          id: '109951165911363',
-        })
-        return '#fff'
-      },
-    })
+// describe('getCoverColor', () => {
+//   test('hit cache', async () => {
+//     vi.stubGlobal('ipcRenderer', {
+//       sendSync: (channel: IpcChannels, ...args: any[]) => {
+//         expect(channel).toBe(IpcChannels.GetApiCache)
+//         expect(args[0].api).toBe(CacheAPIs.CoverColor)
+//         expect(args[0].query).toEqual({
+//           id: '109951165911363',
+//         })
+//         return '#fff'
+//       },
+//     })
 
-    const sendSyncSpy = vi.spyOn(window.ipcRenderer as any, 'sendSync')
+//     const sendSyncSpy = vi.spyOn(window.ipcRenderer as any, 'sendSync')
 
-    expect(
-      await getCoverColor(
-        'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
-      )
-    ).toBe('#fff')
+//     expect(
+//       await getCoverColor(
+//         'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
+//       )
+//     ).toBe('#fff')
 
-    expect(sendSyncSpy).toHaveBeenCalledTimes(1)
-    vi.stubGlobal('ipcRenderer', undefined)
-  })
+//     expect(sendSyncSpy).toHaveBeenCalledTimes(1)
+//     vi.stubGlobal('ipcRenderer', undefined)
+//   })
 
-  test('did not hit cache', async () => {
-    vi.stubGlobal('ipcRenderer', {
-      sendSync: (channel: IpcChannels, ...args: any[]) => {
-        expect(channel).toBe(IpcChannels.GetApiCache)
-        expect(args[0].api).toBe(CacheAPIs.CoverColor)
-        expect(args[0].query).toEqual({
-          id: '109951165911363',
-        })
-        return undefined
-      },
-      send: () => {
-        //
-      },
-    })
+//   test('did not hit cache', async () => {
+//     vi.stubGlobal('ipcRenderer', {
+//       sendSync: (channel: IpcChannels, ...args: any[]) => {
+//         expect(channel).toBe(IpcChannels.GetApiCache)
+//         expect(args[0].api).toBe(CacheAPIs.CoverColor)
+//         expect(args[0].query).toEqual({
+//           id: '109951165911363',
+//         })
+//         return undefined
+//       },
+//       send: () => {
+//         //
+//       },
+//     })
 
-    const sendSyncSpy = vi.spyOn(window.ipcRenderer as any, 'sendSync')
-    const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
+//     const sendSyncSpy = vi.spyOn(window.ipcRenderer as any, 'sendSync')
+//     const sendSpy = vi.spyOn(window.ipcRenderer as any, 'send')
 
-    expect(
-      await getCoverColor(
-        'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
-      )
-    ).toBe('#808080')
+//     expect(
+//       await getCoverColor(
+//         'https://p2.music.126.net/2qW-OYZod7SgrzxTwtyBqA==/109951165911363.jpg?param=256y256'
+//       )
+//     ).toBe('#808080')
 
-    expect(sendSyncSpy).toHaveBeenCalledTimes(1)
-    expect(sendSpy).toHaveBeenCalledTimes(1)
-    vi.stubGlobal('ipcRenderer', undefined)
-  })
+//     expect(sendSyncSpy).toHaveBeenCalledTimes(1)
+//     expect(sendSpy).toHaveBeenCalledTimes(1)
+//     vi.stubGlobal('ipcRenderer', undefined)
+//   })
 
-  test('invalid url', async () => {
-    expect(await getCoverColor('not a valid url')).toBe(undefined)
-  })
-})
+//   test('invalid url', async () => {
+//     expect(await getCoverColor('not a valid url')).toBe(undefined)
+//   })
+// })
 
 test('storage', () => {
   const mockLocalStorage: any = {

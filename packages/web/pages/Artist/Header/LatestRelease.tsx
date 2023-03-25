@@ -104,11 +104,7 @@ const LatestRelease = () => {
   return (
     <>
       {!isLoadingVideos && !isLoadingAlbums && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className='mx-2.5 lg:mx-0'
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className='mx-2.5 lg:mx-0'>
           <div className='mb-3 mt-7 text-14 font-bold text-neutral-300'>
             {t`artist.latest-releases`}
           </div>

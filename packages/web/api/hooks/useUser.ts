@@ -1,10 +1,10 @@
-import { fetchUserAccount } from '@/web/api/user'
+import { dailyCheckIn, fetchUserAccount } from '@/web/api/user'
 import { UserApiNames, FetchUserAccountResponse } from '@/shared/api/User'
 import { CacheAPIs } from '@/shared/CacheAPIs'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { logout as logoutAPI } from '../auth'
-import { removeAllCookies } from '@/web/utils/cookie'
+import { logout as logoutAPI, refreshCookie } from '../auth'
+import { removeAllCookies, setCookies } from '@/web/utils/cookie'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 
 export default function useUser() {
@@ -27,6 +27,43 @@ export default function useUser() {
     },
     {
       refetchOnWindowFocus: true,
+    }
+  )
+}
+
+export function useRefreshCookie() {
+  const user = useUser()
+  return useQuery(
+    [UserApiNames.RefreshCookie],
+    async () => {
+      const result = await refreshCookie()
+      if (result?.code === 200) {
+        setCookies(result.cookie)
+      }
+      return result
+    },
+    {
+      refetchInterval: 1000 * 60 * 30,
+      enabled: !!user.data?.profile?.userId,
+    }
+  )
+}
+
+export function useDailyCheckIn() {
+  const user = useUser()
+  return useQuery(
+    [UserApiNames.DailyCheckIn],
+    async () => {
+      try {
+        Promise.allSettled([dailyCheckIn(0), dailyCheckIn(1)])
+        return 'ok'
+      } catch (e: any) {
+        return 'error'
+      }
+    },
+    {
+      refetchInterval: 1000 * 60 * 30,
+      enabled: !!user.data?.profile?.userId,
     }
   )
 }

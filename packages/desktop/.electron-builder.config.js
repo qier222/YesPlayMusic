@@ -9,7 +9,8 @@ const electronVersion = pkg.devDependencies.electron.replaceAll('^', '')
 module.exports = {
   appId: 'app.r3play',
   productName: pkg.productName,
-  copyright: 'Copyright © 2022 qier222',
+  executableName: pkg.productName,
+  copyright: 'Copyright © 2023 qier222',
   asar: true,
   directories: {
     output: 'release',
@@ -70,14 +71,14 @@ module.exports = {
   },
   linux: {
     target: [
-      {
-        target: 'deb',
-        arch: [
-          'x64',
-          // 'arm64',
-          // 'armv7l'
-        ],
-      },
+      // {
+      //   target: 'deb',
+      //   arch: [
+      //     'x64',
+      //     // 'arm64',
+      //     // 'armv7l'
+      //   ],
+      // },
       {
         target: 'AppImage',
         arch: ['x64'],
@@ -105,19 +106,13 @@ module.exports = {
   },
   files: [
     '!**/*.ts',
-    '!**/node_modules/better-sqlite3/{bin,build,deps}/**',
-    '!**/node_modules/*/{*.MD,*.md,README,readme}',
-    '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}',
-    '!**/node_modules/*.d.ts',
-    '!**/node_modules/.bin',
     '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}',
     '!.editorconfig',
     '!**/._*',
     '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}',
-    '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}',
-    '!**/{appveyor.yml,.travis.yml,circle.yml}',
-    '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json,pnpm-lock.yaml}',
+    '!**/{pnpm-lock.yaml}',
     '!**/*.{map,debug.min.js}',
+    '!**/node_modules/*',
 
     {
       from: './dist',

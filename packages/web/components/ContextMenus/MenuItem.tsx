@@ -96,6 +96,10 @@ const MenuItem = ({
                 `
               )}
             ></div>
+
+            {/* 增加三角形，避免斜着移动到submenu时意外关闭菜单 */}
+            <div className='absolute -right-8 -bottom-6 h-12 w-12 rotate-45'></div>
+            <div className='absolute -right-8 -top-6 h-12 w-12 rotate-45'></div>
           </>
         )}
       </div>

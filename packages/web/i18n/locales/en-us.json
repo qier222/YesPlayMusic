@@ -68,14 +68,15 @@
     "general": "General",
     "appearance": "Appearance",
     "player": "Player",
-    "lyrics": "Lyrics",
     "lab": "Lab",
     "general-choose-language": "Choose Language",
-    "player-youtube-unlock": "YouTube Unlock"
+    "player-youtube-unlock": "YouTube Unlock",
+    "player-find-alternative-track-on-youtube-if-not-available-on-netease": "Find alternative track on YouTube if not available on NetEase.",
+    "about": "About"
   },
   "context-menu": {
     "share": "Share",
-    "copy-netease-link": "Copy Netease Link",
+    "copy-netease-link": "Copy NetEase Link",
     "add-to-playlist": "Add to playlist",
     "add-to-liked-tracks": "Add to Liked Tracks",
     "go-to-album": "Go to album",
@@ -94,11 +95,5 @@
     "listen": "Listen",
     "latest-releases": "Latest Releases",
     "popular": "Popular"
-  },
-  "menu-bar": {
-    "discover": "DISCOVER",
-    "explore": "EXPLORE",
-    "lyrics": "LYRICS",
-    "my-music": "MY MUSIC"
   }
 }

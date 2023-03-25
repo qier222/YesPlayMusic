@@ -6,6 +6,8 @@ export enum UserApiNames {
   FetchUserArtists = 'fetchUserArtists',
   FetchListenedRecords = 'fetchListenedRecords',
   FetchUserVideos = 'fetchUserVideos',
+  RefreshCookie = 'refreshCookie',
+  DailyCheckIn = 'dailyCheckIn',
 }
 
 // 获取账号详情
@@ -129,4 +131,16 @@ export interface FetchListenedRecordsResponse {
     score: number
     song: Track
   }[]
+}
+
+// 刷新Cookie
+export interface RefreshCookieResponse {
+  code: number
+  cookie: string
+}
+
+// 每日签到
+export interface DailyCheckInResponse {
+  code: number
+  point: number
 }

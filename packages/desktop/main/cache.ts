@@ -8,6 +8,8 @@ import { CacheAPIs, CacheAPIsParams } from '@/shared/CacheAPIs'
 import { TablesStructures } from './db'
 import { FastifyReply } from 'fastify'
 
+log.info('[electron] cache.ts')
+
 class Cache {
   constructor() {
     //

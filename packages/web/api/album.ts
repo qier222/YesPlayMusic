@@ -7,9 +7,7 @@ import {
 } from '@/shared/api/Album'
 
 // 专辑详情
-export function fetchAlbum(
-  params: FetchAlbumParams
-): Promise<FetchAlbumResponse> {
+export function fetchAlbum(params: FetchAlbumParams): Promise<FetchAlbumResponse> {
   return request({
     url: '/album',
     method: 'get',
@@ -20,9 +18,7 @@ export function fetchAlbum(
   })
 }
 
-export function likeAAlbum(
-  params: LikeAAlbumParams
-): Promise<LikeAAlbumResponse> {
+export function likeAAlbum(params: LikeAAlbumParams): Promise<LikeAAlbumResponse> {
   return request({
     url: '/album/sub',
     method: 'post',

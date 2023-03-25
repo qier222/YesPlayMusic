@@ -13,9 +13,7 @@ import {
 } from '@/shared/api/Artist'
 
 // 歌手详情
-export function fetchArtist(
-  params: FetchArtistParams
-): Promise<FetchArtistResponse> {
+export function fetchArtist(params: FetchArtistParams): Promise<FetchArtistResponse> {
   return request({
     url: '/artists',
     method: 'get',
@@ -46,9 +44,7 @@ export function fetchSimilarArtists(
 }
 
 // 获取歌手MV
-export function fetchArtistMV(
-  params: FetchArtistMVParams
-): Promise<FetchArtistMVResponse> {
+export function fetchArtistMV(params: FetchArtistMVParams): Promise<FetchArtistMVResponse> {
   return request({
     url: '/artist/mv',
     method: 'get',
@@ -57,9 +53,7 @@ export function fetchArtistMV(
 }
 
 // 收藏歌手
-export function likeAArtist(
-  params: LikeAArtistParams
-): Promise<LikeAArtistResponse> {
+export function likeAArtist(params: LikeAArtistParams): Promise<LikeAArtistResponse> {
   return request({
     url: 'artist/sub',
     method: 'get',

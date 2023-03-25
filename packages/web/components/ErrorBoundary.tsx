@@ -11,9 +11,7 @@ const ErrorBoundary = ({ children }: { children: ReactNode }) => {
         >
           <div className='app-region-no-drag'>
             <p>Something went wrong:</p>
-            <pre className='mb-2 text-18 dark:text-white'>
-              {error.toString()}
-            </pre>
+            <pre className='mb-2 text-18 dark:text-white'>{error.toString()}</pre>
             <div className='max-h-72 max-w-2xl overflow-scroll whitespace-pre-line rounded-12 border border-white/10 px-3 py-2 dark:text-white/50'>
               {componentStack?.trim()}
             </div>

@@ -14,6 +14,7 @@ import { resizeImage } from '@/web/utils/common'
 import { breakpoint as bp } from '@/web/utils/const'
 import useUser from '@/web/api/hooks/useUser'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 
 const Lyrics = ({ tracksIDs }: { tracksIDs: number[] }) => {
   const { t } = useTranslation()
@@ -104,7 +105,8 @@ const PlayLikedSongsCard = () => {
   }, [likedSongsPlaylist?.playlist?.tracks, sampledTracks])
 
   return (
-    <div
+    <motion.div
+      layout
       className={cx(
         'mx-2.5 flex flex-col justify-between rounded-24 p-8 dark:bg-white/10 lg:mx-0',
         css`
@@ -141,7 +143,7 @@ const PlayLikedSongsCard = () => {
           <Icon name='forward' className='h-7 w-7 ' />
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

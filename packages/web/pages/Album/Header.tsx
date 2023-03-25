@@ -5,7 +5,7 @@ import TrackListHeader from '@/web/components/TrackListHeader'
 import player from '@/web/states/player'
 import { formatDuration } from '@/web/utils/common'
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import toast from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -68,18 +68,21 @@ const Header = () => {
     return !!userLikedAlbums?.data?.find(item => item.id === id)
   }, [params.id, userLikedAlbums?.data])
 
-  const onPlay = async (trackID: number | null = null) => {
-    if (!album?.id) {
-      toast('无法播放专辑，该专辑不存在')
-      return
-    }
-    player.playAlbum(album.id, trackID)
-  }
+  const onPlay = useCallback(
+    async (trackID: number | null = null) => {
+      if (!album?.id) {
+        toast('无法播放专辑，该专辑不存在')
+        return
+      }
+      player.playAlbum(album.id, trackID)
+    },
+    [album?.id]
+  )
 
   const likeAAlbum = useMutationLikeAAlbum()
-  const onLike = async () => {
+  const onLike = useCallback(async () => {
     likeAAlbum.mutateAsync(album?.id || Number(params.id))
-  }
+  }, [likeAAlbum.mutateAsync, album?.id, params.id])
 
   return (
     <TrackListHeader

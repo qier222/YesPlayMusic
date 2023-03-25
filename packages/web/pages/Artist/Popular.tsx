@@ -37,9 +37,7 @@ const Track = ({
         <div
           className={cx(
             'line-clamp-1 text-16 font-medium ',
-            isPlaying
-              ? 'text-brand-700'
-              : 'text-neutral-700 dark:text-neutral-200'
+            isPlaying ? 'text-brand-700' : 'text-neutral-700 dark:text-neutral-200'
           )}
         >
           {track?.name}
@@ -71,9 +69,7 @@ const Popular = () => {
 
   return (
     <div>
-      <div className='mb-4 text-12 font-medium uppercase text-neutral-300'>
-        {t`artist.popular`}
-      </div>
+      <div className='mb-4 text-12 font-medium uppercase text-neutral-300'>{t`artist.popular`}</div>
 
       <div className='grid grid-cols-3 grid-rows-3 gap-4 overflow-hidden'>
         {tracks?.slice(0, 9)?.map(t => (

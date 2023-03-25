@@ -1,9 +1,11 @@
+import cache from '../../../cache'
 import log from '@/desktop/main/log'
 import { CacheAPIs } from '@/shared/CacheAPIs'
 import { pathCase, snakeCase } from 'change-case'
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import NeteaseCloudMusicApi from 'NeteaseCloudMusicApi'
-import cache from '../../../cache'
+
+log.info('[electron] appServer/routes/netease.ts')
 
 async function netease(fastify: FastifyInstance) {
   const getHandler = (name: string, neteaseApi: (params: any) => any) => {

@@ -1,13 +1,15 @@
+import path from 'path'
+import { isProd } from '../env'
+import log from '../log'
+import appleMusic from './routes/r3play/appleMusic'
+import netease from './routes/netease/netease'
+import audio from './routes/r3play/audio'
 import fastifyCookie from '@fastify/cookie'
 import fastifyMultipart from '@fastify/multipart'
 import fastifyStatic from '@fastify/static'
 import fastify from 'fastify'
-import path from 'path'
-import { isProd } from '../env'
-import log from '../log'
-import netease from './routes/netease/netease'
-import appleMusic from './routes/r3play/appleMusic'
-import audio from './routes/r3play/audio'
+
+log.info('[electron] appServer/appServer.ts')
 
 const initAppServer = async () => {
   const server = fastify({

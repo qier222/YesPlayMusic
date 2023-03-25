@@ -13,7 +13,7 @@
     "analyze:css": "npx windicss-analysis",
     "analyze:js": "npm run build && open-cli bundle-stats-renderer.html",
     "generate:accent-color-css": "node ./scripts/generate.accent.color.css.js",
-    "api:netease": "npx NeteaseCloudMusicApi@latest"
+    "api:netease": "PORT=30001 npx NeteaseCloudMusicApi@latest"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -23,15 +23,15 @@
     "@sentry/react": "^7.29.0",
     "@sentry/tracing": "^7.29.0",
     "@tailwindcss/container-queries": "^0.1.0",
-    "@tanstack/react-query": "^4.20.9",
-    "@tanstack/react-query-devtools": "^4.20.9",
+    "@tanstack/react-query": "^4.26.1",
+    "@tanstack/react-query-devtools": "^4.26.1",
     "ahooks": "^3.7.4",
     "axios": "^1.2.2",
     "color.js": "^1.2.0",
     "colord": "^2.9.3",
     "dayjs": "^1.11.7",
     "framer-motion": "^8.1.7",
-    "hls.js": "^1.2.9",
+    "hls.js": "^1.3.5",
     "howler": "^2.2.3",
     "i18next": "^22.4.9",
     "js-cookie": "^3.0.1",
@@ -58,7 +58,7 @@
     "@types/qrcode": "^1.4.2",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
-    "@vitejs/plugin-react-swc": "^3.0.1",
+    "@vitejs/plugin-react-swc": "^3.2.0",
     "@vitest/ui": "^0.26.3",
     "autoprefixer": "^10.4.13",
     "c8": "^7.12.0",
@@ -71,8 +71,8 @@
     "rollup-plugin-visualizer": "^5.9.0",
     "tailwindcss": "^3.2.4",
     "typescript": "*",
-    "vite": "^4.0.4",
-    "vite-plugin-pwa": "^0.14.1",
+    "vite": "^4.2.0",
+    "vite-plugin-pwa": "^0.14.4",
     "vite-plugin-svg-icons": "^2.0.1",
     "vitest": "^0.26.3"
   }

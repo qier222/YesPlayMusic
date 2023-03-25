@@ -1,15 +1,11 @@
 import path from 'path'
-import {
-  app,
-  BrowserWindow,
-  Menu,
-  MenuItemConstructorOptions,
-  nativeImage,
-  Tray,
-} from 'electron'
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions, nativeImage, Tray } from 'electron'
 import { IpcChannels } from '@/shared/IpcChannels'
 import { RepeatMode } from '@/shared/playerDataTypes'
 import { appName } from './env'
+import log from './log'
+
+log.info('[electron] tray.ts')
 
 const iconDirRoot =
   process.env.NODE_ENV === 'development'

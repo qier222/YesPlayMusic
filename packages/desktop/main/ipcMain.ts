@@ -14,6 +14,8 @@ import path from 'path'
 import prettyBytes from 'pretty-bytes'
 import { db, Tables } from './db'
 
+log.info('[electron] ipcMain.ts')
+
 const on = <T extends keyof IpcChannelsParams>(
   channel: T,
   listener: (event: Electron.IpcMainEvent, params: IpcChannelsParams[T]) => void
@@ -50,9 +52,30 @@ function initWindowIpcMain(win: BrowserWindow | null) {
     win?.minimize()
   })
 
+  let isMaximized = false
+  let unMaximizeSize: { width: number; height: number } | null = null
+  let windowPosition: { x: number; y: number } | null = null
   on(IpcChannels.MaximizeOrUnmaximize, () => {
-    if (!win) return
-    win.isMaximized() ? win.unmaximize() : win.maximize()
+    if (!win) return false
+
+    if (isMaximized) {
+      if (unMaximizeSize) {
+        win.setSize(unMaximizeSize.width, unMaximizeSize.width, true)
+      }
+      if (windowPosition) {
+        win.setPosition(windowPosition.x, windowPosition.y, true)
+      }
+      win.unmaximize()
+    } else {
+      const size = win.getSize()
+      unMaximizeSize = { width: size[1], height: size[0] }
+      const position = win.getPosition()
+      windowPosition = { x: position[0], y: position[1] }
+      win.maximize()
+    }
+
+    isMaximized = !isMaximized
+    win.webContents.send(IpcChannels.IsMaximized, isMaximized)
   })
 
   on(IpcChannels.Close, () => {
@@ -66,7 +89,7 @@ function initWindowIpcMain(win: BrowserWindow | null) {
 
   handle(IpcChannels.IsMaximized, () => {
     if (!win) return
-    return win.isMaximized()
+    return isMaximized
   })
 }
 

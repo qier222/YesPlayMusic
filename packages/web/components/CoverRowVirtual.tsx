@@ -46,11 +46,7 @@ const CoverRow = ({
   return (
     <div className={className}>
       {/* Title */}
-      {title && (
-        <h4 className='mb-6 text-14 font-bold uppercase dark:text-neutral-300'>
-          {title}
-        </h4>
-      )}
+      {title && <h4 className='mb-6 text-14 font-bold uppercase dark:text-neutral-300'>{title}</h4>}
 
       <Virtuoso
         className='no-scrollbar'
@@ -66,20 +62,14 @@ const CoverRow = ({
           Footer: () => <div className='h-16'></div>,
         }}
         itemContent={(index, row) => (
-          <div
-            key={index}
-            className='grid w-full grid-cols-4 gap-4 lg:mb-6 lg:gap-6'
-          >
+          <div key={index} className='grid w-full grid-cols-4 gap-4 lg:mb-6 lg:gap-6'>
             {row.map((item: Item) => (
               <img
                 onClick={() => goTo(item.id)}
                 key={item.id}
                 alt={item.name}
                 src={resizeImage(
-                  item?.picUrl ||
-                    (item as Playlist)?.coverImgUrl ||
-                    item?.picUrl ||
-                    '',
+                  item?.picUrl || (item as Playlist)?.coverImgUrl || item?.picUrl || '',
                   'md'
                 )}
                 className='aspect-square w-full rounded-24'

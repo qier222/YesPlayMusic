@@ -1,5 +1,5 @@
 import request from '@/web/utils/request'
-import { FetchUserAccountResponse } from '@/shared/api/User'
+import { FetchUserAccountResponse, RefreshCookieResponse } from '@/shared/api/User'
 
 // 手机号登录
 interface LoginWithPhoneParams {
@@ -14,9 +14,7 @@ export interface LoginWithPhoneResponse {
   code: number
   cookie: string
 }
-export function loginWithPhone(
-  params: LoginWithPhoneParams
-): Promise<LoginWithPhoneResponse> {
+export function loginWithPhone(params: LoginWithPhoneParams): Promise<LoginWithPhoneResponse> {
   return request({
     url: '/login/cellphone',
     method: 'post',
@@ -47,9 +45,7 @@ export interface LoginWithEmailResponse extends FetchUserAccountResponse {
     userId: number
   }[]
 }
-export function loginWithEmail(
-  params: LoginWithEmailParams
-): Promise<LoginWithEmailResponse> {
+export function loginWithEmail(params: LoginWithEmailParams): Promise<LoginWithEmailResponse> {
   return request({
     url: '/login',
     method: 'post',
@@ -99,7 +95,7 @@ export function checkLoginQrCodeStatus(
 }
 
 // 刷新登录
-export function refreshCookie() {
+export function refreshCookie(): Promise<RefreshCookieResponse> {
   return request({
     url: '/login/refresh',
     method: 'post',

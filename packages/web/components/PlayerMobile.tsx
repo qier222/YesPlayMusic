@@ -8,9 +8,7 @@ import { resizeImage } from '@/web/utils/common'
 import { motion, PanInfo } from 'framer-motion'
 import { useLockBodyScroll } from 'react-use'
 import { useState } from 'react'
-import useUserLikedTracksIDs, {
-  useMutationLikeATrack,
-} from '@/web/api/hooks/useUserLikedTracksIDs'
+import useUserLikedTracksIDs, { useMutationLikeATrack } from '@/web/api/hooks/useUserLikedTracksIDs'
 import uiStates from '@/web/states/uiStates'
 import { ease } from '@/web/utils/const'
 
@@ -27,10 +25,7 @@ const LikeButton = () => {
       className='flex h-full items-center'
       onClick={() => track?.id && likeATrack.mutateAsync(track.id)}
     >
-      <Icon
-        name={isLiked ? 'heart' : 'heart-outline'}
-        className='h-7 w-7 text-white/10'
-      />
+      <Icon name={isLiked ? 'heart' : 'heart-outline'} className='h-7 w-7 text-white/10' />
     </button>
   )
 }
@@ -42,10 +37,7 @@ const PlayerMobile = () => {
   useLockBodyScroll(locked)
   const { mobileShowPlayingNext } = useSnapshot(uiStates)
 
-  const onDragEnd = (
-    event: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-  ) => {
+  const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     console.log(JSON.stringify(info))
     const { x, y } = info.offset
     const offset = 100
@@ -107,9 +99,7 @@ const PlayerMobile = () => {
           className='flex h-full flex-grow items-center '
         >
           <div className='flex-shrink-0'>
-            <div className='line-clamp-1 text-14 font-bold text-white'>
-              {track?.name}
-            </div>
+            <div className='line-clamp-1 text-14 font-bold text-white'>{track?.name}</div>
             <div className='line-clamp-1 mt-1 text-12 font-bold text-white/60'>
               {track?.ar?.map(a => a.name).join(', ')}
             </div>
@@ -143,10 +133,7 @@ const PlayerMobile = () => {
         onClick={() => player.playOrPause()}
         className='ml-2.5 flex items-center justify-center rounded-full bg-white/20 p-2.5'
       >
-        <Icon
-          name={state === 'playing' ? 'pause' : 'play'}
-          className='h-6 w-6 text-white/80'
-        />
+        <Icon name={state === 'playing' ? 'pause' : 'play'} className='h-6 w-6 text-white/80' />
       </button>
     </div>
   )

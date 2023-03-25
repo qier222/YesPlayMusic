@@ -10,9 +10,7 @@ import {
 } from '@/shared/api/Playlists'
 
 // 歌单详情
-export function fetchPlaylist(
-  params: FetchPlaylistParams
-): Promise<FetchPlaylistResponse> {
+export function fetchPlaylist(params: FetchPlaylistParams): Promise<FetchPlaylistResponse> {
   if (!params.s) params.s = 0 // 网易云默认返回8个收藏者，这里设置为0，减少返回的JSON体积
   return request({
     url: '/playlist/detail',
@@ -46,9 +44,7 @@ export function fetchDailyRecommendPlaylists(): Promise<FetchDailyRecommendPlayl
   })
 }
 
-export function likeAPlaylist(
-  params: LikeAPlaylistParams
-): Promise<LikeAPlaylistResponse> {
+export function likeAPlaylist(params: LikeAPlaylistParams): Promise<LikeAPlaylistResponse> {
   return request({
     url: '/playlist/subscribe',
     method: 'post',

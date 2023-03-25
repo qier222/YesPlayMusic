@@ -9,6 +9,8 @@ import pkg from '../../../package.json'
 import { compare, validate } from 'compare-versions'
 import os from 'os'
 
+log.info('[electron] db.ts')
+
 export const enum Tables {
   Track = 'Track',
   Album = 'Album',
@@ -108,7 +110,7 @@ class DB {
     const prodBinPaths = {
       darwin: path.resolve(app.getPath('exe'), `../../Resources/bin/better_sqlite3.node`),
       win32: path.resolve(app.getPath('exe'), `../resources/bin/better_sqlite3.node`),
-      linux: '',
+      linux: path.resolve(app.getPath('exe'), `../resources/bin/better_sqlite3.node`),
     }
     return isProd
       ? prodBinPaths[os.platform as unknown as 'darwin' | 'win32' | 'linux']

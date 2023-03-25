@@ -10,11 +10,11 @@
   "rewrites": [
     {
       "source": "/netease/:match*",
-      "destination": "http://168.138.174.244:30001/:match*"
+      "destination": "http://129.150.45.86:30001/:match*"
     },
     {
       "source": "/r3play/:match*",
-      "destination": "http://168.138.174.244:35530/:match*"
+      "destination": "http://129.150.45.86:35530/:match*"
     },
     {
       "source": "/(.*)",

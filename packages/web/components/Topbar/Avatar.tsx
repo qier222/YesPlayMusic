@@ -1,7 +1,11 @@
 import { css, cx } from '@emotion/css'
 import Icon from '../Icon'
 import { resizeImage } from '@/web/utils/common'
-import useUser, { useMutationLogout } from '@/web/api/hooks/useUser'
+import useUser, {
+  useDailyCheckIn,
+  useMutationLogout,
+  useRefreshCookie,
+} from '@/web/api/hooks/useUser'
 import uiStates from '@/web/states/uiStates'
 import { useRef, useState } from 'react'
 import BasicContextMenu from '../ContextMenus/BasicContextMenu'
@@ -14,6 +18,9 @@ const Avatar = ({ className }: { className?: string }) => {
   const { data: user } = useUser()
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  useRefreshCookie()
+  useDailyCheckIn()
 
   const avatarUrl = user?.profile?.avatarUrl
     ? resizeImage(user?.profile?.avatarUrl ?? '', 'sm')

@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/src/public/favicon.svg" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline' www.googletagmanager.com blob:;"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>R3PLAY</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/src/public/favicon.svg" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-  <meta http-equiv="Content-Security-Policy"
-    content="script-src 'self' 'unsafe-inline' www.googletagmanager.com blob:;" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>R3PLAY</title>
-</head>
-
-<body>
-  <div id="root">
-    <div id="placeholder" style="background-color: #000; position: fixed; inset: 0; border-radius: 24px;"></div>
-  </div>
-  <script type="module" src="/main.tsx"></script>
-</body>
-
+  <body>
+    <div id="root">
+      <div
+        id="placeholder"
+        style="background-color: #000; position: fixed; inset: 0; border-radius: 24px"
+      ></div>
+    </div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
 </html>

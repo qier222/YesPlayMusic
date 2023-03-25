@@ -1,6 +1,9 @@
 import { FastifyInstance } from 'fastify'
 import proxy from '@fastify/http-proxy'
 import { isDev } from '@/desktop/main/env'
+import log from '@/desktop/main/log'
+
+log.info('[electron] appServer/routes/r3play/appleMusic.ts')
 
 async function appleMusic(fastify: FastifyInstance) {
   fastify.register(proxy, {

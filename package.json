@@ -26,7 +26,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.31.0",
     "prettier": "^2.8.1",
-    "turbo": "^1.6.3",
+    "turbo": "^1.8.3",
     "typescript": "^4.9.5",
     "tsx": "^3.12.1",
     "prettier-plugin-tailwindcss": "^0.2.1"

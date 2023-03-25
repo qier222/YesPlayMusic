@@ -43,13 +43,10 @@ const useScroll = (
 
       const arrivedState: ArrivedState = {
         left: target.scrollLeft <= 0 + (offset?.left || 0),
-        right:
-          target.scrollLeft + target.clientWidth >=
-          target.scrollWidth - (offset?.right || 0),
+        right: target.scrollLeft + target.clientWidth >= target.scrollWidth - (offset?.right || 0),
         top: target.scrollTop <= 0 + (offset?.top || 0),
         bottom:
-          target.scrollTop + target.clientHeight >=
-          target.scrollHeight - (offset?.bottom || 0),
+          target.scrollTop + target.clientHeight >= target.scrollHeight - (offset?.bottom || 0),
       }
 
       setScroll({
@@ -59,9 +56,7 @@ const useScroll = (
       })
     }
 
-    const readHandleScroll = throttle
-      ? lodashThrottle(handleScroll, throttle)
-      : handleScroll
+    const readHandleScroll = throttle ? lodashThrottle(handleScroll, throttle) : handleScroll
 
     const element = 'current' in ref ? ref?.current : ref
     element?.addEventListener('scroll', readHandleScroll)

@@ -13,7 +13,7 @@ function Player() {
 }
 
 function FindTrackOnYouTube() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const { enableFindTrackOnYouTube, httpProxyForYouTube } = useSnapshot(settings)
 
@@ -21,12 +21,18 @@ function FindTrackOnYouTube() {
     <div>
       <BlockTitle>{t`settings.player-youtube-unlock`}</BlockTitle>
       <BlockDescription>
-        Find alternative track on YouTube if not available on NetEase.
+        {t`settings.player-find-alternative-track-on-youtube-if-not-available-on-netease`}
+        {i18n.language === 'zh-CN' && (
+          <>
+            <br />
+            此功能需要开启 Clash for Windows 的 TUN Mode 或 ClashX Pro 的增强模式。
+          </>
+        )}
       </BlockDescription>
 
       {/* Switch */}
       <Option>
-        <OptionText>Enable YouTube Unlock </OptionText>
+        <OptionText>Enable YouTube Unlock</OptionText>
         <Switch
           enabled={enableFindTrackOnYouTube}
           onChange={value => (settings.enableFindTrackOnYouTube = value)}
