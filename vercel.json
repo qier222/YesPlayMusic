@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://service-7pv82q78-1306193308.gz.apigw.tencentcs.com/release/:match*"
+    }
+  ]
+}
