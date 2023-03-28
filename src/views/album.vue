@@ -97,7 +97,7 @@
         {{ album.publishTime | formatDate('MMMM D, YYYY') }}
       </div>
       <div v-if="album.company" class="copyright">
-        © {{ album.company }}
+        {{ album.company }}
       </div>
     </div>
     <div v-if="filteredMoreAlbums.length !== 0" class="more-by">
