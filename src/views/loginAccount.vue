@@ -275,7 +275,7 @@ export default {
             clearInterval(this.qrCodeCheckInterval);
             this.qrCodeInformation = '登录成功，请稍等...';
             result.code = 200;
-            result.cookie = result.cookie.replace('HTTPOnly', '');
+            result.cookie = result.cookie.replaceAll(' HTTPOnly', '');
             this.handleLoginResponse(result);
           }
         });
