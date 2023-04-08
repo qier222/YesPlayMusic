@@ -23,7 +23,11 @@ const service = axios.create({
 service.interceptors.request.use(function (config) {
   if (!config.params) config.params = {};
   if (baseURL.length) {
-    if (baseURL[0] !== '/' && !process.env.IS_ELECTRON) {
+    if (
+      baseURL[0] !== '/' &&
+      !process.env.IS_ELECTRON &&
+      getCookie('MUSIC_U') !== null
+    ) {
       config.params.cookie = `MUSIC_U=${getCookie('MUSIC_U')};`;
     }
   } else {
