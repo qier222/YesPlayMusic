@@ -338,6 +338,10 @@ export default class {
       // code 3: MEDIA_ERR_DECODE
       if (errCode === 3) {
         this._playNextTrack(this._isPersonalFM);
+      } else if (errCode === 4) {
+        // code 4: MEDIA_ERR_SRC_NOT_SUPPORTED
+        store.dispatch('showToast', `无法播放: 不支持的音频格式`);
+        this._playNextTrack(this._isPersonalFM);
       } else {
         const t = this.progress;
         this._replaceCurrentTrackAudio(this.currentTrack, false, false).then(
