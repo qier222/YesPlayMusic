@@ -1,13 +1,17 @@
 import settings from '@/web/states/settings'
-import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { useSnapshot } from 'valtio'
-import { BlockDescription, BlockTitle, Button, Option, OptionText, Switch } from './Controls'
+import { BlockDescription, BlockTitle, Option, OptionText, Switch, Input } from './Controls'
+import Slider from '@/web/components/Slider'
+import { cx } from '@emotion/css'
+import player from '@/web/states/player'
+import { ceil } from 'lodash'
 
 function Player() {
   return (
-    <div>
+    <div className={cx(`space-y-7`)}>
       <FindTrackOnYouTube />
+      <VolumeSlider />
     </div>
   )
 }
@@ -29,7 +33,6 @@ function FindTrackOnYouTube() {
           </>
         )}
       </BlockDescription>
-
       {/* Switch */}
       <Option>
         <OptionText>Enable YouTube Unlock</OptionText>
@@ -52,6 +55,33 @@ function FindTrackOnYouTube() {
           Edit
         </Button>
       </Option> */}
+    </div>
+  )
+}
+
+function VolumeSlider() {
+  const { t } = useTranslation()
+  const { volume } = useSnapshot(player)
+  const onChange = (volume: number) => {
+    player.volume = volume
+  }
+  return (
+    <div>
+      <BlockTitle>{t(`settings.volume-control`)}</BlockTitle>
+      <div className='pt-2 pr-1'>
+        <Slider
+          value={volume}
+          min={0}
+          max={1}
+          onChange={onChange}
+          alwaysShowTrack
+          alwaysShowThumb
+        />
+      </div>
+      <div className='mt-1 flex justify-between text-14 font-bold text-neutral-100'>
+        <span>0</span>
+        <span>{ceil(volume * 100)}</span>
+      </div>
     </div>
   )
 }
