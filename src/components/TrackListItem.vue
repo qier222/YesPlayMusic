@@ -21,7 +21,7 @@
           style="height: 14px; width: 14px"
         ></svg-icon>
       </button>
-      <span v-show="(!focus || !playable) && !isPlaying">{{ track.no }}</span>
+      <span v-show="(!focus || !playable) && !isPlaying">{{ trackNo }}</span>
       <button v-show="isPlaying">
         <svg-icon
           icon-class="volume"
@@ -96,6 +96,7 @@ export default {
 
   props: {
     trackProp: Object,
+    trackNo: Number,
     highlightPlayingTrack: {
       type: Boolean,
       default: true,

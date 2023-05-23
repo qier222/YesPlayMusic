@@ -187,6 +187,7 @@ import '@/assets/css/slider.css';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import VueSlider from 'vue-slider-component';
 import { goToListSource, hasListSource } from '@/utils/playList';
+import { formatTrackTime } from '@/utils/common';
 
 export default {
   name: 'Player',
@@ -239,10 +240,7 @@ export default {
         : this.$router.push({ name: 'next' });
     },
     formatTrackTime(value) {
-      if (!value) return '';
-      let min = ~~((value / 60) % 60);
-      let sec = (~~(value % 60)).toString().padStart(2, '0');
-      return `${min}:${sec}`;
+      return formatTrackTime(value);
     },
     hasList() {
       return hasListSource();
