@@ -129,7 +129,7 @@ export default {
     language: '語言',
     lyric: '歌詞',
     others: '其他',
-    customization: '自定義',
+    customization: '自訂',
     MusicGenrePreference: {
       text: '音樂語種偏好',
       none: '無偏好',
