@@ -241,7 +241,9 @@ export default {
   computed: {
     ...mapState(['player']),
     albums() {
-      return this.albumsData.filter(a => a.type === '专辑');
+      return this.albumsData.filter(
+        a => a.type === '专辑' || a.type === '精选集'
+      );
     },
     eps() {
       return this.albumsData.filter(a =>
