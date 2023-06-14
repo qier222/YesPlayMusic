@@ -1,1 +1,9 @@
 
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://ncmapi.xyr.icu/:match*"
+    }
+  ]
+}
