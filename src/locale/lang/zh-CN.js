@@ -131,6 +131,17 @@ export default {
     settings: '设置',
     logout: '登出',
     language: '语言',
+    lyric: '歌词',
+    others: '其他',
+    customization: '自定义',
+    MusicGenrePreference: {
+      text: '音乐语种偏好',
+      none: '无偏好',
+      mandarin: '华语',
+      western: '欧美',
+      korean: '韩语',
+      japanese: '日语',
+    },
     musicQuality: {
       text: '音质选择',
       low: '普通',

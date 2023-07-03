@@ -130,6 +130,17 @@ export default {
     settings: 'Settings',
     logout: 'LOGOUT',
     language: 'Languages',
+    lyric: 'Lyric',
+    others: 'Others',
+    customization: 'Customization',
+    MusicGenrePreference: {
+      text: 'Music Language Preference',
+      none: 'No preferences',
+      mandarin: 'Mandarin',
+      western: 'Europe & America',
+      korean: 'Korean',
+      japanese: 'Japanese',
+    },
     musicQuality: {
       text: 'Music Quality',
       low: 'Low',
