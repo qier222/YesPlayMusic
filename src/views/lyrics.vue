@@ -202,7 +202,11 @@
                 <svg-icon icon-class="shuffle" />
               </button-icon>
               <button-icon
-                v-show="isShowLyricTypeSwitch && lyricType === 'translation'"
+                v-show="
+                  isShowLyricTypeSwitch &&
+                  $store.state.settings.showLyricsTranslation &&
+                  lyricType === 'translation'
+                "
                 :title="$t('player.translationLyric')"
                 @click.native="switchLyricType"
               >
@@ -210,7 +214,9 @@
               </button-icon>
               <button-icon
                 v-show="
-                  isShowLyricTypeSwitch && lyricType === 'romaPronunciation'
+                  isShowLyricTypeSwitch &&
+                  $store.state.settings.showLyricsTranslation &&
+                  lyricType === 'romaPronunciation'
                 "
                 :title="$t('player.PronunciationLyric')"
                 @click.native="switchLyricType"
