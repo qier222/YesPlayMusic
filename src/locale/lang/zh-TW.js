@@ -110,6 +110,8 @@ export default {
     pause: '暫停',
     mute: '靜音',
     nextUp: '播放清單',
+    translationLyric: '歌詞(譯)',
+    PronunciationLyric: '歌詞(音)',
   },
   modal: {
     close: '關閉',

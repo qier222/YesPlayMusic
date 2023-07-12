@@ -113,6 +113,8 @@ export default {
     pause: 'Pause',
     mute: 'Mute',
     nextUp: 'Next Up',
+    translationLyric: 'lyric (trans)',
+    PronunciationLyric: 'lyric (pronounce)',
   },
   modal: {
     close: 'Close',

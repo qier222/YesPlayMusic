@@ -114,6 +114,8 @@ export default {
     pause: '暂停',
     mute: '静音',
     nextUp: '播放列表',
+    translationLyric: '歌词(译)',
+    PronunciationLyric: '歌词(音)',
   },
   modal: {
     close: '关闭',
