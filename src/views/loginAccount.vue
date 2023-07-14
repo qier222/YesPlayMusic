@@ -261,6 +261,8 @@ export default {
       });
     },
     checkQrCodeLogin() {
+      // 清除二维码检测
+      clearInterval(this.qrCodeCheckInterval);
       this.qrCodeCheckInterval = setInterval(() => {
         if (this.qrCodeKey === '') return;
         loginQrCodeCheck(this.qrCodeKey).then(result => {
