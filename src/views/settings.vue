@@ -58,20 +58,32 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> 音乐语种偏好 </div>
+          <div class="title">
+            {{ $t('settings.MusicGenrePreference.text') }}
+          </div>
         </div>
         <div class="right">
           <select v-model="musicLanguage">
-            <option value="all">无偏好</option>
-            <option value="zh">华语</option>
-            <option value="ea">欧美</option>
-            <option value="jp">日语</option>
-            <option value="kr">韩语</option>
+            <option value="all">{{
+              $t('settings.MusicGenrePreference.none')
+            }}</option>
+            <option value="zh">{{
+              $t('settings.MusicGenrePreference.mandarin')
+            }}</option>
+            <option value="ea">{{
+              $t('settings.MusicGenrePreference.western')
+            }}</option>
+            <option value="jp">{{
+              $t('settings.MusicGenrePreference.japanese')
+            }}</option>
+            <option value="kr">{{
+              $t('settings.MusicGenrePreference.korean')
+            }}</option>
           </select>
         </div>
       </div>
 
-      <h3>音质</h3>
+      <!-- <h3>音质</h3> -->
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.musicQuality.text') }} </div>
@@ -166,7 +178,7 @@
         </div>
       </div>
 
-      <h3>歌词</h3>
+      <h3>{{ $t('settings.lyric') }}</h3>
       <div class="item">
         <div class="left">
           <div class="title">{{ $t('settings.showLyricsTranslation') }}</div>
@@ -408,7 +420,7 @@
         </div>
       </section>
 
-      <h3>第三方</h3>
+      <h3>{{ $t('settings.customization') }}</h3>
       <div class="item">
         <div class="left">
           <div class="title">
@@ -445,7 +457,7 @@
         </div>
       </div>
 
-      <h3>其他</h3>
+      <h3>{{ $t('settings.others') }}</h3>
       <div v-if="isElectron && !isMac" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.closeAppOption.text') }} </div>
