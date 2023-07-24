@@ -169,6 +169,14 @@ module.exports = {
           'jsbi',
           path.join(__dirname, 'node_modules/jsbi/dist/jsbi-cjs.js')
         );
+        config.module
+          .rule('NeteaseCloudMusicApi')
+          .test(/\.js$/)
+          .include.add(/NeteaseCloudMusicApi|quickjs-emscripten/)
+          .end()
+          .use('babel-loader')
+          .loader('babel-loader')
+          .end();
       },
       // 渲染线程的配置文件
       chainWebpackRendererProcess: config => {
