@@ -108,6 +108,8 @@ export default {
     pause: 'Durdur',
     mute: 'Sesi kapat',
     nextUp: 'Sıradaki',
+    translationLyric: 'şarkı sözleri (çeviri)',
+    PronunciationLyric: 'şarkı sözleri (çeviri)',
   },
   modal: {
     close: 'Kapat',
