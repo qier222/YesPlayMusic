@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-18.04]
+        os: [macos-latest, windows-latest, ubuntu-22.04]
 
     steps:
       - name: Check out Git repository
@@ -36,7 +36,7 @@ jobs:
         run: |
           sudo apt-get update &&
           sudo apt-get install --no-install-recommends -y rpm &&
-          sudo apt-get install --no-install-recommends -y bsdtar &&
+          sudo apt-get install --no-install-recommends -y libarchive-tools &&
           sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
       - name: Install Snapcraft (on Ubuntu)
