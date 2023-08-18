@@ -936,6 +936,7 @@ export default class {
   addTrackToPlayNext(trackID, playNow = false) {
     this._playNextList.push(trackID);
     if (playNow) {
+      if (!this._enabled) this._enabled = true;
       this.playNextTrack();
     }
   }
