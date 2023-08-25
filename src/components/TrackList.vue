@@ -65,6 +65,7 @@
         v-for="(track, index) in tracks"
         :key="itemKey === 'id' ? track.id : `${track.id}${index}`"
         :track-prop="track"
+        :track-no="index + 1"
         :highlight-playing-track="highlightPlayingTrack"
         @dblclick.native="playThisList(track.id || track.songId)"
         @click.right.native="openMenu($event, track, index)"

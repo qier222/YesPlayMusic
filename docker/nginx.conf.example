@@ -1,0 +1,28 @@
+server {
+  gzip on;
+  listen       80;
+  listen  [::]:80;
+  server_name  localhost;
+
+  location / {
+    root      /usr/share/nginx/html;
+    index     index.html;
+    try_files $uri $uri/ /index.html;
+  }
+
+  location @rewrites {
+    rewrite ^(.*)$ /index.html last;
+  }
+
+  location /api/ {
+    proxy_buffers           16 32k;
+    proxy_buffer_size       128k;
+    proxy_busy_buffers_size 128k;
+    proxy_set_header        Host $host;
+    proxy_set_header        X-Real-IP $remote_addr;
+    proxy_set_header        X-Forwarded-For $remote_addr;
+    proxy_set_header        X-Forwarded-Host $remote_addr;
+    proxy_set_header        X-NginX-Proxy true;
+    proxy_pass              http://localhost:3000/;
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "yesplaymusic",
-  "version": "0.4.5",
+  "version": "0.4.7",
   "private": true,
   "description": "A third party music player for Netease Music",
   "author": "qier222<qier222@outlook.com>",
@@ -22,9 +22,12 @@
     "netease_api:run": "npx NeteaseCloudMusicApi"
   },
   "main": "background.js",
+  "engines": {
+    "node": "14 || 16"
+  },
   "dependencies": {
-    "@unblockneteasemusic/rust-napi": "^0.3.0-pre.1",
-    "NeteaseCloudMusicApi": "^4.5.2",
+    "@unblockneteasemusic/rust-napi": "^0.4.0",
+    "NeteaseCloudMusicApi": "^4.8.7",
     "axios": "^0.26.1",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",
@@ -59,7 +62,6 @@
     "nprogress": "^0.2.0",
     "pac-proxy-agent": "^4.1.0",
     "plyr": "^3.6.2",
-    "prettier": "2.5.1",
     "qrcode": "^1.4.4",
     "register-service-worker": "^1.7.1",
     "svg-sprite-loader": "^6.0.11",
@@ -83,6 +85,7 @@
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
+    "prettier": "2.5.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.9.0",

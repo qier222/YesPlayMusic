@@ -18,6 +18,11 @@
 
 [![Library][library-screenshot]](https://music.qier222.com)
 
+
+## 全新版本
+全新2.0 Alpha测试版已发布，欢迎前往 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载。
+当前版本将会进入维护模式，除重大bug修复外，不会再更新新功能。
+
 ## ✨ 特性
 
 - ✅ 使用 Vue.js 全家桶开发

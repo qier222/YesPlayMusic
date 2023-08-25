@@ -110,6 +110,8 @@ export default {
     pause: '暫停',
     mute: '靜音',
     nextUp: '播放清單',
+    translationLyric: '歌詞(譯)',
+    PronunciationLyric: '歌詞(音)',
   },
   modal: {
     close: '關閉',
@@ -127,6 +129,17 @@ export default {
     settings: '設定',
     logout: '登出',
     language: '語言',
+    lyric: '歌詞',
+    others: '其他',
+    customization: '自訂',
+    MusicGenrePreference: {
+      text: '音樂語種偏好',
+      none: '無偏好',
+      mandarin: '華語',
+      western: '歐美',
+      korean: '韓語',
+      japanese: '日語',
+    },
     musicQuality: {
       text: '音質選擇',
       low: '普通',

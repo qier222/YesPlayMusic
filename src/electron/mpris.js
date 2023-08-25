@@ -37,6 +37,7 @@ export function createMpris(window) {
       'xesam:title': metadata.title,
       'xesam:album': metadata.album,
       'xesam:artist': metadata.artist.split(','),
+      'xesam:url': metadata.url,
     };
   });
 

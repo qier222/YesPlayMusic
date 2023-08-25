@@ -146,7 +146,7 @@ export default class {
   }
   set volume(volume) {
     this._volume = volume;
-    Howler.volume(volume);
+    this._howler?.volume(volume);
   }
   get list() {
     return this.shuffle ? this._shuffledList : this._list;
@@ -207,7 +207,7 @@ export default class {
 
   _init() {
     this._loadSelfFromLocalStorage();
-    Howler.volume(this.volume);
+    this._howler?.volume(this.volume);
 
     if (this._enabled) {
       // 恢复当前播放歌曲
@@ -338,6 +338,10 @@ export default class {
       // code 3: MEDIA_ERR_DECODE
       if (errCode === 3) {
         this._playNextTrack(this._isPersonalFM);
+      } else if (errCode === 4) {
+        // code 4: MEDIA_ERR_SRC_NOT_SUPPORTED
+        store.dispatch('showToast', `无法播放: 不支持的音频格式`);
+        this._playNextTrack(this._isPersonalFM);
       } else {
         const t = this.progress;
         this._replaceCurrentTrackAudio(this.currentTrack, false, false).then(
@@ -432,12 +436,11 @@ export default class {
       }
     };
 
-    /** @type {import("@unblockneteasemusic/rust-napi").RetrievedSongInfo | null} */
     const retrieveSongInfo = await ipcRenderer.invoke(
       'unblock-music',
       store.state.settings.unmSource,
       track,
-      /** @type {import("@unblockneteasemusic/rust-napi").Context} */ ({
+      {
         enableFlac: store.state.settings.unmEnableFlac || null,
         proxyUri: store.state.settings.unmProxyUri || null,
         searchMode: determineSearchMode(store.state.settings.unmSearchMode),
@@ -446,7 +449,7 @@ export default class {
           'qq:cookie': store.state.settings.unmQQCookie || null,
           'ytdl:exe': store.state.settings.unmYtDlExe || null,
         },
-      })
+      }
     );
 
     if (store.state.settings.automaticallyCacheSongs && retrieveSongInfo?.url) {
@@ -612,6 +615,7 @@ export default class {
       ],
       length: this.currentTrackDuration,
       trackId: this.current,
+      url: '/trackid/' + track.id,
     };
 
     navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
