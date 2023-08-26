@@ -3,7 +3,7 @@ import { getArtist } from '@/api/artist';
 import { trackScrobble, trackUpdateNowPlaying } from '@/api/lastfm';
 import { fmTrash, personalFM } from '@/api/others';
 import { getPlaylistDetail, intelligencePlaylist } from '@/api/playlist';
-import { getMP3, getTrackDetail, scrobble } from '@/api/track';
+import { getLyric, getMP3, getTrackDetail, scrobble } from '@/api/track';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { cacheTrackSource, getTrackSource } from '@/utils/db';
@@ -201,6 +201,9 @@ export default class {
   set progress(value) {
     if (this._howler) {
       this._howler.seek(value);
+      if (isCreateMpris) {
+        ipcRenderer?.send('seeked', this._howler.seek());
+      }
     }
   }
   get isCurrentTrackLiked() {
@@ -622,8 +625,29 @@ export default class {
 
     navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
     if (isCreateMpris) {
-      ipcRenderer?.send('metadata', metadata);
+      this._updateMprisState(track, metadata);
     }
+  }
+  // OSDLyrics 会检测 Mpris 状态并寻找对应歌词文件，所以要在更新 Mpris 状态之前保证歌词下载完成
+  async _updateMprisState(track, metadata) {
+    if (!store.state.settings.enableOsdlyricsSupport) {
+      return ipcRenderer?.send('metadata', metadata);
+    }
+
+    let lyricContent = await getLyric(track.id);
+
+    if (!lyricContent.lrc || !lyricContent.lrc.lyric) {
+      return ipcRenderer?.send('metadata', metadata);
+    }
+
+    ipcRenderer.send('sendLyrics', {
+      track,
+      lyrics: lyricContent.lrc.lyric,
+    });
+
+    ipcRenderer.on('saveLyricFinished', () => {
+      ipcRenderer?.send('metadata', metadata);
+    });
   }
   _updateMediaSessionPositionState() {
     if ('mediaSession' in navigator === false) {
@@ -822,11 +846,14 @@ export default class {
       this.play();
     }
   }
-  seek(time = null) {
+  seek(time = null, sendMpris = true) {
+    if (isCreateMpris && sendMpris && time) {
+      ipcRenderer?.send('seeked', time);
+    }
     if (time !== null) {
       this._howler?.seek(time);
       if (this._playing)
-        this._playDiscordPresence(this._currentTrack, this.seek());
+        this._playDiscordPresence(this._currentTrack, this.seek(null, false));
     }
     return this._howler === null ? 0 : this._howler.seek();
   }

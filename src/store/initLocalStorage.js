@@ -23,6 +23,7 @@ let localStorage = {
     nyancatStyle: false,
     showLyricsTranslation: true,
     lyricsBackground: true,
+    enableOsdlyricsSupport: false,
     closeAppOption: 'ask',
     enableDiscordRichPresence: false,
     enableGlobalShortcut: true,

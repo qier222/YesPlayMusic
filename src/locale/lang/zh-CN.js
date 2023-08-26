@@ -194,6 +194,12 @@ export default {
       exit: '退出',
       minimizeToTray: '最小化到托盘',
     },
+    enableOsdlyricsSupport: {
+      title: '桌面歌词支持',
+      desc1:
+        '仅 Linux 下生效。启用后会将歌词文件下载到本地，并在开启播放器时尝试拉起 OSDLyrics。',
+      desc2: '请在开启之前确保您已经正确安装了 OSDLyrics。',
+    },
     unm: {
       enable: '启用',
       audioSource: {
