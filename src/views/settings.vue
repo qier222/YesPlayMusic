@@ -261,7 +261,9 @@
             {{ $t('settings.enableOsdlyricsSupport.title') }}
           </div>
           <div class="description">
-            {{ $t('settings.enableOsdlyricsSupport.desc') }}
+            {{ $t('settings.enableOsdlyricsSupport.desc1') }}
+            <br />
+            {{ $t('settings.enableOsdlyricsSupport.desc2') }}
           </div>
         </div>
         <div class="right">

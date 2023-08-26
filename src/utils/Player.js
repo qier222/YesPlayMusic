@@ -629,16 +629,17 @@ export default class {
       return ipcRenderer?.send('metadata', metadata);
     }
 
-    let lyricName = track.ar.map(ar => ar.name).join(', ') + '-' + track.name;
     let lyricContent = await getLyric(track.id);
 
-    if (!lyricContent.lrc.lyric) {
+    if (!lyricContent.lrc || !lyricContent.lrc.lyric) {
       return ipcRenderer?.send('metadata', metadata);
     }
-    ipcRenderer.send('saveLyric', {
-      name: lyricName,
-      lyric: lyricContent.lrc.lyric,
+
+    ipcRenderer.send('sendLyrics', {
+      track,
+      lyrics: lyricContent.lrc.lyric,
     });
+
     ipcRenderer.on('saveLyricFinished', () => {
       ipcRenderer?.send('metadata', metadata);
     });

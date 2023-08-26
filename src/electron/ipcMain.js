@@ -5,8 +5,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import shortcuts from '@/utils/shortcuts';
 import { createMenu } from './menu';
 import { isCreateTray, isMac } from '@/utils/platform';
-import { resolve } from 'path';
-import { mkdir, rm, writeFile } from 'fs/promises';
 
 const clc = require('cli-color');
 const log = text => {
@@ -133,43 +131,6 @@ function parseSourceStringToList(executor, sourceString) {
 
       return isAvailable;
     });
-}
-
-/**
- * Write lyrics into local file
- *
- * @param {string} name
- * @param {string} content
- */
-async function writeLyric(name, content) {
-  name = name.replaceAll('/', '⁄');
-
-  const lyricsDir = resolve(process.env.HOME, '.lyrics');
-  const destination = resolve(lyricsDir, name + '.lrc');
-
-  try {
-    await writeFile(destination, content);
-  } catch (e) {
-    switch (e.code) {
-      // ENOENT (no such file or directory)，
-      case 'ENOENT':
-        await mkdir(lyricsDir, { recursive: true });
-
-        // Try again. Should be succeed.
-        return await writeLyric(name, content);
-      // ENOTDIR (not a directory), 指 TMPDIR 有問題。
-      case 'ENOTDIR':
-        // 砍掉 TMPDIR「檔案」。
-        await rm(lyricsDir);
-
-        // 預期接下來的流程是 ENOENT 建立資料夾的流程。
-        return await writeLyric(name, content);
-      default:
-        log(e);
-        break;
-    }
-    log(e);
-  }
 }
 
 export function initIpcMain(win, store, trayEventEmitter) {
@@ -346,12 +307,6 @@ export function initIpcMain(win, store, trayEventEmitter) {
     createMenu(win, store);
     globalShortcut.unregisterAll();
     registerGlobalShortcut(win, store);
-  });
-
-  ipcMain.on('saveLyric', async (_, { name, lyric }) => {
-    await writeLyric(name, lyric);
-
-    return win.webContents.send('saveLyricFinished');
   });
 
   if (isCreateTray) {

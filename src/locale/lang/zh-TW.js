@@ -193,7 +193,9 @@ export default {
     },
     enableOsdlyricsSupport: {
       title: '桌面歌詞支援',
-      desc: '只在 Linux 環境下生效。啟用後會將歌詞檔案下載至本機位置，並在開啟播放器時嘗試連帶啟動 OSDLyrics。',
+      desc1:
+        '只在 Linux 環境下生效。啟用後會將歌詞檔案下載至本機位置，並在開啟播放器時嘗試連帶啟動 OSDLyrics。',
+      desc2: '請在開啟之前確保您已經正確安裝了 OSDLyrics。',
     },
     unm: {
       enable: '啟用',
