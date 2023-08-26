@@ -1515,6 +1515,7 @@ h3 {
 
 select {
   min-width: 192px;
+  max-width: 600px;
   font-weight: 600;
   border: none;
   padding: 8px 12px 8px 12px;
