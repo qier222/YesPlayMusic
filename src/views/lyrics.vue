@@ -566,7 +566,7 @@ export default {
     },
     setLyricsInterval() {
       this.lyricsInterval = setInterval(() => {
-        const progress = this.player.seek() ?? 0;
+        const progress = this.player.seek(null, false) ?? 0;
         let oldHighlightLyricIndex = this.highlightLyricIndex;
         this.highlightLyricIndex = this.lyric.findIndex((l, index) => {
           const nextLyric = this.lyric[index + 1];

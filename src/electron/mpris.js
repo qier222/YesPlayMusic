@@ -44,6 +44,11 @@ export function createMpris(window) {
 
   ipcMain.on('playerCurrentTrackTime', (e, position) => {
     player.getPosition = () => position * 1000 * 1000;
+    player.seeked(position * 1000 * 1000);
+  });
+
+  ipcMain.on('seeked', (e, position) => {
+    player.seeked(position * 1000 * 1000);
   });
 
   ipcMain.on('switchRepeatMode', (e, mode) => {
