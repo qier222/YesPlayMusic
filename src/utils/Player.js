@@ -14,6 +14,8 @@ import { decode as base642Buffer } from '@/utils/base64';
 
 const PLAY_PAUSE_FADE_DURATION = 200;
 
+const INDEX_IN_PLAY_NEXT = -1;
+
 /**
  * @readonly
  * @enum {string}
@@ -255,8 +257,8 @@ export default class {
     const next = this._reversed ? this.current - 1 : this.current + 1;
 
     if (this._playNextList.length > 0) {
-      let trackID = this._playNextList.shift();
-      return [trackID, this.current];
+      let trackID = this._playNextList[0];
+      return [trackID, INDEX_IN_PLAY_NEXT];
     }
 
     // 循环模式开启，则重新播放当前模式下的相对的下一首
@@ -704,7 +706,12 @@ export default class {
       this._setPlaying(false);
       return false;
     }
-    this.current = index;
+    let next = index;
+    if (index === INDEX_IN_PLAY_NEXT) {
+      this._playNextList.shift();
+      next = this.current;
+    }
+    this.current = next;
     this._replaceCurrentTrack(trackID);
     return true;
   }
