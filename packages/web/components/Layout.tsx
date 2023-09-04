@@ -33,7 +33,7 @@ const Layout = () => {
       {showPlayer && <Player />}
 
       {window.env?.isMac && (
-        <div className='fixed top-6 left-6 z-30 translate-y-0.5'>
+        <div className='fixed left-6 top-6 z-30 translate-y-0.5'>
           <TrafficLight />
         </div>
       )}

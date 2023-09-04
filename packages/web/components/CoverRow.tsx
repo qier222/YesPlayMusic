@@ -56,7 +56,7 @@ const Album = ({
         onMouseOver={prefetch}
       />
       {title && (
-        <div className='line-clamp-2 mt-2 text-14 font-medium text-neutral-300'>{title}</div>
+        <div className='mt-2 line-clamp-2 text-14 font-medium text-neutral-300'>{title}</div>
       )}
       {subtitle && <div className='mt-1 text-14 font-medium text-neutral-700'>{subtitle}</div>}
     </div>

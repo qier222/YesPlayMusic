@@ -51,7 +51,7 @@ const useHoverLightSpot = (
       <motion.div
         initial={{ opacity: 0 }}
         className={cx(
-          'pointer-events-none absolute top-0 left-0 rounded-full transition-opacity duration-400',
+          'pointer-events-none absolute left-0 top-0 rounded-full transition-opacity duration-400',
           css`
             filter: blur(16px);
             background: rgb(255, 255, 255);

@@ -4,7 +4,7 @@ import zhCN from './locales/zh-cn.json'
 import enUS from './locales/en-us.json'
 
 export const supportedLanguages = ['zh-CN', 'en-US'] as const
-export type SupportedLanguage = typeof supportedLanguages[number]
+export type SupportedLanguage = (typeof supportedLanguages)[number]
 
 declare module 'react-i18next' {
   interface CustomTypeOptions {

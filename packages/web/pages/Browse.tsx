@@ -49,7 +49,7 @@ const categories = [
   { id: 'charts', name: 'Charts', component: <Recommend /> },
 ]
 const categoriesKeys = categories.map(c => c.id)
-type Key = typeof categoriesKeys[number]
+type Key = (typeof categoriesKeys)[number]
 
 const Browse = () => {
   const [active, setActive] = useState<Key>('recommend')
@@ -60,7 +60,7 @@ const Browse = () => {
         {/* Topbar background */}
         <div
           className={cx(
-            'pointer-events-none fixed top-0 left-10 z-10 hidden lg:block',
+            'pointer-events-none fixed left-10 top-0 z-10 hidden lg:block',
             css`
               height: 230px;
             `

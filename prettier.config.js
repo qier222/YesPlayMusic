@@ -14,5 +14,5 @@ module.exports = {
 
   // Tailwind CSS
   plugins: [require('prettier-plugin-tailwindcss')],
-  tailwindConfig: './packages/web/tailwind.config.js',
+  tailwindConfig: './packages/web/tailwind.config.ts',
 }

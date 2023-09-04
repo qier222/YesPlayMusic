@@ -39,7 +39,7 @@ export function Select<T extends string>({
       <select
         onChange={e => onChange(e.target.value as T)}
         value={value}
-        className='h-full w-full appearance-none bg-transparent py-1 pr-7 pl-3 focus:outline-none'
+        className='h-full w-full appearance-none bg-transparent py-1 pl-3 pr-7 focus:outline-none'
       >
         {options.map(option => (
           <option key={option.value} value={option.value}>
@@ -71,7 +71,7 @@ export function Input({
       <div className='mb-1 text-14 font-medium text-white/30'>Host</div>
       <div className='inline-block rounded-md bg-neutral-800 font-medium text-neutral-400'>
         <input
-          className='appearance-none bg-transparent py-1 px-3'
+          className='appearance-none bg-transparent px-3 py-1'
           onChange={e => onChange(e.target.value)}
           {...{ type, value }}
         />
@@ -80,11 +80,20 @@ export function Input({
   )
 }
 
-export function Button({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+export function Button({
+  disalbed: disabled,
+  children,
+  onClick,
+}: {
+  disalbed?: boolean
+  children: React.ReactNode
+  onClick: () => void
+}) {
   return (
     <button
       onClick={onClick}
-      className='rounded-md bg-neutral-800 py-1 px-3 font-medium text-neutral-400 transition-colors duration-300 hover:bg-neutral-700 hover:text-neutral-300'
+      disabled={disabled}
+      className='rounded-md bg-neutral-800 px-3 py-1 font-medium text-neutral-400 transition-colors duration-300 hover:bg-neutral-700 hover:text-neutral-300 disabled:opacity-10'
     >
       {children}
     </button>
@@ -104,5 +113,9 @@ export function Option({ children }: { children: React.ReactNode }) {
 }
 
 export function OptionText({ children }: { children: React.ReactNode }) {
-  return <div className='text-16 font-medium text-neutral-400'>{children}</div>
+  return (
+    <div className='line-clamp-1 flex-shrink-0 text-16 font-medium text-neutral-400'>
+      {children}
+    </div>
+  )
 }

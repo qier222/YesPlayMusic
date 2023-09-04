@@ -88,7 +88,7 @@ const Track = ({
         >
           {track?.name}
         </div>
-        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  text-white/30'>
+        <div className='mt-1 line-clamp-1 text-14 font-bold text-neutral-200  text-white/30'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>
@@ -151,7 +151,7 @@ const Search = () => {
 
   return (
     <div>
-      <div className='mt-6 mb-8 text-4xl font-semibold dark:text-white'>
+      <div className='mb-8 mt-6 text-4xl font-semibold dark:text-white'>
         <span className='text-white/40'>搜索</span> &quot;{keywords}&quot;
       </div>
 

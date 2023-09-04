@@ -27,6 +27,8 @@ export const enum IpcChannels {
   GetAlbumFromAppleMusic = 'GetAlbumFromAppleMusic',
   GetArtistFromAppleMusic = 'GetArtistFromAppleMusic',
   Logout = 'Logout',
+  GetCachePath = 'GetCachePath',
+  ClearAudioCache = 'ClearAudioCache',
 }
 
 // ipcMain.on params
@@ -70,6 +72,8 @@ export interface IpcChannelsParams {
   }
   [IpcChannels.GetArtistFromAppleMusic]: { id: number; name: string }
   [IpcChannels.Logout]: void
+  [IpcChannels.GetCachePath]: void
+  [IpcChannels.ClearAudioCache]: void
 }
 
 // ipcRenderer.on params
@@ -95,4 +99,6 @@ export interface IpcChannelsReturns {
   [IpcChannels.GetAlbumFromAppleMusic]: AppleMusicAlbum | undefined
   [IpcChannels.GetArtistFromAppleMusic]: AppleMusicArtist | undefined
   [IpcChannels.Logout]: void
+  [IpcChannels.GetCachePath]: string
+  [IpcChannels.ClearAudioCache]: boolean
 }

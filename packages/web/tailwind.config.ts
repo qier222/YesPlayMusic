@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const colors = require('tailwindcss/colors')
-// const pickedColors = require('./scripts/pickedColors.js')
+// import colors from "tailwindcss/colors"
+// import pickedColors = "./scripts/pickedColors"
+import type { Config } from 'tailwindcss'
+import containerQueryPlugin from '@tailwindcss/container-queries'
 
 const fontSizeDefault = {
   lineHeight: '1.2',
   letterSpacing: '0.02em',
 }
 
-module.exports = {
+export default {
   content: ['./index.html', './**/*.{vue,js,ts,jsx,tsx}', '!./node_modules/**/*'],
   darkMode: 'class',
   theme: {
@@ -121,5 +122,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/container-queries')],
-}
+  plugins: [containerQueryPlugin],
+} satisfies Config

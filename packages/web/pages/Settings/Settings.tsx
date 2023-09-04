@@ -11,7 +11,7 @@ import PageTransition from '@/web/components/PageTransition'
 import { ease } from '@/web/utils/const'
 
 export const categoryIds = ['general', 'appearance', 'player', 'lab', 'about'] as const
-export type Category = typeof categoryIds[number]
+export type Category = (typeof categoryIds)[number]
 
 const Sidebar = ({
   activeCategory,
@@ -42,7 +42,7 @@ const Sidebar = ({
         initial={{ y: 11.5 }}
         animate={indicatorAnimation}
         transition={{ type: 'spring', duration: 0.6, bounce: 0.36 }}
-        className='absolute top-0 left-3 mr-2 h-4 w-1 rounded-full bg-brand-700'
+        className='absolute left-3 top-0 mr-2 h-4 w-1 rounded-full bg-brand-700'
       ></motion.div>
 
       {categories.map(category => (

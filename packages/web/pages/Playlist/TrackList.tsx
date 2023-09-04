@@ -55,10 +55,10 @@ const Track = ({
             {track?.name}
 
             {[1318912, 1310848].includes(track?.mark || 0) && (
-              <Icon name='explicit' className='ml-2 mt-px mr-4 h-3.5 w-3.5 text-white/20' />
+              <Icon name='explicit' className='ml-2 mr-4 mt-px h-3.5 w-3.5 text-white/20' />
             )}
           </div>
-          <div className='line-clamp-1 mt-1 text-14 font-bold text-white/30'>
+          <div className='mt-1 line-clamp-1 text-14 font-bold text-white/30'>
             {track?.ar.map((a, index) => (
               <Fragment key={a.id}>
                 {index > 0 && ', '}

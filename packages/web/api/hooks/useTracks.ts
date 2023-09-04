@@ -1,5 +1,5 @@
 import { fetchAudioSource, fetchTracks } from '@/web/api/track'
-import type { } from '@/web/api/track'
+import type {} from '@/web/api/track'
 import reactQueryClient from '@/web/utils/reactQueryClient'
 import { IpcChannels } from '@/shared/IpcChannels'
 import {

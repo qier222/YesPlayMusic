@@ -22,7 +22,7 @@ import settings from '@/web/states/settings'
 import useUser from '@/web/api/hooks/useUser'
 
 const collections = ['playlists', 'albums', 'artists', 'videos'] as const
-type Collection = typeof collections[number]
+type Collection = (typeof collections)[number]
 
 const Albums = () => {
   const { data: albums } = useUserAlbums()
@@ -114,7 +114,7 @@ const CollectionTabs = ({ showBg }: { showBg: boolean }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={cx(
-              'pointer-events-none absolute right-0 left-0 z-10',
+              'pointer-events-none absolute left-0 right-0 z-10',
               css`
                 height: 230px;
                 background-repeat: repeat;
@@ -164,7 +164,7 @@ const Collections = () => {
     <motion.div layout>
       <CollectionTabs showBg={isScrollReachBottom} />
       <div
-        className={cx('no-scrollbar overflow-y-auto px-2.5 pt-16 pb-16 lg:px-0')}
+        className={cx('no-scrollbar overflow-y-auto px-2.5 pb-16 pt-16 lg:px-0')}
         onScroll={onScroll}
         style={{
           height: `calc(100vh - ${topbarHeight}px)`,

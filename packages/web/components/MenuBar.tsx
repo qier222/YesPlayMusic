@@ -53,7 +53,7 @@ const TabName = () => {
   return (
     <div
       className={cx(
-        'absolute bottom-8 right-0 left-0 z-10 flex rotate-180 select-none items-center font-bold text-brand-600 dark:text-brand-700',
+        'absolute bottom-8 left-0 right-0 z-10 flex rotate-180 select-none items-center font-bold text-brand-600 dark:text-brand-700',
         css`
           writing-mode: vertical-rl;
           text-orientation: mixed;
@@ -144,7 +144,7 @@ const MenuBar = () => {
     <div
       className={cx(
         'app-region-drag relative flex h-full w-full flex-col justify-center',
-        'lg:fixed lg:left-0 lg:top-0 lg:bottom-0',
+        'lg:fixed lg:bottom-0 lg:left-0 lg:top-0',
         css`
           ${bp.lg} {
             width: 104px;

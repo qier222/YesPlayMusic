@@ -42,7 +42,7 @@ const Track = ({
         >
           {track?.name}
         </div>
-        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200  dark:text-neutral-700'>
+        <div className='mt-1 line-clamp-1 text-14 font-bold text-neutral-200  dark:text-neutral-700'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>

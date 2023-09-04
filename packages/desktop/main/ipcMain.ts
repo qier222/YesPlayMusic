@@ -13,6 +13,7 @@ import fastFolderSize from 'fast-folder-size'
 import path from 'path'
 import prettyBytes from 'pretty-bytes'
 import { db, Tables } from './db'
+import { promisify } from 'util'
 
 log.info('[electron] ipcMain.ts')
 
@@ -137,15 +138,15 @@ function initOtherIpcMain() {
   /**
    * 清除API缓存
    */
-  on(IpcChannels.ClearAPICache, () => {
-    // db.truncate(Tables.Track)
-    // db.truncate(Tables.Album)
-    // db.truncate(Tables.Artist)
-    // db.truncate(Tables.Playlist)
-    // db.truncate(Tables.ArtistAlbum)
-    // db.truncate(Tables.AccountData)
-    // db.truncate(Tables.Audio)
-    // db.vacuum()
+  handle(IpcChannels.ClearAPICache, async () => {
+    db.truncate(Tables.Track)
+    db.truncate(Tables.Album)
+    db.truncate(Tables.Artist)
+    db.truncate(Tables.Playlist)
+    db.truncate(Tables.ArtistAlbum)
+    db.truncate(Tables.AccountData)
+    db.truncate(Tables.Audio)
+    db.vacuum()
   })
 
   /**
@@ -170,23 +171,37 @@ function initOtherIpcMain() {
     }
   })
 
+  // 获取缓存位置
+  handle(IpcChannels.GetCachePath, async () => {
+    return path.join(app.getPath('userData'), './audio_cache')
+  })
+
+  /**
+   * 获取音频缓存文件夹大小
+   */
+  handle(IpcChannels.GetAudioCacheSize, async () => {
+    const fastFolderSizeAsync = promisify(fastFolderSize)
+    const bytes = await fastFolderSizeAsync(path.join(app.getPath('userData'), './audio_cache'))
+    return prettyBytes(bytes ?? 0)
+  })
+
+  handle(IpcChannels.ClearAudioCache, async () => {
+    try {
+      const audioCachePath = path.join(app.getPath('userData'), './audio_cache')
+      fs.rmdirSync(audioCachePath, { recursive: true })
+      fs.mkdirSync(audioCachePath)
+      return true
+    } catch (e) {
+      return false
+    }
+  })
+
   /**
    * 缓存封面颜色
    */
   on(IpcChannels.CacheCoverColor, (event, args) => {
     const { id, color } = args
     cache.set(CacheAPIs.CoverColor, { id, color })
-  })
-
-  /**
-   * 获取音频缓存文件夹大小
-   */
-  on(IpcChannels.GetAudioCacheSize, event => {
-    fastFolderSize(path.join(app.getPath('userData'), './audio_cache'), (error, bytes) => {
-      if (error) throw error
-
-      event.returnValue = prettyBytes(bytes ?? 0)
-    })
   })
 
   /**
@@ -235,30 +250,26 @@ function initOtherIpcMain() {
    * 导出tables到json文件，方便查看table大小（dev环境）
    */
   if (process.env.NODE_ENV === 'development') {
-    // on(IpcChannels.DevDbExportJson, () => {
-    //   const tables = [
-    //     Tables.ArtistAlbum,
-    //     Tables.Playlist,
-    //     Tables.Album,
-    //     Tables.Track,
-    //     Tables.Artist,
-    //     Tables.Audio,
-    //     Tables.AccountData,
-    //     Tables.Lyric,
-    //   ]
-    //   tables.forEach(table => {
-    //     const data = db.findAll(table)
-    //     fs.writeFile(
-    //       `./tmp/${table}.json`,
-    //       JSON.stringify(data),
-    //       function (err) {
-    //         if (err) {
-    //           return console.log(err)
-    //         }
-    //         console.log('The file was saved!')
-    //       }
-    //     )
-    //   })
-    // })
+    on(IpcChannels.DevDbExportJson, () => {
+      const tables = [
+        Tables.ArtistAlbum,
+        Tables.Playlist,
+        Tables.Album,
+        Tables.Track,
+        Tables.Artist,
+        Tables.Audio,
+        Tables.AccountData,
+        Tables.Lyrics,
+      ]
+      tables.forEach(table => {
+        const data = db.findAll(table)
+        fs.writeFile(`./tmp/${table}.json`, JSON.stringify(data), function (err) {
+          if (err) {
+            return console.log(err)
+          }
+          console.log('The file was saved!')
+        })
+      })
+    })
   }
 }

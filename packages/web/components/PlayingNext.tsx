@@ -36,7 +36,7 @@ const RepeatButton = () => {
       )}
       style={buttonStyle}
     >
-      <div className='absolute top-1/2  left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 blur group-hover:opacity-100'></div>
+      <div className='absolute left-1/2  top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 blur group-hover:opacity-100'></div>
       <Icon name='repeat-1' className='h-7 w-7' />
     </motion.button>
   )
@@ -61,7 +61,7 @@ const ShuffleButton = () => {
       style={buttonStyle}
     >
       <Icon name='shuffle' className='h-7 w-7' />
-      <div className='absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 blur group-hover:opacity-100'></div>
+      <div className='absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 blur group-hover:opacity-100'></div>
     </motion.button>
   )
 }
@@ -71,7 +71,7 @@ const Header = () => {
   return (
     <div
       className={cx(
-        'absolute top-0 left-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold lg:px-0'
+        'absolute left-0 top-0 z-20 flex w-full items-center justify-between bg-contain bg-repeat-x px-7 pb-6 text-14 font-bold lg:px-0'
       )}
     >
       <div className='flex text-neutral-300'>
@@ -134,7 +134,7 @@ const Track = ({
         >
           {track?.name}
         </div>
-        <div className='line-clamp-1 mt-1 text-14 font-bold text-neutral-200 dark:text-white/25'>
+        <div className='mt-1 line-clamp-1 text-14 font-bold text-neutral-200 dark:text-white/25'>
           {track?.ar.map(a => a.name).join(', ')}
         </div>
       </div>

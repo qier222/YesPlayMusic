@@ -212,7 +212,7 @@ const Controls = ({
           visible: { y: 0, opacity: 1 },
         }}
         transition={animationTransition}
-        className='absolute bottom-5 left-5 flex rounded-20 bg-black/70 py-3 px-5 backdrop-blur-3xl'
+        className='absolute bottom-5 left-5 flex rounded-20 bg-black/70 px-5 py-3 backdrop-blur-3xl'
       >
         <button
           onClick={togglePlay}

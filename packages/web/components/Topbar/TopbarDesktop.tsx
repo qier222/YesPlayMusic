@@ -44,7 +44,7 @@ const TopbarDesktop = () => {
   return (
     <div
       className={cx(
-        'app-region-drag fixed top-0 left-0 right-0 z-20 flex items-center justify-between bg-contain pt-11 pb-10 pr-6',
+        'app-region-drag fixed left-0 right-0 top-0 z-20 flex items-center justify-between bg-contain pb-10 pr-6 pt-11',
         css`
           padding-left: 144px;
         `

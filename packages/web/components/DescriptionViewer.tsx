@@ -48,7 +48,7 @@ function DescriptionViewer({
           >
             <div className='relative'>
               {/* Title */}
-              <div className='line-clamp-1 absolute -top-8 mx-44 max-w-2xl select-none text-32 font-extrabold text-neutral-100'>
+              <div className='absolute -top-8 mx-44 line-clamp-1 max-w-2xl select-none text-32 font-extrabold text-neutral-100'>
                 {title}
               </div>
 

@@ -16,42 +16,6 @@
   .no-drag {
     -webkit-user-drag: none;
   }
-
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-all;
-    -webkit-line-clamp: 1;
-  }
-
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 2;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 3;
-  }
-
-  .line-clamp-4 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 4;
-  }
-
-  .line-clamp-5 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    -webkit-line-clamp: 4;
-  }
 }
 
 @font-face {
@@ -96,6 +60,9 @@ input {
   font-family: Roboto, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Helvetica Neue,
     PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei,
     microsoft uighur, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {

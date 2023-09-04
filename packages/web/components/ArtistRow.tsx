@@ -26,7 +26,7 @@ const Artist = ({ artist }: { artist: Artist }) => {
       />
       <div
         onClick={to}
-        className='line-clamp-1 mt-2.5 text-12 font-medium text-neutral-700 dark:text-neutral-600 lg:text-14 lg:font-bold'
+        className='mt-2.5 line-clamp-1 text-12 font-medium text-neutral-700 dark:text-neutral-600 lg:text-14 lg:font-bold'
       >
         {artist.name}
       </div>
@@ -46,7 +46,7 @@ const Placeholder = ({ row }: { row: number }) => {
               minWidth: '96px',
             }}
           />
-          <div className='line-clamp-1 mt-2.5 w-1/2 rounded-full text-12 font-medium text-transparent dark:bg-neutral-800 lg:text-14 lg:font-bold'>
+          <div className='mt-2.5 line-clamp-1 w-1/2 rounded-full text-12 font-medium text-transparent dark:bg-neutral-800 lg:text-14 lg:font-bold'>
             NAME
           </div>
         </div>

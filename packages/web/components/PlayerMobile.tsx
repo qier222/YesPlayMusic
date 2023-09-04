@@ -64,7 +64,7 @@ const PlayerMobile = () => {
             uiStates.mobileShowPlayingNext = true
           }}
           className={cx(
-            'absolute right-0 left-0 flex justify-center',
+            'absolute left-0 right-0 flex justify-center',
             css`
               --height: 20px;
               height: var(--height);
@@ -100,7 +100,7 @@ const PlayerMobile = () => {
         >
           <div className='flex-shrink-0'>
             <div className='line-clamp-1 text-14 font-bold text-white'>{track?.name}</div>
-            <div className='line-clamp-1 mt-1 text-12 font-bold text-white/60'>
+            <div className='mt-1 line-clamp-1 text-12 font-bold text-white/60'>
               {track?.ar?.map(a => a.name).join(', ')}
             </div>
           </div>
@@ -109,7 +109,7 @@ const PlayerMobile = () => {
 
         <div
           className={cx(
-            'absolute left-0 top-0 bottom-0 w-3 ',
+            'absolute bottom-0 left-0 top-0 w-3 ',
             css`
               background: linear-gradient(to right, ${bgColor.to}, transparent);
             `
@@ -117,7 +117,7 @@ const PlayerMobile = () => {
         ></div>
         <div
           className={cx(
-            'absolute right-0  top-0 bottom-0 w-3 bg-red-200',
+            'absolute bottom-0  right-0 top-0 w-3 bg-red-200',
             css`
               background: linear-gradient(to left, ${bgColor.to}, transparent);
             `

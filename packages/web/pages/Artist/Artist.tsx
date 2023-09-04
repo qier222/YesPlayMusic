@@ -9,7 +9,7 @@ const Artist = () => {
     <div>
       <Header />
       {/* Dividing line */}
-      <div className='mt-10 mb-7.5 h-px w-full bg-white/20'></div>
+      <div className='mb-7.5 mt-10 h-px w-full bg-white/20'></div>
       <Popular />
       <ArtistAlbum />
       <ArtistVideos />

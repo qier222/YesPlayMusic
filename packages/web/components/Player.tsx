@@ -13,7 +13,7 @@ const Player = () => {
     <MotionConfig transition={{ duration: 0.6 }}>
       <div
         className={cx(
-          'fixed right-6 bottom-6 flex w-full flex-col justify-between overflow-hidden',
+          'fixed bottom-6 right-6 flex w-full flex-col justify-between overflow-hidden',
           css`
             width: 318px;
           `

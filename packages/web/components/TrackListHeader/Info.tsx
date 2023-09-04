@@ -74,7 +74,7 @@ const Info = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className='line-clamp-3 mt-6 whitespace-pre-wrap text-14 font-bold transition-colors duration-300 dark:text-white/40 dark:hover:text-white/60'
+          className='mt-6 line-clamp-3 whitespace-pre-wrap text-14 font-bold transition-colors duration-300 dark:text-white/40 dark:hover:text-white/60'
           dangerouslySetInnerHTML={{
             __html: description,
           }}
