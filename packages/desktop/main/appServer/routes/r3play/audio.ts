@@ -10,6 +10,7 @@ import { CacheAPIs } from '@/shared/CacheAPIs'
 import { FetchTracksResponse } from '@/shared/api/Track'
 import store from '@/desktop/main/store'
 import { db, Tables } from '@/desktop/main/db'
+const match = require('@unblockneteasemusic/server')
 
 log.info('[electron] appServer/routes/r3play/audio.ts')
 
@@ -143,15 +144,16 @@ async function audio(fastify: FastifyInstance) {
         })
       }
 
-      const cache = await getAudioFromCache(id)
-      if (cache) {
-        return cache
+      const localCache = await getAudioFromCache(id)
+      if (localCache) {
+        return localCache
       }
 
       const { body: fromNetease }: { body: any } = await NeteaseCloudMusicApi.song_url_v1({
         ...req.query,
         cookie: req.cookies as unknown as any,
       })
+
       if (
         fromNetease?.code === 200 &&
         !fromNetease?.data?.[0]?.freeTrialInfo &&
@@ -159,6 +161,40 @@ async function audio(fastify: FastifyInstance) {
       ) {
         reply.status(200).send(fromNetease)
         return
+      }
+      const trackID = id
+      // 先查缓存
+      const cacheData = await cache.get(CacheAPIs.Unblock, trackID)
+      if (cacheData) {
+        return cacheData
+      }
+      if (!trackID) {
+        reply.code(400).send({
+          code: 400,
+          msg: 'id is required or id is invalid',
+        })
+        return
+      }
+
+      try {
+        // todo: 暂时写死的，是否开放给用户配置
+        await match(trackID, ['qq', 'kuwo', 'migu', 'kugou', 'joox']).then((data: unknown) => {
+          if (data === null || data === undefined || (data as any)?.url === '') {
+            reply.code(500).send({
+              code: 400,
+              msg: 'no track info',
+            })
+            return
+          }
+
+          cache.set(CacheAPIs.Unblock, { id: trackID, url: (data as any)?.url }, trackID)
+          reply.code(200).send({
+            code: 200,
+            data: [data],
+          })
+        })
+      } catch (err) {
+        reply.code(500).send(err)
       }
 
       if (store.get('settings.enableFindTrackOnYouTube')) {

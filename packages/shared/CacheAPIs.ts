@@ -12,11 +12,17 @@ import {
   FetchUserLikedTracksIDsResponse,
   FetchUserPlaylistsResponse,
 } from './api/User'
-import { FetchAudioSourceResponse, FetchLyricResponse, FetchTracksResponse } from './api/Track'
+import {
+  FetchAudioSourceResponse,
+  FetchLyricResponse,
+  FetchTracksResponse,
+  UnblockResponse,
+} from './api/Track'
 import { FetchPlaylistResponse, FetchRecommendedPlaylistsResponse } from './api/Playlists'
 import { AppleMusicAlbum, AppleMusicArtist } from './AppleMusic'
 
 export enum CacheAPIs {
+  Unblock = 'unblock',
   Album = 'album',
   Artist = 'artists',
   ArtistAlbum = 'artist/album',
@@ -41,6 +47,7 @@ export enum CacheAPIs {
 }
 
 export interface CacheAPIsParams {
+  [CacheAPIs.Unblock]: { track_id: number }
   [CacheAPIs.Album]: { id: number }
   [CacheAPIs.Artist]: { id: number }
   [CacheAPIs.ArtistAlbum]: { id: number }
@@ -64,6 +71,7 @@ export interface CacheAPIsParams {
 }
 
 export interface CacheAPIsResponse {
+  [CacheAPIs.Unblock]: UnblockResponse
   [CacheAPIs.Album]: FetchAlbumResponse
   [CacheAPIs.Artist]: FetchArtistResponse
   [CacheAPIs.ArtistAlbum]: FetchArtistAlbumsResponse

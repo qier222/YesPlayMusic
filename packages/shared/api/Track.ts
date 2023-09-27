@@ -4,6 +4,15 @@ export enum TrackApiNames {
   FetchLyric = 'fetchLyric',
 }
 
+// unblock music
+export interface UnblockParam {
+  track_id: number
+}
+export interface UnblockResponse {
+  code: number
+  url: string
+}
+
 // 获取歌曲详情
 export interface FetchTracksParams {
   ids: number[]
