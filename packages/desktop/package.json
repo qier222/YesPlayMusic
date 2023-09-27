@@ -27,6 +27,7 @@
     "@fastify/static": "^6.6.1",
     "@sentry/electron": "^3.0.7",
     "NeteaseCloudMusicApi": "^4.8.9",
+    "@unblockneteasemusic/server": "^0.27.3",
     "better-sqlite3": "8.3.0",
     "change-case": "^4.1.2",
     "compare-versions": "^4.1.3",
