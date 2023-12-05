@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "http://168.138.40.199:12835/:match*"
+      "destination": "https://netease-cloud-music-api-roan-five-89.vercel.app/:match*"
     }
   ]
 }
