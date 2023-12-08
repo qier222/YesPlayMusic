@@ -7,6 +7,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./docker/nginx.conf.example:/etc/nginx/conf.d/default.conf:ro
     ports:
       - 80:80
     restart: always
