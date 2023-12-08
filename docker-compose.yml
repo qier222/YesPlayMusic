@@ -8,5 +8,30 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     ports:
-      - 80:80
+      - 1202:80
     restart: always
+    depends_on:
+      - UnblockNeteaseMusic
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    networks:
+      my_network:
+
+  UnblockNeteaseMusic:
+    image: pan93412/unblock-netease-music-enhanced
+    command: -o bilibili kugou kuwo pyncmd -p 80:443 -f 59.111.19.99
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    networks:
+      my_network:
+        aliases:
+          - music.163.com
+          - interface.music.163.com
+          - interface3.music.163.com
+          - interface.music.163.com.163jiasu.com
+          - interface3.music.163.com.163jiasu.com
+    restart: always
+
+networks:
+  my_network:
+    driver: bridge
