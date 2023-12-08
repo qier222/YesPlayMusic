@@ -22,4 +22,4 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 COPY --from=build /app/docker/nginx.conf.example /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
-CMD nginx ; exec env NODE_TLS_REJECT_UNAUTHORIZED=0 npx NeteaseCloudMusicApi
+CMD nginx ; exec npx NeteaseCloudMusicApi

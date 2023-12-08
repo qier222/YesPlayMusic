@@ -8,7 +8,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     ports:
-      - 1202:80
+      - 80:80
     restart: always
     depends_on:
       - UnblockNeteaseMusic
@@ -20,8 +20,6 @@ services:
   UnblockNeteaseMusic:
     image: pan93412/unblock-netease-music-enhanced
     command: -o bilibili kugou kuwo pyncmd -p 80:443 -f 59.111.19.99
-    environment:
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
     networks:
       my_network:
         aliases:
