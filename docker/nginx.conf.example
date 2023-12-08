@@ -27,3 +27,34 @@ server {
     proxy_pass              http://localhost:3000/;
   }
 }
+
+server {
+        listen 0.0.0.0:80;
+        server_name music.163.com interface.music.163.com interface3.music.163.com;
+
+        location / {
+                proxy_pass http://UnblockNeteaseMusic:80;
+                proxy_set_header HOST 'music.163.com';
+        }
+}
+
+server {
+        listen 0.0.0.0:443 ssl;
+        server_name music.163.com interface.music.163.com interface3.music.163.com;
+
+        # ssl on;
+        # ssl_certificate /etc/nginx/ssl/163/server.crt;
+        # ssl_certificate_key /etc/nginx/ssl/163/server.key;
+
+        # ssl_session_timeout 10m;
+        # ssl_session_cache shared:SSL:10m;
+
+        # ssl_protocols  TLSv1 TLSv1.1 TLSv1.2;
+        # ssl_ciphers 'AES128+EECDH:AES128+EDH';
+        # ssl_prefer_server_ciphers on;
+
+        location / {
+                proxy_pass https://UnblockNeteaseMusic:443;
+                proxy_set_header HOST 'music.163.com';
+        }
+}

@@ -19,7 +19,10 @@ services:
 
   UnblockNeteaseMusic:
     image: pan93412/unblock-netease-music-enhanced
-    command: -o bilibili kugou kuwo pyncmd -p 80:443 -f 59.111.19.99
+    command: -o kugou kuwo migu bilibili pyncmd -p 80:443 -f 45.127.129.53 -e -
+    # environment:
+    #   JSON_LOG: true
+    #   LOG_LEVEL: debug
     networks:
       my_network:
         aliases:
