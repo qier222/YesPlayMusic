@@ -823,6 +823,9 @@ export default class {
     this._howler?.once('play', () => {
       this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
 
+      // 播放时确保开启player.
+      // 避免因"忘记设置"导致在播放时播放器不显示的Bug
+      this._enabled = true;
       this._setPlaying(true);
       if (this._currentTrack.name) {
         setTitle(this._currentTrack);
@@ -879,7 +882,6 @@ export default class {
     autoPlayTrackID = 'first'
   ) {
     this._isPersonalFM = false;
-    if (!this._enabled) this._enabled = true;
     this.list = trackIDs;
     this.current = 0;
     this._playlistSource = {
@@ -941,7 +943,6 @@ export default class {
   }
   playPersonalFM() {
     this._isPersonalFM = true;
-    if (!this._enabled) this._enabled = true;
     if (this.currentTrackID !== this._personalFMTrack.id) {
       this._replaceCurrentTrack(this._personalFMTrack.id, true);
     } else {
