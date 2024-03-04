@@ -162,7 +162,7 @@ bash <(curl -s -L https://raw.githubusercontent.com/qier222/YesPlayMusic/main/in
 4. 由于 replit 个人版限制内存为 1G（教育版为 3G），构建过程中可能会失败，请再次运行上述命令或运行以下命令：
 
 ```sh
-cd /home/runner/${REPL_SLUG}/music && yarn installl && yarn run build
+cd /home/runner/${REPL_SLUG}/music && yarn install && yarn run build
 ```
 
 ## 👷‍♂️ 打包客户端
