@@ -57,8 +57,16 @@ service.interceptors.response.use(
   },
   async error => {
     /** @type {import('axios').AxiosResponse | null} */
-    const response = error.response;
-    const data = response.data;
+    let response;
+    let data;
+    if (error === 'TypeError: baseURL is undefined') {
+      response = error;
+      data = error;
+      console.error("You must set up the baseURL in the service's config");
+    } else if (error.response) {
+      response = error.response;
+      data = response.data;
+    }
 
     if (
       response &&
