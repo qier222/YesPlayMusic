@@ -1,3 +1,4 @@
+import dbus from 'dbus-next';
 import { ipcMain, app } from 'electron';
 
 export function createMpris(window) {
@@ -28,6 +29,8 @@ export function createMpris(window) {
   });
 
   ipcMain.on('metadata', (e, metadata) => {
+    // 更新 Mpris 状态前将位置设为0, 否则 OSDLyrics 获取到的进度是上首音乐切换时的进度
+    player.getPosition = () => 0;
     player.metadata = {
       'mpris:trackid': player.objectPath('track/' + metadata.trackId),
       'mpris:artUrl': metadata.artwork[0].src,
@@ -35,11 +38,17 @@ export function createMpris(window) {
       'xesam:title': metadata.title,
       'xesam:album': metadata.album,
       'xesam:artist': metadata.artist.split(','),
+      'xesam:url': metadata.url,
     };
   });
 
   ipcMain.on('playerCurrentTrackTime', (e, position) => {
     player.getPosition = () => position * 1000 * 1000;
+    player.seeked(position * 1000 * 1000);
+  });
+
+  ipcMain.on('seeked', (e, position) => {
+    player.seeked(position * 1000 * 1000);
   });
 
   ipcMain.on('switchRepeatMode', (e, mode) => {
@@ -58,5 +67,28 @@ export function createMpris(window) {
 
   ipcMain.on('switchShuffle', (e, shuffle) => {
     player.shuffle = shuffle;
+  });
+}
+
+export async function createDbus(window) {
+  const bus = dbus.sessionBus();
+  const Variant = dbus.Variant;
+
+  const osdService = await bus.getProxyObject(
+    'org.osdlyrics.Daemon',
+    '/org/osdlyrics/Lyrics'
+  );
+
+  const osdInterface = osdService.getInterface('org.osdlyrics.Lyrics');
+
+  ipcMain.on('sendLyrics', async (e, { track, lyrics }) => {
+    const metadata = {
+      title: new Variant('s', track.name),
+      artist: new Variant('s', track.ar.map(ar => ar.name).join(', ')),
+    };
+
+    await osdInterface.SetLyricContent(metadata, Buffer.from(lyrics));
+
+    window.webContents.send('saveLyricFinished');
   });
 }

@@ -23,7 +23,11 @@ const service = axios.create({
 service.interceptors.request.use(function (config) {
   if (!config.params) config.params = {};
   if (baseURL.length) {
-    if (baseURL[0] !== '/' && !process.env.IS_ELECTRON) {
+    if (
+      baseURL[0] !== '/' &&
+      !process.env.IS_ELECTRON &&
+      getCookie('MUSIC_U') !== null
+    ) {
       config.params.cookie = `MUSIC_U=${getCookie('MUSIC_U')};`;
     }
   } else {
@@ -53,8 +57,16 @@ service.interceptors.response.use(
   },
   async error => {
     /** @type {import('axios').AxiosResponse | null} */
-    const response = error.response;
-    const data = response.data;
+    let response;
+    let data;
+    if (error === 'TypeError: baseURL is undefined') {
+      response = error;
+      data = error;
+      console.error("You must set up the baseURL in the service's config");
+    } else if (error.response) {
+      response = error.response;
+      data = response.data;
+    }
 
     if (
       response &&

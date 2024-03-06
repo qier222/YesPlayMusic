@@ -58,20 +58,32 @@
       </div>
       <div class="item">
         <div class="left">
-          <div class="title"> 音乐语种偏好 </div>
+          <div class="title">
+            {{ $t('settings.MusicGenrePreference.text') }}
+          </div>
         </div>
         <div class="right">
           <select v-model="musicLanguage">
-            <option value="all">无偏好</option>
-            <option value="zh">华语</option>
-            <option value="ea">欧美</option>
-            <option value="jp">日语</option>
-            <option value="kr">韩语</option>
+            <option value="all">{{
+              $t('settings.MusicGenrePreference.none')
+            }}</option>
+            <option value="zh">{{
+              $t('settings.MusicGenrePreference.mandarin')
+            }}</option>
+            <option value="ea">{{
+              $t('settings.MusicGenrePreference.western')
+            }}</option>
+            <option value="jp">{{
+              $t('settings.MusicGenrePreference.japanese')
+            }}</option>
+            <option value="kr">{{
+              $t('settings.MusicGenrePreference.korean')
+            }}</option>
           </select>
         </div>
       </div>
 
-      <h3>音质</h3>
+      <!-- <h3>音质</h3> -->
       <div class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.musicQuality.text') }} </div>
@@ -166,7 +178,7 @@
         </div>
       </div>
 
-      <h3>歌词</h3>
+      <h3>{{ $t('settings.lyric') }}</h3>
       <div class="item">
         <div class="left">
           <div class="title">{{ $t('settings.showLyricsTranslation') }}</div>
@@ -237,6 +249,33 @@
               {{ $t('settings.lyricFontSize.xlarge') }} - 36px
             </option>
           </select>
+        </div>
+      </div>
+      <div v-if="isElectron && isLinux" class="item">
+        <div class="left">
+          <div class="title">
+            {{ $t('settings.unm.enable') }}
+            <a target="_blank" href="https://github.com/osdlyrics/osdlyrics"
+              >OSDLyrics</a
+            >
+            {{ $t('settings.enableOsdlyricsSupport.title') }}
+          </div>
+          <div class="description">
+            {{ $t('settings.enableOsdlyricsSupport.desc1') }}
+            <br />
+            {{ $t('settings.enableOsdlyricsSupport.desc2') }}
+          </div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="enable-osdlyrics-support"
+              v-model="enableOsdlyricsSupport"
+              type="checkbox"
+              name="enable-osdlyrics-support"
+            />
+            <label for="enable-osdlyrics-support"></label>
+          </div>
         </div>
       </div>
 
@@ -408,7 +447,7 @@
         </div>
       </section>
 
-      <h3>第三方</h3>
+      <h3>{{ $t('settings.customization') }}</h3>
       <div class="item">
         <div class="left">
           <div class="title">
@@ -445,7 +484,7 @@
         </div>
       </div>
 
-      <h3>其他</h3>
+      <h3>{{ $t('settings.others') }}</h3>
       <div v-if="isElectron && !isMac" class="item">
         <div class="left">
           <div class="title"> {{ $t('settings.closeAppOption.text') }} </div>
@@ -963,6 +1002,17 @@ export default {
         });
       },
     },
+    enableOsdlyricsSupport: {
+      get() {
+        return this.settings.enableOsdlyricsSupport;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'enableOsdlyricsSupport',
+          value,
+        });
+      },
+    },
     closeAppOption: {
       get() {
         return this.settings.closeAppOption;
@@ -1465,6 +1515,7 @@ h3 {
 
 select {
   min-width: 192px;
+  max-width: 600px;
   font-weight: 600;
   border: none;
   padding: 8px 12px 8px 12px;

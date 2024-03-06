@@ -75,9 +75,9 @@ export default {
         return new Date(item.publishTime).getFullYear();
       if (this.subText === 'artist') {
         if (item.artist !== undefined)
-          return `<a href="/#/artist/${item.artist.id}">${item.artist.name}</a>`;
+          return `<a href="/artist/${item.artist.id}">${item.artist.name}</a>`;
         if (item.artists !== undefined)
-          return `<a href="/#/artist/${item.artists[0].id}">${item.artists[0].name}</a>`;
+          return `<a href="/artist/${item.artists[0].id}">${item.artists[0].name}</a>`;
       }
       if (this.subText === 'albumType+releaseYear') {
         let albumType = item.type;

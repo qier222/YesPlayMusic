@@ -7,6 +7,33 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+      - ./docker/nginx.conf.example:/etc/nginx/conf.d/default.conf:ro
     ports:
       - 80:80
     restart: always
+    depends_on:
+      - UnblockNeteaseMusic
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    networks:
+      my_network:
+
+  UnblockNeteaseMusic:
+    image: pan93412/unblock-netease-music-enhanced
+    command: -o kugou kuwo migu bilibili pyncmd -p 80:443 -f 45.127.129.53 -e -
+    # environment:
+    #   JSON_LOG: true
+    #   LOG_LEVEL: debug
+    networks:
+      my_network:
+        aliases:
+          - music.163.com
+          - interface.music.163.com
+          - interface3.music.163.com
+          - interface.music.163.com.163jiasu.com
+          - interface3.music.163.com.163jiasu.com
+    restart: always
+
+networks:
+  my_network:
+    driver: bridge

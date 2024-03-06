@@ -135,7 +135,7 @@ img {
   cursor: default;
   transition: 0.2s;
   .svg-icon {
-    height: 44%;
+    width: 50%;
     margin: {
       left: 4px;
     }
