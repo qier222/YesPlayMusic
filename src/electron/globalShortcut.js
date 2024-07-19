@@ -84,6 +84,4 @@ export function registerGlobalShortcut(win, store) {
 
   //音量增大和减少采用 多媒体键盘全局设置即可。无需单独注册。
  
-
-
 }
