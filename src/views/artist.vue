@@ -185,6 +185,7 @@ import {
   followAArtist,
   similarArtists,
 } from '@/api/artist';
+import { getTrackDetail } from '@/api/track';
 import locale from '@/locale';
 import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
@@ -278,7 +279,7 @@ export default {
       this.$parent.$refs.main.scrollTo({ top: 0 });
       getArtist(id).then(data => {
         this.artist = data.artist;
-        this.popularTracks = data.hotSongs;
+        this.setPopularTracks(data.hotSongs);
         if (next !== undefined) next();
         NProgress.done();
         this.show = true;
@@ -293,6 +294,12 @@ export default {
       });
       similarArtists(id).then(data => {
         this.similarArtists = data.artists;
+      });
+    },
+    setPopularTracks(hotSongs) {
+      const trackIDs = hotSongs.map(t => t.id);
+      getTrackDetail(trackIDs.join(',')).then(data => {
+        this.popularTracks = data.songs;
       });
     },
     goToAlbum(id) {
