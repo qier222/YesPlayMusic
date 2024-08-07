@@ -50,7 +50,7 @@ export default {
   props: {
     items: { type: Array, required: true },
     type: { type: String, required: true },
-    subText: { type: String, default: 'null' },
+    subText: { type: String, default: 'none' },
     subTextFontSize: { type: String, default: '16px' },
     showPlayCount: { type: Boolean, default: false },
     columnNumber: { type: Number, default: 5 },
