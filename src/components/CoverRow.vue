@@ -96,7 +96,7 @@ export default {
       return this.type === 'playlist' && item.privacy === 10;
     },
     isExplicit(item) {
-      return this.type === 'album' && item.mark === 1056768;
+      return this.type === 'album' && (item.mark & 1048576) === 1048576;
     },
     getTitleLink(item) {
       return `/${this.type}/${item.id}`;
