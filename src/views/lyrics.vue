@@ -268,6 +268,12 @@
           <svg-icon icon-class="arrow-down" />
         </button>
       </div>
+      <div class="close-button" style="left: 24px" @click="fullscreen">
+        <button>
+          <svg-icon v-if="isFullscreen" icon-class="fullscreen-exit" />
+          <svg-icon v-else icon-class="fullscreen" />
+        </button>
+      </div>
     </div>
   </transition>
 </template>
@@ -305,6 +311,7 @@ export default {
       minimize: true,
       background: '',
       date: this.formatTime(new Date()),
+      isFullscreen: !!document.fullscreenElement,
     };
   },
   computed: {
@@ -435,6 +442,15 @@ export default {
     this.getLyric();
     this.getCoverColor();
     this.initDate();
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F11') {
+        e.preventDefault();
+        this.fullscreen();
+      }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      this.isFullscreen = !!document.fullscreenElement;
+    });
   },
   beforeDestroy: function () {
     if (this.timer) {
@@ -465,6 +481,13 @@ export default {
         ':' +
         second.padStart(2, '0')
       );
+    },
+    fullscreen() {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
     },
     addToPlaylist() {
       if (!isAccountLoggedIn()) {
