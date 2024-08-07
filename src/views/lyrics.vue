@@ -270,7 +270,8 @@
       </div>
       <div class="close-button" style="left: 24px" @click="fullscreen">
         <button>
-          <svg-icon icon-class="fullscreen" />
+          <svg-icon v-if="isFullscreen" icon-class="fullscreen-exit" />
+          <svg-icon v-else icon-class="fullscreen" />
         </button>
       </div>
     </div>
@@ -310,6 +311,7 @@ export default {
       minimize: true,
       background: '',
       date: this.formatTime(new Date()),
+      isFullscreen: !!document.fullscreenElement,
     };
   },
   computed: {
@@ -445,6 +447,9 @@ export default {
         e.preventDefault();
         this.fullscreen();
       }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      this.isFullscreen = !!document.fullscreenElement;
     });
   },
   beforeDestroy: function () {
