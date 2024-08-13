@@ -292,9 +292,11 @@ export default {
         this.mvs = data.mvs;
         this.hasMoreMV = data.hasMore;
       });
-      similarArtists(id).then(data => {
-        this.similarArtists = data.artists;
-      });
+      if (isAccountLoggedIn()) {
+        similarArtists(id).then(data => {
+          this.similarArtists = data.artists;
+        });
+      }
     },
     setPopularTracks(hotSongs) {
       const trackIDs = hotSongs.map(t => t.id);
