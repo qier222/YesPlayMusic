@@ -120,10 +120,13 @@ export default {
       setTimeout(() => {
         if (!this.show) NProgress.start();
       }, 1000);
-      this.activeCategory =
-        this.$route.query.category === undefined
-          ? '全部'
-          : this.$route.query.category;
+      const queryCategory = this.$route.query.category;
+      if (queryCategory === undefined) {
+        this.playlists = [];
+        this.activeCategory = '全部';
+      } else {
+        this.activeCategory = queryCategory;
+      }
       this.getPlaylist();
     },
     goToCategory(Category) {
