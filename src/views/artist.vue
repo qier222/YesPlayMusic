@@ -291,9 +291,11 @@ export default {
         this.mvs = data.mvs;
         this.hasMoreMV = data.hasMore;
       });
-      similarArtists(id).then(data => {
-        this.similarArtists = data.artists;
-      });
+      if (isAccountLoggedIn()) {
+        similarArtists(id).then(data => {
+          this.similarArtists = data.artists;
+        });
+      }
     },
     goToAlbum(id) {
       this.$router.push({

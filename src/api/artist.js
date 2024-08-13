@@ -1,5 +1,7 @@
 import request from '@/utils/request';
 import { mapTrackPlayableStatus } from '@/utils/common';
+import { isAccountLoggedIn } from '@/utils/auth';
+import { getTrackDetail } from '@/api/track';
 
 /**
  * 获取歌手单曲
@@ -14,7 +16,13 @@ export function getArtist(id) {
       id,
       timestamp: new Date().getTime(),
     },
-  }).then(data => {
+  }).then(async data => {
+    if (!isAccountLoggedIn()) {
+      const trackIDs = data.hotSongs.map(t => t.id);
+      const tracks = await getTrackDetail(trackIDs.join(','));
+      data.hotSongs = tracks.songs;
+      return data;
+    }
     data.hotSongs = mapTrackPlayableStatus(data.hotSongs);
     return data;
   });
