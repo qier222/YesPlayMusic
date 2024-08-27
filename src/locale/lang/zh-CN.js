@@ -243,6 +243,8 @@ export default {
     minePlaylists: '创建的歌单',
     likedPlaylists: '收藏的歌单',
     cardiacMode: '心动模式',
+    copyLyric: '复制歌词',
+    copyLyricWithTranslation: '复制歌词（含翻译）',
   },
   toast: {
     savedToPlaylist: '已添加到歌单',
