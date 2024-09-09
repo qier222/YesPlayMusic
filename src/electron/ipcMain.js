@@ -240,7 +240,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
       details: track.name + ' - ' + track.ar.map(ar => ar.name).join(','),
       state: track.al.name,
       endTimestamp: Date.now() + track.dt,
-      largeImageKey: 'logo',
+      largeImageKey: track.al.picUrl,
       largeImageText: 'Listening ' + track.name,
       smallImageKey: 'play',
       smallImageText: 'Playing',
@@ -252,7 +252,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
     client.updatePresence({
       details: track.name + ' - ' + track.ar.map(ar => ar.name).join(','),
       state: track.al.name,
-      largeImageKey: 'logo',
+      largeImageKey: track.al.picUrl,
       largeImageText: 'YesPlayMusic',
       smallImageKey: 'pause',
       smallImageText: 'Pause',
