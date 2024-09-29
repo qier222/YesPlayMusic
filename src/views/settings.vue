@@ -641,6 +641,33 @@
           <button @click="sendProxyConfig">更新代理</button>
         </div>
       </div>
+      <div v-if="isElectron">
+        <h3>Real IP</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title"> Real IP </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="enable-real-ip"
+                v-model="enableRealIP"
+                type="checkbox"
+                name="enable-real-ip"
+              />
+              <label for="enable-real-ip"></label>
+            </div>
+          </div>
+        </div>
+        <div id="real-ip" :class="{ disabled: !enableRealIP }">
+          <input
+            v-model="realIP"
+            class="text-input"
+            placeholder="IP地址"
+            :disabled="!enableRealIP"
+          />
+        </div>
+      </div>
 
       <div v-if="isElectron">
         <h3>快捷键</h3>
@@ -1121,6 +1148,28 @@ export default {
         this.$store.commit('updateSettings', {
           key: 'proxyConfig',
           value: config,
+        });
+      },
+    },
+    enableRealIP: {
+      get() {
+        return this.settings.enableRealIP || false;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'enableRealIP',
+          value: value,
+        });
+      },
+    },
+    realIP: {
+      get() {
+        return this.settings.realIP || '';
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'realIP',
+          value: value,
         });
       },
     },

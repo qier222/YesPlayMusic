@@ -36,6 +36,8 @@ let localStorage = {
       server: '',
       port: null,
     },
+    enableRealIP: false,
+    realIP: null,
     shortcuts: shortcuts,
   },
   data: {
