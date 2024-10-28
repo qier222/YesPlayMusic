@@ -125,6 +125,16 @@ yarn run build
 
 7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
+## ⚙️ 宝塔面板 docker应用商店 部署
+
+1. 安装宝塔面板，前往[宝塔面板官网](https://www.bt.cn/new/download.html) ，选择正式版的脚本下载安装。
+
+2. 安装后登录宝塔面板，在左侧导航栏中点击 Docker，首次进入会提示安装Docker服务，点击立即安装，按提示完成安装
+
+3. 安装完成后在应用商店中找到YesPlayMusic，点击安装，配置域名、端口等基本信息即可完成安装。
+
+4. 安装后在浏览器输入上一步骤设置的域名即可访问。
+
 ## ⚙️ Docker 部署
 
 1. 构建 Docker Image
@@ -210,7 +220,7 @@ yarn electron:serve
 本地运行 NeteaseCloudMusicApi，或者将 API [部署至 Vercel](#%EF%B8%8F-部署至-vercel)
 
 ```shell
-# 运行 API （默认 3000 端口）
+# 运行 API （默认 3000 端口）w 
 yarn netease_api:run
 ```
 
