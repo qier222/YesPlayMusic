@@ -220,7 +220,7 @@ yarn electron:serve
 本地运行 NeteaseCloudMusicApi，或者将 API [部署至 Vercel](#%EF%B8%8F-部署至-vercel)
 
 ```shell
-# 运行 API （默认 3000 端口）w 
+# 运行 API （默认 3000 端口）
 yarn netease_api:run
 ```
 
