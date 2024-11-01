@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://devenv.sh/devenv.schema.json
+inputs:
+  nixpkgs:
+    url: github:nixos/nixpkgs/nixpkgs-unstable
+  nodejs16:
+    url: github:nixos/nixpkgs/a71323f68d4377d12c04a5410e214495ec598d4c
+
+# https://github.com/cachix/devenv/issues/792#issuecomment-2043166453
+impure: true
+# If you're using non-OSS software, you can set allowUnfree to true.
+# allowUnfree: true
+
+# If you're willing to use a package that's vulnerable
+# permittedInsecurePackages:
+#  - "openssl-1.1.1w"
+
+# If you have more than one devenv you can merge them
+#imports:
+# - ./backend
