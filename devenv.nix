@@ -8,7 +8,9 @@ in
   env.GREET = "devenv";
 
   # https://devenv.sh/packages/
-  packages = [ pkgs.git ];
+  packages = [ pkgs.git ] ++ lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk; [
+    frameworks.AppKit
+  ]);
 
   # https://devenv.sh/languages/
   languages.javascript.enable = true;
