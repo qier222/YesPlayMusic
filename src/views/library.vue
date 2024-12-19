@@ -308,7 +308,7 @@ export default {
     this.loadData();
   },
   activated() {
-    this.$parent.$refs.scrollbar.restorePosition();
+    this.$parent.$parent.$refs.scrollbar.restorePosition();
     this.loadData();
     dailyTask();
   },

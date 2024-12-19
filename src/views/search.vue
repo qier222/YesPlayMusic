@@ -55,24 +55,6 @@
       <MvRow :mvs="musicVideos.slice(0, 5)" />
     </div>
 
-    <div v-show="playlists.length > 0" class="playlists">
-      <div class="section-title"
-        >{{ $t('search.playlist')
-        }}<router-link :to="`/search/${keywords}/playlists`">{{
-          $t('home.seeMore')
-        }}</router-link></div
-      >
-      <CoverRow
-        type="playlist"
-        :items="playlists.slice(0, 12)"
-        sub-text="title"
-        :column-number="6"
-        sub-text-font-size="14px"
-        gap="34px 24px"
-        :play-button-size="26"
-      />
-    </div>
-
     <div v-show="!haveResult" class="no-results">
       <div
         ><svg-icon icon-class="search" />

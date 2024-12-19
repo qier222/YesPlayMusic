@@ -11,7 +11,7 @@
           ><svg-icon icon-class="arrow-right"
         /></button-icon>
       </div>
-      <div class="navigation-links">
+      <!-- <div class="navigation-links">
         <router-link to="/" :class="{ active: $route.name === 'home' }">{{
           $t('nav.home')
         }}</router-link>
@@ -25,7 +25,7 @@
           :class="{ active: $route.name === 'library' }"
           >{{ $t('nav.library') }}</router-link
         >
-      </div>
+      </div> -->
       <div class="right-part">
         <div class="search-box">
           <div class="container" :class="{ active: inputFocus }">
@@ -65,11 +65,11 @@
         <svg-icon icon-class="logout" />
         {{ $t('library.userProfileMenu.logout') }}
       </div>
-      <hr />
-      <div class="item" @click="toGitHub">
+      <!-- <hr /> -->
+      <!-- <div class="item" @click="toGitHub">
         <svg-icon icon-class="github" />
         {{ $t('nav.github') }}
-      </div>
+      </div> -->
     </ContextMenu>
   </div>
 </template>

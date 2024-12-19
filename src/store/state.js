@@ -13,7 +13,7 @@ updateApp();
 export default {
   showLyrics: false,
   enableScrolling: true,
-  title: 'YesPlayMusic',
+  title: 'zzwMusic',
   liked: {
     songs: [],
     songsWithDetails: [], // 只有前12首
