@@ -1,4 +1,4 @@
-FROM node:16.13.1-alpine as build
+FROM node:16.13.1-alpine AS build
 ENV VUE_APP_NETEASE_API_URL=/api
 WORKDIR /app
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories &&\
@@ -9,7 +9,7 @@ COPY . .
 RUN yarn config set electron_mirror https://npmmirror.com/mirrors/electron/ && \
     yarn build
 
-FROM nginx:1.20.2-alpine as app
+FROM nginx:1.20.2-alpine AS app
 
 COPY --from=build /app/package.json /usr/local/lib/
 
@@ -22,4 +22,4 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 COPY --from=build /app/docker/nginx.conf.example /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
-CMD nginx ; exec npx NeteaseCloudMusicApi
+CMD ["sh", "-c", "nginx && exec npx NeteaseCloudMusicApi"]
