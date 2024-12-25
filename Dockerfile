@@ -4,10 +4,13 @@ WORKDIR /app
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories &&\
 	apk add --no-cache python3 make g++ git
 COPY package.json yarn.lock ./
-RUN yarn install
-COPY . .
 RUN yarn config set electron_mirror https://npmmirror.com/mirrors/electron/ && \
-    yarn build
+    yarn config set registry https://registry.npmmirror.com && \
+    sed -i 's/registry.yarnpkg.com/registry.npmmirror.com/g' yarn.lock && \
+    sed -i 's/registry.npmjs.org/registry.npmmirror.com/g' yarn.lock && \
+    yarn install 
+COPY . .
+RUN yarn build
 
 FROM nginx:1.20.2-alpine AS app
 
