@@ -219,10 +219,10 @@ export default {
   },
   mounted() {
     this.setupMediaControls();
-    window.addEventListener("keydown", this.handleKeydown);
+    window.addEventListener('keydown', this.handleKeydown);
   },
   beforeDestroy() {
-    window.removeEventListener("keydown", this.handleKeydown);
+    window.removeEventListener('keydown', this.handleKeydown);
   },
   methods: {
     ...mapMutations(['toggleLyrics']),
@@ -279,17 +279,17 @@ export default {
     },
 
     setupMediaControls() {
-      if ("mediaSession" in navigator) {
-        navigator.mediaSession.setActionHandler("play", () => {
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => {
           this.playOrPause();
         });
-        navigator.mediaSession.setActionHandler("pause", () => {
+        navigator.mediaSession.setActionHandler('pause', () => {
           this.playOrPause();
         });
-        navigator.mediaSession.setActionHandler("previoustrack", () => {
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
           this.playPrevTrack();
         });
-        navigator.mediaSession.setActionHandler("nexttrack", () => {
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
           this.playNextTrack();
         });
       }
@@ -297,13 +297,13 @@ export default {
 
     handleKeydown(event) {
       switch (event.code) {
-        case "MediaPlayPause":
+        case 'MediaPlayPause':
           this.playOrPause();
           break;
-        case "MediaTrackPrevious":
+        case 'MediaTrackPrevious':
           this.playPrevTrack();
           break;
-        case "MediaTrackNext":
+        case 'MediaTrackNext':
           this.playNextTrack();
           break;
         default:
