@@ -92,6 +92,18 @@ module.exports = {
         copyright: 'Copyright © YesPlayMusic',
         // compression: "maximum", // 机器好的可以打开，配置压缩，开启后会让 .AppImage 格式的客户端启动缓慢
         asar: true,
+        extraResources: [
+          {
+            from: 'library/bilibili-server.exe', // Go 程序编译后的输出路径
+            to: 'library/bilibili-server.exe', // 打包后会存放在 resources/goapp 目录下
+            filter: ['**/*'],
+          },
+          {
+            from: 'library/bilibili-audiio-server/.env.example',
+            to: 'library/.env',
+            filter: ['**/*'],
+          },
+        ],
         publish: [
           {
             provider: 'github',

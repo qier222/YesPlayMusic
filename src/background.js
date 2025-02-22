@@ -18,7 +18,7 @@ import {
   isCreateMpris,
 } from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
-import { startNeteaseMusicApi } from './electron/services';
+import { startNeteaseMusicApi, startBilibiliAudioServer } from './electron/services';
 import { initIpcMain } from './electron/ipcMain.js';
 import { createMenu } from './electron/menu';
 import { createTray } from '@/electron/tray';
@@ -106,6 +106,7 @@ class Background {
 
     // start netease music api
     this.neteaseMusicAPI = startNeteaseMusicApi();
+    startBilibiliAudioServer();
 
     // create Express app
     this.createExpressApp();
