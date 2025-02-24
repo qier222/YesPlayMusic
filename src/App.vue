@@ -32,7 +32,11 @@ import Navbar from './components/Navbar.vue';
 import Player from './components/Player.vue';
 import Toast from './components/Toast.vue';
 import { ipcRenderer } from './electron/ipcRenderer';
-import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
+import {
+  isAccountLoggedIn,
+  isLooseLoggedIn,
+  setBiliRemoteCookies,
+} from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
 import { mapState } from 'vuex';
 
@@ -79,6 +83,7 @@ export default {
   created() {
     if (this.isElectron) ipcRenderer(this);
     window.addEventListener('keydown', this.handleKeydown);
+    setBiliRemoteCookies();
     this.fetchData();
   },
   methods: {
@@ -101,6 +106,7 @@ export default {
         this.$store.dispatch('fetchLikedMVs');
         this.$store.dispatch('fetchCloudDisk');
       }
+      this.$store.dispatch('fetchBiliFavs');
     },
     handleScroll() {
       this.$refs.scrollbar.handleScroll();

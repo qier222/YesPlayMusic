@@ -54,3 +54,65 @@ export function doLogout() {
   // 更新状态仓库中的喜欢列表
   store.commit('updateData', { key: 'likedSongPlaylistID', value: undefined });
 }
+
+export function setBiliCookies(string) {
+  localStorage.setItem('bili-Cookies', string);
+  store.commit('updateData', {
+    key: 'bili-Cookies',
+    value: string,
+  });
+}
+
+export function getBiliCookies() {
+  if (!store.state.data['bili-Cookies']) {
+    let cks = localStorage.getItem('bili-Cookies');
+    if (!cks) {
+      return null;
+    }
+    store.commit('updateData', {
+      key: 'bili-Cookies',
+      value: cks,
+    });
+    return cks;
+  }
+  return store.state.data['bili-Cookies'];
+}
+
+export function isBiliLogin() {
+  let cks = getBiliCookies();
+  if (cks) {
+    for (let ck of cks) {
+      if (ck.Name === 'DedeUserID') {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// only useful while logged in
+export function getBiliUid() {
+  let cks = getBiliCookies();
+  if (cks) {
+    cks.forEach(ck => {
+      if (ck.Name === 'DedeUserID') {
+        return ck.Value;
+      }
+    });
+  }
+}
+
+export function setBiliRemoteCookies() {
+  if (isBiliLogin()) {
+    let cks = getBiliCookies();
+    fetch('http://127.0.0.1:10764/login/set_cookies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cookies: cks }),
+    }).then(() => {
+      console.log('已保存B站登录信息');
+    });
+  }
+}

@@ -219,3 +219,7 @@ export function cloudDiskTrackDelete(id) {
     },
   });
 }
+
+export function biliFavs() {
+  return fetch('http://127.0.0.1:10764/playlist/list_all');
+}

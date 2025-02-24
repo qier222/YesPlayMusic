@@ -15,6 +15,24 @@ import {
  * @param {string} id - 音乐的 id，例如 id=405998841,33894312
  */
 export function getMP3(id) {
+  if (id.slice && id.slice(0, 2) == 'BV') {
+    let bvcid = id.split('_');
+    return fetch(
+      `http://127.0.0.1:10764/song/url?bvid=${bvcid[0]}&cid=${bvcid[1]}`
+    )
+      .then(resp => resp.json())
+      .then(data => {
+        return {
+          data: [
+            {
+              url: data['url'],
+              br: 128000,
+            },
+          ],
+        };
+      });
+  }
+
   const getBr = () => {
     // 当返回的 quality >= 400000时，就会优先返回 hi-res
     const quality = store.state.settings?.musicQuality ?? '320000';
@@ -37,6 +55,69 @@ export function getMP3(id) {
  * @param {string} ids - 音乐 id, 例如 ids=405998841,33894312
  */
 export function getTrackDetail(ids) {
+  if (ids.slice && ids.slice(0, 2) == 'BV') {
+    let bvcid = ids.split('_');
+    return fetch(
+      `http://127.0.0.1:10764/song/detail?bvid=${bvcid[0]}&cid=${bvcid[1]}`
+    )
+      .then(resp => resp.json())
+      .then(data => {
+        return {
+          songs: [
+            {
+              id: ids,
+              name: data['title'],
+              ar: [
+                {
+                  id: data['artist']['id'],
+                  name: data['artist']['name'],
+                  tns: [],
+                  alias: [],
+                },
+              ],
+              dt: data['duration'], // TODO: 依然出现为undefined情况
+              al: {
+                picUrl: data['cover'],
+                id: '0',
+                name: 'bilibili',
+                tns: [],
+              },
+            },
+          ],
+        };
+      });
+  }
+
+  if (typeof ids !== 'number' && typeof ids !== 'string') {
+    console.log(ids);
+    return new Promise(resolve => {
+      resolve({
+        songs: [
+          {
+            url: ids['url'],
+            dt: ids['duration'],
+            id: ids['id'],
+            name: ids['name'],
+            ar: [
+              {
+                id: 0,
+                name: '',
+                tns: [],
+                alias: [],
+              },
+            ],
+            al: {
+              picUrl: ids['cover'],
+              id: '0',
+              name: ids['album'],
+              tns: [],
+            },
+          },
+        ],
+      });
+    });
+  }
+
   const fetchLatest = () => {
     return request({
       url: '/song/detail',
@@ -74,6 +155,13 @@ export function getTrackDetail(ids) {
  * @param {number} id - 音乐 id
  */
 export function getLyric(id) {
+  if (id.slice && id.slice(0, 2) == 'BV') {
+    return new Promise(resolve => {
+      resolve(
+        '{"uncollected":true,"sgc":true,"sfy":true,"qfy":true,"needDesc":true,"lrc":{"version":1,"lyric":""},"code":200,"briefDesc":null}'
+      );
+    });
+  }
   const fetchLatest = () => {
     return request({
       url: '/lyric',

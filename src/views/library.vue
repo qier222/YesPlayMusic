@@ -96,6 +96,13 @@
           >
             {{ $t('library.playHistory.title') }}
           </div>
+          <div
+            class="tab"
+            :class="{ active: currentTab === 'favs' }"
+            @click="updateCurrentTab('favs')"
+          >
+            {{ 'b23' }}
+          </div>
         </div>
         <button
           v-show="currentTab === 'playlists'"
@@ -179,6 +186,16 @@
           type="tracklist"
         />
       </div>
+
+      <div v-show="currentTab === 'favs'">
+        <BiliFav
+          v-show="liked.biliFavs"
+          :items="liked.biliFavs"
+          type="biliFav"
+          sub-text="artist"
+          :show-play-button="false"
+        />
+      </div>
     </div>
 
     <input
@@ -227,6 +244,7 @@ import TrackList from '@/components/TrackList.vue';
 import CoverRow from '@/components/CoverRow.vue';
 import SvgIcon from '@/components/SvgIcon.vue';
 import MvRow from '@/components/MvRow.vue';
+import BiliFav from '@/components/BiliFav.vue';
 
 /**
  * Pick the lyric part from a string formed in `[timecode] lyric`.
@@ -240,7 +258,7 @@ function extractLyricPart(rawLyric) {
 
 export default {
   name: 'Library',
-  components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
+  components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu, BiliFav },
   data() {
     return {
       show: false,
@@ -335,6 +353,7 @@ export default {
       this.$store.dispatch('fetchLikedMVs');
       this.$store.dispatch('fetchCloudDisk');
       this.$store.dispatch('fetchPlayHistory');
+      this.$store.dispatch('fetchBiliFavs');
     },
     playLikedSongs() {
       this.$store.state.player.playPlaylistByID(
@@ -351,7 +370,7 @@ export default {
       );
     },
     updateCurrentTab(tab) {
-      if (!isAccountLoggedIn() && tab !== 'playlists') {
+      if (!isAccountLoggedIn() && tab !== 'playlists' && tab !== 'favs') {
         this.showToast(locale.t('toast.needToLogin'));
         return;
       }

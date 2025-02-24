@@ -61,6 +61,11 @@ const routes = [
     component: () => import('@/views/mv.vue'),
   },
   {
+    path: '/biliFav/:id',
+    name: 'biliFav',
+    component: () => import('@/views/biliFav.vue'),
+  },
+  {
     path: '/next',
     name: 'next',
     component: () => import('@/views/next.vue'),

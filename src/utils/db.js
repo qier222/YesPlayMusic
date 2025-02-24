@@ -64,6 +64,37 @@ export function cacheTrackSource(trackInfo, url, bitRate, from = 'netease') {
   axios.get(`${cover}?param=512y512`);
   axios.get(`${cover}?param=224y224`);
   axios.get(`${cover}?param=1024y1024`);
+
+  if (trackInfo.id?.slice && trackInfo.id.slice(0, 2) == 'BV') {
+    from = 'bilibili';
+    return axios
+      .get(url, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+          Referer: 'https://www.bilibili.com',
+        },
+        responseType: 'arraybuffer',
+      })
+      .then(response => {
+        db.trackSources.put({
+          id: trackInfo.id,
+          source: response.data,
+          bitRate,
+          from,
+          name,
+          artist,
+          createTime: new Date().getTime(),
+        });
+        console.debug(
+          `[debug][db.js] cached bilibili track 👉 ${name} by ${artist}`
+        );
+        tracksCacheBytes += response.data.byteLength;
+        deleteExcessCache();
+        return { trackID: trackInfo.id, source: response.data, bitRate };
+      });
+  }
+
   return axios
     .get(url, {
       responseType: 'arraybuffer',

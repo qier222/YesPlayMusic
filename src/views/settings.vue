@@ -483,6 +483,35 @@
           </div>
         </div>
       </div>
+      <div v-if="isElectron" class="item">
+        <div class="left">
+          <div class="title">
+            {{ 'bilibili' }}
+          </div>
+          <div class="description">
+            {{
+              (biliLoginStatus !== null
+                ? biliLoginStatus
+                  ? 'success'
+                  : 'fail'
+                : '未登录') +
+              (biliStatus.uid != '' ? '  uid:' + biliStatus.uid : '')
+            }}
+          </div>
+        </div>
+        <div class="right">
+          <button @click="biliStartConnect()">开启登录事务</button>
+        </div>
+      </div>
+
+      <div v-if="bili_tid_img !== ''">
+        <div class="left">
+          <img :src="bili_tid_img" />
+        </div>
+        <div class="right">
+          <button @click="cancelBiliLogin()">取消登录</button>
+        </div>
+      </div>
 
       <h3>{{ $t('settings.others') }}</h3>
       <div v-if="isElectron && !isMac" class="item">
@@ -776,11 +805,18 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { isLooseLoggedIn, doLogout } from '@/utils/auth';
+import {
+  isLooseLoggedIn,
+  doLogout,
+  getBiliCookies,
+  setBiliCookies,
+  setBiliRemoteCookies,
+} from '@/utils/auth';
 import { auth as lastfmAuth } from '@/api/lastfm';
 import { changeAppearance, bytesToSize } from '@/utils/common';
 import { countDBSize, clearDB } from '@/utils/db';
 import pkg from '../../package.json';
+import axios from 'axios';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -809,6 +845,13 @@ export default {
         recording: false,
       },
       recordedShortcut: [],
+      bili_tid: '',
+      bili_tid_img: '',
+      biliLoginStatus: null, // bili登录状态，null表示还未检测
+      cancelTokenSource: null,
+      biliStatus: {
+        uid: '',
+      },
     };
   },
   computed: {
@@ -1285,10 +1328,21 @@ export default {
   created() {
     this.countDBSize('tracks');
     if (process.env.IS_ELECTRON) this.getAllOutputDevices();
+
+    let cks = getBiliCookies();
+    if (cks) {
+      this.cksToUid(cks);
+    }
+    setBiliRemoteCookies();
   },
   activated() {
     this.countDBSize('tracks');
     if (process.env.IS_ELECTRON) this.getAllOutputDevices();
+
+    let cks = getBiliCookies();
+    if (cks) {
+      this.cksToUid(cks);
+    }
   },
   methods: {
     ...mapActions(['showToast']),
@@ -1347,6 +1401,77 @@ export default {
     lastfmDisconnect() {
       localStorage.removeItem('lastfm');
       this.$store.commit('updateLastfm', {});
+    },
+    async biliStartConnect() {
+      console.log('biliStartConnect');
+      fetch('http://127.0.0.1:10764/login/qrcode').then(res => {
+        res.json().then(data => {
+          this.bili_tid = data['transaction_id'];
+          console.log('bili_tid', this.bili_tid);
+          this.bili_tid_img = `http://127.0.0.1:10764/login/qrcode_img?tid=${this.bili_tid}`;
+          this.biliLoginStatus = null;
+          this.cancelTokenSource = axios.CancelToken.source();
+          try {
+            axios
+              .get(
+                `http://127.0.0.1:10764/login/qrcode_status?tid=${this.bili_tid}`,
+                {
+                  cancelToken: this.cancelTokenSource.token, // 绑定取消令牌
+                }
+              )
+              .then(response => {
+                // 假设返回值决定登录是否成功
+                if (response.data['code'] === 0) {
+                  this.biliLoginStatus = true;
+                  this.bili_tid_img = ''; // 登录成功，清空二维码
+                  console.log('bili login success');
+                  // 请求cookies并保存
+                  fetch('http://127.0.0.1:10764/user/cookies').then(res => {
+                    res.json().then(data => {
+                      setBiliCookies(data.cookies);
+                      console.log('已保存B站登录信息');
+                      this.cksToUid(data.cookies);
+                    });
+                  });
+                } else {
+                  this.loginStatus = false;
+                }
+              });
+          } catch (error) {
+            if (axios.isCancel(error)) {
+              console.log('登录请求已取消');
+            } else {
+              console.error('请求失败', error);
+            }
+          }
+        });
+      });
+    },
+    cancelBiliLogin() {
+      if (this.cancelTokenSource) {
+        this.cancelTokenSource.cancel('登录请求已被用户取消');
+      }
+      this.biliLoginStatus = false; // 取消登录，状态设置为失败
+      this.bili_tid_img = ''; // 可选，取消后清空二维码
+    },
+    cksToUid(cks) {
+      cks.forEach(ck => {
+        if (ck.Name === 'DedeUserID') {
+          this.biliStatus.uid = ck.Value;
+        }
+      });
+      this.biliLoginStatus = true;
+    },
+    saveToRemote(cks) {
+      fetch('http://127.0.0.1:10764/login/set_cookies', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cookies: cks }),
+      }).then(() => {
+        console.log('已保存B站登录信息');
+      });
     },
     sendProxyConfig() {
       if (this.proxyProtocol === 'noProxy') return;

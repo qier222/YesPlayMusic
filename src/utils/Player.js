@@ -11,6 +11,7 @@ import { isCreateMpris, isCreateTray } from '@/utils/platform';
 import { Howl, Howler } from 'howler';
 import shuffle from 'lodash/shuffle';
 import { decode as base642Buffer } from '@/utils/base64';
+import { getBiliFav } from './biliFav';
 
 const PLAY_PAUSE_FADE_DURATION = 200;
 
@@ -191,6 +192,9 @@ export default class {
     return this._personalFMTrack;
   }
   get currentTrackDuration() {
+    if (!this.currentTrack.dt && this.currentTrack.id.includes('BV')) {
+      console.log(this.currentTrack);
+    }
     const trackDuration = this._currentTrack.dt || 1000;
     let duration = ~~(trackDuration / 1000);
     return duration > 1 ? duration - 1 : duration;
@@ -329,11 +333,14 @@ export default class {
   }
   _playAudioSource(source, autoplay = true) {
     Howler.unload();
+    if (source.includes('bilivideo')) {
+      source = `http://127.0.0.1:10764/media/proxy?url=${btoa(source)}`;
+    }
     this._howler = new Howl({
       src: [source],
       html5: true,
       preload: true,
-      format: ['mp3', 'flac'],
+      format: ['mp3', 'flac', 'mp4'],
       onend: () => {
         this._nextTrackCallback();
       },
@@ -388,19 +395,26 @@ export default class {
     return source;
   }
   _getAudioSourceFromCache(id) {
+    if (id.slice && id.slice(0, 2) == 'BV') {
+      return null;
+    }
     return getTrackSource(id).then(t => {
       if (!t) return null;
       return this._getAudioSourceBlobURL(t.source);
     });
   }
   _getAudioSourceFromNetease(track) {
+    console.log('try to get mp3');
     if (isAccountLoggedIn()) {
       return getMP3(track.id).then(result => {
         if (!result.data[0]) return null;
         if (!result.data[0].url) return null;
         if (result.data[0].freeTrialInfo !== null) return null; // 跳过只能试听的歌曲
         const source = result.data[0].url.replace(/^http:/, 'https:');
-        if (store.state.settings.automaticallyCacheSongs) {
+        if (
+          store.state.settings.automaticallyCacheSongs &&
+          !source.includes('bili')
+        ) {
           cacheTrackSource(track, source, result.data[0].br);
         }
         return source;
@@ -480,6 +494,20 @@ export default class {
     return this._getAudioSourceBlobURL(buffer);
   }
   _getAudioSource(track) {
+    // TODO: bilibili 直接请求
+    if (track.id.slice && track.id.slice(0, 2) == 'BV') {
+      if (track.url) {
+        return new Promise(resolve => {
+          resolve(`http://127.0.0.1:10764/media/proxy?url=${btoa(track.url)}`);
+        });
+      } else if (track.id.includes('BV') && track.id.includes('_')) {
+        return new Promise(resolve => {
+          resolve(`http://127.0.0.1:10764/media/${track.id}`);
+        });
+      }
+      return this._getAudioSourceFromNetease(track);
+    }
+
     return this._getAudioSourceFromCache(String(track.id))
       .then(source => {
         return source ?? this._getAudioSourceFromNetease(track);
@@ -519,6 +547,7 @@ export default class {
   ) {
     return this._getAudioSource(track).then(source => {
       if (source) {
+        // null bilibiliTODo
         let replaced = false;
         if (track.id === this.currentTrackID) {
           this._playAudioSource(source, autoplay);
@@ -906,9 +935,31 @@ export default class {
     console.debug(
       `[debug][Player.js] playPlaylistByID 👉 id:${id} trackID:${trackID} noCache:${noCache}`
     );
-    getPlaylistDetail(id, noCache).then(data => {
+    getPlaylistDetail(id, (noCache = false)).then(data => {
       let trackIDs = data.playlist.trackIds.map(t => t.id);
       this.replacePlaylist(trackIDs, id, 'playlist', trackID);
+    });
+  }
+  playPlaylistByBID(id, trackID = 'first') {
+    console.log('all inn ');
+    // bilibili 请注意修改trackIDs的获取方法
+    // TODO: 修改正常循环在获取ID是判断前两个字符是否是BV，是就换一种获取音乐Url方式
+    getBiliFav(id).then(data => {
+      let tracks = data;
+      this._isPersonalFM = false;
+      this.list = tracks;
+      this.current = 0;
+      this._playlistSource = {
+        type: 'bilibili',
+        id: id,
+      };
+      if (this.shuffle) this._shuffleTheList(trackID);
+      if (trackID === 'first') {
+        this._replaceCurrentTrack(this.list[0]);
+      } else {
+        this.current = tracks.indexOf(trackID);
+        this._replaceCurrentTrack(trackID);
+      }
     });
   }
   playArtistByID(id, trackID = 'first') {

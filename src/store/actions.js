@@ -1,5 +1,5 @@
 // import store, { state, dispatch, commit } from "@/store";
-import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
+import { isAccountLoggedIn, isLooseLoggedIn, isBiliLogin } from '@/utils/auth';
 import { likeATrack } from '@/api/track';
 import { getPlaylistDetail } from '@/api/playlist';
 import { getTrackDetail } from '@/api/track';
@@ -12,6 +12,7 @@ import {
   likedMVs,
   cloudDisk,
   userAccount,
+  biliFavs,
 } from '@/api/user';
 
 export default {
@@ -189,6 +190,29 @@ export default {
         });
       }
     });
+  },
+  fetchBiliFavs: ({ commit }) => {
+    if (!isBiliLogin()) {
+      console.log('未登录B站账号');
+      return;
+    }
+    return biliFavs()
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(result => {
+        if (result) {
+          for (let i = 0; i < result.length; i++) {
+            result[i].name = result[i].title;
+          }
+          commit('updateLikedXXX', {
+            name: 'biliFavs',
+            data: result,
+          });
+        }
+      });
   },
   fetchUserProfile: ({ commit }) => {
     if (!isAccountLoggedIn()) return;
