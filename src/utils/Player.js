@@ -892,7 +892,7 @@ export default class {
     if (autoPlayTrackID === 'first') {
       this._replaceCurrentTrack(this.list[0]);
     } else {
-      this.current = trackIDs.indexOf(autoPlayTrackID);
+      this.current = this.list.indexOf(autoPlayTrackID);
       this._replaceCurrentTrack(autoPlayTrackID);
     }
   }
