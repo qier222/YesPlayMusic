@@ -130,6 +130,8 @@ export default class {
     if (shuffle) {
       this._shuffleTheList();
     }
+    // 同步当前歌曲在列表中的下标
+    this.current = this.list.indexOf(this.currentTrackID);
   }
   get reversed() {
     return this._reversed;
