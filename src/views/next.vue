@@ -57,7 +57,9 @@ export default {
         this.player.current + 1,
         this.player.current + 100
       );
-      return this.tracks.filter(t => trackIDs.includes(t.id));
+      return trackIDs
+        .map(tid => this.tracks.find(t => t.id === tid))
+        .filter(t => t);
     },
     playNextList() {
       return this.player.playNextList;
