@@ -100,7 +100,8 @@
   "resolutions": {
     "icon-gen": "3.0.0",
     "degenerator": "2.2.0",
-    "electron-builder": "^23.0.0"
+    "electron-builder": "^23.0.0",
+    "@achrinza/node-ipc": "^10.1.0"
   },
   "eslintConfig": {
     "root": true,
