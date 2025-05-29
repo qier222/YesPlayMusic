@@ -23,7 +23,7 @@
   },
   "main": "background.js",
   "engines": {
-    "node": "14 || 16"
+    "node": "16.x || 18.x"
   },
   "dependencies": {
     "@unblockneteasemusic/rust-napi": "^0.4.0",
