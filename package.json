@@ -103,7 +103,7 @@
   "degenerator": "2.2.0",
   "icon-gen": "3.0.0",
   "electron-builder": "^23.0.0"
-}
+},
   "eslintConfig": {
     "root": true,
     "env": {
