@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": { "nodeVersion": "16.x" }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://your-netease-api.example.com/:match*"
+    }
+  ]
+}
