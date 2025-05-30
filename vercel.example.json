@@ -1,8 +1,17 @@
 {
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "https://ku-gou-music-api-coral.vercel.app//:match*"
+      "destination": "https://ku-gou-music-api-coral.vercel.app/:match*"
     }
   ]
 }
