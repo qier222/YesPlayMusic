@@ -12,7 +12,7 @@
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "https://ku-gou-music-api-coral.vercel.app/:match*"
+      "destination": "https://neteasecloudmusicapi.vercel.app/:match*"
     }
   ]
 }
