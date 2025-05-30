@@ -130,6 +130,8 @@ export default class {
     if (shuffle) {
       this._shuffleTheList();
     }
+    // 同步当前歌曲在列表中的下标
+    this.current = this.list.indexOf(this.currentTrackID);
   }
   get reversed() {
     return this._reversed;
@@ -892,7 +894,7 @@ export default class {
     if (autoPlayTrackID === 'first') {
       this._replaceCurrentTrack(this.list[0]);
     } else {
-      this.current = trackIDs.indexOf(autoPlayTrackID);
+      this.current = this.list.indexOf(autoPlayTrackID);
       this._replaceCurrentTrack(autoPlayTrackID);
     }
   }
