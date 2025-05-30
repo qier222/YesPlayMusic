@@ -84,9 +84,9 @@ export default {
     login: '登录',
     loginWithEmail: '邮箱登录',
     loginWithPhone: '手机号登录',
-    notice: `YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
+    notice: `承诺不会保存你的任何账号信息到云端。<br />
       你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
-      YesPlayMusic 并非网易云官方网站，输入账号信息前请慎重考虑。 你也可以前往
+       并非网易云官方网站，输入账号信息前请慎重考虑。 开源地址
       <a href="https://github.com/qier222/YesPlayMusic"
         >YesPlayMusic 的 GitHub 源代码仓库</a
       >
