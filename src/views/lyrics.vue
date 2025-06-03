@@ -29,19 +29,53 @@
         class="gradient-background"
         :style="{ background }"
       ></div>
+      <div
+        v-if="settings.lyricsBackground === 'starry_night'"
+        class="gradient-background background-layer"
+      >
+        <video
+          src="/theme/the-starry-night/bg.webm"
+          type="video/webm"
+          autoplay
+          muted
+          loop
+        ></video>
+      </div>
 
       <div class="left-side">
         <div>
           <div v-if="settings.showLyricsTime" class="date">
             {{ date }}
           </div>
-          <div class="cover">
+          <div
+            class="cover rotate"
+            :class="{
+              isPlaying: player.playing,
+              'rotate-pause': !player.playing,
+            }"
+          >
             <div class="cover-container">
-              <img :src="imageUrl" loading="lazy" />
+              <img :src="imageUrl" class="cover-img" loading="lazy" />
               <div
                 class="shadow"
                 :style="{ backgroundImage: `url(${imageUrl})` }"
               ></div>
+              <div
+                v-if="settings.lyricsBackground === 'starry_night'"
+                class="disc-layer"
+              >
+                <img
+                  class="front"
+                  src="/theme/the-starry-night/disc1.png"
+                  alt=""
+                  ref="front"
+                />
+                <img
+                  class="back"
+                  src="/theme/the-starry-night/disc.png"
+                  alt=""
+                />
+              </div>
             </div>
           </div>
           <div class="controls">
@@ -125,7 +159,13 @@
                 </div>
               </div>
             </div>
-            <div class="progress-bar">
+            <div
+              class="progress-bar"
+              :class="{
+                nyancat: settings.nyancatStyle,
+                'nyancat-stop': settings.nyancatStyle && !player.playing,
+              }"
+            >
               <span>{{ formatTrackTime(player.progress) || '0:00' }}</span>
               <div class="slider">
                 <vue-slider
@@ -224,6 +264,18 @@
                 <span class="lyric-switch-icon">音</span>
               </button-icon>
             </div>
+          </div>
+          <div
+            v-if="settings.lyricsBackground === 'starry_night'"
+            class="gradient-background foreground-layer"
+          >
+            <video
+              src="/theme/the-starry-night/cover-left.webm"
+              type="video/webm"
+              autoplay
+              muted
+              loop
+            ></video>
           </div>
         </div>
       </div>
@@ -443,7 +495,10 @@ export default {
       return this.currentTrack?.al || { id: 0, name: 'unknown' };
     },
     theme() {
-      return this.settings.lyricsBackground === true ? 'dark' : 'auto';
+      return this.settings.lyricsBackground === true ||
+        this.settings.lyricsBackground === 'starry_night'
+        ? 'dark'
+        : 'auto';
     },
   },
   watch: {
@@ -736,6 +791,14 @@ export default {
   animation: rotate 150s linear infinite;
 }
 
+.rotate {
+  animation: rotate 18s linear infinite;
+}
+
+.rotate-pause {
+  animation-play-state: paused;
+}
+
 @keyframes rotate {
   0% {
     transform: rotate(0deg);
@@ -751,12 +814,40 @@ export default {
   width: 100vw;
 }
 
+.background-layer,
+.foreground-layer,
+.disc-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  video {
+    width: 100%;
+    object-fit: initial;
+    overflow-clip-margin: border-box;
+    height: 100%;
+  }
+}
+
+.foreground-layer {
+  z-index: 5;
+  min-width: max-content;
+  pointer-events: none;
+}
+
+.background-layer {
+  z-index: 0;
+}
+
 .left-side {
   flex: 1;
   display: flex;
-  justify-content: flex-end;
-  margin-right: 32px;
-  margin-top: 24px;
+  justify-content: center;
   align-items: center;
   transition: all 0.5s;
 
@@ -774,12 +865,15 @@ export default {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
     overflow: hidden;
+    z-index: 3;
   }
 
   .controls {
     max-width: 54vh;
     margin-top: 24px;
     color: var(--color-text);
+    z-index: 6;
+    position: sticky;
 
     .title {
       margin-top: 8px;
@@ -815,12 +909,20 @@ export default {
           display: flex;
           align-items: center;
           .volume-bar {
+            display: none;
+            transition: all 0.1s ease;
             width: 84px;
+          }
+          &:hover {
+            .volume-bar {
+              display: block;
+              transition: all 0.1s ease;
+            }
           }
         }
 
         .buttons {
-          display: flex;
+          display: none;
           align-items: center;
 
           button {
@@ -855,7 +957,7 @@ export default {
     }
 
     .media-controls {
-      display: flex;
+      display: none;
       justify-content: center;
       margin-top: 18px;
       align-items: center;
@@ -903,33 +1005,107 @@ export default {
       }
     }
   }
+
+  &:hover {
+    transition: all 0.5s ease;
+
+    .top-part {
+      .top-right {
+        .buttons {
+          display: flex;
+        }
+      }
+    }
+
+    .media-controls {
+      display: flex;
+    }
+  }
 }
 
 .cover {
   position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 40vh;
+  height: 40vh;
 
   .cover-container {
     position: relative;
+    display: inline-block;
+    img,
+    .shadow {
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    img {
+      width: 40vh;
+      height: 40vh;
+      user-select: none;
+      object-fit: cover;
+    }
+
+    .cover-img {
+      z-index: 2;
+    }
+
+    .shadow {
+      position: absolute;
+      top: 12px;
+      height: 40vh;
+      width: 40vh;
+      filter: blur(12px) opacity(0.6);
+      z-index: -1;
+      background-size: cover;
+    }
+
+    .disc-layer {
+      position: absolute;
+      top: -10vh;
+      left: -10vh;
+      right: -10vh;
+      bottom: -10vh;
+      vertical-align: middle;
+      text-align: center;
+      height: 60vh;
+      width: 60vh;
+      z-index: 0;
+      background-size: cover;
+      overflow: visible;
+      z-index: -1;
+      opacity: 0.5;
+      transition: opacity 1s ease;
+      user-select: none;
+      object-fit: cover;
+
+      .front,
+      .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+      }
+
+      .front {
+        z-index: 1;
+      }
+
+      .back {
+        z-index: 0;
+      }
+    }
   }
 
-  img {
-    border-radius: 0.75em;
-    width: 54vh;
-    height: 54vh;
-    user-select: none;
-    object-fit: cover;
-  }
-
-  .shadow {
-    position: absolute;
-    top: 12px;
-    height: 54vh;
-    width: 54vh;
-    filter: blur(16px) opacity(0.6);
-    transform: scale(0.92, 0.96);
-    z-index: -1;
-    background-size: cover;
-    border-radius: 0.75em;
+  &.isPlaying {
+    .cover-container {
+      .disc-layer {
+        opacity: 0.7;
+      }
+    }
   }
 }
 
@@ -938,13 +1114,13 @@ export default {
   font-weight: 600;
   color: var(--color-text);
   margin-right: 24px;
-  z-index: 0;
+  z-index: 3;
 
   .lyrics-container {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding-left: 78px;
+    padding-left: 2rem;
     max-width: 460px;
     overflow-y: auto;
     transition: 0.5s;
@@ -952,7 +1128,7 @@ export default {
 
     .line {
       margin: 2px 0;
-      padding: 12px 18px;
+      padding: 5px;
       transition: 0.5s;
       border-radius: 12px;
 
@@ -962,19 +1138,18 @@ export default {
 
       .content {
         transform-origin: center left;
-        transform: scale(0.95);
         transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         user-select: none;
 
         span {
-          opacity: 0.28;
+          opacity: 0.5;
           cursor: default;
-          font-size: 1em;
+          font-size: 1.05em;
           transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         span.translation {
-          opacity: 0.2;
+          opacity: 0.4;
           font-size: 0.925em;
         }
       }
@@ -989,9 +1164,10 @@ export default {
     }
 
     .highlight div.content {
-      transform: scale(1);
       span {
-        opacity: 0.98;
+        font-size: 1.8em;
+        line-height: 1.2;
+        opacity: 1;
         display: inline-block;
       }
 
@@ -1047,6 +1223,18 @@ export default {
     transition: all 0.5s;
     transform: translateX(27vh);
     margin-right: 0;
+  }
+}
+
+[data-theme='dark'] {
+  .right-side {
+    .lyrics-container {
+      .highlight div.content {
+        span {
+          color: #ffe1b7;
+        }
+      }
+    }
   }
 }
 
