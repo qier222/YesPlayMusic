@@ -942,6 +942,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      min-width: 30vw;
 
       .slider {
         width: 100%;
@@ -1029,6 +1030,7 @@ export default {
   text-align: center;
   width: 40vh;
   height: 40vh;
+  margin: 0 auto;
 
   .cover-container {
     position: relative;
