@@ -8,5 +8,6 @@
   "arrowParens": "avoid",
   "endOfLine": "lf",
   "bracketSpacing": true,
+  "singleAttributePerLine": false,
   "htmlWhitespaceSensitivity": "strict"
 }

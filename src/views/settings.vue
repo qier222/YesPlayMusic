@@ -198,6 +198,13 @@
       <div class="item">
         <div class="left">
           <div class="title">{{ $t('settings.lyricsBackground.text') }}</div>
+          <div class="description" v-if="lyricsBackground === 'starry_night'">
+            主题修改自<a
+              target="_blank"
+              href="https://github.com/reverieofnight/starryNightLiveWallpaper"
+              >starryNightLiveWallpaper</a
+            >
+          </div>
         </div>
         <div class="right">
           <select v-model="lyricsBackground">
@@ -208,6 +215,7 @@
               {{ $t('settings.lyricsBackground.on') }}
             </option>
             <option value="blur"> 模糊封面 </option>
+            <option value="starry_night"> 梵高·星月夜 </option>
             <option value="dynamic">
               {{ $t('settings.lyricsBackground.dynamic') }}
             </option>
