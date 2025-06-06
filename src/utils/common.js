@@ -1,6 +1,6 @@
 import { isAccountLoggedIn } from './auth';
 import { refreshCookie } from '@/api/auth';
-import { dailySignin } from '@/api/user';
+// import { dailySignin } from '@/api/user';
 import dayjs from 'dayjs';
 import store from '@/store';
 
@@ -110,12 +110,13 @@ export function dailyTask() {
         value: dayjs().date(),
       });
     });
-    dailySignin(0).catch(() => {
-      console.debug('[debug][common.js] 手机端重复签到');
-    });
-    dailySignin(1).catch(() => {
-      console.debug('[debug][common.js] PC端重复签到');
-    });
+    // 停用“每日签到”
+    // dailySignin(0).catch(() => {
+    //   console.debug('[debug][common.js] 手机端重复签到');
+    // });
+    // dailySignin(1).catch(() => {
+    //   console.debug('[debug][common.js] PC端重复签到');
+    // });
   }
 }
 
