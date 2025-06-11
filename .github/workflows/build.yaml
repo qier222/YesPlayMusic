@@ -97,19 +97,19 @@ jobs:
 
           use_vue_cli: true
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: YesPlayMusic-mac
           path: dist_electron/*-universal.dmg
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: YesPlayMusic-win
           path: dist_electron/*Setup*.exe
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: YesPlayMusic-linux
           path: dist_electron/*.AppImage
