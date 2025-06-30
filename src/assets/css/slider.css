@@ -90,6 +90,7 @@
 
 .nyancat .vue-slider-dot-handle {
   background: url('/img/logos/nyancat.gif');
+  background-color: unset !important;
   background-size: 36px;
   width: 36px;
   height: 24px;
