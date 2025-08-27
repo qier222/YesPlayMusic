@@ -14,6 +14,8 @@ on:
 jobs:
   release:
     runs-on: ${{ matrix.os }}
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.snapcraft_token }}
 
     strategy:
       matrix:
@@ -23,7 +25,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
         with:
-          submodules: "recursive"
+          submodules: 'recursive'
 
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3
@@ -40,10 +42,8 @@ jobs:
           sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
       - name: Install Snapcraft (on Ubuntu)
-        uses: samuelmeuli/action-snapcraft@v1
+        uses: samuelmeuli/action-snapcraft@v3
         if: startsWith(matrix.os, 'ubuntu')
-        with:
-          snapcraft_token: ${{ secrets.snapcraft_token }}
 
       - id: get_unm_version
         name: Get the installed UNM version

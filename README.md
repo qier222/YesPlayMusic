@@ -18,10 +18,10 @@
 
 [![Library][library-screenshot]](https://music.qier222.com)
 
-
 ## 全新版本
-全新2.0 Alpha测试版已发布，欢迎前往 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载。
-当前版本将会进入维护模式，除重大bug修复外，不会再更新新功能。
+
+全新 2.0 Alpha 测试版已发布，欢迎前往 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载。
+当前版本将会进入维护模式，除重大 bug 修复外，不会再更新新功能。
 
 ## ✨ 特性
 
@@ -35,7 +35,7 @@
 - 🔐 支持 [UnblockNeteaseMusic](https://github.com/UnblockNeteaseMusic/server#音源清单)，自动使用[各类音源](https://github.com/UnblockNeteaseMusic/server#音源清单)替换变灰歌曲链接 （网页版不支持）
   - 「各类音源」指默认启用的音源。
   - YouTube 音源需自行安装 `yt-dlp`。
-- ✔️ 每日自动签到（手机端和电脑端同时签到）
+- ~~✔️ 每日自动签到（手机端和电脑端同时签到）~~
 - 🌚 Light/Dark Mode 自动切换
 - 👆 支持 Touch Bar
 - 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
@@ -125,13 +125,13 @@ yarn run build
 
 7. 将 `/dist` 目录下的文件上传到你的 Web 服务器
 
-## ⚙️ 宝塔面板 docker应用商店 部署
+## ⚙️ 宝塔面板 docker 应用商店 部署
 
 1. 安装宝塔面板，前往[宝塔面板官网](https://www.bt.cn/new/download.html) ，选择正式版的脚本下载安装。
 
-2. 安装后登录宝塔面板，在左侧导航栏中点击 Docker，首次进入会提示安装Docker服务，点击立即安装，按提示完成安装
+2. 安装后登录宝塔面板，在左侧导航栏中点击 Docker，首次进入会提示安装 Docker 服务，点击立即安装，按提示完成安装
 
-3. 安装完成后在应用商店中找到YesPlayMusic，点击安装，配置域名、端口等基本信息即可完成安装。
+3. 安装完成后在应用商店中找到 YesPlayMusic，点击安装，配置域名、端口等基本信息即可完成安装。
 
 4. 安装后在浏览器输入上一步骤设置的域名即可访问。
 
