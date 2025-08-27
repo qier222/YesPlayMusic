@@ -56,6 +56,14 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 - Windows 用户可以通过 Scoop 来安装：`scoop install extras/yesplaymusic`
 
+## 同类项目（排名无先后）
+
+欢迎大家通过 PR 分享你的项目，让更多人看到！
+
+- [algerkong/AlgerMusicPlayer](https://github.com/algerkong/AlgerMusicPlayer)
+- [asxez/MusicBox](https://github.com/asxez/MusicBox)
+- [lianchengwu/wmplayer](https://github.com/lianchengwu/wmplayer)
+
 ## ⚙️ 部署至 Vercel
 
 除了下载安装包使用，你还可以将本项目部署到 Vercel 或你的服务器上。下面是部署到 Vercel 的方法。
