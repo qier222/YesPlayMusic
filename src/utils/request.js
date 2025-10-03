@@ -21,6 +21,14 @@ const service = axios.create({
 });
 
 service.interceptors.request.use(function (config) {
+  // Log API request (only in development or Electron)
+  if (process.env.NODE_ENV === 'development' || process.env.IS_ELECTRON) {
+    console.log(
+      `[API Request] ${config.method?.toUpperCase()} ${config.url}`,
+      config.params
+    );
+  }
+
   if (!config.params) config.params = {};
   if (baseURL.length) {
     if (
@@ -59,10 +67,30 @@ service.interceptors.request.use(function (config) {
 
 service.interceptors.response.use(
   response => {
+    // Log API response (only in development or Electron)
+    if (process.env.NODE_ENV === 'development' || process.env.IS_ELECTRON) {
+      console.log(`[API Response] ${response.config.url}`, {
+        status: response.status,
+        code: response.data?.code,
+        dataKeys: response.data ? Object.keys(response.data) : []
+      });
+    }
+    
     const res = response.data;
     return res;
   },
   async error => {
+    // Log API error (only in development or Electron)
+    if (process.env.NODE_ENV === 'development' || process.env.IS_ELECTRON) {
+      console.error(`[API Error]`, {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        message: error.message,
+        data: error.response?.data
+      });
+    }
+
     /** @type {import('axios').AxiosResponse | null} */
     let response;
     let data;

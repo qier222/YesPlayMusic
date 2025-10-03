@@ -111,7 +111,10 @@ class Background {
         log('Netease Music API started successfully');
       })
       .catch(err => {
-        console.error(clc.redBright('[background.js] Failed to start API:'), err);
+        console.error(
+          clc.redBright('[background.js] Failed to start API:'),
+          err
+        );
       });
 
     // create Express app
@@ -161,20 +164,22 @@ class Background {
 
     const expressApp = express();
     expressApp.use('/', express.static(__dirname + '/'));
-    
+
     // Add logging middleware for API requests
     expressApp.use('/api', (req, res, next) => {
       const start = Date.now();
       log(`API Request: ${req.method} ${req.path}`);
-      
+
       res.on('finish', () => {
         const duration = Date.now() - start;
-        log(`API Response: ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+        log(
+          `API Response: ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`
+        );
       });
-      
+
       next();
     });
-    
+
     expressApp.use('/api', expressProxy('http://127.0.0.1:10754'));
     expressApp.use('/player', (req, res) => {
       this.window.webContents
@@ -188,7 +193,12 @@ class Background {
           });
         });
     });
-    this.expressApp = expressApp.listen(27232, '127.0.0.1');
+    this.expressApp = expressApp.listen(27232, '127.0.0.1', () => {
+      log('Express app listening on http://127.0.0.1:27232');
+      log(
+        'API proxy path: http://127.0.0.1:27232/api -> http://127.0.0.1:10754'
+      );
+    });
   }
 
   createWindow() {
