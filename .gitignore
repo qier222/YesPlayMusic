@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 /dist
+/test
 
 # local env files
 .env
