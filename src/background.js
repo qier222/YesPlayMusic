@@ -105,7 +105,14 @@ class Background {
     if (!app.requestSingleInstanceLock()) return app.quit();
 
     // start netease music api
-    this.neteaseMusicAPI = startNeteaseMusicApi();
+    log('Starting Netease Music API server...');
+    this.neteaseMusicAPI = startNeteaseMusicApi()
+      .then(() => {
+        log('Netease Music API started successfully');
+      })
+      .catch(err => {
+        console.error(clc.redBright('[background.js] Failed to start API:'), err);
+      });
 
     // create Express app
     this.createExpressApp();
@@ -154,6 +161,20 @@ class Background {
 
     const expressApp = express();
     expressApp.use('/', express.static(__dirname + '/'));
+    
+    // Add logging middleware for API requests
+    expressApp.use('/api', (req, res, next) => {
+      const start = Date.now();
+      log(`API Request: ${req.method} ${req.path}`);
+      
+      res.on('finish', () => {
+        const duration = Date.now() - start;
+        log(`API Response: ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+      });
+      
+      next();
+    });
+    
     expressApp.use('/api', expressProxy('http://127.0.0.1:10754'));
     expressApp.use('/player', (req, res) => {
       this.window.webContents
