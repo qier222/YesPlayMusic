@@ -1,0 +1,77 @@
+{
+  "name": "espower",
+  "description": "Power Assert feature instrumentor based on the ECMAScript AST",
+  "version": "2.1.2",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/power-assert-js/espower/issues"
+  },
+  "contributors": [
+    {
+      "name": "James Talmage",
+      "url": "https://github.com/jamestalmage"
+    }
+  ],
+  "dependencies": {
+    "array-find": "^1.0.0",
+    "escallmatch": "^1.5.0",
+    "escodegen": "^1.7.0",
+    "escope": "^3.3.0",
+    "espower-location-detector": "^1.0.0",
+    "espurify": "^1.3.0",
+    "estraverse": "^4.1.0",
+    "source-map": "^0.5.0",
+    "type-name": "^2.0.0"
+  },
+  "devDependencies": {
+    "acorn": "^5.0.0",
+    "acorn-es7-plugin": "^1.0.14",
+    "esprima": "^4.0.0",
+    "jshint": "^2.9.2",
+    "mocha": "^5.0.0",
+    "nyc": "^13.1.0",
+    "rimraf": "^2.6.3"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "MIT-LICENSE.txt",
+    "README.md",
+    "index.js",
+    "lib",
+    "package.json"
+  ],
+  "homepage": "https://github.com/power-assert-js/espower",
+  "keywords": [
+    "power-assert",
+    "assert",
+    "assertion",
+    "test",
+    "testing",
+    "ecmascript",
+    "estree",
+    "ast"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/power-assert-js/espower.git"
+  },
+  "scripts": {
+    "preversion": "npm test",
+    "clean": "rimraf ./coverage",
+    "lint": "jshint index.js lib",
+    "gen": "node gen.js",
+    "test": "npm run lint && npm run gen && npm run test:unit",
+    "test:unit": "mocha --reporter dot",
+    "test:cov": "nyc --reporter=lcovonly npm run test:unit",
+    "coveralls": "npm run test:cov && cat ./coverage/lcov.info | coveralls"
+  }
+}

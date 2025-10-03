@@ -1,0 +1,38 @@
+{
+  "name": "power-assert-util-string-width",
+  "description": "calculates width of given string",
+  "version": "1.2.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/twada/power-assert-runtime/issues"
+  },
+  "dependencies": {
+    "eastasianwidth": "^0.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.0"
+  },
+  "files": [
+    "README.md",
+    "index.js"
+  ],
+  "homepage": "https://github.com/twada/power-assert-runtime",
+  "keywords": [
+    "string",
+    "unicode",
+    "width"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twada/power-assert-runtime.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
+}

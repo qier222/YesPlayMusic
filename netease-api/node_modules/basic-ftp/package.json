@@ -1,0 +1,50 @@
+{
+  "name": "basic-ftp",
+  "version": "5.0.3",
+  "description": "FTP client for Node.js, supports FTPS over TLS, IPv6, Async/Await, and Typescript.",
+  "main": "dist/index",
+  "types": "dist/index",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run clean && npm run lint && tsc && mocha",
+    "test": "npm run prepublishOnly",
+    "clean": "rimraf dist",
+    "lint": "eslint \"./src/**/*.ts\"",
+    "lint-fix": "eslint --fix \"./src/**/*.ts\"",
+    "dev": "npm run clean && tsc --watch",
+    "tdd": "mocha --watch",
+    "buildOnly": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrickjuchli/basic-ftp.git"
+  },
+  "author": "Patrick Juchli <patrickjuchli@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "ftp",
+    "ftps",
+    "promise",
+    "async",
+    "await",
+    "tls",
+    "ipv6",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "9.1.1",
+    "@types/node": "20.0.0",
+    "@typescript-eslint/eslint-plugin": "5.59.2",
+    "@typescript-eslint/parser": "5.59.2",
+    "eslint": "8.39.0",
+    "mocha": "10.2.0",
+    "mock-fs": "5.1.4",
+    "rimraf": "3.0.2",
+    "typescript": "5.0.4"
+  }
+}

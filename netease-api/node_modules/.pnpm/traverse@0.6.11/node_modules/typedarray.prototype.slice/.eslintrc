@@ -1,0 +1,55 @@
+{
+	"root": true,
+
+	"extends": "@ljharb",
+
+	"globals": {
+		"Float32Array": false,
+		"Float64Array": false,
+		"Int16Array": false,
+		"Int32Array": false,
+		"Int8Array": false,
+		"Uint16Array": false,
+		"Uint32Array": false,
+		"Uint8Array": false,
+		"Uint8ClampedArray": false,
+	},
+
+	"rules": {
+		"func-style": 0,
+		"id-length": 0,
+		"max-lines-per-function": 0,
+		"max-params": 0,
+		"max-statements": 0,
+		"multiline-comment-style": 0,
+		"new-cap": [2, {
+			"capIsNewExceptions": [
+				"Get",
+				"GetIntrinsic",
+				"GetValueFromBuffer",
+				"IsDetachedBuffer",
+				"Set",
+				"SetValueInBuffer",
+				"ToIntegerOrInfinity",
+				"ToString",
+				"TypedArrayElementSize",
+				"TypedArrayElementType",
+				"TypedArraySpeciesCreate",
+				"ValidateTypedArray",
+			],
+		}],
+	},
+
+	"overrides": [
+		{
+			"files": "test/**",
+			"globals": {
+				"ArrayBuffer": false,
+				"Uint8Array": false,
+			},
+			"rules": {
+				"max-lines-per-function": 0,
+			},
+		},
+	],
+}

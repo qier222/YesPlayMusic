@@ -1,0 +1,15 @@
+{
+  "name": "safe-decode-uri-component2",
+  "collaborators": [
+    "Justin Ridgewell <jridgewell@google.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "safe_decode_uri_component2_bg.wasm",
+    "safe_decode_uri_component2.js",
+    "safe_decode_uri_component2.d.ts"
+  ],
+  "module": "safe_decode_uri_component2.js",
+  "types": "safe_decode_uri_component2.d.ts",
+  "sideEffects": "false"
+}

@@ -1,0 +1,60 @@
+{
+  "name": "get-uri",
+  "version": "6.0.2",
+  "description": "Returns a `stream.Readable` from a URI string",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TooTallNate/proxy-agents.git",
+    "directory": "packages/get-uri"
+  },
+  "keywords": [
+    "uri",
+    "read",
+    "readstream",
+    "stream",
+    "get",
+    "http",
+    "https",
+    "ftp",
+    "file",
+    "data",
+    "protocol",
+    "url"
+  ],
+  "author": "Nathan Rajlich <nathan@tootallnate.net> (http://n8.io/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/fs-extra": "^8.1.2",
+    "@types/ftpd": "^0.2.35",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^14.18.45",
+    "async-listen": "^3.0.0",
+    "ftpd": "https://files-jg1s1zt9l.n8.io/ftpd-v0.2.14.tgz",
+    "jest": "^29.5.0",
+    "st": "^1.2.2",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4",
+    "tsconfig": "0.0.0"
+  },
+  "dependencies": {
+    "basic-ftp": "^5.0.2",
+    "data-uri-to-buffer": "^6.0.0",
+    "debug": "^4.3.4",
+    "fs-extra": "^8.1.0"
+  },
+  "engines": {
+    "node": ">= 14"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --env node --verbose --bail",
+    "lint": "eslint . --ext .ts",
+    "pack": "node ../../scripts/pack.mjs"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "es6-map",
+  "version": "0.1.5",
+  "description": "ECMAScript6 Map polyfill",
+  "author": "Mariusz Nowak <medyk@medikoo.com> (http://www.medikoo.com/)",
+  "keywords": [
+    "collection",
+    "es6",
+    "shim",
+    "harmony",
+    "list",
+    "hash",
+    "map",
+    "polyfill",
+    "ponyfill",
+    "ecmascript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/medikoo/es6-map.git"
+  },
+  "dependencies": {
+    "d": "1",
+    "es5-ext": "~0.10.14",
+    "es6-iterator": "~2.0.1",
+    "es6-set": "~0.1.5",
+    "es6-symbol": "~3.1.1",
+    "event-emitter": "~0.3.5"
+  },
+  "devDependencies": {
+    "tad": "~0.2.7",
+    "xlint": "~0.2.2",
+    "xlint-jslint-medikoo": "~0.1.4"
+  },
+  "scripts": {
+    "lint": "node node_modules/xlint/bin/xlint --linter=node_modules/xlint-jslint-medikoo/index.js --no-cache --no-stream",
+    "lint-console": "node node_modules/xlint/bin/xlint --linter=node_modules/xlint-jslint-medikoo/index.js --watch",
+    "test": "node ./node_modules/tad/bin/tad"
+  },
+  "license": "MIT"
+}

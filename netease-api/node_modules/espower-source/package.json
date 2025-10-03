@@ -1,0 +1,86 @@
+{
+  "name": "espower-source",
+  "description": "Power Assert instrumentor from source to source, with source-map",
+  "version": "2.3.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": "https://github.com/power-assert-js/espower-source/issues",
+  "contributors": [
+    {
+      "name": "azu",
+      "url": "https://github.com/azu"
+    },
+    {
+      "name": "James Talmage",
+      "url": "https://github.com/jamestalmage"
+    },
+    {
+      "name": "Yoshiki Shibukawa",
+      "url": "https://github.com/shibukawa"
+    },
+    {
+      "name": "Yiyu He",
+      "url": "https://github.com/dead-horse"
+    },
+    {
+      "name": "Eward Song",
+      "url": "https://github.com/shepherdwind"
+    }
+  ],
+  "dependencies": {
+    "acorn": "^5.0.0",
+    "acorn-es7-plugin": "^1.0.10",
+    "convert-source-map": "^1.1.1",
+    "empower-assert": "^1.0.0",
+    "escodegen": "^1.10.0",
+    "espower": "^2.1.1",
+    "estraverse": "^4.0.0",
+    "merge-estraverse-visitors": "^1.0.0",
+    "multi-stage-sourcemap": "^0.2.1",
+    "path-is-absolute": "^1.0.0",
+    "xtend": "^4.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^2.0.2",
+    "gulp-mocha": "^5.0.0",
+    "gulp-util": "^3.0.6",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.0.1",
+    "mocha": "^5.0.0",
+    "source-map": "^0.5.7"
+  },
+  "engines": {
+    "node": ">=0.8.0",
+    "npm": ">=1.2.10"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "MIT-LICENSE.txt",
+    "README.md",
+    "index.js",
+    "package.json"
+  ],
+  "homepage": "https://github.com/power-assert-js/espower-source",
+  "keywords": [
+    "power-assert",
+    "assert",
+    "assertion",
+    "test",
+    "testing"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/power-assert-js/espower-source.git"
+  },
+  "scripts": {
+    "preversion": "npm test",
+    "lint": "gulp lint",
+    "test": "gulp test"
+  }
+}

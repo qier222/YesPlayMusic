@@ -1,0 +1,38 @@
+{
+  "name": "power-assert",
+  "version": "0.7.2",
+  "main": "build/power-assert.js",
+  "ignore": [
+    "**/.*",
+    "Gruntfile.js",
+    "gulpfile.js",
+    "espowered_tests",
+    "node_modules",
+    "package.json",
+    "sandbox",
+    "scripts",
+    "test",
+    "enable_power_assert.js"
+  ],
+  "devDependencies": {
+    "empower": "~0.7.1",
+    "expect": "~0.3.1",
+    "mocha": "~1.18.2",
+    "power-assert-formatter": "~0.7.1",
+    "qunit": "1.14.0",
+    "qunit-tap": "1.4.2",
+    "requirejs": "~2.1.11",
+    "assert": "Jxck/assert"
+  },
+  "homepage": "https://github.com/twada/power-assert",
+  "_release": "0.7.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.7.2",
+    "commit": "ed5c5b16a08a6cc0bd0bda5bbeb90cf9fc74d859"
+  },
+  "_source": "git://github.com/twada/power-assert.git",
+  "_target": "~0.7.2",
+  "_originalSource": "power-assert",
+  "_direct": true
+}

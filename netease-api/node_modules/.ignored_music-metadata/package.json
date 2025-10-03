@@ -1,0 +1,149 @@
+{
+  "name": "music-metadata",
+  "description": "Music metadata parser for Node.js, supporting virtual any audio and tag format.",
+  "version": "7.14.0",
+  "author": {
+    "name": "Borewit",
+    "url": "https://github.com/Borewit"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/Borewit"
+  },
+  "keywords": [
+    "music",
+    "metadata",
+    "meta",
+    "audio",
+    "tag",
+    "tags",
+    "duration",
+    "MusicBrainz",
+    "Discogs",
+    "Picard",
+    "ID3",
+    "ID3v1",
+    "ID3v2",
+    "m4a",
+    "m4b",
+    "mp3",
+    "mp4",
+    "Vorbis",
+    "ogg",
+    "flac",
+    "Matroska",
+    "WebM",
+    "EBML",
+    "asf",
+    "wma",
+    "wmv",
+    "ape",
+    "MonkeyAudio",
+    "aiff",
+    "wav",
+    "WavPack",
+    "Opus",
+    "speex",
+    "musepack",
+    "mpc",
+    "dsd",
+    "dsf",
+    "mpc",
+    "dff",
+    "dsdiff",
+    "aac",
+    "adts",
+    "length",
+    "chapter",
+    "info",
+    "parse",
+    "parser",
+    "bwf"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
+  ],
+  "scripts": {
+    "clean": "del-cli lib/**/*.js lib/**/*.js.map lib/**/*.d.ts src/**/*.d.ts test/**/*.js test/**/*.js.map test/**/*.js test/**/*.js.map doc-gen/**/*.js doc-gen/**/*.js.map",
+    "compile-src": "tsc -p lib",
+    "compile-test": "tsc -p test",
+    "compile-doc": "tsc -p doc-gen",
+    "compile": "npm run compile-src && npm run compile-test && npm run compile-doc",
+    "eslint": "eslint lib/**/*.ts --ignore-pattern lib/**/*.d.ts example/typescript/**/*.ts test/**/*.ts doc-gen/**/*.ts",
+    "lint-md": "remark -u preset-lint-recommended .",
+    "lint": "npm run lint-md && npm run eslint",
+    "test": "mocha --require ts-node/register --require source-map-support/register --full-trace test/test-*.ts",
+    "build": "npm run clean && npm run compile && npm run doc-gen",
+    "start": "npm-run-all compile lint cover-test",
+    "test-coverage": "nyc npm run test",
+    "send-codacy": "nyc report --reporter=text-lcov | codacy-coverage",
+    "doc-gen": "node doc-gen/gen.js"
+  },
+  "dependencies": {
+    "@tokenizer/token": "^0.3.0",
+    "content-type": "^1.0.5",
+    "debug": "^4.3.4",
+    "file-type": "^16.5.4",
+    "media-typer": "^1.1.0",
+    "strtok3": "^6.3.0",
+    "token-types": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.9",
+    "@types/chai-as-promised": "^7.1.7",
+    "@types/debug": "^4.1.10",
+    "@types/file-type": "^10.9.1",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^20.8.9",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "chai": "^4.3.10",
+    "chai-as-promised": "^7.1.1",
+    "del-cli": "5.1.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsdoc": "^46.8.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-unicorn": "^49.0.0",
+    "mime": "^3.0.0",
+    "mocha": "^9.2.2",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^15.1.0",
+    "remark-cli": "^12.0.0",
+    "remark-preset-lint-recommended": "^6.1.3",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/borewit/music-metadata.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Borewit/music-metadata/issues"
+  },
+  "nyc": {
+    "exclude": [
+      "test/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "sourceMap": true,
+    "instrument": true,
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "report-dir": "coverage"
+  }
+}

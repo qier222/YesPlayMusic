@@ -1,0 +1,97 @@
+{
+  "name": "power-assert-formatter",
+  "description": "Power Assert output formatter",
+  "version": "1.4.1",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/power-assert-js/power-assert-formatter/issues"
+  },
+  "contributors": [
+    {
+      "name": "James Talmage",
+      "url": "https://github.com/jamestalmage"
+    }
+  ],
+  "dependencies": {
+    "power-assert-context-formatter": "^1.0.7",
+    "power-assert-context-reducer-ast": "^1.0.7",
+    "power-assert-renderer-file": "^1.0.7",
+    "power-assert-renderer-assertion": "^1.0.7",
+    "power-assert-renderer-diagram": "^1.0.7",
+    "power-assert-renderer-comparison": "^1.0.7",
+    "core-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.0.0",
+    "babel-plugin-espower": "^2.2.0",
+    "babel-polyfill": "^6.0.0",
+    "babel-preset-es2015": "^6.0.0",
+    "babel-preset-stage-3": "^6.0.0",
+    "blanket": "1.1.9",
+    "browserify": "^13.0.0",
+    "del": "^2.2.0",
+    "empower": "^1.1.0",
+    "escodegen": "^1.6.1",
+    "espower": "^1.2.1",
+    "esprima": "^2.5.0",
+    "gulp": "^3.9.0",
+    "gulp-derequire": "^2.1.0",
+    "gulp-dereserve": "^0.2.1",
+    "gulp-jshint": "^2.0.0",
+    "gulp-mocha": "^2.1.3",
+    "gulp-mocha-phantomjs": "^0.11.0",
+    "gulp-util": "^3.0.6",
+    "gulp-webserver": "^0.9.1",
+    "jshint": "~2.8.0",
+    "jshint-stylish": "^2.0.1",
+    "licensify": "^3.1.0",
+    "mocha": "^2.2.5",
+    "mocha-lcov-reporter": "^1.2.0",
+    "package-json-versionify": "^1.0.2",
+    "through2": "^2.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "MIT-LICENSE.txt",
+    "README.md",
+    "index.js",
+    "lib",
+    "build/power-assert-formatter.js",
+    "package.json"
+  ],
+  "homepage": "https://github.com/power-assert-js/power-assert-formatter",
+  "keywords": [
+    "power-assert",
+    "test",
+    "testing",
+    "assert",
+    "assertion"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/power-assert-js/power-assert-formatter.git"
+  },
+  "scripts": {
+    "preversion": "npm test",
+    "version": "npm run dist && git add -A build",
+    "bower": "bower install --config.interactive=false",
+    "build": "npm run clean && npm prune && npm dedupe && gulp bundle",
+    "clean": "gulp clean",
+    "lint": "gulp lint",
+    "dist": "npm run build && gulp dist",
+    "test": "npm run lint && gulp test",
+    "unit": "gulp unit",
+    "watch": "gulp watch",
+    "coveralls": "gulp coverage && cat ./coverage.lcov | coveralls"
+  }
+}

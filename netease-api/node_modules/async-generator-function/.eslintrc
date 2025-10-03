@@ -1,0 +1,26 @@
+{
+	"root": true,
+
+	"extends": "@ljharb",
+
+	"rules": {
+		"id-length": "off",
+	},
+
+	"overrides": [
+		{
+			"files": "./index.js",
+			"extends": "@ljharb/eslint-config/node/8",
+			"rules": {
+				"id-length": "off",
+			},
+		},
+		{
+			"files": "./require.mjs",
+			"extends": "@ljharb/eslint-config/node/16",
+			"rules": {
+				"id-length": "off",
+			},
+		},
+	],
+}

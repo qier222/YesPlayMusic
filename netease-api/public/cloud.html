@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>云盘上传</title>
+  </head>
+
+  <body>
+    <div>
+      <a href="/qrlogin-nocookie.html"> 如果没登录,请先登录 </a>
+    </div>
+    <input id="file" type="file" multiple />
+    <div id="app">
+      <ul>
+        <li v-for="(item,index) in songs" :key="index">{{item.songName}}</li>
+      </ul>
+    </div>
+
+    <script src="https://fastly.jsdelivr.net/npm/axios@0.26.1/dist/axios.min.js"></script>
+    <script src="https://fastly.jsdelivr.net/npm/vue"></script>
+    <script>
+      const logger = require('../util/logger.js')
+      const app = Vue.createApp({
+        data() {
+          return {
+            songs: [],
+          }
+        },
+        created() {
+          this.getData()
+        },
+        methods: {
+          getData() {
+            logger.info('getdata')
+            const _this = this
+            axios({
+              url: `/user/cloud?time=${Date.now()}&cookie=${localStorage.getItem(
+                'cookie',
+              )}`,
+            }).then((res) => {
+              logger.info(res.data)
+              _this.songs = res.data.data
+            })
+          },
+        },
+      }).mount('#app')
+      const fileUpdateTime = {}
+      let fileLength = 0
+
+      function main() {
+        document
+          .querySelector('input[type="file"]')
+          .addEventListener('change', function (e) {
+            logger.info(this.files)
+            let currentIndx = 0
+            fileLength = this.files.length
+            for (const item of this.files) {
+              currentIndx += 1
+              upload(item, currentIndx)
+            }
+          })
+      }
+      main()
+
+      function upload(file, currentIndx) {
+        var formData = new FormData()
+        formData.append('songFile', file)
+        axios({
+          method: 'post',
+          url: `/cloud?time=${Date.now()}&cookie=${localStorage.getItem(
+            'cookie',
+          )}`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          data: formData,
+        })
+          .then((res) => {
+            logger.info(`${file.name} 上传成功`)
+            if (currentIndx >= fileLength) {
+              logger.info('上传完毕')
+            }
+            app.getData()
+          })
+          .catch(async (err) => {
+            logger.info(err)
+            logger.info(fileUpdateTime)
+            fileUpdateTime[file.name]
+              ? (fileUpdateTime[file.name] += 1)
+              : (fileUpdateTime[file.name] = 1)
+            if (fileUpdateTime[file.name] >= 4) {
+              console.error(`丢，这首歌怎么都传不上：${file.name}`)
+              return
+            } else {
+              console.error(`${file.name} 失败 ${fileUpdateTime[file.name]} 次`)
+            }
+            // await login()
+            upload(file, currentIndx)
+          })
+      }
+    </script>
+  </body>
+</html>

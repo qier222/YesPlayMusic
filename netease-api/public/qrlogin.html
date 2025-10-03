@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>二维码登录</title>
+</head>
+
+<body>
+  <img id="qrImg" />
+  <div id="info" class="info"></div>
+  <script src="https://fastly.jsdelivr.net/npm/axios@0.26.1/dist/axios.min.js
+    "></script>
+  <script>
+    async function login() {
+      let timer
+      let timestamp = Date.now()
+      const cookie = localStorage.getItem('cookie')
+      getLoginStatus(cookie)
+      const res = await axios({
+        url: `/login/qr/key?timestamp=${Date.now()}`,
+      })
+      const key = res.data.data.unikey
+      const res2 = await axios({
+        url: `/login/qr/create?key=${key}&qrimg=true&timestamp=${Date.now()}&ua=pc`,
+      })
+      document.querySelector('#qrImg').src = res2.data.data.qrimg
+
+      timer = setInterval(async () => {
+        const statusRes = await checkStatus(key)
+        if (statusRes.code === 800) {
+          alert('二维码已过期,请重新获取')
+          clearInterval(timer)
+        }
+        if (statusRes.code === 803) {
+          // 这一步会返回cookie
+          clearInterval(timer)
+          alert('授权登录成功')
+          await getLoginStatus(statusRes.cookie)
+          localStorage.setItem('cookie', statusRes.cookie)
+        }
+      }, 3000)
+    }
+    login()
+
+    async function checkStatus(key) {
+      const res = await axios({
+        url: `/login/qr/check?key=${key}&timestamp=${Date.now()}&ua=pc`,
+      })
+      return res.data
+    }
+    async function getLoginStatus(cookie = '') {
+      const res = await axios({
+        url: `/login/status?timestamp=${Date.now()}&ua=pc`,
+        method: 'post',
+        data: {
+          cookie,
+        },
+      })
+      document.querySelector('#info').innerText = JSON.stringify(res.data, null, 2)
+    }
+  </script>
+  <style>
+    .info {
+      white-space: pre;
+    }
+  </style>
+</body>
+
+</html>

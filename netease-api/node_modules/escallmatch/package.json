@@ -1,0 +1,68 @@
+{
+  "name": "escallmatch",
+  "description": "ECMAScript CallExpression matcher made from function/method signature",
+  "version": "1.5.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": "https://github.com/twada/escallmatch/issues",
+  "dependencies": {
+    "call-matcher": "^1.0.0",
+    "esprima": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-types": "^6.13.0",
+    "babylon": "^6.8.4",
+    "browserify": "^13.1.0",
+    "del": "^2.2.2",
+    "espurify": "^1.6.0",
+    "estraverse": "^4.2.0",
+    "gulp": "^3.9.1",
+    "gulp-derequire": "^2.1.0",
+    "gulp-dereserve": "^0.2.1",
+    "gulp-jshint": "^2.0.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-mocha-phantomjs": "^0.11.0",
+    "gulp-util": "^3.0.7",
+    "gulp-webserver": "^0.9.1",
+    "jshint": "^2.9.2",
+    "jshint-stylish": "^2.2.1",
+    "licensify": "^3.1.2",
+    "mocha": "^3.0.2",
+    "package-json-versionify": "^1.0.2",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "directories": {
+    "test": "test/"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "build/escallmatch.js"
+  ],
+  "homepage": "https://github.com/twada/escallmatch",
+  "keywords": [
+    "ecmascript",
+    "ast"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/escallmatch.git"
+  },
+  "scripts": {
+    "preversion": "npm test",
+    "version": "npm run dist && git add -A build",
+    "dist": "gulp dist",
+    "bower": "bower install --config.interactive=false",
+    "lint": "gulp lint",
+    "unit": "gulp unit",
+    "watch": "gulp watch",
+    "test": "gulp test"
+  }
+}

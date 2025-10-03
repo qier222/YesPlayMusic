@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>歌单导入工具</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://fastly.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入Bootstrap JS -->
+    <script src="https://fastly.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 引入axios用于发送异步请求 -->
+    <script src="https://fastly.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">歌单导入工具</h1>
+        <p>请选择一种导入方式并填写相关信息：</p>
+
+        <!-- 表单开始 -->
+        <form id="importForm" novalidate>
+            <!-- 选项卡导航 -->
+            <ul class="nav nav-tabs mb-3" id="importTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="metadata-tab" data-bs-toggle="tab" data-bs-target="#metadata" type="button" role="tab" aria-controls="metadata" aria-selected="true">元数据导入</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab" aria-controls="text" aria-selected="false">文字导入</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="link-tab" data-bs-toggle="tab" data-bs-target="#link" type="button" role="tab" aria-controls="link" aria-selected="false">链接导入</button>
+                </li>
+            </ul>
+
+            <!-- 选项卡面板 -->
+            <div class="tab-content" id="importTabContent">
+                <!-- 元数据导入 -->
+                <div class="tab-pane fade show active" id="metadata" role="tabpanel" aria-labelledby="metadata-tab">
+                    <table class="table table-bordered mb-3">
+                        <thead>
+                            <tr>
+                                <th scope="col">歌曲名称</th>
+                                <th scope="col">艺术家</th>
+                                <th scope="col">专辑</th>
+                            </tr>
+                        </thead>
+                        <tbody id="metadataTableBody">
+                            <!-- 默认添加一行 -->
+                            <tr>
+                                <td><input type="text" class="form-control" name="name[]" placeholder="歌曲名称"></td>
+                                <td><input type="text" class="form-control" name="artist[]" placeholder="艺术家"></td>
+                                <td><input type="text" class="form-control" name="album[]" placeholder="专辑"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-secondary mb-3" id="addMetadataRow">增加歌曲</button>
+                </div>
+                <!-- 文字导入 -->
+                <div class="tab-pane fade" id="text" role="tabpanel" aria-labelledby="text-tab">
+                    <div class="mb-3">
+                        <label for="textInput" class="form-label">文字:</label>
+                        <textarea class="form-control" id="textInput" name="text" rows="5"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="playlistNameInput" class="form-label">歌单名:</label>
+                        <input type="text" class="form-control" id="playlistNameInput" name="playlistName" placeholder="请输入歌单名">
+                    </div>
+                </div>
+                <!-- 链接导入 -->
+                <div class="tab-pane fade" id="link" role="tabpanel" aria-labelledby="link-tab">
+                    <div class="mb-3">
+                        <label for="linkInputs" class="form-label">链接:</label>
+                        <div id="linkInputsContainer">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="linkInput0" name="linkInput0" placeholder="请输入链接">
+                                <button type="button" class="btn btn-secondary removeLinkButton" data-index="0">×</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary mb-3" id="addLinkButton">增加链接</button>
+                        <div class="mb-3">
+                            <label for="playlistNameLinkInput" class="form-label">歌单名:</label>
+                            <input type="text" class="form-control" id="playlistNameLinkInput" name="playlistName" placeholder="请输入歌单名">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 是否导入我喜欢的音乐 -->
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="importStarCheckbox">
+                <label class="form-check-label" for="importStarCheckbox">
+                    导入“我喜欢的音乐”
+                </label>
+            </div>
+
+            <!-- 提交按钮 -->
+            <button type="submit" class="btn btn-primary mt-3">导入歌曲</button>
+        </form>
+        <!-- 表单结束 -->
+
+        <script>
+            // 动态增加链接输入框
+            document.getElementById('addLinkButton').addEventListener('click', function() {
+                var container = document.getElementById('linkInputsContainer');
+                var newIndex = container.childElementCount - 1; // 减去非输入框元素的数量
+                var newInput = document.createElement('input');
+                newInput.type = 'text';
+                newInput.className = 'form-control';
+                newInput.id = `linkInput${newIndex}`;
+                newInput.name = `linkInput${newIndex}`;
+                newInput.placeholder = '请输入链接';
+
+                var removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'btn btn-secondary removeLinkButton';
+                removeButton.textContent = '×';
+                removeButton.dataset.index = newIndex.toString();
+                removeButton.addEventListener('click', function() {
+                    var group = this.closest('.input-group');
+                    container.removeChild(group);
+                });
+
+                var inputGroup = document.createElement('div');
+                inputGroup.className = 'input-group mb-3';
+                inputGroup.appendChild(newInput);
+                inputGroup.appendChild(removeButton);
+
+                container.appendChild(inputGroup);
+            });
+
+            // 动态增加元数据行
+            document.getElementById('addMetadataRow').addEventListener('click', function() {
+                var container = document.getElementById('metadataTableBody');
+                var newRow = document.createElement('tr');
+
+                var nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'form-control';
+                nameInput.name = 'name[]';
+                nameInput.placeholder = '歌曲名称';
+
+                var artistInput = document.createElement('input');
+                artistInput.type = 'text';
+                artistInput.className = 'form-control';
+                artistInput.name = 'artist[]';
+                artistInput.placeholder = '艺术家';
+
+                var albumInput = document.createElement('input');
+                albumInput.type = 'text';
+                albumInput.className = 'form-control';
+                albumInput.name = 'album[]';
+                albumInput.placeholder = '专辑';
+
+                newRow.innerHTML = `
+                    <td>${nameInput.outerHTML}</td>
+                    <td>${artistInput.outerHTML}</td>
+                    <td>${albumInput.outerHTML}</td>
+                `;
+
+                container.appendChild(newRow);
+            });
+
+            document.getElementById('importForm').addEventListener('submit', async function(event) {
+                // 阻止默认行为
+                event.preventDefault();
+
+                // 获取表单值
+                let text = document.getElementById('textInput').value;
+                let links = [];
+                let local = [];
+                let playlistName = '';
+
+                // 获取所有链接输入框的值
+                let linkInputs = document.querySelectorAll('#linkInputsContainer .input-group .form-control');
+                linkInputs.forEach(function(input) {
+                    if (input.value.trim() !== '') {
+                        links.push(input.value);
+                    }
+                });
+
+                // 获取元数据
+                let metadataRows = document.querySelectorAll('#metadataTableBody tr');
+                metadataRows.forEach(function(row) {
+                    let name = row.querySelector('input[name="name[]"]').value;
+                    let artist = row.querySelector('input[name="artist[]"]').value;
+                    let album = row.querySelector('input[name="album[]"]').value;
+                    if (name && artist && album) {
+                        local.push({ name, artist, album });
+                    }
+                });
+
+                // 检查是否有且只有一个输入字段被填写
+                let filledCount = (text ? 1 : 0) + (links.length > 0 ? 1 : 0) + (local.length > 0 ? 1 : 0);
+                if (filledCount !== 1) {
+                    alert("请确保仅填写了一个输入字段！");
+                    return;
+                }
+
+                // 获取歌单名
+                if (document.getElementById('importStarCheckbox').checked) {
+                    playlistName = '我喜欢的音乐';
+                } else {
+                    playlistName = document.getElementById('playlistNameInput').value ||
+                       document.getElementById('playlistNameLinkInput').value ||
+                       '导入音乐 ' + new Date().toLocaleString();
+                }
+
+                // 创建请求参数
+                let data = {};
+                if (text) {
+                    data.text = text;
+                    data.playlistName = playlistName;
+                } else if (links.length > 0) {
+                    data.link = JSON.stringify(links);
+                    data.playlistName = playlistName;
+                } else if (local.length > 0) {
+                    data.local = JSON.stringify(local);
+                }
+
+                // 添加额外参数
+                if (document.getElementById('importStarCheckbox').checked) {
+                    data.importStarPlaylist = true;
+                }
+
+                try {
+                    const res = await axios({
+                        url: `/playlist/import/name/task/create?timestamp=${Date.now()}`,
+                        method: 'post',
+                        data: data,
+                    });
+
+                    let taskId = res.data?.data?.taskId
+                    if (taskId) {
+                        alert(`任务创建成功! 正在导入, 请稍等; 任务id:${taskId}`)
+                        // const res2 = await axios({
+                        //     url: `/playlist/import/task/status?timestamp=${Date.now()}`,
+                        //     method: 'post',
+                        //     data: {
+                        //         id: taskId
+                        //     },
+                        // });
+                        // alert(JSON.stringify(res2.data, null, 2));
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('导入失败，请检查您的输入或稍后再试。');
+                }
+            });
+
+            // 监听复选框状态变化
+            document.getElementById('importStarCheckbox').addEventListener('change', function() {
+                let isChecked = this.checked;
+                let playlistNameInputs = document.querySelectorAll('[name="playlistName"]');
+                playlistNameInputs.forEach(function(input) {
+                    input.disabled = isChecked;
+                });
+            });
+
+            // 初始化时设置歌单名输入框的状态
+            document.getElementById('importStarCheckbox').dispatchEvent(new Event('change'));
+        </script>
+    </div>
+</body>
+</html>

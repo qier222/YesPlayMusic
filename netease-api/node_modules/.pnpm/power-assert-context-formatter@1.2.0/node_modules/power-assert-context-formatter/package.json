@@ -1,0 +1,41 @@
+{
+  "name": "power-assert-context-formatter",
+  "description": "format power-assert context",
+  "version": "1.2.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/twada/power-assert-runtime/issues"
+  },
+  "dependencies": {
+    "core-js": "^2.0.0",
+    "power-assert-context-traversal": "^1.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.0",
+    "power-assert-context-reducer-ast": "^1.2.0",
+    "power-assert-renderer-assertion": "^1.2.0",
+    "power-assert-renderer-diagram": "^1.2.0"
+  },
+  "files": [
+    "README.md",
+    "index.js",
+    "lib"
+  ],
+  "homepage": "https://github.com/twada/power-assert-runtime",
+  "keywords": [
+    "power-assert"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twada/power-assert-runtime.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
+}

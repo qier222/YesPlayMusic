@@ -1,0 +1,42 @@
+{
+  "name": "acorn-es7-plugin-test",
+  "version": "0.0.5",
+  "description": "Tests for acorn-es7-plugin",
+  "main": "nothing-here",
+  "scripts": {
+    "test": "npm i acorn@3 ; mocha --opts ./mocha.opts ; node test-es5.js ; npm i acorn@4 ; mocha --opts ./mocha.opts ; node test-es5.js ; npm i acorn@5 ; mocha --opts ./mocha.opts ; node test-es5.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatAtBread/acorn-es7-plugin.git"
+  },
+  "keywords": [
+    "acorn",
+    "parser",
+    "es7",
+    "async",
+    "await"
+  ],
+  "author": "matatbread",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatAtBread/acorn-es7-plugin/issues"
+  },
+  "homepage": "https://github.com/MatAtBread/acorn-es7-plugin#readme",
+  "devDependencies": {
+    "babel-core": "^6.0.20",
+    "babel-preset-es2015": "^6.0.15",
+    "estraverse": "^4.1.1",
+    "mocha": "^2.3.3",
+    "colors": "^1.1.2",
+    "xtend": "^4.0.1"
+  },
+  "dependencies": {
+    "babel-core": "^6.14.0",
+    "babel-preset-es2015": "^6.14.0",
+    "colors": "^1.1.2",
+    "estraverse": "^4.2.0",
+    "mocha": "^2.5.3",
+    "xtend": "^4.0.1"
+  }
+}

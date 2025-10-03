@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eapi 参数和返回内容解析</title>
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app" class="p-5 flex flex-col">
+    <h1 class="text-2xl font-bold mb-5">eapi 参数和返回内容解析</h1>
+    <textarea class="border border-gray-300 p-3 mb-5" v-model="hexString" rows="10"></textarea>
+    <button @click="decrypt" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      解密
+    </button>
+    <div class="mt-3">
+      <input type="radio" id="format" name="format" v-model="isReq" value="true">
+      <label for="format" class="ml-2">请求数据request params(针对请求数据的 params)</label>
+      <input type="radio" id="noFormat" name="format" v-model="isReq" value="false" class="ml-5">
+      <label for="noFormat" class="ml-2">返回数据 response 二进制数据(针对返回内容解析)</label>
+    </div>
+    <div>
+      <p>解密结果:
+      <pre>{{ JSON.stringify(JSON.parse(result), null, 2) }}</pre>
+      </p>
+    </div>
+
+
+    <div>
+      <p>使用例子:</p>
+      <img src="/static/eapi_params.png" />
+      <img src="/static/eapi_response.png" />
+    </div>
+  </div>
+
+  <script src="https://fastly.jsdelivr.net/npm/axios"></script>
+  <script src="https://fastly.jsdelivr.net/npm/vue@3"></script>
+
+  <script>
+    const logger = require('../util/logger.js')
+    const app = Vue.createApp({
+      data() {
+        return {
+          hexString: 'AD96DDB984491E79B6F429DD650C6E2AE524627AC223AC9A123C66BB0997965950FED137544A93DFC718E16F57C8C121AF537086F395570A5602A3922366D11964DAFACD7830AACABF62E5650E67F457E79C1D2E13502391FC3487216CC5BF8681843FCB8E05559487EB18AAC1BE0EFEA4F7B6A050478366153A9426C238B8869600B275704555A9EB94C92E4F3FDABE9E0BCE07645410D0AA7B675698A4CAE6CD3620633ABF0B849A4244CC8DFC5DB2646D5EA9B3954E62BFEF19AFEAFDDC34E55C3E9A1DD3167CF53D443617108141',
+          result: '{}',
+          isReq: true
+        }
+      },
+      mounted() {
+        this.decrypt()
+      },
+      methods: {
+        async decrypt() {
+          try {
+            const res = await axios({
+              url: `/eapi/decrypt?isReq=${this.isReq}&timestamp=${Date.now()}`,
+              method: 'post',
+              data: {
+                hexString: this.hexString
+              }
+            })
+            this.result = JSON.stringify(res.data.data)
+            logger.info(res.data);
+          } catch (error) {
+            console.error(error)
+            alert(error?.response?.data?.message || '解密失败,数据格式错误')
+          }
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
+</body>
+
+</html>

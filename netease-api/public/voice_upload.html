@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>播客上传声音</title>
+  </head>
+
+  <body>
+    <div>
+      <a href="/qrlogin-nocookie.html"> 如果没登录,请先登录 </a>
+    </div>
+    <div id="app">
+      <ul>
+        <li
+          v-for="(item,index) in voicelist"
+          @click="currentVoiceIndex=index"
+          :class="{active:currentVoiceIndex===index}"
+        >
+          <img :src="item.coverUrl" style="width: 50px; width: 50px" />
+          <ul>
+            <li v-for="(item2,index) in item.voiceListData">
+              {{item2.voiceName}}
+            </li>
+          </ul>
+          {{item.voiceListName}}
+        </li>
+      </ul>
+      <input v-model="songName" placeholder="请输入声音名称" />
+      <input v-model="description" placeholder="请输入介绍" />
+      <input type="file" name="songFile" />
+      <button @click="submit">上传</button>
+    </div>
+
+    <script src="https://fastly.jsdelivr.net/npm/axios@0.26.1/dist/axios.min.js"></script>
+    <script src="https://fastly.jsdelivr.net/npm/vue"></script>
+    <script>
+      const logger = require('../util/logger.js')
+      Vue.createApp({
+        data() {
+          return {
+            songName: '',
+            description: '',
+            voicelist: [],
+            cookieToken: '',
+            currentVoiceIndex: 0,
+          }
+        },
+        created() {
+          this.getData()
+        },
+        computed: {
+          currentVoice() {
+            // {
+            //   voiceListId: '',
+            //   coverImgId: '',
+            //   categoryId: '',
+            //   secondCategoryId: '',
+            // }
+            return this.voicelist[this.currentVoiceIndex]
+          },
+        },
+        methods: {
+          submit() {
+            logger.info('submit')
+            const file = document.querySelector('input[type=file]').files[0]
+            this.upload(file)
+          },
+
+          async getData() {
+            const res = await axios({
+              url: `/voicelist/search?cookie=${localStorage.getItem('cookie')}`,
+            })
+
+            logger.info(res.data.data)
+            this.voicelist = res.data.data.list
+            this.voicelist.map(async (i) => {
+              const res2 = await axios({
+                url: `/voicelist/list?voiceListId=${i.voiceListId}&limit=5`,
+              })
+              i.voiceListData = res2.data.data.list
+              logger.info(res2)
+            })
+          },
+          upload(file) {
+            var formData = new FormData()
+            formData.append('songFile', file)
+            axios({
+              method: 'post',
+              url: `/voice/upload?time=${Date.now()}&cookie=${localStorage.getItem(
+                'cookie',
+              )}&songName=${this.songName}&voiceListId=${
+                this.currentVoice.voiceListId
+              }&categoryId=${this.currentVoice.categoryId}&coverImgId=${
+                this.currentVoice.coverImgId
+              }&secondCategoryId=${
+                this.currentVoice.secondCategoryId
+              }&description=${this.description}&privacy=1`,
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+              data: formData,
+            })
+              .then((res) => {
+                alert(`${file.name} 上传成功`)
+                if (currentIndx >= fileLength) {
+                  logger.info('上传完毕')
+                }
+              })
+              .catch(async (err) => {
+                logger.info(err)
+              })
+          },
+        },
+      }).mount('#app')
+    </script>
+
+    <style>
+      ul li {
+        cursor: pointer;
+      }
+
+      ul li.active {
+        color: red;
+      }
+    </style>
+  </body>
+</html>

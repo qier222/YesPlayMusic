@@ -1,0 +1,35 @@
+{
+  "name": "process-warning",
+  "version": "1.0.0",
+  "description": "A small utility for creating warnings and emitting them.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "standard && ava -v test.js && jest jest.test.js && tsd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastify/processs-warning.git"
+  },
+  "keywords": [
+    "fastify",
+    "error",
+    "warning",
+    "utility",
+    "plugin",
+    "emit",
+    "once"
+  ],
+  "author": "Tomas Della Vedova",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fastify/fastify-warning/issues"
+  },
+  "homepage": "https://github.com/fastify/fastify-warning#readme",
+  "devDependencies": {
+    "ava": "^3.10.1",
+    "jest": "^27.0.1",
+    "standard": "^16.0.3",
+    "tsd": "^0.19.0"
+  }
+}

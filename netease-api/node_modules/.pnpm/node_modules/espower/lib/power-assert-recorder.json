@@ -1,0 +1,342 @@
+{
+  "type": "CallExpression",
+  "callee": {
+    "type": "FunctionExpression",
+    "id": null,
+    "params": [],
+    "body": {
+      "type": "BlockStatement",
+      "body": [
+        {
+          "type": "FunctionDeclaration",
+          "id": {
+            "type": "Identifier",
+            "name": "PowerAssertRecorder"
+          },
+          "params": [],
+          "body": {
+            "type": "BlockStatement",
+            "body": [
+              {
+                "type": "ExpressionStatement",
+                "expression": {
+                  "type": "AssignmentExpression",
+                  "operator": "=",
+                  "left": {
+                    "type": "MemberExpression",
+                    "object": {
+                      "type": "ThisExpression"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "name": "captured"
+                    },
+                    "computed": false
+                  },
+                  "right": {
+                    "type": "ArrayExpression",
+                    "elements": []
+                  }
+                }
+              }
+            ]
+          },
+          "generator": false
+        },
+        {
+          "type": "ExpressionStatement",
+          "expression": {
+            "type": "AssignmentExpression",
+            "operator": "=",
+            "left": {
+              "type": "MemberExpression",
+              "object": {
+                "type": "MemberExpression",
+                "object": {
+                  "type": "Identifier",
+                  "name": "PowerAssertRecorder"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "prototype"
+                },
+                "computed": false
+              },
+              "property": {
+                "type": "Identifier",
+                "name": "_capt"
+              },
+              "computed": false
+            },
+            "right": {
+              "type": "FunctionExpression",
+              "id": {
+                "type": "Identifier",
+                "name": "_capt"
+              },
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "value"
+                },
+                {
+                  "type": "Identifier",
+                  "name": "espath"
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [
+                  {
+                    "type": "ExpressionStatement",
+                    "expression": {
+                      "type": "CallExpression",
+                      "callee": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "captured"
+                          },
+                          "computed": false
+                        },
+                        "property": {
+                          "type": "Identifier",
+                          "name": "push"
+                        },
+                        "computed": false
+                      },
+                      "arguments": [
+                        {
+                          "type": "ObjectExpression",
+                          "properties": [
+                            {
+                              "type": "Property",
+                              "key": {
+                                "type": "Identifier",
+                                "name": "value"
+                              },
+                              "value": {
+                                "type": "Identifier",
+                                "name": "value"
+                              },
+                              "kind": "init",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false
+                            },
+                            {
+                              "type": "Property",
+                              "key": {
+                                "type": "Identifier",
+                                "name": "espath"
+                              },
+                              "value": {
+                                "type": "Identifier",
+                                "name": "espath"
+                              },
+                              "kind": "init",
+                              "method": false,
+                              "shorthand": false,
+                              "computed": false
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "ReturnStatement",
+                    "argument": {
+                      "type": "Identifier",
+                      "name": "value"
+                    }
+                  }
+                ]
+              },
+              "generator": false
+            }
+          }
+        },
+        {
+          "type": "ExpressionStatement",
+          "expression": {
+            "type": "AssignmentExpression",
+            "operator": "=",
+            "left": {
+              "type": "MemberExpression",
+              "object": {
+                "type": "MemberExpression",
+                "object": {
+                  "type": "Identifier",
+                  "name": "PowerAssertRecorder"
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "prototype"
+                },
+                "computed": false
+              },
+              "property": {
+                "type": "Identifier",
+                "name": "_expr"
+              },
+              "computed": false
+            },
+            "right": {
+              "type": "FunctionExpression",
+              "id": {
+                "type": "Identifier",
+                "name": "_expr"
+              },
+              "params": [
+                {
+                  "type": "Identifier",
+                  "name": "value"
+                },
+                {
+                  "type": "Identifier",
+                  "name": "source"
+                }
+              ],
+              "body": {
+                "type": "BlockStatement",
+                "body": [
+                  {
+                    "type": "VariableDeclaration",
+                    "declarations": [
+                      {
+                        "type": "VariableDeclarator",
+                        "id": {
+                          "type": "Identifier",
+                          "name": "capturedValues"
+                        },
+                        "init": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression"
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "captured"
+                          },
+                          "computed": false
+                        }
+                      }
+                    ],
+                    "kind": "var"
+                  },
+                  {
+                    "type": "ExpressionStatement",
+                    "expression": {
+                      "type": "AssignmentExpression",
+                      "operator": "=",
+                      "left": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "ThisExpression"
+                        },
+                        "property": {
+                          "type": "Identifier",
+                          "name": "captured"
+                        },
+                        "computed": false
+                      },
+                      "right": {
+                        "type": "ArrayExpression",
+                        "elements": []
+                      }
+                    }
+                  },
+                  {
+                    "type": "ReturnStatement",
+                    "argument": {
+                      "type": "ObjectExpression",
+                      "properties": [
+                        {
+                          "type": "Property",
+                          "key": {
+                            "type": "Identifier",
+                            "name": "powerAssertContext"
+                          },
+                          "value": {
+                            "type": "ObjectExpression",
+                            "properties": [
+                              {
+                                "type": "Property",
+                                "key": {
+                                  "type": "Identifier",
+                                  "name": "value"
+                                },
+                                "value": {
+                                  "type": "Identifier",
+                                  "name": "value"
+                                },
+                                "kind": "init",
+                                "method": false,
+                                "shorthand": false,
+                                "computed": false
+                              },
+                              {
+                                "type": "Property",
+                                "key": {
+                                  "type": "Identifier",
+                                  "name": "events"
+                                },
+                                "value": {
+                                  "type": "Identifier",
+                                  "name": "capturedValues"
+                                },
+                                "kind": "init",
+                                "method": false,
+                                "shorthand": false,
+                                "computed": false
+                              }
+                            ]
+                          },
+                          "kind": "init",
+                          "method": false,
+                          "shorthand": false,
+                          "computed": false
+                        },
+                        {
+                          "type": "Property",
+                          "key": {
+                            "type": "Identifier",
+                            "name": "source"
+                          },
+                          "value": {
+                            "type": "Identifier",
+                            "name": "source"
+                          },
+                          "kind": "init",
+                          "method": false,
+                          "shorthand": false,
+                          "computed": false
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "generator": false
+            }
+          }
+        },
+        {
+          "type": "ReturnStatement",
+          "argument": {
+            "type": "Identifier",
+            "name": "PowerAssertRecorder"
+          }
+        }
+      ]
+    },
+    "generator": false
+  },
+  "arguments": []
+}

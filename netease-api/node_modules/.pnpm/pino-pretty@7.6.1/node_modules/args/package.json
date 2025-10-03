@@ -1,0 +1,58 @@
+{
+  "name": "args",
+  "version": "5.0.3",
+  "description": "Minimal toolkit for building CLIs",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "scripts": {
+    "precommit": "lint-staged",
+    "test": "npm run lint && ava",
+    "lint": "xo"
+  },
+  "repository": "leo/args",
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "keywords": [
+    "cli",
+    "command",
+    "arguments",
+    "util",
+    "bin",
+    "commander",
+    "nanomist"
+  ],
+  "xo": {
+    "extends": "prettier"
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint",
+      "prettier --single-quote --write --no-semi",
+      "git add"
+    ]
+  },
+  "author": "leo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leo/args/issues"
+  },
+  "homepage": "https://github.com/leo/args#readme",
+  "devDependencies": {
+    "ava": "1.2.1",
+    "eslint-config-prettier": "4.1.0",
+    "execa": "1.0.0",
+    "husky": "1.3.1",
+    "lint-staged": "8.1.5",
+    "prettier": "1.16.4",
+    "xo": "0.24.0"
+  },
+  "dependencies": {
+    "camelcase": "5.0.0",
+    "chalk": "2.4.2",
+    "leven": "2.1.0",
+    "mri": "1.1.4"
+  }
+}

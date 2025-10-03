@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+        - 'docs/**'
+        - '*.md'
+  pull_request:
+    paths-ignore:
+        - 'docs/**'
+        - '*.md'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    outputs:
+      COVERALLS: ${{ steps.coveralls-trigger.outputs.COVERALLS_TRIGGER }}
+    strategy:
+      matrix:
+        node-version: [12, 14, 16]
+        os: [ubuntu-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Restore cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('package.json') }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm run ci
+
+      - name: Coveralls Parallel
+        id: coveralls-parallel
+        uses: coverallsapp/github-action@1.1.3
+        continue-on-error: true
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true
+          flag-name: run-${{ matrix.node-version }}-${{ matrix.os }}
+
+      - name: Should Trigger coverallsapp/github-action@master
+        id: coveralls-trigger
+        # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#steps-context
+        # when continue-on-error failed, outcome is failure and conclusion is success
+        if: steps.coveralls-parallel.conclusion == 'success' && steps.coveralls-parallel.outcome != 'success'
+        run: |
+          echo "::set-output name=COVERALLS_TRIGGER::failure"
+
+  coverage:
+    needs: build
+    runs-on: ubuntu-latest
+    if: needs.test.outputs.COVERALLS != 'failure'
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@1.1.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+
+  automerge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v2.7.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

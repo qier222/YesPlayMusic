@@ -1,0 +1,39 @@
+{
+  "name": "merge-estraverse-visitors",
+  "description": "merge multiple estraverse visitors into one",
+  "version": "1.0.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": "https://github.com/twada/merge-estraverse-visitors/issues",
+  "dependencies": {
+    "estraverse": "^4.0.0"
+  },
+  "devDependencies": {
+    "acorn": "^4.0.0",
+    "espurify": "^1.6.0",
+    "mocha": "^3.0.0"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "index.js"
+  ],
+  "homepage": "https://github.com/twada/merge-estraverse-visitors",
+  "keywords": [
+    "ast",
+    "estraverse",
+    "estree"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/merge-estraverse-visitors.git"
+  },
+  "scripts": {
+    "test": "mocha test"
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "name": "pino",
+  "version": "6.14.0",
+  "description": "super fast, all natural json logger",
+  "main": "pino.js",
+  "browser": "./browser.js",
+  "files": [
+    "pino.js",
+    "bin.js",
+    "browser.js",
+    "pretty.js",
+    "usage.txt",
+    "test",
+    "docs",
+    "example.js",
+    "lib"
+  ],
+  "scripts": {
+    "docs": "docsify serve",
+    "browser-test": "airtap --local 8080 test/browser*test.js",
+    "lint": "eslint .",
+    "test": "npm run lint && tap --100 test/*test.js test/*/*test.js",
+    "test-ci": "npm run lint && tap test/*test.js test/*/*test.js --coverage-report=lcovonly",
+    "cov-ui": "tap --coverage-report=html test/*test.js test/*/*test.js",
+    "bench": "node benchmarks/utils/runbench all",
+    "bench-basic": "node benchmarks/utils/runbench basic",
+    "bench-object": "node benchmarks/utils/runbench object",
+    "bench-deep-object": "node benchmarks/utils/runbench deep-object",
+    "bench-multi-arg": "node benchmarks/utils/runbench multi-arg",
+    "bench-longs-tring": "node benchmarks/utils/runbench long-string",
+    "bench-child": "node benchmarks/utils/runbench child",
+    "bench-child-child": "node benchmarks/utils/runbench child-child",
+    "bench-child-creation": "node benchmarks/utils/runbench child-creation",
+    "bench-formatters": "node benchmarks/utils/runbench formatters",
+    "update-bench-doc": "node benchmarks/utils/generate-benchmark-doc > docs/benchmarks.md"
+  },
+  "bin": {
+    "pino": "./bin.js"
+  },
+  "precommit": "test",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pinojs/pino.git"
+  },
+  "keywords": [
+    "fast",
+    "logger",
+    "stream",
+    "json"
+  ],
+  "author": "Matteo Collina <hello@matteocollina.com>",
+  "contributors": [
+    "David Mark Clements <huperekchuno@googlemail.com>",
+    "James Sumners <james.sumners@gmail.com>",
+    "Thomas Watson Steen <w@tson.dk> (https://twitter.com/wa7son)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pinojs/pino/issues"
+  },
+  "homepage": "http://getpino.io",
+  "devDependencies": {
+    "airtap": "4.0.3",
+    "benchmark": "^2.1.4",
+    "bole": "^4.0.0",
+    "bunyan": "^1.8.14",
+    "docsify-cli": "^4.4.1",
+    "eslint": "^7.17.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "execa": "^5.0.0",
+    "fastbench": "^1.0.1",
+    "flush-write-stream": "^2.0.0",
+    "import-fresh": "^3.2.1",
+    "log": "^6.0.0",
+    "loglevel": "^1.6.7",
+    "pino-pretty": "^5.0.0",
+    "pre-commit": "^1.2.2",
+    "proxyquire": "^2.1.3",
+    "pump": "^3.0.0",
+    "semver": "^7.0.0",
+    "split2": "^3.1.1",
+    "steed": "^1.1.3",
+    "strip-ansi": "^6.0.0",
+    "tap": "^15.0.1",
+    "tape": "^5.0.0",
+    "through2": "^4.0.0",
+    "winston": "^3.3.3"
+  },
+  "dependencies": {
+    "fast-redact": "^3.0.0",
+    "fast-safe-stringify": "^2.0.8",
+    "process-warning": "^1.0.0",
+    "flatstr": "^1.0.12",
+    "pino-std-serializers": "^3.1.0",
+    "quick-format-unescaped": "^4.0.3",
+    "sonic-boom": "^1.0.2"
+  }
+}

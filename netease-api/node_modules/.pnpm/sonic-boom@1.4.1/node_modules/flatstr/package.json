@@ -1,0 +1,30 @@
+{
+  "name": "flatstr",
+  "version": "1.0.12",
+  "description": "Flattens the underlying C structures of a concatenated JavaScript string",
+  "main": "index.js",
+  "browser": {
+    "v8": "./v8"
+  },
+  "tags": [
+    "perf",
+    "performance",
+    "strings",
+    "concatenation"
+  ],
+  "author": "David Mark Clements",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidmarkclements/flatstr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidmarkclements/flatstr/issues"
+  },
+  "homepage": "https://github.com/davidmarkclements/flatstr#readme",
+  "devDependencies": {
+    "fastbench": "^1.0.1",
+    "tap": "^12.0.1"
+  },
+  "dependencies": {}
+}

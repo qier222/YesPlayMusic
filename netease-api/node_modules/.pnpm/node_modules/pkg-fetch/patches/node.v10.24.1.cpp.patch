@@ -1,0 +1,568 @@
+--- node/deps/v8/include/v8.h
++++ node/deps/v8/include/v8.h
+@@ -8137,10 +8137,14 @@
+    */
+   static void SetFlagsFromCommandLine(int* argc,
+                                       char** argv,
+                                       bool remove_flags);
+ 
++  static void EnableCompilationForSourcelessUse();
++  static void DisableCompilationForSourcelessUse();
++  static void FixSourcelessScript(Isolate* v8_isolate, Local<UnboundScript> script);
++
+   /** Get the version string. */
+   static const char* GetVersion();
+ 
+   /**
+    * Initializes V8. This function needs to be called before the first Isolate
+--- node/deps/v8/src/api.cc
++++ node/deps/v8/src/api.cc
+@@ -914,10 +914,42 @@
+ 
+ void V8::SetFlagsFromCommandLine(int* argc, char** argv, bool remove_flags) {
+   i::FlagList::SetFlagsFromCommandLine(argc, argv, remove_flags);
+ }
+ 
++bool save_lazy;
++bool save_predictable;
++
++
++void V8::EnableCompilationForSourcelessUse() {
++  save_lazy = i::FLAG_lazy;
++  i::FLAG_lazy = false;
++  save_predictable = i::FLAG_predictable;
++  i::FLAG_predictable = true;
++  i::CpuFeatures::Reinitialize();
++  i::CpuFeatures::Probe(true);
++}
++
++
++void V8::DisableCompilationForSourcelessUse() {
++  i::FLAG_lazy = save_lazy;
++  i::FLAG_predictable = save_predictable;
++  i::CpuFeatures::Reinitialize();
++  i::CpuFeatures::Probe(false);
++}
++
++
++void V8::FixSourcelessScript(Isolate* v8_isolate, Local<UnboundScript> script) {
++  auto isolate = reinterpret_cast<i::Isolate*>(v8_isolate);
++  auto object = i::Handle<i::HeapObject>::cast(Utils::OpenHandle(*script));
++  i::Handle<i::SharedFunctionInfo> function_info(
++    i::SharedFunctionInfo::cast(*object), object->GetIsolate());
++  auto s = reinterpret_cast<i::Script*>(function_info->script());
++  s->set_source(isolate->heap()->undefined_value());
++}
++
++
+ RegisteredExtension* RegisteredExtension::first_extension_ = nullptr;
+ 
+ RegisteredExtension::RegisteredExtension(Extension* extension)
+     : extension_(extension) { }
+ 
+--- node/deps/v8/src/assembler.h
++++ node/deps/v8/src/assembler.h
+@@ -302,10 +302,15 @@
+   }
+ 
+   static void PrintTarget();
+   static void PrintFeatures();
+ 
++  static void Reinitialize() {
++    supported_ = 0;
++    initialized_ = false;
++  }
++
+  private:
+   friend class ExternalReference;
+   friend class AssemblerBase;
+   // Flush instruction cache.
+   static void FlushICache(void* start, size_t size);
+--- node/deps/v8/src/objects.cc
++++ node/deps/v8/src/objects.cc
+@@ -13179,10 +13179,13 @@
+ 
+   // Check if we should print {function} as a class.
+   Handle<Object> maybe_class_positions = JSReceiver::GetDataProperty(
+       function, isolate->factory()->class_positions_symbol());
+   if (maybe_class_positions->IsTuple2()) {
++    if (Script::cast(shared_info->script())->source()->IsUndefined(isolate)) {
++      return isolate->factory()->NewStringFromAsciiChecked("class {}");
++    }
+     Tuple2* class_positions = Tuple2::cast(*maybe_class_positions);
+     int start_position = Smi::ToInt(class_positions->value1());
+     int end_position = Smi::ToInt(class_positions->value2());
+     Handle<String> script_source(
+         String::cast(Script::cast(shared_info->script())->source()), isolate);
+--- node/deps/v8/src/parsing/parsing.cc
++++ node/deps/v8/src/parsing/parsing.cc
+@@ -18,10 +18,11 @@
+ namespace parsing {
+ 
+ bool ParseProgram(ParseInfo* info, Isolate* isolate) {
+   DCHECK(info->is_toplevel());
+   DCHECK_NULL(info->literal());
++  if (info->script()->source()->IsUndefined(isolate)) return false;
+ 
+   VMState<PARSER> state(isolate);
+ 
+   // Create a character stream for the parser.
+   Handle<String> source(String::cast(info->script()->source()), isolate);
+@@ -55,10 +56,11 @@
+ bool ParseFunction(ParseInfo* info, Handle<SharedFunctionInfo> shared_info,
+                    Isolate* isolate) {
+   DCHECK(!info->is_toplevel());
+   DCHECK(!shared_info.is_null());
+   DCHECK_NULL(info->literal());
++  if (info->script()->source()->IsUndefined(isolate)) return false;
+ 
+   // Create a character stream for the parser.
+   Handle<String> source(String::cast(info->script()->source()), isolate);
+   source = String::Flatten(source);
+   isolate->counters()->total_parse_size()->Increment(source->length());
+--- node/deps/v8/src/snapshot/code-serializer.cc
++++ node/deps/v8/src/snapshot/code-serializer.cc
+@@ -401,31 +401,46 @@
+ 
+ SerializedCodeData::SanityCheckResult SerializedCodeData::SanityCheck(
+     Isolate* isolate, uint32_t expected_source_hash) const {
+   if (this->size_ < kHeaderSize) return INVALID_HEADER;
+   uint32_t magic_number = GetMagicNumber();
+-  if (magic_number != ComputeMagicNumber(isolate)) return MAGIC_NUMBER_MISMATCH;
++  if (magic_number != ComputeMagicNumber(isolate)) {
++    // base::OS::PrintError("Pkg: MAGIC_NUMBER_MISMATCH\n"); // TODO enable after solving v8-cache/ncc issue
++    return MAGIC_NUMBER_MISMATCH;
++  }
+   uint32_t version_hash = GetHeaderValue(kVersionHashOffset);
+-  uint32_t source_hash = GetHeaderValue(kSourceHashOffset);
+   uint32_t cpu_features = GetHeaderValue(kCpuFeaturesOffset);
+   uint32_t flags_hash = GetHeaderValue(kFlagHashOffset);
+   uint32_t payload_length = GetHeaderValue(kPayloadLengthOffset);
+   uint32_t c1 = GetHeaderValue(kChecksum1Offset);
+   uint32_t c2 = GetHeaderValue(kChecksum2Offset);
+-  if (version_hash != Version::Hash()) return VERSION_MISMATCH;
+-  if (source_hash != expected_source_hash) return SOURCE_MISMATCH;
+-  if (cpu_features != static_cast<uint32_t>(CpuFeatures::SupportedFeatures())) {
++  if (version_hash != Version::Hash()) {
++    base::OS::PrintError("Pkg: VERSION_MISMATCH\n");
++    return VERSION_MISMATCH;
++  }
++  uint32_t host_features = static_cast<uint32_t>(CpuFeatures::SupportedFeatures());
++  if (cpu_features & (~host_features)) {
++    base::OS::PrintError("Pkg: CPU_FEATURES_MISMATCH\n");
+     return CPU_FEATURES_MISMATCH;
+   }
+-  if (flags_hash != FlagList::Hash()) return FLAGS_MISMATCH;
++  if (flags_hash != FlagList::Hash()) {
++    base::OS::PrintError("Pkg: FLAGS_MISMATCH\n");
++    return FLAGS_MISMATCH;
++  }
+   uint32_t max_payload_length =
+       this->size_ -
+       POINTER_SIZE_ALIGN(kHeaderSize +
+                          GetHeaderValue(kNumReservationsOffset) * kInt32Size +
+                          GetHeaderValue(kNumCodeStubKeysOffset) * kInt32Size);
+-  if (payload_length > max_payload_length) return LENGTH_MISMATCH;
+-  if (!Checksum(DataWithoutHeader()).Check(c1, c2)) return CHECKSUM_MISMATCH;
++  if (payload_length > max_payload_length) {
++    base::OS::PrintError("Pkg: LENGTH_MISMATCH\n");
++    return LENGTH_MISMATCH;
++  }
++  if (!Checksum(DataWithoutHeader()).Check(c1, c2)) {
++    base::OS::PrintError("Pkg: CHECKSUM_MISMATCH\n");
++    return CHECKSUM_MISMATCH;
++  }
+   return CHECK_SUCCESS;
+ }
+ 
+ uint32_t SerializedCodeData::SourceHash(Handle<String> source) {
+   return source->length();
+--- node/lib/child_process.js
++++ node/lib/child_process.js
+@@ -108,11 +108,11 @@
+   }
+ 
+   options.execPath = options.execPath || process.execPath;
+   options.shell = false;
+ 
+-  return spawn(options.execPath, args, options);
++  return exports.spawn(options.execPath, args, options);
+ };
+ 
+ 
+ exports._forkChild = function _forkChild(fd) {
+   // set process.send()
+--- node/lib/internal/bootstrap/loaders.js
++++ node/lib/internal/bootstrap/loaders.js
+@@ -337,11 +337,11 @@
+ 
+       // (code, filename, lineOffset, columnOffset
+       // cachedData, produceCachedData, parsingContext)
+       const script = new ContextifyScript(
+         source, this.filename, 0, 0,
+-        cache, false, undefined
++        cache, false, undefined, false
+       );
+ 
+       // This will be used to create code cache in tools/generate_code_cache.js
+       this.script = script;
+ 
+--- node/lib/internal/bootstrap/node.js
++++ node/lib/internal/bootstrap/node.js
+@@ -213,10 +213,47 @@
+ 
+     // There are various modes that Node can run in. The most common two
+     // are running from a script and running the REPL - but there are a few
+     // others like the debugger or running --eval arguments. Here we decide
+     // which mode we run in.
++
++    (function () {
++      var fs = NativeModule.require('fs');
++      var vm = NativeModule.require('vm');
++      function readPrelude (fd) {
++        var PAYLOAD_POSITION = '// PAYLOAD_POSITION //' | 0;
++        var PAYLOAD_SIZE = '// PAYLOAD_SIZE //' | 0;
++        var PRELUDE_POSITION = '// PRELUDE_POSITION //' | 0;
++        var PRELUDE_SIZE = '// PRELUDE_SIZE //' | 0;
++        if (!PRELUDE_POSITION) {
++          // no prelude - remove entrypoint from argv[1]
++          process.argv.splice(1, 1);
++          return { undoPatch: true };
++        }
++        var prelude = Buffer.alloc(PRELUDE_SIZE);
++        var read = fs.readSync(fd, prelude, 0, PRELUDE_SIZE, PRELUDE_POSITION);
++        if (read !== PRELUDE_SIZE) {
++          console.error('Pkg: Error reading from file.');
++          process.exit(1);
++        }
++        var s = new vm.Script(prelude, { filename: 'pkg/prelude/bootstrap.js' });
++        var fn = s.runInThisContext();
++        return fn(process, NativeModule.require,
++          console, fd, PAYLOAD_POSITION, PAYLOAD_SIZE);
++      }
++      (function () {
++        var fd = fs.openSync(process.execPath, 'r');
++        var result = readPrelude(fd);
++        if (result && result.undoPatch) {
++          var bindingFs = process.binding('fs');
++          fs.internalModuleStat = bindingFs.internalModuleStat;
++          fs.internalModuleReadJSON = bindingFs.internalModuleReadJSON;
++          fs.closeSync(fd);
++        }
++      }());
++    }());
++
+     if (internalBinding('worker').getEnvMessagePort() !== undefined) {
+       // This means we are in a Worker context, and any script execution
+       // will be directed by the worker module.
+       NativeModule.require('internal/worker').setupChild(evalScript);
+     } else if (NativeModule.exists('_third_party_main')) {
+--- node/lib/internal/modules/cjs/loader.js
++++ node/lib/internal/modules/cjs/loader.js
+@@ -27,14 +27,12 @@
+ const vm = require('vm');
+ const assert = require('assert').ok;
+ const fs = require('fs');
+ const internalFS = require('internal/fs/utils');
+ const path = require('path');
+-const {
+-  internalModuleReadJSON,
+-  internalModuleStat
+-} = process.binding('fs');
++const internalModuleReadJSON = function (f) { return require('fs').internalModuleReadJSON(f); };
++const internalModuleStat = function (f) { return require('fs').internalModuleStat(f); };
+ const { safeGetenv } = process.binding('util');
+ const {
+   makeRequireFunction,
+   normalizeReferrerURL,
+   requireDepth,
+--- node/lib/vm.js
++++ node/lib/vm.js
+@@ -55,10 +55,11 @@
+       columnOffset = 0,
+       cachedData,
+       produceCachedData = false,
+       importModuleDynamically,
+       [kParsingContext]: parsingContext,
++      sourceless = false,
+     } = options;
+ 
+     if (typeof filename !== 'string') {
+       throw new ERR_INVALID_ARG_TYPE('options.filename', 'string', filename);
+     }
+@@ -84,11 +85,12 @@
+             filename,
+             lineOffset,
+             columnOffset,
+             cachedData,
+             produceCachedData,
+-            parsingContext);
++            parsingContext,
++            sourceless);
+     } catch (e) {
+       throw e; /* node-do-not-add-exception-line */
+     }
+ 
+     if (importModuleDynamically !== undefined) {
+--- node/src/inspector_agent.cc
++++ node/src/inspector_agent.cc
+@@ -705,12 +705,10 @@
+     CHECK_EQ(0, uv_async_init(parent_env_->event_loop(),
+                               &start_io_thread_async,
+                               StartIoThreadAsyncCallback));
+     uv_unref(reinterpret_cast<uv_handle_t*>(&start_io_thread_async));
+     start_io_thread_async.data = this;
+-    // Ignore failure, SIGUSR1 won't work, but that should not block node start.
+-    StartDebugSignalHandler();
+   }
+ 
+   bool wait_for_connect = options->wait_for_connect();
+   if (parent_handle_) {
+     wait_for_connect = parent_handle_->WaitForConnect();
+--- node/src/node.cc
++++ node/src/node.cc
+@@ -2369,17 +2369,10 @@
+ }
+ 
+ 
+ inline void PlatformInit() {
+ #ifdef __POSIX__
+-#if HAVE_INSPECTOR
+-  sigset_t sigmask;
+-  sigemptyset(&sigmask);
+-  sigaddset(&sigmask, SIGUSR1);
+-  const int err = pthread_sigmask(SIG_SETMASK, &sigmask, nullptr);
+-#endif  // HAVE_INSPECTOR
+-
+   // Make sure file descriptors 0-2 are valid before we start logging anything.
+   for (int fd = STDIN_FILENO; fd <= STDERR_FILENO; fd += 1) {
+     struct stat ignored;
+     if (fstat(fd, &ignored) == 0)
+       continue;
+@@ -2389,14 +2382,10 @@
+       ABORT();
+     if (fd != open("/dev/null", O_RDWR))
+       ABORT();
+   }
+ 
+-#if HAVE_INSPECTOR
+-  CHECK_EQ(err, 0);
+-#endif  // HAVE_INSPECTOR
+-
+ #ifndef NODE_SHARED_MODE
+   // Restore signal dispositions, the parent process may have changed them.
+   struct sigaction act;
+   memset(&act, 0, sizeof(act));
+ 
+--- node/src/node_contextify.cc
++++ node/src/node_contextify.cc
+@@ -63,10 +63,11 @@
+ using v8::String;
+ using v8::Symbol;
+ using v8::TryCatch;
+ using v8::Uint32;
+ using v8::UnboundScript;
++using v8::V8;
+ using v8::Value;
+ using v8::WeakCallbackInfo;
+ using v8::WeakCallbackType;
+ 
+ // The vm module executes code in a sandboxed environment with a different
+@@ -638,15 +639,16 @@
+   Local<Integer> line_offset;
+   Local<Integer> column_offset;
+   Local<ArrayBufferView> cached_data_buf;
+   bool produce_cached_data = false;
+   Local<Context> parsing_context = context;
++  bool sourceless = false;
+ 
+   if (argc > 2) {
+     // new ContextifyScript(code, filename, lineOffset, columnOffset,
+     //                      cachedData, produceCachedData, parsingContext)
+-    CHECK_EQ(argc, 7);
++    CHECK_EQ(argc, 8);
+     CHECK(args[2]->IsNumber());
+     line_offset = args[2].As<Integer>();
+     CHECK(args[3]->IsNumber());
+     column_offset = args[3].As<Integer>();
+     if (!args[4]->IsUndefined()) {
+@@ -661,10 +663,11 @@
+           ContextifyContext::ContextFromContextifiedSandbox(
+               env, args[6].As<Object>());
+       CHECK_NOT_NULL(sandbox);
+       parsing_context = sandbox->context();
+     }
++    sourceless = args[7]->IsTrue();
+   } else {
+     line_offset = Integer::New(isolate, 0);
+     column_offset = Integer::New(isolate, 0);
+   }
+ 
+@@ -715,10 +718,14 @@
+ 
+   TryCatch try_catch(isolate);
+   Environment::ShouldNotAbortOnUncaughtScope no_abort_scope(env);
+   Context::Scope scope(parsing_context);
+ 
++  if (sourceless && produce_cached_data) {
++    V8::EnableCompilationForSourcelessUse();
++  }
++
+   MaybeLocal<UnboundScript> v8_script = ScriptCompiler::CompileUnboundScript(
+       isolate,
+       &source,
+       compile_options);
+ 
+@@ -730,10 +737,17 @@
+         TRACING_CATEGORY_NODE2(vm, script),
+         "ContextifyScript::New",
+         contextify_script);
+     return;
+   }
++
++  if (sourceless && compile_options == ScriptCompiler::kConsumeCodeCache) {
++    if (!source.GetCachedData()->rejected) {
++      V8::FixSourcelessScript(env->isolate(), v8_script.ToLocalChecked());
++    }
++  }
++
+   contextify_script->script_.Reset(isolate, v8_script.ToLocalChecked());
+ 
+   if (compile_options == ScriptCompiler::kConsumeCodeCache) {
+     args.This()->Set(
+         env->cached_data_rejected_string(),
+@@ -751,10 +765,15 @@
+     }
+     args.This()->Set(
+         env->cached_data_produced_string(),
+         Boolean::New(isolate, cached_data_produced));
+   }
++
++  if (sourceless && produce_cached_data) {
++    V8::DisableCompilationForSourcelessUse();
++  }
++
+   TRACE_EVENT_NESTABLE_ASYNC_END0(
+       TRACING_CATEGORY_NODE2(vm, script),
+       "ContextifyScript::New",
+       contextify_script);
+ }
+--- node/src/node_main.cc
++++ node/src/node_main.cc
+@@ -20,10 +20,12 @@
+ // USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+ #include "node.h"
+ #include <stdio.h>
+ 
++int reorder(int argc, char** argv);
++
+ #ifdef _WIN32
+ #include <windows.h>
+ #include <VersionHelpers.h>
+ #include <WinError.h>
+ 
+@@ -67,11 +69,11 @@
+       exit(1);
+     }
+   }
+   argv[argc] = nullptr;
+   // Now that conversion is done, we can finally start.
+-  return node::Start(argc, argv);
++  return reorder(argc, argv);
+ }
+ #else
+ // UNIX
+ #ifdef __linux__
+ #include <elf.h>
+@@ -119,8 +121,75 @@
+ #endif
+   // Disable stdio buffering, it interacts poorly with printf()
+   // calls elsewhere in the program (e.g., any logging from V8.)
+   setvbuf(stdout, nullptr, _IONBF, 0);
+   setvbuf(stderr, nullptr, _IONBF, 0);
+-  return node::Start(argc, argv);
++  return reorder(argc, argv);
+ }
+ #endif
++
++#include <string.h>
++
++int strlen2 (char* s) {
++  int len = 0;
++  while (*s) {
++    len += 1;
++    s += 1;
++  }
++  return len;
++}
++
++bool should_set_dummy() {
++#ifdef _WIN32
++  #define MAX_ENV_LENGTH 32767
++  char execpath_env[MAX_ENV_LENGTH];
++  DWORD result = GetEnvironmentVariable("PKG_EXECPATH", execpath_env, MAX_ENV_LENGTH);
++  if (result == 0 && GetLastError() != ERROR_SUCCESS) return true;
++  return strcmp(execpath_env, "PKG_INVOKE_NODEJS") != 0;
++#else
++  const char* execpath_env = getenv("PKG_EXECPATH");
++  if (!execpath_env) return true;
++  return strcmp(execpath_env, "PKG_INVOKE_NODEJS") != 0;
++#endif
++}
++
++// for uv_setup_args
++int adjacent(int argc, char** argv) {
++  size_t size = 0;
++  for (int i = 0; i < argc; i++) {
++    size += strlen(argv[i]) + 1;
++  }
++  char* args = new char[size];
++  size_t pos = 0;
++  for (int i = 0; i < argc; i++) {
++    memcpy(&args[pos], argv[i], strlen(argv[i]) + 1);
++    argv[i] = &args[pos];
++    pos += strlen(argv[i]) + 1;
++  }
++  return node::Start(argc, argv);
++}
++
++volatile char* BAKERY = (volatile char*) "\0// BAKERY // BAKERY " \
++  "// BAKERY // BAKERY // BAKERY // BAKERY // BAKERY // BAKERY " \
++  "// BAKERY // BAKERY // BAKERY // BAKERY // BAKERY // BAKERY " \
++  "// BAKERY // BAKERY // BAKERY // BAKERY // BAKERY // BAKERY ";
++
++int reorder(int argc, char** argv) {
++  int i;
++  char** nargv = new char*[argc + 64];
++  int c = 0;
++  nargv[c++] = argv[0];
++  char* bakery = (char*) BAKERY;
++  while (true) {
++    size_t width = strlen2(bakery);
++    if (width == 0) break;
++    nargv[c++] = bakery;
++    bakery += width + 1;
++  }
++  if (should_set_dummy()) {
++    nargv[c++] = (char*) "PKG_DUMMY_ENTRYPOINT";
++  }
++  for (i = 1; i < argc; i++) {
++    nargv[c++] = argv[i];
++  }
++  return adjacent(c, nargv);
++}
+--- node/src/node_options.cc
++++ node/src/node_options.cc
+@@ -55,10 +55,11 @@
+ // XXX: If you add an option here, please also add it to doc/node.1 and
+ // doc/api/cli.md
+ // TODO(addaleax): Make that unnecessary.
+ 
+ DebugOptionsParser::DebugOptionsParser() {
++  return;
+ #if HAVE_INSPECTOR
+   AddOption("--inspect-port",
+             "set host:port for inspector",
+             &DebugOptions::host_port,
+             kAllowedInEnvironment);

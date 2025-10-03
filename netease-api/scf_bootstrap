@@ -1,0 +1,3 @@
+#!/bin/bash
+export PORT=9000
+/var/lang/node16/bin/node app.js

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>home</title>
+  </head>
+
+  <body>
+    <div>
+      <a href="/qrlogin-nocookie.html"> 如果没登录,请先登录 </a>
+    </div>
+    <script src="https://fastly.jsdelivr.net/npm/axios@0.26.1/dist/axios.min.js"></script>
+    <script>
+      const logger = require('../util/logger.js')
+      async function main() {
+        const res = await axios({
+          url: `/homepage/block/page`,
+          data: {
+            cookie: localStorage.getItem('cookie'),
+          },
+          method: 'post',
+        })
+        let cursor = ''
+        logger.info(res.data.data)
+        if (res.data.data.hasMore) {
+          cursor = res.data.data.cursor
+          const res2 = await axios({
+            url: `/homepage/block/page?time=${Date.now()}`,
+            data: {
+              cookie: localStorage.getItem('cookie'),
+              cursor: cursor,
+            },
+            method: 'post',
+          })
+        }
+      }
+      main()
+    </script>
+  </body>
+</html>

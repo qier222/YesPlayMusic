@@ -1,0 +1,31 @@
+name: Build Image
+
+on:
+  push:
+      tags:
+          - v*
+
+jobs:
+  build:
+      if: github.event.base_ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+      name: Build image job
+      
+      steps:
+          - name: Checkout main
+            uses: actions/checkout@v5
+          - name: Get version
+            id: get_version
+            if: startsWith(github.ref, 'refs/tags/') && startsWith(github.repository, 'Binaryify/ncm')
+            run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+          - name: Build and publish image
+            uses: elgohr/Publish-Docker-Github-Action@v5
+            if: startsWith(github.ref, 'refs/tags/') && startsWith(github.repository, 'Binaryify/ncm')
+            with:
+              name: binaryify/netease_cloud_music_api # dockerid/imageName
+              platforms: linux/arm64,linux/amd64 # 你准备构建的镜像平台
+              tags: latest,${{ steps.get_version.outputs.VERSION }}
+              username: ${{ secrets.DOCKER_USERNAME }} # docker hub userid 在setting创建secrets name=DOCKER_USERNAME  value=dockerid
+              password: ${{ secrets.DOCKER_PASSWORD }} # docker hub password,在setting创建secrets name=DOCKER_PASSWORD  value=dockerpassword

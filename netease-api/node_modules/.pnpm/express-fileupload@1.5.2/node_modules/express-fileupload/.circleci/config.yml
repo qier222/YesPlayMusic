@@ -1,0 +1,54 @@
+version: 2.1
+orbs:
+  node: circleci/node@5.1.0
+jobs:
+  lintandcoverage:
+    docker:
+      - image: cimg/node:18.20.8
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run coveralls
+workflows:
+  test:
+    jobs:
+      - lintandcoverage:
+          context:
+            - COVERALLS
+      - node/test:
+          version: '16.20.2'
+          pkg-manager: npm
+          filters:
+            tags:
+              ignore:
+                - /.*/
+      - node/test:
+          version: '18.20.8'
+          pkg-manager: npm
+          filters:
+            tags:
+              ignore:
+                - /.*/
+      - node/test:
+          version: '20.19.3'
+          pkg-manager: npm
+          filters:
+            tags:
+              ignore:
+                - /.*/
+      - node/test:
+          version: '22.17.0'
+          pkg-manager: npm
+          filters:
+            tags:
+              ignore:
+                - /.*/
+      - node/test:
+          version: '24.3.0'
+          pkg-manager: npm
+          filters:
+            tags:
+              ignore:
+                - /.*/

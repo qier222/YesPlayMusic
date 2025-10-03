@@ -1,0 +1,93 @@
+{
+  "name": "pkg",
+  "version": "5.8.1",
+  "description": "Package your Node.js project into an executable",
+  "main": "lib-es5/index.js",
+  "license": "MIT",
+  "repository": "vercel/pkg",
+  "types": "lib-es5/index.d.ts",
+  "bin": {
+    "pkg": "lib-es5/bin.js"
+  },
+  "files": [
+    "lib-es5/*.js",
+    "lib-es5/index.d.ts",
+    "dictionary/*.js",
+    "prelude/*.js"
+  ],
+  "prettier": {
+    "singleQuote": true
+  },
+  "dependencies": {
+    "@babel/generator": "7.18.2",
+    "@babel/parser": "7.18.4",
+    "@babel/types": "7.19.0",
+    "chalk": "^4.1.2",
+    "fs-extra": "^9.1.0",
+    "globby": "^11.1.0",
+    "into-stream": "^6.0.0",
+    "is-core-module": "2.9.0",
+    "minimist": "^1.2.6",
+    "multistream": "^4.1.0",
+    "pkg-fetch": "3.4.2",
+    "prebuild-install": "7.1.1",
+    "resolve": "^1.22.0",
+    "stream-meter": "^1.0.4"
+  },
+  "devDependencies": {
+    "@babel/core": "7.18.2",
+    "@types/babel__generator": "7.6.4",
+    "@types/escodegen": "0.0.7",
+    "@types/fs-extra": "9.0.13",
+    "@types/is-core-module": "2.2.0",
+    "@types/minimist": "1.2.2",
+    "@types/multistream": "4.1.0",
+    "@types/node": "14.18.20",
+    "@types/resolve": "1.20.2",
+    "@types/stream-meter": "0.0.22",
+    "@typescript-eslint/eslint-plugin": "4.33.0",
+    "@typescript-eslint/parser": "4.33.0",
+    "eslint": "7.32.0",
+    "eslint-config-airbnb-base": "14.2.1",
+    "eslint-config-airbnb-typescript": "12.3.1",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "json-stable-stringify": "^1.0.1",
+    "lint-staged": "^10.5.4",
+    "mkdirp": "^1.0.4",
+    "prettier": "2.6.2",
+    "rimraf": "^3.0.2",
+    "simple-git-hooks": ">=2.8.0",
+    "typescript": "4.7.2"
+  },
+  "peerDependencies": {
+    "node-notifier": ">=9.0.1"
+  },
+  "peerDependenciesMeta": {
+    "node-notifier": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "clean": "rimraf lib-es5",
+    "build": "npm run clean && tsc",
+    "start": "tsc --watch",
+    "lint": "npm run lint:style && npm run lint:code",
+    "lint:style": "prettier -c \"{lib,prelude,test}/**/*.{ts,js}\"",
+    "lint:code": "eslint lib prelude test",
+    "fix": "npm run lint:style -- -w && npm run lint:code -- --fix",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint",
+    "test": "npm run build && npm run test:14 && npm run test:12 && npm run test:10 && npm run test:host",
+    "test:10": "node test/test.js node10 no-npm",
+    "test:12": "node test/test.js node12 no-npm",
+    "test:14": "node test/test.js node14 no-npm",
+    "test:host": "node test/test.js host only-npm"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,css,md,json}": "prettier --write"
+  }
+}

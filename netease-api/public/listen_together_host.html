@@ -1,0 +1,324 @@
+<!-- eslint-disable prettier/prettier -->
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一起听</title>
+    <script src="https://unpkg.com/petite-vue"></script>
+    <script src="https://fastly.jsdelivr.net/npm/axios@0.26.1/dist/axios.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css"
+    />
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
+  </head>
+
+  <body class="mdui-container">
+    <div>
+      <a href="/qrlogin.html"> 如果没登录,请先登录 </a>
+    </div>
+    <h1>一起听 - 主机模式</h1>
+    <div>消息: {{message}}</div>
+    <audio id="player" autoplay controls></audio>
+    <br />
+    <br />
+    <button v-if="!account.login" @click="login">获取登录状态</button>
+    <div>您的当前登录账号为: {{account.nickname}}</div>
+    <br />
+    <div v-if="account.login">
+      <button v-if="!roomInfo.roomId" @click="createRoom">创建房间</button>
+      <details>
+        <summary>加入房间</summary>
+        <div><span>房间ID: </span><input v-model="roomInfo.roomId" /></div>
+        <div>
+          <span>邀请者 ID: </span><input v-model="roomInfo.inviterId" />
+        </div>
+        <button @click="joinRoom">点击加入</button>
+      </details>
+
+      <div v-if="roomInfo.roomId">
+        <div>
+          分享链接为:
+          https://st.music.163.com/listen-together/share/?songId=1372188635&roomId={{roomInfo.roomId}}&inviterId={{roomInfo.inviterId}}
+        </div>
+        <br />
+        <button @click="refreshRoom">刷新房间状态</button>
+        <div>在线用户:</div>
+        <ul class="mdui-list">
+          <li
+            v-for="user in roomInfo.roomUsers"
+            class="mdui-list-item mdui-ripple"
+          >
+            <div class="mdui-list-item-avatar">
+              <img :src="user.avatarUrl" />
+            </div>
+            <div class="mdui-list-item-content">{{user.nickname}}</div>
+          </li>
+        </ul>
+        <button v-if="roomInfo.roomId" @click="closeRoom">关闭房间</button>
+      </div>
+    </div>
+    <button @click="playTrack">播放</button>
+    <button @click="pauseTrack">暂停</button>
+    <button @click="seekTrack">同步进度</button>
+    <details>
+      <summary>播放列表</summary>
+      <br />
+      <div>
+        <span>歌单ID: </span><input v-model="playlistInfo.playlistId" />
+      </div>
+      <button @click="loadPlaylist">加载歌单到播放列表</button>
+      <span>{{playlistInfo.playlistName}}</span>
+      <br />
+      <br />
+      <div>歌单内容:</div>
+      <ul class="mdui-list">
+        <li
+          @click="gotoTrack(track.id)"
+          v-for="track in playlistInfo.playlistTracks"
+          class="mdui-list-item mdui-ripple"
+        >
+          <div class="mdui-list-item-avatar">
+            <img :src="track.al.picUrl" />
+          </div>
+          <div class="mdui-list-item-content">{{track.name}}</div>
+        </li>
+      </ul>
+    </details>
+  </body>
+  <script>
+    const logger = require('../util/logger.js')
+    PetiteVue.createApp({
+      message: '请点击获取登录状态',
+      account: {
+        login: false,
+        userId: 0,
+        nickname: '未登录',
+      },
+      roomInfo: {
+        roomId: null,
+        inviterId: 0,
+        roomUsers: [],
+      },
+      playlistInfo: {
+        playlistId: 0,
+        playlistName: '未获取',
+        playlistTrackIds: [],
+        playlistTracks: [],
+      },
+      playingInfo: {
+        trackId: 0,
+        status: 'PLAY',
+        progress: 1,
+      },
+      clientSeq: 1,
+      login: async function () {
+        const res = await axios({
+          url: `/login/status?timestamp=${new Date().getTime()}`,
+          method: 'get',
+          data: {
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        if (res.data.data.code != 200) {
+          alert('请先使用登录 API 登录到网易云音乐')
+        } else {
+          this.account.userId = res.data.data.profile.userId
+          this.account.nickname = res.data.data.profile.nickname
+          this.account.login = true
+          this.message = '成功登录, 请创建房间'
+        }
+      },
+      joinRoom: async function () {
+        const res = await axios({
+          url: 'listentogether/accept',
+          method: 'post',
+          data: {
+            roomId: this.roomInfo.roomId,
+            inviterId: this.roomInfo.inviterId,
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(res)
+        if (res.data.code != 200) {
+          this.message = '加入房间出现问题: ' + res.data.message
+        } else {
+          this.message = '加入房间成功: ' + this.roomInfo.roomId
+          const res2 = await axios({
+            url: 'listentogether/room/check',
+            method: 'post',
+            data: {
+              roomId: this.roomInfo.roomId,
+              cookie: localStorage.getItem('cookie'),
+            },
+          })
+          logger.info(res2)
+          const res3 = await axios({
+            url: 'listentogether/sync/playlist/get',
+            method: 'post',
+            data: {
+              roomId: this.roomInfo.roomId,
+              cookie: localStorage.getItem('cookie'),
+            },
+          })
+
+          this.playlistInfo.playlistName = '其他人的歌单'
+          this.playlistInfo.playlistTrackIds =
+            res3.data.data.playlist.displayList.result.join(',')
+          const resa = await axios({
+            url: '/song/detail',
+            method: 'post',
+            data: {
+              ids: this.playlistInfo.playlistTrackIds,
+              cookie: localStorage.getItem('cookie'),
+            },
+          })
+          logger.info(resa)
+          this.playlistInfo.playlistTracks = resa.data.songs
+        }
+      },
+      createRoom: async function () {
+        const res = await axios({
+          url: 'listentogether/room/create',
+          method: 'get',
+          data: {
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(res)
+        if (res.data.code != 200) {
+          this.message = '创建房间出现问题: ' + res.data.message
+        } else {
+          this.message = '创建房间成功: ' + res.data.data.roomInfo.roomId
+          this.roomInfo.inviterId = this.account.userId
+          this.roomInfo.roomId = res.data.data.roomInfo.roomId
+          const res2 = await axios({
+            url: 'listentogether/room/check',
+            method: 'post',
+            data: {
+              roomId: this.roomInfo.roomId,
+              cookie: localStorage.getItem('cookie'),
+            },
+          })
+          logger.info(res2)
+        }
+      },
+      refreshRoom: async function () {
+        const res = await axios({
+          url: '/listentogether/status',
+          data: {
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(res)
+        if (res.data.code != 200 || !res.data.data.inRoom) {
+          this.message = '房间状态获取失败, 可能退出了房间'
+        } else {
+          this.roomInfo.roomUsers = res.data.data.roomInfo.roomUsers
+        }
+      },
+      closeRoom: async function () {
+        const res = await axios({
+          url: '/listentogether/end',
+          method: 'post',
+          data: {
+            roomId: this.roomInfo.roomId,
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(res)
+        if (res.data.code != 200 || !res.data.data.success) {
+          this.message = '房间关闭失败'
+        } else {
+          this.message = '房间关闭成功'
+          this.roomInfo.roomId = null
+        }
+      },
+      loadPlaylist: async function () {
+        const res = await axios({
+          url: '/playlist/detail',
+          method: 'post',
+          data: {
+            id: this.playlistInfo.playlistId,
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(res)
+        this.playlistInfo.playlistName = res.data.playlist.name
+        this.playlistInfo.playlistTrackIds = res.data.playlist.trackIds
+          .map((track) => track.id)
+          .join(',')
+        const resa = await axios({
+          url: '/song/detail',
+          method: 'post',
+          data: {
+            ids: this.playlistInfo.playlistTrackIds,
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(resa)
+        this.playlistInfo.playlistTracks = resa.data.songs
+        if (this.roomInfo.roomId) {
+          const resb = await axios({
+            url: 'listentogether/sync/list/command',
+            method: 'post',
+            data: {
+              roomId: this.roomInfo.roomId,
+              commandType: 'REPLACE',
+              userId: this.account.userId,
+              version: this.clientSeq++,
+              playMode: 'ORDER_LOOP',
+              displayList: this.playlistInfo.playlistTrackIds,
+              randomList: this.playlistInfo.playlistTrackIds,
+              cookie: localStorage.getItem('cookie'),
+            },
+          })
+          logger.info(resb)
+        }
+      },
+      gotoTrack: async function (trackId) {
+        this.playingInfo.trackId = trackId
+        if (this.roomInfo.roomId) {
+          await this.playCommand('GOTO')
+        }
+        document.getElementById('player').src =
+          'https://music.163.com/song/media/outer/url?id=' + trackId + '.mp3'
+      },
+      playTrack: async function () {
+        this.playingInfo.status = 'PLAY'
+        await this.playCommand('PLAY')
+        document.getElementById('player').play()
+      },
+      pauseTrack: async function () {
+        this.playingInfo.status = 'PAUSE'
+        await this.playCommand('PAUSE')
+        document.getElementById('player').pause()
+      },
+      seekTrack: async function () {
+        this.playingInfo.status = 'PLAY'
+        await this.playCommand('seek')
+        document.getElementById('player').play()
+      },
+      playCommand: async function (action) {
+        const res = await axios({
+          url: 'listentogether/play/command',
+          method: 'post',
+          data: {
+            roomId: this.roomInfo.roomId,
+            progress: Math.floor(
+              document.getElementById('player').currentTime * 1000,
+            ),
+            commandType: action,
+            formerSongId: '-1',
+            targetSongId: this.playingInfo.trackId,
+            clientSeq: this.clientSeq++,
+            playStatus: this.playingInfo.status,
+            cookie: localStorage.getItem('cookie'),
+          },
+        })
+        logger.info(res)
+      },
+    }).mount()
+  </script>
+</html>

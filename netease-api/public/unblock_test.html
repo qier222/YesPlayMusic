@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐解灰测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .source-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .source-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>音乐解灰测试</h1>
+        <div class="form-group">
+            <label for="songId">音乐 ID：</label>
+            <input type="number" id="songId" placeholder="请输入音乐ID" required>
+        </div>
+        <div class="form-group">
+            <p>选择音源：</p>
+            <div class="source-options">
+                <div class="source-option">
+                    <input type="checkbox" id="pyncmd" value="pyncmd">
+                    <label for="pyncmd">pyncmd</label>
+                </div>
+                <div class="source-option">
+                    <input type="checkbox" id="kuwo" value="kuwo">
+                    <label for="kuwo">kuwo</label>
+                </div>
+                <div class="source-option">
+                    <input type="checkbox" id="bodian" value="bodian">
+                    <label for="bodian">bodian</label>
+                </div>
+                <div class="source-option">
+                    <input type="checkbox" id="qq" value="qq">
+                    <label for="qq">qq</label>
+                </div>
+                <div class="source-option">
+                    <input type="checkbox" id="kugou" value="kugou">
+                    <label for="kugou">kugou</label>
+                </div>
+                <div class="source-option">
+                    <input type="checkbox" id="migu" value="migu">
+                    <label for="migu">migu</label>
+                </div>
+            </div>
+        </div>
+        <button onclick="testSong()">开始测试</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testSong() {
+            const songId = document.getElementById('songId').value;
+            if (!songId) {
+                alert('请输入音乐ID');
+                return;
+            }
+
+            const sources = ['pyncmd', 'kuwo', 'bodian', 'qq', 'kugou', 'migu']
+                .filter(source => document.getElementById(source).checked)
+                .join(',');
+
+            if (!sources) {
+                alert('请至少选择一个音源');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = '正在请求...';
+
+            try {
+                const response = await fetch(`/song/url/match?id=${songId}&source=${sources}`);
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = `请求失败: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

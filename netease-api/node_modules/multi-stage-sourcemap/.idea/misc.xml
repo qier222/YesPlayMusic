@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsBowerSettings">
+    <exe-path>$USER_HOME$/.nodebrew/current/bin/bower</exe-path>
+    <config-path />
+  </component>
+  <component name="ProjectRootManager" version="2" />
+</project>
+

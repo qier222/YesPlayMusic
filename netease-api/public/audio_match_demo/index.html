@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<head>
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+
+    pre {
+      font-family: monospace;
+    }
+
+    a {
+      font-family: sans-serif;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    canvas {
+      width: 100%;
+      height: 0;
+      transition: all linear 0.1s;
+    }
+
+    .canvas-active {
+      height: 15vh;
+    }
+
+    pre {
+      overflow: scroll;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>听歌识曲 Demo (Credit: <a href="https://github.com/mos9527/ncm-afp" target="_blank">https://github.com/mos9527/ncm-afp</a>)</h1>
+  <hr>
+  <p><b>DISCLAIMER: </b></p>
+  <p>This site uses the offical NetEase audio matcher APIs (reverse engineered from <a
+      href="https://fn.music.163.com/g/chrome-extension-home-page-beta/">https://fn.music.163.com/g/chrome-extension-home-page-beta/</a>)
+  </p>
+  <p>And DOES NOT condone copyright infringment nor intellectual property theft.</p>
+  <hr>
+  <p><b>NOTE:</b></p>
+  <p>Before start using the site, you may want to access this link first:</p>
+  <a href="https://cors-anywhere.herokuapp.com/corsdemo">https://cors-anywhere.herokuapp.com/corsdemo</a>
+  <p>Since Netease APIs do not have CORS headers, this is required to alleviate this restriction.</p>
+  <hr>
+  <p>Usage:</p>
+  <li>Select your audio file through "Choose File" picker</li>
+  <li>Hit the "Clip" button and wait for the results!</li>
+
+  <audio id="audio" controls autoplay></audio>
+  <canvas id="canvas"></canvas>
+  <button id="invoke">Clip</button>
+  <input type="file" name="picker" accept="*" id="file">
+  <hr>
+  <label for="use-mic">Mix in Microphone input</label>
+  <input type="checkbox" name="use-mic" id="usemic">
+  <hr>
+  <pre id="logs"></pre>
+</body>
+<script src="./afp.wasm.js"></script>
+<script src="./afp.js"></script>
+<script type="module">
+  const duration = 3
+
+  let audioCtx, recorderNode, micSourceNode
+  let audioBuffer, bufferHealth
+  let audio = document.getElementById('audio')
+  let file = document.getElementById('file')
+  let clip = document.getElementById('invoke')
+  let usemic = document.getElementById('usemic')
+  let canvas = document.getElementById('canvas')
+  let canvasCtx = canvas.getContext('2d')
+  let logs = document.getElementById('logs')
+  logs.write = line => logs.innerHTML += line + '\n'
+
+  function RecorderCallback(channelL) {
+    let sampleBuffer = new Float32Array(channelL.subarray(0, duration * 8000))
+    GenerateFP(sampleBuffer).then(FP => {
+      logs.write(`[index] Generated FP ${FP}`)
+      logs.write('[index] Now querying, please wait...')
+      fetch(
+        '/audio/match?' +
+        new URLSearchParams({
+          duration: duration, audioFP: FP
+        }), {
+        method: 'POST'
+      }).then(resp => resp.json()).then(resp => {
+        if (!resp.data.result) {
+          return logs.write('[index] Query failed with no results.')
+        }
+        logs.write(`[index] Query complete. Results=${resp.data.result.length}`)
+        for (var song of resp.data.result) {
+          logs.write(
+            `[result] <a target="_blank" href="https://music.163.com/song?id=${song.song.id}">${song.song.name} - ${song.song.album.name} (${song.startTime / 1000}s)</a>`
+          )
+        }
+      })
+    })
+  }
+
+  function InitAudioCtx() {
+    // AFP.wasm can't do it with anything other than 8KHz
+    audioCtx = new AudioContext({ 'sampleRate': 8000 })
+    if (audioCtx.state == 'suspended')
+      return false
+    let audioNode = audioCtx.createMediaElementSource(audio)
+    audioCtx.audioWorklet.addModule('rec.js').then(() => {
+      recorderNode = new AudioWorkletNode(audioCtx, 'timed-recorder')
+      audioNode.connect(recorderNode) // recorderNode doesn't output anything
+      audioNode.connect(audioCtx.destination)
+      recorderNode.port.onmessage = event => {
+        switch (event.data.message) {
+          case 'finished':
+            RecorderCallback(event.data.recording)
+            clip.innerHTML = 'Clip'
+            clip.disabled = false
+            canvas.classList.remove('canvas-active')
+            break
+          case 'bufferhealth':
+            clip.innerHTML = `${(duration * (1 - event.data.health)).toFixed(2)}s`
+            bufferHealth = event.data.health
+            audioBuffer = event.data.recording
+            break
+          default:
+            logs.write(event.data.message)
+        }
+      }
+      // Attempt to get user's microphone and connect it to the AudioContext.
+      navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: false,
+          autoGainControl: false,
+          noiseSuppression: false,
+          latency: 0,
+        },
+      }).then(micStream => {
+        micSourceNode = audioCtx.createMediaStreamSource(micStream);
+        micSourceNode.connect(recorderNode)
+        usemic.checked = true
+        logs.write('[rec.js] Microphone attached.')
+      });
+    });
+    return true
+  }
+
+  clip.addEventListener('click', event => {
+    recorderNode.port.postMessage({
+      message: 'start', duration: duration
+    })
+    clip.disabled = true
+    canvas.classList.add('canvas-active')
+  })
+  usemic.addEventListener('change', event => {
+    if (!usemic.checked)
+      micSourceNode.disconnect(recorderNode)
+    else
+      micSourceNode.connect(recorderNode)
+  })
+  file.addEventListener('change', event => {
+    file.files[0].arrayBuffer().then(
+      async buffer => {
+        logs.write(`[index] File ${file.files[0].name} loaded.`)
+        audio.src = window.URL.createObjectURL(new Blob([buffer]))
+        clip.disabled = false
+      })
+  })
+
+  function UpdateCanvas() {
+    let w = canvas.clientWidth, h = canvas.clientHeight
+    canvas.width = w, canvas.height = h
+    canvasCtx.fillStyle = 'rgba(0,0,0,0)';
+    canvasCtx.fillRect(0, 0, w, h);
+    if (audioBuffer) {
+      canvasCtx.fillStyle = 'black';
+      for (var x = 0; x < w * bufferHealth; x++) {
+        var y = audioBuffer[Math.ceil((x / w) * audioBuffer.length)]
+        var z = Math.abs(y) * h / 2
+        canvasCtx.fillRect(x, h / 2 - (y > 0 ? z : 0), 1, z)
+      }
+    }
+    requestAnimationFrame(UpdateCanvas)
+  }
+  UpdateCanvas()
+  let requestCtx = setInterval(() => {
+    try {
+      if (InitAudioCtx()) { // Put this here so we don't have to deal with the 'user did not interact' thing
+        clearInterval(requestCtx)
+        logs.write('[rec.js] Audio Context started.')
+      }
+    } catch {
+      // Fail silently
+    }
+  }, 100)
+</script>

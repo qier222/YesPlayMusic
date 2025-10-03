@@ -1,0 +1,5 @@
+flow: false
+ts: false
+jsx: false
+timeout: 120
+check-coverage: false

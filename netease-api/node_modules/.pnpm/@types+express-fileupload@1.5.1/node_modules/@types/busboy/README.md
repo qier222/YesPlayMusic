@@ -1,0 +1,15 @@
+# Installation
+> `npm install --save @types/busboy`
+
+# Summary
+This package contains type definitions for busboy (https://github.com/mscdex/busboy).
+
+# Details
+Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/busboy.
+
+### Additional Details
+ * Last updated: Thu, 02 May 2024 10:35:42 GMT
+ * Dependencies: [@types/node](https://npmjs.com/package/@types/node)
+
+# Credits
+These definitions were written by [Jacob Baskin](https://github.com/jacobbaskin), [BendingBender](https://github.com/BendingBender), and [Martin Badin](https://github.com/martin-badin).

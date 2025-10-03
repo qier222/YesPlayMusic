@@ -1,0 +1,27 @@
+{
+  "name": "power-assert-renderer-base",
+  "description": "base renderer for power-assert context",
+  "version": "1.1.1",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/twada/power-assert-runtime/issues"
+  },
+  "files": [
+    "README.md",
+    "index.js"
+  ],
+  "homepage": "https://github.com/twada/power-assert-runtime",
+  "keywords": [
+    "power-assert"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twada/power-assert-runtime.git"
+  }
+}

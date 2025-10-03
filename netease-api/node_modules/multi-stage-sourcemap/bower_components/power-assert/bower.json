@@ -1,0 +1,27 @@
+{
+  "name": "power-assert",
+  "version": "0.7.2",
+  "main": "build/power-assert.js",
+  "ignore": [
+    "**/.*",
+    "Gruntfile.js",
+    "gulpfile.js",
+    "espowered_tests",
+    "node_modules",
+    "package.json",
+    "sandbox",
+    "scripts",
+    "test",
+    "enable_power_assert.js"
+  ],
+  "devDependencies": {
+    "empower": "~0.7.1",
+    "expect": "~0.3.1",
+    "mocha": "~1.18.2",
+    "power-assert-formatter": "~0.7.1",
+    "qunit": "1.14.0",
+    "qunit-tap": "1.4.2",
+    "requirejs": "~2.1.11",
+    "assert": "Jxck/assert"
+  }
+}

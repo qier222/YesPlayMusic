@@ -1,0 +1,55 @@
+{
+  "name": "call-matcher",
+  "description": "ECMAScript CallExpression matcher made from function/method signature",
+  "version": "1.1.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": "https://github.com/twada/call-matcher/issues",
+  "dependencies": {
+    "core-js": "^2.0.0",
+    "deep-equal": "^1.0.0",
+    "espurify": "^1.6.0",
+    "estraverse": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-types": "^6.3.21",
+    "babylon": "^6.3.21",
+    "browserify": "^13.0.0",
+    "derequire": "^2.0.2",
+    "dereserve": "^1.0.0",
+    "esprima": "^4.0.0",
+    "jshint": "^2.8.0",
+    "licensify": "^3.1.1",
+    "mocha": "^5.0.0",
+    "package-json-filterify": "^1.0.4"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "MIT-LICENSE.txt",
+    "README.md",
+    "index.js",
+    "dist/call-matcher.js"
+  ],
+  "homepage": "https://github.com/twada/call-matcher",
+  "keywords": [
+    "ast",
+    "estree",
+    "ecmascript"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/call-matcher.git"
+  },
+  "scripts": {
+    "dist": "mkdir -p dist && browserify index.js --plugin licensify --global-transform package-json-filterify --standalone CallMatcher | dereserve | derequire > ./dist/call-matcher.js",
+    "lint": "jshint index.js",
+    "preversion": "npm test",
+    "test": "npm run lint && mocha test",
+    "version": "npm run dist && git add -A dist"
+  }
+}

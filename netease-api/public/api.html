@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API 调试界面</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    form {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    input, button {
+        padding: 10px;
+        box-sizing: border-box;
+        flex: 1;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    .data-result {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+    }
+    .data-result > div {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    .data-result label {
+        margin-bottom: 10px;
+    }
+    #data, #result {
+        height: 100%;
+        box-sizing: border-box;
+    }
+    #data {
+        border-right: 1px solid #ccc;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <form onsubmit="event.preventDefault(); sendRequest();">
+            <label for="uri">uri</label>
+            <input type="text" id="uri" name="uri" value="/api/song/lyric/v1">
+            <label for="crypto">crypto</label>
+            <select id="crypto" name="crypto">
+                <option value="weapi">weapi</option>
+                <option value="eapi">eapi</option>
+                <option value="api">api</option>
+                <option value="linuxapi">linuxapi</option>
+                <option value="" selected>(默认)</option>
+            </select>
+            <button type="submit">发送</button>
+        </form>
+        <div class="data-result">
+            <div>
+                <label for="result">result</label>
+                <textarea id="result" name="result"></textarea>
+            </div>
+            <div>
+                <label for="data">data</label>
+                <textarea id="data" name="data">
+{
+    "cp": false,
+    "id": "2058263032",
+    "kv": 0,
+    "lv": 0,
+    "rv": 0,
+    "tv": 0,
+    "yrv": 0,
+    "ytv": 0,
+    "yv": 0
+}</textarea>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://fastly.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        async function sendRequest() {
+            document.getElementById('result').value = ""
+
+            const uri = document.getElementById('uri').value;
+            const crypto = document.getElementById('crypto').value;
+            const data = document.getElementById('data').value;
+
+            try {
+                const res = await axios({
+                    url: `/api?timestamp=${Date.now()}`,
+                    method: 'post',
+                    data: {
+                        uri: uri,
+                        data: JSON.parse(data),
+                        crypto: crypto,
+                    },
+                });
+
+                document.getElementById('result').value = JSON.stringify(res.data, null, 2);
+            } catch (error) {
+                document.getElementById('result').value = 'Request failed: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

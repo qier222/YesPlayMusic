@@ -1,0 +1,56 @@
+{
+	"name": "into-stream",
+	"version": "6.0.0",
+	"description": "Convert a string/promise/array/iterable/asynciterable/buffer/typedarray/arraybuffer/object into a stream",
+	"license": "MIT",
+	"repository": "sindresorhus/into-stream",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "https://sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=10"
+	},
+	"scripts": {
+		"test": "xo && ava && tsd"
+	},
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"keywords": [
+		"stream",
+		"buffer",
+		"string",
+		"object",
+		"array",
+		"iterable",
+		"async",
+		"asynciterable",
+		"promise",
+		"promises",
+		"from",
+		"into",
+		"to",
+		"transform",
+		"convert",
+		"readable",
+		"pull",
+		"gulpfriendly",
+		"value"
+	],
+	"dependencies": {
+		"from2": "^2.3.0",
+		"p-is-promise": "^3.0.0"
+	},
+	"devDependencies": {
+		"ava": "^2.4.0",
+		"get-stream": "^6.0.0",
+		"p-event": "^4.2.0",
+		"p-immediate": "^3.1.0",
+		"tsd": "^0.13.1",
+		"xo": "^0.33.0"
+	}
+}

@@ -1,0 +1,32 @@
+{
+  "name": "node-windows",
+  "version": "1.0.0-beta.8",
+  "description": "Support for Windows services, event logging, UAC, and several helper methods for interacting with the OS.",
+  "keywords": [
+    "ngn",
+    "windows",
+    "service",
+    "daemon",
+    "logging",
+    "event",
+    "event logging",
+    "elevate",
+    "sudo",
+    "task"
+  ],
+  "author": "Corey Butler <corey@coreybutler.com>",
+  "main": "lib/node-windows.js",
+  "preferGlobal": true,
+  "dependencies": {
+    "xml": "1.0.1",
+    "yargs": "^17.5.1"
+  },
+  "readmeFilename": "README.md",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/coreybutler/node-windows.git"
+  },
+  "license": "MIT",
+  "engine": "node >= 0.10.10"
+}

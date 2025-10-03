@@ -1,0 +1,9 @@
+{
+  "name": "neteasecloudmusicapienhanced",
+  "main": "app.js",
+  "compatibility_date": "2025-08-05",
+  "compatibility_flags": ["nodejs_compat"],
+  "service": {
+    "environment": "production"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "name": "multistream",
+  "description": "A stream that emits multiple other streams one after another (streams3)",
+  "version": "4.1.0",
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org"
+  },
+  "bugs": {
+    "url": "https://github.com/feross/multistream/issues"
+  },
+  "dependencies": {
+    "once": "^1.4.0",
+    "readable-stream": "^3.6.0"
+  },
+  "devDependencies": {
+    "airtap": "^3.0.0",
+    "array-to-stream": "^1.0.2",
+    "simple-concat": "^1.0.1",
+    "standard": "*",
+    "string-to-stream": "^3.0.1",
+    "tape": "^5.0.1",
+    "through": "^2.3.8"
+  },
+  "homepage": "https://github.com/feross/multistream",
+  "keywords": [
+    "combine streams",
+    "join streams",
+    "concat streams",
+    "multiple streams",
+    "combine",
+    "join",
+    "concat",
+    "multiple",
+    "file stream",
+    "append",
+    "append streams",
+    "combiner",
+    "joiner"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/multistream.git"
+  },
+  "scripts": {
+    "test": "standard && npm run test-node && npm run test-browser",
+    "test-browser": "airtap -- test/*.js",
+    "test-browser-local": "airtap --local -- test/*.js",
+    "test-node": "tape test/*.js"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/feross"
+    },
+    {
+      "type": "patreon",
+      "url": "https://www.patreon.com/feross"
+    },
+    {
+      "type": "consulting",
+      "url": "https://feross.org/support"
+    }
+  ]
+}

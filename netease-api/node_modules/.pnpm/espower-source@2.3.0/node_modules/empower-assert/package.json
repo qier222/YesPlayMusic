@@ -1,0 +1,39 @@
+{
+  "name": "empower-assert",
+  "description": "Convert assert to power-assert on ESTree AST",
+  "version": "1.1.0",
+  "author": "Teppei Sato <teppeis@gmail.com>",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "lint": "eslint index.js 'test/*.js'",
+    "mocha": "mocha test",
+    "test": "npm run lint && npm run mocha"
+  },
+  "dependencies": {
+    "estraverse": "^4.2.0"
+  },
+  "devDependencies": {
+    "acorn": "^4.0.3",
+    "eslint": "^2.8.0",
+    "eslint-config-teppeis": "^2.0.4",
+    "espurify": "^1.5.1",
+    "mocha": "^3.1.2"
+  },
+  "homepage": "https://github.com/teppeis/empower-assert",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/teppeis/empower-assert.git"
+  },
+  "bugs": "https://github.com/teppeis/empower-assert/issues",
+  "keywords": [
+    "assert",
+    "assertion",
+    "power-assert",
+    "test",
+    "testing"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,76 @@
+{
+  "name": "lint-staged",
+  "version": "12.1.7",
+  "description": "Lint files staged by git",
+  "license": "MIT",
+  "repository": "https://github.com/okonet/lint-staged",
+  "author": "Andrey Okonetchnikov <andrey@okonet.ru>",
+  "maintainers": [
+    "Lufty Wiranda <lufty.wiranda@gmail.com>",
+    "Suhas Karanth <sudo.suhas@gmail.com>",
+    "Iiro Jäppinen <iiro@jappinen.fi> (https://iiro.fi)"
+  ],
+  "funding": {
+    "url": "https://opencollective.com/lint-staged"
+  },
+  "engines": {
+    "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+  },
+  "type": "module",
+  "bin": "./bin/lint-staged.js",
+  "exports": "./lib/index.js",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "cli-truncate": "^3.1.0",
+    "colorette": "^2.0.16",
+    "commander": "^8.3.0",
+    "debug": "^4.3.3",
+    "execa": "^5.1.1",
+    "lilconfig": "2.0.4",
+    "listr2": "^3.13.5",
+    "micromatch": "^4.0.4",
+    "normalize-path": "^3.0.0",
+    "object-inspect": "^1.11.1",
+    "string-argv": "^0.3.1",
+    "supports-color": "^9.2.1",
+    "yaml": "^1.10.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/eslint-parser": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "babel-jest": "^27.4.5",
+    "consolemock": "^1.1.0",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "fs-extra": "^10.0.0",
+    "husky": "^7.0.4",
+    "jest": "^27.4.5",
+    "jest-snapshot-serializer-ansi": "^1.0.0",
+    "prettier": "^2.5.1"
+  },
+  "keywords": [
+    "lint",
+    "git",
+    "staged",
+    "eslint",
+    "prettier",
+    "stylelint",
+    "code",
+    "quality",
+    "check",
+    "format",
+    "validate"
+  ]
+}

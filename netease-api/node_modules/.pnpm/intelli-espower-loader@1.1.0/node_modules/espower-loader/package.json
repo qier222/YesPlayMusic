@@ -1,0 +1,68 @@
+{
+  "name": "espower-loader",
+  "description": "Power Assert feature instrumentor on the fly",
+  "version": "1.2.2",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/power-assert-js/espower-loader/issues"
+  },
+  "contributors": [
+    {
+      "name": "Eward Song",
+      "url": "https://github.com/shepherdwind"
+    },
+    {
+      "name": "Haoliang Gao",
+      "url": "https://github.com/popomore"
+    }
+  ],
+  "dependencies": {
+    "convert-source-map": "^1.1.0",
+    "espower-source": "^2.0.0",
+    "minimatch": "^3.0.0",
+    "source-map-support": "^0.4.0",
+    "xtend": "^4.0.0"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "jshint": "^2.9.4",
+    "mocha": "^3.0.0",
+    "power-assert": "^1.4.2"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "MIT-LICENSE.txt",
+    "README.md",
+    "examples",
+    "index.js",
+    "package.json"
+  ],
+  "homepage": "https://github.com/power-assert-js/espower-loader",
+  "keywords": [
+    "power-assert",
+    "assert",
+    "assertion",
+    "test",
+    "testing"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/power-assert-js/espower-loader.git"
+  },
+  "scripts": {
+    "lint": "jshint index.js",
+    "unit": "mocha 'test/unit/**/*.js'",
+    "tobe_instrumented": "mocha --require './test_loader/enable-power-assert' 'test/tobe_instrumented/*.js'",
+    "not_tobe_instrumented": "mocha 'test/not_tobe_instrumented/*.js'",
+    "test": "npm run lint && npm run unit && npm run tobe_instrumented && npm run not_tobe_instrumented"
+  }
+}

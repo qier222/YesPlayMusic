@@ -1,0 +1,34 @@
+{
+  "name": "intelli-espower-loader",
+  "description": "Make espower-lodaer config file unnecessary.",
+  "version": "1.1.0",
+  "repository": {
+    "url": "git://github.com/power-assert-js/intelli-espower-loader.git"
+  },
+  "main": "intelli-espower-loader.js",
+  "scripts": {
+    "test": "mocha test/*.js && (cd example && npm run ci-test)"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "intelli-espower-loader.js",
+    "lib",
+    "package.json",
+    "readme.md"
+  ],
+  "directories": {
+    "test": "test/"
+  },
+  "author": "azu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/power-assert-js/intelli-espower-loader/issues"
+  },
+  "dependencies": {
+    "espower-loader": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.0.0"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "name": "pkg-fetch",
+  "version": "3.4.2",
+  "description": "Compiles and stores base binaries for pkg",
+  "main": "lib-es5/index.js",
+  "license": "MIT",
+  "repository": "vercel/pkg-fetch",
+  "bin": {
+    "pkg-fetch": "lib-es5/bin.js"
+  },
+  "files": [
+    "lib-es5/*.js",
+    "lib-es5/*.ts",
+    "patches/*"
+  ],
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "fs-extra": "^9.1.0",
+    "https-proxy-agent": "^5.0.0",
+    "node-fetch": "^2.6.6",
+    "progress": "^2.0.3",
+    "semver": "^7.3.5",
+    "tar-fs": "^2.1.1",
+    "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^14.17.32",
+    "@types/node-fetch": "^2.5.12",
+    "@types/progress": "^2.0.5",
+    "@types/semver": "^7.3.9",
+    "@types/tar-fs": "^2.0.1",
+    "@types/yargs": "^16.0.4",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "simple-git-hooks": ">=2.7.0",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "build": "rimraf lib-es5 && tsc --build lib",
+    "bin": "node lib-es5/bin.js",
+    "lint": "eslint lib",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint",
+    "start": "node lib-es5/bin.js"
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "empower-core",
+  "description": "Power Assert feature enhancer for assert function/object",
+  "version": "1.2.0",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": {
+    "url": "https://github.com/twada/power-assert-runtime/issues"
+  },
+  "contributors": [
+    {
+      "name": "James Talmage",
+      "url": "https://github.com/jamestalmage"
+    }
+  ],
+  "dependencies": {
+    "call-signature": "0.0.2",
+    "core-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "acorn": "^5.0.0",
+    "acorn-es7-plugin": "^1.0.14",
+    "buster-assertions": "^0.10.4",
+    "escodegen": "^1.8.0",
+    "espower": "^2.0.0",
+    "mocha": "^5.0.0"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "index.js",
+    "lib",
+    "package.json"
+  ],
+  "homepage": "https://github.com/twada/power-assert-runtime",
+  "keywords": [
+    "assert",
+    "assertion",
+    "power-assert",
+    "test",
+    "testing"
+  ],
+  "license": "MIT",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twada/power-assert-runtime.git"
+  },
+  "scripts": {
+    "test": "mocha test"
+  }
+}

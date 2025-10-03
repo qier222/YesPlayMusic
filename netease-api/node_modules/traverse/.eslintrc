@@ -1,0 +1,33 @@
+{
+	"root": true,
+
+	"extends": "@ljharb/eslint-config/node/0.4",
+
+	"rules": {
+		"array-bracket-newline": 0,
+		"array-callback-return": 0,
+		"array-element-newline": 0,
+		"complexity": 0,
+		"func-style": [2, "declaration"],
+		"global-require": 1,
+		"max-lines-per-function": 0,
+		"max-statements-per-line": 1,
+		"multiline-comment-style": 0,
+		"no-proto": 0,
+		"no-sparse-arrays": 1,
+		"no-underscore-dangle": 0,
+        "no-invalid-this": 0,
+        "object-curly-newline": 0,
+		"sort-keys": 0,
+	},
+
+	"overrides": [
+		{
+			"files": "examples/**",
+			"rules": {
+				"no-console": 0,
+                "no-plusplus": 0,
+			},
+		},
+	],
+}

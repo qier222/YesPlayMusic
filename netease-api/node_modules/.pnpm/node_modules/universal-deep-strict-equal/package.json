@@ -1,0 +1,61 @@
+{
+  "name": "universal-deep-strict-equal",
+  "description": "A port of Node v6's internal _deepEqual function in a universal style",
+  "version": "1.2.2",
+  "author": {
+    "name": "Takuto Wada",
+    "email": "takuto.wada@gmail.com",
+    "url": "https://github.com/twada"
+  },
+  "bugs": "https://github.com/twada/universal-deep-strict-equal/issues",
+  "contributors": [
+    {
+      "name": "azu",
+      "url": "https://github.com/azu"
+    }
+  ],
+  "dependencies": {
+    "array-filter": "^1.0.0",
+    "indexof": "0.0.1",
+    "object-keys": "^1.0.0"
+  },
+  "devDependencies": {
+    "graceful-fs": "^4.1.3",
+    "mocha": "^2.4.5",
+    "zuul": "^3.10.1"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "index.js",
+    "package.json"
+  ],
+  "homepage": "https://github.com/twada/universal-deep-strict-equal",
+  "keywords": [
+    "assert",
+    "assertion",
+    "builtin",
+    "core",
+    "deep",
+    "deep-equal",
+    "deep-strict-equal",
+    "eq",
+    "equal",
+    "equality",
+    "same",
+    "strict",
+    "test",
+    "testing"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twada/universal-deep-strict-equal.git"
+  },
+  "scripts": {
+    "test": "mocha test/test-*.js",
+    "test-saucelabs": "zuul -- test/test-*.js",
+    "zuul-local": "zuul --local 8080 --ui mocha-bdd -- test/test-*.js"
+  }
+}

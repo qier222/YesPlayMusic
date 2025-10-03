@@ -1,0 +1,35 @@
+{
+  "name": "stream-meter",
+  "version": "1.0.4",
+  "description": "A stream meter that both counts the bytes piped through it, and can optionally abort on a max size.  (e.g. limit a http request size)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "readable-stream": "^2.1.4"
+  },
+  "devDependencies": {
+    "concat-stream": "^1.5.1",
+    "stream-spigot": "^3.0.3",
+    "tape": "^4.6.0"
+  },
+  "scripts": {
+    "test": "node test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brycebaril/node-stream-meter.git"
+  },
+  "keywords": [
+    "streams2",
+    "streams",
+    "meter",
+    "abort"
+  ],
+  "author": "Bryce B. Baril",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brycebaril/node-stream-meter/issues"
+  }
+}

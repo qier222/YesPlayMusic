@@ -1,0 +1,41 @@
+# .github/dependabot.yml
+
+version: 2
+updates:
+  # 更新 npm (JavaScript) 依赖
+  - package-ecosystem: "npm"
+    directory: "/" # package.json 所在的位置
+    schedule:
+      interval: "weekly" # 每周一检查
+    # 默认情况下，Dependabot 会自动获取最新版本。
+    # 你可以使用 `ignore` 来排除某些特定更新
+    ignore:
+      - dependency-name: "eslint"
+        # 对于 ESLint，忽略主版本 8 以上的所有更新
+        versions: ["> 8"]
+    # 自动合并小版本更新的 PR (可选)
+    # 可以设置针对 patch 或 minor 版本更新自动合并
+    commit-message:
+      prefix: "chore(packages):" # PR 合并提交信息的前缀
+
+  # 更新 GitHub Actions 依赖
+  - package-ecosystem: "github-actions"
+    directory: "/" # .github/workflows/ 目录所在的位置
+    schedule:
+      interval: "monthly"
+
+  # 更新 Python (pip) 依赖，如果你的项目有 requirements.txt
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # 如果你有多个目录（例如一个 monorepo），可以为每个目录单独配置
+  # - package-ecosystem: "npm"
+  #   directory: "/packages/frontend"
+  #   schedule:
+  #     interval: "weekly"
+  # - package-ecosystem: "npm"
+  #   directory: "/packages/backend"
+  #   schedule:
+  #     interval: "weekly"
