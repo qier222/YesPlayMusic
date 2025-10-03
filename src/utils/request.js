@@ -31,12 +31,33 @@ service.interceptors.request.use(function (config) {
 
   if (!config.params) config.params = {};
   if (baseURL.length) {
-    if (
-      baseURL[0] !== '/' &&
-      !process.env.IS_ELECTRON &&
-      getCookie('MUSIC_U') !== null
-    ) {
-      config.params.cookie = `MUSIC_U=${getCookie('MUSIC_U')};`;
+    // 在 Electron 和 Web 环境下都添加 Cookie
+    const musicU = getCookie('MUSIC_U') || localStorage.getItem('MUSIC_U');
+    if (musicU) {
+      // Electron 环境：通过 cookie 参数传递
+      if (process.env.IS_ELECTRON) {
+        config.params.cookie = `MUSIC_U=${musicU};`;
+        if (process.env.NODE_ENV === 'development') {
+          console.log(
+            '[API] 添加 Cookie (Electron):',
+            config.params.cookie.substring(0, 50) + '...'
+          );
+        }
+      }
+      // Web 环境：通过 cookie 参数传递（当不是根路径时）
+      else if (baseURL[0] !== '/') {
+        config.params.cookie = `MUSIC_U=${musicU};`;
+        if (process.env.NODE_ENV === 'development') {
+          console.log(
+            '[API] 添加 Cookie (Web):',
+            config.params.cookie.substring(0, 50) + '...'
+          );
+        }
+      }
+    } else {
+      if (process.env.NODE_ENV === 'development' || process.env.IS_ELECTRON) {
+        console.log('[API] ⚠️ 未找到 MUSIC_U Cookie，使用匿名模式');
+      }
     }
   } else {
     console.error("You must set up the baseURL in the service's config");
@@ -72,10 +93,10 @@ service.interceptors.response.use(
       console.log(`[API Response] ${response.config.url}`, {
         status: response.status,
         code: response.data?.code,
-        dataKeys: response.data ? Object.keys(response.data) : []
+        dataKeys: response.data ? Object.keys(response.data) : [],
       });
     }
-    
+
     const res = response.data;
     return res;
   },
@@ -87,7 +108,7 @@ service.interceptors.response.use(
         method: error.config?.method,
         status: error.response?.status,
         message: error.message,
-        data: error.response?.data
+        data: error.response?.data,
       });
     }
 

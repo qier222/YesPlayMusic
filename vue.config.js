@@ -12,7 +12,7 @@ module.exports = {
     port: process.env.DEV_SERVER_PORT || 8080,
     proxy: {
       '^/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:10754',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/',
@@ -70,7 +70,7 @@ module.exports = {
       .end()
       .use('esbuild-loader')
       .loader('esbuild-loader')
-      .options({ target: 'es2018', format: "cjs" })
+      .options({ target: 'es2018', format: 'cjs' })
       .end();
 
     // LimitChunkCountPlugin 可以通过合并块来对块进行后期处理。用以解决 chunk 包太多的问题
@@ -187,7 +187,7 @@ module.exports = {
           .end()
           .use('esbuild-loader')
           .loader('esbuild-loader')
-          .options({ target: 'es2018', format: "cjs" })
+          .options({ target: 'es2018', format: 'cjs' })
           .end();
       },
       // 渲染线程的配置文件

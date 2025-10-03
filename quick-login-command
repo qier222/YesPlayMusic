@@ -1,0 +1,116 @@
+/**
+ * 🎵 YesPlayMusic Electron 快速登录脚本
+ *
+ * 使用方法：
+ * 1. 打开 Electron 应用
+ * 2. 按 Cmd+Option+I (Mac) 或 Ctrl+Shift+I (Windows) 打开 DevTools
+ * 3. 切换到 Console 标签
+ * 4. 将下面的 MUSIC_U 替换为你的 Cookie
+ * 5. 复制整个脚本粘贴到控制台按回车
+ */
+
+(async () => {
+  // ==================== 配置区 ====================
+  // 替换为你的 MUSIC_U Cookie 值
+  const MUSIC_U =
+    '';
+  // ================================================
+
+  console.log(
+    '%c🎵 YesPlayMusic 登录助手',
+    'color: #335eea; font-size: 20px; font-weight: bold;'
+  );
+  console.log('%c开始登录流程...', 'color: #42b883; font-size: 14px;');
+
+  if (!MUSIC_U || MUSIC_U.length < 50) {
+    console.error(
+      '%c❌ 错误: MUSIC_U Cookie 无效或未设置',
+      'color: red; font-size: 14px;'
+    );
+    console.log(
+      '%c💡 请将脚本中的 MUSIC_U 替换为你自己的 Cookie',
+      'color: orange;'
+    );
+    return;
+  }
+
+  // 1. 保存 Cookie
+  console.log('📝 [1/3] 保存 Cookie...');
+  localStorage.setItem('MUSIC_U', MUSIC_U);
+  localStorage.setItem('cookie-MUSIC_U', MUSIC_U);
+  console.log('✅ Cookie 已保存到 localStorage');
+
+  // 2. 测试 API
+  console.log('🌐 [2/3] 验证登录状态...');
+  try {
+    const apiUrl = `/api/user/account?timestamp=${Date.now()}`;
+    console.log('   请求地址:', apiUrl);
+
+    const response = await fetch(apiUrl, {
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('   响应数据:', data);
+
+    if (data.code === 200 && data.profile) {
+      console.log(
+        '%c✅ 登录成功!',
+        'color: green; font-size: 16px; font-weight: bold;'
+      );
+      console.log(
+        `%c👤 欢迎: ${data.profile.nickname}`,
+        'color: #335eea; font-size: 14px;'
+      );
+      console.log(`   用户ID: ${data.account.id}`);
+      console.log(`   VIP类型: ${data.account.vipType}`);
+
+      // 3. 保存用户信息
+      console.log('💾 [3/3] 保存用户信息...');
+      const oldData = JSON.parse(localStorage.getItem('data') || '{}');
+      const newData = {
+        ...oldData,
+        user: data.profile,
+        account: data.account,
+        loginMode: 'account',
+        loginTime: Date.now(),
+      };
+      localStorage.setItem('data', JSON.stringify(newData));
+      console.log('✅ 用户信息已保存');
+
+      // 刷新页面
+      console.log(
+        '%c🔄 3秒后自动刷新页面...',
+        'color: #42b883; font-size: 14px;'
+      );
+      setTimeout(() => {
+        location.reload();
+      }, 3000);
+    } else if (data.code === 200 && !data.profile) {
+      console.error(
+        '%c❌ 登录失败: 账号信息为空（匿名用户）',
+        'color: red; font-size: 14px;'
+      );
+      console.log('%c💡 可能的原因:', 'color: orange;');
+      console.log('   1. Cookie 已过期');
+      console.log('   2. Cookie 格式不正确');
+      console.log('   3. Cookie 被网易云服务器拒绝');
+      console.log('%c💡 解决方案: 重新获取 Cookie', 'color: orange;');
+    } else {
+      console.error('%c❌ 登录失败:', 'color: red; font-size: 14px;');
+      console.log('   错误代码:', data.code);
+      console.log('   错误信息:', data.message || data.msg || '未知错误');
+    }
+  } catch (error) {
+    console.error('%c❌ API 调用失败:', 'color: red; font-size: 14px;');
+    console.error('   错误详情:', error.message);
+    console.log('%c💡 请检查:', 'color: orange;');
+    console.log('   1. API 服务器是否正常运行');
+    console.log('   2. 网络连接是否正常');
+    console.log('   3. 控制台是否有其他错误信息');
+  }
+})();

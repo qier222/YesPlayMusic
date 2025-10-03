@@ -273,7 +273,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
     );
   });
 
-  ipcMain.on('removeProxy', (event, arg) => {
+  ipcMain.on('removeProxy', () => {
     log('removeProxy');
     win.webContents.session.setProxy({});
     store.set('proxy', '');
