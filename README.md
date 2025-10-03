@@ -18,6 +18,39 @@
 
 [![Library][library-screenshot]](https://music.qier222.com)
 
+## 🎉 重要更新：已切换到新版 API
+
+> **本项目现已使用 `@neteaseapireborn/api` 作为后端 API！**
+
+### 🆕 新 API 的优势
+
+- 🚀 **更快的响应速度** - 优化的请求处理性能
+- 🔧 **更好的维护** - 活跃的社区维护和更新
+- 🔐 **增强的安全性** - 最新的安全补丁和依赖更新
+- 📦 **模块化设计** - 更清晰的代码结构
+
+### ⚙️ 新 API 配置
+
+新版 API 默认运行在 **10754** 端口（而非旧版的 3000 端口）。如果你需要自行部署，请参考下面的说明。
+
+### 🔐 快速登录方法
+
+如果你在 Electron 客户端遇到登录问题，可以使用控制台快速登录脚本：
+
+1. 打开 YesPlayMusic Electron 应用
+2. 按 `Cmd+Option+I` (Mac) 或 `Ctrl+Shift+I` (Windows) 打开开发者工具
+3. 切换到 **Console** 标签
+4. 打开项目根目录的 `quick-login-command` 文件
+5. 将你的 `MUSIC_U` Cookie 值填入脚本中的配置区
+6. 复制整个脚本粘贴到控制台并按回车
+
+**获取 MUSIC_U Cookie 的方法：**
+- 在浏览器登录网易云音乐官网
+- 打开浏览器开发者工具 → Application/存储 → Cookies
+- 找到 `MUSIC_U` 字段并复制其值
+
+详细使用说明请查看 [`quick-login-command`](./quick-login-command) 文件。
+
 ## 全新版本
 
 全新 2.0 Alpha 测试版已发布，欢迎前往 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载。
@@ -72,8 +105,9 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 [![Powered by Vercel](https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg)](https://vercel.com/?utm_source=ohmusic&utm_campaign=oss)
 
-1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://neteasecloudmusicapi.vercel.app/#/?id=%e5%ae%89%e8%a3%85)
-   。你也可以将 API 部署到 Vercel。
+> **注意：本项目现已使用新版 API `@neteaseapireborn/api`**
+
+1. 部署网易云 API。本项目使用新版 `@neteaseapireborn/api`（默认运行在 10754 端口）。你也可以将 API 部署到 Vercel。
 
 2. 点击本仓库右上角的 Fork，复制本仓库到你的 GitHub 账号。
 
@@ -103,7 +137,9 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 除了部署到 Vercel，你还可以部署到自己的服务器上
 
-1. 部署网易云 API，详情参见 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+> **注意：本项目现已使用新版 API `@neteaseapireborn/api`（默认运行在 10754 端口）**
+
+1. 本项目内置了新版网易云 API（位于 `netease-api` 目录）
 2. 克隆本仓库
 
 ```sh
@@ -119,10 +155,10 @@ yarn install
 
 4. （可选）使用 Nginx 反向代理 API，将 API 路径映射为 `/api`，如果 API 和网页不在同一个域名下的话（跨域），会有一些 bug。
 
-5. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:3000`，YesPlayMusic 地址为 `http://localhost:8080`。如果你使用了反向代理 API，可以填写 API 地址为 `/api`。
+5. 复制 `/.env.example` 文件为 `/.env`，修改里面 `VUE_APP_NETEASE_API_URL` 的值为网易云 API 地址。本地开发的话可以填写 API 地址为 `http://localhost:10754`（新版 API 默认端口），YesPlayMusic 地址为 `http://localhost:8080`。如果你使用了反向代理 API，可以填写 API 地址为 `/api`。
 
 ```
-VUE_APP_NETEASE_API_URL=http://localhost:3000
+VUE_APP_NETEASE_API_URL=http://localhost:10754
 ```
 
 6. 编译打包
@@ -207,7 +243,7 @@ cd /home/runner/${REPL_SLUG}/music && yarn install && yarn run build
 
 ## :computer: 配置开发环境
 
-本项目由 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 提供 API。
+本项目现已使用新版 API `@neteaseapireborn/api`（位于 `netease-api` 目录）。
 
 运行本项目
 
@@ -225,12 +261,22 @@ yarn serve
 yarn electron:serve
 ```
 
-本地运行 NeteaseCloudMusicApi，或者将 API [部署至 Vercel](#%EF%B8%8F-部署至-vercel)
+本地运行新版 NeteaseCloudMusicApi，或者将 API [部署至 Vercel](#%EF%B8%8F-部署至-vercel)
 
 ```shell
-# 运行 API （默认 3000 端口）
+# 运行新版 API （默认 10754 端口）
 yarn netease_api:run
 ```
+
+### 🔐 开发环境快速登录
+
+如果在开发过程中遇到登录问题，可以使用根目录的 `quick-login-command` 脚本：
+
+1. 在浏览器登录网易云音乐，获取 `MUSIC_U` Cookie
+2. 打开 `quick-login-command` 文件，填入你的 Cookie
+3. 按下F12，在控制台粘贴完整的内容
+
+这样可以快速完成登录，无需每次都扫码或输入密码。
 
 ## ☑️ Todo
 
@@ -246,8 +292,9 @@ yarn netease_api:run
 
 ## 灵感来源
 
-API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
+API 源代码来自 [@neteaseapireborn/api](https://github.com/neteaseapireborn/api)（新版 API）
 
+设计灵感来源于：
 - [Apple Music](https://music.apple.com)
 - [YouTube Music](https://music.youtube.com)
 - [Spotify](https://www.spotify.com)

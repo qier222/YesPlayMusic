@@ -23,14 +23,14 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: '16.20.2'
           cache: 'yarn'
 
       - name: Install RPM & Pacman (on Ubuntu)
@@ -42,7 +42,7 @@ jobs:
           sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
       - name: Install Snapcraft (on Ubuntu)
-        uses: samuelmeuli/action-snapcraft@v3
+        uses: samuelmeuli/action-snapcraft@v2
         if: startsWith(matrix.os, 'ubuntu')
 
       - id: get_unm_version
@@ -50,7 +50,7 @@ jobs:
         run: |
           yarn --ignore-optional
           unm_version=$(node -e "console.log(require('./node_modules/@unblockneteasemusic/rust-napi/package.json').version)")
-          echo "::set-output name=unmver::${unm_version}"
+          echo "unmver=${unm_version}" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Install UNM dependencies for Windows

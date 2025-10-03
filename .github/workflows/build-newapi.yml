@@ -126,10 +126,6 @@ jobs:
           # 如果是 tag 推送则发布 release
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
           use_vue_cli: true
-          # 使用不同的应用名称区分新 API 版本
-          build_script_name: electron:build-${{ matrix.platform }}
-          # 跳过自动发布，我们手动控制
-          skip_build: false
 
       # ==================== 上传构建产物 ====================
       - name: Upload artifacts (macOS)
