@@ -1,4 +1,4 @@
-name: Build with New API
+name: Release
 
 env:
   YARN_INSTALL_NOPT: yarn add --ignore-platform --ignore-optional
@@ -6,31 +6,20 @@ env:
 on:
   push:
     branches:
-      - NewApi  # 监听 NewApi 分支的推送
-    tags:
-      - v*-newapi  # 监听带 newapi 标签的版本
-  pull_request:
-    branches:
       - NewApi
-  workflow_dispatch:  # 允许手动触发
+    tags:
+      - v*
+  workflow_dispatch:
 
 jobs:
-  build:
+  release:
     runs-on: ${{ matrix.os }}
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.snapcraft_token }}
 
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-22.04]
-        include:
-          - os: macos-latest
-            platform: mac
-            artifact: '*.dmg'
-          - os: windows-latest
-            platform: win
-            artifact: '*Setup*.exe'
-          - os: ubuntu-22.04
-            platform: linux
-            artifact: '*.AppImage'
 
     steps:
       - name: Check out Git repository
@@ -38,60 +27,40 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install Node.js 16
+      - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v4
         with:
           node-version: '16.20.2'
           cache: 'yarn'
 
-      - name: Install system dependencies (Ubuntu)
+      - name: Install RPM & Pacman (on Ubuntu)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y \
-            rpm \
-            libarchive-tools \
-            libopenjp2-tools \
-            snapd
+          sudo apt-get update &&
+          sudo apt-get install --no-install-recommends -y rpm &&
+          sudo apt-get install --no-install-recommends -y libarchive-tools &&
+          sudo apt-get install --no-install-recommends -y libopenjp2-tools
 
-      - name: Install Snapcraft (Ubuntu)
-        if: runner.os == 'Linux'
+      - name: Install Snapcraft (on Ubuntu)
         uses: samuelmeuli/action-snapcraft@v2
-        with:
-          skip_install: false
+        if: startsWith(matrix.os, 'ubuntu')
 
-      # ==================== 安装依赖 ====================
-      - name: Install project dependencies
-        run: yarn install --frozen-lockfile
-        env:
-          NODE_ENV: development
-
-      # ==================== 安装 netease-api 依赖 ====================
-      - name: Install netease-api dependencies
-        run: |
-          cd netease-api
-          yarn install --production --frozen-lockfile
-          cd ..
-        shell: bash
-
-      # ==================== 获取 UNM 版本 ====================
       - id: get_unm_version
-        name: Get UNM version
+        name: Get the installed UNM version
         run: |
+          yarn --ignore-optional
           unm_version=$(node -e "console.log(require('./node_modules/@unblockneteasemusic/rust-napi/package.json').version)")
           echo "unmver=${unm_version}" >> $GITHUB_OUTPUT
         shell: bash
 
-      # ==================== Windows 平台特定依赖 ====================
-      - name: Install UNM dependencies (Windows)
+      - name: Install UNM dependencies for Windows
         if: runner.os == 'Windows'
         run: |
           ${{ env.YARN_INSTALL_NOPT }} \
             @unblockneteasemusic/rust-napi-win32-x64-msvc@${{steps.get_unm_version.outputs.unmver}}
         shell: bash
 
-      # ==================== macOS 平台特定依赖 ====================
-      - name: Install UNM dependencies (macOS)
+      - name: Install UNM dependencies for macOS
         if: runner.os == 'macOS'
         run: |
           ${{ env.YARN_INSTALL_NOPT }} \
@@ -100,8 +69,7 @@ jobs:
             dmg-license
         shell: bash
 
-      # ==================== Linux 平台特定依赖 ====================
-      - name: Install UNM dependencies (Linux)
+      - name: Install UNM dependencies for Linux
         if: runner.os == 'Linux'
         run: |
           ${{ env.YARN_INSTALL_NOPT }} \
@@ -110,137 +78,39 @@ jobs:
             @unblockneteasemusic/rust-napi-linux-arm-gnueabihf@${{steps.get_unm_version.outputs.unmver}}
         shell: bash
 
-      # ==================== 构建应用 ====================
-      - name: Build Electron app
+      - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
         env:
-          # API 配置
           VUE_APP_NETEASE_API_URL: /api
           VUE_APP_ELECTRON_API_URL: /api
           VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
-          # Last.fm API 密钥
           VUE_APP_LASTFM_API_KEY: 09c55292403d961aa517ff7f5e8a3d9c
           VUE_APP_LASTFM_API_SHARED_SECRET: 307c9fda32b3904e53654baff215cb67
         with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
-          # 如果是 tag 推送则发布 release
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+
           use_vue_cli: true
 
-      # ==================== 上传构建产物 ====================
-      - name: Upload artifacts (macOS)
-        if: runner.os == 'macOS'
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: YesPlayMusic-NewAPI-macOS-${{ github.sha }}
-          path: |
-            dist_electron/*.dmg
-            dist_electron/*.dmg.blockmap
-            dist_electron/latest-mac.yml
-          if-no-files-found: error
-          retention-days: 30
+          name: YesPlayMusic-mac
+          path: dist_electron/*-universal.dmg
+          if-no-files-found: ignore
 
-      - name: Upload artifacts (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: YesPlayMusic-NewAPI-Windows-${{ github.sha }}
-          path: |
-            dist_electron/*Setup*.exe
-            dist_electron/*Setup*.exe.blockmap
-            dist_electron/latest.yml
-          if-no-files-found: error
-          retention-days: 30
+          name: YesPlayMusic-win
+          path: dist_electron/*Setup*.exe
+          if-no-files-found: ignore
 
-      - name: Upload artifacts (Linux)
-        if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: YesPlayMusic-NewAPI-Linux-${{ github.sha }}
-          path: |
-            dist_electron/*.AppImage
-            dist_electron/*.deb
-            dist_electron/*.rpm
-            dist_electron/*.tar.gz
-            dist_electron/latest-linux.yml
-          if-no-files-found: error
-          retention-days: 30
-
-  # ==================== 创建 Release ====================
-  create-release:
-    needs: build
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Display structure of downloaded files
-        run: ls -R artifacts
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          prerelease: contains(github.ref, 'beta') || contains(github.ref, 'alpha')
-          name: YesPlayMusic NewAPI ${{ github.ref_name }}
-          body: |
-            ## 🎉 YesPlayMusic with New API
-            
-            ### 📦 What's New
-            - 使用 @neteaseapireborn/api v4.29.7
-            - 支持 Node.js 16+
-            - 优化了 API 调用性能
-            - 修复了若干已知问题
-            
-            ### 📥 Download
-            请根据您的操作系统下载对应的安装包：
-            
-            - **macOS**: 
-              - Intel (x64): `YesPlayMusic-mac-*-x64.dmg`
-              - Apple Silicon (arm64): `YesPlayMusic-mac-*-arm64.dmg`
-              - Universal: `YesPlayMusic-mac-*-universal.dmg`
-            
-            - **Windows**: 
-              - `YesPlayMusic-*-Setup-*.exe` (安装版)
-              - `YesPlayMusic-*-portable.exe` (便携版)
-            
-            - **Linux**:
-              - `YesPlayMusic-*.AppImage` (通用)
-              - `YesPlayMusic-*.deb` (Debian/Ubuntu)
-              - `YesPlayMusic-*.rpm` (RedHat/Fedora)
-              - `YesPlayMusic-*.tar.gz` (源码包)
-            
-            ### 🐛 Known Issues
-            请在 Issues 页面报告您遇到的问题
-            
-            ### 📝 Changelog
-            详细更新日志请查看 commit 记录
-          files: |
-            artifacts/**/*.dmg
-            artifacts/**/*.exe
-            artifacts/**/*.AppImage
-            artifacts/**/*.deb
-            artifacts/**/*.rpm
-            artifacts/**/*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # ==================== 构建成功通知 ====================
-  notify:
-    needs: build
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
-      - name: Build Status
-        run: |
-          if [ "${{ needs.build.result }}" == "success" ]; then
-            echo "✅ Build succeeded on all platforms!"
-          else
-            echo "❌ Build failed!"
-            exit 1
-          fi
+          name: YesPlayMusic-linux
+          path: dist_electron/*.AppImage
+          if-no-files-found: ignore
