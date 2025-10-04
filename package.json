@@ -19,15 +19,15 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "prettier": "npx prettier --write ./src",
-    "netease_api:run": "npx NeteaseCloudMusicApi"
+    "netease_api:run": "npx @neteaseapireborn/api"
   },
   "main": "background.js",
   "engines": {
     "node": "14 || 16"
   },
   "dependencies": {
+    "@neteaseapireborn/api": "^4.29.7",
     "@unblockneteasemusic/rust-napi": "^0.4.0",
-    "NeteaseCloudMusicApi": "^4.23.3",
     "axios": "^0.26.1",
     "change-case": "^4.1.2",
     "cli-color": "^2.0.0",

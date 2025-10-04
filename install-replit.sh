@@ -10,7 +10,7 @@ fi
 # 安装
 if [[ ! -d api ]];then
     mkdir api
-    git clone https://github.com/Binaryify/NeteaseCloudMusicApi ./api &&  \
+    git clone https://github.com/neteasecloudmusicapienhanced/api-enhanced.git ./api &&  \
     cd api && npm install && cd ..
 fi
 
