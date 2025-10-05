@@ -20,14 +20,10 @@
 
 ## 🎉 重要更新：已切换到新版 API
 
-> **本项目现已使用 `@neteaseapireborn/api` 作为后端 API！**
+> **本项目现已使用 [网易云音乐Api Enhanced(Reborn)](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced) 作为后端 API！**
 
-### 🆕 新 API 的优势
-
-- 🚀 **更快的响应速度** - 优化的请求处理性能
-- 🔧 **更好的维护** - 活跃的社区维护和更新
-- 🔐 **增强的安全性** - 最新的安全补丁和依赖更新
-- 📦 **模块化设计** - 更清晰的代码结构
+### 🆕 新 API 已解决
+1. 登陆封控
 
 ### ⚙️ 新 API 配置
 
@@ -51,10 +47,6 @@
 
 详细使用说明请查看 [`quick-login-command`](./quick-login-command) 文件。
 
-## 全新版本
-
-全新 2.0 Alpha 测试版已发布，欢迎前往 [Releases](https://github.com/qier222/YesPlayMusic/releases) 页面下载。
-当前版本将会进入维护模式，除重大 bug 修复外，不会再更新新功能。
 
 ## ✨ 特性
 
@@ -105,7 +97,7 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 
 [![Powered by Vercel](https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg)](https://vercel.com/?utm_source=ohmusic&utm_campaign=oss)
 
-> **注意：本项目现已使用新版 API `@neteaseapireborn/api`**
+> **注意：本项目现已使用新版 API [网易云音乐Api Enhanced(Reborn)](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced) 
 
 1. 部署网易云 API。本项目使用新版 `@neteaseapireborn/api`（默认运行在 10754 端口）。你也可以将 API 部署到 Vercel。
 
