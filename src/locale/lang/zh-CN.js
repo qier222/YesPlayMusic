@@ -36,6 +36,7 @@ export default {
     userProfileMenu: {
       settings: '设置',
       logout: '登出',
+      cookieImport: 'Cookie 导入',
     },
   },
   explore: {

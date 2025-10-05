@@ -39,6 +39,7 @@ export default {
     userProfileMenu: {
       settings: 'Settings',
       logout: 'Logout',
+      cookieImport: 'Cookie Import',
     },
   },
   explore: {

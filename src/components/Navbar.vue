@@ -65,12 +65,18 @@
         <svg-icon icon-class="logout" />
         {{ $t('library.userProfileMenu.logout') }}
       </div>
+      <div class="item" @click="openCookieImport">
+        <svg-icon icon-class="cookies-icon" />
+        {{ $t('library.userProfileMenu.cookieImport') }}
+      </div>
       <hr />
       <div class="item" @click="toGitHub">
         <svg-icon icon-class="github" />
         {{ $t('nav.github') }}
       </div>
     </ContextMenu>
+
+    <CookieImportModal ref="cookieImportModal" />
   </div>
 </template>
 
@@ -86,6 +92,7 @@ import Win32Titlebar from '@/components/Win32Titlebar.vue';
 import LinuxTitlebar from '@/components/LinuxTitlebar.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import CookieImportModal from '@/components/CookieImportModal.vue';
 
 export default {
   name: 'Navbar',
@@ -94,6 +101,7 @@ export default {
     LinuxTitlebar,
     ButtonIcon,
     ContextMenu,
+    CookieImportModal,
   },
   data() {
     return {
@@ -166,6 +174,9 @@ export default {
       } else {
         this.$router.push({ name: 'login' });
       }
+    },
+    openCookieImport() {
+      this.$refs.cookieImportModal.openModal();
     },
   },
 };

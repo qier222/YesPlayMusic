@@ -39,6 +39,7 @@ export default {
     userProfileMenu: {
       settings: 'Ayarlar',
       logout: 'Çıkış Yap',
+      cookieImport: 'Cookie İçe Aktarma',
     },
   },
   explore: {
