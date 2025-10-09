@@ -1,6 +1,6 @@
 import clc from 'cli-color';
 import checkAuthToken from '../utils/checkAuthToken';
-import server from 'NeteaseCloudMusicApi/server';
+import server from '@neteaseapireborn/api/server';
 
 export async function startNeteaseMusicApi() {
   // Let user know that the service is starting
