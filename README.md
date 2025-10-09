@@ -1,3 +1,19 @@
+<div align="center">
+	<a href="http://go.warp.dev/YesPlayMusic" target="_blank">
+		<sup>Special thanks to:</sup>
+		<br>
+		<img alt="Warp sponsorship" width="400" src="https://github.com/warpdotdev/brand-assets/blob/main/Github/Sponsor/Warp-Github-LG-03.png?raw=true">
+		<br>
+		<h>Warp is built for coding with multiple AI agents</b>
+		<br>
+		<sup>Available for macOS, Linux and Windows</sup>
+	</a>
+</div>
+
+<br>
+
+---
+
 <br />
 <p align="center">
   <a href="https://music.qier222.com" target="blank">
