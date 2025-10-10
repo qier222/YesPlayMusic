@@ -1,5 +1,5 @@
 const { TouchBar, nativeImage, ipcMain } = require('electron');
-const { TouchBarButton, TouchBarSpacer } = TouchBar;
+const { TouchBarButton, TouchBarSpacer, TouchBarLabel } = TouchBar;
 const path = require('path');
 
 export function createTouchBar(window) {
@@ -71,6 +71,12 @@ export function createTouchBar(window) {
     icon: getNativeIcon('next_up.png'),
   });
 
+  // 歌词显示标签 - 固定宽度以最大化显示空间
+  const lyricLabel = new TouchBarLabel({
+    label: '♪ YesPlayMusic',
+    textColor: '#FFFFFF',
+  });
+
   ipcMain.on('player', (e, { playing, likedCurrentTrack }) => {
     playButton.icon =
       playing === true ? getNativeIcon('pause.png') : getNativeIcon('play.png');
@@ -79,18 +85,25 @@ export function createTouchBar(window) {
       : getNativeIcon('like.png');
   });
 
+  // 监听歌词更新
+  ipcMain.on('updateLyric', (e, { lyric }) => {
+    console.log('[Touch Bar] 收到歌词更新:', lyric);
+    if (lyric && lyric.trim()) {
+      lyricLabel.label = `♪ ${lyric}`;
+    } else {
+      lyricLabel.label = '♪ YesPlayMusic';
+    }
+  });
+
   const touchBar = new TouchBar({
     items: [
-      previousPage,
-      nextPage,
-      searchButton,
-      new TouchBarSpacer({ size: 'flexible' }),
       previousTrackButton,
       playButton,
       nextTrackButton,
       new TouchBarSpacer({ size: 'flexible' }),
+      lyricLabel,
+      new TouchBarSpacer({ size: 'flexible' }),
       likeButton,
-      nextUpButton,
     ],
   });
   return touchBar;
