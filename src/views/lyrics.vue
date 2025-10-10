@@ -665,7 +665,6 @@ export default {
             if (currentLyricLine && currentLyricLine.contents) {
               // 只发送第一行歌词（原文），避免显示过长
               const lyricText = currentLyricLine.contents[0] || '';
-              console.log('[Touch Bar] 发送歌词:', lyricText);
               ipcRenderer.send('updateLyric', { lyric: lyricText });
             }
           }

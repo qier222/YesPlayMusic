@@ -59,7 +59,6 @@ export function createTouchBar(window) {
 
   // 监听歌词更新
   ipcMain.on('updateLyric', (e, { lyric }) => {
-    console.log('[Touch Bar] 收到歌词更新:', lyric);
     if (lyric && lyric.trim()) {
       lyricLabel.label = `♪ ${lyric}`;
     } else {
