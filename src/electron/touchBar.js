@@ -15,27 +15,6 @@ export function createTouchBar(window) {
     );
   }
 
-  const previousPage = new TouchBarButton({
-    click: () => {
-      renderer.send('routerGo', 'back');
-    },
-    icon: getNativeIcon('page_prev.png'),
-  });
-
-  const nextPage = new TouchBarButton({
-    click: () => {
-      renderer.send('routerGo', 'forward');
-    },
-    icon: getNativeIcon('page_next.png'),
-  });
-
-  const searchButton = new TouchBarButton({
-    click: () => {
-      renderer.send('search');
-    },
-    icon: getNativeIcon('search.png'),
-  });
-
   const playButton = new TouchBarButton({
     click: () => {
       renderer.send('play');
@@ -62,13 +41,6 @@ export function createTouchBar(window) {
       renderer.send('like');
     },
     icon: getNativeIcon('like.png'),
-  });
-
-  const nextUpButton = new TouchBarButton({
-    click: () => {
-      renderer.send('nextUp');
-    },
-    icon: getNativeIcon('next_up.png'),
   });
 
   // 歌词显示标签 - 固定宽度以最大化显示空间
