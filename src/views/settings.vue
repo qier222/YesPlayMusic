@@ -56,6 +56,18 @@
           </select>
         </div>
       </div>
+      <div v-if="isElectron" class="item">
+        <div class="left">
+          <div class="title"> {{ $t('settings.trayIcon.text') }} </div>
+        </div>
+        <div class="right">
+          <select v-model="trayIconTheme">
+            <option value="auto">{{ $t('settings.trayIcon.auto') }}</option>
+            <option value="light">{{ $t('settings.trayIcon.light') }}</option>
+            <option value="dark">{{ $t('settings.trayIcon.dark') }}</option>
+          </select>
+        </div>
+      </div>
       <div class="item">
         <div class="left">
           <div class="title">
@@ -905,6 +917,21 @@ export default {
           value,
         });
         changeAppearance(value);
+      },
+    },
+    trayIconTheme: {
+      get() {
+        if (this.settings.trayIconTheme === undefined) return 'auto';
+        return this.settings.trayIconTheme;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'trayIconTheme',
+          value,
+        });
+        if (this.isElectron) {
+          ipcRenderer.send('updateTrayIcon', value);
+        }
       },
     },
     musicQuality: {

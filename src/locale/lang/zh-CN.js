@@ -170,6 +170,12 @@ export default {
       light: '浅色',
       dark: '深色',
     },
+    trayIcon: {
+      text: '托盘图标颜色',
+      auto: '自动',
+      light: '浅色',
+      dark: '深色',
+    },
     automaticallyCacheSongs: '自动缓存歌曲',
     clearSongsCache: '清除歌曲缓存',
     cacheCount: '已缓存 {song} 首 ({size})',
