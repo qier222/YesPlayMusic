@@ -164,6 +164,12 @@ export default {
       light: 'Aydınlık',
       dark: 'Karanlık',
     },
+    trayIcon: {
+      text: 'Tepsi Simgesi Rengi',
+      auto: 'Otomatik',
+      light: 'Aydınlık',
+      dark: 'Karanlık',
+    },
     automaticallyCacheSongs: 'Müzikleri otomatik çerezle',
     clearSongsCache: 'Müzik çerezlerini temizle',
     cacheCount: 'Çerezlenen {song} Müzikler ({size})',

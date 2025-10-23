@@ -30,6 +30,7 @@ let localStorage = {
     showLibraryDefault: false,
     subTitleDefault: false,
     linuxEnableCustomTitlebar: false,
+    trayIconTheme: 'auto',
     enabledPlaylistCategories,
     proxyConfig: {
       protocol: 'noProxy',
