@@ -388,7 +388,11 @@ class Background {
       // create tray
       if (isCreateTray) {
         this.trayEventEmitter = new EventEmitter();
-        this.ypmTrayImpl = createTray(this.window, this.trayEventEmitter);
+        this.ypmTrayImpl = createTray(
+          this.window,
+          this.trayEventEmitter,
+          this.store
+        );
       }
 
       // init ipcMain
