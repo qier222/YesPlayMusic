@@ -80,6 +80,7 @@ jobs:
         with:
           use_vue_cli: true
           release: false
+          github_token: ${{ secrets.github_token }}
 
       - uses: actions/upload-artifact@v4
         with:
