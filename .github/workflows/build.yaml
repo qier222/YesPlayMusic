@@ -1,21 +1,14 @@
-name: Release
-
-env:
-  YARN_INSTALL_NOPT: yarn add --ignore-platform --ignore-optional
+name: Build
 
 on:
   push:
     branches:
       - master
-    tags:
-      - v*
   workflow_dispatch:
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
-    env:
-      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.snapcraft_token }}
 
     strategy:
       matrix:
@@ -37,9 +30,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update &&
-          sudo apt-get install --no-install-recommends -y rpm &&
-          sudo apt-get install --no-install-recommends -y libarchive-tools &&
-          sudo apt-get install --no-install-recommends -y libopenjp2-tools
+          sudo apt-get install --no-install-recommends -y rpm libarchive-tools libopenjp2-tools
 
       - name: Install Snapcraft (on Ubuntu)
         uses: samuelmeuli/action-snapcraft@v3
@@ -56,14 +47,14 @@ jobs:
       - name: Install UNM dependencies for Windows
         if: runner.os == 'Windows'
         run: |
-          ${{ env.YARN_INSTALL_NOPT }} \
+          yarn add --ignore-platform --ignore-optional \
             @unblockneteasemusic/rust-napi-win32-x64-msvc@${{steps.get_unm_version.outputs.unmver}}
         shell: bash
 
       - name: Install UNM dependencies for macOS
         if: runner.os == 'macOS'
         run: |
-          ${{ env.YARN_INSTALL_NOPT }} \
+          yarn add --ignore-platform --ignore-optional \
             @unblockneteasemusic/rust-napi-darwin-x64@${{steps.get_unm_version.outputs.unmver}} \
             @unblockneteasemusic/rust-napi-darwin-arm64@${{steps.get_unm_version.outputs.unmver}} \
             dmg-license
@@ -72,13 +63,13 @@ jobs:
       - name: Install UNM dependencies for Linux
         if: runner.os == 'Linux'
         run: |
-          ${{ env.YARN_INSTALL_NOPT }} \
+          yarn add --ignore-platform --ignore-optional \
             @unblockneteasemusic/rust-napi-linux-x64-gnu@${{steps.get_unm_version.outputs.unmver}} \
             @unblockneteasemusic/rust-napi-linux-arm64-gnu@${{steps.get_unm_version.outputs.unmver}} \
             @unblockneteasemusic/rust-napi-linux-arm-gnueabihf@${{steps.get_unm_version.outputs.unmver}}
         shell: bash
 
-      - name: Build/release Electron app
+      - name: Build Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
         env:
           VUE_APP_NETEASE_API_URL: /api
@@ -87,15 +78,8 @@ jobs:
           VUE_APP_LASTFM_API_KEY: 09c55292403d961aa517ff7f5e8a3d9c
           VUE_APP_LASTFM_API_SHARED_SECRET: 307c9fda32b3904e53654baff215cb67
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-
           use_vue_cli: true
+          publish: never   # 不触发 Release 发布
 
       - uses: actions/upload-artifact@v4
         with:
