@@ -372,7 +372,7 @@ module.exports = [
   {  
   identifier: 'lyric_new',  
   route: '/lyric/new',  
-  module: require('NeteaseCloudMusicApi/module/lyric_new'),  
+  module: require('@neteaseapireborn/api/module/lyric_new'),  
   },
   {
     identifier: 'logout',
