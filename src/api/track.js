@@ -1,12 +1,12 @@
-import store from "@/store";
-import request from "@/utils/request";
-import { mapTrackPlayableStatus } from "@/utils/common";
+import store from '@/store';
+import request from '@/utils/request';
+import { mapTrackPlayableStatus } from '@/utils/common';
 import {
   cacheTrackDetail,
   getTrackDetailFromCache,
   cacheLyric,
   getLyricFromCache,
-} from "@/utils/db";
+} from '@/utils/db';
 
 /**
  * 获取音乐 url
@@ -17,13 +17,13 @@ import {
 export function getMP3(id) {
   const getBr = () => {
     // 当返回的 quality >= 400000时，就会优先返回 hi-res
-    const quality = store.state.settings?.musicQuality ?? "320000";
-    return quality === "flac" ? "350000" : quality;
+    const quality = store.state.settings?.musicQuality ?? '320000';
+    return quality === 'flac' ? '350000' : quality;
   };
 
   return request({
-    url: "/song/url",
-    method: "get",
+    url: '/song/url',
+    method: 'get',
     params: {
       id,
       br: getBr(),
@@ -39,8 +39,8 @@ export function getMP3(id) {
 export function getTrackDetail(ids) {
   const fetchLatest = () => {
     return request({
-      url: "/song/detail",
-      method: "get",
+      url: '/song/detail',
+      method: 'get',
       params: {
         ids,
       },
@@ -56,8 +56,8 @@ export function getTrackDetail(ids) {
   fetchLatest();
 
   let idsInArray = [String(ids)];
-  if (typeof ids === "string") {
-    idsInArray = ids.split(",");
+  if (typeof ids === 'string') {
+    idsInArray = ids.split(',');
   }
 
   return getTrackDetailFromCache(idsInArray).then((result) => {
@@ -76,8 +76,8 @@ export function getTrackDetail(ids) {
 export function getLyric(id) {
   const fetchLatest = () => {
     return request({
-      url: "/lyric",
-      method: "get",
+      url: '/lyric',
+      method: 'get',
       params: {
         id,
       },
@@ -102,8 +102,8 @@ export function getLyric(id) {
 export function getLyricNew(id) {
   const fetchLatest = () => {
     return request({
-      url: "/lyric/new",
-      method: "get",
+      url: '/lyric/new',
+      method: 'get',
       params: {
         id,
       },
@@ -127,8 +127,8 @@ export function getLyricNew(id) {
  */
 export function topSong(type) {
   return request({
-    url: "/top/song",
-    method: "get",
+    url: '/top/song',
+    method: 'get',
     params: {
       type,
     },
@@ -147,8 +147,8 @@ export function topSong(type) {
 export function likeATrack(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: "/like",
-    method: "get",
+    url: '/like',
+    method: 'get',
     params,
   });
 }
@@ -167,8 +167,8 @@ export function likeATrack(params) {
 export function scrobble(params) {
   params.timestamp = new Date().getTime();
   return request({
-    url: "/scrobble",
-    method: "get",
+    url: '/scrobble',
+    method: 'get',
     params,
   });
 }
