@@ -44,8 +44,8 @@ export function getTrackDetail(ids) {
       params: {
         ids,
       },
-    }).then(data => {  
-      data.songs.map(song => {  
+    }).then(data => {
+      data.songs.map(song => {
         const privileges = data.privileges.find(t => t.id === song.id);
         cacheTrackDetail(song, privileges);
       });
