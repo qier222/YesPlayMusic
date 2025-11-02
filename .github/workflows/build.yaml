@@ -79,7 +79,7 @@ jobs:
           VUE_APP_LASTFM_API_SHARED_SECRET: 307c9fda32b3904e53654baff215cb67
         with:
           use_vue_cli: true
-          publish: never   # 不触发 Release 发布
+          release: false
 
       - uses: actions/upload-artifact@v4
         with:
