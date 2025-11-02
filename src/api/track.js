@@ -94,6 +94,32 @@ export function getLyric(id) {
   });
 }
 
+/**  
+ * 获取新版歌词  
+ * 说明 : 调用此接口 , 传入音乐 id 可获得对应音乐的新版歌词  
+ * @param {number} id - 音乐 id  
+ */  
+export function getLyricNew(id) {  
+  const fetchLatest = () => {  
+    return request({  
+      url: '/lyric/new',  
+      method: 'get',  
+      params: {  
+        id,  
+      },  
+    }).then(result => {  
+      cacheLyric(id, result);  
+      return result;  
+    });  
+  };  
+  
+  fetchLatest();  
+  
+  return getLyricFromCache(id).then(result => {  
+    return result ?? fetchLatest();  
+  });  
+}
+
 /**
  * 新歌速递
  * 说明 : 调用此接口 , 可获取新歌速递
