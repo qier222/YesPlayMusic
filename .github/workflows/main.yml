@@ -1,4 +1,4 @@
-name: Release
+name: Build Artifacts
 
 env:
   YARN_INSTALL_NOPT: yarn add --ignore-platform --ignore-optional
@@ -7,15 +7,11 @@ on:
   push:
     branches:
       - master
-    tags:
-      - v*
   workflow_dispatch:
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
-    env:
-      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.snapcraft_token }}
 
     strategy:
       matrix:
@@ -25,39 +21,28 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          submodules: recursive
 
-      - name: Install Node.js, NPM and Yarn
+      - name: Install Node.js and Yarn
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'yarn'
+          cache: yarn
 
-      - name: Install RPM & Pacman (on Ubuntu)
+      - name: Install Linux packaging deps
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update &&
-          sudo apt-get install --no-install-recommends -y rpm &&
-          sudo apt-get install --no-install-recommends -y libarchive-tools &&
-          sudo apt-get install --no-install-recommends -y libopenjp2-tools
-
-      - name: Install Snapcraft (on Ubuntu)
-        uses: samuelmeuli/action-snapcraft@v3
-        if: startsWith(matrix.os, 'ubuntu')
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            rpm libarchive-tools libopenjp2-tools \
+            libfuse2   # ✅ AppImage required
 
       - id: get_unm_version
-        name: Get the installed UNM version
+        name: Get UNM version
         run: |
           yarn --ignore-optional
           unm_version=$(node -e "console.log(require('./node_modules/@unblockneteasemusic/rust-napi/package.json').version)")
           echo "::set-output name=unmver::${unm_version}"
-        shell: bash
-
-      - name: Install UNM dependencies for Windows
-        if: runner.os == 'Windows'
-        run: |
-          ${{ env.YARN_INSTALL_NOPT }} \
-            @unblockneteasemusic/rust-napi-win32-x64-msvc@${{steps.get_unm_version.outputs.unmver}}
         shell: bash
 
       - name: Install UNM dependencies for macOS
@@ -67,7 +52,12 @@ jobs:
             @unblockneteasemusic/rust-napi-darwin-x64@${{steps.get_unm_version.outputs.unmver}} \
             @unblockneteasemusic/rust-napi-darwin-arm64@${{steps.get_unm_version.outputs.unmver}} \
             dmg-license
-        shell: bash
+
+      - name: Install UNM dependencies for Windows
+        if: runner.os == 'Windows'
+        run: |
+          ${{ env.YARN_INSTALL_NOPT }} \
+            @unblockneteasemusic/rust-napi-win32-x64-msvc@${{steps.get_unm_version.outputs.unmver}}
 
       - name: Install UNM dependencies for Linux
         if: runner.os == 'Linux'
@@ -76,41 +66,50 @@ jobs:
             @unblockneteasemusic/rust-napi-linux-x64-gnu@${{steps.get_unm_version.outputs.unmver}} \
             @unblockneteasemusic/rust-napi-linux-arm64-gnu@${{steps.get_unm_version.outputs.unmver}} \
             @unblockneteasemusic/rust-napi-linux-arm-gnueabihf@${{steps.get_unm_version.outputs.unmver}}
-        shell: bash
 
-      - name: Build/release Electron app
+      - name: Build Electron app
         uses: samuelmeuli/action-electron-builder@v1.6.0
         env:
           VUE_APP_NETEASE_API_URL: /api
           VUE_APP_ELECTRON_API_URL: /api
           VUE_APP_ELECTRON_API_URL_DEV: http://127.0.0.1:10754
-          VUE_APP_LASTFM_API_KEY: 09c55292403d961aa517ff7f5e8a3d9c
-          VUE_APP_LASTFM_API_SHARED_SECRET: 307c9fda32b3904e53654baff215cb67
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
           release: false
-          
           use_vue_cli: true
 
-      - uses: actions/upload-artifact@v4
+      # ───────── Upload Artifacts ─────────
+
+      - name: Upload mac dmg
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'macOS'
         with:
           name: YesPlayMusic-mac
-          path: dist_electron/*-universal.dmg
+          path: dist_electron/*.dmg
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload win exe
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
         with:
           name: YesPlayMusic-win
           path: dist_electron/*Setup*.exe
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Linux AppImage
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'Linux'
         with:
-          name: YesPlayMusic-linux
+          name: YesPlayMusic-linux-AppImage
           path: dist_electron/*.AppImage
+          if-no-files-found: warn
+
+      - name: Upload deb/rpm
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'Linux'
+        with:
+          name: YesPlayMusic-linux-packages
+          path: |
+            dist_electron/*.deb
+            dist_electron/*.rpm
           if-no-files-found: ignore
