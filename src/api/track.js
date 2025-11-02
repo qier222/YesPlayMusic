@@ -44,9 +44,9 @@ export function getTrackDetail(ids) {
       params: {
         ids,
       },
-    }).then((data) => {
-      data.songs.map((song) => {
-        const privileges = data.privileges.find((t) => t.id === song.id);
+    }).then(data => {  
+      data.songs.map(song => {  
+        const privileges = data.privileges.find(t => t.id === song.id);
         cacheTrackDetail(song, privileges);
       });
       data.songs = mapTrackPlayableStatus(data.songs, data.privileges);
@@ -60,7 +60,7 @@ export function getTrackDetail(ids) {
     idsInArray = ids.split(',');
   }
 
-  return getTrackDetailFromCache(idsInArray).then((result) => {
+  return getTrackDetailFromCache(idsInArray).then(result => {
     if (result) {
       result.songs = mapTrackPlayableStatus(result.songs, result.privileges);
     }
@@ -81,7 +81,7 @@ export function getLyric(id) {
       params: {
         id,
       },
-    }).then((result) => {
+    }).then(result => {
       cacheLyric(id, result);
       return result;
     });
@@ -89,7 +89,7 @@ export function getLyric(id) {
 
   fetchLatest();
 
-  return getLyricFromCache(id).then((result) => {
+  return getLyricFromCache(id).then(result => {
     return result ?? fetchLatest();
   });
 }
@@ -107,7 +107,7 @@ export function getLyricNew(id) {
       params: {
         id,
       },
-    }).then((result) => {
+    }).then(result => {
       cacheLyric(id, result);
       return result;
     });
@@ -115,7 +115,7 @@ export function getLyricNew(id) {
 
   fetchLatest();
 
-  return getLyricFromCache(id).then((result) => {
+  return getLyricFromCache(id).then(result => {
     return result ?? fetchLatest();
   });
 }
