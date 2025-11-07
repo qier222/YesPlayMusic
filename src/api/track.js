@@ -96,7 +96,8 @@ export function getLyric(id) {
 
 /**
  * 获取云盘歌曲内嵌歌词 * 说明 : 调用此接口 , 传入音乐 id 可获得云盘歌曲的内嵌歌词
- * @param {number} id - 音乐 id
+ * @param {number} songId - 音乐 id
+ * @param {number} userId - 用户 id
  */
 export function getCloudLyric(songId, userId) {
   const fetchLatest = () => {
