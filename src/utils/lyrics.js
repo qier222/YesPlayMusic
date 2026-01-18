@@ -64,8 +64,9 @@ function parseLyric(lrc) {
 
     for (const timestamp of lyricTimestamps.matchAll(extractTimestampRegex)) {
       const { min, sec, ms } = timestamp.groups;
-      const rawTime = timestamp[0];
-      const time = Number(min) * 60 + Number(sec) + Number(ms ?? 0) * 0.001;
+      const validMs = ms?.slice(0, 2) ?? '00';
+      const rawTime = `[${min}:${sec}.${validMs}]`;
+      const time = Number(min) * 60 + Number(sec) + Number(validMs) * 0.01;
 
       /** @type {ParsedLyric} */
       const parsedLyric = { rawTime, time, content: trimContent(content) };
