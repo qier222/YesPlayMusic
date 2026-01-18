@@ -614,4 +614,9 @@ module.exports = [
     route: '/activate/init/profile',
     module: require('@neteaseapireborn/api/module/activate_init_profile'),
   },
+  {
+    identifier: 'api',
+    route: '/api',
+    module: require('@neteaseapireborn/api/module/api'),
+  },
 ];
