@@ -1,5 +1,5 @@
 const { TouchBar, nativeImage, ipcMain } = require('electron');
-const { TouchBarButton, TouchBarSpacer } = TouchBar;
+const { TouchBarButton, TouchBarSpacer, TouchBarLabel } = TouchBar;
 const path = require('path');
 
 export function createTouchBar(window) {
@@ -14,27 +14,6 @@ export function createTouchBar(window) {
       path.join(__static, 'img/touchbar/', name)
     );
   }
-
-  const previousPage = new TouchBarButton({
-    click: () => {
-      renderer.send('routerGo', 'back');
-    },
-    icon: getNativeIcon('page_prev.png'),
-  });
-
-  const nextPage = new TouchBarButton({
-    click: () => {
-      renderer.send('routerGo', 'forward');
-    },
-    icon: getNativeIcon('page_next.png'),
-  });
-
-  const searchButton = new TouchBarButton({
-    click: () => {
-      renderer.send('search');
-    },
-    icon: getNativeIcon('search.png'),
-  });
 
   const playButton = new TouchBarButton({
     click: () => {
@@ -64,11 +43,10 @@ export function createTouchBar(window) {
     icon: getNativeIcon('like.png'),
   });
 
-  const nextUpButton = new TouchBarButton({
-    click: () => {
-      renderer.send('nextUp');
-    },
-    icon: getNativeIcon('next_up.png'),
+  // 歌词显示标签 - 固定宽度以最大化显示空间
+  const lyricLabel = new TouchBarLabel({
+    label: '♪ YesPlayMusic',
+    textColor: '#FFFFFF',
   });
 
   ipcMain.on('player', (e, { playing, likedCurrentTrack }) => {
@@ -79,18 +57,24 @@ export function createTouchBar(window) {
       : getNativeIcon('like.png');
   });
 
+  // 监听歌词更新
+  ipcMain.on('updateLyric', (e, { lyric }) => {
+    if (lyric && lyric.trim()) {
+      lyricLabel.label = `♪ ${lyric}`;
+    } else {
+      lyricLabel.label = '♪ YesPlayMusic';
+    }
+  });
+
   const touchBar = new TouchBar({
     items: [
-      previousPage,
-      nextPage,
-      searchButton,
-      new TouchBarSpacer({ size: 'flexible' }),
       previousTrackButton,
       playButton,
       nextTrackButton,
       new TouchBarSpacer({ size: 'flexible' }),
+      lyricLabel,
+      new TouchBarSpacer({ size: 'flexible' }),
       likeButton,
-      nextUpButton,
     ],
   });
   return touchBar;
