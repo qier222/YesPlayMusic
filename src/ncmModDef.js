@@ -369,6 +369,11 @@ module.exports = [
     route: '/lyric',
     module: require('@neteaseapireborn/api/module/lyric'),
   },
+  {  
+  identifier: 'lyric_new',  
+  route: '/lyric/new',  
+  module: require('@neteaseapireborn/api/module/lyric_new'),  
+  },
   {
     identifier: 'logout',
     route: '/logout',
