@@ -300,6 +300,24 @@ export function initIpcMain(win, store, trayEventEmitter) {
     registerGlobalShortcut(win, store);
   });
 
+  ipcMain.on(
+    'disableSingleGlobalShortcut',
+    (e, shortcutId, oldGlobalShortcut) => {
+      log(`disableSingleGlobalShortcut: ${shortcutId}`);
+
+      let shortcuts = store.get('settings.shortcuts');
+      const target = shortcuts.find(s => s.id === shortcutId);
+      if (!target) return;
+
+      if (oldGlobalShortcut && oldGlobalShortcut.trim() !== '') {
+        if (globalShortcut.isRegistered(oldGlobalShortcut)) {
+          globalShortcut.unregister(oldGlobalShortcut);
+        }
+      }
+      store.set('settings.shortcuts', shortcuts);
+    }
+  );
+
   ipcMain.on('restoreDefaultShortcuts', () => {
     log('restoreDefaultShortcuts');
     store.set('settings.shortcuts', cloneDeep(shortcuts));
