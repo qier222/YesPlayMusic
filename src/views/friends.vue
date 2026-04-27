@@ -64,8 +64,7 @@
                 class="follow-btn"
                 :class="{
                   followed: user.followed,
-                  'hover-unfollow':
-                    user.followed && hoveredBtn === user.userId,
+                  'hover-unfollow': user.followed && hoveredBtn === user.userId,
                 }"
                 @mouseenter="user.followed && (hoveredBtn = user.userId)"
                 @mouseleave="hoveredBtn = null"
@@ -75,10 +74,10 @@
                   !user.followed
                     ? $t('friends.follow')
                     : hoveredBtn === user.userId
-                      ? $t('friends.unfollow')
-                      : isMutual(user.userId)
-                        ? $t('friends.mutual')
-                        : $t('friends.following')
+                    ? $t('friends.unfollow')
+                    : isMutual(user.userId)
+                    ? $t('friends.mutual')
+                    : $t('friends.following')
                 }}
               </button>
             </div>
@@ -796,12 +795,15 @@ export default {
   .follow-btn {
     border: none;
     border-radius: 14px;
+    width: 78px;
     padding: 4px 10px;
     font-size: 12px;
     color: #fff;
     background: var(--color-primary);
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: center;
+    box-sizing: border-box;
 
     &.followed {
       background: var(--color-secondary-bg);

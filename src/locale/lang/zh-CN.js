@@ -14,7 +14,7 @@ export default {
   friends: {
     title: '好友',
     recentContacts: '最近联系',
-    following: '关注',
+    following: '已关注',
     followers: '粉丝',
     follow: '关注',
     mutual: '已互关',
