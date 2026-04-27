@@ -153,6 +153,17 @@ export default {
       return this.data?.user?.avatarUrl || '';
     },
   },
+  watch: {
+    $route(to) {
+      if (to.name === 'messages') {
+        this.uid = Number(to.params.uid);
+        this.nickname = to.query.nickname || '';
+        this.avatarUrl = to.query.avatarUrl || '';
+        this.messages = [];
+        this.loadMessages();
+      }
+    },
+  },
   created() {
     this.uid = Number(this.$route.params.uid);
     this.nickname = this.$route.query.nickname || '';
@@ -163,14 +174,18 @@ export default {
     this.loadMessages();
   },
   activated() {
-    this.uid = Number(this.$route.params.uid);
-    this.nickname = this.$route.query.nickname || '';
-    this.avatarUrl = this.$route.query.avatarUrl || '';
+    const newUid = Number(this.$route.params.uid);
+    if (newUid !== this.uid) {
+      this.uid = newUid;
+      this.nickname = this.$route.query.nickname || '';
+      this.avatarUrl = this.$route.query.avatarUrl || '';
+      this.messages = [];
+    }
     this.loadMessages();
   },
   methods: {
     goBack() {
-      this.$router.push({ name: 'friends' });
+      this.$router.back();
     },
     loadMessages() {
       if (!isAccountLoggedIn() || !this.uid) {

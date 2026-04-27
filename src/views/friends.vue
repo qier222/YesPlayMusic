@@ -119,7 +119,6 @@ import { mapState } from 'vuex';
 import { isAccountLoggedIn } from '@/utils/auth';
 import {
   getPrivateMsgList,
-  getRecentContacts,
   getUserFollows,
   getUserFolloweds,
   followUser,
@@ -165,25 +164,30 @@ export default {
       this.loadFolloweds();
     },
     loadRecentContacts() {
-      getRecentContacts()
+      getPrivateMsgList()
         .then(data => {
-          this.recentContacts = data.contacts || [];
+          // /msg/private 返回的 fromUser 是最后发消息的人
+          // 需要判断是否是自己，如果是自己则取 toUser 作为对话对象
+          const myId = this.userId;
+          this.recentContacts = (data.msgs || []).map(msg => {
+            const other =
+              msg.fromUser && msg.fromUser.userId !== myId
+                ? msg.fromUser
+                : msg.toUser;
+            return {
+              userId: other ? other.userId : 0,
+              nickname: other ? other.nickname : '',
+              avatarUrl: other ? other.avatarUrl : '',
+              lastMsg: msg.lastMsg ? msg.lastMsg.msg : '',
+              lastMsgTime: msg.lastMsg ? msg.lastMsg.time : msg.time,
+            };
+          });
           NProgress.done();
           this.show = true;
         })
         .catch(() => {
-          // fallback: 用私信列表
-          getPrivateMsgList().then(data => {
-            this.recentContacts = (data.msgs || []).map(msg => ({
-              userId: msg.fromUser.userId,
-              nickname: msg.fromUser.nickname,
-              avatarUrl: msg.fromUser.avatarUrl,
-              lastMsg: msg.lastMsg,
-              lastMsgTime: msg.lastMsgTime,
-            }));
-            NProgress.done();
-            this.show = true;
-          });
+          NProgress.done();
+          this.show = true;
         });
     },
     loadFollows() {

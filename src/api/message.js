@@ -8,7 +8,7 @@ import request from '@/utils/request';
  */
 export function getPrivateMsgList(params = {}) {
   return request({
-    url: '/msg/private/users',
+    url: '/msg/private',
     method: 'get',
     params: {
       offset: params.offset || 0,
@@ -39,20 +39,6 @@ export function getPrivateMsgHistory(params) {
 }
 
 /**
- * 获取最近联系人
- * 说明 : 登录后调用此接口 , 可获取最近联系人
- */
-export function getRecentContacts() {
-  return request({
-    url: '/msg/recentcontact/get',
-    method: 'get',
-    params: {
-      timestamp: new Date().getTime(),
-    },
-  });
-}
-
-/**
  * 发送文字私信
  * 说明 : 登录后调用此接口 , 可发送文字私信
  * - user_ids : 用户 id
@@ -61,7 +47,7 @@ export function getRecentContacts() {
 export function sendTextMsg(params) {
   return request({
     url: '/send/text',
-    method: 'get',
+    method: 'post',
     params: {
       user_ids: params.user_ids,
       msg: params.msg,
@@ -80,7 +66,7 @@ export function sendTextMsg(params) {
 export function sendSongMsg(params) {
   return request({
     url: '/send/song',
-    method: 'get',
+    method: 'post',
     params: {
       user_ids: params.user_ids,
       id: params.id,
@@ -100,7 +86,7 @@ export function sendSongMsg(params) {
 export function sendPlaylistMsg(params) {
   return request({
     url: '/send/playlist',
-    method: 'get',
+    method: 'post',
     params: {
       user_ids: params.user_ids,
       playlist: params.playlist,
@@ -119,7 +105,7 @@ export function sendPlaylistMsg(params) {
  */
 export function getUserFollows(params) {
   return request({
-    url: `/user/follows`,
+    url: '/user/follows',
     method: 'get',
     params: {
       uid: params.uid,
@@ -139,7 +125,7 @@ export function getUserFollows(params) {
  */
 export function getUserFolloweds(params) {
   return request({
-    url: `/user/followeds`,
+    url: '/user/followeds',
     method: 'get',
     params: {
       uid: params.uid,
@@ -159,7 +145,7 @@ export function getUserFolloweds(params) {
 export function followUser(params) {
   return request({
     url: '/follow',
-    method: 'get',
+    method: 'post',
     params: {
       id: params.id,
       t: params.t,
