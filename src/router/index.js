@@ -132,6 +132,24 @@ const routes = [
     name: 'lastfmCallback',
     component: () => import('@/views/lastfmCallback.vue'),
   },
+  {
+    path: '/friends',
+    name: 'friends',
+    component: () => import('@/views/friends.vue'),
+    meta: {
+      requireAccountLogin: true,
+      keepAlive: true,
+      savePosition: true,
+    },
+  },
+  {
+    path: '/messages/:uid',
+    name: 'messages',
+    component: () => import('@/views/messages.vue'),
+    meta: {
+      requireAccountLogin: true,
+    },
+  },
 ];
 
 const router = new VueRouter({

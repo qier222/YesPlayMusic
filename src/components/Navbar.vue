@@ -25,6 +25,12 @@
           :class="{ active: $route.name === 'library' }"
           >{{ $t('nav.library') }}</router-link
         >
+        <router-link
+          v-if="isLooseLoggedIn"
+          to="/friends"
+          :class="{ active: $route.name === 'friends' || $route.name === 'messages' }"
+          >{{ $t('nav.friends') }}</router-link
+        >
       </div>
       <div class="right-part">
         <div class="search-box">
