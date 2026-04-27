@@ -26,7 +26,6 @@
           >{{ $t('nav.library') }}</router-link
         >
         <router-link
-          v-if="isLooseLoggedIn"
           to="/friends"
           :class="{
             active: $route.name === 'friends' || $route.name === 'messages',
