@@ -228,7 +228,10 @@ export default {
         const mins = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${mins}`;
       }
-      return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      return `${date.getMonth() + 1}/${date.getDate()} ${date
+        .getHours()
+        .toString()
+        .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
     },
   },
 };
