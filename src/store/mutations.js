@@ -2,6 +2,10 @@ import shortcuts from '@/utils/shortcuts';
 import cloneDeep from 'lodash/cloneDeep';
 
 export default {
+  setFriendsSidebar(state, status = null) {
+    state.showFriendsSidebar =
+      typeof status === 'boolean' ? status : !state.showFriendsSidebar;
+  },
   updateLikedXXX(state, { name, data }) {
     state.liked[name] = data;
     if (name === 'songs') {

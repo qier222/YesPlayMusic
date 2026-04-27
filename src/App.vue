@@ -12,6 +12,7 @@
       </keep-alive>
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </main>
+    <FriendsSidebar v-if="showFriendsSidebar" />
     <transition name="slide-up">
       <Player v-if="enablePlayer" v-show="showPlayer" ref="player" />
     </transition>
@@ -31,6 +32,7 @@ import Scrollbar from './components/Scrollbar.vue';
 import Navbar from './components/Navbar.vue';
 import Player from './components/Player.vue';
 import Toast from './components/Toast.vue';
+import FriendsSidebar from './views/friends.vue';
 import { ipcRenderer } from './electron/ipcRenderer';
 import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
@@ -42,6 +44,7 @@ export default {
     Navbar,
     Player,
     Toast,
+    FriendsSidebar,
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
     Lyrics,
@@ -54,7 +57,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(['showLyrics', 'settings', 'player', 'enableScrolling']),
+    ...mapState([
+      'showLyrics',
+      'settings',
+      'player',
+      'enableScrolling',
+      'showFriendsSidebar',
+    ]),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },

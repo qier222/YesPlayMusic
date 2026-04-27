@@ -15,12 +15,12 @@
         v-for="msg in messages"
         :key="msg.msgId"
         class="msg-item"
-        :class="{ 'msg-mine': msg.fromUser.userId === myUserId }"
+        :class="{ 'msg-mine': isMine(msg) }"
       >
         <img
-          v-if="msg.fromUser.userId !== myUserId"
+          v-if="!isMine(msg)"
           class="msg-avatar"
-          :src="msg.fromUser.avatarUrl | resizeImage"
+          :src="(msg.fromUser && msg.fromUser.avatarUrl) | resizeImage"
           loading="lazy"
         />
         <div class="msg-bubble">
@@ -88,7 +88,7 @@
           </div>
           <!-- 图片消息 -->
           <div v-else-if="msg.type === 'image'" class="msg-image">
-            <img :src="msg.msg" loading="lazy" />
+            <img :src="msg.image || msg.msg" loading="lazy" />
           </div>
           <!-- 其他消息类型 -->
           <div v-else class="msg-text msg-unknown">
@@ -97,9 +97,12 @@
           <div class="msg-time">{{ formatTime(msg.time) }}</div>
         </div>
         <img
-          v-if="msg.fromUser.userId === myUserId"
+          v-if="isMine(msg)"
           class="msg-avatar"
-          :src="myAvatarUrl | resizeImage"
+          :src="
+            (myAvatarUrl || (msg.fromUser && msg.fromUser.avatarUrl))
+              | resizeImage
+          "
           loading="lazy"
         />
       </div>
@@ -193,12 +196,104 @@ export default {
         this.show = true;
         return;
       }
-      getPrivateMsgHistory({ uid: this.uid, limit: 100 }).then(data => {
-        this.messages = (data.msgs || []).reverse();
-        NProgress.done();
-        this.show = true;
-        this.$nextTick(() => this.scrollToBottom());
-      });
+      getPrivateMsgHistory({ uid: this.uid, limit: 100 })
+        .then(data => {
+          this.messages = (data.msgs || [])
+            .reverse()
+            .map((item, index) => this.normalizeMessage(item, index));
+          NProgress.done();
+          this.show = true;
+          this.$nextTick(() => this.scrollToBottom());
+        })
+        .catch(() => {
+          NProgress.done();
+          this.show = true;
+        });
+    },
+    isMine(msg) {
+      return (
+        Number(msg && msg.fromUser && msg.fromUser.userId) ===
+        Number(this.myUserId)
+      );
+    },
+    normalizeMessage(rawMessage, index) {
+      const payload = this.parseMessagePayload(rawMessage && rawMessage.msg);
+      const time = this.normalizeTimestamp(
+        (rawMessage && rawMessage.time) ||
+          (rawMessage && rawMessage.lastMsgTime) ||
+          payload.time
+      );
+
+      return {
+        msgId:
+          (rawMessage &&
+            (rawMessage.id || rawMessage.msgId || rawMessage.msgid)) ||
+          `${time || Date.now()}-${index}`,
+        fromUser: (rawMessage && rawMessage.fromUser) || {
+          userId: 0,
+          avatarUrl: '',
+          nickname: '',
+        },
+        toUser: (rawMessage && rawMessage.toUser) || {
+          userId: 0,
+          avatarUrl: '',
+          nickname: '',
+        },
+        time: time || Date.now(),
+        type: this.resolveMessageType(payload),
+        msg: this.getMessageText(payload),
+        song: payload.song || payload.music || payload.songData || null,
+        playlist: payload.playlist || payload.playlistData || null,
+        album: payload.album || payload.albumData || null,
+        image: this.getImageUrl(payload),
+      };
+    },
+    parseMessagePayload(rawPayload) {
+      if (!rawPayload) return {};
+      if (typeof rawPayload === 'object') return rawPayload;
+      if (typeof rawPayload !== 'string') return {};
+      try {
+        return JSON.parse(rawPayload);
+      } catch (error) {
+        return { msg: rawPayload };
+      }
+    },
+    getMessageText(payload) {
+      if (!payload) return '';
+      if (typeof payload.msg === 'string') return payload.msg;
+      if (typeof payload.pushMsg === 'string') return payload.pushMsg;
+      if (
+        payload.generalMsg &&
+        typeof payload.generalMsg.inboxBriefContent === 'string'
+      ) {
+        return payload.generalMsg.inboxBriefContent;
+      }
+      return '';
+    },
+    getImageUrl(payload) {
+      if (!payload) return '';
+      return (
+        payload.picUrl ||
+        payload.imgUrl ||
+        payload.imageUrl ||
+        (payload.picInfo && (payload.picInfo.picUrl || payload.picInfo.url)) ||
+        ''
+      );
+    },
+    resolveMessageType(payload) {
+      if (!payload) return 'unknown';
+      if (payload.song || payload.music || payload.songData) return 'song';
+      if (payload.playlist || payload.playlistData) return 'playlist';
+      if (payload.album || payload.albumData) return 'album';
+      if (this.getImageUrl(payload)) return 'image';
+      if (Number(payload.type) === 16 && payload.picInfo) return 'image';
+      if (this.getMessageText(payload)) return 'text';
+      return 'unknown';
+    },
+    normalizeTimestamp(value) {
+      const ts = Number(value);
+      if (!Number.isFinite(ts) || ts <= 0) return 0;
+      return ts < 1e12 ? ts * 1000 : ts;
     },
     sendText() {
       const text = this.inputText.trim();
@@ -233,20 +328,28 @@ export default {
       }
     },
     formatTime(timestamp) {
-      if (!timestamp) return '';
-      const date = new Date(timestamp);
+      const ts = this.normalizeTimestamp(timestamp);
+      if (!ts) return '';
+
+      const date = new Date(ts);
+      if (Number.isNaN(date.getTime())) return '';
+
       const now = new Date();
-      const diff = now - date;
-      if (diff < 60000) return this.$t('friends.justNow');
-      if (diff < 86400000) {
-        const hours = date.getHours().toString().padStart(2, '0');
-        const mins = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${mins}`;
-      }
-      return `${date.getMonth() + 1}/${date.getDate()} ${date
-        .getHours()
-        .toString()
-        .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      const isSameYear = date.getFullYear() === now.getFullYear();
+      const isSameDay =
+        isSameYear &&
+        date.getMonth() === now.getMonth() &&
+        date.getDate() === now.getDate();
+
+      const hours = date.getHours().toString().padStart(2, '0');
+      const mins = date.getMinutes().toString().padStart(2, '0');
+      const hm = `${hours}:${mins}`;
+
+      if (isSameDay) return hm;
+      if (isSameYear) return `${date.getMonth() + 1}/${date.getDate()} ${hm}`;
+      return `${date.getFullYear()}/${
+        date.getMonth() + 1
+      }/${date.getDate()} ${hm}`;
     },
   },
 };

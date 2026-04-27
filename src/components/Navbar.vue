@@ -25,13 +25,6 @@
           :class="{ active: $route.name === 'library' }"
           >{{ $t('nav.library') }}</router-link
         >
-        <router-link
-          to="/friends"
-          :class="{
-            active: $route.name === 'friends' || $route.name === 'messages',
-          }"
-          >{{ $t('nav.friends') }}</router-link
-        >
       </div>
       <div class="right-part">
         <div class="search-box">
@@ -60,6 +53,10 @@
     </nav>
 
     <ContextMenu ref="userProfileMenu">
+      <div v-if="isLooseLoggedIn" class="item" @click="toFriends">
+        <svg-icon icon-class="list" />
+        {{ $t('nav.friends') }}
+      </div>
       <div class="item" @click="toSettings">
         <svg-icon icon-class="settings" />
         {{ $t('library.userProfileMenu.settings') }}
@@ -83,7 +80,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { isLooseLoggedIn, doLogout } from '@/utils/auth';
+import { isAccountLoggedIn, isLooseLoggedIn, doLogout } from '@/utils/auth';
 
 // import icons for win32 title bar
 // icons by https://github.com/microsoft/vscode-codicons
@@ -163,6 +160,13 @@ export default {
     },
     toSettings() {
       this.$router.push({ name: 'settings' });
+    },
+    toFriends() {
+      if (!isAccountLoggedIn()) {
+        this.toLogin();
+        return;
+      }
+      this.$store.commit('setFriendsSidebar', true);
     },
     toGitHub() {
       window.open('https://github.com/qier222/YesPlayMusic');
