@@ -62,11 +62,23 @@
               <button
                 v-else
                 class="follow-btn"
-                :class="{ followed: user.followed }"
+                :class="{
+                  followed: user.followed,
+                  'hover-unfollow':
+                    user.followed && hoveredBtn === user.userId,
+                }"
+                @mouseenter="user.followed && (hoveredBtn = user.userId)"
+                @mouseleave="hoveredBtn = null"
                 @click.stop="toggleFollow(user)"
               >
                 {{
-                  user.followed ? $t('friends.following') : $t('friends.follow')
+                  !user.followed
+                    ? $t('friends.follow')
+                    : hoveredBtn === user.userId
+                      ? $t('friends.unfollow')
+                      : isMutual(user.userId)
+                        ? $t('friends.mutual')
+                        : $t('friends.following')
                 }}
               </button>
             </div>
@@ -241,6 +253,7 @@ export default {
       activeContact: null,
       messages: [],
       inputText: '',
+      hoveredBtn: null,
     };
   },
   computed: {
@@ -260,6 +273,12 @@ export default {
       if (this.currentTab === 'contacts') return this.$t('friends.noContacts');
       if (this.currentTab === 'follows') return this.$t('friends.noFollowing');
       return this.$t('friends.noFollowers');
+    },
+    followedsIdSet() {
+      return new Set(this.followeds.map(u => u.userId));
+    },
+    followsIdSet() {
+      return new Set(this.follows.map(u => u.userId));
     },
   },
   created() {
@@ -560,11 +579,19 @@ export default {
         this.$router.push({ name: 'album', params: { id: album.id } });
       }
     },
+    isMutual(userId) {
+      // follows tab: check if they're also in my followeds
+      if (this.currentTab === 'follows') return this.followedsIdSet.has(userId);
+      // followeds tab: check if I also follow them
+      if (this.currentTab === 'followeds') return this.followsIdSet.has(userId);
+      return false;
+    },
     toggleFollow(user) {
       const t = user.followed ? 0 : 1;
       followUser({ id: user.userId, t }).then(data => {
         if (data.code === 200) {
           this.$set(user, 'followed', !user.followed);
+          this.hoveredBtn = null;
         }
       });
     },
@@ -774,10 +801,16 @@ export default {
     color: #fff;
     background: var(--color-primary);
     cursor: pointer;
+    transition: all 0.2s ease;
 
     &.followed {
       background: var(--color-secondary-bg);
       color: var(--color-text);
+
+      &.hover-unfollow {
+        background: #e84040;
+        color: #fff;
+      }
     }
   }
 }

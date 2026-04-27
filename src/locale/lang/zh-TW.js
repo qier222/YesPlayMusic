@@ -17,6 +17,8 @@ export default {
     following: '追蹤',
     followers: '粉絲',
     follow: '追蹤',
+    mutual: '已互關',
+    unfollow: '取消追蹤',
     noContacts: '暫無聯繫人',
     noFollowing: '暫無追蹤',
     noFollowers: '暫無粉絲',

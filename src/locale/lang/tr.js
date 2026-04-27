@@ -17,6 +17,8 @@ export default {
     following: 'Takip',
     followers: 'Takipçiler',
     follow: 'Takip Et',
+    mutual: 'Karşılıklı',
+    unfollow: 'Takibi Bırak',
     noContacts: 'Son iletişim yok',
     noFollowing: 'Kimseyi takip etmiyor',
     noFollowers: 'Henüz takipçi yok',

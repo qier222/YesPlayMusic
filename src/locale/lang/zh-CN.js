@@ -17,6 +17,8 @@ export default {
     following: '关注',
     followers: '粉丝',
     follow: '关注',
+    mutual: '已互关',
+    unfollow: '取消关注',
     noContacts: '暂无联系人',
     noFollowing: '暂无关注',
     noFollowers: '暂无粉丝',

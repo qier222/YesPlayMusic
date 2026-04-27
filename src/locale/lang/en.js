@@ -17,6 +17,8 @@ export default {
     following: 'Following',
     followers: 'Followers',
     follow: 'Follow',
+    mutual: 'Mutual',
+    unfollow: 'Unfollow',
     noContacts: 'No recent contacts',
     noFollowing: 'Not following anyone',
     noFollowers: 'No followers yet',
