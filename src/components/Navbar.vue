@@ -28,7 +28,9 @@
         <router-link
           v-if="isLooseLoggedIn"
           to="/friends"
-          :class="{ active: $route.name === 'friends' || $route.name === 'messages' }"
+          :class="{
+            active: $route.name === 'friends' || $route.name === 'messages',
+          }"
           >{{ $t('nav.friends') }}</router-link
         >
       </div>

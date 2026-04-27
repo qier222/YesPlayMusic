@@ -222,8 +222,10 @@ export default {
       const now = new Date();
       const diff = now - date;
       if (diff < 60000) return this.$t('friends.justNow');
-      if (diff < 3600000) return `${Math.floor(diff / 60000)}${this.$t('friends.minutesAgo')}`;
-      if (diff < 86400000) return `${Math.floor(diff / 3600000)}${this.$t('friends.hoursAgo')}`;
+      if (diff < 3600000)
+        return `${Math.floor(diff / 60000)}${this.$t('friends.minutesAgo')}`;
+      if (diff < 86400000)
+        return `${Math.floor(diff / 3600000)}${this.$t('friends.hoursAgo')}`;
       return `${date.getMonth() + 1}/${date.getDate()}`;
     },
   },

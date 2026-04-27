@@ -4,11 +4,7 @@
       <button-icon class="back-btn" @click.native="goBack">
         <svg-icon icon-class="arrow-left" />
       </button-icon>
-      <img
-        class="avatar"
-        :src="avatarUrl | resizeImage"
-        loading="lazy"
-      />
+      <img class="avatar" :src="avatarUrl | resizeImage" loading="lazy" />
       <div class="user-info">
         <h2>{{ nickname }}</h2>
       </div>
@@ -33,7 +29,11 @@
             {{ msg.msg }}
           </div>
           <!-- 歌曲消息 -->
-          <div v-else-if="msg.type === 'song'" class="msg-song" @click="playSong(msg.song)">
+          <div
+            v-else-if="msg.type === 'song'"
+            class="msg-song"
+            @click="playSong(msg.song)"
+          >
             <img
               v-if="msg.song"
               class="song-cover"
@@ -41,13 +41,21 @@
               loading="lazy"
             />
             <div class="song-info">
-              <div class="song-name">{{ msg.song ? msg.song.name : $t('messages.song') }}</div>
-              <div class="song-artist">{{ msg.song && msg.song.artists ? msg.song.artists[0].name : '' }}</div>
+              <div class="song-name">{{
+                msg.song ? msg.song.name : $t('messages.song')
+              }}</div>
+              <div class="song-artist">{{
+                msg.song && msg.song.artists ? msg.song.artists[0].name : ''
+              }}</div>
             </div>
             <svg-icon icon-class="play" class="play-icon" />
           </div>
           <!-- 歌单消息 -->
-          <div v-else-if="msg.type === 'playlist'" class="msg-playlist" @click="goPlaylist(msg.playlist)">
+          <div
+            v-else-if="msg.type === 'playlist'"
+            class="msg-playlist"
+            @click="goPlaylist(msg.playlist)"
+          >
             <img
               v-if="msg.playlist"
               class="playlist-cover"
@@ -55,11 +63,17 @@
               loading="lazy"
             />
             <div class="playlist-info">
-              <div class="playlist-name">{{ msg.playlist ? msg.playlist.name : $t('messages.playlist') }}</div>
+              <div class="playlist-name">{{
+                msg.playlist ? msg.playlist.name : $t('messages.playlist')
+              }}</div>
             </div>
           </div>
           <!-- 专辑消息 -->
-          <div v-else-if="msg.type === 'album'" class="msg-album" @click="goAlbum(msg.album)">
+          <div
+            v-else-if="msg.type === 'album'"
+            class="msg-album"
+            @click="goAlbum(msg.album)"
+          >
             <img
               v-if="msg.album"
               class="album-cover"
@@ -67,7 +81,9 @@
               loading="lazy"
             />
             <div class="album-info">
-              <div class="album-name">{{ msg.album ? msg.album.name : $t('messages.album') }}</div>
+              <div class="album-name">{{
+                msg.album ? msg.album.name : $t('messages.album')
+              }}</div>
             </div>
           </div>
           <!-- 图片消息 -->
@@ -343,7 +359,7 @@ export default {
 
       .song-info,
       .playlist-info,
-        .album-info {
+      .album-info {
         flex: 1;
         min-width: 0;
 
