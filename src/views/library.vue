@@ -478,7 +478,7 @@ h1 {
       align-items: center;
       height: 44px;
       width: 44px;
-      background: var(--color-primary);
+      background: var(--color-primary-gradient);
       border-radius: 50%;
       transition: 0.2s;
       box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.2);

@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import state from './state';
 import mutations from './mutations';
 import actions from './actions';
-import { changeAppearance } from '@/utils/common';
+import { changeAppearance, changeThemeColor } from '@/utils/common';
 import Player from '@/utils/Player';
 // vuex 自定义插件
 import saveToLocalStorage from './plugins/localStorage';
@@ -42,12 +42,14 @@ if ([undefined, null].includes(store.state.settings.lang)) {
 }
 
 changeAppearance(store.state.settings.appearance);
+changeThemeColor(store.state.settings.themeColor);
 
 window
   .matchMedia('(prefers-color-scheme: dark)')
   .addEventListener('change', () => {
     if (store.state.settings.appearance === 'auto') {
       changeAppearance(store.state.settings.appearance);
+      changeThemeColor(store.state.settings.themeColor);
     }
   });
 

@@ -166,6 +166,13 @@ export default {
       light: '淺色',
       dark: '深色',
     },
+    themeColor: {
+      text: '主題顏色',
+      default: '原始顏色',
+      sunset: '日落漸變',
+      ocean: '海洋漸變',
+      forest: '森林漸變',
+    },
     trayIcon: {
       text: '工作列圖示顏色',
       auto: '自動',
