@@ -61,6 +61,11 @@ export function ipcRenderer(vueInstance) {
     player.volume -= 0.1;
   });
 
+  ipcRenderer.on('setVolume', (event, volume) => {
+    const nextVolume = Math.min(1, Math.max(0, Number(volume) || 0));
+    player.volume = nextVolume;
+  });
+
   ipcRenderer.on('like', () => {
     store.dispatch('likeATrack', player.currentTrack.id);
   });

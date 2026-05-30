@@ -1,5 +1,6 @@
 import { playlistCategories } from '@/utils/staticData';
 import shortcuts from '@/utils/shortcuts';
+import { DEFAULT_DESKTOP_LYRICS_SETTINGS } from '@/utils/desktopLyrics';
 
 console.debug('[debug][initLocalStorage.js]');
 const enabledPlaylistCategories = playlistCategories
@@ -22,6 +23,7 @@ let localStorage = {
     enableReversedMode: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
+    lyricType: 'translation',
     lyricsBackground: true,
     enableOsdlyricsSupport: false,
     closeAppOption: 'ask',
@@ -31,6 +33,7 @@ let localStorage = {
     subTitleDefault: false,
     linuxEnableCustomTitlebar: false,
     trayIconTheme: 'auto',
+    desktopLyrics: DEFAULT_DESKTOP_LYRICS_SETTINGS,
     enabledPlaylistCategories,
     proxyConfig: {
       protocol: 'noProxy',

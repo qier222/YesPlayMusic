@@ -168,6 +168,13 @@
           </div>
 
           <button-icon
+            v-if="isElectron"
+            :class="{ active: desktopLyricsActive }"
+            :title="$t('settings.desktopLyrics.toggle')"
+            @click.native="toggleDesktopLyrics"
+            ><svg-icon icon-class="desktop-lyrics"
+          /></button-icon>
+          <button-icon
             class="lyrics-button"
             title="歌词"
             style="margin-left: 12px"
@@ -188,6 +195,11 @@ import ButtonIcon from '@/components/ButtonIcon.vue';
 import VueSlider from 'vue-slider-component';
 import { goToListSource, hasListSource } from '@/utils/playList';
 import { formatTrackTime } from '@/utils/common';
+import { normalizeDesktopLyricsSettings } from '@/utils/desktopLyrics';
+
+const electron =
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
+const ipcRenderer = electron?.ipcRenderer;
 
 export default {
   name: 'Player',
@@ -215,6 +227,15 @@ export default {
     },
     playing() {
       return this.player.playing;
+    },
+    isElectron() {
+      return process.env.IS_ELECTRON === true;
+    },
+    desktopLyricsActive() {
+      const desktopLyrics = normalizeDesktopLyricsSettings(
+        this.settings.desktopLyrics
+      );
+      return desktopLyrics.enabled && desktopLyrics.visible;
     },
     audioSource() {
       return this.player._howler?._src.includes('kuwo.cn')
@@ -289,6 +310,9 @@ export default {
     },
     mute() {
       this.player.mute();
+    },
+    toggleDesktopLyrics() {
+      ipcRenderer?.send('desktop-lyrics:toggle');
     },
 
     setupMediaControls() {

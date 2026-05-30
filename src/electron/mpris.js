@@ -1,5 +1,5 @@
 import dbus from 'dbus-next';
-import { ipcMain, app } from 'electron';
+const { ipcMain, app } = require('electron');
 
 export function createMpris(window) {
   const Player = require('mpris-service');

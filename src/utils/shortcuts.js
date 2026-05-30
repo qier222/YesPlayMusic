@@ -44,4 +44,10 @@ export default [
     shortcut: 'CommandOrControl+M',
     globalShortcut: 'Alt+CommandOrControl+M',
   },
+  {
+    id: 'toggleDesktopLyrics',
+    name: '桌面歌词',
+    shortcut: '',
+    globalShortcut: 'Alt+CommandOrControl+D',
+  },
 ];

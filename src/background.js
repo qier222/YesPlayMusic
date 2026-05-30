@@ -1,5 +1,5 @@
 'use strict';
-import {
+const {
   app,
   protocol,
   BrowserWindow,
@@ -8,7 +8,7 @@ import {
   globalShortcut,
   nativeTheme,
   screen,
-} from 'electron';
+} = require('electron');
 import {
   isWindows,
   isMac,
@@ -17,7 +17,7 @@ import {
   isCreateTray,
   isCreateMpris,
 } from '@/utils/platform';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+import createProtocol from 'vue-cli-plugin-electron-builder/lib/createProtocol';
 import { startNeteaseMusicApi } from './electron/services';
 import { initIpcMain } from './electron/ipcMain.js';
 import { createMenu } from './electron/menu';
@@ -25,8 +25,8 @@ import { createTray } from '@/electron/tray';
 import { createTouchBar } from './electron/touchBar';
 import { createDockMenu } from './electron/dockMenu';
 import { registerGlobalShortcut } from './electron/globalShortcut';
+import { createDesktopLyricsManager } from './electron/desktopLyrics';
 import { autoUpdater } from 'electron-updater';
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { EventEmitter } from 'events';
 import express from 'express';
 import expressProxy from 'express-http-proxy';
@@ -94,6 +94,7 @@ class Background {
     this.neteaseMusicAPI = null;
     this.expressApp = null;
     this.willQuitApp = !isMac;
+    this.desktopLyrics = null;
 
     this.init();
   }
@@ -130,6 +131,9 @@ class Background {
   async initDevtools() {
     // Install Vue Devtools extension
     try {
+      const devtoolsInstaller = require('electron-devtools-installer');
+      const installExtension = devtoolsInstaller.default || devtoolsInstaller;
+      const { VUEJS_DEVTOOLS } = devtoolsInstaller;
       await installExtension(VUEJS_DEVTOOLS);
     } catch (e) {
       console.error('Vue Devtools failed to install:', e.toString());
@@ -396,7 +400,13 @@ class Background {
       }
 
       // init ipcMain
-      initIpcMain(this.window, this.store, this.trayEventEmitter);
+      this.desktopLyrics = createDesktopLyricsManager(this.window, this.store);
+      initIpcMain(
+        this.window,
+        this.store,
+        this.trayEventEmitter,
+        this.desktopLyrics
+      );
 
       // set proxy
       const proxyRules = this.store.get('proxy');
@@ -422,7 +432,16 @@ class Background {
 
       // register global shortcuts
       if (this.store.get('settings.enableGlobalShortcut') !== false) {
-        registerGlobalShortcut(this.window, this.store);
+        registerGlobalShortcut(this.window, this.store, this.desktopLyrics);
+      }
+
+      const desktopLyricsSettings = this.store.get('settings.desktopLyrics');
+      if (
+        desktopLyricsSettings &&
+        desktopLyricsSettings.enabled &&
+        desktopLyricsSettings.visible
+      ) {
+        this.desktopLyrics.show();
       }
 
       // try to start osdlyrics process on start
@@ -468,6 +487,9 @@ class Background {
     });
 
     app.on('quit', () => {
+      if (this.desktopLyrics) {
+        this.desktopLyrics.destroy();
+      }
       this.expressApp.close();
     });
 
@@ -477,7 +499,7 @@ class Background {
     });
 
     if (!isMac) {
-      app.on('second-instance', (e, cl, wd) => {
+      app.on('second-instance', () => {
         if (this.window) {
           this.window.show();
           if (this.window.isMinimized()) {

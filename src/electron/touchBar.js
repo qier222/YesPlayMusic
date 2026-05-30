@@ -1,8 +1,10 @@
 const { TouchBar, nativeImage, ipcMain } = require('electron');
-const { TouchBarButton, TouchBarSpacer } = TouchBar;
 const path = require('path');
 
 export function createTouchBar(window) {
+  if (!TouchBar) return null;
+
+  const { TouchBarButton, TouchBarSpacer } = TouchBar;
   const renderer = window.webContents;
 
   // Icon follow touchbar design guideline.

@@ -23,6 +23,9 @@ export default {
   updateSettings(state, { key, value }) {
     state.settings[key] = value;
   },
+  updateDesktopLyricsFromMain(state, value) {
+    state.settings.desktopLyrics = value;
+  },
   updateData(state, { key, value }) {
     state.data[key] = value;
   },

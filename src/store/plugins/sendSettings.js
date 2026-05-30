@@ -4,7 +4,7 @@ export function getSendSettingsPlugin() {
   return store => {
     store.subscribe((mutation, state) => {
       // console.log(mutation);
-      if (mutation.type !== 'updateSettings') return;
+      if (!['updateSettings', 'changeLang'].includes(mutation.type)) return;
       ipcRenderer.send('settings', state.settings);
     });
   };
