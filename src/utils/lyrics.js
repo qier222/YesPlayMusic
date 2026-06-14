@@ -25,7 +25,7 @@ const extractTimestampRegex =
  * @returns {ParsedLyric[]} The parsed lyric.
  * @example parseLyric("[00:00.00] Hello, World!\n[00:00.10] Test\n");
  */
-function parseLyric(lrc) {
+export function parseLyric(lrc) {
   /**
    * A sorted list of parsed lyric and its timestamp.
    *

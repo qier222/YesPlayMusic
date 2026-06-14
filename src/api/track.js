@@ -95,6 +95,39 @@ export function getLyric(id) {
 }
 
 /**
+ * 获取云盘歌曲内嵌歌词 * 说明 : 调用此接口 , 传入音乐 id 可获得云盘歌曲的内嵌歌词
+ * @param {number} songId - 音乐 id
+ * @param {number} userId - 用户 id
+ */
+export function getCloudLyric(songId, userId) {
+  const fetchLatest = () => {
+    return request({
+      url: '/api',
+      method: 'get',
+      params: {
+        uri: `/api/cloud/lyric/get`,
+        data: {
+          songId,
+          userId,
+          lv: '-1',
+          kv: '-1',
+        },
+        crypto: 'eapi',
+      },
+    }).then(result => {
+      cacheLyric(songId, result);
+      return result;
+    });
+  };
+
+  fetchLatest();
+
+  return getLyricFromCache(songId).then(result => {
+    return result ?? fetchLatest();
+  });
+}
+
+/**
  * 新歌速递
  * 说明 : 调用此接口 , 可获取新歌速递
  * @param {number} type - 地区类型 id, 对应以下: 全部:0 华语:7 欧美:96 日本:8 韩国:16
