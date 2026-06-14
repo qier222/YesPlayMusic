@@ -315,6 +315,10 @@ import { isAccountLoggedIn } from '@/utils/auth';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
 import locale from '@/locale';
 
+const electron =
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
+const ipcRenderer = electron?.ipcRenderer || null;
+
 export default {
   name: 'Lyrics',
   components: {
@@ -456,7 +460,10 @@ export default {
         this.setLyricsInterval();
         this.$store.commit('enableScrolling', false);
       } else {
-        clearInterval(this.lyricsInterval);
+        // 在 Electron 环境下，即使不显示歌词页面，也保持定时器运行以更新 Touch Bar
+        if (process.env.IS_ELECTRON !== true) {
+          clearInterval(this.lyricsInterval);
+        }
         this.$store.commit('enableScrolling', true);
       }
     },
@@ -465,6 +472,10 @@ export default {
     this.getLyric();
     this.getCoverColor();
     this.initDate();
+    // 在 Electron 环境下立即启动歌词定时器，以便 Touch Bar 可以显示歌词
+    if (process.env.IS_ELECTRON === true) {
+      this.setLyricsInterval();
+    }
     document.addEventListener('keydown', e => {
       if (e.key === 'F11') {
         e.preventDefault();
@@ -636,12 +647,27 @@ export default {
           );
         });
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
-          const el = document.getElementById(`line${this.highlightLyricIndex}`);
-          if (el)
-            el.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
-            });
+          // 只在显示歌词页面时才滚动
+          if (this.showLyrics) {
+            const el = document.getElementById(
+              `line${this.highlightLyricIndex}`
+            );
+            if (el)
+              el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+              });
+          }
+
+          // 发送当前歌词到主进程（用于 Touch Bar 显示）
+          if (ipcRenderer && this.highlightLyricIndex >= 0) {
+            const currentLyricLine = this.lyricToShow[this.highlightLyricIndex];
+            if (currentLyricLine && currentLyricLine.contents) {
+              // 只发送第一行歌词（原文），避免显示过长
+              const lyricText = currentLyricLine.contents[0] || '';
+              ipcRenderer.send('updateLyric', { lyric: lyricText });
+            }
+          }
         }
       }, 50);
     },
