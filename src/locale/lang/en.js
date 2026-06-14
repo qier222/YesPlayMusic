@@ -169,6 +169,13 @@ export default {
       light: 'Light',
       dark: 'Dark',
     },
+    themeColor: {
+      text: 'Theme Color',
+      default: 'Original',
+      sunset: 'Sunset Gradient',
+      ocean: 'Ocean Gradient',
+      forest: 'Forest Gradient',
+    },
     trayIcon: {
       text: 'Tray Icon Color',
       auto: 'Auto',

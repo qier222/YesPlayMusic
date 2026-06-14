@@ -170,6 +170,13 @@ export default {
       light: '浅色',
       dark: '深色',
     },
+    themeColor: {
+      text: '主题颜色',
+      default: '原始颜色',
+      sunset: '日落渐变',
+      ocean: '海洋渐变',
+      forest: '森林渐变',
+    },
     trayIcon: {
       text: '托盘图标颜色',
       auto: '自动',
