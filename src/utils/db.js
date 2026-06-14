@@ -30,6 +30,46 @@ db.version(1).stores({
 
 let tracksCacheBytes = 0;
 
+// 等待 settings 可用
+async function waitForSettingsReady(timeoutMs = 5000) {
+  const interval = 100;
+  const maxTries = Math.ceil(timeoutMs / interval);
+  let tries = 0;
+  while (
+    (store.state == null ||
+      store.state.settings == null ||
+      store.state.settings.cacheLimit === undefined) &&
+    tries < maxTries
+  ) {
+    await new Promise(resolve => setTimeout(resolve, interval));
+    tries++;
+  }
+  return store.state && store.state.settings;
+}
+
+// 初始化现有缓存总大小，确保应用启动时能正确判断并清理超限缓存
+async function initTracksCacheBytes() {
+  if (!process.env.IS_ELECTRON) return;
+  try {
+    await waitForSettingsReady();
+    const all = await db.trackSources.toArray();
+    tracksCacheBytes = all.reduce(
+      (sum, t) => sum + (t?.source?.byteLength || 0),
+      0
+    );
+    console.debug(
+      '[debug][db.js] initTracksCacheBytes, total bytes:',
+      tracksCacheBytes
+    );
+    deleteExcessCache();
+  } catch (err) {
+    console.debug('[debug][db.js] initTracksCacheBytes failed', err);
+  }
+}
+
+// 模块加载时触发初始化
+initTracksCacheBytes();
+
 async function deleteExcessCache() {
   if (
     store.state.settings.cacheLimit === false ||
