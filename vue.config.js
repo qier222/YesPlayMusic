@@ -7,6 +7,7 @@ function resolve(dir) {
 module.exports = {
   // 生产环境打包不输出 map
   productionSourceMap: false,
+  filenameHashing: false,
   devServer: {
     disableHostCheck: true,
     port: process.env.DEV_SERVER_PORT || 8080,
@@ -33,6 +34,12 @@ module.exports = {
     //   swSrc: "dev/sw.js",
     // },
   },
+  css: {
+    extract: {
+      filename: 'css/[name].css',
+      chunkFilename: 'css/[name].css',
+    },
+  },
   pages: {
     index: {
       entry: 'src/main.js',
@@ -40,6 +47,13 @@ module.exports = {
       filename: 'index.html',
       title: 'YesPlayMusic',
       chunks: ['main', 'chunk-vendors', 'chunk-common', 'index'],
+    },
+    desktopLyrics: {
+      entry: 'src/desktopLyrics.js',
+      template: 'public/index.html',
+      filename: 'desktopLyrics.html',
+      title: 'Desktop Lyrics',
+      chunks: ['chunk-vendors', 'chunk-common', 'desktopLyrics'],
     },
   },
   chainWebpack(config) {
@@ -70,7 +84,7 @@ module.exports = {
       .end()
       .use('esbuild-loader')
       .loader('esbuild-loader')
-      .options({ target: 'es2015', format: "cjs" })
+      .options({ target: 'es2015', format: 'cjs' })
       .end();
 
     // LimitChunkCountPlugin 可以通过合并块来对块进行后期处理。用以解决 chunk 包太多的问题
@@ -187,7 +201,7 @@ module.exports = {
           .end()
           .use('esbuild-loader')
           .loader('esbuild-loader')
-          .options({ target: 'es2015', format: "cjs" })
+          .options({ target: 'es2015', format: 'cjs' })
           .end();
       },
       // 渲染线程的配置文件

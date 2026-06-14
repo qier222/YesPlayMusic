@@ -1,6 +1,6 @@
 /* global __static */
 import path from 'path';
-import { app, nativeImage, Tray, Menu, nativeTheme } from 'electron';
+const { app, nativeImage, Tray, Menu, nativeTheme } = require('electron');
 import { isLinux } from '@/utils/platform';
 
 function createMenuTemplate(win) {

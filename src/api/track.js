@@ -8,6 +8,8 @@ import {
   getLyricFromCache,
 } from '@/utils/db';
 
+const lyricRequestCache = new Map();
+
 /**
  * 获取音乐 url
  * 说明 : 使用歌单详情接口后 , 能得到的音乐的 id, 但不能得到的音乐 url, 调用此接口, 传入的音乐 id( 可多个 , 用逗号隔开 ), 可以获取对应的音乐的 url,
@@ -74,6 +76,10 @@ export function getTrackDetail(ids) {
  * @param {number} id - 音乐 id
  */
 export function getLyric(id) {
+  if (lyricRequestCache.has(id)) {
+    return lyricRequestCache.get(id);
+  }
+
   const fetchLatest = () => {
     return request({
       url: '/lyric',
@@ -87,11 +93,20 @@ export function getLyric(id) {
     });
   };
 
-  fetchLatest();
+  const lyricRequest = getLyricFromCache(id)
+    .then(result => {
+      if (result) {
+        fetchLatest().catch(() => null);
+        return result;
+      }
+      return fetchLatest();
+    })
+    .finally(() => {
+      setTimeout(() => lyricRequestCache.delete(id), 5000);
+    });
 
-  return getLyricFromCache(id).then(result => {
-    return result ?? fetchLatest();
-  });
+  lyricRequestCache.set(id, lyricRequest);
+  return lyricRequest;
 }
 
 /**

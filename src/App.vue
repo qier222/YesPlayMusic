@@ -21,6 +21,7 @@
     <transition v-if="enablePlayer" name="slide-up">
       <Lyrics v-show="showLyrics" />
     </transition>
+    <DesktopLyricsBridge v-if="isElectron" />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import { ipcRenderer } from './electron/ipcRenderer';
 import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
 import { mapState } from 'vuex';
+import DesktopLyricsBridge from './components/DesktopLyricsBridge.vue';
 
 export default {
   name: 'App',
@@ -46,6 +48,7 @@ export default {
     ModalNewPlaylist,
     Lyrics,
     Scrollbar,
+    DesktopLyricsBridge,
   },
   data() {
     return {

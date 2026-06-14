@@ -202,6 +202,14 @@
                 <svg-icon icon-class="shuffle" />
               </button-icon>
               <button-icon
+                v-if="isElectron"
+                :title="$t('settings.desktopLyrics.toggle')"
+                :class="{ active: desktopLyricsActive }"
+                @click.native="toggleDesktopLyrics"
+              >
+                <svg-icon icon-class="desktop-lyrics" />
+              </button-icon>
+              <button-icon
                 v-show="
                   isShowLyricTypeSwitch &&
                   $store.state.settings.showLyricsTranslation &&
@@ -307,13 +315,18 @@ import VueSlider from 'vue-slider-component';
 import ContextMenu from '@/components/ContextMenu.vue';
 import { formatTrackTime } from '@/utils/common';
 import { getLyric } from '@/api/track';
-import { lyricParser, copyLyric } from '@/utils/lyrics';
+import { lyricParser, copyLyric, getCurrentLyricIndex } from '@/utils/lyrics';
 import ButtonIcon from '@/components/ButtonIcon.vue';
 import * as Vibrant from 'node-vibrant/dist/vibrant.worker.min.js';
 import Color from 'color';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
+import { normalizeDesktopLyricsSettings } from '@/utils/desktopLyrics';
 import locale from '@/locale';
+
+const electron =
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
+const ipcRenderer = electron?.ipcRenderer;
 
 export default {
   name: 'Lyrics',
@@ -328,7 +341,7 @@ export default {
       lyric: [],
       tlyric: [],
       romalyric: [],
-      lyricType: 'translation', // or 'romaPronunciation'
+      lyricType: this.$store.state.settings.lyricType || 'translation',
       highlightLyricIndex: -1,
       minimize: true,
       background: '',
@@ -358,6 +371,15 @@ export default {
     },
     isShowLyricTypeSwitch() {
       return this.romalyric.length > 0 && this.tlyric.length > 0;
+    },
+    isElectron() {
+      return process.env.IS_ELECTRON === true;
+    },
+    desktopLyricsActive() {
+      const desktopLyrics = normalizeDesktopLyricsSettings(
+        this.settings.desktopLyrics
+      );
+      return desktopLyrics.enabled && desktopLyrics.visible;
     },
     lyricToShow() {
       return this.lyricType === 'translation'
@@ -542,6 +564,9 @@ export default {
         this.player.playNextTrack();
       }
     },
+    toggleDesktopLyrics() {
+      ipcRenderer?.send('desktop-lyrics:toggle');
+    },
     getLyric() {
       if (!this.currentTrack.id) return;
       return getLyric(this.currentTrack.id).then(data => {
@@ -578,11 +603,19 @@ export default {
             this.tlyric = tlyric;
             this.romalyric = romalyric;
             if (tlyric.length * romalyric.length > 0) {
-              this.lyricType = 'translation';
+              this.lyricType = ['translation', 'romaPronunciation'].includes(
+                this.settings.lyricType
+              )
+                ? this.settings.lyricType
+                : 'translation';
             } else {
               this.lyricType =
                 lyric.length > 0 ? 'translation' : 'romaPronunciation';
             }
+            this.$store.commit('updateSettings', {
+              key: 'lyricType',
+              value: this.lyricType,
+            });
             return true;
           }
         }
@@ -591,6 +624,10 @@ export default {
     switchLyricType() {
       this.lyricType =
         this.lyricType === 'translation' ? 'romaPronunciation' : 'translation';
+      this.$store.commit('updateSettings', {
+        key: 'lyricType',
+        value: this.lyricType,
+      });
     },
     formatTrackTime(value) {
       return formatTrackTime(value);
@@ -629,12 +666,7 @@ export default {
       this.lyricsInterval = setInterval(() => {
         const progress = this.player.seek(null, false) ?? 0;
         let oldHighlightLyricIndex = this.highlightLyricIndex;
-        this.highlightLyricIndex = this.lyric.findIndex((l, index) => {
-          const nextLyric = this.lyric[index + 1];
-          return (
-            progress >= l.time && (nextLyric ? progress < nextLyric.time : true)
-          );
-        });
+        this.highlightLyricIndex = getCurrentLyricIndex(this.lyric, progress);
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
           const el = document.getElementById(`line${this.highlightLyricIndex}`);
           if (el)

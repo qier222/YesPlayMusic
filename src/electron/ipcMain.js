@@ -1,4 +1,4 @@
-import { app, dialog, globalShortcut, ipcMain } from 'electron';
+const { app, dialog, globalShortcut, ipcMain } = require('electron');
 import UNM from '@unblockneteasemusic/rust-napi';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
@@ -133,10 +133,14 @@ function parseSourceStringToList(executor, sourceString) {
     });
 }
 
-export function initIpcMain(win, store, trayEventEmitter) {
+export function initIpcMain(win, store, trayEventEmitter, desktopLyrics) {
   // WIP: Do not enable logging as it has some issues in non-blocking I/O environment.
   // UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
   const unmExecutor = new UNM.Executor();
+  let globalShortcutSignature = JSON.stringify({
+    enabled: store.get('settings.enableGlobalShortcut') !== false,
+    shortcuts: store.get('settings.shortcuts'),
+  });
 
   ipcMain.handle(
     'unblock-music',
@@ -227,11 +231,21 @@ export function initIpcMain(win, store, trayEventEmitter) {
 
   ipcMain.on('settings', (event, options) => {
     store.set('settings', options);
-    if (options.enableGlobalShortcut) {
-      registerGlobalShortcut(win, store);
-    } else {
-      log('unregister global shortcut');
-      globalShortcut.unregisterAll();
+    if (desktopLyrics) {
+      desktopLyrics.applySettings(options.desktopLyrics);
+    }
+    const nextGlobalShortcutSignature = JSON.stringify({
+      enabled: options.enableGlobalShortcut !== false,
+      shortcuts: options.shortcuts,
+    });
+    if (nextGlobalShortcutSignature !== globalShortcutSignature) {
+      globalShortcutSignature = nextGlobalShortcutSignature;
+      if (options.enableGlobalShortcut !== false) {
+        registerGlobalShortcut(win, store, desktopLyrics);
+      } else {
+        log('unregister global shortcut');
+        globalShortcut.unregisterAll();
+      }
     }
   });
 
@@ -273,7 +287,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
     );
   });
 
-  ipcMain.on('removeProxy', (event, arg) => {
+  ipcMain.on('removeProxy', () => {
     log('removeProxy');
     win.webContents.session.setProxy({});
     store.set('proxy', '');
@@ -284,7 +298,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
     if (status === 'disable') {
       globalShortcut.unregisterAll();
     } else {
-      registerGlobalShortcut(win, store);
+      registerGlobalShortcut(win, store, desktopLyrics);
     }
   });
 
@@ -297,7 +311,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
 
     createMenu(win, store);
     globalShortcut.unregisterAll();
-    registerGlobalShortcut(win, store);
+    registerGlobalShortcut(win, store, desktopLyrics);
   });
 
   ipcMain.on('restoreDefaultShortcuts', () => {
@@ -306,7 +320,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
 
     createMenu(win, store);
     globalShortcut.unregisterAll();
-    registerGlobalShortcut(win, store);
+    registerGlobalShortcut(win, store, desktopLyrics);
   });
 
   if (isCreateTray) {

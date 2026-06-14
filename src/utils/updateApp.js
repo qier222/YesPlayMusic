@@ -13,13 +13,11 @@ const updateSetting = () => {
   ) {
     // 当新增 shortcuts 时
     const oldShortcutsId = settings.shortcuts.map(s => s.id);
-    const newShortcutsId = initLocalStorage.settings.shortcuts.filter(
+    const newShortcuts = initLocalStorage.settings.shortcuts.filter(
       s => oldShortcutsId.includes(s.id) === false
     );
-    newShortcutsId.map(id => {
-      settings.shortcuts.push(
-        initLocalStorage.settings.shortcuts.find(s => s.id === id)
-      );
+    newShortcuts.forEach(shortcut => {
+      settings.shortcuts.push(shortcut);
     });
   }
 

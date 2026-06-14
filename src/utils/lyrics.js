@@ -8,6 +8,63 @@ export function lyricParser(lrc) {
   };
 }
 
+export function cleanupLyric(lyric, track = {}) {
+  let normalizedLyric = lyric.filter(
+    l => !/^作?词[曲]?\s*(:|：)?\s*无?/.exec(l.content)
+  );
+  const includePureMusic =
+    normalizedLyric.length <= 10 &&
+    normalizedLyric.map(l => l.content).includes('纯音乐，请欣赏');
+
+  if (!includePureMusic) return normalizedLyric;
+
+  const authorRegex = /^作?词[曲]?\s*(:|：)?\s*/;
+  const author = track?.ar?.[0]?.name;
+  normalizedLyric = normalizedLyric.filter(l => {
+    const regExpArr = l.content.match(authorRegex);
+    return !regExpArr || l.content.replace(regExpArr[0], '') !== author;
+  });
+
+  return normalizedLyric.length === 1 ? [] : normalizedLyric;
+}
+
+export function buildLyricWithSecondary(lyric, secondaryLyric) {
+  const lyricFiltered = lyric.filter(({ content }) => Boolean(content));
+  return lyricFiltered.map(l => {
+    const { rawTime, time, content } = l;
+    const lyricItem = { time, content, contents: [content] };
+    const sameTimeSecondaryLyric = secondaryLyric.find(
+      ({ rawTime: secondaryRawTime }) => secondaryRawTime === rawTime
+    );
+    if (sameTimeSecondaryLyric?.content) {
+      lyricItem.contents.push(sameTimeSecondaryLyric.content);
+    }
+    return lyricItem;
+  });
+}
+
+export function getCurrentLyricIndex(lyric, progress) {
+  return lyric.findIndex((l, index) => {
+    const nextLyric = lyric[index + 1];
+    return progress >= l.time && (nextLyric ? progress < nextLyric.time : true);
+  });
+}
+
+export function getCurrentLyricLine(lyricToShow, lyric, progress) {
+  if (lyricToShow.length === 0 || lyric.length === 0) return null;
+
+  let currentIndex = getCurrentLyricIndex(lyric, progress);
+  if (currentIndex < 0 && progress < lyric[0].time) {
+    currentIndex = 0;
+  }
+
+  return {
+    index: currentIndex,
+    currentLine: lyricToShow[currentIndex] || null,
+    nextLine: lyricToShow[currentIndex + 1] || null,
+  };
+}
+
 // regexr.com/6e52n
 const extractLrcRegex =
   /^(?<lyricTimestamps>(?:\[.+?\])+)(?!\[)(?<content>.+)$/gm;

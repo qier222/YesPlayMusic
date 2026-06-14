@@ -263,6 +263,111 @@
           </select>
         </div>
       </div>
+      <template v-if="isElectron">
+        <h3>{{ $t('settings.desktopLyrics.title') }}</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title">{{ $t('settings.desktopLyrics.enable') }}</div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="desktop-lyrics-enabled"
+                v-model="desktopLyricsEnabled"
+                type="checkbox"
+              />
+              <label for="desktop-lyrics-enabled"></label>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">
+              {{ $t('settings.desktopLyrics.alwaysOnTop') }}
+            </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="desktop-lyrics-always-on-top"
+                v-model="desktopLyricsAlwaysOnTop"
+                type="checkbox"
+              />
+              <label for="desktop-lyrics-always-on-top"></label>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">{{ $t('settings.desktopLyrics.lock') }}</div>
+            <div class="description">
+              {{ $t('settings.desktopLyrics.lockDescription') }}
+            </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="desktop-lyrics-locked"
+                v-model="desktopLyricsLocked"
+                type="checkbox"
+              />
+              <label for="desktop-lyrics-locked"></label>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">{{ $t('settings.desktopLyrics.fontSize') }}</div>
+          </div>
+          <div class="right">
+            <input
+              v-model="desktopLyricsFontSizeInputValue"
+              class="text-input desktop-lyrics-number"
+              type="number"
+              min="18"
+              max="72"
+              @change="commitDesktopLyricsFontSize"
+              @blur="commitDesktopLyricsFontSize"
+              @keydown.enter.prevent="commitDesktopLyricsFontSize"
+            />
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">{{ $t('settings.desktopLyrics.opacity') }}</div>
+          </div>
+          <div class="right desktop-lyrics-range">
+            <input
+              v-model.number="desktopLyricsOpacity"
+              type="range"
+              min="0.3"
+              max="1"
+              step="0.01"
+            />
+            <span>{{ Math.round(desktopLyricsOpacity * 100) }}%</span>
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">
+              {{ $t('settings.desktopLyrics.currentColor') }}
+            </div>
+          </div>
+          <div class="right">
+            <input v-model="desktopLyricsCurrentColor" type="color" />
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">
+              {{ $t('settings.desktopLyrics.nextColor') }}
+            </div>
+          </div>
+          <div class="right">
+            <input v-model="desktopLyricsNextColor" type="color" />
+          </div>
+        </div>
+      </template>
       <div v-if="isElectron && isLinux" class="item">
         <div class="left">
           <div class="title">
@@ -793,6 +898,10 @@ import { auth as lastfmAuth } from '@/api/lastfm';
 import { changeAppearance, bytesToSize } from '@/utils/common';
 import { countDBSize, clearDB } from '@/utils/db';
 import pkg from '../../package.json';
+import {
+  normalizeDesktopLyricsSettings,
+  updateDesktopLyricsSettings,
+} from '@/utils/desktopLyrics';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -821,6 +930,8 @@ export default {
         recording: false,
       },
       recordedShortcut: [],
+      desktopLyricsFontSizeInput: '',
+      desktopLyricsFontSizeEditing: false,
     };
   },
   computed: {
@@ -951,6 +1062,74 @@ export default {
       },
       set(value) {
         this.$store.commit('changeLyricFontSize', value);
+      },
+    },
+    desktopLyrics() {
+      return normalizeDesktopLyricsSettings(this.settings.desktopLyrics);
+    },
+    desktopLyricsEnabled: {
+      get() {
+        return this.desktopLyrics.enabled && this.desktopLyrics.visible;
+      },
+      set(value) {
+        this.updateDesktopLyrics({
+          enabled: value,
+          visible: value,
+        });
+      },
+    },
+    desktopLyricsAlwaysOnTop: {
+      get() {
+        return this.desktopLyrics.alwaysOnTop;
+      },
+      set(value) {
+        this.updateDesktopLyrics({ alwaysOnTop: value });
+      },
+    },
+    desktopLyricsLocked: {
+      get() {
+        return this.desktopLyrics.locked;
+      },
+      set(value) {
+        this.updateDesktopLyrics({ locked: value });
+      },
+    },
+    desktopLyricsFontSizeInputValue: {
+      get() {
+        if (this.desktopLyricsFontSizeEditing) {
+          return this.desktopLyricsFontSizeInput;
+        }
+        return String(this.desktopLyrics.fontSize);
+      },
+      set(value) {
+        this.desktopLyricsFontSizeEditing = true;
+        this.desktopLyricsFontSizeInput = value;
+      },
+    },
+    desktopLyricsOpacity: {
+      get() {
+        return this.desktopLyrics.opacity;
+      },
+      set(value) {
+        this.updateDesktopLyrics({
+          opacity: Math.min(1, Math.max(0.3, Number(value) || 0.92)),
+        });
+      },
+    },
+    desktopLyricsCurrentColor: {
+      get() {
+        return this.desktopLyrics.currentColor;
+      },
+      set(value) {
+        this.updateDesktopLyrics({ currentColor: value });
+      },
+    },
+    desktopLyricsNextColor: {
+      get() {
+        return this.desktopLyrics.nextColor;
+      },
+      set(value) {
+        this.updateDesktopLyrics({ nextColor: value });
       },
     },
     outputDevice: {
@@ -1319,6 +1498,29 @@ export default {
   },
   methods: {
     ...mapActions(['showToast']),
+    updateDesktopLyrics(patch) {
+      this.$store.commit('updateSettings', {
+        key: 'desktopLyrics',
+        value: updateDesktopLyricsSettings(this.settings.desktopLyrics, patch),
+      });
+    },
+    commitDesktopLyricsFontSize() {
+      const rawValue = this.desktopLyricsFontSizeEditing
+        ? this.desktopLyricsFontSizeInput
+        : this.desktopLyrics.fontSize;
+      const numericValue = Number(rawValue);
+
+      this.desktopLyricsFontSizeEditing = false;
+      this.desktopLyricsFontSizeInput = '';
+
+      if (rawValue === '' || !Number.isFinite(numericValue)) {
+        return;
+      }
+
+      this.updateDesktopLyrics({
+        fontSize: Math.min(72, Math.max(18, Math.round(numericValue))),
+      });
+    },
     getAllOutputDevices() {
       navigator.mediaDevices.enumerateDevices().then(devices => {
         this.allOutputDevices = devices.filter(device => {
@@ -1624,6 +1826,10 @@ button {
 input.text-input.margin-right-0 {
   margin-right: 0;
 }
+input.text-input.desktop-lyrics-number {
+  width: 96px;
+  margin-right: 0;
+}
 input.text-input {
   background: var(--color-secondary-bg);
   border: none;
@@ -1640,6 +1846,26 @@ input::-webkit-inner-spin-button {
 }
 input[type='number'] {
   -moz-appearance: textfield;
+}
+input[type='color'] {
+  width: 52px;
+  height: 32px;
+  padding: 2px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-secondary-bg);
+}
+.desktop-lyrics-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 192px;
+  span {
+    min-width: 42px;
+    color: var(--color-text);
+    font-weight: 600;
+    opacity: 0.68;
+  }
 }
 
 #proxy-form,
