@@ -24,11 +24,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
           cache: 'yarn'
 
       - name: Install deps
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-engines
 
       - name: Install Linux system deps
         if: runner.os == 'Linux'
