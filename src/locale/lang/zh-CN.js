@@ -84,6 +84,12 @@ export default {
     login: '登录',
     loginWithEmail: '邮箱登录',
     loginWithPhone: '手机号登录',
+    webLogin: '网页登录',
+    openWebLogin: '打开网易云网页登录',
+    webLoginTip:
+      '在打开的网易云页面完成登录后，复制该页面的 Cookie 并粘贴到下方。',
+    cookiePlaceholder: '粘贴 MUSIC_U=...; __csrf=... 等网易云 Cookie',
+    cookieTip: '至少需要 MUSIC_U。Cookie 只会保存在本机浏览器和 localStorage。',
     notice: `YesPlayMusic 承诺不会保存你的任何账号信息到云端。<br />
       你的密码会在本地进行 MD5 加密后再传输到网易云 API。<br />
       YesPlayMusic 并非网易云官方网站，输入账号信息前请慎重考虑。 你也可以前往

@@ -1,4 +1,11 @@
-import { app, dialog, globalShortcut, ipcMain } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  session,
+} from 'electron';
 import UNM from '@unblockneteasemusic/rust-napi';
 import { registerGlobalShortcut } from '@/electron/globalShortcut';
 import cloneDeep from 'lodash/cloneDeep';
@@ -133,6 +140,15 @@ function parseSourceStringToList(executor, sourceString) {
     });
 }
 
+
+const getNeteaseCookieString = async loginSession => {
+  const cookies = await loginSession.cookies.get({
+    domain: 'music.163.com',
+  });
+
+  return cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ');
+};
+
 export function initIpcMain(win, store, trayEventEmitter) {
   // WIP: Do not enable logging as it has some issues in non-blocking I/O environment.
   // UNM.enableLogging(UNM.LoggingType.ConsoleEnv);
@@ -197,6 +213,76 @@ export function initIpcMain(win, store, trayEventEmitter) {
       }
     }
   );
+
+
+  ipcMain.handle('open-netease-web-login', async () => {
+    const loginSession = session.fromPartition('persist:netease-web-login');
+    const existingCookieString = await getNeteaseCookieString(loginSession);
+    if (existingCookieString.includes('MUSIC_U=')) {
+      return existingCookieString;
+    }
+
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const loginWindow = new BrowserWindow({
+        width: 960,
+        height: 720,
+        parent: win,
+        title: 'NetEase Web Login',
+        webPreferences: {
+          partition: 'persist:netease-web-login',
+          nodeIntegration: false,
+          contextIsolation: true,
+        },
+      });
+
+      const cleanup = () => {
+        loginSession.cookies.removeListener('changed', handleCookieChanged);
+        loginWindow.removeListener('closed', handleClosed);
+      };
+
+      const finish = cookieString => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        if (!loginWindow.isDestroyed()) loginWindow.close();
+        resolve(cookieString);
+      };
+
+      const fail = error => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(error);
+      };
+
+      const checkLoginCookie = async () => {
+        try {
+          const cookieString = await getNeteaseCookieString(loginSession);
+          if (cookieString.includes('MUSIC_U=')) finish(cookieString);
+        } catch (error) {
+          fail(error);
+        }
+      };
+
+      const handleCookieChanged = (_event, cookie) => {
+        if (cookie.domain?.includes('music.163.com')) {
+          checkLoginCookie();
+        }
+      };
+
+      const handleClosed = () => {
+        if (!settled) {
+          cleanup();
+          resolve('');
+        }
+      };
+
+      loginSession.cookies.on('changed', handleCookieChanged);
+      loginWindow.on('closed', handleClosed);
+      loginWindow.loadURL('https://music.163.com/#/login').catch(fail);
+    });
+  });
 
   ipcMain.on('close', e => {
     if (isMac) {
