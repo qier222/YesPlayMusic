@@ -28,13 +28,15 @@ console.log(
   'background:unset;color:unset;'
 );
 
-Vue.use(
-  VueGtag,
-  {
-    config: { id: 'G-KMJJCFZDKF' },
-  },
-  router
-);
+if (process.env.NODE_ENV === 'production') {
+  Vue.use(
+    VueGtag,
+    {
+      config: { id: 'G-KMJJCFZDKF' },
+    },
+    router
+  );
+}
 Vue.config.productionTip = false;
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 100 });

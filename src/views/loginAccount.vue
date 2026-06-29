@@ -51,7 +51,7 @@
             </div>
           </div>
         </div>
-        <div v-show="mode !== 'qrCode'" class="input-box">
+        <div v-show="mode !== 'qrCode' && mode !== 'cookie'" class="input-box">
           <div class="container" :class="{ active: inputFocus === 'password' }">
             <svg-icon icon-class="lock" />
             <div class="inputs">
@@ -78,6 +78,26 @@
             {{ qrCodeInformation }}
           </div>
         </div>
+        <div v-show="mode === 'cookie'" class="cookie-login">
+          <button class="web-login-button" @click="loginWithWeb">
+            {{ $t('login.openWebLogin') }}
+          </button>
+          <div class="cookie-tip">
+            {{ $t('login.webLoginTip') }}
+          </div>
+          <textarea
+            v-model="cookieText"
+            :placeholder="$t('login.cookiePlaceholder')"
+            @focus="inputFocus = 'cookie'"
+            @blur="inputFocus = ''"
+          ></textarea>
+          <div class="cookie-tip">
+            {{ $t('login.cookieTip') }}
+          </div>
+          <div v-show="cookieError" class="cookie-error">
+            {{ cookieError }}
+          </div>
+        </div>
       </div>
       <div v-show="mode !== 'qrCode'" class="confirm">
         <button v-show="!processing" @click="login">
@@ -101,9 +121,13 @@
         <a v-show="mode !== 'qrCode'" @click="changeMode('qrCode')">
           二维码登录
         </a>
+        <span v-show="mode !== 'cookie'">|</span>
+        <a v-show="mode !== 'cookie'" @click="changeMode('cookie')">
+          {{ $t('login.webLogin') }}
+        </a>
       </div>
       <div
-        v-show="mode !== 'qrCode'"
+        v-show="mode !== 'qrCode' && mode !== 'cookie'"
         class="notice"
         v-html="isElectron ? $t('login.noticeElectron') : $t('login.notice')"
       ></div>
@@ -116,7 +140,8 @@ import QRCode from 'qrcode';
 import md5 from 'crypto-js/md5';
 import NProgress from 'nprogress';
 import { mapMutations } from 'vuex';
-import { setCookies } from '@/utils/auth';
+import { normalizeCookieString, removeCookie, setCookies } from '@/utils/auth';
+import { userAccountWithCookie } from '@/api/user';
 import nativeAlert from '@/utils/nativeAlert';
 import {
   loginWithPhone,
@@ -136,6 +161,8 @@ export default {
       email: '',
       password: '',
       smsCode: '',
+      cookieText: '',
+      cookieError: '',
       inputFocus: '',
       qrCodeKey: '',
       qrCodeSvg: '',
@@ -149,7 +176,9 @@ export default {
     },
   },
   created() {
-    if (['phone', 'email', 'qrCode'].includes(this.$route.query.mode)) {
+    if (
+      ['phone', 'email', 'qrCode', 'cookie'].includes(this.$route.query.mode)
+    ) {
       this.mode = this.$route.query.mode;
     }
     this.getQrCodeKey();
@@ -185,7 +214,9 @@ export default {
       return true;
     },
     login() {
-      if (this.mode === 'phone') {
+      if (this.mode === 'cookie') {
+        this.loginWithCookie();
+      } else if (this.mode === 'phone') {
         this.processing = this.validatePhone();
         if (!this.processing) return;
         loginWithPhone({
@@ -232,36 +263,109 @@ export default {
         nativeAlert(data.msg ?? data.message ?? '账号或密码错误，请检查');
       }
     },
-    getQrCodeKey() {
-      return loginQrCodeKey().then(result => {
-        if (result.code === 200) {
-          this.qrCodeKey = result.data.unikey;
-          QRCode.toString(
-            `https://music.163.com/login?codekey=${this.qrCodeKey}`,
-            {
-              width: 192,
-              margin: 0,
-              color: {
-                dark: '#335eea',
-                light: '#00000000',
-              },
-              type: 'svg',
+    loginWithCookie() {
+      if (!this.cookieText.includes('MUSIC_U=')) {
+        this.cookieError = 'Cookie 中缺少 MUSIC_U';
+        return;
+      }
+
+      this.processing = true;
+      this.cookieError = '';
+      const cookie = normalizeCookieString(this.cookieText);
+      userAccountWithCookie(cookie)
+        .then(result => {
+          if (!result?.profile?.userId) {
+            const message = result?.msg ?? result?.message ?? result?.code;
+            throw new Error(
+              message
+                ? `无法获取账号信息：${message}`
+                : '无法获取账号信息，请检查 Cookie 是否有效'
+            );
+          }
+
+          setCookies(cookie);
+          this.updateData({ key: 'loginMode', value: 'account' });
+          this.updateData({ key: 'user', value: result.profile });
+          return this.$store.dispatch('fetchLikedPlaylist');
+        })
+        .then(() => {
+          this.processing = false;
+          this.$router.push({ path: '/library' });
+        })
+        .catch(error => {
+          console.error('Cookie login failed', error);
+          this.processing = false;
+          this.cookieError = error.message ?? `Cookie 登录失败：${error}`;
+          this.updateData({ key: 'loginMode', value: null });
+          removeCookie('MUSIC_U');
+          removeCookie('__csrf');
+        });
+    },
+    loginWithWeb() {
+      if (!this.isElectron) {
+        window.open('https://music.163.com/#/login', '_blank', 'noopener');
+        return;
+      }
+
+      this.processing = true;
+      this.cookieError = '';
+      try {
+        const { ipcRenderer } = window.require('electron');
+        ipcRenderer
+          .invoke('open-netease-web-login')
+          .then(cookie => {
+            if (!cookie) {
+              this.processing = false;
+              return;
             }
-          )
-            .then(svg => {
-              this.qrCodeSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
-                svg
-              )}`;
-            })
-            .catch(err => {
-              console.error(err);
-            })
-            .finally(() => {
-              NProgress.done();
-            });
-        }
-        this.checkQrCodeLogin();
-      });
+
+            this.cookieText = cookie;
+            this.loginWithCookie();
+          })
+          .catch(error => {
+            this.processing = false;
+            this.cookieError = error.message ?? `网页登录失败：${error}`;
+          });
+      } catch (error) {
+        this.processing = false;
+        this.cookieError = `网页登录失败：${error}`;
+      }
+    },
+    getQrCodeKey() {
+      return loginQrCodeKey()
+        .then(result => {
+          if (result?.code === 200 && result?.data?.unikey) {
+            this.qrCodeKey = result.data.unikey;
+            QRCode.toString(
+              `https://music.163.com/login?codekey=${this.qrCodeKey}`,
+              {
+                width: 192,
+                margin: 0,
+                color: {
+                  dark: '#335eea',
+                  light: '#00000000',
+                },
+                type: 'svg',
+              }
+            )
+              .then(svg => {
+                this.qrCodeSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
+                  svg
+                )}`;
+              })
+              .catch(err => {
+                console.error(err);
+              })
+              .finally(() => {
+                NProgress.done();
+              });
+          }
+          this.checkQrCodeLogin();
+        })
+        .catch(error => {
+          this.cookieError = error?.message ?? `二维码登录初始化失败：${error}`;
+          NProgress.done();
+        });
     },
     checkQrCodeLogin() {
       // 清除二维码检测
@@ -487,5 +591,62 @@ button.loading {
   color: var(--color-text);
   text-align: center;
   margin-bottom: 28px;
+}
+.cookie-login {
+  width: 300px;
+
+  .web-login-button {
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: var(--color-primary-bg);
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s;
+
+    &:hover {
+      transform: scale(1.03);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 128px;
+    resize: vertical;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--color-secondary-bg);
+    color: var(--color-text);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  textarea:focus {
+    outline: none;
+    background: var(--color-primary-bg);
+  }
+
+  .cookie-tip {
+    margin-top: 8px;
+    color: var(--color-text);
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.58;
+  }
+
+  .cookie-error {
+    margin-top: 8px;
+    color: #e9546b;
+    font-size: 12px;
+    line-height: 1.5;
+  }
 }
 </style>

@@ -30,6 +30,25 @@ export function userAccount() {
     },
   });
 }
+/**
+ * 通过 Cookie 获取账号详情（网页登录）
+ * 说明 : 登录后调用此接口 ,可获取用户账号信息
+ * - cookie: 网易云 Cookie 字符串
+ * @param {string} cookie
+ */
+export function userAccountWithCookie(cookie) {
+  const data = new URLSearchParams();
+  data.set('cookie', cookie);
+
+  return request({
+    url: '/user/account',
+    method: 'post',
+    params: {
+      timestamp: new Date().getTime(),
+    },
+    data,
+  });
+}
 
 /**
  * 获取用户歌单

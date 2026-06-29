@@ -6,12 +6,20 @@ let baseURL = '';
 // Web 和 Electron 跑在不同端口避免同时启动时冲突
 if (process.env.IS_ELECTRON) {
   if (process.env.NODE_ENV === 'production') {
-    baseURL = process.env.VUE_APP_ELECTRON_API_URL;
+    baseURL = process.env.VUE_APP_ELECTRON_API_URL || '/api';
   } else {
-    baseURL = process.env.VUE_APP_ELECTRON_API_URL_DEV;
+    baseURL = process.env.VUE_APP_ELECTRON_API_URL_DEV || '/api';
   }
 } else {
-  baseURL = process.env.VUE_APP_NETEASE_API_URL;
+  baseURL = process.env.VUE_APP_NETEASE_API_URL || '/api';
+}
+
+function getSettings() {
+  try {
+    return JSON.parse(localStorage.getItem('settings')) || {};
+  } catch (error) {
+    return {};
+  }
 }
 
 const service = axios.create({
@@ -39,17 +47,16 @@ service.interceptors.request.use(function (config) {
   }
 
   // Force real_ip
-  const enableRealIP = JSON.parse(
-    localStorage.getItem('settings')
-  ).enableRealIP;
-  const realIP = JSON.parse(localStorage.getItem('settings')).realIP;
+  const settings = getSettings();
+  const enableRealIP = settings.enableRealIP;
+  const realIP = settings.realIP;
   if (process.env.VUE_APP_REAL_IP) {
     config.params.realIP = process.env.VUE_APP_REAL_IP;
   } else if (enableRealIP) {
     config.params.realIP = realIP;
   }
 
-  const proxy = JSON.parse(localStorage.getItem('settings')).proxyConfig;
+  const proxy = settings.proxyConfig || {};
   if (['HTTP', 'HTTPS'].includes(proxy.protocol)) {
     config.params.proxy = `${proxy.protocol}://${proxy.server}:${proxy.port}`;
   }
@@ -93,6 +100,8 @@ service.interceptors.response.use(
         router.push({ name: 'login' });
       }
     }
+
+    return Promise.reject(error);
   }
 );
 

@@ -121,9 +121,13 @@ export default {
       newAlbums({
         area: this.settings.musicLanguage ?? 'ALL',
         limit: 10,
-      }).then(data => {
-        this.newReleasesAlbum.items = data.albums;
-      });
+      })
+        .then(data => {
+          this.newReleasesAlbum.items = data?.albums ?? [];
+        })
+        .catch(() => {
+          this.newReleasesAlbum.items = [];
+        });
 
       const toplistOfArtistsAreaTable = {
         all: null,
@@ -134,22 +138,31 @@ export default {
       };
       toplistOfArtists(
         toplistOfArtistsAreaTable[this.settings.musicLanguage ?? 'all']
-      ).then(data => {
-        let indexs = [];
-        while (indexs.length < 6) {
-          let tmp = ~~(Math.random() * 100);
-          if (!indexs.includes(tmp)) indexs.push(tmp);
-        }
-        this.recommendArtists.indexs = indexs;
-        this.recommendArtists.items = data.list.artists.filter((l, index) =>
-          indexs.includes(index)
-        );
-      });
-      toplists().then(data => {
-        this.topList.items = data.list.filter(l =>
-          this.topList.ids.includes(l.id)
-        );
-      });
+      )
+        .then(data => {
+          let indexs = [];
+          while (indexs.length < 6) {
+            let tmp = ~~(Math.random() * 100);
+            if (!indexs.includes(tmp)) indexs.push(tmp);
+          }
+          this.recommendArtists.indexs = indexs;
+          const artists = data?.list?.artists ?? [];
+          this.recommendArtists.items = artists.filter((l, index) =>
+            indexs.includes(index)
+          );
+        })
+        .catch(() => {
+          this.recommendArtists.items = [];
+        });
+      toplists()
+        .then(data => {
+          this.topList.items = (data?.list ?? []).filter(l =>
+            this.topList.ids.includes(l.id)
+          );
+        })
+        .catch(() => {
+          this.topList.items = [];
+        });
       this.$refs.DailyTracksCard.loadDailyTracks();
     },
   },
