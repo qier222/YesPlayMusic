@@ -140,7 +140,6 @@ function parseSourceStringToList(executor, sourceString) {
     });
 }
 
-
 const getNeteaseCookieString = async loginSession => {
   const cookies = await loginSession.cookies.get({
     domain: 'music.163.com',
@@ -213,7 +212,6 @@ export function initIpcMain(win, store, trayEventEmitter) {
       }
     }
   );
-
 
   ipcMain.handle('open-netease-web-login', async () => {
     const loginSession = session.fromPartition('persist:netease-web-login');

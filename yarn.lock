@@ -1664,7 +1664,7 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@neteasecloudmusicapienhanced/api@^4.36.1":
+"@neteasecloudmusicapienhanced/api@^4.29.7":
   version "4.36.1"
   resolved "https://registry.yarnpkg.com/@neteasecloudmusicapienhanced/api/-/api-4.36.1.tgz#8492ed077c9c82a4aa013b3fe5819e7d585a2c7e"
   integrity sha512-Do677SCn+I62Sk+CWxQVinG8LRhD1qejrsNjoTT9twfU+JzdjK1VsYGR7k3IsEfPkZudKLdQUJq63ohfxQ5WPg==

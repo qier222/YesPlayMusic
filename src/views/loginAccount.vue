@@ -176,7 +176,9 @@ export default {
     },
   },
   created() {
-    if (['phone', 'email', 'qrCode', 'cookie'].includes(this.$route.query.mode)) {
+    if (
+      ['phone', 'email', 'qrCode', 'cookie'].includes(this.$route.query.mode)
+    ) {
       this.mode = this.$route.query.mode;
     }
     this.getQrCodeKey();
@@ -645,5 +647,4 @@ button.loading {
     line-height: 1.5;
   }
 }
-
 </style>
