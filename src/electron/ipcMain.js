@@ -264,7 +264,7 @@ export function initIpcMain(win, store, trayEventEmitter) {
       };
 
       const handleCookieChanged = (_event, cookie) => {
-        if (cookie.domain?.includes('music.163.com')) {
+        if (cookie.domain && cookie.domain.includes('music.163.com')) {
           checkLoginCookie();
         }
       };

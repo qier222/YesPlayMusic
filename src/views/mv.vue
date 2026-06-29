@@ -56,7 +56,7 @@ import MvRow from '@/components/MvRow.vue';
 import { mapActions } from 'vuex';
 
 export default {
-  name: 'mv',
+  name: 'Mv',
   components: {
     MvRow,
     ButtonIcon,

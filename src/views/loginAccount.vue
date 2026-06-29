@@ -332,35 +332,40 @@ export default {
       }
     },
     getQrCodeKey() {
-      return loginQrCodeKey().then(result => {
-        if (result.code === 200) {
-          this.qrCodeKey = result.data.unikey;
-          QRCode.toString(
-            `https://music.163.com/login?codekey=${this.qrCodeKey}`,
-            {
-              width: 192,
-              margin: 0,
-              color: {
-                dark: '#335eea',
-                light: '#00000000',
-              },
-              type: 'svg',
-            }
-          )
-            .then(svg => {
-              this.qrCodeSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
-                svg
-              )}`;
-            })
-            .catch(err => {
-              console.error(err);
-            })
-            .finally(() => {
-              NProgress.done();
-            });
-        }
-        this.checkQrCodeLogin();
-      });
+      return loginQrCodeKey()
+        .then(result => {
+          if (result?.code === 200 && result?.data?.unikey) {
+            this.qrCodeKey = result.data.unikey;
+            QRCode.toString(
+              `https://music.163.com/login?codekey=${this.qrCodeKey}`,
+              {
+                width: 192,
+                margin: 0,
+                color: {
+                  dark: '#335eea',
+                  light: '#00000000',
+                },
+                type: 'svg',
+              }
+            )
+              .then(svg => {
+                this.qrCodeSvg = `data:image/svg+xml;utf8,${encodeURIComponent(
+                  svg
+                )}`;
+              })
+              .catch(err => {
+                console.error(err);
+              })
+              .finally(() => {
+                NProgress.done();
+              });
+          }
+          this.checkQrCodeLogin();
+        })
+        .catch(error => {
+          this.cookieError = error?.message ?? `二维码登录初始化失败：${error}`;
+          NProgress.done();
+        });
     },
     checkQrCodeLogin() {
       // 清除二维码检测
