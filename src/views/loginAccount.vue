@@ -286,14 +286,11 @@ export default {
           setCookies(cookie);
           this.updateData({ key: 'loginMode', value: 'account' });
           this.updateData({ key: 'user', value: result.profile });
+          return this.$store.dispatch('fetchLikedPlaylist');
+        })
+        .then(() => {
           this.processing = false;
           this.$router.push({ path: '/library' });
-          this.$store.dispatch('fetchLikedPlaylist').catch(error => {
-            console.warn(
-              'Failed to fetch liked playlists after cookie login',
-              error
-            );
-          });
         })
         .catch(error => {
           console.error('Cookie login failed', error);
