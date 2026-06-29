@@ -2,6 +2,8 @@ name: Release
 
 env:
   YARN_INSTALL_NOPT: yarn add --ignore-platform --ignore-optional --ignore-engines
+  ELECTRON_MIRROR: https://npmmirror.com/mirrors/electron/
+  ELECTRON_BUILDER_BINARIES_MIRROR: https://npmmirror.com/mirrors/electron-builder-binaries/
 
 on:
   push:
