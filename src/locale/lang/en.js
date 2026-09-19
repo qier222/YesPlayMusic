@@ -133,6 +133,7 @@ export default {
     logout: 'LOGOUT',
     language: 'Languages',
     lyric: 'Lyric',
+    cache: 'Cache',
     others: 'Others',
     customization: 'Customization',
     MusicGenrePreference: {

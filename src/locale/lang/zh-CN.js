@@ -134,6 +134,7 @@ export default {
     logout: '登出',
     language: '语言',
     lyric: '歌词',
+    cache: '缓存',
     others: '其他',
     customization: '自定义',
     MusicGenrePreference: {

@@ -128,6 +128,7 @@ export default {
     logout: 'ÇIKIŞ YAP',
     language: 'Diller',
     lyric: 'Şarkı Sözleri',
+    cache: 'Önbellek',
     others: 'Diğerleri',
     customization: 'Özelleştirme',
     MusicGenrePreference: {
