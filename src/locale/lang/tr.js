@@ -183,6 +183,7 @@ export default {
     clearSongsCache: 'Müzik çerezlerini temizle',
     cacheCount: 'Çerezlenen {song} Müzikler ({size})',
     showLyricsTranslation: 'Müzik sözlerinin çevirilerini göster',
+    lyricsZoomActive: 'Aktif sözü büyüt',
     showPlaylistsByAppleMusic: "Apple Music'in Çalma Listelerini Göster",
     enableDiscordRichPresence: 'Discord gösterimini aktifleştir',
     showLibraryDefault: 'Kitaplık Varsayılanını göster',

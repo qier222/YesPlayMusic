@@ -23,6 +23,7 @@ let localStorage = {
     enableReversedMode: false,
     nyancatStyle: false,
     showLyricsTranslation: true,
+    lyricsZoomActive: true,
     lyricsBackground: true,
     enableOsdlyricsSupport: false,
     closeAppOption: 'ask',

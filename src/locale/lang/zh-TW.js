@@ -185,6 +185,7 @@ export default {
     clearSongsCache: '清除歌曲快取',
     cacheCount: '已快取 {song} 首 ({size})',
     showLyricsTranslation: '顯示歌詞翻譯',
+    lyricsZoomActive: '放大目前播放歌詞',
     minimizeToTray: '最小化到工作列角落',
     showPlaylistsByAppleMusic: '首頁顯示來自 Apple Music 的歌單',
     enableDiscordRichPresence: '啟用 Discord Rich Presence',

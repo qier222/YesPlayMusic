@@ -284,6 +284,22 @@
           </select>
         </div>
       </div>
+      <div class="item">
+        <div class="left">
+          <div class="title">{{ $t('settings.lyricsZoomActive') }}</div>
+        </div>
+        <div class="right">
+          <div class="toggle">
+            <input
+              id="lyrics-zoom-active"
+              v-model="lyricsZoomActive"
+              type="checkbox"
+              name="lyrics-zoom-active"
+            />
+            <label for="lyrics-zoom-active"></label>
+          </div>
+        </div>
+      </div>
       <div v-if="isElectron && isLinux" class="item">
         <div class="left">
           <div class="title">
@@ -1087,6 +1103,17 @@ export default {
       set(value) {
         this.$store.commit('updateSettings', {
           key: 'lyricsBackground',
+          value,
+        });
+      },
+    },
+    lyricsZoomActive: {
+      get() {
+        return this.settings.lyricsZoomActive !== false;
+      },
+      set(value) {
+        this.$store.commit('updateSettings', {
+          key: 'lyricsZoomActive',
           value,
         });
       },

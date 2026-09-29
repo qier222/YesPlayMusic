@@ -188,6 +188,7 @@ export default {
     clearSongsCache: 'Clear Songs Cache',
     cacheCount: 'Cached {song} songs ({size})',
     showLyricsTranslation: 'Show lyrics translation',
+    lyricsZoomActive: 'Zoom active lyric',
     showPlaylistsByAppleMusic: 'Show playlists by Apple Music',
     enableDiscordRichPresence: 'Enable Discord Rich Presence',
     enableGlobalShortcut: 'Enable Global Shortcut',

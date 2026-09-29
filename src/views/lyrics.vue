@@ -2,7 +2,10 @@
   <transition name="slide-up">
     <div
       class="lyrics-page"
-      :class="{ 'no-lyric': noLyric || isCoverOnly }"
+      :class="{
+        'no-lyric': noLyric || isCoverOnly,
+        'zoom-active': settings.lyricsZoomActive !== false,
+      }"
       :data-theme="theme"
     >
       <div
@@ -1096,6 +1099,72 @@ export default {
 
   .lyrics-container .line:first-child {
     margin-top: 50vh;
+  }
+}
+
+// 放大当前播放歌词：其他歌词缩小并虚化，当前歌词放大发光
+.lyrics-page.zoom-active .right-side .lyrics-container {
+  max-width: 780px;
+  padding-right: 64px;
+
+  // 首尾的占位元素 (#line-1, #line-end) 不参与
+  .line:not(#line-1):not(#line-end) {
+    width: fit-content;
+    max-width: 86%;
+    margin: 4px 0;
+    padding: 12px 18px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    .content {
+      transform: scale(0.95);
+      filter: blur(1.2px);
+      opacity: 0.35;
+      text-shadow: 0 0 0 transparent;
+      transition: transform 0.56s cubic-bezier(0.25, 1, 0.5, 1),
+        filter 0.56s cubic-bezier(0.25, 1, 0.5, 1),
+        opacity 0.56s cubic-bezier(0.25, 1, 0.5, 1),
+        text-shadow 0.56s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform, opacity, filter;
+      backface-visibility: hidden;
+      -webkit-font-smoothing: subpixel-antialiased;
+    }
+
+    &:hover .content {
+      opacity: 0.72;
+      filter: blur(0.3px);
+      transform: scale(0.98);
+      cursor: pointer;
+    }
+
+    &.highlight .content {
+      transform: scale(1.14);
+      filter: blur(0);
+      opacity: 1;
+
+      span {
+        font-weight: 700;
+        letter-spacing: -0.015em;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.42),
+          0 0 22px rgba(255, 255, 255, 0.18), 0 2px 14px rgba(0, 0, 0, 0.35);
+      }
+
+      span.translation {
+        opacity: 0.88;
+        font-weight: 600;
+        letter-spacing: normal;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3),
+          0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+
+  @media (max-aspect-ratio: 10/9) {
+    max-width: 100%;
+  }
+
+  @media screen and (min-width: 1200px) {
+    max-width: 880px;
   }
 }
 
