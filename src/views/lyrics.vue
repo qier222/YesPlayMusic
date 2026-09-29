@@ -770,7 +770,7 @@ export default {
 }
 
 .lyrics-background {
-  filter: blur(50px) contrast(var(--contrast-lyrics-background))
+  filter: blur(42px) contrast(var(--contrast-lyrics-background))
     brightness(var(--brightness-lyrics-background));
   position: absolute;
   height: 100vh;
@@ -781,7 +781,7 @@ export default {
     z-index: 0;
     width: 140vw;
     height: 140vw;
-    opacity: 0.6;
+    opacity: 0.72;
     position: absolute;
     background-size: cover;
   }
@@ -796,21 +796,33 @@ export default {
     left: 0;
     bottom: 0;
     animation-direction: reverse;
-    animation-delay: 10s;
+    animation-delay: 6s;
   }
 }
 
 .dynamic-background > div {
-  animation: rotate 150s linear infinite;
+  animation: rotate 38s ease-in-out infinite;
 }
 
 @keyframes rotate {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(1) translate(0, 0);
+  }
+
+  25% {
+    transform: rotate(90deg) scale(1.08) translate(-2vw, 2vw);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.14) translate(-1vw, -2vw);
+  }
+
+  75% {
+    transform: rotate(270deg) scale(1.06) translate(2vw, -1vw);
   }
 
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scale(1) translate(0, 0);
   }
 }
 
@@ -1179,9 +1191,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 0.28;
+  opacity: 0.4;
   transition: 0.2s;
   -webkit-app-region: no-drag;
+  cursor: pointer;
+
+  // 让整个按钮区域都显示手型光标，点击由外层元素处理
+  button,
+  .svg-icon {
+    pointer-events: none;
+  }
 
   .svg-icon {
     color: var(--color-text);
@@ -1192,7 +1211,7 @@ export default {
 
   &:hover {
     background: var(--color-secondary-bg-for-transparent);
-    opacity: 0.88;
+    opacity: 0.95;
   }
 }
 
