@@ -2,7 +2,7 @@
   <transition name="slide-up">
     <div
       class="lyrics-page"
-      :class="{ 'no-lyric': noLyric }"
+      :class="{ 'no-lyric': noLyric || isCoverOnly }"
       :data-theme="theme"
     >
       <div
@@ -35,7 +35,13 @@
           <div v-if="settings.showLyricsTime" class="date">
             {{ date }}
           </div>
-          <div class="cover">
+          <div
+            class="cover"
+            :title="
+              isCoverOnly ? $t('player.showLyrics') : $t('player.coverOnly')
+            "
+            @click="toggleCoverOnly"
+          >
             <div class="cover-container">
               <img :src="imageUrl" loading="lazy" />
               <div
@@ -230,7 +236,7 @@
       <div class="right-side">
         <transition name="slide-fade">
           <div
-            v-show="!noLyric"
+            v-show="!noLyric && !isCoverOnly"
             ref="lyricsContainer"
             class="lyrics-container"
             :style="lyricFontSize"
@@ -340,6 +346,7 @@ export default {
       background: '',
       date: this.formatTime(new Date()),
       isFullscreen: !!document.fullscreenElement,
+      isCoverOnly: false, // 只显示封面，隐藏歌词
       rightClickLyric: null,
     };
   },
@@ -475,6 +482,17 @@ export default {
       if (e.key === 'F11') {
         e.preventDefault();
         this.fullscreen();
+      }
+      // 歌词页显示时按 C 切换只显示封面 (不响应输入框和 Cmd/Ctrl+C 复制)
+      if (
+        e.key?.toLowerCase() === 'c' &&
+        this.showLyrics &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey &&
+        !['INPUT', 'TEXTAREA'].includes(e.target.tagName)
+      ) {
+        this.toggleCoverOnly();
       }
     });
     document.addEventListener('fullscreenchange', () => {
@@ -672,14 +690,24 @@ export default {
           );
         });
         if (oldHighlightLyricIndex !== this.highlightLyricIndex) {
-          const el = document.getElementById(`line${this.highlightLyricIndex}`);
-          if (el)
-            el.scrollIntoView({
-              behavior: 'smooth',
-              block: 'center',
-            });
+          this.scrollToHighlightLyric();
         }
       }, 50);
+    },
+    scrollToHighlightLyric() {
+      const el = document.getElementById(`line${this.highlightLyricIndex}`);
+      if (el)
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+    },
+    toggleCoverOnly() {
+      this.isCoverOnly = !this.isCoverOnly;
+      if (!this.isCoverOnly) {
+        // 歌词被隐藏期间 scrollIntoView 不会生效，重新显示后把当前歌词滚到中间
+        this.$nextTick(() => setTimeout(this.scrollToHighlightLyric, 120));
+      }
     },
     moveToFMTrash() {
       this.player.moveToFMTrash();
@@ -947,6 +975,16 @@ export default {
 
 .cover {
   position: relative;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 
   .cover-container {
     position: relative;

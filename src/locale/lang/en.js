@@ -115,6 +115,8 @@ export default {
     nextUp: 'Next Up',
     translationLyric: 'lyric (trans)',
     PronunciationLyric: 'lyric (pronounce)',
+    showLyrics: 'Show lyrics (shortcut: C)',
+    coverOnly: 'Show the cover only (shortcut: C)',
   },
   modal: {
     close: 'Close',

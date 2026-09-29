@@ -116,6 +116,8 @@ export default {
     nextUp: '播放列表',
     translationLyric: '歌词(译)',
     PronunciationLyric: '歌词(音)',
+    showLyrics: '点击显示歌词 (快捷键 C)',
+    coverOnly: '点击仅显示封面 (快捷键 C)',
   },
   modal: {
     close: '关闭',

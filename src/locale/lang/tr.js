@@ -110,6 +110,8 @@ export default {
     nextUp: 'Sıradaki',
     translationLyric: 'şarkı sözleri (çeviri)',
     PronunciationLyric: 'şarkı sözleri (çeviri)',
+    showLyrics: 'Şarkı sözlerini göster (kısayol: C)',
+    coverOnly: 'Yalnızca kapağı göster (kısayol: C)',
   },
   modal: {
     close: 'Kapat',

@@ -112,6 +112,8 @@ export default {
     nextUp: '播放清單',
     translationLyric: '歌詞(譯)',
     PronunciationLyric: '歌詞(音)',
+    showLyrics: '點擊顯示歌詞 (快捷鍵 C)',
+    coverOnly: '點擊僅顯示封面 (快捷鍵 C)',
   },
   modal: {
     close: '關閉',
