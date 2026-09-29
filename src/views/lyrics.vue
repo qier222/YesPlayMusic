@@ -265,6 +265,7 @@
                 >
               </div>
             </div>
+            <div id="line-end" class="line"></div>
             <ContextMenu v-if="!noLyric" ref="lyricMenu">
               <div class="item" @click="copyLyric(false)">{{
                 $t('contextMenu.copyLyric')
@@ -1001,8 +1002,18 @@ export default {
       }
     }
 
-    .line#line-1:hover {
+    .line#line-1:hover,
+    .line#line-end:hover {
       background: unset;
+    }
+
+    // 底部留白，让最后几句歌词也能滚动到屏幕中间。
+    // 不能用 .line:last-child，因为最后一个子元素是右键菜单 (ContextMenu)
+    .line#line-end {
+      flex-shrink: 0;
+      height: 50vh;
+      margin: 0;
+      padding: 0;
     }
 
     .translation {
@@ -1029,10 +1040,6 @@ export default {
 
   .lyrics-container .line:first-child {
     margin-top: 50vh;
-  }
-
-  .lyrics-container .line:last-child {
-    margin-bottom: calc(50vh - 128px);
   }
 }
 
