@@ -309,10 +309,20 @@ export default class {
     );
     const trackDuration = ~~(track.dt / 1000);
     time = completed ? trackDuration : ~~time;
+
+    // 一次播放只上报一次：歌曲自然播完时会先走 _nextTrackCallback，
+    // 紧接着切歌又会走 _replaceCurrentTrack，两边都会调用到这里。
+    // 没有真正播放过的歌曲 (时长为 0) 也不需要上报。
+    const howler = this._howler;
+    if (howler?._scrobbled || time < 1) return;
+    if (howler) howler._scrobbled = true;
+
     scrobble({
       id: track.id,
       sourceid: this.playlistSource.id,
       time,
+    }).catch(error => {
+      console.debug('[debug][Player.js] scrobble failed', error);
     });
     if (
       store.state.lastfm.key !== undefined &&
