@@ -225,6 +225,14 @@ export function initIpcMain(win, store, trayEventEmitter) {
     win.isMaximized() ? win.unmaximize() : win.maximize();
   });
 
+  ipcMain.on('fullscreen', () => {
+    win.setFullScreen(!win.isFullScreen());
+  });
+
+  ipcMain.handle('isFullscreen', () => {
+    return win.isFullScreen();
+  });
+
   ipcMain.on('settings', (event, options) => {
     store.set('settings', options);
     if (options.enableGlobalShortcut) {

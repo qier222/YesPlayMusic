@@ -315,6 +315,11 @@ import { isAccountLoggedIn } from '@/utils/auth';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
 import locale from '@/locale';
 
+const electron =
+  process.env.IS_ELECTRON === true ? window.require('electron') : null;
+const ipcRenderer =
+  process.env.IS_ELECTRON === true ? electron.ipcRenderer : null;
+
 export default {
   name: 'Lyrics',
   components: {
@@ -474,6 +479,15 @@ export default {
     document.addEventListener('fullscreenchange', () => {
       this.isFullscreen = !!document.fullscreenElement;
     });
+    if (ipcRenderer) {
+      // 系统全屏不会触发 fullscreenchange，需要由主进程告知窗口的全屏状态
+      ipcRenderer.on('isFullscreen', (_, value) => {
+        this.isFullscreen = value;
+      });
+      ipcRenderer.invoke('isFullscreen').then(value => {
+        this.isFullscreen = value;
+      });
+    }
   },
   beforeDestroy: function () {
     if (this.timer) {
@@ -506,6 +520,10 @@ export default {
       );
     },
     fullscreen() {
+      if (ipcRenderer) {
+        ipcRenderer.send('fullscreen');
+        return;
+      }
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else {

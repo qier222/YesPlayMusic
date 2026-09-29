@@ -341,6 +341,23 @@ class Background {
       this.window.webContents.send('isMaximized', false);
     });
 
+    // 系统全屏 (enter-full-screen) 和网页全屏 (enter-html-full-screen) 都要通知渲染进程
+    this.window.on('enter-full-screen', () => {
+      this.window.webContents.send('isFullscreen', true);
+    });
+
+    this.window.on('leave-full-screen', () => {
+      this.window.webContents.send('isFullscreen', false);
+    });
+
+    this.window.on('enter-html-full-screen', () => {
+      this.window.webContents.send('isFullscreen', true);
+    });
+
+    this.window.on('leave-html-full-screen', () => {
+      this.window.webContents.send('isFullscreen', false);
+    });
+
     this.window.webContents.on('new-window', function (e, url) {
       e.preventDefault();
       log('open url');
