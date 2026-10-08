@@ -104,6 +104,15 @@ module.exports = {
         directories: {
           output: 'dist_electron',
         },
+        // Ship the push daemon next to the app: it is a real binary, so it has
+        // to live outside the asar archive. Put ncm-castd(.exe) in ./bin first.
+        extraResources: [
+          {
+            from: 'bin',
+            to: '.',
+            filter: ['ncm-castd*', '*.dll'],
+          },
+        ],
         mac: {
           target: [
             {

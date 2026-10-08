@@ -144,6 +144,12 @@
             @click.native="switchReversed"
             ><svg-icon icon-class="sort-up"
           /></button-icon>
+          <button-icon
+            :class="{ active: castState.selected.length > 0 }"
+            title="推送到设备（DLNA / AirPlay / HEOS / QPlay）"
+            @click.native="toggleCast"
+            ><svg-icon icon-class="cast"
+          /></button-icon>
           <div class="volume-control">
             <button-icon :title="$t('player.mute')" @click.native="mute">
               <svg-icon v-show="volume > 0.5" icon-class="volume" />
@@ -188,6 +194,7 @@ import ButtonIcon from '@/components/ButtonIcon.vue';
 import VueSlider from 'vue-slider-component';
 import { goToListSource, hasListSource } from '@/utils/playList';
 import { formatTrackTime } from '@/utils/common';
+import { castState } from '@/utils/cast';
 
 export default {
   name: 'Player',
@@ -198,6 +205,7 @@ export default {
   data() {
     return {
       mouseDownTarget: null,
+      castState,
     };
   },
   computed: {
@@ -232,6 +240,9 @@ export default {
   methods: {
     ...mapMutations(['toggleLyrics']),
     ...mapActions(['showToast', 'likeATrack']),
+    toggleCast() {
+      castState.open = !castState.open;
+    },
     handleClick(event) {
       if (event.target == this.mouseDownTarget) {
         this.toggleLyrics();

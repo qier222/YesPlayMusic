@@ -19,6 +19,7 @@ import {
 } from '@/utils/platform';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { startNeteaseMusicApi } from './electron/services';
+import { startCastService, stopCastService } from './electron/castService';
 import { initIpcMain } from './electron/ipcMain.js';
 import { createMenu } from './electron/menu';
 import { createTray } from '@/electron/tray';
@@ -106,6 +107,9 @@ class Background {
 
     // start netease music api
     this.neteaseMusicAPI = startNeteaseMusicApi();
+
+    // start the DLNA/AirPlay/HEOS/QPlay push daemon (best effort)
+    this.castService = startCastService();
 
     // create Express app
     this.createExpressApp();
@@ -474,6 +478,8 @@ class Background {
     app.on('will-quit', () => {
       // unregister all global shortcuts
       globalShortcut.unregisterAll();
+      // stop the push daemon
+      stopCastService();
     });
 
     if (!isMac) {
