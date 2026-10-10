@@ -3,6 +3,16 @@
     <div class="special-playlist">
       <div class="title gradient"> 每日歌曲推荐 </div>
       <div class="subtitle">根据你的音乐口味生成 · 每天6:00更新</div>
+      <div class="buttons">
+        <ButtonTwoTone
+          class="play-button"
+          icon-class="play"
+          color="grey"
+          @click.native="playDailyTracks()"
+        >
+          {{ $t('common.play') }}
+        </ButtonTwoTone>
+      </div>
     </div>
 
     <TrackList
@@ -18,11 +28,13 @@ import { mapMutations, mapState } from 'vuex';
 import NProgress from 'nprogress';
 import { dailyRecommendTracks } from '@/api/playlist';
 
+import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
 import TrackList from '@/components/TrackList.vue';
 
 export default {
   name: 'DailyTracks',
   components: {
+    ButtonTwoTone,
     TrackList,
   },
   data() {
@@ -52,6 +64,15 @@ export default {
         NProgress.done();
         this.show = true;
       });
+    },
+    playDailyTracks() {
+      let trackIDs = this.dailyTracks.map(t => t.id);
+      this.$store.state.player.replacePlaylist(
+        trackIDs,
+        '/daily/songs',
+        'url',
+        this.dailyTracks[0].id
+      );
     },
   },
 };
