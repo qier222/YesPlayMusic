@@ -187,7 +187,7 @@ module.exports = [
   {
     identifier: 'scrobble',
     route: '/scrobble',
-    module: require('@neteaseapireborn/api/module/scrobble'),
+    module: require('./electron/scrobble'),
   },
   {
     identifier: 'recommend_songs',
