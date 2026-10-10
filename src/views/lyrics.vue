@@ -458,6 +458,11 @@ export default {
       } else {
         clearInterval(this.lyricsInterval);
         this.$store.commit('enableScrolling', true);
+        // Fullscreen is requested on documentElement, so it makes the whole
+        // window fullscreen. Since the only way to leave fullscreen from the
+        // UI lives on this page, closing it would leave the window stuck in
+        // fullscreen with no way out (minimize/restore stays fullscreen).
+        this.exitFullscreen();
       }
     },
   },
@@ -479,6 +484,7 @@ export default {
     if (this.timer) {
       clearInterval(this.timer);
     }
+    this.exitFullscreen();
   },
   destroyed() {
     clearInterval(this.lyricsInterval);
@@ -507,9 +513,14 @@ export default {
     },
     fullscreen() {
       if (document.fullscreenElement) {
-        document.exitFullscreen();
+        this.exitFullscreen();
       } else {
         document.documentElement.requestFullscreen();
+      }
+    },
+    exitFullscreen() {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
       }
     },
     addToPlaylist() {
