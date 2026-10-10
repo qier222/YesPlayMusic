@@ -139,8 +139,12 @@ module.exports = async query => {
     details.error = error.message || String(error);
   }
 
+  // 主进程由 webpack 4 打包，不支持 optional chaining。
   const succeeded =
-    details.startplay?.code === 200 && details.play?.code === 200;
+    !!details.startplay &&
+    details.startplay.code === 200 &&
+    !!details.play &&
+    details.play.code === 200;
   if (!succeeded) console.error('[scrobble] failed', id, details);
 
   // 上报失败不应该影响播放。这里不能把网易云返回的 301 直接透传给前端，
