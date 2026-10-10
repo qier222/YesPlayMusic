@@ -45,7 +45,20 @@
                 yarn
                 git
               ]
+              ++ lib.optionals stdenv.isLinux [
+                # deb/rpm/pacman targets; electron-builder's bundled fpm is x86-only.
+                fpm
+                rpm
+                libarchive
+              ]
               ++ lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.AppKit ];
+
+            env = {
+              # nixpkgs builds Node.js 16 against OpenSSL 3, which rejects the md4
+              # hash webpack 4 uses ("error:0308010C:digital envelope routines::unsupported").
+              NODE_OPTIONS = "--openssl-legacy-provider";
+            }
+            // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux { USE_SYSTEM_FPM = "true"; };
           };
         }
       );
