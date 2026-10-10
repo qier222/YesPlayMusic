@@ -130,6 +130,7 @@ export default {
     logout: '登出',
     language: '語言',
     lyric: '歌詞',
+    cache: '快取',
     others: '其他',
     customization: '自訂',
     MusicGenrePreference: {
