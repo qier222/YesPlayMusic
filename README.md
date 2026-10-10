@@ -53,7 +53,8 @@
   - YouTube 音源需自行安装 `yt-dlp`。
 - ~~✔️ 每日自动签到（手机端和电脑端同时签到）~~
 - 🌚 Light/Dark Mode 自动切换
-- 👆 支持 Touch Bar
+- 👆 支持 Touch Bar 歌词显示
+![Library][touchbar-screenshot]
 - 🖥️ 支持 PWA，可在 Chrome/Edge 里点击地址栏右边的 ➕ 安装到电脑
 - 🟥 支持 Last.fm Scrobble
 - ☁️ 支持音乐云盘
@@ -274,7 +275,7 @@ API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryif
 ![lyrics][lyrics-screenshot]
 ![library-dark][library-dark-screenshot]
 ![album][album-screenshot]
-![home-2][home-2-screenshot]
+![home-2][home-2-screens hot]
 ![artist][artist-screenshot]
 ![search][search-screenshot]
 ![home][home-screenshot]
@@ -292,3 +293,4 @@ API 源代码来自 [Binaryify/NeteaseCloudMusicApi](https://github.com/Binaryif
 [library-screenshot]: images/library.png
 [library-dark-screenshot]: images/library-dark.png
 [search-screenshot]: images/search.png
+[touchbar-screenshot]: images/touchbar.png 
