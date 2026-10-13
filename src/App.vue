@@ -16,6 +16,7 @@
       <Player v-if="enablePlayer" v-show="showPlayer" ref="player" />
     </transition>
     <Toast />
+    <CastDevices />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
     <ModalNewPlaylist v-if="isAccountLoggedIn" />
     <transition v-if="enablePlayer" name="slide-up">
@@ -31,6 +32,7 @@ import Scrollbar from './components/Scrollbar.vue';
 import Navbar from './components/Navbar.vue';
 import Player from './components/Player.vue';
 import Toast from './components/Toast.vue';
+import CastDevices from './components/CastDevices.vue';
 import { ipcRenderer } from './electron/ipcRenderer';
 import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
@@ -42,6 +44,7 @@ export default {
     Navbar,
     Player,
     Toast,
+    CastDevices,
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
     Lyrics,

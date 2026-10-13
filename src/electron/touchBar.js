@@ -1,8 +1,14 @@
-const { TouchBar, nativeImage, ipcMain } = require('electron');
-const { TouchBarButton, TouchBarSpacer, TouchBarLabel } = TouchBar;
+const { nativeImage, ipcMain } = require('electron');
 const path = require('path');
 
 export function createTouchBar(window) {
+  // TouchBar is macOS-only. `electron.TouchBar` is `undefined` on Windows/Linux,
+  // and the original code destructured it at module load — which crashed the main
+  // process on those platforms before the window could ever open. Guard it.
+  if (process.platform !== 'darwin') return null;
+  const { TouchBar } = require('electron');
+  const { TouchBarButton, TouchBarSpacer, TouchBarLabel } = TouchBar;
+
   const renderer = window.webContents;
 
   // Icon follow touchbar design guideline.

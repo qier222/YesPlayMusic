@@ -104,6 +104,15 @@ module.exports = {
         directories: {
           output: 'dist_electron',
         },
+        // 推送守护进程（ncm-castd）是真二进制，必须放在 asar 之外。
+        // 打包前把 ncm-castd / ncm-castd.exe（及所需 .dll）放进项目根目录的 bin/。
+        extraResources: [
+          {
+            from: 'bin',
+            to: '.',
+            filter: ['ncm-castd*', '*.dll'],
+          },
+        ],
         mac: {
           target: [
             {

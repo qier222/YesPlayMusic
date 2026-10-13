@@ -193,7 +193,7 @@ export default class {
     return this._personalFMTrack;
   }
   get currentTrackDuration() {
-    const trackDuration = this._currentTrack.dt || 1000;
+    const trackDuration = this._currentTrack?.dt || 1000;
     let duration = ~~(trackDuration / 1000);
     return duration > 1 ? duration - 1 : duration;
   }
@@ -217,10 +217,16 @@ export default class {
     this._howler?.volume(this.volume);
 
     if (this._enabled) {
-      // 恢复当前播放歌曲
-      this._replaceCurrentTrack(this.currentTrackID, false).then(() => {
-        this._howler?.seek(localStorage.getItem('playerCurrentTrackTime') ?? 0);
-      }); // update audio source and init howler
+      // 恢复当前播放歌曲。仅当上次保存的是「真实曲目」（有 id 且有名称）时才恢复：
+      // 构造函数里的占位曲目 { id: 86827685 } 早已下架，若无条件恢复会触发一次
+      // 必然失败的加载，表现为「一打开应用就在加载中」
+      if (this._currentTrack?.id && this._currentTrack?.name) {
+        this._replaceCurrentTrack(this.currentTrackID, false).then(() => {
+          this._howler?.seek(
+            localStorage.getItem('playerCurrentTrackTime') ?? 0
+          );
+        }); // update audio source and init howler
+      }
       this._initMediaSession();
     }
 
@@ -509,7 +515,16 @@ export default class {
       this._scrobble(this.currentTrack, this._howler?.seek());
     }
     return getTrackDetail(id).then(data => {
-      const track = data.songs[0];
+      const track = data.songs?.[0];
+      if (!track) {
+        // 歌曲已下架 / 无版权时接口返回空 songs，此处必须中止，
+        // 否则会把当前曲目清成 undefined，后续读 duration 直接抛
+        // TypeError，导致播放控件整体渲染失败而消失
+        console.debug(
+          `[debug][Player.js] 歌曲 ${id} 详情为空，已中止替换当前曲目`
+        );
+        return false;
+      }
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
       return this._replaceCurrentTrackAudio(
@@ -567,7 +582,8 @@ export default class {
     if (!nextTrackID) return;
     if (this._personalFMTrack.id == nextTrackID) return;
     getTrackDetail(nextTrackID).then(data => {
-      let track = data.songs[0];
+      let track = data.songs?.[0];
+      if (!track) return;
       this._getAudioSource(track);
     });
   }
@@ -922,6 +938,26 @@ export default class {
       let trackIDs = data.playlist.trackIds.map(t => t.id);
       this.replacePlaylist(trackIDs, id, 'playlist', trackID);
     });
+  }
+  /**
+   * 按指定播放模式播放一个歌单。
+   * ⚠️ 必须先退出私人 FM 再设置 shuffle / repeatMode：
+   * 这两个 setter 开头都有 `if (this._isPersonalFM) return` 的保护，
+   * 在私人 FM 模式下设置会被静默丢弃，表现为「点了没反应」。
+   */
+  playPlaylistByIDWithMode(
+    id,
+    {
+      shuffle = false,
+      repeatMode = 'on',
+      trackID = 'first',
+      noCache = false,
+    } = {}
+  ) {
+    this._isPersonalFM = false;
+    this.shuffle = shuffle;
+    this.repeatMode = repeatMode;
+    this.playPlaylistByID(id, trackID, noCache);
   }
   playArtistByID(id, trackID = 'first') {
     getArtist(id).then(data => {

@@ -1,6 +1,16 @@
 import store from '@/store';
+import * as cast from '@/utils/cast';
+import { castState } from '@/utils/cast';
 
 const player = store.state.player;
+
+// Menu items, MPRIS (Linux) and the registered media keys all land here. While
+// a device is selected the raw `player` methods only move the muted local
+// <audio>, so route the transport ones onto the device instead — otherwise
+// "pause" stops the silent local element and the speaker keeps playing.
+// Synchronous gate: `deviceTransport` is async, so `controlsDevice()` decides
+// whether this command belongs to the device or to the local element.
+const onDevice = () => cast.controlsDevice();
 
 export function ipcRenderer(vueInstance) {
   const self = vueInstance;
@@ -32,6 +42,17 @@ export function ipcRenderer(vueInstance) {
   });
 
   ipcRenderer.on('play', () => {
+    if (onDevice()) {
+      const wasPlaying = !!castState.active[cast.activeId()];
+      cast.deviceTransport('toggle', player.currentTrack).catch(() => {});
+      // Keep the muted conductor in lockstep so the queue keeps advancing.
+      if (wasPlaying) {
+        if (player.pause) player.pause();
+      } else if (player.play) {
+        player.play();
+      }
+      return;
+    }
     player.playOrPause();
   });
 
@@ -48,6 +69,10 @@ export function ipcRenderer(vueInstance) {
   });
 
   ipcRenderer.on('increaseVolume', () => {
+    if (onDevice()) {
+      cast.nudgeDeviceVolume(0.1);
+      return;
+    }
     if (player.volume + 0.1 >= 1) {
       return (player.volume = 1);
     }
@@ -55,6 +80,10 @@ export function ipcRenderer(vueInstance) {
   });
 
   ipcRenderer.on('decreaseVolume', () => {
+    if (onDevice()) {
+      cast.nudgeDeviceVolume(-0.1);
+      return;
+    }
     if (player.volume - 0.1 <= 0) {
       return (player.volume = 0);
     }

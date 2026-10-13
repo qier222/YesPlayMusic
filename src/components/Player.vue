@@ -9,15 +9,15 @@
       @click.stop
     >
       <vue-slider
-        v-model="player.progress"
+        v-model="progress"
         :min="0"
-        :max="player.currentTrackDuration"
+        :max="progressMax"
         :interval="1"
         :drag-on-click="true"
         :duration="0"
         :dot-size="12"
         :height="2"
-        :tooltip-formatter="formatTrackTime"
+        :tooltip-formatter="formatProgressTooltip"
         :lazy="true"
         :silent="true"
       ></vue-slider>
@@ -87,29 +87,30 @@
           /></button-icon>
           <button-icon
             class="play"
-            :title="$t(player.playing ? 'player.pause' : 'player.play')"
+            :title="$t(playing ? 'player.pause' : 'player.play')"
             @click.native="playOrPause"
           >
-            <svg-icon :icon-class="player.playing ? 'pause' : 'play'"
+            <svg-icon :icon-class="playing ? 'pause' : 'play'"
           /></button-icon>
           <button-icon :title="$t('player.next')" @click.native="playNextTrack"
             ><svg-icon icon-class="next"
           /></button-icon>
+          <span
+            v-if="isCastMode"
+            class="cast-badge"
+            :title="`${$t('cast.castingTo')}${castDeviceName}`"
+          >
+            <svg-icon icon-class="cast" />
+            <span class="cast-badge-name">{{ castDeviceName }}</span>
+          </span>
         </div>
         <div class="blank"></div>
       </div>
       <div class="right-control-buttons">
         <div class="blank"></div>
         <div class="container" @click.stop>
-          <button-icon
-            :title="$t('player.nextUp')"
-            :class="{
-              active: $route.name === 'next',
-              disabled: player.isPersonalFM,
-            }"
-            @click.native="goToNextTracksPage"
-            ><svg-icon icon-class="list"
-          /></button-icon>
+          <!-- 悬停显示当前播放队列浮窗，点击按钮仍跳转到完整的「播放列表」页 -->
+          <QueuePopover />
           <button-icon
             :class="{
               active: player.repeatMode !== 'off',
@@ -143,6 +144,14 @@
             :title="$t('player.reversed')"
             @click.native="switchReversed"
             ><svg-icon icon-class="sort-up"
+          /></button-icon>
+          <!-- 推送到设备：DLNA / AirPlay / HEOS / QPlay -->
+          <button-icon
+            :class="{ active: castState.selected.length > 0 }"
+            :title="$t('cast.title')"
+            :aria-pressed="castState.selected.length > 0"
+            @click.native="toggleCast"
+            ><svg-icon icon-class="cast"
           /></button-icon>
           <div class="volume-control">
             <button-icon :title="$t('player.mute')" @click.native="mute">
@@ -185,16 +194,23 @@ import { mapState, mapMutations, mapActions } from 'vuex';
 import '@/assets/css/slider.css';
 
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import QueuePopover from '@/components/QueuePopover.vue';
 import VueSlider from 'vue-slider-component';
 import { goToListSource, hasListSource } from '@/utils/playList';
 import { formatTrackTime } from '@/utils/common';
+import { castState } from '@/utils/cast';
+import castSync from '@/utils/castSync';
 
 export default {
   name: 'Player',
   components: {
     ButtonIcon,
     VueSlider,
+    QueuePopover,
   },
+  // Cast-aware `progress` / `progressMax` / `volume` / `playing`, shared with
+  // the lyrics page so both surfaces mirror the same device timeline.
+  mixins: [castSync],
   data() {
     return {
       mouseDownTarget: null,
@@ -204,17 +220,6 @@ export default {
     ...mapState(['player', 'settings', 'data']),
     currentTrack() {
       return this.player.currentTrack;
-    },
-    volume: {
-      get() {
-        return this.player.volume;
-      },
-      set(value) {
-        this.player.volume = value;
-      },
-    },
-    playing() {
-      return this.player.playing;
     },
     audioSource() {
       return this.player._howler?._src.includes('kuwo.cn')
@@ -232,6 +237,9 @@ export default {
   methods: {
     ...mapMutations(['toggleLyrics']),
     ...mapActions(['showToast', 'likeATrack']),
+    toggleCast() {
+      castState.open = !castState.open;
+    },
     handleClick(event) {
       if (event.target == this.mouseDownTarget) {
         this.toggleLyrics();
@@ -244,6 +252,12 @@ export default {
       this.player.playPrevTrack();
     },
     playOrPause() {
+      // In cast mode the button drives the remote renderer (and keeps the
+      // muted local element in lockstep so the timeline advances together).
+      if (this.isCastMode) {
+        this.castPlayOrPause();
+        return;
+      }
       this.player.playOrPause();
     },
     playNextTrack() {
@@ -288,6 +302,12 @@ export default {
       this.player.switchReversed();
     },
     mute() {
+      // While casting the volume control owns the speaker, not the local
+      // <audio> (which is already muted by the cast panel).
+      if (this.isCastMode) {
+        this.castMute();
+        return;
+      }
       this.player.mute();
     },
 
@@ -377,6 +397,34 @@ export default {
 
 .playing {
   display: flex;
+}
+
+.cast-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--color-primary-bg, #eaeffd);
+  color: var(--color-primary, #335eea);
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 180px;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  .svg-icon {
+    flex: none;
+    width: 13px;
+    height: 13px;
+  }
+
+  .cast-badge-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 
 .playing .container {

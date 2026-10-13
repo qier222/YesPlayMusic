@@ -37,3 +37,7 @@ vercel.json
 
 # pre-commit
 .pre-commit-config.yaml
+
+# ncm-cast 推送守护进程二进制（平台相关、体积大，由发布流程单独提供，
+# 不随仓库分发）。electron-builder 的 extraResources 会从这里取。
+bin/
