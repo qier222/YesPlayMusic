@@ -76,7 +76,7 @@
             type="range"
             min="0"
             max="100"
-            :value="vol[d.id] == null ? 50 : vol[d.id]"
+            :value="volumePercent"
             @change="setVolume(d.id, $event.target.value)"
           />
         </div>
@@ -107,7 +107,6 @@ export default {
     return {
       castState: cast.castState,
       busy: false,
-      vol: {},
       savedVolume: null,
       unsubscribe: null,
       // Per-device status polled from the daemon:
@@ -147,6 +146,13 @@ export default {
       return this.castState.direct
         ? this.$t('cast.directHintOn')
         : this.$t('cast.directHintOff');
+    },
+    // The one source of truth for cast volume is castState.volume (mirrored
+    // from the daemon and written by every control surface). This panel used
+    // to keep its own per-device copy, which started at a hard-coded 50 and
+    // never followed the main player's slider — the two bars disagreed.
+    volumePercent() {
+      return Math.round((this.castState.volume || 0) * 100);
     },
   },
   watch: {
@@ -363,8 +369,10 @@ export default {
       Vue.set(this.castState.active, id, false);
     },
     async setVolume(id, v) {
-      this.$set(this.vol, id, Number(v));
-      await cast.volume(id, Number(v));
+      // Route through the shared mirror so the main player's slider, the
+      // mute icon and every other surface move together; also applies to
+      // all selected devices, which is what a cast session means.
+      await cast.setDeviceVolume(Number(v) / 100);
     },
     /**
      * Poll the daemon for status of every selected device. Two consumers:

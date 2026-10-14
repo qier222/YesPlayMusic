@@ -195,8 +195,12 @@ export const status = id =>
       s.volume != null &&
       Date.now() - (castState.volumeSetAt || 0) > 1500
     ) {
-      castState.volume = s.volume / 100;
-      if (s.volume > 0) castState.lastVolume = s.volume / 100;
+      // A muted renderer keeps reporting its pre-mute level. Mirror it as 0
+      // anyway, otherwise the poll snaps the bar back to the old value and
+      // the main player's mute icon flickers off a second after muting.
+      const muted = !!s.muted;
+      castState.volume = muted ? 0 : s.volume / 100;
+      if (!muted && s.volume > 0) castState.lastVolume = s.volume / 100;
     }
     return s;
   });

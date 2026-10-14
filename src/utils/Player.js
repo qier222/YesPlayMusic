@@ -352,6 +352,12 @@ export default class {
       html5: true,
       preload: true,
       format: ['mp3', 'flac'],
+      // A fresh Howl starts at volume 1. The volume setter only reaches the
+      // CURRENT instance, so without this the local <audio> snapped back to
+      // full volume after every source change — while casting that meant the
+      // muted local conductor (volume 0) suddenly played out loud on the PC
+      // as soon as the next track was pushed or the source was reloaded.
+      volume: this.volume,
       onend: () => {
         this._nextTrackCallback();
       },
