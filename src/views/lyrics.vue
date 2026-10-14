@@ -126,23 +126,23 @@
               </div>
             </div>
             <div class="progress-bar">
-              <span>{{ formatTrackTime(player.progress) || '0:00' }}</span>
+              <span>{{ currentTimeLabel }}</span>
               <div class="slider">
                 <vue-slider
-                  v-model="player.progress"
+                  v-model="progress"
                   :min="0"
-                  :max="player.currentTrackDuration"
+                  :max="progressMax"
                   :interval="1"
                   :drag-on-click="true"
                   :duration="0"
                   :dot-size="12"
                   :height="2"
-                  :tooltip-formatter="formatTrackTime"
+                  :tooltip-formatter="formatProgressTooltip"
                   :lazy="true"
                   :silent="true"
                 ></vue-slider>
               </div>
-              <span>{{ formatTrackTime(player.currentTrackDuration) }}</span>
+              <span>{{ totalTimeLabel }}</span>
             </div>
             <div class="media-controls">
               <button-icon
@@ -181,10 +181,10 @@
                 </button-icon>
                 <button-icon
                   id="play"
-                  :title="$t(player.playing ? 'player.pause' : 'player.play')"
+                  :title="$t(playing ? 'player.pause' : 'player.play')"
                   @click.native="playOrPause"
                 >
-                  <svg-icon :icon-class="player.playing ? 'pause' : 'play'" />
+                  <svg-icon :icon-class="playing ? 'pause' : 'play'" />
                 </button-icon>
                 <button-icon
                   :title="$t('player.next')"
@@ -315,6 +315,7 @@ import Color from 'color';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { hasListSource, getListSourcePath } from '@/utils/playList';
 import locale from '@/locale';
+import castSync from '@/utils/castSync';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -327,6 +328,10 @@ export default {
     ButtonIcon,
     ContextMenu,
   },
+  // Same cast-aware `progress` / `volume` / `playing` the player bar uses:
+  // while a device is selected this page must mirror the device, otherwise its
+  // volume slider and play button silently drive the muted local <audio>.
+  mixins: [castSync],
   data() {
     return {
       lyricsInterval: null,
@@ -346,14 +351,6 @@ export default {
     ...mapState(['player', 'settings', 'showLyrics']),
     currentTrack() {
       return this.player.currentTrack;
-    },
-    volume: {
-      get() {
-        return this.player.volume;
-      },
-      set(value) {
-        this.player.volume = value;
-      },
     },
     imageUrl() {
       return this.player.currentTrack?.al?.picUrl + '?param=1024y1024';
@@ -556,6 +553,12 @@ export default {
       this.player.playPrevTrack();
     },
     playOrPause() {
+      // In cast mode the button drives the remote renderer, not the local
+      // (muted) <audio>.
+      if (this.isCastMode) {
+        this.castPlayOrPause();
+        return;
+      }
       this.player.playOrPause();
     },
     playNextTrack() {
@@ -728,6 +731,10 @@ export default {
       return getListSourcePath();
     },
     mute() {
+      if (this.isCastMode) {
+        this.castMute();
+        return;
+      }
       this.player.mute();
     },
   },

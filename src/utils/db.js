@@ -80,6 +80,9 @@ async function deleteExcessCache() {
   try {
     const delCache = await db.trackSources.orderBy('createTime').first();
     await db.trackSources.delete(delCache.id);
+    // 单消费者场景：只有 deleteExcessCache 会修改 tracksCacheBytes，
+    // await 之后读到的仍是最新值。此处为避免规则误报显式禁用。
+    // eslint-disable-next-line require-atomic-updates
     tracksCacheBytes -= delCache.source.byteLength;
     console.debug(
       `[debug][db.js] deleteExcessCacheSucces, track: ${delCache.name}, size: ${delCache.source.byteLength}, cacheSize:${tracksCacheBytes}`

@@ -6,6 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="referrer" content="no-referrer" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- theme-color is normally injected by @vue/cli-plugin-pwa's HtmlPwaPlugin;
+       electron builds skip that plugin (workbox is unusable here), so it must
+       live in the template or changeAppearance() crashes on a null meta and
+       the whole app never mounts (white screen). -->
+  <meta name="theme-color" content="#222" />
   <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
   <title>
     <%= htmlWebpackPlugin.options.title %>

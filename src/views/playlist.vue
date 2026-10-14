@@ -146,6 +146,20 @@
         />
         {{ data.user.nickname }}{{ $t('library.sLikedSongs') }}
       </h1>
+      <div class="liked-songs-actions">
+        <ButtonTwoTone
+          class="play-button"
+          icon-class="play"
+          @click.native="playPlaylistByID()"
+        >
+          {{ $t('player.play') }}
+        </ButtonTwoTone>
+        <PlayModeMenu
+          :playlist-id="playlist.id"
+          variant="tone"
+          :icon-button="true"
+        />
+      </div>
       <div class="search-box-likepage" @click="searchInPlaylist()">
         <div class="container" :class="{ active: inputFocus }">
           <svg-icon icon-class="search" />
@@ -232,6 +246,7 @@ import nativeAlert from '@/utils/nativeAlert';
 import locale from '@/locale';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
+import PlayModeMenu from '@/components/PlayModeMenu.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import TrackList from '@/components/TrackList.vue';
 import Cover from '@/components/Cover.vue';
@@ -336,6 +351,7 @@ export default {
     TrackList,
     Modal,
     ContextMenu,
+    PlayModeMenu,
   },
   directives: {
     focus: {
@@ -810,6 +826,13 @@ export default {
       border-radius: 50%;
       border: rgba(0, 0, 0, 0.2);
     }
+  }
+
+  .liked-songs-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
   }
 }
 

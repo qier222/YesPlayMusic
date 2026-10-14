@@ -17,8 +17,15 @@ import {
   isCreateTray,
   isCreateMpris,
 } from '@/utils/platform';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
+// Import createProtocol directly from its module (NOT the barrel
+// `vue-cli-plugin-electron-builder/lib`), because the barrel also re-exports
+// the deprecated `installVueDevtools`, whose top-level code calls
+// `electron.app.getPath('userData')`. On Electron 13 `remote` is gone and the
+// CJS interop leaves `.app` undefined, so merely loading the barrel crashes the
+// main process before `new Background()` ever runs — i.e. no window at all.
+import createProtocol from 'vue-cli-plugin-electron-builder/lib/createProtocol';
 import { startNeteaseMusicApi } from './electron/services';
+import { startCastService, stopCastService } from './electron/castService';
 import { initIpcMain } from './electron/ipcMain.js';
 import { createMenu } from './electron/menu';
 import { createTray } from '@/electron/tray';
@@ -106,6 +113,10 @@ class Background {
 
     // start netease music api
     this.neteaseMusicAPI = startNeteaseMusicApi();
+
+    // start the DLNA / AirPlay / HEOS / QPlay push daemon (best effort:
+    // a missing binary must never stop the player from starting)
+    this.castService = startCastService();
 
     // create Express app
     this.createExpressApp();
@@ -474,6 +485,8 @@ class Background {
     app.on('will-quit', () => {
       // unregister all global shortcuts
       globalShortcut.unregisterAll();
+      // stop the push daemon so it is never left orphaned
+      stopCastService();
     });
 
     if (!isMac) {

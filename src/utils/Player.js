@@ -193,7 +193,7 @@ export default class {
     return this._personalFMTrack;
   }
   get currentTrackDuration() {
-    const trackDuration = this._currentTrack.dt || 1000;
+    const trackDuration = this._currentTrack?.dt || 1000;
     let duration = ~~(trackDuration / 1000);
     return duration > 1 ? duration - 1 : duration;
   }
@@ -217,10 +217,16 @@ export default class {
     this._howler?.volume(this.volume);
 
     if (this._enabled) {
-      // 恢复当前播放歌曲
-      this._replaceCurrentTrack(this.currentTrackID, false).then(() => {
-        this._howler?.seek(localStorage.getItem('playerCurrentTrackTime') ?? 0);
-      }); // update audio source and init howler
+      // 恢复当前播放歌曲。仅当上次保存的是「真实曲目」（有 id 且有名称）时才恢复：
+      // 构造函数里的占位曲目 { id: 86827685 } 早已下架，若无条件恢复会触发一次
+      // 必然失败的加载，表现为「一打开应用就在加载中」
+      if (this._currentTrack?.id && this._currentTrack?.name) {
+        this._replaceCurrentTrack(this.currentTrackID, false).then(() => {
+          this._howler?.seek(
+            localStorage.getItem('playerCurrentTrackTime') ?? 0
+          );
+        }); // update audio source and init howler
+      }
       this._initMediaSession();
     }
 
@@ -346,6 +352,12 @@ export default class {
       html5: true,
       preload: true,
       format: ['mp3', 'flac'],
+      // A fresh Howl starts at volume 1. The volume setter only reaches the
+      // CURRENT instance, so without this the local <audio> snapped back to
+      // full volume after every source change — while casting that meant the
+      // muted local conductor (volume 0) suddenly played out loud on the PC
+      // as soon as the next track was pushed or the source was reloaded.
+      volume: this.volume,
       onend: () => {
         this._nextTrackCallback();
       },
@@ -509,7 +521,16 @@ export default class {
       this._scrobble(this.currentTrack, this._howler?.seek());
     }
     return getTrackDetail(id).then(data => {
-      const track = data.songs[0];
+      const track = data.songs?.[0];
+      if (!track) {
+        // 歌曲已下架 / 无版权时接口返回空 songs，此处必须中止，
+        // 否则会把当前曲目清成 undefined，后续读 duration 直接抛
+        // TypeError，导致播放控件整体渲染失败而消失
+        console.debug(
+          `[debug][Player.js] 歌曲 ${id} 详情为空，已中止替换当前曲目`
+        );
+        return false;
+      }
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
       return this._replaceCurrentTrackAudio(
@@ -567,7 +588,8 @@ export default class {
     if (!nextTrackID) return;
     if (this._personalFMTrack.id == nextTrackID) return;
     getTrackDetail(nextTrackID).then(data => {
-      let track = data.songs[0];
+      let track = data.songs?.[0];
+      if (!track) return;
       this._getAudioSource(track);
     });
   }
@@ -818,14 +840,28 @@ export default class {
   }
 
   pause() {
-    this._howler?.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
-
-    this._howler?.once('fade', () => {
-      this._howler?.pause();
+    const howler = this._howler;
+    if (!howler) return;
+    const finishPause = () => {
+      howler.pause();
       this._setPlaying(false);
       setTitle(null);
       this._pauseDiscordPresence(this._currentTrack);
-    });
+    };
+    // Howler's fade interval only emits 'fade' when to !== from (its
+    // completion check requires to < from or to > from), so fading 0 -> 0
+    // never fires the event. That is exactly the shape while casting: the
+    // local <audio> is muted to volume 0, so the fade never completed and
+    // the real pause() below never ran — the muted track kept playing to
+    // its end, onend fired and the queue advanced (and pushed the next
+    // track to the speaker) behind the user's back. Skip the fade when
+    // there is nothing to fade.
+    if (this.volume > 0 && howler.playing()) {
+      howler.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
+      howler.once('fade', finishPause);
+    } else {
+      finishPause();
+    }
   }
   play() {
     if (this._howler?.playing()) return;
@@ -833,7 +869,12 @@ export default class {
     this._howler?.play();
 
     this._howler?.once('play', () => {
-      this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
+      // Same from === to trap as in pause(): fading 0 -> 0 (muted local
+      // <audio> while casting) would also never complete, leaving a fade
+      // interval ticking forever.
+      if (this.volume > 0) {
+        this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
+      }
 
       // 播放时确保开启player.
       // 避免因"忘记设置"导致在播放时播放器不显示的Bug
@@ -922,6 +963,26 @@ export default class {
       let trackIDs = data.playlist.trackIds.map(t => t.id);
       this.replacePlaylist(trackIDs, id, 'playlist', trackID);
     });
+  }
+  /**
+   * 按指定播放模式播放一个歌单。
+   * ⚠️ 必须先退出私人 FM 再设置 shuffle / repeatMode：
+   * 这两个 setter 开头都有 `if (this._isPersonalFM) return` 的保护，
+   * 在私人 FM 模式下设置会被静默丢弃，表现为「点了没反应」。
+   */
+  playPlaylistByIDWithMode(
+    id,
+    {
+      shuffle = false,
+      repeatMode = 'on',
+      trackID = 'first',
+      noCache = false,
+    } = {}
+  ) {
+    this._isPersonalFM = false;
+    this.shuffle = shuffle;
+    this.repeatMode = repeatMode;
+    this.playPlaylistByID(id, trackID, noCache);
   }
   playArtistByID(id, trackID = 'first') {
     getArtist(id).then(data => {

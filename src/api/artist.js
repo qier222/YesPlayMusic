@@ -17,14 +17,14 @@ export function getArtist(id) {
       timestamp: new Date().getTime(),
     },
   }).then(async data => {
+    // 不在 await 之后修改外层 data 的属性（会触发 require-atomic-updates），
+    // 改为返回新对象，语义与原来完全等价
     if (!isAccountLoggedIn()) {
       const trackIDs = data.hotSongs.map(t => t.id);
       const tracks = await getTrackDetail(trackIDs.join(','));
-      data.hotSongs = tracks.songs;
-      return data;
+      return { ...data, hotSongs: tracks.songs };
     }
-    data.hotSongs = mapTrackPlayableStatus(data.hotSongs);
-    return data;
+    return { ...data, hotSongs: mapTrackPlayableStatus(data.hotSongs) };
   });
 }
 
