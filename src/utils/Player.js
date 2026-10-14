@@ -834,14 +834,28 @@ export default class {
   }
 
   pause() {
-    this._howler?.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
-
-    this._howler?.once('fade', () => {
-      this._howler?.pause();
+    const howler = this._howler;
+    if (!howler) return;
+    const finishPause = () => {
+      howler.pause();
       this._setPlaying(false);
       setTitle(null);
       this._pauseDiscordPresence(this._currentTrack);
-    });
+    };
+    // Howler's fade interval only emits 'fade' when to !== from (its
+    // completion check requires to < from or to > from), so fading 0 -> 0
+    // never fires the event. That is exactly the shape while casting: the
+    // local <audio> is muted to volume 0, so the fade never completed and
+    // the real pause() below never ran — the muted track kept playing to
+    // its end, onend fired and the queue advanced (and pushed the next
+    // track to the speaker) behind the user's back. Skip the fade when
+    // there is nothing to fade.
+    if (this.volume > 0 && howler.playing()) {
+      howler.fade(this.volume, 0, PLAY_PAUSE_FADE_DURATION);
+      howler.once('fade', finishPause);
+    } else {
+      finishPause();
+    }
   }
   play() {
     if (this._howler?.playing()) return;
@@ -849,7 +863,12 @@ export default class {
     this._howler?.play();
 
     this._howler?.once('play', () => {
-      this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
+      // Same from === to trap as in pause(): fading 0 -> 0 (muted local
+      // <audio> while casting) would also never complete, leaving a fade
+      // interval ticking forever.
+      if (this.volume > 0) {
+        this._howler?.fade(0, this.volume, PLAY_PAUSE_FADE_DURATION);
+      }
 
       // 播放时确保开启player.
       // 避免因"忘记设置"导致在播放时播放器不显示的Bug
