@@ -1,6 +1,10 @@
 .DS_Store
 node_modules
+# 上游使用 yarn（yarn.lock），npm 生成的 lock 文件不提交
+package-lock.json
 /dist
+# electron:build 的 modern 模式会往项目根目录泄漏一份 index.html 副本
+/index.html
 
 # local env files
 .env

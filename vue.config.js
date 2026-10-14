@@ -86,6 +86,13 @@ module.exports = {
     // electron-builder的配置文件
     electronBuilder: {
       nodeIntegration: true,
+      // 生产构建渲染层的 publicPath。
+      // 插件默认把它设为 'app://./' 并开启 modern 模式（产出
+      // <script type="module">），而本项目生产分支是 background.js 用
+      // http://localhost:27232 的 Express 加载文档的。改成 '/' 后文档与
+      // 所有资源同源于 27232，URL 形态与 dev 构建完全一致，少一个
+      // "只在生产出现" 的变量。/api 代理、动态 chunk、字体/图片引用均不受影响。
+      customFileProtocol: '/',
       externals: ['@unblockneteasemusic/rust-napi'],
       builderOptions: {
         productName: 'YesPlayMusic',
