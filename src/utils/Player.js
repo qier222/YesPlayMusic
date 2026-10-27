@@ -631,7 +631,7 @@ export default class {
         },
       ],
       length: this.currentTrackDuration,
-      trackId: this.current,
+      trackId: track.id,
       url: '/trackid/' + track.id,
     };
 
