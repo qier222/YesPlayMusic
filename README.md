@@ -80,6 +80,7 @@ Electron 版本由 [@hawtim](https://github.com/hawtim) 和 [@qier222](https://g
 - [algerkong/AlgerMusicPlayer](https://github.com/algerkong/AlgerMusicPlayer)
 - [asxez/MusicBox](https://github.com/asxez/MusicBox)
 - [lianchengwu/wmplayer](https://github.com/lianchengwu/wmplayer)
+- [alanwang233233/NextMusic](https://github.com/alanwang233233/NextMusic)
 
 ## ⚙️ 部署至 Vercel
 
