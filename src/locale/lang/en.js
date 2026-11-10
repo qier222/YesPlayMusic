@@ -87,6 +87,13 @@ export default {
     login: 'Login',
     loginWithEmail: 'Login with Email',
     loginWithPhone: 'Login with Phone',
+    webLogin: 'Web Login',
+    openWebLogin: 'Open NetEase Web Login',
+    webLoginTip:
+      'After logging in on the NetEase page, copy that page Cookie and paste it below.',
+    cookiePlaceholder: 'Paste NetEase Cookie such as MUSIC_U=...; __csrf=...',
+    cookieTip:
+      'MUSIC_U is required. Cookies are only stored in this browser and localStorage.',
     notice: `YesPlayMusic promises not to save any of your account information to the cloud.<br />
       Your password will be MD5 encrypted locally and then transmitted to NetEase Music API.<br />
       YesPlayMusic is not the official website of NetEase Music, please consider carefully before entering account information. You can also go to <a href="https://github.com/qier222/YesPlayMusic">YesPlayMusic's GitHub repository</a> to build and use the self-hosted NetEase Music API.`,

@@ -2,17 +2,61 @@ import Cookies from 'js-cookie';
 import { logout } from '@/api/auth';
 import store from '@/store';
 
+const cookieAttributes = new Set([
+  'domain',
+  'expires',
+  'httponly',
+  'max-age',
+  'path',
+  'samesite',
+  'secure',
+]);
+
+export function normalizeCookieString(string) {
+  const cookies = string.includes(';;')
+    ? string.split(';;')
+    : string.split(';');
+
+  return cookies
+    .map(cookie => {
+      const [rawKey, ...rawValue] = cookie.trim().split('=');
+      const key = rawKey?.trim();
+      const value = rawValue.join('=').trim();
+
+      if (!key || !value || cookieAttributes.has(key.toLowerCase())) {
+        return null;
+      }
+
+      return `${key}=${value}`;
+    })
+    .filter(Boolean)
+    .join('; ');
+}
+
 export function setCookies(string) {
-  const cookies = string.split(';;');
-  cookies.map(cookie => {
-    document.cookie = cookie;
-    const cookieKeyValue = cookie.split(';')[0].split('=');
-    localStorage.setItem(`cookie-${cookieKeyValue[0]}`, cookieKeyValue[1]);
+  const cookies = normalizeCookieString(string).split(';');
+
+  cookies.forEach(cookie => {
+    const [rawKey, ...rawValue] = cookie.trim().split('=');
+    const key = rawKey?.trim();
+    const value = rawValue.join('=').trim();
+
+    if (!key || !value || cookieAttributes.has(key.toLowerCase())) return;
+
+    document.cookie = `${key}=${value}; path=/`;
+    localStorage.setItem(`cookie-${key}`, value);
   });
 }
 
 export function getCookie(key) {
   return Cookies.get(key) ?? localStorage.getItem(`cookie-${key}`);
+}
+
+export function getCookieString() {
+  return Object.keys(localStorage)
+    .filter(key => key.startsWith('cookie-'))
+    .map(key => `${key.replace('cookie-', '')}=${localStorage.getItem(key)}`)
+    .join('; ');
 }
 
 export function removeCookie(key) {
