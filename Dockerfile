@@ -19,10 +19,10 @@ COPY --from=build /app/package.json /usr/local/lib/
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
   && apk add --no-cache libuv nodejs npm \
   && npm config set registry https://registry.npmmirror.com \
-  && npm i -g $(awk -F \" '{if($2=="@neteaseapireborn/api@latest") print $2"@"$4}' /usr/local/lib/package.json) \
+  && npm i -g $(awk -F \" '{if($2=="@neteasecloudmusicapienhanced/api@latest") print $2"@"$4}' /usr/local/lib/package.json) \
   && rm -f /usr/local/lib/package.json
 
 COPY --from=build /app/docker/nginx.conf.example /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
-CMD ["sh", "-c", "nginx && exec npx @neteaseapireborn/api@latest"]
+CMD ["sh", "-c", "nginx && exec npx @neteasecloudmusicapienhanced/api@latest"]
