@@ -29,19 +29,22 @@ export function getListSourcePath() {
 
 export async function getRecommendPlayList(limit, removePrivateRecommand) {
   if (isAccountLoggedIn()) {
-    const playlists = await Promise.all([
+    const playlists = await Promise.allSettled([
       dailyRecommendPlaylist(),
       recommendPlaylist({ limit }),
     ]);
-    let recommend = playlists[0].recommend ?? [];
+    const daily = playlists[0].status === 'fulfilled' ? playlists[0].value : {};
+    const personalized =
+      playlists[1].status === 'fulfilled' ? playlists[1].value : {};
+    let recommend = daily.recommend ?? [];
     if (recommend.length) {
       if (removePrivateRecommand) recommend = recommend.slice(1);
       await replaceRecommendResult(recommend);
     }
-    return recommend.concat(playlists[1].result).slice(0, limit);
+    return recommend.concat(personalized.result ?? []).slice(0, limit);
   } else {
-    const response = await recommendPlaylist({ limit });
-    return response.result;
+    const response = await recommendPlaylist({ limit }).catch(() => ({}));
+    return response.result ?? [];
   }
 }
 
