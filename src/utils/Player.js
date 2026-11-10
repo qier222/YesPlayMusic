@@ -232,11 +232,16 @@ export default class {
       this._personalFMNextTrack.id === 0 ||
       this._personalFMTrack.id === this._personalFMNextTrack.id
     ) {
-      personalFM().then(result => {
-        this._personalFMTrack = result.data[0];
-        this._personalFMNextTrack = result.data[1];
-        return this._personalFMTrack;
-      });
+      personalFM()
+        .then(result => {
+          if (!result?.data?.length) return this._personalFMTrack;
+          this._personalFMTrack = result.data[0];
+          this._personalFMNextTrack = result.data[1] ?? result.data[0];
+          return this._personalFMTrack;
+        })
+        .catch(() => {
+          return this._personalFMTrack;
+        });
     }
   }
   _setPlaying(isPlaying) {
