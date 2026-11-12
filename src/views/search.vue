@@ -160,7 +160,9 @@ export default {
           return { result: result.result, type };
         })
         .catch(err => {
-          showToast(err.response.data.msg || err.response.data.message);
+          // 兼容请求层把错误吞掉（resolve undefined）或抛出 AxiosError 两种情况
+          const data = err?.response?.data;
+          showToast(data?.msg || data?.message || '搜索失败，请稍候重试');
         });
     },
     getData() {
@@ -171,37 +173,47 @@ export default {
 
       const requestAll = requests => {
         const keywords = this.keywords;
-        Promise.all(requests).then(results => {
-          if (keywords != this.keywords) return;
-          results.map(result => {
-            const searchType = result.type;
-            if (result.result === undefined) return;
-            result = result.result;
-            switch (searchType) {
-              case 'all':
-                this.result = result;
-                break;
-              case 'musicVideos':
-                this.musicVideos = result.mvs ?? [];
-                break;
-              case 'artists':
-                this.artists = result.artists ?? [];
-                break;
-              case 'albums':
-                this.albums = result.albums ?? [];
-                break;
-              case 'tracks':
-                this.tracks = result.songs ?? [];
-                this.getTracksDetail();
-                break;
-              case 'playlists':
-                this.playlists = result.playlists ?? [];
-                break;
-            }
+        Promise.all(requests)
+          .then(results => {
+            if (keywords != this.keywords) return;
+            results.map(result => {
+              // 单个类型请求失败时 search() 会 resolve undefined，跳过它、
+              // 保留其余已成功的结果
+              if (!result || result.result === undefined) return;
+              const searchType = result.type;
+              result = result.result;
+              switch (searchType) {
+                case 'all':
+                  this.result = result;
+                  break;
+                case 'musicVideos':
+                  this.musicVideos = result.mvs ?? [];
+                  break;
+                case 'artists':
+                  this.artists = result.artists ?? [];
+                  break;
+                case 'albums':
+                  this.albums = result.albums ?? [];
+                  break;
+                case 'tracks':
+                  this.tracks = result.songs ?? [];
+                  this.getTracksDetail();
+                  break;
+                case 'playlists':
+                  this.playlists = result.playlists ?? [];
+                  break;
+              }
+            });
+            NProgress.done();
+            this.show = true;
+          })
+          .catch(() => {
+            // 即使全部请求失败，也要结束加载态并让页面显示出来，
+            // 否则 v-show="show" 会让整个搜索页保持空白
+            if (keywords != this.keywords) return;
+            NProgress.done();
+            this.show = true;
           });
-          NProgress.done();
-          this.show = true;
-        });
       };
 
       const requests = [
