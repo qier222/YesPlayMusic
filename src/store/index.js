@@ -31,7 +31,8 @@ if ([undefined, null].includes(store.state.settings.lang)) {
     .set('zh', 'zh-CN')
     .set('zh-TW', 'zh-TW')
     .set('en', 'en')
-    .set('tr', 'tr');
+    .set('tr', 'tr')
+    .set('es', 'es');
   store.state.settings.lang =
     langMapper.get(
       langMapper.has(navigator.language)

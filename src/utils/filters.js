@@ -29,6 +29,10 @@ Vue.filter('formatTime', (Milliseconds, format = 'HH:MM:SS') => {
         hoursUnit = '小時';
         minitesUnit = '分鐘';
         break;
+      case 'es':
+        hoursUnit = 'h';
+        minitesUnit = 'min';
+        break;
       default:
         hoursUnit = 'hr';
         minitesUnit = 'min';
@@ -44,6 +48,7 @@ Vue.filter('formatDate', (timestamp, format = 'MMM D, YYYY') => {
   if (!timestamp) return '';
   if (locale.locale === 'zh-CN') format = 'YYYY年MM月DD日';
   else if (locale.locale === 'zh-TW') format = 'YYYY年MM月DD日';
+  else if (locale.locale === 'es') format = 'DD/MM/YYYY';
   return dayjs(timestamp).format(format);
 });
 
