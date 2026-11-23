@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-## [3.0.0] - 未发布
+## [3.0.0] - 2026-11-24
 
 YesPlayMusic 用 Flutter 重写的第一个版本。
 
