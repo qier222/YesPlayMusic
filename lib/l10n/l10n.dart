@@ -5,7 +5,7 @@ import 'app_localizations.dart';
 
 export 'app_localizations.dart';
 
-/// 应用支持的语言选项（含「跟随系统」）。
+/// App language options (including "follow system").
 class AppLanguage {
   const AppLanguage({
     required this.code,
@@ -14,16 +14,16 @@ class AppLanguage {
     required this.bcp47,
   });
 
-  /// 持久化到 prefs.json 的标识。
+  /// Identifier persisted in prefs.json.
   final String code;
 
-  /// 原生语言名称；跟随系统为空（由当前语言翻译）。
+  /// Native language name; empty for follow system (translated in the current language).
   final String nativeName;
 
-  /// 传给 WidgetsApp.locale；跟随系统为 null。
+  /// Passed to WidgetsApp.locale; null for follow system.
   final Locale? locale;
 
-  /// 传给插件运行时（host.language()）的 BCP-47 标签；跟随系统按当前生效 locale 决定。
+  /// BCP-47 tag passed to the plugin runtime (host.language()); for follow system, decided by the effective locale.
   final String bcp47;
 
   static const system = AppLanguage(
@@ -98,7 +98,7 @@ class AppLanguage {
       code == 'system' ? l.langSystem : nativeName;
 }
 
-/// 将系统语言列表解析为应用支持的 Locale（繁中自动归到 zh_Hant，未知语言回退到 en）。
+/// Resolves the system language list to a supported Locale (Traditional Chinese maps to zh_Hant, unknown languages fall back to en).
 Locale resolveAppLocale(
   List<Locale>? locales,
   Iterable<Locale> supportedLocales,
@@ -121,7 +121,7 @@ Locale resolveAppLocale(
   return const Locale('en');
 }
 
-/// 将 Locale 转为给插件用的 BCP-47 标签。
+/// Converts a Locale into the BCP-47 tag used by plugins.
 String bcp47Of(Locale locale) {
   if (locale.languageCode == 'zh') {
     return locale.scriptCode == 'Hant' ? 'zh-TW' : 'zh-CN';
@@ -129,14 +129,14 @@ String bcp47Of(Locale locale) {
   return locale.languageCode;
 }
 
-/// 全局当前语言实例，供没有 BuildContext 的逻辑层（AppState、Updater、插件加载等）使用。
-/// 默认中文以兼容无 UI 环境的单元测试；在 WidgetsApp.builder 里会自动同步。
+/// Global current localizations, for logic without a BuildContext (AppState, Updater, plugin loading, etc.).
+/// Defaults to Chinese for unit tests without UI; synced automatically in WidgetsApp.builder.
 AppLocalizations L = lookupAppLocalizations(const Locale('zh'));
 
-/// 当前生效的 Locale，与 [L] 同步更新。
+/// The effective Locale, updated together with [L].
 Locale currentLocale = const Locale('zh');
 
-/// 生效语言变了（用户改了语言或系统语言变了）时调用，比如通知插件。
+/// Called when the effective language changes (user changed it or the system language changed), e.g. to notify plugins.
 void Function(Locale locale)? onGlobalLocaleChanged;
 
 void syncGlobalL10n(BuildContext context) {
@@ -147,7 +147,7 @@ void syncGlobalL10n(BuildContext context) {
   if (changed) onGlobalLocaleChanged?.call(loc);
 }
 
-/// [bcp47Of] 的反方向：插件 isolate 里用它挑同一种语言的文案。
+/// The reverse of [bcp47Of]: the plugin isolate uses it to pick strings in the same language.
 AppLocalizations l10nForTag(String tag) {
   final parts = tag.split(RegExp('[-_]'));
   final lang = parts.first.toLowerCase();
@@ -171,18 +171,18 @@ extension L10nX on BuildContext {
   AppLocalizations get l10n => AppLocalizations.of(this);
 }
 
-/// 首页大标题上方的日期行（跟随当前语言格式化）。
+/// Date line above the home page's large title (formatted for the current language).
 String formatHomeDate(DateTime d, Locale locale) {
   final tag = locale.toLanguageTag();
   try {
     return DateFormat.MMMMEEEEd(tag).format(d);
   } catch (_) {
-    // 日期数据没初始化（main 里 initializeDateFormatting）时只有 en_US 是内置的
+    // Without date data (initializeDateFormatting in main), only en_US is built in
     return DateFormat.MMMMEEEEd('en_US').format(d);
   }
 }
 
-/// 播放量 / 评论数缩写：中日韩用万/亿，其他语言用 K/M/B。
+/// Abbreviated play / comment counts: CJK uses 万/亿, English K/M/B, other languages their CLDR short forms.
 String formatShortCount(int n, Locale locale) {
   String one(double v) => v >= 10
       ? '${v.round()}'
@@ -204,12 +204,27 @@ String formatShortCount(int n, Locale locale) {
     if (n >= 10000) return '${one(n / 10000)}만';
     return '$n';
   }
+  if (lang != 'en') {
+    // Other languages use their own abbreviations and decimal separator
+    // (de 1,2 Mio., fr 1,2 M, ru 1,2 млн).
+    return NumberFormat.compact(locale: lang).format(n);
+  }
   if (n >= 1000000000) return '${one(n / 1000000000)}B';
   if (n >= 1000000) return '${one(n / 1000000)}M';
   if (n >= 1000) return '${one(n / 1000)}K';
   return '$n';
 }
 
-/// 列表分隔顿号/逗号（中日文用顿号，其他语言用 ", "）。
+/// Storage size such as "1.5 GB" or "320 MB", with the locale's decimal separator.
+String formatBytes(int bytes, Locale locale) {
+  final tag = locale.languageCode;
+  final gb = bytes / (1 << 30);
+  if (gb >= 1) return '${NumberFormat('0.0', tag).format(gb)} GB';
+  final mb = bytes / (1 << 20);
+  final n = mb < 10 ? NumberFormat('0.0', tag).format(mb) : '${mb.round()}';
+  return '$n MB';
+}
+
+/// List separator: the ideographic comma for Chinese and Japanese, ", " for other languages.
 String listJoiner(Locale locale) =>
     (locale.languageCode == 'zh' || locale.languageCode == 'ja') ? '、' : ', ';

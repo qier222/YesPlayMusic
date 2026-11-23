@@ -73,6 +73,15 @@ void main() {
     expect(formatShortCount(12500, const Locale('ko')), '1.3만');
     expect(formatShortCount(12500, const Locale('en')), '13K');
     expect(formatShortCount(1500000, const Locale('en')), '1.5M');
+    expect(formatShortCount(1200000, const Locale('de')), '1,2\u00A0Mio.');
+    expect(formatShortCount(1200000, const Locale('ru')), '1,2\u00A0млн');
+  });
+
+  test('formatBytes uses the locale decimal separator', () {
+    expect(formatBytes(3 << 29, const Locale('en')), '1.5 GB');
+    expect(formatBytes(3 << 29, const Locale('de')), '1,5 GB');
+    expect(formatBytes(5 << 20, const Locale('fr')), '5,0 MB');
+    expect(formatBytes(320 << 20, const Locale('zh')), '320 MB');
   });
 
   test('AppLanguage.byCode 与 bcp47Of 正确映射', () {

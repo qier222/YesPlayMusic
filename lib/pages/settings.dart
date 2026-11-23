@@ -646,12 +646,7 @@ class _About extends StatelessWidget {
   }
 }
 
-String _mb(int bytes) {
-  final gb = bytes / (1 << 30);
-  if (gb >= 1) return '${gb.toStringAsFixed(1)} GB';
-  final mb = bytes / (1 << 20);
-  return mb < 10 ? '${mb.toStringAsFixed(1)} MB' : '${mb.round()} MB';
-}
+String _mb(int bytes) => formatBytes(bytes, currentLocale);
 
 // Three colors in the cache bar: API, audio, images
 const _cacheApi = Color(0xFF2F7DE1);
