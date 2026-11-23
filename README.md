@@ -138,7 +138,7 @@ flutter test
 
 - 问题和建议请提 [Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
 - 安全问题请私下报告，见 [SECURITY.md](SECURITY.md)。
-- 本项目**不接受 Pull Request**，来自 fork 的 PR 会被自动关闭。
+- 本项目**不接受 Pull Request**。
 
 ## 协议
 
