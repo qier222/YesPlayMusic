@@ -1879,10 +1879,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get miniShuffleOn => '隨機播放：開';
 
   @override
-  String get miniRepeatOn => '列表循環';
+  String get miniRepeatOn => '重複播放全部';
 
   @override
-  String get miniRepeatOff => '不循環';
+  String get miniRepeatOff => '不重複播放';
 
   @override
   String get miniQueue => '播放佇列';
@@ -1989,7 +1989,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get shortcutMute => '靜音';
 
   @override
-  String get shortcutRepeat => '循環模式';
+  String get shortcutRepeat => '重複播放模式';
 
   @override
   String get shortcutLikeCurrent => '喜歡目前歌曲';
@@ -2110,16 +2110,16 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
-  String get aboutLogs => '日誌檔案';
+  String get aboutLogs => '記錄檔';
 
   @override
   String get aboutLogsHint => '回報問題時附上';
 
   @override
-  String get aboutOpenFolder => '打開資料夾';
+  String get aboutOpenFolder => '開啟資料夾';
 
   @override
-  String get aboutOpen => '打開';
+  String get aboutOpen => '開啟';
 
   @override
   String updaterNewVersion(String version) {
@@ -3272,7 +3272,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String pluginErrProcessExited(String name) {
-    return '$name：外掛程序意外結束';
+    return '$name：外掛處理程序意外結束';
   }
 
   @override
