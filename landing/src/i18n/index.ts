@@ -7,4 +7,4 @@ export type Dict = typeof zh;
 
 const dicts: Record<Lang, Dict> = { zh, en };
 export const t = (lang: Lang) => dicts[lang];
-export const pathOf = (lang: Lang) => (lang === 'zh' ? '/' : `/${lang}/`);
+export const pathOf = (lang: Lang) => `/${lang}/`;

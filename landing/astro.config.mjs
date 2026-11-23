@@ -7,6 +7,7 @@ export default defineConfig({
   i18n: {
     defaultLocale: 'zh',
     locales: ['zh', 'en'],
-    routing: { prefixDefaultLocale: false },
+    // Both locales live under a prefix; worker/index.js redirects / by cookie, then Accept-Language
+    routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
   },
 });

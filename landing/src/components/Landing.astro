@@ -40,7 +40,11 @@ const shots = {
 const { coverflowBand, shelf } = shots;
 const site = Astro.site ?? new URL('https://example.com');
 const langItems = (Object.keys(languages) as Lang[]).map((code) => ({ code, label: languages[code], href: pathOf(code) }));
-const alt = langItems.map((i) => ({ hreflang: i.code === 'zh' ? 'zh-CN' : i.code, href: new URL(i.href, site).href }));
+const alt = [
+  ...langItems.map((i) => ({ hreflang: i.code === 'zh' ? 'zh-CN' : i.code, href: new URL(i.href, site).href })),
+  // / redirects by browser language, so mark it as x-default for search engines
+  { hreflang: 'x-default', href: new URL('/', site).href },
+];
 
 const sources = [
   { name: d.hero.local, icon: 'music' },

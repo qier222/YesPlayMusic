@@ -31,7 +31,16 @@ export default function LangMenu({ current, items, compact = false, up = false }
       {open && (
         <div className={up ? 'lang-menu up' : 'lang-menu'} role="menu">
           {items.map((i) => (
-            <a key={i.code} role="menuitemradio" aria-checked={i.code === current} href={i.href} hrefLang={i.code} className={i.code === current ? 'on' : undefined}>
+            <a
+              key={i.code}
+              role="menuitemradio"
+              aria-checked={i.code === current}
+              href={i.href}
+              hrefLang={i.code}
+              className={i.code === current ? 'on' : undefined}
+              // Remember the manual choice so the worker redirects / to it next time
+              onClick={() => (document.cookie = `lang=${i.code}; path=/; max-age=31536000; samesite=lax`)}
+            >
               {i.label}
               {i.code === current && <Icon name="check" size={18} />}
             </a>

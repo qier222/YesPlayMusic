@@ -1,0 +1,33 @@
+---
+// Root path. In production worker/index.js 302-redirects it on the server; this page is only a
+// fallback for dev / preview. Same rule as the worker: cookie, then browser language, then English.
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>YesPlayMusic</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <script is:inline>
+      (function () {
+        var m = document.cookie.match(/(?:^|;\s*)lang=(zh|en)\b/);
+        var lang = m ? m[1] : null;
+        if (!lang) {
+          var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+          for (var i = 0; i < list.length && !lang; i++) {
+            var l = String(list[i]).toLowerCase();
+            if (l.indexOf('zh') === 0) lang = 'zh';
+            else if (l.indexOf('en') === 0) lang = 'en';
+          }
+        }
+        location.replace('/' + (lang || 'en') + '/' + location.search + location.hash);
+      })();
+    </script>
+    <noscript><meta http-equiv="refresh" content="0; url=/en/" /></noscript>
+  </head>
+  <body style="background:#000">
+    <noscript><a href="/zh/">简体中文</a> · <a href="/en/">English</a></noscript>
+  </body>
+</html>

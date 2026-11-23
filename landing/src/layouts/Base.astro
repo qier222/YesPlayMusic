@@ -4,6 +4,11 @@ import '../styles/global.css';
 import type { Dict } from '../i18n';
 interface Props { d: Dict; alt: { href: string; hreflang: string }[] }
 const { d, alt } = Astro.props;
+// Social card: public/og/og-{zh,en}.jpg (1280×640, exported from the Sketch 定稿 page)
+const zh = d.htmlLang.startsWith('zh');
+const site = Astro.site ?? Astro.url;
+const url = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(`/og/og-${zh ? 'zh' : 'en'}.jpg`, site).href;
 ---
 <!doctype html>
 <html lang={d.htmlLang}>
@@ -16,8 +21,22 @@ const { d, alt } = Astro.props;
     <link rel="icon" type="image/png" href="/favicon.png" />
     {alt.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     <link rel="preload" href="/fonts/archivo-expanded-900.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="YesPlayMusic" />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content={zh ? 'zh_CN' : 'en_US'} />
     <meta property="og:title" content={d.title} />
     <meta property="og:description" content={d.description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content={d.title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={d.title} />
+    <meta name="twitter:description" content={d.description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <slot />
