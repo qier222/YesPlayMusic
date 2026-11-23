@@ -123,12 +123,15 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            tx(
-                              it.$2,
-                              15,
-                              w: sel ? w700 : w500,
-                              f: F.semi,
-                              c: fg,
+                            // Long labels (e.g. Russian) ellipsize instead of overflowing
+                            Flexible(
+                              child: tx(
+                                it.$2,
+                                15,
+                                w: sel ? w700 : w500,
+                                f: F.semi,
+                                c: fg,
+                              ),
                             ),
                           ],
                         ),
