@@ -1,0 +1,26 @@
+name: 功能建议 / Feature request
+description: 希望应用增加或改进的功能
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请先搜索一下有没有相同的建议。应用不内置任何在线音乐服务，「支持某某音乐平台」这类需求请通过插件实现。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 遇到的问题 / Problem
+      description: 现在用起来哪里不方便
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 希望怎样 / Proposal
+      description: 你希望它怎么工作
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 其他方案 / Alternatives

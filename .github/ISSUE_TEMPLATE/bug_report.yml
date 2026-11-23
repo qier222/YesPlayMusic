@@ -1,0 +1,68 @@
+name: 问题反馈 / Bug report
+description: 应用崩溃、功能不正常、界面显示错误
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请先搜索一下有没有相同的 Issue。插件（音乐源）本身的问题请找插件作者。
+        安全问题请不要公开提交，见 [SECURITY.md](https://github.com/qier222/YesPlayMusic/blob/main/SECURITY.md)。
+  - type: input
+    id: version
+    attributes:
+      label: 应用版本 / App version
+      description: 设置 → 关于 里可以看到
+      placeholder: "3.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: 系统 / OS
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Windows
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: 系统版本 / OS version
+      placeholder: "macOS 15.2 / Windows 11 24H2 / Ubuntu 24.04"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 音乐源 / Music source
+      description: 出问题时用的是本地音乐还是哪个插件（插件名和版本）
+      placeholder: "本地音乐 / Subsonic 0.1.0"
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么 / What happened
+      description: 你做了什么、期望看到什么、实际看到了什么
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      placeholder: |
+        1. 打开 …
+        2. 点击 …
+        3. 看到 …
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / Logs
+      description: 从终端启动应用时输出的内容（见 docs/plugins.md 的「调试」），请先删掉 Cookie、Token 等敏感信息
+      render: text
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图或录屏 / Screenshots

@@ -1,0 +1,25 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import type { Dict } from '../i18n';
+interface Props { d: Dict; alt: { href: string; hreflang: string }[] }
+const { d, alt } = Astro.props;
+---
+<!doctype html>
+<html lang={d.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{d.title}</title>
+    <meta name="description" content={d.description} />
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    {alt.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <link rel="preload" href="/fonts/archivo-expanded-900.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:title" content={d.title} />
+    <meta property="og:description" content={d.description} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

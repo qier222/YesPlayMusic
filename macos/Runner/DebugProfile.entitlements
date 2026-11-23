@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 不启用沙盒：要读取用户任意选择的音乐文件夹，插件也要访问各种域名。不上架 Mac App Store。 -->
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.cs.allow-jit</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+</dict>
+</plist>

@@ -1,0 +1,293 @@
+# 推送 v* 标签时构建三个平台的安装包，生成 Sparkle / WinSparkle 的 appcast，
+# 创建一个草稿 Release。检查无误后在 GitHub 上点 Publish，应用才会收到更新。
+#
+# 需要的 Secrets / Variables 见 docs/releasing.md。没配签名的话照样出包，只是不签名、
+# 不公证、也不开启 Sparkle 自动更新。
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "要发布的标签，例如 v3.0.0"
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.50.0"
+  TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      build: ${{ steps.v.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - id: v
+        name: Check the tag matches pubspec.yaml
+        run: |
+          version="${TAG#v}"
+          pub=$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' pubspec.yaml)
+          if [ "$version" != "$pub" ]; then
+            echo "::error::标签 $TAG 和 pubspec.yaml 的版本 $pub 不一致"
+            exit 1
+          fi
+          IFS=. read -r major minor patch <<< "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          # Sparkle 按 CFBundleVersion 比较新旧，用 3.1.2 → 30102 保证递增
+          echo "build=$((major * 10000 + minor * 100 + patch))" >> "$GITHUB_OUTPUT"
+
+  macos:
+    needs: version
+    runs-on: macos-15
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      BUILD: ${{ needs.version.outputs.build }}
+      MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+      MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+      MACOS_SIGNING_IDENTITY: ${{ vars.MACOS_SIGNING_IDENTITY }}
+      APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+      APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+      SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY }}
+      SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Enable Sparkle
+        id: sparkle
+        if: env.SPARKLE_PUBLIC_KEY != '' && env.SPARKLE_PRIVATE_KEY != ''
+        run: |
+          /usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string $SPARKLE_PUBLIC_KEY" macos/Runner/Info.plist
+          echo "define=--dart-define=YPM_SPARKLE=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: flutter build macos --release --build-name "$VERSION" --build-number "$BUILD" ${{ steps.sparkle.outputs.define }}
+
+      - name: Import signing certificate
+        if: env.MACOS_CERTIFICATE_P12 != ''
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
+          echo "$MACOS_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/cert.p12" -P "$MACOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm "$RUNNER_TEMP/cert.p12"
+
+      - name: Sign
+        if: env.MACOS_CERTIFICATE_P12 != ''
+        run: scripts/release/macos-sign.sh build/macos/Build/Products/Release/YesPlayMusic.app "$MACOS_SIGNING_IDENTITY"
+
+      - name: Notarize the app
+        if: env.MACOS_CERTIFICATE_P12 != '' && env.APPLE_API_KEY_P8 != ''
+        run: |
+          echo "$APPLE_API_KEY_P8" | base64 --decode > "$RUNNER_TEMP/key.p8"
+          ditto -c -k --keepParent build/macos/Build/Products/Release/YesPlayMusic.app "$RUNNER_TEMP/notarize.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/notarize.zip" --key "$RUNNER_TEMP/key.p8" \
+            --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" --wait
+          xcrun stapler staple build/macos/Build/Products/Release/YesPlayMusic.app
+
+      - name: Package
+        run: |
+          mkdir -p dist "$RUNNER_TEMP/dmg"
+          APP=build/macos/Build/Products/Release/YesPlayMusic.app
+          # 给 Sparkle 用的 zip
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "dist/YesPlayMusic-$VERSION-macos.zip"
+          # 给人下载的 dmg：app 和「应用程序」快捷方式
+          cp -R "$APP" "$RUNNER_TEMP/dmg/"
+          ln -s /Applications "$RUNNER_TEMP/dmg/Applications"
+          hdiutil create -volname YesPlayMusic -srcfolder "$RUNNER_TEMP/dmg" -ov -format UDZO "dist/YesPlayMusic-$VERSION-macos.dmg"
+
+      - name: Sign and notarize the dmg
+        if: env.MACOS_CERTIFICATE_P12 != '' && env.APPLE_API_KEY_P8 != ''
+        run: |
+          DMG="dist/YesPlayMusic-$VERSION-macos.dmg"
+          codesign --force --timestamp --sign "$MACOS_SIGNING_IDENTITY" "$DMG"
+          xcrun notarytool submit "$DMG" --key "$RUNNER_TEMP/key.p8" \
+            --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" --wait
+          xcrun stapler staple "$DMG"
+
+      - name: Appcast
+        if: steps.sparkle.outcome == 'success'
+        run: |
+          ZIP="dist/YesPlayMusic-$VERSION-macos.zip"
+          printf '%s' "$SPARKLE_PRIVATE_KEY" > "$RUNNER_TEMP/sparkle.key"
+          SIG=$(macos/Pods/Sparkle/bin/sign_update --ed-key-file "$RUNNER_TEMP/sparkle.key" "$ZIP" | sed -E 's/.*(sparkle:edSignature="[^"]+").*/\1/')
+          rm "$RUNNER_TEMP/sparkle.key"
+          python3 scripts/release/appcast.py --os macos --version "$VERSION" --build "$BUILD" \
+            --url "https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$ZIP")" \
+            --length "$(stat -f%z "$ZIP")" --signature "$SIG" --min-os 12.0 \
+            --notes "https://github.com/${{ github.repository }}/releases/tag/$TAG" > dist/appcast-macos.xml
+
+      - name: Clean up keychain
+        if: always() && env.MACOS_CERTIFICATE_P12 != ''
+        run: security delete-keychain "$RUNNER_TEMP/signing.keychain-db" || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/*
+
+  windows:
+    needs: version
+    runs-on: windows-2022
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      BUILD: ${{ needs.version.outputs.build }}
+      WINDOWS_DSA_PUBLIC_KEY: ${{ vars.WINDOWS_DSA_PUBLIC_KEY }}
+      WINDOWS_DSA_PRIVATE_KEY: ${{ secrets.WINDOWS_DSA_PRIVATE_KEY }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Enable WinSparkle
+        id: sparkle
+        if: env.WINDOWS_DSA_PUBLIC_KEY != '' && env.WINDOWS_DSA_PRIVATE_KEY != ''
+        run: |
+          printf '%s\n' "$WINDOWS_DSA_PUBLIC_KEY" > dsa_pub.pem
+          printf '\nDSAPub DSAPEM "../../dsa_pub.pem"\n' >> windows/runner/Runner.rc
+          echo "define=--dart-define=YPM_SPARKLE=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        run: flutter build windows --release --build-name "$VERSION" --build-number "$BUILD" ${{ steps.sparkle.outputs.define }}
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          REL="$(cygpath -w "$PWD/build/windows/x64/runner/Release")"
+          ISCC="/c/Program Files (x86)/Inno Setup 6/ISCC.exe"
+          [ -x "$ISCC" ] || choco install innosetup --no-progress -y
+          "$ISCC" "//DAppVersion=$VERSION" "//DSourceDir=$REL" windows/packaging/installer.iss
+          (cd build/windows/x64/runner/Release && 7z a -tzip "$GITHUB_WORKSPACE/dist/YesPlayMusic-$VERSION-windows-x64-portable.zip" .)
+
+      - name: Appcast
+        if: steps.sparkle.outcome == 'success'
+        run: |
+          EXE="dist/YesPlayMusic-$VERSION-windows-x64-setup.exe"
+          printf '%s\n' "$WINDOWS_DSA_PRIVATE_KEY" > "$RUNNER_TEMP/dsa_priv.pem"
+          # WinSparkle 的 DSA 签名：对文件的 SHA-1 再做 DSA(SHA-1) 签名
+          SIG=$(openssl dgst -sha1 -binary < "$EXE" | openssl dgst -sha1 -sign "$RUNNER_TEMP/dsa_priv.pem" | openssl enc -base64 -A)
+          rm "$RUNNER_TEMP/dsa_priv.pem"
+          python scripts/release/appcast.py --os windows --version "$VERSION" --build "$VERSION+$BUILD" \
+            --url "https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$EXE")" \
+            --length "$(stat -c%s "$EXE")" --signature "sparkle:dsaSignature=\"$SIG\"" \
+            --notes "https://github.com/${{ github.repository }}/releases/tag/$TAG" > dist/appcast-windows.xml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/*
+
+  linux:
+    needs: version
+    runs-on: ubuntu-22.04
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      BUILD: ${{ needs.version.outputs.build }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev
+      - run: flutter build linux --release --build-name "$VERSION" --build-number "$BUILD"
+      - name: Package
+        run: |
+          mkdir -p dist
+          DIR="YesPlayMusic-$VERSION-linux-x64"
+          cp -r build/linux/x64/release/bundle "$DIR"
+          cp linux/packaging/yesplaymusic.desktop linux/packaging/yesplaymusic.png "$DIR/"
+          tar -czf "dist/$DIR.tar.gz" "$DIR"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/*
+
+  release:
+    needs: [version, macos, windows, linux]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Release notes from CHANGELOG.md
+        run: |
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > notes.md
+          cat >> notes.md <<'EOF'
+
+          ---
+
+          - macOS：下载 `.dmg`，只支持 Apple Silicon（M 系列芯片）。
+          - Windows：下载 `-setup.exe` 安装，或 `-portable.zip` 解压即用。
+          - Linux：下载 `.tar.gz`，需要系统装有 libmpv（Debian / Ubuntu：`sudo apt install libmpv2`，较旧的系统是 `libmpv1`）。
+          EOF
+      - name: Update notice for 0.4.x (Electron) users
+        # 旧版用 electron-updater 读 releases/latest 里的 latest*.yml，发现新版本就弹窗跳到 Releases 页。
+        # 这里只给它一个版本号；files 指向不存在的文件，旧版的自动下载会失败，不会把新安装包当成旧版的更新装上。
+        run: |
+          for f in latest.yml latest-mac.yml latest-linux.yml; do
+            cat > "dist/$f" <<EOF
+          version: $VERSION
+          files:
+            - url: see-github-releases-$VERSION
+              sha512: none
+              size: 0
+          path: see-github-releases-$VERSION
+          sha512: none
+          releaseDate: '$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'
+          EOF
+          done
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$TAG" dist/* --draft --verify-tag \
+            --title "YesPlayMusic $VERSION" --notes-file notes.md

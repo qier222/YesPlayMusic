@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yesplaymusic-landing",
+  "compatibility_date": "2026-11-01",
+  // 纯静态站：Worker 只托管 astro build 产出的 dist
+  "assets": { "directory": "./dist" },
+  "routes": [{ "pattern": "yesplaymusic.0xtangerine.com", "custom_domain": true }]
+}

@@ -1,0 +1,53 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "extended-srgb:1.00000,1.00000,1.00000,1.00000",
+      "extended-srgb:0.93333,0.93725,0.95686,1.00000"
+    ]
+  },
+  "fill-specializations": [
+    {
+      "appearance": "dark",
+      "value": {
+        "linear-gradient": [
+          "extended-srgb:0.11765,0.11765,0.14118,1.00000",
+          "extended-srgb:0.03529,0.03529,0.04706,1.00000"
+        ]
+      }
+    }
+  ],
+  "groups": [
+    {
+      "layers": [
+        {
+          "glass": true,
+          "image-name": "m4_lilac_balanced.png",
+          "name": "M4 丁香紫 Balanced Grain Mesh",
+          "position": {
+            "scale": 1.0,
+            "translation-in-points": [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "lighting": "combined",
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.44
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.28
+      }
+    }
+  ],
+  "supported-platforms": {
+    "circles": [
+      "watchOS"
+    ],
+    "squares": "shared"
+  }
+}

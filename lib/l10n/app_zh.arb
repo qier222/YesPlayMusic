@@ -1,0 +1,1071 @@
+{
+  "@@locale": "zh",
+  "navHome": "首页",
+  "navDiscover": "发现",
+  "navLibrary": "音乐库",
+  "navSearch": "搜索",
+  "navSearchPage": "搜索页",
+  "navSettings": "设置",
+  "navProfile": "个人主页",
+
+  "actionPlay": "播放",
+  "actionPause": "暂停",
+  "actionPlayAll": "播放全部",
+  "actionShuffle": "随机播放",
+  "actionNext": "下一首",
+  "actionPrev": "上一首",
+  "actionLike": "喜欢",
+  "actionUnlike": "取消喜欢",
+  "actionSaveAlbum": "收藏专辑",
+  "actionUnsave": "取消收藏",
+  "actionFollow": "关注",
+  "actionFollowing": "已关注",
+  "actionMore": "更多",
+  "actionBack": "返回",
+  "actionClose": "关闭",
+  "actionCancel": "取消",
+  "actionConfirm": "确定",
+  "actionClear": "清除",
+  "actionClearShort": "清空",
+  "actionRetry": "重试",
+  "actionOpen": "打开",
+  "actionSave": "保存",
+  "actionSaving": "保存中…",
+  "actionDone": "完成",
+  "actionApply": "应用",
+  "actionCopy": "复制",
+  "actionReset": "重置",
+  "actionAdd": "添加",
+  "actionSelect": "选择",
+  "actionAll": "全部",
+  "actionCollapse": "收起",
+  "actionExpandAllCategories": "全部分类",
+  "actionPrevPage": "上一页",
+  "actionNextPage": "下一页",
+  "actionViewFullText": "查看全文",
+  "actionShow": "显示",
+  "actionHide": "隐藏",
+  "actionReload": "重新加载",
+  "actionInstall": "安装",
+  "actionUpdate": "更新",
+  "actionUninstall": "卸载",
+  "actionEnable": "启用",
+  "actionSignIn": "登录",
+  "actionSignOut": "退出登录",
+  "actionManageSources": "管理音乐源",
+  "actionManagePlugins": "管理插件",
+  "actionGoSearch": "去搜索",
+  "actionLoadMore": "加载更多",
+
+  "stateLoading": "正在加载…",
+  "stateLoadingShort": "加载中…",
+  "stateLoadFailed": "加载失败",
+  "stateCouldNotLoad": "没能加载",
+  "stateSigningIn": "正在登录…",
+  "stateSigningInShort": "登录中…",
+  "stateSignedIn": "已登录",
+  "stateNotSignedIn": "未登录",
+  "stateNone": "无",
+  "statePleaseSelect": "请选择",
+  "stateCopied": "已复制",
+  "stateSaved": "已保存",
+  "stateSaveFailed": "保存失败：{error}",
+  "@stateSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "miniShuffleOn": "随机播放：开",
+  "miniRepeatOn": "列表循环",
+  "miniRepeatOff": "不循环",
+  "miniQueue": "播放队列",
+  "miniOpenNowPlaying": "打开正在播放",
+  "miniMute": "静音",
+
+  "npTitle": "正在播放",
+  "npComments": "评论",
+  "npSimilar": "相似歌曲",
+  "npSimilarTo": "和 {title} 相似",
+  "@npSimilarTo": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "npNoSimilar": "没有找到相似的歌曲",
+  "npUpNext": "接下来",
+  "npQueueEmpty": "队列里没有更多歌曲了",
+  "npFromPrefix": "来自 ",
+  "npViewAlbum": "查看专辑",
+  "npViewArtist": "查看艺人",
+
+  "menuPlayNext": "下一首播放",
+  "menuAddedNext": "将在下一首播放",
+  "menuAddToQueue": "加入播放队列",
+  "menuAddedToQueue": "已加入播放队列",
+  "menuAddToPlaylist": "添加到歌单",
+  "menuCreatePlaylist": "新建歌单",
+  "menuPlaylistNamePlaceholder": "歌单名字",
+  "menuCreateAndAdd": "新建并添加",
+  "menuPlaySimilar": "播放相似歌曲",
+  "menuDislike": "不喜欢",
+  "menuRemoveFromPlaylist": "从歌单中删除",
+
+  "shortcutGroupPlayback": "播放",
+  "shortcutGroupUi": "界面",
+  "shortcutGroupMediaKeys": "媒体键",
+  "shortcutPlayPause": "播放 / 暂停",
+  "shortcutSpaceKey": "空格",
+  "shortcutSeekForward": "快进 5 秒",
+  "shortcutSeekBackward": "快退 5 秒",
+  "shortcutVolumeUp": "音量加",
+  "shortcutVolumeDown": "音量减",
+  "shortcutMute": "静音",
+  "shortcutRepeat": "循环模式",
+  "shortcutLikeCurrent": "喜欢当前歌曲",
+  "shortcutDismissOverlay": "收起正在播放，关闭弹窗",
+  "shortcutBack": "后退",
+  "shortcutForward": "前进",
+  "shortcutSwitchTab": "切换侧边栏页面",
+  "shortcutKeyRangeTo": "到",
+  "shortcutMediaKeysLabel": "键盘媒体键和耳机按键",
+  "shortcutTypingHintMac": "正在输入文字时，只有 ⌘F 和 Esc 生效",
+  "shortcutTypingHintOther": "正在输入文字时，只有 Ctrl+F 和 Esc 生效",
+  "menuBarSettings": "设置…",
+  "menuBarView": "显示",
+  "menuBarWindow": "窗口",
+
+  "swatchLilac": "丁香紫",
+  "swatchSky": "天蓝",
+  "swatchMint": "薄荷",
+  "swatchSun": "日光",
+  "swatchRose": "玫瑰",
+  "swatchFlame": "橙焰",
+
+  "settingsGeneral": "通用",
+  "settingsShortcuts": "快捷键",
+  "settingsPlugins": "插件",
+  "settingsAbout": "关于",
+  "settingsAppearance": "外观",
+  "settingsLyrics": "歌词",
+  "settingsPlayback": "播放",
+  "settingsStorage": "存储",
+  "settingsAccentColor": "主题色",
+  "settingsLanguage": "语言",
+  "langSystem": "跟随系统",
+  "settingsMiniLyric": "在迷你播放器显示当前歌词",
+  "settingsMinimizeToTray": "关闭窗口时最小化到托盘",
+
+  "aboutDownloadVersion": "下载 {version}",
+  "@aboutDownloadVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "aboutChecking": "正在检查…",
+  "aboutCheckUpdate": "检查更新",
+  "aboutAutoCheck": "自动检查更新",
+  "aboutAnalytics": "发送匿名使用统计",
+  "aboutSourceAndFeedback": "源代码与问题反馈",
+  "aboutVersion": "版本 {version}",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "aboutLogs": "日志文件",
+  "aboutLogsHint": "反馈问题时附上",
+  "aboutOpenFolder": "打开文件夹",
+  "aboutOpen": "打开",
+  "updaterNewVersion": "发现新版本 {version}",
+  "@updaterNewVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "updaterUpToDate": "已经是最新版本",
+  "updaterCheckFailed": "检查更新失败",
+
+  "storageClearTitle": "清除 {size} 缓存？",
+  "@storageClearTitle": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "storageClearMessage": "API、音频和图片的缓存都会清除，\n之后用到时再重新获取。",
+  "storageCleared": "已清除 {size} 缓存",
+  "@storageCleared": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "storageLimit": "/ {size} 缓存上限",
+  "@storageLimit": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "storageApi": "API {size}",
+  "@storageApi": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "storageAudio": "音频 {size}",
+  "@storageAudio": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "storageImage": "图片 {size}",
+  "@storageImage": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "storageClearing": "正在清除…",
+  "storageClearCache": "清除缓存",
+
+  "sourceMusicSource": "音乐来源",
+  "sourceLocal": "本地音乐",
+  "sourceLocalDesc": "播放电脑上的音乐文件",
+  "sourceBuiltIn": "内置",
+  "sourceInUse": "正在使用",
+  "sourceScanning": "正在扫描…",
+  "sourceNoFolders": "未添加文件夹",
+  "sourceFolderAlbums": "{folders} 个文件夹，{albums} 张专辑",
+  "@sourceFolderAlbums": {
+    "placeholders": {
+      "folders": { "type": "int" },
+      "albums": { "type": "int" }
+    }
+  },
+  "sourceAddFolderEllipsis": "添加音乐文件夹…",
+  "sourceAddFolder": "添加文件夹",
+  "sourceAddMusicFolder": "添加音乐文件夹",
+  "sourceRescan": "重新扫描",
+  "sourceMusicFolders": "音乐文件夹",
+  "sourceNoFoldersAdded": "还没有添加音乐文件夹",
+  "sourceOpenInFileManager": "在文件管理器中打开",
+  "sourceShowInFileManager": "在文件管理器中显示",
+  "sourceStopScanningFolder": "不再扫描这个文件夹",
+  "sourceSwitchedTo": "已切换到「{name}」",
+  "@sourceSwitchedTo": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "sourceFolderAlreadyScanned": "这个文件夹已经在扫描范围里了",
+  "sourceNoMusicFound": "没有找到音乐",
+  "sourceNotFound": "没有找到这个音乐源",
+
+  "pluginsLoadedToast": "已加载 {count} 个插件",
+  "@pluginsLoadedToast": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pluginFind": "查找插件",
+  "pluginInstallTitle": "安装插件",
+  "pluginTabInstalled": "已安装",
+  "pluginTabOfficial": "官方插件",
+  "pluginOpenDir": "打开插件目录",
+  "pluginThirdPartyHint": "官方之外的插件由各自作者维护",
+  "pluginDevDocs": "插件开发文档 ›",
+  "pluginComingSoon": "即将上线",
+  "pluginInstallFromLink": "从链接安装",
+  "pluginInstallFromLinkHint": "GitHub 仓库、Release 或 .zip",
+  "pluginUninstallTitle": "卸载「{name}」？",
+  "@pluginUninstallTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginUninstallMessage": "插件的设置和登录状态会一起删除",
+  "pluginUninstalled": "已卸载「{name}」",
+  "@pluginUninstalled": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginUpdateAvailable": "可更新到 {version}",
+  "@pluginUpdateAvailable": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "pluginNeedSetting": "需要填写{field}",
+  "@pluginNeedSetting": {
+    "placeholders": {
+      "field": { "type": "String" }
+    }
+  },
+  "pluginSignedInAs": "已登录 {name}",
+  "@pluginSignedInAs": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginDisabledToast": "已停用「{name}」",
+  "@pluginDisabledToast": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginEnabledToast": "已启用「{name}」",
+  "@pluginEnabledToast": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginHasUpdate": "有更新",
+  "pluginSignInAccount": "登录账号",
+  "pluginSettingsEllipsis": "插件设置…",
+  "pluginDisable": "停用插件",
+  "pluginReload": "重新加载插件",
+  "pluginUninstallEllipsis": "卸载插件…",
+  "pluginDeleteEllipsis": "删除插件…",
+  "pluginDisabledBadge": "已停用",
+  "pluginNotLoadedBadge": "未加载",
+  "pluginNotLoadedStatus": "插件没有加载",
+  "pluginEmptyTitle": "还没有安装插件",
+  "pluginEmptyHint": "支持 GitHub 链接",
+  "pluginSettingsTitle": "插件设置",
+  "pluginSectionAccount": "账号",
+  "pluginSectionCapabilities": "能力",
+  "pluginSectionPermissions": "权限",
+  "pluginDisabledHint": "插件已停用，启用后生效",
+  "pluginUninstallBtn": "卸载插件",
+  "pluginSignInSyncHint": "登录后同步收藏和歌单",
+  "pluginGetIt": "去获取 ›",
+  "pluginUpdatedToast": "已更新「{name}」",
+  "@pluginUpdatedToast": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginInstalledToast": "已安装「{name}」",
+  "@pluginInstalledToast": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginInstallFailed": "安装失败：{error}",
+  "@pluginInstallFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "pluginInstallPrompt": "粘贴 GitHub 仓库地址，\n或者插件的下载链接",
+  "pluginInstallPlaceholder": "github.com/作者/仓库",
+  "pluginInstallSupportHint": "支持 GitHub 仓库、Release，以及 plugin.json 和 .zip 链接",
+  "pluginReading": "读取中…",
+  "pluginNextStep": "下一步",
+  "pluginInstallFromLocal": "从本地文件夹安装…",
+  "pluginPublishedAgo": "，{ago}发布",
+  "@pluginPublishedAgo": {
+    "placeholders": {
+      "ago": { "type": "String" }
+    }
+  },
+  "pluginLocalFolder": "本地文件夹",
+  "pluginLatestCode": "最新代码",
+  "pluginInstalledVersion": "已安装 {version}",
+  "@pluginInstalledVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "pluginPermissionsNeeded": "需要这些权限",
+  "pluginPermNoNetwork": "不访问网络",
+  "pluginPermNoNetworkDetail": "不连接任何网站",
+  "pluginPermAnyWebsite": "访问任意网站",
+  "pluginPermAnyWebsiteDetail": "可连接任意网站",
+  "pluginPermAnyWebsiteFull": "可以访问任意网站",
+  "pluginPermNetwork": "访问网络",
+  "pluginPermSignInDetail": "打开登录页，读取登录后的 Cookie",
+  "pluginPermProcess": "运行本机程序",
+  "pluginPermProcessBadge": "需要单独允许",
+  "pluginPermProcessDetail": "{programs}，默认关闭，可在插件设置中开启",
+  "@pluginPermProcessDetail": {
+    "placeholders": {
+      "programs": { "type": "String" }
+    }
+  },
+  "pluginPermStorage": "保存数据",
+  "pluginPermStorageDetail": "保存设置、登录状态和缓存",
+  "pluginCapabilitiesProvided": "提供这些能力",
+  "pluginNavIconHint": "带图标的会加到侧边栏",
+  "pluginTrustHint": "请只安装可信来源的插件",
+  "pluginInstalling": "安装中…",
+  "pluginYourServer": "你填写的服务器",
+  "pluginCanAccessHosts": "可访问 {hosts}",
+  "@pluginCanAccessHosts": {
+    "placeholders": {
+      "hosts": { "type": "String" }
+    }
+  },
+  "pluginCanAccessHostsMore": "可访问 {hosts} 等 {count} 个",
+  "@pluginCanAccessHostsMore": {
+    "placeholders": {
+      "hosts": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "pluginOnlyYourServer": "只访问你在设置里填写的服务器",
+  "pluginAndYourServer": "{hosts}，以及你在设置里填写的服务器",
+  "@pluginAndYourServer": {
+    "placeholders": {
+      "hosts": { "type": "String" }
+    }
+  },
+  "pluginAnyProgram": "任意本机程序",
+  "officialJellyfinDesc": "连接 Jellyfin 服务器",
+  "officialPlexDesc": "连接 Plex Media Server",
+  "officialSubsonicDesc": "连接 Navidrome 等 Subsonic 服务器",
+  "officialEmbyDesc": "连接 Emby 服务器",
+
+  "capSuggest": "搜索建议",
+  "capLyrics": "歌词",
+  "capPlaylist": "歌单",
+  "capEditPlaylist": "编辑歌单",
+  "capFavorites": "收藏",
+  "capAlbum": "专辑",
+  "capArtist": "艺人",
+  "capRadio": "电台",
+  "capSimilar": "相似推荐",
+  "capHistory": "播放记录",
+  "capDislike": "不感兴趣",
+  "capTrackMenu": "歌曲菜单",
+
+  "mcpPortRangeError": "端口号需在 1024 ~ 65535 之间",
+  "mcpPortUpdated": "已更新端口为 {port}",
+  "@mcpPortUpdated": {
+    "placeholders": {
+      "port": { "type": "int" }
+    }
+  },
+  "mcpCopiedLabel": "已复制 {label}",
+  "@mcpCopiedLabel": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "mcpRunning": "运行中 · {url}",
+  "@mcpRunning": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+  "mcpStopped": "已停止",
+  "mcpEnableLocal": "启用本地 MCP 服务",
+  "mcpEnableHint": "仅监听 127.0.0.1，供外部 AI 客户端控制播放与搜索",
+  "mcpSessions": "{count} 会话",
+  "@mcpSessions": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "mcpListenPort": "监听端口",
+  "mcpPortHint": "默认 18888（Streamable HTTP）",
+  "mcpLazyMode": "MCP 懒加载模式",
+  "mcpLazyHintOn": "初始仅暴露 {core} 个核心工具 + 按需发现 {lazy} 个扩展工具",
+  "@mcpLazyHintOn": {
+    "placeholders": {
+      "core": { "type": "int" },
+      "lazy": { "type": "int" }
+    }
+  },
+  "mcpLazyHintOff": "全量暴露当前音乐来源支持的全部 {total} 个工具",
+  "@mcpLazyHintOff": {
+    "placeholders": {
+      "total": { "type": "int" }
+    }
+  },
+  "mcpReadOnly": "只读安全模式",
+  "mcpReadOnlyHint": "屏蔽删改歌单、发评论、喜欢/不喜欢等写操作",
+  "mcpAuthSection": "安全认证",
+  "mcpRequireToken": "要求 Bearer Token",
+  "mcpRequireTokenHint": "开启后客户端请求头需携带 Authorization: Bearer <token>",
+  "mcpHttpConfigTitle": "客户端配置（Streamable HTTP）",
+  "mcpHttpConfigDesc": "适用于 Antigravity、Cursor、Claude 等支持 HTTP MCP 的客户端：",
+  "mcpCopyHttpConfig": "复制 HTTP 配置",
+  "mcpHttpConfigLabel": "Streamable HTTP 配置",
+  "mcpStdioConfigTitle": "Stdio 桥接配置（支持自动唤醒）",
+  "mcpStdioConfigDesc": "适用于仅支持 stdio 的客户端；请求到达时若应用未运行会自动后台唤醒：",
+  "mcpCopyStdioConfig": "复制 Stdio 桥接配置",
+  "mcpStdioConfigLabel": "Stdio 桥接配置",
+  "mcpPortStartFailed": "端口 {port} 启动失败：{error}",
+  "@mcpPortStartFailed": {
+    "placeholders": {
+      "port": { "type": "int" },
+      "error": { "type": "String" }
+    }
+  },
+
+  "tabSongs": "歌曲",
+  "tabAlbums": "专辑",
+  "tabPlaylists": "歌单",
+  "tabArtists": "艺人",
+  "tabArtistSearch": "歌手",
+  "sortTitleAZ": "标题 A-Z",
+  "sortReleaseDate": "发行时间",
+  "sortDefault": "默认",
+  "sortAlbumAZ": "专辑 A-Z",
+  "libraryEmptyTitle": "音乐库还是空的",
+  "libraryAddSource": "添加音乐源",
+  "libraryNoAlbums": "还没有专辑",
+  "libraryNoSongs": "还没有歌曲",
+  "libraryNoPlaylists": "还没有歌单",
+  "libraryNoArtists": "还没有艺人",
+  "libraryEarlier": "更早",
+  "libraryCreatedByMe": "我创建的",
+  "libraryCollected": "收藏的",
+
+  "countTracks": "{count} 首",
+  "@countTracks": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "countSongs": "{count} 首歌曲",
+  "@countSongs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "countAlbums": "{count} 张专辑",
+  "@countAlbums": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "countPlays": "{count} 次",
+  "@countPlays": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "countComments": "{count} 条评论",
+  "@countComments": {
+    "placeholders": {
+      "count": { "type": "String" }
+    }
+  },
+  "durationHours": "{count} 小时",
+  "@durationHours": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "durationMinutes": "{count} 分钟",
+  "@durationMinutes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "albumTracksDuration": "{tracks} 首 · {minutes} 分钟",
+  "@albumTracksDuration": {
+    "placeholders": {
+      "tracks": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "albumNotFound": "找不到这张专辑",
+  "albumKindAlbum": "专辑",
+  "albumKindSingle": "单曲",
+  "albumKindCompilation": "合集",
+  "albumTracksTitle": "曲目",
+  "albumReleasedIn": "发行于 {year} 年",
+  "@albumReleasedIn": {
+    "placeholders": {
+      "year": { "type": "int" }
+    }
+  },
+
+  "albumReleasedOn": "发行于 {date}",
+  "@albumReleasedOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "artistFollowed": "已关注 {name}",
+  "@artistFollowed": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "artistUnfollowed": "已取消关注",
+  "artistFollowFailed": "没能关注，稍后再试",
+  "artistUnfollowFailed": "没能取消关注，稍后再试",
+  "artistSimilar": "相似艺人",
+  "artistHotTracksOf": "{name} 的热门歌曲",
+  "@artistHotTracksOf": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "artistLatestRelease": "最新发布",
+  "artistHotTracks": "热门歌曲",
+  "artistSinglesAndEps": "单曲与 EP",
+
+  "playlistSearchPlaceholder": "在歌单内搜索",
+  "playlistColTitle": "标题",
+  "playlistColAlbum": "专辑",
+  "playlistColAdded": "加入时间",
+  "playlistEmpty": "歌单里还没有歌",
+  "playlistNoMatch": "没有找到「{query}」",
+  "@playlistNoMatch": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "playlistTagCount": "「{tag}」有 {count} 首",
+  "@playlistTagCount": {
+    "placeholders": {
+      "tag": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+
+  "searchPlaceholder": "搜索歌曲、专辑、歌手和歌单",
+  "searchUnsupported": "这个插件不支持搜索。",
+  "searchRecent": "最近搜索",
+  "searchRecentResults": "最近搜索结果",
+  "searchHot": "热门搜索",
+  "searchRemoveHistory": "从记录里删掉",
+  "searchNoResults": "没有找到「{query}」",
+  "@searchNoResults": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "searchViewAllSongs": "查看全部 {count} 首歌",
+  "@searchViewAllSongs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchViewAllAlbums": "查看全部 {count} 张专辑",
+  "@searchViewAllAlbums": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchAllCount": "全部 {count}",
+  "@searchAllCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchQueueName": "搜索「{query}」",
+  "@searchQueueName": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+  "searchMcpQueueName": "搜索：{query}",
+  "@searchMcpQueueName": {
+    "placeholders": {
+      "query": { "type": "String" }
+    }
+  },
+
+  "commentSortHot": "热门",
+  "commentSortLatest": "最新",
+  "commentWrite": "写评论",
+  "commentEmpty": "还没有评论",
+  "commentLoadFailed": "评论加载失败",
+  "commentLikeFailed": "点赞失败",
+  "commentAnonymous": "匿名",
+  "commentReply": "回复",
+  "commentPosted": "评论已发布",
+  "commentReplyPosted": "回复已发布",
+  "commentPostFailed": "发布失败",
+  "commentWriteTo": "写给",
+  "commentPosting": "正在发布…",
+  "commentPost": "发布",
+  "commentPlaceholder": "写点什么…",
+  "commentReplyPlaceholder": "回复 {name}…",
+  "@commentReplyPlaceholder": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "profileLocalUnsupported": "本地音乐没有个人主页。",
+  "profileSourceUnsupported": "「{name}」没有个人主页。",
+  "@profileSourceUnsupported": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "profileSignInHint": "登录「{name}」后可以看到你的个人主页。",
+  "@profileSignInHint": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "profileTopArtists": "最常听的艺人",
+  "profileMostPlayed": "最常听",
+  "profileMyPlaylists": "我创建的歌单",
+
+  "signOutConfirmTitle": "退出「{name}」？",
+  "@signOutConfirmTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "signOutConfirmMessage": "退出后这个源的音乐库、歌单和推荐都看不到了，\n重新登录就能回来。",
+  "signInDialogTitle": "登录{name}",
+  "@signInDialogTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "signInQrFailed": "二维码生成失败",
+
+  "remoteNeedSignIn": "需要先登录",
+  "remoteErrorKind": "出错了（{kind}）",
+  "@remoteErrorKind": {
+    "placeholders": {
+      "kind": { "type": "String" }
+    }
+  },
+  "remotePluginMissing": "插件 {id} 没有加载。可以在设置里重新加载插件。",
+  "@remotePluginMissing": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "remoteSwitchToLocalHint": "可以在设置里换回本地音乐",
+  "remoteNoDiscover": "这个插件没有发现页，可以用搜索找歌。",
+  "remoteNoHome": "这个插件没有首页，可以用搜索找歌。",
+  "remoteNoContent": "这里暂时没有内容。",
+  "remotePlayAlbumFailed": "没能播放这张专辑，稍后再试",
+
+  "greetingLateNight": "夜深了",
+  "greetingMorning": "早上好",
+  "greetingNoon": "中午好",
+  "greetingAfternoon": "下午好",
+  "greetingEvening": "晚上好",
+
+  "localRecentlyAdded": "最近添加",
+  "localEmptyHint": "还没有歌曲，去设置里添加音乐文件夹",
+  "localArtistNotFound": "找不到这位艺人",
+  "localFileMovedOrDeleted": "文件已被移动或删除",
+
+  "timeJustNow": "刚刚",
+  "timeMinutesAgo": "{count} 分钟前",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "timeHoursAgo": "{count} 小时前",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "timeDaysAgo": "{count} 天前",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "timeMonthsAgo": "{count} 个月前",
+  "@timeMonthsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "timeYearsAgo": "{count} 年前",
+  "@timeYearsAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "timeToday": "今天",
+  "timeYesterday": "昨天",
+  "dateYear": "{year} 年",
+  "@dateYear": {
+    "placeholders": {
+      "year": { "type": "int" }
+    }
+  },
+  "dateYearMonth": "{year} 年 {month} 月",
+  "@dateYearMonth": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" }
+    }
+  },
+  "dateMonthDay": "{month} 月 {day} 日",
+  "@dateMonthDay": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" }
+    }
+  },
+  "dateYearMonthDay": "{year} 年 {month} 月 {day} 日",
+  "@dateYearMonthDay": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" },
+      "day": { "type": "int" }
+    }
+  },
+
+  "toastSignedInAs": "已登录：{name}",
+  "@toastSignedInAs": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastNotSignedIn": "没有登录",
+  "toastSignOutFailed": "退出失败",
+  "toastPlayAlbumFailed": "放不了这张专辑",
+  "toastPlayPlaylistFailed": "放不了这个歌单",
+  "toastPlaybackError": "播放出错：{error}",
+  "@toastPlaybackError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "toastCannotPlayTrack": "无法播放「{title}」",
+  "@toastCannotPlayTrack": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "toastStationEmpty": "{name} 暂时没有歌",
+  "@toastStationEmpty": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastStationOpenFailed": "{name} 打不开",
+  "@toastStationOpenFailed": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastAddedToPlaylist": "已添加到「{name}」",
+  "@toastAddedToPlaylist": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastAddToPlaylistFailed": "没能添加到「{name}」",
+  "@toastAddToPlaylistFailed": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastPlaylistCreated": "已新建歌单「{name}」",
+  "@toastPlaylistCreated": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastCreatePlaylistFailed": "没能新建歌单",
+  "toastRemovedFromPlaylist": "已从歌单中删除",
+  "toastRemoveFromPlaylistFailed": "没能从歌单中删除",
+  "toastNoSimilarFound": "没找到相似的歌",
+  "toastSimilarQueueName": "「{title}」的相似歌曲",
+  "@toastSimilarQueueName": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "toastFindSimilarFailed": "没能找到相似的歌",
+  "toastActionFailed": "「{title}」没有成功",
+  "@toastActionFailed": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "toastDisliked": "以后少推荐这样的歌",
+  "toastDislikeFailed": "没能告诉{name}",
+  "@toastDislikeFailed": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "toastLikeFailed": "没能喜欢这首歌",
+  "toastUnlikeFailed": "没能取消喜欢",
+  "toastSaveAlbumFailed": "没能收藏这张专辑",
+  "toastUnsaveAlbumFailed": "没能取消收藏",
+  "toastAlbumSaved": "已收藏「{title}」",
+  "@toastAlbumSaved": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "toastAlbumUnsaved": "已取消收藏",
+
+  "pluginErrIdTaken": "id {id} 已被占用",
+  "@pluginErrIdTaken": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "pluginErrMinAppVersion": "需要 YesPlayMusic {required} 或更新的版本，当前是 {current}",
+  "@pluginErrMinAppVersion": {
+    "placeholders": {
+      "required": { "type": "String" },
+      "current": { "type": "String" }
+    }
+  },
+  "pluginErrEmptyLink": "请填写链接",
+  "pluginErrInvalidLink": "看不懂这个链接",
+  "pluginErrDownloadNetwork": "下载失败，请检查网络：{error}",
+  "@pluginErrDownloadNetwork": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "pluginErrRepoNotFound": "找不到 GitHub 仓库 {slug}",
+  "@pluginErrRepoNotFound": {
+    "placeholders": {
+      "slug": { "type": "String" }
+    }
+  },
+  "pluginErrNoManifestInPath": "{path} 里没有 plugin.json",
+  "@pluginErrNoManifestInPath": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "pluginErrNoManifestInLink": "这个链接里没有找到 plugin.json",
+  "pluginErrMissingEntry": "插件缺少入口文件 {file}",
+  "@pluginErrMissingEntry": {
+    "placeholders": {
+      "file": { "type": "String" }
+    }
+  },
+  "pluginErrNotFoundUrl": "找不到 {url}",
+  "@pluginErrNotFoundUrl": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+  "pluginErrGithubRateLimit": "GitHub 暂时拒绝了请求（可能是访问太频繁），请稍后再试",
+  "pluginErrDownloadHttp": "下载失败：HTTP {code}",
+  "@pluginErrDownloadHttp": {
+    "placeholders": {
+      "code": { "type": "int" }
+    }
+  },
+  "pluginErrTooLarge": "插件太大了（超过 50 MB）",
+  "pluginErrInvalidZip": "下载的文件不是有效的 .zip",
+  "pluginErrManifestJson": "plugin.json 不是合法 JSON：{error}",
+  "@pluginErrManifestJson": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "pluginErrManifestObject": "plugin.json 应该是一个对象",
+  "pluginErrManifestIdChars": "id \"{id}\" 只能用小写字母、数字和 . _ -",
+  "@pluginErrManifestIdChars": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "pluginErrManifestIdLocal": "id \"local\" 是保留的",
+  "pluginErrManifestNoName": "缺少 name",
+  "pluginErrManifestMain": "main \"{file}\" 应该是插件目录里的 .js 文件",
+  "@pluginErrManifestMain": {
+    "placeholders": {
+      "file": { "type": "String" }
+    }
+  },
+  "pluginErrManifestIcon": "icon \"{file}\" 应该是插件目录里的 png、jpg 或 webp 文件",
+  "@pluginErrManifestIcon": {
+    "placeholders": {
+      "file": { "type": "String" }
+    }
+  },
+  "pluginErrStopped": "{name} 已停止",
+  "@pluginErrStopped": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginErrNoManifestDir": "{dir}：没有 plugin.json",
+  "@pluginErrNoManifestDir": {
+    "placeholders": {
+      "dir": { "type": "String" }
+    }
+  },
+  "pluginErrMinVersionSimple": "{name} 需要 YesPlayMusic {version} 或更新的版本",
+  "@pluginErrMinVersionSimple": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "version": { "type": "String" }
+    }
+  },
+  "pluginErrProcessExited": "{name}：插件进程意外退出",
+  "@pluginErrProcessExited": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginErrNotObject": "{name}.{op} 返回的不是对象",
+  "@pluginErrNotObject": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "op": { "type": "String" }
+    }
+  },
+  "pluginErrNotArray": "{name}.{op} 返回的不是数组",
+  "@pluginErrNotArray": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "op": { "type": "String" }
+    }
+  },
+  "pluginErrInvalidStreamUrl": "{name} 给的播放地址无效",
+  "@pluginErrInvalidStreamUrl": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginErrDuplicateId": "和其他插件的 id 重复：{id}",
+  "@pluginErrDuplicateId": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "pluginErrTimeoutDisabled": "插件运行超过 {seconds} 秒没有返回，已停用",
+  "@pluginErrTimeoutDisabled": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "pluginErrOomDisabled": "插件内存用尽，已停用",
+  "pluginErrLoadTimeout": "加载超时",
+  "pluginErrOpTimeout": "{op} 超时（{seconds} 秒）",
+  "@pluginErrOpTimeout": {
+    "placeholders": {
+      "op": { "type": "String" },
+      "seconds": { "type": "int" }
+    }
+  },
+  "pluginErrClosed": "插件已关闭",
+  "sourceErrUnsupported": "{name} 不支持 {op}",
+  "@sourceErrUnsupported": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "op": { "type": "String" }
+    }
+  },
+  "sourceErrNotFound": "找不到源 {source}",
+  "@sourceErrNotFound": {
+    "placeholders": {
+      "source": { "type": "String" }
+    }
+  }
+}

@@ -1,0 +1,244 @@
+import 'dart:math' as math;
+
+import 'package:flutter/widgets.dart';
+
+import 'l10n/l10n.dart';
+
+/// 设计稿「Color Tokens · 深 / 浅」。
+class Palette {
+  const Palette({
+    required this.dark,
+    required this.ground,
+    required this.surface,
+    required this.raised,
+    required this.hover,
+    required this.line,
+    required this.ink,
+    required this.muted,
+    required this.faint,
+    required this.thumb,
+    required this.floating,
+    required this.tip,
+  });
+
+  final bool dark;
+  final Color ground; // 页面底色
+  final Color surface; // 卡片、列表悬停
+  final Color raised; // 按钮、输入框、轨道
+  final Color hover; // 按钮悬停
+  final Color line; // 分隔线
+  final Color ink; // 主要文字、图标
+  final Color muted; // 次要文字
+  final Color faint; // 辅助文字
+  final Color thumb; // 分段选中 / 开关圆点
+  final Color floating; // 迷你播放条
+  final Color tip; // 提示胶囊
+
+  static const darkPalette = Palette(
+    dark: true,
+    ground: Color(0xFF0B0B0D),
+    surface: Color(0xFF18181B),
+    raised: Color(0xFF242428),
+    hover: Color(0xFF303036),
+    line: Color(0x0FFFFFFF),
+    ink: Color(0xFFF7F7F8),
+    muted: Color(0xFFA1A1AA),
+    faint: Color(0xFF85858F),
+    thumb: Color(0xFFF7F7F8),
+    floating: Color(0xFF18181B),
+    tip: Color(0xFF2E2E33),
+  );
+
+  static const lightPalette = Palette(
+    dark: false,
+    ground: Color(0xFFFFFFFF),
+    surface: Color(0xFFF4F4F5),
+    raised: Color(0xFFE4E4E7),
+    hover: Color(0xFFD9D9DE),
+    line: Color(0x0A0B0B0D),
+    ink: Color(0xFF0B0B0D),
+    muted: Color(0xFF52525B),
+    faint: Color(0xFF71717A),
+    thumb: Color(0xFFFFFFFF),
+    floating: Color(0xFFFFFFFF),
+    tip: Color(0xFF2E2E33),
+  );
+}
+
+/// 全局当前色板。主题切换时整棵树会重建。
+Palette P = Palette.darkPalette;
+
+/// 主题色（设置里可换），深浅两套。
+Color accent = const Color(0xFFD6B0FA);
+
+const swatchesDark = [
+  Color(0xFFD6B0FA),
+  Color(0xFF8EC5FF),
+  Color(0xFF8FE3C0),
+  Color(0xFFF6C453),
+  Color(0xFFFF9EB5),
+  Color(0xFFFF9A5C),
+];
+const swatchesLight = [
+  Color(0xFF7C4FD6),
+  Color(0xFF2F7DE1),
+  Color(0xFF1F9E6E),
+  Color(0xFFC88A0A),
+  Color(0xFFD6406A),
+  Color(0xFFD9601E),
+];
+List<String> swatchNamesOf(AppLocalizations l) => [
+  l.swatchLilac,
+  l.swatchSky,
+  l.swatchMint,
+  l.swatchSun,
+  l.swatchRose,
+  l.swatchFlame,
+];
+
+const heart = Color(0xFFFF5C7A);
+const wine = Color(0xFF7B1D2E); // Moon River 的封面色
+const white = Color(0xFFFFFFFF);
+const black = Color(0xFF000000);
+const darkInk = Color(0xFF0B0B0D);
+
+/// 半透明版的实心色：叠在页面底色 P.ground 上，看到的颜色和 [solid] 完全一样；
+/// 叠在封面色背景上则透出底下的颜色，不会是一块突兀的灰。
+/// 透明度取能做到的最小值，颜色按底色反算。
+Color glass(Color solid) {
+  final g = P.ground;
+  final gs = [g.r, g.g, g.b], ts = [solid.r, solid.g, solid.b];
+  final up = ts[0] + ts[1] + ts[2] >= gs[0] + gs[1] + gs[2]; // 深色主题往亮叠
+  var a = 0.0;
+  for (var i = 0; i < 3; i++) {
+    final room = up ? 1 - gs[i] : gs[i];
+    final need = (ts[i] - gs[i]).abs();
+    if (room > 0 && need / room > a) a = need / room;
+  }
+  if (a == 0) return solid.withValues(alpha: 0);
+  double ch(int i) => (gs[i] + (ts[i] - gs[i]) / a).clamp(0.0, 1.0);
+  return Color.from(alpha: a, red: ch(0), green: ch(1), blue: ch(2));
+}
+
+Color wa(double a) => Color.fromRGBO(255, 255, 255, a);
+Color ba(double a) => Color.fromRGBO(0, 0, 0, a);
+
+/// 连续圆角（超椭圆）装饰，统一替代带圆角的 [BoxDecoration]。
+ShapeDecoration squircle(
+  double radius, {
+  Color? color,
+  Gradient? gradient,
+  DecorationImage? image,
+  BorderSide? side,
+  List<BoxShadow>? shadows,
+}) {
+  return ShapeDecoration(
+    color: color,
+    gradient: gradient,
+    image: image,
+    shadows: shadows,
+    shape: RoundedSuperellipseBorder(
+      borderRadius: BorderRadius.circular(radius),
+      side: side ?? BorderSide.none,
+    ),
+  );
+}
+
+/// 字体：Archivo 三种宽度切成三个家族。
+enum F { body, semi, wide }
+
+const _families = {
+  F.body: 'Archivo',
+  F.semi: 'ArchivoSemi',
+  F.wide: 'ArchivoWide',
+};
+const _fallback = [
+  'PingFang SC',
+  'PingFang TC',
+  'Hiragino Sans GB',
+  'Hiragino Sans',
+  'Apple SD Gothic Neo',
+  'Heiti SC',
+  'Microsoft YaHei',
+  'Noto Sans CJK SC',
+];
+
+TextStyle ts(
+  double size, {
+  FontWeight w = FontWeight.w600,
+  Color? c,
+  F f = F.body,
+  double? h,
+  bool tnum = false,
+  double? ls,
+}) {
+  return TextStyle(
+    fontFamily: _families[f],
+    fontFamilyFallback: _fallback,
+    fontSize: size,
+    fontWeight: w,
+    color: c ?? P.ink,
+    height: h,
+    letterSpacing: ls,
+    fontFeatures: tnum ? const [FontFeature.tabularFigures()] : null,
+    decoration: TextDecoration.none,
+  );
+}
+
+/// 单行省略文本。
+Widget tx(
+  String s,
+  double size, {
+  FontWeight w = FontWeight.w600,
+  Color? c,
+  F f = F.body,
+  bool tnum = false,
+  int? lines = 1,
+  double? h,
+  TextAlign? align,
+  Key? key,
+}) {
+  return Text(
+    s,
+    key: key,
+    maxLines: lines,
+    overflow: lines == null ? null : TextOverflow.ellipsis,
+    softWrap: lines != 1,
+    textAlign: align,
+    style: ts(size, w: w, c: c, f: f, tnum: tnum, h: h),
+  );
+}
+
+const w500 = FontWeight.w500;
+const w600 = FontWeight.w600;
+const w700 = FontWeight.w700;
+const w800 = FontWeight.w800;
+const w900 = FontWeight.w900;
+
+/// 常用动效时长与曲线。
+const fast = Duration(milliseconds: 120);
+const medium = Duration(milliseconds: 200);
+
+/// 带一点回弹的弹簧曲线（近似 Sketch 原型里的 spring）。
+class SpringCurve extends Curve {
+  const SpringCurve({this.bounce = 0.15});
+  final double bounce;
+
+  @override
+  double transformInternal(double t) {
+    // 阻尼振荡：bounce 越大，过冲越多。
+    final zeta = 1 - bounce.clamp(0.0, 0.9);
+    const omega = 12.0;
+    if (zeta >= 1) {
+      return 1 - (1 + omega * t) * math.exp(-omega * t);
+    }
+    final wd = omega * math.sqrt(1 - zeta * zeta);
+    return 1 -
+        math.exp(-zeta * omega * t) *
+            (math.cos(wd * t) + (zeta * omega / wd) * math.sin(wd * t));
+  }
+}
+
+const bouncy = SpringCurve(bounce: 0.3);
+const snappy = Curves.easeOutCubic;
+const smooth = Curves.easeOutQuart;

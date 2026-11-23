@@ -1,0 +1,25 @@
+# 本项目不接受外部的 Pull Request：自动留言说明并关闭。
+# 只读事件数据、不检出 PR 的代码，所以可以安全地用 pull_request_target。
+name: Close pull requests
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close:
+    # 只关从 fork 发来的：能在本仓库推分支的（自己、协作者、装了的机器人）不受影响
+    if: github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment and close
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr close "$PR" --comment "感谢你的贡献！这个项目目前不接受 Pull Request。如果发现了问题或有建议，欢迎提交 Issue。
+
+          Thanks for your interest! This project does not accept pull requests. Please open an issue for bugs or suggestions instead."

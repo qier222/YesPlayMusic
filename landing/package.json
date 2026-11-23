@@ -1,0 +1,23 @@
+{
+  "name": "yesplaymusic-landing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/react": "7.1.9",
+    "@fontsource-variable/inter": "5.3.0",
+    "astro": "7.4.12",
+    "react": "19.1.10",
+    "react-dom": "19.1.10"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "wrangler": "4.162.0"
+  }
+}

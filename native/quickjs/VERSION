@@ -1,0 +1,2 @@
+quickjs-ng v0.18.0 amalgamation, from https://github.com/quickjs-ng/quickjs/releases/tag/v0.18.0 (quickjs-amalgam.zip).
+Not modified. Built without QJS_BUILD_LIBC, so plugins get no std/os modules.

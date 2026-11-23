@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全问题 / Security vulnerability
+    url: https://github.com/qier222/YesPlayMusic/security/advisories/new
+    about: 请私下报告安全问题，不要公开提交 Issue
+  - name: 插件开发文档 / Plugin docs
+    url: https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.md
+    about: 写插件之前先看这里

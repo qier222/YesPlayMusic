@@ -1,0 +1,235 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
+import LangMenu from './LangMenu';
+import Carousel from './Carousel';
+import DownloadModal from './DownloadModal';
+import { languages, pathOf, t, type Lang } from '../i18n';
+import { downloads, links } from '../lib/site';
+
+import appIcon from '../assets/app-icon.webp';
+import jellyfin from '../assets/plugins/jellyfin.webp';
+import plex from '../assets/plugins/plex.webp';
+import emby from '../assets/plugins/emby.webp';
+import subsonic from '../assets/plugins/subsonic.webp';
+import zhLibrary from '../assets/shots/library.webp';
+import zhHome from '../assets/shots/home.webp';
+import zhNowPlaying from '../assets/shots/now-playing.webp';
+import zhAlbum from '../assets/shots/album.webp';
+import zhCoverflow from '../assets/shots/coverflow.webp';
+import zhCoverflowBand from '../assets/coverflow-band.webp';
+import zhShelf from '../assets/shelf-spines.webp';
+import enLibrary from '../assets/en/shots/library.webp';
+import enHome from '../assets/en/shots/home.webp';
+import enNowPlaying from '../assets/en/shots/now-playing.webp';
+import enAlbum from '../assets/en/shots/album.webp';
+import enCoverflow from '../assets/en/shots/coverflow.webp';
+import enCoverflowBand from '../assets/en/coverflow-band.webp';
+import enShelf from '../assets/en/shelf-spines.webp';
+import coverMoonRiver from '../assets/cover-moonriver.webp';
+import coverFocus from '../assets/cover-focus.webp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const d = t(lang);
+// 截图跟着语言走：英文页用英文界面的截图
+const shots = {
+  zh: { slides: [zhLibrary, zhHome, zhNowPlaying, zhAlbum, zhCoverflow], coverflowBand: zhCoverflowBand, shelf: zhShelf },
+  en: { slides: [enLibrary, enHome, enNowPlaying, enAlbum, enCoverflow], coverflowBand: enCoverflowBand, shelf: enShelf },
+}[lang];
+const { coverflowBand, shelf } = shots;
+const site = Astro.site ?? new URL('https://example.com');
+const langItems = (Object.keys(languages) as Lang[]).map((code) => ({ code, label: languages[code], href: pathOf(code) }));
+const alt = langItems.map((i) => ({ hreflang: i.code === 'zh' ? 'zh-CN' : i.code, href: new URL(i.href, site).href }));
+
+const sources = [
+  { name: d.hero.local, icon: 'music' },
+  { name: 'Jellyfin', img: jellyfin },
+  { name: 'Plex', img: plex },
+  { name: 'Emby', img: emby },
+  { name: 'Subsonic', img: subsonic },
+  { name: d.hero.morePlugins, icon: 'plus', more: true, href: links.pluginTopic },
+];
+const slides = shots.slides.map((s, k) => ({
+  src: s.src, width: s.width, height: s.height, alt: d.hero.slides[k],
+}));
+const official = [
+  { name: 'Jellyfin', img: jellyfin },
+  { name: 'Plex', img: plex },
+  { name: 'Emby', img: emby },
+  { name: 'Subsonic', img: subsonic },
+];
+const footerLinks = [links.repo, links.plugins, links.changelog, links.issues];
+const pluginJson = `{
+  "id": "hello",
+  "name": "Hello",
+  "main": "index.js",
+  "permissions": { "network": ["example.com"] }
+}`;
+---
+<Base d={d} alt={alt}>
+  <header class="nav">
+    <a class="brand" href={pathOf(lang)}>
+      <img src={appIcon.src} width="36" height="36" alt="" />
+      <span>YesPlayMusic</span>
+    </a>
+    <nav class="nav-right">
+      <LangMenu client:idle current={lang} items={langItems} />
+      <a class="nav-item github" href={links.repo}><Icon name="github" size={20} /><span class="label">GitHub</span></a>
+      <button class="btn btn-white btn-sm" data-download>{d.nav.download}</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>{d.hero.title[0]}{d.hero.titlePunct && <span class="hang">{d.hero.titlePunct}</span>}<br />{d.hero.title[1]}</h1>
+      <p class="hero-sub">{d.hero.subtitle[0]}<br />{d.hero.subtitle[1]}</p>
+      <div class="hero-cta">
+        <button class="btn btn-white" data-download><Icon name="download" size={20} />{d.hero.download}</button>
+        <a class="btn btn-ghost" href={links.repo}><Icon name="github" size={20} />GitHub</a>
+      </div>
+      <ul class="sources">
+        {sources.map((s) => (
+          <li class:list={[{ more: s.more }]}>
+            {s.href ? (
+              <a href={s.href}><span class="source-icon"><Icon name={s.icon!} size={16} /></span>{s.name}</a>
+            ) : (
+              <>{s.img ? <img src={s.img.src} width="28" height="28" alt="" /> : <span class="source-icon"><Icon name={s.icon!} size={16} /></span>}{s.name}</>
+            )}
+          </li>
+        ))}
+      </ul>
+      <Carousel client:load slides={slides} start={1} />
+    </section>
+
+    <section class="section" id="features">
+      <p class="eyebrow">{d.features.label}</p>
+      <h2>{d.features.title}</h2>
+      <div class="bento">
+        <article class="card card-coverflow">
+          <h3 class="wide">{d.features.coverflow.title}</h3>
+          <p>{d.features.coverflow.body}</p>
+          <img class="coverflow-band" src={coverflowBand.src} width={coverflowBand.width} height={coverflowBand.height} alt="" loading="lazy" />
+        </article>
+
+        <article class="card card-native">
+          <h3>{d.features.native.title}</h3>
+          <p>{d.features.native.body}</p>
+          <div class="built-with"><span>{d.features.native.builtWith}</span><strong>Flutter</strong></div>
+        </article>
+
+        <article class="card card-shelf">
+          <h3>{d.features.shelf.title}</h3>
+          <p>{d.features.shelf.body}</p>
+          <img class="shelf" src={shelf.src} width={shelf.width} height={shelf.height} alt="" loading="lazy" />
+        </article>
+
+        <article class="card card-local">
+          <h3>{d.features.local.title}</h3>
+          <p>{d.features.local.body}</p>
+          <p class="formats">FLAC MP3<br />M4A WAV<br />AIFF OGG<br />OPUS APE</p>
+        </article>
+
+        <article class="card card-media">
+          <h3>{d.features.media.title}</h3>
+          <p>{d.features.media.body}</p>
+          <div class="now-widget" aria-hidden="true">
+            <div class="now-top">
+              <img src={coverMoonRiver.src} width="52" height="52" alt="" loading="lazy" />
+              <div><strong>Moon River</strong><span>Frank Ocean · YesPlayMusic</span></div>
+            </div>
+            <div class="now-progress"><i></i></div>
+            <div class="now-controls">
+              <Icon name="previous" size={26} /><Icon name="pause" size={30} /><Icon name="next" size={26} />
+            </div>
+          </div>
+          <ul class="chips">{d.features.media.chips.map((c) => <li>{c}</li>)}</ul>
+        </article>
+
+        <article class="card card-ai">
+          <div class="ai-text">
+            <h3>{d.features.ai.title}</h3>
+            <p>{d.features.ai.body}</p>
+            <span class="hint"><Icon name="mcp" size={18} />{d.features.ai.hint}</span>
+          </div>
+          <div class="chat" aria-hidden="true">
+            <p class="bubble">{d.features.ai.ask}</p>
+            <ul class="tools">
+              {['search_music', 'play_tracks', 'manage_queue'].map((x) => <li><Icon name="check" size={14} /><code>{x}</code></li>)}
+            </ul>
+            <p class="reply">{d.features.ai.reply}</p>
+            <div class="mini-player">
+              <img src={coverFocus.src} width="40" height="40" alt="" loading="lazy" />
+              <div><strong>{d.features.ai.playlist}</strong><span>{d.features.ai.playing}</span></div>
+              <Icon name="pause" size={24} />
+            </div>
+          </div>
+        </article>
+
+        <article class="card card-open">
+          <h3>{d.features.open.title}</h3>
+          <p>{d.features.open.body}</p>
+          <p class="platforms">macOS<br />Windows<br />Linux</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section plugins" id="plugins">
+      <p class="eyebrow">{d.plugins.label}</p>
+      <h2>{d.plugins.title}</h2>
+      <p class="lead">{d.plugins.body}</p>
+      <div class="official">
+        <span>{d.plugins.official}</span>
+        <ul>{official.map((p) => <li><img src={p.img.src} width="28" height="28" alt="" />{p.name}</li>)}</ul>
+      </div>
+      <div class="paths">
+        <article class="card path">
+          <p class="eyebrow">{d.plugins.browse.label}</p>
+          <h3>{d.plugins.browse.title}</h3>
+          <p>{d.plugins.browse.body}</p>
+          <ol class="steps">{d.plugins.browse.steps.map((s) => <li>{s}</li>)}</ol>
+          <a class="btn btn-white" href={links.pluginTopic}><Icon name="github" size={18} />{d.plugins.browse.cta}</a>
+        </article>
+        <article class="card path">
+          <p class="eyebrow">{d.plugins.develop.label}</p>
+          <h3>{d.plugins.develop.title}</h3>
+          <p>{d.plugins.develop.body}</p>
+          <pre class="code"><span class="code-name">plugin.json</span><code>{pluginJson}</code></pre>
+          <a class="btn btn-ghost" href={links.plugins}>{d.plugins.develop.cta}</a>
+        </article>
+      </div>
+      <ul class="safety">
+        {d.plugins.safety.map(([h, b]) => <li><strong>{h}</strong><p>{b}</p></li>)}
+      </ul>
+    </section>
+
+    {/* 「我还做了这些」暂时隐藏，内容填好后去掉这层注释即可
+    <section class="section" id="more">
+      <p class="eyebrow">{d.more.label}</p>
+      <h2>{d.more.title}</h2>
+      <ul class="products">
+        {d.more.products.map((p) => (
+          <li>
+            <a class="card product" href={p.href}>
+              <span class="product-icon" aria-hidden="true"></span>
+              <h3>{p.name}</h3>
+              <p>{p.body}</p>
+              <Icon name="arrow-right" size={24} class="product-arrow" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+    */}
+  </main>
+
+  <footer class="footer">
+    <span>YesPlayMusic · {d.footer.license}</span>
+    <nav>
+      {d.footer.links.map((l, k) => <a href={footerLinks[k]}>{l}</a>)}
+      <LangMenu client:visible current={lang} items={langItems} up />
+    </nav>
+  </footer>
+
+  <DownloadModal client:idle t={d.modal} urls={downloads} />
+</Base>

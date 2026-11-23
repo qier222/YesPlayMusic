@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=YesPlayMusic
+Comment=Desktop music player with a plugin system
+Comment[zh_CN]=支持插件的桌面音乐播放器
+Exec=yesplaymusic %U
+Icon=yesplaymusic
+Terminal=false
+Categories=AudioVideo;Audio;Player;Music;
+StartupWMClass=com._0xtangerine.yesplaymusic

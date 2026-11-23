@@ -1,0 +1,28 @@
+name: 插件接口 / Plugin API
+description: 插件开发者：接口不够用、文档不清楚或行为和文档不一致
+labels: [plugin-api]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        接口说明见 [docs/plugins.md](https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.md)。某个插件本身的问题请找插件作者。
+  - type: input
+    id: version
+    attributes:
+      label: 应用版本 / App version
+      placeholder: "3.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 问题或需求 / Issue
+      description: 想做什么、现在的接口为什么做不到，或者实际行为和文档哪里不一致
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: 代码示例 / Example
+      description: plugin.json 和相关代码片段
+      render: js

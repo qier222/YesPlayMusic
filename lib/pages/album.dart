@@ -1,0 +1,324 @@
+import 'package:flutter/widgets.dart';
+
+import '../data.dart';
+import '../l10n/l10n.dart';
+import '../menus.dart';
+import '../state.dart';
+import '../theme.dart';
+import '../ui.dart';
+import 'common.dart';
+import 'library.dart' show HeartSmall;
+
+// 右侧文字叠在封面取色的背景上，实心灰会和封面色打架；改用白 / 黑 + 透明度，
+// 叠在纯黑（浅色主题：纯白）上和原来的 P.muted / P.faint 灰度相同。
+Color get _muted =>
+    P.dark ? wa(161 / 255) : ba(1 - 82 / 255); // #A1A1AA / #52525B
+Color get _faint =>
+    P.dark ? wa(133 / 255) : ba(1 - 113 / 255); // #85858F / #71717A
+
+class AlbumPage extends StatelessWidget {
+  const AlbumPage({super.key, required this.id});
+  final String id;
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.app;
+    final l = context.l10n;
+    final al = app.albumOf(id);
+    if (al == null) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(40, 20, 40, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BackBtn(onTap: app.back),
+            const SizedBox(height: 48),
+            tx(l.albumNotFound, 15, w: w600, c: P.faint),
+          ],
+        ),
+      );
+    }
+    final saved = app.savedAlbums.contains(al.id);
+    final kind = al.kind.isEmpty ? l.albumKindAlbum : al.kind;
+    final rows = [
+      for (final t in app.albumTracks(al.id) ?? const <Track>[]) (t, ''),
+    ];
+    final minutes = (rows.fold(0, (a, r) => a + r.$1.seconds) / 60).round();
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 往左多铺 96（侧边栏 72 + 切页滑动 24），往右多铺 24：背景铺到窗口
+        // 最左边、透到通透的侧边栏下面，并且和页面一起淡入淡出、滑动，切页时两边不会露底。
+        Positioned(
+          left: -96,
+          right: -24,
+          top: 0,
+          bottom: 0,
+          child: CoverWash(coverId: al.cover),
+        ),
+        // 左侧封面信息固定，只有右侧曲目列表滚动
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 400,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      BackBtn(onTap: app.back),
+                      const SizedBox(height: 36),
+                      FadeIn(
+                        dy: 20,
+                        child: Container(
+                          decoration: squircle(
+                            20,
+                            shadows: [
+                              BoxShadow(
+                                color: ba(0.67),
+                                blurRadius: 60,
+                                offset: const Offset(0, 24),
+                                spreadRadius: -10,
+                              ),
+                            ],
+                          ),
+                          child: Cover(al.cover, w: 400, h: 400, r: 20),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      tx(
+                        al.year > 0 ? '$kind · ${al.year}' : kind,
+                        13,
+                        w: w700,
+                        f: F.semi,
+                        c: _muted,
+                      ),
+                      const SizedBox(height: 8),
+                      Transform.translate(
+                        offset: const Offset(-3, 0),
+                        child: SizedBox(
+                          width: 440,
+                          child: tx(
+                            al.title,
+                            al.title.length > 9 ? 44 : 72,
+                            w: w900,
+                            f: F.wide,
+                            lines: 2,
+                            h: 1.05,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Tap(
+                        onTap: al.artistRoute.isEmpty
+                            ? null
+                            : () => app.go(al.artistRoute),
+                        builder: (_, h, _) => Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Cover(al.cover, w: 28, h: 28, r: 14),
+                            const SizedBox(width: 10),
+                            AnimatedDefaultTextStyle(
+                              duration: fast,
+                              style: ts(
+                                15,
+                                w: w700,
+                                f: F.semi,
+                                c: h ? accent : P.ink,
+                              ),
+                              child: Text(al.artist),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          PlayPill(
+                            onTap: () => app.playAlbum(al.id, shuffled: false),
+                          ),
+                          const SizedBox(width: 10),
+                          RoundBtn(
+                            icon: 'shuffle',
+                            tip: l.actionShuffle,
+                            onTap: (_) => app.playAlbum(al.id, shuffled: true),
+                          ),
+                          const SizedBox(width: 10),
+                          RoundBtn(
+                            icon: saved ? 'heart-filled' : 'heart',
+                            tip: saved ? l.actionUnsave : l.actionSaveAlbum,
+                            on: saved,
+                            onTap: (_) => app.toggleSaveAlbum(al),
+                          ),
+                          const SizedBox(width: 10),
+                          RoundBtn(
+                            icon: 'more',
+                            tip: l.actionMore,
+                            onTap: (ctx) => menuBelow(ctx, albumMenu(ctx, al)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 64),
+                // 和歌单页一样：表头固定，只有下面的曲目滚动
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 96),
+                      SizedBox(
+                        height: 28,
+                        child: Row(
+                          children: [
+                            tx(l.albumTracksTitle, 20, w: w700, f: F.semi),
+                            const Spacer(),
+                            tx(
+                              l.albumTracksDuration(rows.length, minutes),
+                              13,
+                              w: w600,
+                              c: _faint,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(height: 1, color: P.line),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(top: 12, bottom: 200),
+                          itemCount: rows.length + 1,
+                          itemBuilder: (_, i) => i < rows.length
+                              ? Padding(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  child: FadeIn(
+                                    delay: (i < 14 ? i : 14) * 20,
+                                    child: _AlbumTrackRow(
+                                      i: i,
+                                      track: rows[i].$1,
+                                      feat: rows[i].$2,
+                                      album: al,
+                                    ),
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.only(top: 22),
+                                  child: tx(
+                                    _footer(al, l),
+                                    12,
+                                    w: w500,
+                                    c: _faint,
+                                    lines: null,
+                                    h: 1.67,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// 列表底部：发行日期（只知道年份时只写年份），下一行是版权。
+String _footer(Album al, AppLocalizations l) {
+  final d = al.released;
+  final date = d != null
+      ? l.albumReleasedOn(l.dateYearMonthDay(d.year, d.month, d.day))
+      : al.year > 0
+      ? l.albumReleasedIn(al.year)
+      : '';
+  return [date, al.copyright].where((s) => s.isNotEmpty).join('\n');
+}
+
+class _AlbumTrackRow extends StatelessWidget {
+  const _AlbumTrackRow({
+    required this.i,
+    required this.track,
+    required this.feat,
+    required this.album,
+  });
+  final int i;
+  final Track track;
+  final String feat;
+  final Album album;
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.app;
+    final current = app.track.key == track.key;
+    void play() =>
+        current ? app.togglePlay() : app.playAlbum(album.id, start: i);
+    return Tap(
+      onDoubleTap: play,
+      onMenu: (p) => showMenu(context, p, trackMenu(context, track)),
+      builder: (_, h, _) => AnimatedContainer(
+        duration: fast,
+        height: 46,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: squircle(
+          12,
+          color: current
+              ? (P.dark ? wa(0.08) : ba(0.05))
+              : (h ? (P.dark ? wa(0.05) : ba(0.03)) : const Color(0x00000000)),
+        ),
+        child: Row(
+          children: [
+            RowIndex(
+              n: i + 1,
+              hover: h,
+              current: current,
+              playing: app.playing,
+              width: 26,
+              align: Alignment.center,
+              color: _faint,
+              onTap: play,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Flexible(
+                    child: tx(
+                      track.title,
+                      15,
+                      w: w700,
+                      c: current ? accent : P.ink,
+                    ),
+                  ),
+                  if (feat.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: tx(feat, 12, w: w500, c: _muted),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (h || app.liked.contains(track.key)) ...[
+              HeartSmall(
+                liked: app.liked.contains(track.key),
+                onTap: () => app.toggleLike(track),
+                color: _faint,
+              ),
+              const SizedBox(width: 8),
+            ],
+            tx(track.dur, 13, w: w600, c: _faint, tnum: true),
+          ],
+        ),
+      ),
+    );
+  }
+}

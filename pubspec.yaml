@@ -1,0 +1,80 @@
+name: yesplaymusic
+description: "YesPlayMusic — a desktop music player with a plugin system."
+publish_to: 'none'
+version: 3.0.0+1
+
+environment:
+  sdk: ^3.14.0
+
+dependencies:
+  archive: ^4.0.7
+  audio_metadata_reader: 1.8.1
+  auto_updater: 1.0.0
+  code_assets: ">=2.1.0 <2.2.0"
+  crypto: ^3.0.6
+  ffi: ^2.1.4
+  file_selector: 1.1.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_svg: ^2.4.0
+  hooks: ^2.2.0
+  intl: any
+  logging: ^1.3.0
+  media_kit: ^1.2.6
+  media_kit_libs_audio: ^1.0.7
+  native_toolchain_c: 0.19.5
+  path: ^1.9.1
+  pointycastle: ^4.0.0
+  qr_flutter: ^4.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  integration_test:
+    sdk: flutter
+
+flutter:
+  generate: true
+  assets:
+    - assets/icons/
+    - assets/icons/20/
+    - assets/icons/16/
+    - assets/icons/png/24/
+    - assets/icons/png/20/
+    - assets/icons/png/16/
+    - assets/plugins/
+    - assets/app_icon.png
+  fonts:
+    - family: Archivo
+      fonts:
+        - asset: assets/fonts/Archivo-400.ttf
+          weight: 400
+        - asset: assets/fonts/Archivo-500.ttf
+          weight: 500
+        - asset: assets/fonts/Archivo-600.ttf
+          weight: 600
+        - asset: assets/fonts/Archivo-700.ttf
+          weight: 700
+        - asset: assets/fonts/Archivo-800.ttf
+          weight: 800
+        - asset: assets/fonts/Archivo-900.ttf
+          weight: 900
+    - family: ArchivoSemi
+      fonts:
+        - asset: assets/fonts/ArchivoSemiExpanded-600.ttf
+          weight: 600
+        - asset: assets/fonts/ArchivoSemiExpanded-700.ttf
+          weight: 700
+        - asset: assets/fonts/ArchivoSemiExpanded-800.ttf
+          weight: 800
+    - family: ArchivoWide
+      fonts:
+        - asset: assets/fonts/ArchivoExpanded-700.ttf
+          weight: 700
+        - asset: assets/fonts/ArchivoExpanded-800.ttf
+          weight: 800
+        - asset: assets/fonts/ArchivoExpanded-900.ttf
+          weight: 900

@@ -1,0 +1,35 @@
+PODS:
+  - auto_updater_macos (0.0.1):
+    - FlutterMacOS
+    - Sparkle
+  - FlutterMacOS (1.0.0)
+  - media_kit_libs_macos_audio (1.0.4):
+    - FlutterMacOS
+  - Sparkle (2.9.6)
+
+DEPENDENCIES:
+  - auto_updater_macos (from `Flutter/ephemeral/.symlinks/plugins/auto_updater_macos/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - media_kit_libs_macos_audio (from `Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_audio/macos`)
+
+SPEC REPOS:
+  trunk:
+    - Sparkle
+
+EXTERNAL SOURCES:
+  auto_updater_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/auto_updater_macos/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  media_kit_libs_macos_audio:
+    :path: Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_audio/macos
+
+SPEC CHECKSUMS:
+  auto_updater_macos: 3a42f1a06be6981f1a18be37e6e7bf86aa732118
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
+  media_kit_libs_macos_audio: 06f3cf88d6d89c7c3c87eae57689d1c6adb335b2
+  Sparkle: b8c9cf4ced217ffc708a1ca5f988a7ba877658db
+
+PODFILE CHECKSUM: 1e95c36afbfd1cb6423ceca4de7a8e1b256fb6ac
+
+COCOAPODS: 1.17.0
