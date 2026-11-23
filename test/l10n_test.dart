@@ -102,4 +102,12 @@ void main() {
     expect(l10nForTag('ja').localeName, 'ja');
     expect(l10nForTag('xx').localeName, 'en');
   });
+
+  test('listJoiner uses the ideographic comma for zh and ja only', () {
+    expect(listJoiner(const Locale('zh')), '、');
+    expect(listJoiner(const Locale('zh', 'TW')), '、');
+    expect(listJoiner(const Locale('ja')), '、');
+    expect(listJoiner(const Locale('en')), ', ');
+    expect(listJoiner(const Locale('de')), ', ');
+  });
 }
