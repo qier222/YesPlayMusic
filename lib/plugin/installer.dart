@@ -557,9 +557,14 @@ Future<void> _unzip(Uint8List bytes, String dest) async {
   }
 }
 
+/// Copies regular files and directories only. Symlinks are skipped: a plugin folder
+/// with a link like `data -> ~/.ssh` would otherwise copy files from outside it
+/// into the plugin directory, where the plugin can read them.
 Future<void> _copyDir(String from, String to) async {
   await Directory(to).create(recursive: true);
-  await for (final e in Directory(from).list(recursive: true)) {
+  await for (final e in Directory(
+    from,
+  ).list(recursive: true, followLinks: false)) {
     final rel = p.relative(e.path, from: from);
     if (e is Directory) {
       await Directory(p.join(to, rel)).create(recursive: true);

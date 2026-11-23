@@ -241,6 +241,31 @@ void main() {
       expect(File(p.join(dir, 'index.js')).existsSync(), isTrue);
     });
 
+    test('symlinks in the folder are not followed', () async {
+      final secret = Directory(p.join(tmp.path, 'secret'))..createSync();
+      File(p.join(secret.path, 'id_rsa')).writeAsStringSync('KEY');
+      final src = Directory(p.join(tmp.path, 'src3'))..createSync();
+      File(p.join(src.path, 'plugin.json'))
+          .writeAsStringSync('{"id":"lnk","name":"Lnk","version":"1.0.0"}');
+      File(p.join(src.path, 'index.js'))
+          .writeAsStringSync('export async function playlists(){}');
+      Link(p.join(src.path, 'data')).createSync(secret.path);
+      Link(p.join(src.path, 'key.txt'))
+          .createSync(p.join(secret.path, 'id_rsa'));
+
+      final pkg = await fetchPluginFromFolder(src.path, pluginsRoot: root);
+      final dir = await installPlugin(pkg, pluginsRoot: root);
+      expect(File(p.join(dir, 'index.js')).existsSync(), isTrue);
+      expect(
+        FileSystemEntity.typeSync(p.join(dir, 'data', 'id_rsa')),
+        FileSystemEntityType.notFound,
+      );
+      expect(
+        FileSystemEntity.typeSync(p.join(dir, 'key.txt')),
+        FileSystemEntityType.notFound,
+      );
+    }, skip: Platform.isWindows ? 'creating symlinks needs privileges' : false);
+
     test('文件夹里缺入口文件时报错', () async {
       final src = Directory(p.join(tmp.path, 'src2'))..createSync();
       File(p.join(src.path, 'plugin.json'))
