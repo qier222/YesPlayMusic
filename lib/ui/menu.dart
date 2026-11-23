@@ -1,4 +1,4 @@
-// 通用组件：右键菜单。
+// Common widgets: context menus.
 
 import 'dart:async';
 
@@ -10,7 +10,7 @@ import '../theme.dart';
 import 'icons.dart';
 import 'tap.dart';
 
-// ───────────── 右键菜单 ─────────────
+// ───────────── Context menu ─────────────
 
 class MenuItem {
   const MenuItem(
@@ -31,19 +31,19 @@ class MenuItem {
   final List<MenuItem>? sub;
   final bool checked;
 
-  /// 子菜单第一项和其余之间画分隔线（「新建歌单」和已有歌单）。
+  /// Draws a divider between a submenu's first item and the rest ("New playlist" and existing playlists).
   final bool subSplit;
 
-  /// 要等一下才知道的子菜单（比如自己的歌单），悬停时显示「正在加载…」。
+  /// Submenus only known after a wait (e.g. the user's playlists) show "Loading…" on hover.
   final Future<List<MenuItem>> Function()? subLoad;
 
-  /// 自带条目的名字，插件可以按它藏起来（见 [MenuSpec.more]）。
+  /// Name of a built-in item, which plugins can use to hide it (see [MenuSpec.more]).
   final String? id;
 
   bool get hasSub => sub != null || subLoad != null;
 }
 
-/// 晚到的菜单补充：要插进去的组，和要藏起来的条目 id。
+/// Late menu additions: groups to insert and item ids to hide.
 typedef MenuMore = ({List<List<MenuItem>> groups, Set<String> hide});
 
 class MenuSpec {
@@ -60,13 +60,13 @@ class MenuSpec {
   final bool round;
   final List<List<MenuItem>> groups;
 
-  /// 晚一点才知道的条目（比如插件自定义的），到了就插在第 [moreAt] 组前
-  /// （默认最后）。出错或为空就什么都不加。
+  /// Items known only a little later (e.g. plugin-defined ones), inserted before group [moreAt] when they arrive
+  /// (last by default). Nothing is added on error or when empty.
   final Future<MenuMore>? more;
   final int? moreAt;
 }
 
-/// 打开当前菜单的那个元素（右键的那一行）。菜单开着时它保持悬停样式。
+/// The element that opened the current menu (the right-clicked row). It keeps its hover style while the menu is open.
 final menuOwner = ValueNotifier<Object?>(null);
 
 OverlayEntry? _menuEntry;
@@ -316,7 +316,7 @@ class _MenuRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // 图标为空时不占位（比如只用勾表示选中的单选菜单）
+            // No space reserved when the icon is null (e.g. radio menus that only use a check for selection)
             if (item.icon.isNotEmpty) ...[
               Ico(item.icon, size: 20, color: icol),
               const SizedBox(width: 10),

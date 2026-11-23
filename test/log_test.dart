@@ -15,7 +15,7 @@ void main() {
 
   String read() => File(p.join(tmp.path, 'app.log')).readAsStringSync();
 
-  // debugPrint 和没人接的异常都写进文件；close 后恢复原来的回调。
+  // debugPrint and unhandled exceptions are written to the file; close restores the original callbacks.
   test('captures debugPrint and uncaught errors', () {
     final printBefore = debugPrint;
     final platformBefore = PlatformDispatcher.instance.onError;
@@ -37,7 +37,7 @@ void main() {
     expect(PlatformDispatcher.instance.onError, same(platformBefore));
   });
 
-  // 超过 1 MB 的旧日志在启动时换成 app.1.log。
+  // An old log over 1 MB is rotated to app.1.log at launch.
   test('rotates a big log on start', () {
     File(p.join(tmp.path, 'app.log'))
         .writeAsStringSync('x' * (AppLog.rotateBytes + 1));
@@ -50,7 +50,7 @@ void main() {
     expect(read(), endsWith(' I new\n'));
   });
 
-  // 一次运行写满 5 MB 后只留一行提示，不再写。
+  // After 5 MB in one run, only one notice line is left and nothing more is written.
   test('caps one session', () {
     AppLog.init(tmp.path);
     final big = 'y' * (1 << 20);
@@ -60,11 +60,11 @@ void main() {
     AppLog.write('I', 'after');
     final text = read();
     expect(text.length, lessThan(AppLog.sessionBytes + 200));
-    expect(text, contains('本次日志已满'));
+    expect(text, contains('Log limit reached'));
     expect(text, isNot(contains('after')));
   });
 
-  // 登录凭据写盘前打码，其他内容不动。
+  // Credentials are masked before writing; everything else is unchanged.
   test('redacts credentials', () {
     expect(
       AppLog.redact('Cookie: MUSIC_U=abc; os=pc\nnext line'),

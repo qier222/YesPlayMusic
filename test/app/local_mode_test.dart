@@ -105,7 +105,7 @@ void main() {
     expect(app.queue, isEmpty);
     expect(app.npOpen, isFalse);
     expect(app.queueFrom, '');
-    // 等 _sync 取地址失败，再 dispose
+    // Wait for _sync to fail fetching the URL, then dispose
     await Future<void>.delayed(const Duration(milliseconds: 350));
   });
 }

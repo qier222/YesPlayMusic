@@ -113,7 +113,7 @@ void main() {
     expect(lastHeaders['referer'], 'https://music.example.com');
     expect(lastHeaders['x-token'], 'abc');
 
-    // 模拟重启：新建实例从磁盘读取，不再发网络请求
+    // Simulate a restart: a new instance reads from disk without network requests
     final c2 = makeCache();
     addTearDown(c2.dispose);
     final cached = await c2.get('demo@u1/song1');
@@ -140,13 +140,13 @@ void main() {
       AudioStream(url: '$baseUrl/s1.flac', type: 'flac'),
     );
 
-    // 29 天内仍然有效
+    // Still valid within 29 days
     now = now.add(const Duration(days: 29));
     final before = await c.get('demo@u1/s1');
     expect(before, isNotNull);
     final filePath = Uri.parse(before!.url).toFilePath();
 
-    // 再过 2 天（总共 31 天，超过一个月）：失效且删除文件
+    // Two more days (31 in total, over a month): expired and the file deleted
     now = now.add(const Duration(days: 2));
     expect(await c.get('demo@u1/s1'), isNull);
     expect(File(filePath).existsSync(), isFalse);
@@ -191,7 +191,7 @@ void main() {
   test(
     'trim removes expired entries first and then LRU by lastModified',
     () async {
-      // 每条大约 4096 字节 + ~180 字节 meta ≈ 4280 字节，上限设 10000 字节
+      // Each entry is about 4096 bytes + ~180 bytes meta ≈ 4280 bytes; the cap is set to 10000 bytes
       final c = makeCache(maxBytes: 10000);
       addTearDown(c.dispose);
 
@@ -210,14 +210,14 @@ void main() {
       expect(await c.get('src@a/0'), isNull);
       expect(await c.get('src@a/3'), isNotNull);
 
-      // 超过一个月后 trim 会清空全部过期条目
+      // After more than a month, trim clears all expired entries
       now = now.add(const Duration(days: 31));
       await c.trim();
       expect(await c.size(), 0);
     },
   );
 
-  // 音频先到位、.json 后写：刚写的「孤儿」文件不删，放久了才删。
+  // Audio arrives first and .json is written later: just-written "orphan" files aren't deleted, only old ones are.
   test('trim keeps fresh orphan audio, deletes old ones', () async {
     final c = makeCache();
     addTearDown(c.dispose);
@@ -234,9 +234,9 @@ void main() {
     expect(orphan.existsSync(), isFalse);
   });
 
-  // 刚写的歌即使最久没播过，超上限时也先不删。
+  // A just-written song isn't deleted first when over the cap, even if it's the least recently played.
   test('trim does not evict files written in the last minute', () async {
-    // 每首约 4280 字节：删掉旧的那首还超，不跳过的话会接着删刚写的
+    // About 4280 bytes each: still over after deleting the old one; without the skip it would go on to delete the new one
     final c = makeCache(maxBytes: 5000);
     addTearDown(c.dispose);
     await c.cache('src@a/old', AudioStream(url: '$baseUrl/o.mp3', type: 'mp3'));
@@ -277,7 +277,7 @@ void main() {
     },
   );
 
-  // 服务器一直不回（弱网、代理卡住）：超时放弃，不留半截文件，下次还能重新缓存。
+  // The server never responds (weak network, stuck proxy): give up on timeout, leave no partial file, and caching can be retried later.
   test('gives up on a stalled server and can retry', () async {
     final c = makeCache(idleTimeout: const Duration(milliseconds: 200));
     addTearDown(c.dispose);

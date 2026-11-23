@@ -1,4 +1,4 @@
-// 通用组件：淡入、滚动、提示条、空状态、加载圈。
+// Common widgets: fade-in, scrolling, toast, empty state, spinner.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -8,13 +8,13 @@ import 'package:flutter/widgets.dart';
 
 import '../theme.dart';
 
-// ───────────── 杂项 ─────────────
+// ───────────── Misc ─────────────
 
-/// 页面进入时轻微上浮淡入（用于列表项错峰出现）。
+/// A slight rise and fade-in when the page enters (for staggered list items).
 class FadeIn extends StatefulWidget {
   const FadeIn({super.key, required this.child, this.delay = 0, this.dy = 12});
   final Widget child;
-  final int delay; // 毫秒
+  final int delay; // milliseconds
   final double dy;
 
   @override
@@ -27,15 +27,15 @@ class _FadeInState extends State<FadeIn> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 只在列表刚出现时播入场动画。滚动中（或已经滚离顶部）懒加载出来的行
-    // 直接显示，否则快速滚动时新露出来的行全是透明的，看起来一片黑。
-    // 只在第一次决定，之后不变，免得行被拆掉重建。
+    // Play the entrance animation only when the list first appears. Rows lazily built while scrolling (or after scrolling away from the top)
+    // show directly; otherwise rows revealed during fast scrolling would all be transparent and look like a black void.
+    // Decided only the first time and never changed, so rows aren't torn down and rebuilt.
     if (_animate == null) {
       final pos = Scrollable.maybeOf(context)?.position;
       _animate =
           pos == null ||
           !pos.hasPixels ||
-          // 第一次布局时还没有内容范围：就是列表刚出现
+          // No content extent on the first layout: the list has just appeared
           !pos.hasContentDimensions ||
           (!pos.isScrollingNotifier.value && pos.pixels <= pos.minScrollExtent);
     }
@@ -66,7 +66,7 @@ class _FadeInState extends State<FadeIn> {
   }
 }
 
-/// 隐藏滚动条的滚动行为。
+/// Scroll behavior that hides scrollbars.
 class NoBars extends ScrollBehavior {
   const NoBars();
   @override
@@ -81,14 +81,14 @@ class NoBars extends ScrollBehavior {
     PointerDeviceKind.trackpad,
   };
 
-  // macOS 默认会回弹；触控板的惯性事件到了边缘还在来，和回弹动画互相拉扯，
-  // 列表在顶/底来回晃（可滚距离短的列表最明显）。到边就停。
+  // macOS bounces by default; trackpad momentum events keep coming at the edge and fight the bounce animation,
+  // so the list wobbles at the top/bottom (most visible on lists with a short scroll range). Stop at the edge.
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) =>
       const ClampingScrollPhysics();
 }
 
-/// 用于复制链接等假动作的轻提示。
+/// A toast for placeholder actions like copying a link.
 final ValueNotifier<String?> toast = ValueNotifier(null);
 Timer? _toastTimer;
 void showToast(String s) {
@@ -100,9 +100,9 @@ void showToast(String s) {
   );
 }
 
-// ───────────── 空状态（Sketch 定稿 · 空状态 v30） ─────────────
+// ───────────── Empty state (Sketch final · empty state v30) ─────────────
 
-/// 居中的空状态：大标题和按钮（说明只在出错时用）。音乐库和 Coverflow 共用。
+/// A centered empty state: large title and button (description only used for errors). Shared by the library and Coverflow.
 class EmptyMessage extends StatelessWidget {
   const EmptyMessage({
     super.key,
@@ -116,7 +116,7 @@ class EmptyMessage extends StatelessWidget {
   final String? sub;
   final List<Widget> actions;
 
-  /// Coverflow 这类始终是深色底的页面。
+  /// Pages like Coverflow that always have a dark background.
   final bool onDark;
 
   @override
@@ -160,7 +160,7 @@ class EmptyMessage extends StatelessWidget {
   }
 }
 
-/// 加载指示器：一段转着的弧线。[delay] 内加载完就不出现，免得一闪。
+/// Loading indicator: a spinning arc. Not shown if loading finishes within [delay], avoiding a flash.
 class Spinner extends StatefulWidget {
   const Spinner({
     super.key,

@@ -1,4 +1,4 @@
-// 通用组件：悬停、按下：Tap、PressScale。
+// Common widgets: hover, press: Tap, PressScale.
 
 import 'package:flutter/widgets.dart';
 
@@ -6,7 +6,7 @@ import '../theme.dart';
 import 'menu.dart';
 import 'tip.dart';
 
-// ───────────── 悬停 / 按下 ─────────────
+// ───────────── Hover / press ─────────────
 
 typedef HoverBuilder = Widget Function(
   BuildContext context,
@@ -14,7 +14,7 @@ typedef HoverBuilder = Widget Function(
   bool pressed,
 );
 
-/// 按钮提示只在这个作用域里出现（底部迷你播放条、正在播放页底部播放条）。
+/// Button tooltips only appear within this scope (bottom mini player bar, Now Playing's bottom player bar).
 class TipScope extends InheritedWidget {
   const TipScope({super.key, required super.child});
 
@@ -25,7 +25,7 @@ class TipScope extends InheritedWidget {
   bool updateShouldNotify(TipScope oldWidget) => false;
 }
 
-/// 所有可点元素的基础：悬停、按下、点击、右键菜单、提示。
+/// The base for every tappable element: hover, press, tap, context menu, tooltip.
 class Tap extends StatefulWidget {
   const Tap({
     super.key,
@@ -44,13 +44,13 @@ class Tap extends StatefulWidget {
 
   final HoverBuilder builder;
 
-  /// 读屏念的名字；不给就用 [tip]，再没有就合并里面的文字。
+  /// Name read by screen readers; falls back to [tip], then to the merged text inside.
   final String? semanticLabel;
 
-  /// 开关类控件的状态（读屏念「开 / 关」）。
+  /// State of toggle controls (screen readers say "on / off").
   final bool? toggled;
 
-  /// 分段、标签这类多选一控件里是不是选中的那个。
+  /// Whether it's the selected one in a one-of-many control like segments or tabs.
   final bool? selected;
   final VoidCallback? onTap;
   final VoidCallback? onDoubleTap;
@@ -106,12 +106,12 @@ class _TapState extends State<Tap> {
           ? null
           : (d) {
               widget.onMenu!(d.globalPosition);
-              // 菜单开着时这一行保持悬停样式
+              // Keep this row's hover style while the menu is open
               menuOwner.value = this;
             },
       child: widget.builder(context, _hover || _owned, _pressed),
     );
-    // 只有底部播放器（TipScope 内）显示按钮提示
+    // Only the bottom player (inside TipScope) shows button tooltips
     if (widget.tip != null && TipScope.enabled(context)) {
       child = TipAnchor(
         text: widget.tip!,
@@ -126,7 +126,7 @@ class _TapState extends State<Tap> {
       onExit: (_) => _setHover(false),
       child: child,
     );
-    // 读屏：能点的是按钮，里面的文字合并成按钮的名字（图标按钮用提示文字）
+    // Screen readers: tappable things are buttons, and their inner text merges into the button name (icon buttons use the tooltip)
     if (widget.onTap == null && widget.onMenu == null) return child;
     return MergeSemantics(
       child: Semantics(
@@ -142,7 +142,7 @@ class _TapState extends State<Tap> {
   }
 }
 
-/// 按下时轻微缩放。
+/// Scales down slightly when pressed.
 class PressScale extends StatelessWidget {
   const PressScale({
     super.key,

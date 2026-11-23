@@ -1,4 +1,4 @@
-// 侧边栏头像弹出的「音乐来源」菜单（Sketch「插件设置」v2 方案 C）。
+// The "Music source" menu popping up from the sidebar avatar (Sketch "插件设置" v2 option C).
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -12,7 +12,7 @@ import 'settings.dart' show openPluginSettings;
 
 OverlayEntry? _entry;
 
-/// 在 [anchor]（头像）右边弹出，底边和头像对齐。
+/// Pops up to the right of [anchor] (the avatar), bottom-aligned with it.
 void showSourceSwitcher(BuildContext anchor) {
   _entry?.remove();
   final box = anchor.findRenderObject() as RenderBox;

@@ -41,18 +41,18 @@ void main() {
     tmp.deleteSync(recursive: true);
   });
 
-  // 加载 main，能 import 插件目录里的其他文件，列出导出的函数。
+  // Loads main, can import other files in the plugin directory, and lists exported functions.
   test('loads module and lists exports', () {
     expect(rt.exports, containsAll(['search', 'misc', 'store']));
   });
 
-  // fetch 到设置里填的服务器（{setting:server} 权限），带请求头，解析 JSON。
+  // fetch to the server set in settings ({setting:server} permission), with headers, parsing JSON.
   test('fetch through setting-host permission', () async {
     final r = await rt.call('search', {'query': '晚風'}) as Map;
     expect((r['tracks'] as List).single['name'], '晚風|1');
   });
 
-  // 不在 permissions.network 里的主机：拒绝；跳转到不允许的主机也拒绝。
+  // Hosts not in permissions.network: rejected; redirects to disallowed hosts are rejected too.
   test('network permission is enforced, including redirects', () async {
     await expectLater(
       rt.call('blocked'),
@@ -76,7 +76,7 @@ void main() {
     );
   });
 
-  // 跳到别的源（这里是另一个端口）时不带登录凭据，同源跳转照常带上。
+  // Redirects to another origin (another port here) drop credentials; same-origin redirects keep them.
   test('redirect drops credentials across origins', () async {
     final base = 'http://127.0.0.1:${server.port}';
     expect(await rt.call('redirectCreds', {'to': '$base/headers'}), {
@@ -94,7 +94,7 @@ void main() {
     );
   });
 
-  // POST 表单、二进制响应、中止请求。
+  // POST forms, binary responses, aborting requests.
   test('post form, binary body, abort', () async {
     final r = await rt.call('post') as Map;
     expect(r['text'], 'a=1+2&b=%E4%B8%AD');
@@ -103,7 +103,7 @@ void main() {
     expect(await rt.call('abort'), 'AbortError');
   });
 
-  // 插件抛的错误码原样带回。
+  // Error codes thrown by the plugin come back as-is.
   test('error codes', () async {
     await expectLater(
       rt.call('needSignIn'),
@@ -120,7 +120,7 @@ void main() {
     );
   });
 
-  // 存储写进 dataDir，换一个运行时还在。
+  // Storage is written to dataDir and survives a new runtime.
   test('storage persists', () async {
     expect(await rt.call('store', {'v': 1}), isNull);
     expect(await rt.call('store', {'v': 2}), 1);
@@ -130,12 +130,12 @@ void main() {
     expect(await rt.call('store', {'v': 3}), 2);
   });
 
-  // setTimeout 驱动的异步结果。
+  // Async results driven by setTimeout.
   test('timers', () async {
     expect(await rt.call('wait', {'ms': 30}), 30);
   });
 
-  // 内置的 URL、编码、md5、本地化。
+  // Built-in URL, encoding, md5, localisation.
   test('web APIs and host helpers', () async {
     expect(await rt.call('misc'), {
       'md5': '900150983cd24fb0d6963f7d28e17f72',
@@ -148,7 +148,7 @@ void main() {
     });
   });
 
-  // 不能 import 插件目录以外的文件。
+  // Can't import files outside the plugin directory.
   test('modules stay inside the plugin', () async {
     await expectLater(
       rt.call('escape'),
@@ -162,7 +162,7 @@ void main() {
     );
   });
 
-  // 调用超时：返回错误，插件还能用。
+  // Call timeout: returns an error, and the plugin still works.
   test('call timeout', () async {
     rt.dispose();
     rt = make(timeout: const Duration(milliseconds: 200));
@@ -174,7 +174,7 @@ void main() {
     expect(await rt.call('wait', {'ms': 1}), 1);
   });
 
-  // 死循环：中断并停用插件，不卡住宿主。
+  // Infinite loop: interrupted and the plugin disabled, without hanging the host.
   test('runaway plugin is stopped', () async {
     rt.dispose();
     rt = make(sliceMs: 300);
@@ -184,7 +184,7 @@ void main() {
     await expectLater(rt.call('misc'), throwsA(isA<PluginError>()));
   });
 
-  // host.language() 跟着应用语言；改了语言 host.t() 换成那种语言的 locales 文件。
+  // host.language() follows the app language; after changing it, host.t() switches to that language's locales file.
   test('language follows the app and can change', () async {
     Directory(p.join(rt.dir, 'locales')).createSync();
     File(p.join(rt.dir, 'locales', 'en.json'))

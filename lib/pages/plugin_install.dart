@@ -1,8 +1,8 @@
-// 安装插件（Sketch 定稿「v31 / 设置 · 插件 · 安装 1 / 2」）。
+// Install plugin (Sketch final "v31 / 设置 · 插件 · 安装 1 / 2").
 //
-// 第一步粘贴链接（GitHub 仓库、Release、plugin.json、.zip），或者选本地文件夹；
-// 第二步列出来源、要的权限和提供的能力，用户点「安装」才真正装进插件目录。
-// 更新插件时直接从第二步开始。
+// Step one: paste a link (GitHub repo, Release, plugin.json, .zip) or pick a local folder;
+// step two lists the origin, requested permissions and provided capabilities; it's only installed into the plugin directory after the user clicks "Install".
+// Updating a plugin starts directly at step two.
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/widgets.dart';
@@ -17,7 +17,7 @@ import '../ui.dart';
 import 'common.dart';
 import 'plugin_ui.dart';
 
-/// 打开安装弹窗。给了 [link] 时直接去读它（更新插件）。
+/// Opens the install dialog. With [link], reads it right away (plugin update).
 void showInstallPlugin(BuildContext context, {String? link}) {
   showPluginDialog(
     context,
@@ -40,7 +40,7 @@ class _InstallFlowState extends State<_InstallFlow> {
   PluginPackage? _pkg;
   String? _error;
   var _busy = false, _installing = false, _installed = false;
-  var _gen = 0; // 读到一半关掉或换了链接时，晚到的结果丢掉
+  var _gen = 0; // late results are dropped if closed midway or the link changed
 
   @override
   void initState() {
@@ -147,7 +147,7 @@ class _InstallFlowState extends State<_InstallFlow> {
           ),
   );
 
-  // ───── 第一步：链接 ─────
+  // ───── Step one: link ─────
 
   Widget _linkStep() {
     final l = context.l10n;
@@ -264,7 +264,7 @@ class _InstallFlowState extends State<_InstallFlow> {
     );
   }
 
-  // ───── 第二步：权限与能力 ─────
+  // ───── Step two: permissions and capabilities ─────
 
   Widget _review(PluginPackage pkg) {
     final app = context.app;

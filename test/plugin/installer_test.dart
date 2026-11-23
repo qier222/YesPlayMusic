@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/plugin/installer.dart';
 import 'package:yesplaymusic/plugin/manifest.dart';
 
-/// 本机静态文件服务：路径 → 内容。记录被请求过的路径。
+/// Local static file server: path → content. Records the paths requested.
 Future<({HttpServer server, List<String> hits})> _serve(
   Map<String, List<int>> files,
 ) async {
@@ -52,7 +52,7 @@ void main() {
     await tmp.delete(recursive: true);
   });
 
-  /// tmp 下除了 plugins/ 以外有没有别的文件（被写出插件目录）。
+  /// Whether tmp has any files besides plugins/ (written outside the plugin directory).
   List<String> escaped() => [
     for (final e in tmp.listSync(recursive: true))
       if (e is File && !p.isWithin(root, e.path)) e.path,

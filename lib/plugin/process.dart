@@ -1,13 +1,13 @@
-// host.spawn：插件启动本机程序（在插件 isolate 里运行）。
+// host.spawn: plugins start local programs (runs in the plugin isolate).
 //
-// 只能启动 plugin.json 里 permissions.process 列出的程序，而且用户要先在设置里
-// 允许这个插件运行程序。列表里的项：
-// - 路径（含 /）：相对插件目录或绝对路径，只匹配路径；
-// - 名字：在 PATH 里找，只匹配名字；
-// - * 在一层目录内通配；单独的 "*"（或 process: true）表示任意程序。
+// Only programs listed in permissions.process in plugin.json can be started, and the user must first allow
+// this plugin to run programs in settings. List entries:
+// - a path (contains /): relative to the plugin directory or absolute, matches the path only;
+// - a name: looked up in PATH, matches the name only;
+// - * wildcards within one directory level; a lone "*" (or process: true) means any program.
 //
-// macOS 上从 Finder 打开的应用拿不到 shell 的 PATH，所以名字也会在 Homebrew 的
-// 目录里找。程序继承系统代理（HTTPS_PROXY 等），插件停止时一并结束。
+// On macOS, apps opened from Finder don't get the shell's PATH, so names are also looked up in Homebrew
+// directories. Programs inherit the system proxy (HTTPS_PROXY etc.) and are terminated when the plugin stops.
 
 import 'dart:async';
 import 'dart:collection';
@@ -18,7 +18,7 @@ import 'package:path/path.dart' as p;
 
 import '../net/proxy.dart';
 
-/// [command] 是否在 [allowed] 之内。相对路径相对 [pluginDir]。
+/// Whether [command] is within [allowed]. Relative paths are relative to [pluginDir].
 bool processAllowed(String command, List<String> allowed, String pluginDir) {
   final isPath = _isPath(command);
   final cmd = isPath
@@ -33,23 +33,23 @@ bool processAllowed(String command, List<String> allowed, String pluginDir) {
   return false;
 }
 
-/// 含路径分隔符的算路径。反斜杠也算：Windows 上 `yt-dlp\..\..\cmd` 不能被当成名字，
-/// 去匹配 `yt-dlp*` 这样的通配。
+/// Anything with a path separator counts as a path. Backslashes count too: on Windows `yt-dlp\..\..\cmd` must not be treated as a name
+/// matching a wildcard like `yt-dlp*`.
 bool _isPath(String s) => s.contains('/') || s.contains(r'\');
 
-/// 统一成 `/` 分隔，通配只在一层目录内。
+/// Normalised to `/` separators; wildcards stay within one directory level.
 String _unify(String s) => s.replaceAll(r'\', '/');
 
 RegExp _glob(String pattern) =>
     RegExp('^${pattern.split('*').map(RegExp.escape).join('[^/]*')}\$');
 
-/// 找程序：路径直接用（相对插件目录），名字在 PATH 和 Homebrew 目录里找。
+/// Finds the program: paths are used directly (relative to the plugin directory), names are looked up in PATH and Homebrew directories.
 String? findProgram(String command, String pluginDir) {
   if (_isPath(command)) {
     final path = p.normalize(p.join(pluginDir, command));
     return _isExe(path) ? path : null;
   }
-  // Windows 上名字可以不带扩展名，按 PATHEXT 补上 .exe、.cmd 这些
+  // On Windows names may omit the extension; .exe, .cmd etc. are added from PATHEXT
   final exts = Platform.isWindows && p.extension(command).isEmpty
       ? (Platform.environment['PATHEXT'] ?? '.EXE;.CMD;.BAT')
             .split(';')
@@ -70,8 +70,8 @@ bool _isExe(String path) {
       (Platform.isWindows || s.mode & 0x49 != 0);
 }
 
-/// PATH 加上 Homebrew 和常见的用户级安装目录（mise、pipx、deno、bun、volta、
-/// asdf），去重，保持顺序。
+/// PATH plus Homebrew and common user-level install directories (mise, pipx, deno, bun, volta,
+/// asdf), deduplicated, order preserved.
 List<String> searchPath() {
   final path = (Platform.environment['PATH'] ?? '')
       .split(_sep)
@@ -95,13 +95,13 @@ List<String> searchPath() {
   }.toList();
 }
 
-/// 子进程的环境：补全 PATH，带上系统代理。
+/// Environment for the child process: completed PATH, with the system proxy.
 final _sep = Platform.isWindows ? ';' : ':';
 
 Map<String, String> childEnvironment(HttpProxy? proxy) {
   final env = {
     ...Platform.environment,
-    // Windows 的环境变量名不分大小写，PATH 保持原样
+    // Windows environment variable names are case-insensitive; keep PATH as is
     if (!Platform.isWindows) 'PATH': searchPath().join(_sep),
   };
   if (proxy != null) {
@@ -125,7 +125,7 @@ Map<String, String> childEnvironment(HttpProxy? proxy) {
   return env;
 }
 
-/// 插件启动的一个程序。标准输出按行读，标准错误留最后 64 KB。
+/// A program started by a plugin. Stdout is read line by line; the last 64 KB of stderr is kept.
 class PluginProcess {
   PluginProcess.start(
     String path,
@@ -187,7 +187,7 @@ class PluginProcess {
     }
   }
 
-  /// 下一行；输出结束返回 null。程序没能启动时抛错。
+  /// The next line; null at end of output. Throws if the program failed to start.
   Future<String?> readLine() async {
     await _started;
     if (_lines.isNotEmpty) return _lines.removeFirst();

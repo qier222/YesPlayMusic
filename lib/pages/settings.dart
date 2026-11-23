@@ -25,9 +25,10 @@ import 'plugin_install.dart';
 import 'plugin_settings.dart';
 import 'plugin_ui.dart';
 
-int _nav = 0; // 换主题会重建整棵树，分类选择放在外面保留
+// Changing the theme rebuilds the whole tree, so the selected category lives outside
+int _nav = 0;
 
-/// 打开设置的「插件」分类（空音乐库的「添加音乐源」用）。
+/// Opens the "Plugins" category of Settings (used by "Add music source" in the empty library).
 void openPluginSettings(AppState app) {
   _nav = 2;
   app.go('/settings');
@@ -73,7 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Positioned(
           left: 38,
           top: 72,
-          // 行高按 Archivo 固定：中日韩文字回退到苹方等字体时行高不同，换语言标题会上下跳
+          // Line height fixed to Archivo: CJK fallback fonts like PingFang have different line heights, so titles would jump when switching languages
           child: Text(
             l.navSettings,
             maxLines: 1,
@@ -203,7 +204,7 @@ class _GeneralTab extends StatelessWidget {
   }
 }
 
-/// 快捷键说明（定稿 v30a / 设置 · 快捷键（列表））：左边播放，右边界面和媒体键。
+/// Shortcut reference (final v30a / 设置 · 快捷键（列表）): playback on the left, UI and media keys on the right.
 class _ShortcutsTab extends StatelessWidget {
   const _ShortcutsTab({super.key});
 
@@ -265,7 +266,7 @@ class _ShortcutsTab extends StatelessWidget {
   }
 }
 
-/// 一组键帽；`null` 是中间的「到」。[icons] 为真时每个键帽里画图标。
+/// A group of keycaps; `null` is the "to" in the middle. When [icons] is true each keycap draws an icon.
 class _Keys extends StatelessWidget {
   const _Keys(this.keys, {this.icons = false});
   final List<String?> keys;
@@ -283,7 +284,7 @@ class _Keys extends StatelessWidget {
           else
             Container(
               height: 26,
-              // 单个字符和图标是正方形，「空格」「Esc」这类按文字撑宽
+              // Single characters and icons are square; "Space", "Esc" and the like widen to fit their text
               width: icons || k.characters.length == 1 ? 26 : null,
               padding: icons || k.characters.length == 1
                   ? EdgeInsets.zero
@@ -507,7 +508,7 @@ class _Playback extends StatelessWidget {
     final app = context.app;
     return Column(
       children: [
-        // 音质由各插件在自己的设置里决定，这里不再放
+        // Audio quality is decided by each plugin in its own settings, so it's no longer here
         _row(
           66,
           context.l10n.settingsMinimizeToTray,
@@ -526,7 +527,7 @@ class _AboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // logo 和名字在卡片外，整体水平居中
+    // Logo and name sit outside the card, centered horizontally as a whole
     return SizedBox(
       width: double.infinity,
       child: FadeIn(
@@ -544,11 +545,11 @@ class _AboutTab extends StatelessWidget {
   }
 }
 
-/// 版本、检查更新、匿名统计、项目链接和日志文件，一张卡片。
+/// Version, update check, anonymous stats, project links and log files, in one card.
 class _About extends StatelessWidget {
   const _About();
 
-  // 行和分隔线之间留 18
+  // 18 between rows and dividers
   static const _gap = SizedBox(height: 18);
 
   static Widget _line(String label, Widget right, {String hint = ''}) => Row(
@@ -652,7 +653,7 @@ String _mb(int bytes) {
   return mb < 10 ? '${mb.toStringAsFixed(1)} MB' : '${mb.round()} MB';
 }
 
-// 缓存条三种颜色：API、音频、图片
+// Three colors in the cache bar: API, audio, images
 const _cacheApi = Color(0xFF2F7DE1);
 const _cacheImg = Color(0xFF6E56CF);
 const _cacheAudio = Color(0xFFE0892B);
@@ -740,7 +741,7 @@ class _StorageState extends State<_Storage> {
             ],
           ),
           const SizedBox(height: 20),
-          // 一条普通进度条：各部分首尾相接，只有整条两端是圆角
+          // A plain progress bar: segments butt end to end, only the two ends of the whole bar are rounded
           ClipRSuperellipse(
             borderRadius: BorderRadius.circular(5),
             child: Container(
@@ -802,7 +803,7 @@ class _StorageState extends State<_Storage> {
   );
 }
 
-// ───────────── 插件设置页（Sketch 定稿「v31 / 设置 · 插件（卡片）」） ─────────────
+// ───────────── Plugin settings page (Sketch final "v31 / 设置 · 插件（卡片）") ─────────────
 
 const _docsUrl =
     'https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.md';
@@ -849,7 +850,7 @@ class _PluginsTab extends StatefulWidget {
 }
 
 class _PluginsTabState extends State<_PluginsTab> {
-  /// false：已安装；true：官方插件。
+  /// false: installed; true: official plugins.
   bool _official = false;
 
   @override
@@ -984,7 +985,7 @@ class _PluginsTabState extends State<_PluginsTab> {
   }
 }
 
-/// 「已安装 / 官方插件」文字标签，后面跟数量。
+/// "Installed / Official plugins" text tab followed by a count.
 class _TextTab extends StatelessWidget {
   const _TextTab({
     required this.label,
@@ -1018,7 +1019,7 @@ class _TextTab extends StatelessWidget {
   }
 }
 
-/// 官方插件：一行三张，最后一张是「从链接安装」。
+/// Official plugins: three per row, the last one is "Install from link".
 class _OfficialGrid extends StatelessWidget {
   const _OfficialGrid();
 
@@ -1162,7 +1163,7 @@ class _LinkInstallCard extends StatelessWidget {
   }
 }
 
-/// 音乐来源：「音乐来源」后面一排单选胶囊，选中的是白色圆底加勾。
+/// Music source: a row of radio pills after "Music source"; the selected one has a white round background with a check.
 class _SourcePicker extends StatelessWidget {
   const _SourcePicker();
 
@@ -1266,11 +1267,11 @@ class _SourcePill extends StatelessWidget {
   }
 }
 
-/// 卡片底部左边的一句状态。
+/// A status line at the bottom left of the card.
 typedef _Status = ({String icon, String text, Color? color});
 
-/// 插件卡片（方案 A 信息卡）：图标、名字、徽章、作者、开关；介绍和能力；
-/// 底部状态、「设置」和更多菜单。同一行的两张卡片一样高。
+/// Plugin card (option A info card): icon, name, badges, author, switch; description and capabilities;
+/// status at the bottom, "Settings" and a more menu. Two cards in the same row have the same height.
 class _PluginCard extends StatelessWidget {
   const _PluginCard({
     required this.icon,
@@ -1402,7 +1403,7 @@ class _PluginCard extends StatelessWidget {
   }
 }
 
-/// 本地音乐：内置的音乐源，不能停用。
+/// Local music: the built-in music source, can't be disabled.
 class _LocalCard extends StatelessWidget {
   const _LocalCard();
 
@@ -1453,7 +1454,7 @@ Future<void> _addFolder(AppState app) async {
   if (dir != null) await app.addMusicFolder(dir);
 }
 
-/// 本地音乐的设置：要扫描的文件夹。
+/// Local music settings: folders to scan.
 void _showLocalSettings(BuildContext context) {
   final l = context.l10n;
   showDialogCard(
@@ -1535,7 +1536,7 @@ void _showLocalSettings(BuildContext context) {
   );
 }
 
-/// 在运行的插件。
+/// A running plugin.
 class _RunningCard extends StatelessWidget {
   const _RunningCard({required this.plugin});
   final PluginSource plugin;
@@ -1642,7 +1643,7 @@ class _RunningCard extends StatelessWidget {
   }
 }
 
-/// 用户停用的插件：不运行，只能启用、设置、卸载。
+/// A plugin the user disabled: not running; can only be enabled, configured or uninstalled.
 class _DisabledCard extends StatelessWidget {
   const _DisabledCard({required this.dir, required this.manifest});
   final String dir;
@@ -1719,7 +1720,7 @@ class _DisabledCard extends StatelessWidget {
   }
 }
 
-/// 没能加载的插件：显示原因。
+/// A plugin that failed to load: shows the reason.
 class _FailedCard extends StatelessWidget {
   const _FailedCard({required this.dir, required this.reason});
   final String dir, reason;
@@ -1771,7 +1772,7 @@ class _FailedCard extends StatelessWidget {
   }
 }
 
-/// 还没装插件时占在本地音乐旁边。
+/// Placeholder next to local music when no plugins are installed.
 class _EmptyCard extends StatelessWidget {
   const _EmptyCard();
 
@@ -1804,7 +1805,7 @@ class _EmptyCard extends StatelessWidget {
   }
 }
 
-// ───────────── MCP Server 设置页 ─────────────
+// ───────────── MCP server settings page ─────────────
 
 class _McpTab extends StatefulWidget {
   const _McpTab({super.key});

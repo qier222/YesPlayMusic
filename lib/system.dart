@@ -1,12 +1,12 @@
-// 和操作系统打交道的小工具：用户目录、打开文件夹或网址。
+// Small helpers for dealing with the OS: user directories, opening folders or URLs.
 
 import 'dart:io';
 
-/// 用户主目录（Windows 上没有 HOME，用 USERPROFILE）。
+/// The user's home directory (Windows has no HOME, so USERPROFILE is used).
 String get homeDir =>
     Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '';
 
-/// 用系统默认的程序打开文件夹、文件或 http(s) 网址。
+/// Opens a folder, file or http(s) URL with the system default program.
 void openExternal(String target) {
   final (cmd, args) = Platform.isMacOS
       ? ('open', [target])

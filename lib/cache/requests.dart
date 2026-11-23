@@ -1,12 +1,12 @@
-// 插件数据的请求：哪个源、调哪个操作、带什么参数、怎么转成模型、多久算新。
-// 页面拿着请求问 AppState 要数据（peekData / loadData），缓存、存盘、后台
-// 重取都在 AppState 和 SwrStore 里。
+// Plugin data requests: which source, which op, what params, how to decode into a model, how long it stays fresh.
+// Pages pass a request to AppState for data (peekData / loadData); caching, storing and background
+// refetching all happen in AppState and SwrStore.
 
 import '../music/models.dart' as m;
 import '../music/source.dart';
 import 'swr.dart';
 
-/// 各种数据的新鲜度（方案里的那张表）。
+/// Freshness for each kind of data (the table in the design).
 abstract final class Policies {
   static const home = CachePolicy(
     fresh: Duration(minutes: 5),
@@ -29,7 +29,7 @@ abstract final class Policies {
     maxAge: Duration(days: 7),
   );
 
-  /// 我的歌单、红心、音乐库：每次打开都重取，旧的先顶着。
+  /// My playlists, liked songs, library: refetched on every open, showing the old data meanwhile.
   static const mine = CachePolicy(
     fresh: Duration.zero,
     maxAge: Duration(days: 30),
@@ -65,24 +65,24 @@ class DataReq<T> {
     this.trackList = false,
   });
 
-  /// 插件返回的直接是歌曲列表：取到时每首标上源 id。
+  /// The plugin returns a plain list of songs: tag each with the source id when fetched.
   final bool trackList;
 
   final String source;
 
-  /// 在这个源下面的 key，比如 album/123。
+  /// Key under this source, e.g. album/123.
   final String path;
 
-  /// 插件操作和参数：插件源直接取原始 JSON 存进缓存。
+  /// Plugin op and params: plugin sources store the raw JSON in the cache.
   final String op;
   final Map<String, Object?> params;
   final T Function(Object? raw) decode;
   final CachePolicy policy;
 
-  /// 不是插件的源（本地音乐）：直接调，不进缓存。
+  /// Non-plugin sources (local music): called directly, not cached.
   final Future<T> Function(Source s) direct;
 
-  // ── 常用的几种 ──
+  // ── Common ones ──
 
   static m.Json _j(Object? raw) => (raw as Map).cast<String, Object?>();
 
@@ -96,7 +96,7 @@ class DataReq<T> {
     direct: (s) => s.home(),
   );
 
-  /// 发现页：[page] 空的是默认页。
+  /// Discover page: an empty [page] is the default page.
   static DataReq<m.Browse> browse(String source, String page) => DataReq(
     source: source,
     path: page.isEmpty ? 'browse' : 'browse/$page',
@@ -178,7 +178,7 @@ class DataReq<T> {
     direct: (s) => s.hotSearches(),
   );
 
-  // decode 用顶层函数：同一个函数，CacheEntry 才认得出转过了
+  // decode is a top-level function: CacheEntry only recognises it was already decoded when it's the same function
   static m.Browse _browse(Object? raw) => m.Browse.fromJson(_j(raw));
   static m.AlbumPage _album(Object? raw) => m.AlbumPage.fromJson(_j(raw));
   static m.ArtistPage _artist(Object? raw) => m.ArtistPage.fromJson(_j(raw));

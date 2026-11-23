@@ -1,6 +1,6 @@
-// Coverflow 页面：
-// 1. 封面高度随窗口高度等比缩放，全屏与最小窗口下都保持合适比例。
-// 2. 艺人封面为圆形、优先显示艺人头像，点击中间播放图标随机播放艺人的所有歌曲。
+// Coverflow page:
+// 1. Cover height scales proportionally with window height, keeping good proportions in full screen and at the minimum window size.
+// 2. Artist covers are round and prefer the artist avatar; clicking the center play icon shuffles all of the artist's songs.
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -136,7 +136,7 @@ void main() {
     final s1080 = await measureFrontCover(t, const Size(1920, 1080));
     final s1440 = await measureFrontCover(t, const Size(2560, 1440));
 
-    // 正方形封面，且严格按窗口高度等比缩放（基准 900 高对应 487.2）
+    // Square covers, scaled strictly with window height (baseline 900 high maps to 487.2)
     expect(s900.width, closeTo(487.2, 0.1));
     expect(s900.height, closeTo(487.2, 0.1));
     expect(s800.height, closeTo(487.2 * (800 / 900), 0.1));
@@ -159,13 +159,13 @@ void main() {
     final cover = find.byKey(const ValueKey(0));
     expect(cover, findsOneWidget);
 
-    // 艺人主封面和倒影都裁成圆形
+    // Both the artist's main cover and its reflection are clipped to circles
     expect(
       find.descendant(of: cover, matching: find.byType(ClipOval)),
       findsNWidgets(2),
     );
 
-    // 封面图片已替换成艺人头像（而不是曲目里的专辑封面）
+    // The cover image was replaced with the artist avatar (not the album cover from a track)
     final images = t.widgetList<Image>(
       find.descendant(of: cover, matching: find.byType(Image)),
     );
@@ -174,7 +174,7 @@ void main() {
     final inner = provider is ResizeImage ? provider.imageProvider : provider;
     expect(inner.toString(), contains('artist-avatar.jpg'));
 
-    // 悬停正面封面并点击中间播放图标
+    // Hover the front cover and click the center play icon
     final box = find
         .descendant(of: cover, matching: find.byType(SizedBox))
         .first;
@@ -208,7 +208,7 @@ void main() {
     await pumpFrames(t);
     expect(t.takeException(), isNull);
 
-    // 播放歌曲列表并切到下一首
+    // Plays the song list and moves to the next song
     app.playList(app.library!.tracks, start: 0, name: '音乐库');
     await pumpFrames(t);
     expect(find.text('喜欢的歌 1'), findsWidgets);

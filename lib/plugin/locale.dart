@@ -1,18 +1,18 @@
-// 插件本地化：从插件目录的 locales/<语言>.json 读取翻译表。
+// Plugin localisation: reads translation tables from locales/<language>.json in the plugin directory.
 //
-// 匹配顺序：
-// 1. 精确标签（如 zh-CN.json、en.json）及其下划线写法（zh_CN.json）
-// 2. 中文特例：繁体（zh-TW / zh-HK / zh-MO / zh-Hant）依次尝试 zh-TW / zh-Hant / zh-HK / zh；
-//    简体（zh-CN / zh-SG / zh-Hans / zh）依次尝试 zh-CN / zh-Hans / zh
-// 3. 其他语言：先去掉地区码试基础语言（en-US → en），再在 locales/ 里找同前缀的
-//    地区文件（en → en-US.json，按文件名排序取第一个）
+// Matching order:
+// 1. Exact tag (e.g. zh-CN.json, en.json) and its underscore form (zh_CN.json)
+// 2. Chinese special cases: Traditional (zh-TW / zh-HK / zh-MO / zh-Hant) tries zh-TW / zh-Hant / zh-HK / zh in turn;
+//    Simplified (zh-CN / zh-SG / zh-Hans / zh) tries zh-CN / zh-Hans / zh in turn
+// 3. Other languages: first drop the region to try the base language (en-US → en), then look in locales/ for a region file
+//    with the same prefix (en → en-US.json, first by file name order)
 
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-/// 读取插件目录 [dir] 下匹配 [language]（BCP-47）的翻译表；找不到或格式不对返回空表。
+/// Reads the translation table matching [language] (BCP-47) in plugin directory [dir]; returns an empty table if missing or malformed.
 Map<String, String> loadPluginLocale(String dir, String language) {
   final localesDir = Directory(p.join(dir, 'locales'));
   if (!localesDir.existsSync()) return const {};
@@ -22,7 +22,7 @@ Map<String, String> loadPluginLocale(String dir, String language) {
     if (map != null) return map;
   }
 
-  // 无地区码的非中文语言（如 en、ja）：允许回退到同语言的地区文件（如 en-US.json）。
+  // Non-Chinese languages without a region (e.g. en, ja): may fall back to a region file of the same language (e.g. en-US.json).
   final parts = language.trim().split(RegExp(r'[-_]'));
   final base = parts.first.toLowerCase();
   if (base.isNotEmpty && base != 'zh') {
@@ -98,7 +98,7 @@ Map<String, String>? _readJsonMap(String path) {
 
 final Map<(String, String), Map<String, String>> _cache = {};
 
-/// 在主 isolate（UI）里翻译插件静态文案（plugin.json 里的名称、介绍、设置项、导航等）。
+/// Translates a plugin's static text (name, description, settings, navigation etc. in plugin.json) on the main (UI) isolate.
 String pluginTranslate(String dir, String language, String text) {
   if (text.isEmpty || dir.isEmpty) return text;
   final map = _cache.putIfAbsent((
@@ -108,7 +108,7 @@ String pluginTranslate(String dir, String language, String text) {
   return map[text] ?? text;
 }
 
-/// 清理翻译缓存（重新加载或卸载插件时调用）。
+/// Clears the translation cache (called when a plugin is reloaded or uninstalled).
 void clearPluginLocaleCache([String? dir]) {
   if (dir == null) {
     _cache.clear();

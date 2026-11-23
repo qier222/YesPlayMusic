@@ -7,13 +7,13 @@ import 'pages/common.dart' show askName;
 import 'state.dart';
 import 'ui.dart';
 
-// 右键菜单：歌曲、专辑、歌单。
+// Context menus: songs, albums, playlists.
 
-/// 歌曲右键菜单。[playlist] 是右键时所在、而且是自己的歌单 id（能从里面删歌）；
-/// [onRemoved] 在删掉之后调用，让歌单页把这一行拿掉。
+/// Song context menu. [playlist] is the id of the user's own playlist the menu was opened in (songs can be removed from it);
+/// [onRemoved] is called after removal so the playlist page can drop the row.
 ///
-/// 来源里的歌：应用自带的条目按源支持的操作出现，插件还可以用 trackMenu
-/// 加自己的条目（点了调 menuAction）、按 id 藏起自带的条目。
+/// Songs from a source: built-in items appear according to the ops the source supports; plugins can also use trackMenu
+/// to add their own items (calling menuAction when clicked) and hide built-in items by id.
 MenuSpec trackMenu(
   BuildContext context,
   Track t, {
@@ -32,7 +32,7 @@ MenuSpec trackMenu(
     for (final a in r.artists)
       if (app.artistRouteFor(r.source, a.id) case final route?) (a.name, route),
   ];
-  // 菜单里能选中的是歌本身：直接用插件给的歌曲数据
+  // What the menu acts on is the song itself: use the song data the plugin gave directly
   Future<MenuMore>? more;
   if (can(Op.trackMenu)) {
     more = s!
@@ -61,7 +61,7 @@ MenuSpec trackMenu(
     subtitle: t.artist,
     cover: t.cover,
     more: more,
-    // 插件的条目放在「去哪儿」那组之后、删除之前
+    // Plugin items go after the "go to" group and before delete
     moreAt: 3,
     groups: [
       [
@@ -157,7 +157,7 @@ MenuSpec trackMenu(
             id: 'similar',
             onTap: () => app.playSimilar(t),
           ),
-        // 只有电台里的歌能「不喜欢」（告诉电台以后少推荐）
+        // Only songs from a station can be disliked (tells the station to recommend them less)
         if (app.canDislike(t) &&
             app.station?.$1 == r.source &&
             app.queue.any((x) => x.key == t.key))
@@ -184,7 +184,7 @@ MenuSpec trackMenu(
   );
 }
 
-/// 应用自带的图标名，插件条目只能用这些。
+/// Built-in icon names; plugin items can only use these.
 const _icons = {
   'arrow-left',
   'arrow-right',
@@ -208,7 +208,7 @@ const _icons = {
   'settings', 'shuffle', 'thumbs-down', 'trending', 'user', 'volume',
 };
 
-/// 专辑的菜单：播放、随机播放、收藏（源支持时）、查看艺人。
+/// Album menu: play, shuffle, save (when the source supports it), view artist.
 MenuSpec albumMenu(BuildContext context, Album al) {
   final app = context.appRead;
   final l = context.l10n;
@@ -251,7 +251,7 @@ MenuSpec albumMenu(BuildContext context, Album al) {
   );
 }
 
-/// 歌单的菜单：播放、随机播放。[onPlay] 把歌单放进队列并开始播放。
+/// Playlist menu: play, shuffle. [onPlay] puts the playlist in the queue and starts playing.
 MenuSpec playlistMenu(
   BuildContext context, {
   required String title,

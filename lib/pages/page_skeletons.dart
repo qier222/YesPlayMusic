@@ -4,11 +4,11 @@ import '../state.dart';
 import '../theme.dart';
 import '../ui.dart';
 
-/// 专辑、歌单、艺人页加载中的骨架：和首页骨架同一套做法（[HomeSkeleton]），
-/// 只画外框，位置和尺寸跟加载完的页面一样，内容到了布局不跳。
-/// 返回按钮是真的，加载中也能退回去。
+/// Loading skeleton for album, playlist and artist pages: same approach as the home skeleton ([HomeSkeleton]),
+/// drawing only outlines positioned and sized like the loaded page, so the layout doesn't jump when content arrives.
+/// The back button is real, so you can go back while loading.
 
-// 卡片、封面白 5%，文字条白 7%（浅色时换成黑），和首页骨架一样。
+// Cards and covers white 5%, text bars white 7% (black in light mode), same as the home skeleton.
 Color get _card => P.dark ? wa(0.05) : ba(0.04);
 Color get _bone => P.dark ? wa(0.07) : ba(0.06);
 
@@ -21,10 +21,10 @@ Widget _box({double? w, double? h, double r = 0, Color? c}) => Container(
 Widget _text(double w, [double h = 14]) => _box(w: w, h: h, r: h / 3, c: _bone);
 Widget _dot(double d) => _box(w: d, h: d, r: d / 2);
 
-/// 标题条长短错开一点，看起来像一列不同的歌名。
+/// Title bar lengths vary a little so it looks like a list of different song names.
 const _widths = [220.0, 168.0, 252.0, 196.0, 140.0, 236.0, 180.0, 208.0];
 
-/// 一道很淡的光带从左往右扫（和首页骨架一样）。
+/// A faint band of light sweeping left to right (same as the home skeleton).
 class _Shine extends StatefulWidget {
   const _Shine({required this.child});
   final Widget child;
@@ -77,7 +77,7 @@ class _Slide extends GradientTransform {
       Matrix4.translationValues(bounds.width * dx, 0, 0);
 }
 
-/// 一列歌曲行：[h] 行高，[gap] 行间距，[cover] 行首封面边长（0 = 没有封面，画序号）。
+/// A column of song rows: [h] row height, [gap] row spacing, [cover] leading cover size (0 = no cover, draw the index).
 Widget _rows({
   required double h,
   required double gap,
@@ -118,9 +118,9 @@ Widget _rows({
   ),
 );
 
-// ───── 专辑 ─────
+// ───── Album ─────
 
-/// 定稿 · 专辑页：左边 400 宽的封面和信息，右边曲目表。
+/// Final · album page: a 400-wide cover and info on the left, track list on the right.
 class AlbumSkeleton extends StatelessWidget {
   const AlbumSkeleton({super.key});
 
@@ -200,9 +200,9 @@ class AlbumSkeleton extends StatelessWidget {
   }
 }
 
-// ───── 歌单 ─────
+// ───── Playlist ─────
 
-/// 定稿 · 歌单页：左边 340 宽的封面卡片，右边搜索、排序和曲目表。
+/// Final · playlist page: a 340-wide cover card on the left; search, sort and track list on the right.
 class PlaylistSkeleton extends StatelessWidget {
   const PlaylistSkeleton({super.key});
 
@@ -298,9 +298,9 @@ class PlaylistSkeleton extends StatelessWidget {
   }
 }
 
-// ───── 艺人 ─────
+// ───── Artist ─────
 
-/// 定稿 · 歌手页：头像和名字，最新发布 + 热门歌曲，下面一排专辑。
+/// Final · artist page: avatar and name, latest release + top songs, a row of albums below.
 class ArtistSkeleton extends StatelessWidget {
   const ArtistSkeleton({super.key});
 

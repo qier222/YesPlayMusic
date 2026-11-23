@@ -1,4 +1,4 @@
-// host.spawn、host.webSignIn 和 host.signInPrompt。
+// host.spawn, host.webSignIn and host.signInPrompt.
 import 'dart:convert';
 import 'dart:io';
 
@@ -112,7 +112,7 @@ void main() {
     expect(processAllowed('bin/sub/helper', ['bin/*'], dir), false);
     expect(processAllowed('../evil', ['*'], dir), true);
     expect(processAllowed('ffmpeg', ['ff*'], dir), true);
-    // 反斜杠算路径分隔符：不能借名字通配跳到别的程序
+    // Backslashes count as path separators: a name wildcard can't be used to jump to another program
     expect(
       processAllowed(r'ff\..\..\Windows\System32\cmd', ['ff*'], dir),
       false,

@@ -1,15 +1,15 @@
-// 通用组件：进度条拖动。
+// Common widgets: progress bar dragging.
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
-// ───────────── 进度条拖动 ─────────────
+// ───────────── Progress bar dragging ─────────────
 
-/// 让一块区域可以悬停预览、按住拖动来设定 0..1 的值。
-/// 进度条、音量条这类可以点、可以拖的条。
+/// Lets an area hover-preview and press-drag to set a value from 0..1.
+/// Tappable, draggable bars like progress and volume bars.
 ///
-/// 按下和拖动时调 [onChanged]（只用来预览），松手时调 [onCommit]。
-/// 直接用指针事件：点一下和拖动是同一个过程，按下的位置不会先“提交”一次。
+/// Calls [onChanged] on press and drag (for preview only) and [onCommit] on release.
+/// Uses pointer events directly: tapping and dragging are one gesture, so the press position isn't "committed" first.
 class Scrubber extends StatefulWidget {
   const Scrubber({
     super.key,

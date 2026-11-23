@@ -1,4 +1,4 @@
-// 懒加载扩展工具集：按领域分组，并根据已加载 Source 的 Op 能力动态裁剪。
+// Lazy extended tool set: grouped by domain and trimmed by the Ops the loaded sources support.
 
 import '../music/lrc.dart' as lrc;
 import '../music/models.dart' as m;
@@ -31,7 +31,7 @@ List<String> _strList(Map<String, Object?> args, String key) {
   return [for (final x in v) '$x'.trim()].where((x) => x.isNotEmpty).toList();
 }
 
-/// 解析目标歌曲的 (sourceId, trackId)，缺省回退到当前正在播放的歌曲。
+/// Resolves the target song's (sourceId, trackId), falling back to the currently playing song.
 (String, String) _resolveTrackRef(AppState app, Map<String, Object?> args) {
   final id = _str(args, 'id');
   final src = _str(args, 'source');

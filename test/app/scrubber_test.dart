@@ -30,7 +30,7 @@ void main() {
     await g.up();
     expect(committed, [closeTo(0.75, 1e-9)]);
 
-    // 单击也是松手时提交一次。
+    // A single click also commits once on release.
     await tester.tapAt(const Offset(50, 10));
     expect(committed, [closeTo(0.75, 1e-9), closeTo(0.25, 1e-9)]);
   });

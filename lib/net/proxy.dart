@@ -1,9 +1,9 @@
-// 系统代理。Dart 的 HttpClient 和 mpv 都不会自己读 macOS 的代理设置，
-// 插件的 fetch 和播放网络音频都要用它。
+// System proxy. Neither Dart's HttpClient nor mpv reads the macOS proxy settings on its own,
+// and both plugin fetches and network audio playback need it.
 //
-// 优先用环境变量 https_proxy / http_proxy / all_proxy（只认 http 代理），
-// 其次 macOS 系统设置（scutil --proxy 里的 HTTPS/HTTP 代理和例外列表）。
-// 本机地址、局域网地址和例外列表里的主机直连。
+// Prefers the env vars https_proxy / http_proxy / all_proxy (http proxies only),
+// then macOS system settings (HTTPS/HTTP proxy and exceptions list from scutil --proxy).
+// Local addresses, LAN addresses and hosts in the exceptions list connect directly.
 
 import 'dart:io';
 
@@ -12,13 +12,13 @@ class HttpProxy {
   final String host;
   final int port;
 
-  /// 直连的主机：精确主机名、*.suffix、IPv4 网段（a.b.c.d/n）。
+  /// Hosts that connect directly: exact host names, *.suffix, IPv4 ranges (a.b.c.d/n).
   final List<String> exceptions;
 
-  /// mpv 的 http-proxy 选项格式。
+  /// Format of mpv's http-proxy option.
   String get url => 'http://$host:$port';
 
-  /// HttpClient.findProxy 的返回值。
+  /// Return value for HttpClient.findProxy.
   String findProxy(Uri u) => bypass(u.host) ? 'DIRECT' : 'PROXY $host:$port';
 
   bool bypass(String host) {
@@ -80,7 +80,7 @@ class HttpProxy {
 HttpProxy? _cached;
 var _detected = false;
 
-/// 当前的系统代理（第一次调用时检测，之后用缓存）。没有代理返回 null。
+/// The current system proxy (detected on first call, cached afterwards). Returns null when there is no proxy.
 HttpProxy? systemProxy() {
   if (_detected) return _cached;
   _detected = true;
@@ -124,7 +124,7 @@ HttpProxy? _fromScutil() {
   return parseScutil(out);
 }
 
-/// 解析 `scutil --proxy` 的输出。
+/// Parses the output of `scutil --proxy`.
 HttpProxy? parseScutil(String out) {
   String? v(String key) =>
       RegExp('^\\s*$key : (.+)\$', multiLine: true).firstMatch(out)?[1]?.trim();

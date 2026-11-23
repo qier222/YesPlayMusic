@@ -1,9 +1,9 @@
-// 本地日志：debugPrint、Flutter 框架错误和没人接的异步异常都写进
-// <数据目录>/logs/app.log，用户反馈问题时可以把这个文件发过来。
+// Local log: debugPrint, Flutter framework errors and unhandled async errors all go to
+// <data dir>/logs/app.log, so users can send this file when reporting issues.
 //
-// 只写本机，不上传。每次启动时超过 1 MB 就换成 app.1.log（只留一份旧的），
-// 一次运行最多写 5 MB，防止某个错误刷屏把磁盘写满。
-// Cookie、Authorization、token、password 的值写盘前换成 ***，日志发出去也不漏登录信息。
+// Written locally only, never uploaded. At each launch, over 1 MB rotates to app.1.log (only one old copy kept),
+// and at most 5 MB is written per run so a repeating error can't fill the disk.
+// Values of Cookie, Authorization, token and password become *** before writing, so sharing the log never leaks sign-in data.
 
 import 'dart:convert';
 import 'dart:io';
@@ -28,13 +28,13 @@ class AppLog {
   static FlutterExceptionHandler? _origFlutterError;
   static ErrorCallback? _origPlatformError;
 
-  /// 当前日志文件；没初始化（或打不开）时为 null。
+  /// Current log file; null when not initialized (or it couldn't be opened).
   static String? get path => _path;
 
-  /// 日志所在的文件夹；没初始化时为 null。
+  /// Folder holding the logs; null when not initialized.
   static String? get dir => _path == null ? null : p.dirname(_path!);
 
-  /// 用系统文件管理器打开日志文件夹。没有日志时返回 false。
+  /// Opens the log folder in the system file manager. Returns false when there are no logs.
   static bool openFolder() {
     final d = dir;
     if (d == null) return false;
@@ -55,14 +55,14 @@ class AppLog {
     caseSensitive: false,
   );
 
-  /// 把登录凭据的值换成 ***：Cookie / Authorization 请求头整行，
-  /// URL 或表单里的 token=、password=，JSON 里的 "token": "..."。
+  /// Replaces credential values with ***: whole Cookie / Authorization header lines,
+  /// token= and password= in URLs or forms, and "token": "..." in JSON.
   static String redact(String s) => s
       .replaceAllMapped(_secretLine, (m) => '${m[1]}${m[2]}***')
       .replaceAllMapped(_secretParam, (m) => '${m[1]}=***')
       .replaceAllMapped(_secretJson, (m) => '${m[1]}"***"');
 
-  /// 打开 [dir]/app.log。打不开就只打印、不写文件。
+  /// Opens [dir]/app.log. If it can't be opened, only prints without writing a file.
   static void init(String dir) {
     close();
     try {
@@ -78,7 +78,7 @@ class AppLog {
     }
   }
 
-  /// 接管 debugPrint、FlutterError.onError 和 PlatformDispatcher.onError。
+  /// Takes over debugPrint, FlutterError.onError and PlatformDispatcher.onError.
   static void captureErrors() {
     if (_origPrint == null) {
       _origPrint = debugPrint;
@@ -95,43 +95,43 @@ class AppLog {
       FlutterError.presentError(details);
     };
     PlatformDispatcher.instance.onError = (error, stack) {
-      orig('未捕获的异常：$error\n$stack');
+      orig('Uncaught exception: $error\n$stack');
       write('E', '$error\n$stack');
-      // 已经记下来了，不让引擎再当成致命错误
+      // Already logged; don't let the engine treat it as fatal
       return true;
     };
   }
 
-  /// 写一行。[level] 是 I / W / E。
+  /// Writes one line. [level] is I / W / E.
   static void write(String level, String message) {
     final f = _file;
     if (f == null || _capped) return;
     final line =
         '${DateTime.now().toIso8601String()} $level ${redact(message)}\n';
-    // 同步写：崩溃前的最后几行也能落盘
+    // Write synchronously so the last lines before a crash reach the disk
     try {
       final bytes = utf8.encode(line);
       if (_written + bytes.length > sessionBytes) {
         _capped = true;
         f.writeStringSync(
-          '${DateTime.now().toIso8601String()} W 本次日志已满，后面的不再记录\n',
+          '${DateTime.now().toIso8601String()} W Log limit reached for this run, nothing more will be recorded\n',
         );
         return;
       }
       f.writeFromSync(bytes);
       _written += bytes.length;
     } on FileSystemException {
-      // 磁盘满了之类：不再写
+      // Disk full or similar: stop writing
       _capped = true;
     }
   }
 
-  /// 关掉文件，恢复接管前的回调（测试用）。
+  /// Closes the file and restores the callbacks from before takeover (for tests).
   static void close() {
     try {
       _file?.closeSync();
     } on FileSystemException {
-      // 忽略
+      // Ignore
     }
     _file = null;
     _path = null;

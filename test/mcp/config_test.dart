@@ -27,7 +27,7 @@ void main() {
       expect(c.readOnly, isFalse);
       expect(c.requireAuth, isFalse);
       expect(McpConfig.fromJson({'lazyLoading': false}).lazyLoading, isFalse);
-      // 非 true 的值不算启用
+      // Values other than true don't count as enabled
       expect(McpConfig.fromJson({'enabled': 'true'}).enabled, isFalse);
       expect(McpConfig.fromJson({'token': 123}).token, '');
     });

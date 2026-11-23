@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'cache/image_cache.dart';
 import 'music/models.dart' as m;
 
-// 界面用的数据：Track.ref 指向来源里的歌曲。
+// Data for the UI: Track.ref points to the song in its source.
 
-/// 封面可以是本地绝对路径、file:// 或 http(s) 地址。
+/// A cover can be a local absolute path, file:// or an http(s) URL.
 ImageProvider coverImage(String id) {
   if (id.startsWith('http://') || id.startsWith('https://')) {
     return DiskCachedImage(id);
@@ -30,7 +30,7 @@ class Track {
     this.added,
   });
 
-  /// 来源里的一首歌。
+  /// A song from a source.
   factory Track.of(m.Track t) => Track(
     title: t.name,
     artist: t.artistNames,
@@ -41,7 +41,7 @@ class Track {
     added: DateTime.tryParse(t.added)?.toLocal(),
   );
 
-  /// 队列为空时的「当前歌曲」。
+  /// The "current song" when the queue is empty.
   static const none = Track(title: '', artist: '', cover: '', seconds: 0);
 
   final String title;
@@ -51,10 +51,10 @@ class Track {
   final int seconds;
   final bool mv;
 
-  /// 来源里的歌曲数据；只有 [none] 为 null。
+  /// Song data from the source; null only for [none].
   final m.Track? ref;
 
-  /// 加进音乐库的时间；不知道为 null。
+  /// When it was added to the library; null if unknown.
   final DateTime? added;
 
   String get dur => fmtTime(seconds.toDouble());
@@ -71,11 +71,11 @@ class LyricLine {
   final String text;
   final String trans;
 
-  /// 开始时间（毫秒）。
+  /// Start time (milliseconds).
   final int start;
 }
 
-// ───────────── 专辑（唱片架） ─────────────
+// ───────────── Albums (record shelf) ─────────────
 
 class Album {
   const Album({
@@ -94,21 +94,21 @@ class Album {
 
   final String id, title, artist, cover, kind;
 
-  /// 版权行（℗ 2022 XX Records），专辑页底部显示；不知道为空。
+  /// Copyright line (℗ 2022 XX Records), shown at the bottom of the album page; empty if unknown.
   final String copyright;
 
-  /// 点歌手名去的页面；为空时不能点。
+  /// Page opened by tapping the artist name; not tappable when empty.
   final String artistRoute;
   final int year;
-  final double spine; // 书脊宽度
+  final double spine; // spine width
 
-  /// 加进音乐库的时间；不知道时为 null。
+  /// When it was added to the library; null if unknown.
   final DateTime? added;
 
-  /// 发行日期；不知道时为 null，只能看 [year]。
+  /// Release date; null if unknown, leaving only [year].
   final DateTime? released;
 
-  /// 补上发行日期（音乐库列表接口常常不带，后来查专辑详情才知道）。
+  /// Fills in the release date (library list APIs often omit it; it's only known after fetching album details).
   Album withReleased(DateTime d) => Album(
     id: id,
     title: title,
@@ -124,7 +124,7 @@ class Album {
   );
 }
 
-// ───────────── 音乐库 · 歌曲 ─────────────
+// ───────────── Library · Songs ─────────────
 
 class SongRow {
   const SongRow(
@@ -146,7 +146,7 @@ class SongMonth {
   final List<SongRow> rows;
 }
 
-// ───────────── 音乐库 · 艺人（气泡） ─────────────
+// ───────────── Library · Artists (bubbles) ─────────────
 
 class Bubble {
   const Bubble(this.name, this.cover, this.d);
@@ -154,10 +154,10 @@ class Bubble {
   final double d;
 }
 
-// ───────────── 歌单 ─────────────
+// ───────────── Playlists ─────────────
 
 class PlaylistCard {
   const PlaylistCard(this.id, this.title, this.meta, this.cover, this.mine);
   final String id, title, meta, cover;
-  final bool mine; // 卡片颜色由 CoverColors 从封面提取
+  final bool mine; // card color is extracted from the cover by CoverColors
 }

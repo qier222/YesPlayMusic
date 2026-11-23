@@ -1,11 +1,11 @@
-// MCP 工具注册表、Session 状态与懒加载分发器。
+// MCP tool registry, session state and lazy dispatcher.
 //
-// 支持两种懒加载协作模式：
-// 1. 通用渐进式懒加载（默认）：tools/list 仅返回核心工具 + ypm_discover_tools +
-//    ypm_call_tool；LLM 通过 discover 获取扩展工具 Schema，再用 ypm_call_tool 执行。
-// 2. 动态热刷新（兼容支持 notifications/tools/list_changed 的客户端）：discover 或
-//    enable 后，将对应工具注册进当前 Session 并推送 list_changed 通知，客户端随后
-//    可直接调用真实工具名。
+// Supports two lazy-loading modes:
+// 1. Generic progressive lazy loading (default): tools/list returns only core tools + ypm_discover_tools +
+//    ypm_call_tool; the LLM gets extended tool schemas via discover, then runs them with ypm_call_tool.
+// 2. Dynamic hot refresh (for clients that support notifications/tools/list_changed): after discover or
+//    enable, the tools are registered on the current session and a list_changed notification is pushed; the client
+//    can then call the real tool names directly.
 
 import 'dart:async';
 import 'dart:convert';
@@ -58,11 +58,11 @@ class McpTool {
   final Map<String, Object?> inputSchema;
   final McpToolHandler handler;
 
-  /// 是否在懒加载模式下初始直接暴露。
+  /// Whether exposed directly from the start in lazy mode.
   final bool core;
 
-  /// 是否是懒加载元工具（ypm_discover_tools / ypm_call_tool）。
-  /// 在全量暴露模式下不显示元工具，减少冗余。
+  /// Whether this is a lazy meta tool (ypm_discover_tools / ypm_call_tool).
+  /// Meta tools are hidden in full exposure mode to reduce noise.
   final bool meta;
 
   /// MCP Tool Annotations。
@@ -70,14 +70,14 @@ class McpTool {
   final bool destructive;
   final bool idempotent;
 
-  /// 是否会修改远程/用户持久化数据（歌单、喜欢、评论、不喜欢等）。
-  /// 在 `config.readOnly` 启用时被屏蔽。
+  /// Whether it modifies remote/user persistent data (playlists, likes, comments, dislikes, etc.).
+  /// Blocked when `config.readOnly` is enabled.
   final bool mutatesData;
 
-  /// 依赖的单一 Source Op；为空表示不依赖特定 Op。
+  /// The single source Op it depends on; empty means no specific Op.
   final String? requiredOp;
 
-  /// 满足任意一个 Op 即可用。
+  /// Available if any one of these Ops is supported.
   final List<String> anyOps;
 
   Map<String, Object?> toMcpSchema() => {
@@ -101,7 +101,7 @@ class McpTool {
   };
 }
 
-/// 单个 MCP 客户端会话，记录其通过懒加载已解锁的工具和活跃 SSE 流。
+/// One MCP client session, tracking the tools it has unlocked lazily and its active SSE streams.
 class McpSession {
   McpSession(this.id);
 
@@ -109,34 +109,34 @@ class McpSession {
   bool initialized = false;
   DateTime lastSeen = DateTime.now();
 
-  /// 当前会话已动态解锁的懒加载分类与工具名。
+  /// Lazy categories and tool names this session has unlocked dynamically.
   final Set<String> enabledCategories = {};
   final Set<String> enabledTools = {};
 
-  /// 当前会话挂载的 SSE 通知通道（GET /mcp），见 [serveSse]。
+  /// SSE notification channels attached to this session (GET /mcp), see [serveSse].
   final List<IOSink> _sseStreams = [];
 
-  /// 每条 SSE 通道上一次写入的 flush，写入必须串行：
-  /// flush 未完成时再 write 会抛 StateError，连发两条通知时整条通道就被误判为断开。
+  /// The last flush on each SSE channel; writes must be serialized:
+  /// writing again before a flush completes throws StateError, so sending two notifications back to back would wrongly mark the channel as disconnected.
   final Map<IOSink, Future<void>> _pending = {};
 
-  /// 通道被移除时完成，供 GET /mcp 的处理函数结束等待。
+  /// Completes when the channel is removed, so the GET /mcp handler can stop waiting.
   final Map<IOSink, Completer<void>> _detached = {};
 
-  /// 对端断开后 flush 会一直挂起、`res.done` 也不触发，只能靠超时发现死连接。
-  /// 测试里会调短。
+  /// After the peer disconnects, flush hangs forever and `res.done` never fires; only a timeout finds dead connections.
+  /// Tests shorten it.
   static Duration writeTimeout = const Duration(seconds: 5);
 
   int get sseCount => _sseStreams.length;
 
-  /// 把 [res] 当作 SSE 通道挂到会话上，直到对端断开或通道被移除才返回。
-  /// 调用方先设好状态码和响应头（Content-Type 等），这里负责其余部分。
+  /// Attaches [res] to the session as an SSE channel, returning only when the peer disconnects or the channel is removed.
+  /// The caller sets the status code and headers (Content-Type etc.) first; this handles the rest.
   ///
-  /// HttpResponse 会吞掉对端断开的 SocketException（之后写入静默丢弃、flush 照样成功、
-  /// done 也不触发），所以写完响应头就拿出原始 Socket：写失败会直接报错，
-  /// 读端 onDone 能立刻发现断开。
+  /// HttpResponse swallows SocketExceptions from a disconnected peer (later writes are silently dropped, flush still succeeds,
+  /// and done never fires), so after writing the headers we take the raw Socket: failed writes then throw,
+  /// and the read side's onDone notices the disconnect right away.
   Future<void> serveSse(HttpResponse res, {void Function()? onAttached}) async {
-    // 不分块、读到连接关闭为止：detach 之后直接写 socket。
+    // No chunking, read until the connection closes: after detach, write to the socket directly.
     res.headers.chunkedTransferEncoding = false;
     res.persistentConnection = false;
     final Socket socket;
@@ -170,7 +170,7 @@ class McpSession {
     }
   }
 
-  /// 挂上一条 SSE 通道；返回的 Future 在通道被移除（断开、超时、会话关闭）时完成。
+  /// Attaches an SSE channel; the returned Future completes when the channel is removed (disconnect, timeout, session closed).
   Future<void> attachSse(IOSink res) {
     _sseStreams.add(res);
     return (_detached[res] ??= Completer<void>()).future;
@@ -183,14 +183,14 @@ class McpSession {
     if (c != null && !c.isCompleted) c.complete();
   }
 
-  /// 向当前会话的所有 SSE 通道推送 JSON-RPC 通知。
+  /// Pushes a JSON-RPC notification to every SSE channel of this session.
   void notify(String method, [Map<String, Object?>? params]) {
     _broadcast(
       'event: message\ndata: ${jsonEncode(jsonRpcNotification(method, params))}\n\n',
     );
   }
 
-  /// SSE 注释行心跳：客户端忽略，服务端借此发现已断开的连接。
+  /// SSE comment-line heartbeat: clients ignore it, the server uses it to find disconnected connections.
   void keepAlive() => _broadcast(': ping\n\n');
 
   void _broadcast(String payload) {
@@ -204,7 +204,7 @@ class McpSession {
             await s.flush().timeout(writeTimeout);
           })
           .catchError((Object _) {
-            // 客户端已断开或写超时：移除通道，不让错误冒泡成未捕获异常。
+            // Client disconnected or write timed out: remove the channel instead of letting the error bubble up as uncaught.
             detachSse(s);
           });
     }
@@ -235,7 +235,7 @@ class McpToolRegistry {
   Iterable<McpTool> get all => _tools.values;
   McpTool? operator [](String name) => _tools[name];
 
-  /// 判断工具在当前已加载源与配置下是否可用。
+  /// Whether the tool is available with the currently loaded sources and config.
   bool isAvailable(McpTool tool, AppState app, McpConfig config) {
     if (config.readOnly && tool.mutatesData) return false;
     if (tool.requiredOp != null) {
@@ -251,7 +251,7 @@ class McpToolRegistry {
     return true;
   }
 
-  /// 计算当前所有可用工具的数量（核心 / 懒加载），供设置页展示。
+  /// Counts all currently available tools (core / lazy) for the settings page.
   ({int core, int lazy, int total}) counts(AppState app, McpConfig config) {
     var core = 0, lazy = 0;
     for (final t in _tools.values) {
@@ -266,7 +266,7 @@ class McpToolRegistry {
     return (core: core, lazy: lazy, total: core + lazy);
   }
 
-  /// 生成 `tools/list` 返回的工具列表。
+  /// Builds the tool list returned by `tools/list`.
   List<Map<String, Object?>> listTools(
     AppState app,
     McpConfig config,
@@ -276,11 +276,11 @@ class McpToolRegistry {
     for (final t in _tools.values) {
       if (!isAvailable(t, app, config)) continue;
       if (!config.lazyLoading) {
-        // 全量模式：直接暴露所有真实工具，省略懒加载元工具。
+        // Full mode: expose every real tool directly, omitting the lazy meta tools.
         if (!t.meta) out.add(t.toMcpSchema());
         continue;
       }
-      // 懒加载模式：暴露核心工具、元工具，以及当前会话已动态解锁的扩展工具。
+      // Lazy mode: expose core tools, meta tools and extended tools this session has unlocked.
       if (t.core ||
           t.meta ||
           session.enabledCategories.contains(t.category) ||
@@ -291,7 +291,7 @@ class McpToolRegistry {
     return out;
   }
 
-  /// 懒加载发现入口：按分类或关键词列出扩展工具及其 Schema，并可选地为当前会话解锁。
+  /// Lazy discovery entry: lists extended tools and their schemas by category or keyword, optionally unlocking them for this session.
   Map<String, Object?> discoverTools(
     AppState app,
     McpConfig config,
@@ -356,7 +356,7 @@ class McpToolRegistry {
     };
   }
 
-  /// 执行指定工具（支持直接调用，也支持通过 ypm_call_tool 代理调用）。
+  /// Runs a tool (called directly or proxied through ypm_call_tool).
   Future<Map<String, Object?>> callTool(
     String name,
     Map<String, Object?> args,

@@ -27,14 +27,14 @@ class NowPlayingPage extends StatelessWidget {
     final mv = t.mv;
     final noLyrics = !app.hasLyrics && !app.lyricsLoading && !mv;
 
-    // 源给不出相似歌曲（比如本地音乐）时没有这个标签，停在播放队列
+    // When the source can't give similar songs (e.g. local music) this tab doesn't exist; stay on the queue
     var tab = app.npTab;
     if (tab == NpTab.similar && !app.canSimilar) tab = NpTab.queue;
     if (tab == NpTab.comments && !app.canComments) tab = NpTab.queue;
     if (mv && tab == NpTab.lyrics) tab = NpTab.queue;
     final big = tab == NpTab.lyrics && noLyrics;
 
-    // 只切换下面的内容；上面的歌曲信息不参与切换，免得两份叠在一起闪
+    // Only switch the content below; the song info above isn't part of the switch, so two copies don't overlap and flicker
     final Widget body;
     if (big) {
       body = _BigInfo(key: ValueKey('big-${t.key}'), track: t);
@@ -91,7 +91,7 @@ class NowPlayingPage extends StatelessWidget {
         ),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 260),
-          // 先淡出旧的再淡入新的，不让两份内容半透明地叠在一起
+          // Fade the old out before fading the new in, so the two never overlap semi-transparently
           switchInCurve: const Interval(0.4, 1, curve: Curves.easeOutCubic),
           switchOutCurve: const Interval(0.4, 1, curve: Curves.easeInCubic),
           transitionBuilder: (c, a) => FadeTransition(opacity: a, child: c),
@@ -102,7 +102,7 @@ class NowPlayingPage extends StatelessWidget {
       ],
     );
 
-    // 背景固定使用当前歌曲封面的主色（切歌时 CoverTone 平滑过渡）
+    // The background always uses the current song cover's dominant color (CoverTone transitions smoothly on song change)
     return CoverTone(
       coverId: t.cover,
       builder: (context, pal) => ColoredBox(
@@ -111,9 +111,9 @@ class NowPlayingPage extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, box) => Stack(
               children: [
-                // 右侧斜放的封面 / MV 画面（随窗口宽高缩放，不侵入左侧歌词区，垂直居中）
+                // Tilted cover / MV on the right (scales with the window, stays out of the lyrics area on the left, vertically centered)
                 _Art(track: t, playing: app.playing, stageSize: box.biggest),
-                // 顶部标题栏区域支持拖动窗口（放在 _TopBar 下层，避免影响按钮点击）
+                // The title bar area at the top can drag the window (beneath _TopBar so buttons stay clickable)
                 const Positioned(
                   left: 0,
                   right: 0,
@@ -155,7 +155,7 @@ class _Art extends StatelessWidget {
   final bool playing;
   final Size stageSize;
 
-  // 左侧内容区（left: 40, width: 780）右侧边界 + 安全间距，避免旋转 6° 后压到歌词。
+  // Right edge of the left content area (left: 40, width: 780) + safety margin, so the 6° rotation doesn't cover the lyrics.
   static const _leftLimit = 856.0;
   static const _topSafe = 80.0;
   static const _bottomSafe = 110.0;
@@ -282,7 +282,7 @@ class _Art extends StatelessWidget {
       top: top,
       right: right,
       child: AnimatedScale(
-        // 暂停时封面轻轻退后
+        // The cover recedes slightly when paused
         scale: playing ? 1 : 0.94,
         duration: const Duration(milliseconds: 700),
         curve: const SpringCurve(bounce: 0.15),
@@ -321,7 +321,7 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.app;
     final t = app.track;
-    // 标签组居中；收起在底部播放条末尾（定稿 v32），左上、右上都不放按钮
+    // The tab group is centered; collapse sits at the end of the bottom player bar (final v32), no buttons top left or top right
     return Positioned(
       left: 0,
       right: 0,
@@ -369,8 +369,8 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-/// 「来自 …」：队列的来处。不知道来处时调用方不放这一行（顶部标签已经写了「正在播放」）。
-/// 来处是专辑或歌单时，名字可以点进去。
+/// "From …": where the queue came from. When unknown the caller omits this line (the top tab already says "Now Playing").
+/// When it came from an album or playlist, the name can be tapped.
 class _FromLink extends StatelessWidget {
   const _FromLink({required this.size});
   final double size;
@@ -390,8 +390,8 @@ class _FromLink extends StatelessWidget {
   }
 }
 
-/// 正在播放页上能点的文字：悬停时白 100% + 下划线，点了收起正在播放、打开 [route]。
-/// [route] 为空时就是普通文字。[prefix] 不参与点击。
+/// Tappable text on the Now Playing page: white 100% + underline on hover; tapping collapses Now Playing and opens [route].
+/// Plain text when [route] is empty. [prefix] isn't tappable.
 class _Link extends StatelessWidget {
   const _Link(
     this.text, {
@@ -478,7 +478,7 @@ class _TrackInfo extends StatelessWidget {
   }
 }
 
-/// 没有歌词时的大字歌曲信息。
+/// Large song info shown when there are no lyrics.
 class _BigInfo extends StatelessWidget {
   const _BigInfo({super.key, required this.track});
   final Track track;
@@ -519,9 +519,9 @@ class _BigInfo extends StatelessWidget {
   }
 }
 
-// ───────────── 歌词 ─────────────
+// ───────────── Lyrics ─────────────
 
-/// 歌词行高缓存（键含字号、字重、字体、文本）。超过上限就整体清空，避免无限增长。
+/// Lyric line height cache (keyed by font size, weight, font and text). Cleared entirely over the limit so it can't grow forever.
 final _heights = _BoundedCache<String, double>(2000);
 
 class _BoundedCache<K, V> {
@@ -537,7 +537,7 @@ class _BoundedCache<K, V> {
   }
 }
 
-/// 当前行最大，上下渐淡；换行时整列平滑上移，字号也跟着变。
+/// The current line is largest, fading above and below; on line change the column slides up smoothly and the font size follows.
 class _Lyrics extends StatefulWidget {
   const _Lyrics();
 
@@ -546,25 +546,25 @@ class _Lyrics extends StatefulWidget {
 }
 
 class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
-  /// 用户用滚轮 / 触控板滚动时进入「浏览」：所有行都是小字，排版和当前行
-  /// 无关，位置 [_abs] 只听手势；正在唱的行照常往下走，只靠高亮区分。
-  /// 停手 3 秒后回到跟随，当前行重新放大。
+  /// Scrolling with the wheel / trackpad enters "browsing": every line is small, the layout doesn't depend on the current line,
+  /// and the position [_abs] follows only gestures; the line being sung keeps advancing, distinguished only by highlight.
+  /// After 3 seconds without input it returns to following, and the current line grows again.
   bool _scrolling = false;
   double _abs = 0;
   Timer? _back;
 
-  /// 进入浏览的时间：前 520ms 当前行在缩小，行的位置用同样的时长跟上，免得叠在一起。
+  /// When browsing started: for the first 520ms the current line is shrinking, and line positions follow with the same duration so they don't overlap.
   DateTime _since = DateTime(0);
   bool get _settling =>
       DateTime.now().difference(_since) < const Duration(milliseconds: 520);
 
-  /// 上一下是鼠标滚轮：一格跳得远，位置用 90ms 补间；触控板和惯性直接跟手。
+  /// The last input was a mouse wheel: one notch jumps far, so the position tweens over 90ms; trackpad and momentum follow directly.
   bool _wheel = false;
 
-  // 触控板松手后的惯性：按松手前的速度用摩擦减速。
+  // Trackpad momentum after release: decelerate with friction from the velocity before release.
   late final Ticker _fling = createTicker(_onFling);
   FrictionSimulation? _sim;
-  double _vel = 0; // px/s，最近几次移动平滑出来的
+  double _vel = 0; // px/s, smoothed from the last few moves
   DateTime _lastMove = DateTime(0);
   double _min = 0, _max = 0;
 
@@ -592,7 +592,7 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
     if (_fling.isActive) _fling.stop();
   }
 
-  /// 触控板一次移动：记下速度，松手时用。
+  /// One trackpad move: record the velocity for use on release.
   void _pan(double dy, void Function(double) scroll) {
     _stopFling();
     final now = DateTime.now();
@@ -605,10 +605,10 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
   }
 
   void _panEnd() {
-    // 停住一会儿再松手不算甩
+    // Pausing for a moment before releasing doesn't count as a fling
     final idle = DateTime.now().difference(_lastMove).inMilliseconds > 80;
     if (!_scrolling || idle || _vel.abs() < 80) return;
-    // 减速快一点；慢到 20px/s 就停，免得尾巴拖很久
+    // Decelerate a bit faster; stop below 20px/s so the tail doesn't drag on
     _sim = FrictionSimulation(
       0.03,
       _abs,
@@ -653,11 +653,12 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
         return LayoutBuilder(
           builder: (context, box) {
             const maxW = 760.0;
-            // 所有行都按当前行的字排版，断行位置固定；其他行只是整体缩小
-            // （缩放不重新排版），切换时就不会跳行。
+            // Every line is laid out at the current line's font, so line breaks are fixed; other lines are just scaled down
+            // (scaling doesn't re-layout), so lines don't jump when switching.
             const big = 40.0, subBig = 18.0;
-            const small = 0.55; // 其他行的歌词缩到 55%（约 22 号）
-            const subSmall = 0.8; // 翻译单独缩，其他行的翻译约 14 号
+            const small = 0.55; // other lines' lyrics scale to 55% (about 22pt)
+            // Translations scale separately; other lines' translations are about 14pt
+            const subSmall = 0.8;
 
             String main(int i) =>
                 mode == LyricMode.trans && ls[i].trans.isNotEmpty
@@ -668,7 +669,7 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
                 ? ls[i].trans
                 : null;
 
-            // 每次进度更新都会重新布局；行高按内容和字号缓存，只算一次。
+            // Layout runs on every progress update; line heights are cached by content and font size and computed once.
             double measure(
               String s,
               double size,
@@ -689,7 +690,7 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
             });
 
             double mainH(int i) => measure(main(i), big, w900, F.wide, 1.1);
-            // [big] 是放大的那一行；-1 表示都不放大（浏览时）
+            // [big] is the enlarged line; -1 means none is enlarged (while browsing)
             double heightOf(int i, int bigRow) {
               final c = i == bigRow;
               final h = mainH(i) * (c ? 1 : small);
@@ -714,27 +715,27 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
             final followTops = topsFor(playing);
             final browseTops = topsFor(-1);
             final tops = _scrolling ? browseTops : followTops;
-            // 当前行放在区域约 30% 的高度上
+            // The current line sits at about 30% of the area's height
             final anchor = box.maxHeight * 0.30;
             final follow = followTops[playing] - anchor;
-            // 往上最多滚到第一行露在顶部渐变下面，往下最多滚到最后一行停在锚点
+            // Scroll up at most until the first line shows below the top gradient, down at most until the last line rests at the anchor
             final minOff = -(box.maxHeight * 0.08 + 24);
             final maxOff = math.max(minOff, browseTops.last - anchor);
             final offset = _scrolling ? _abs : follow;
-            // 开始滚动时当前行缩小，但位置不动，下面的行往上收
+            // When scrolling starts the current line shrinks but stays in place, and the lines below move up
             void scroll(double dy) =>
                 _scrollBy(dy, browseTops[playing] - anchor, minOff, maxOff);
 
             return Listener(
               onPointerSignal: (e) {
-                // 鼠标滚轮一格的距离太小，放大一些；触控板走下面的 panZoom，跟手不放大
+                // One mouse wheel notch is too small, so scale it up; the trackpad goes through panZoom below and follows the finger unscaled
                 if (e is PointerScrollEvent) {
                   _stopFling();
                   _wheel = true;
                   scroll(e.scrollDelta.dy * 2.5);
                 }
               },
-              // 触控板：手指移动距离放大 2 倍，松手后有惯性
+              // Trackpad: finger movement doubled, with momentum after release
               onPointerPanZoomUpdate: (e) => _pan(-e.panDelta.dy * 2, scroll),
               onPointerPanZoomEnd: (_) => _panEnd(),
               child: ShaderMask(
@@ -749,14 +750,14 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      // 整块接住滚动，行与行之间的空隙也能滚
+                      // The whole block catches scrolling, so the gaps between lines scroll too
                       const Positioned.fill(
                         child: ColoredBox(color: Color(0x00000000)),
                       ),
                       for (var i = 0; i < ls.length; i++)
                         AnimatedPositioned(
                           key: ValueKey(i),
-                          // 手动滚动时跟手，自动跟随时用弹簧
+                          // Follow the finger when scrolling manually, use a spring when following automatically
                           duration: Duration(
                             milliseconds: !_scrolling
                                 ? 700
@@ -818,14 +819,14 @@ class _LyricRow extends StatelessWidget {
   final String? sub;
   final int distance;
 
-  /// [current]：放大的当前行。[browsing]：用户在滚动，正在唱的行（distance 0）
-  /// 全亮，其他行统一半透明，滚到远处也看得清。
+  /// [current]: the enlarged current line. [browsing]: the user is scrolling; the line being sung (distance 0)
+  /// is fully bright and other lines uniformly semi-transparent, so they stay readable when scrolled far.
   final bool current, browsing;
 
-  /// 当前行的字号；其他行同样排版，歌词缩到 [small] 倍、翻译缩到 [subSmall] 倍。
+  /// Font size of the current line; other lines use the same layout, with lyrics scaled to [small] and translations to [subSmall].
   final double size, subSize, small, subSmall;
 
-  /// 歌词按 [size] 排版时的高度，用来把翻译放在缩小后的歌词正下方。
+  /// Height of the lyrics laid out at [size], used to put the translation right below the scaled-down lyrics.
   final double mainHeight;
   final VoidCallback onTap;
 
@@ -845,12 +846,12 @@ class _LyricRow extends StatelessWidget {
         duration: const Duration(milliseconds: 260),
         opacity: h && distance != 0 ? math.max(base, 0.75) : base,
         child: TweenAnimationBuilder<double>(
-          // 0 = 其他行，1 = 当前行
+          // 0 = other lines, 1 = current line
           tween: Tween(end: current ? 1 : 0),
           duration: const Duration(milliseconds: 520),
           curve: Curves.easeOutCubic,
           builder: (_, k, _) {
-            // 只缩放绘制，不改排版：断行永远和当前行一样
+            // Scale only the painting, not the layout: line breaks always match the current line
             final km = small + (1 - small) * k;
             final ks = subSmall + (1 - subSmall) * k;
             final lyric = Transform.scale(
@@ -889,7 +890,7 @@ class _LyricRow extends StatelessWidget {
   }
 }
 
-// ───────────── 播放队列 / 相似歌曲 ─────────────
+// ───────────── Queue / Similar songs ─────────────
 
 class _NpList extends StatelessWidget {
   const _NpList({
@@ -917,8 +918,8 @@ class _NpList extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 12),
                   child: tx(empty, 15, w: w600, c: wa(0.5)),
                 )
-              // 整个列表左移 10，让 hover 底色的左边和标题对齐；
-              // 移的是列表本身，裁剪边界跟着走，不会切掉底色
+              // Shift the whole list left by 10 so the left edge of the hover background aligns with the title;
+              // the list itself moves, so the clip boundary moves with it and the background isn't cut off
               : Transform.translate(
                   offset: const Offset(-10, 0),
                   child: ShaderMask(
@@ -929,7 +930,7 @@ class _NpList extends StatelessWidget {
                       colors: [black, black, ba(0)],
                       stops: const [0, 0.85, 1],
                     ).createShader(r),
-                    // 正在播放页不显示滚动条
+                    // No scrollbar on the Now Playing page
                     child: ScrollConfiguration(
                       behavior: const NoBars(),
                       child: ListView.builder(
@@ -963,7 +964,7 @@ class _NpRow extends StatelessWidget {
   });
   final Track track;
 
-  /// 列表里有 MV 时封面位按 16:9 留 80 宽，否则就是 45 的方形封面，靠左和标题对齐。
+  /// With MVs in the list the cover slot is 80 wide at 16:9, otherwise a 45 square cover, left-aligned with the title.
   final bool wide;
   final bool showDur;
   final VoidCallback onTap;
@@ -976,14 +977,14 @@ class _NpRow extends StatelessWidget {
       onMenu: (p) => showMenu(context, p, trackMenu(context, t)),
       builder: (_, h, _) => AnimatedContainer(
         duration: fast,
-        // 封面四周都留 10：45 + 10 × 2
+        // 10 on every side of the cover: 45 + 10 × 2
         height: 65,
         width: 792,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: squircle(14, color: h ? ba(0.16) : ba(0)),
         child: Row(
           children: [
-            // 播放按钮放在封面上：和其他列表一样在行首，时长照常显示
+            // The play button sits on the cover: at the start of the row like other lists, with the duration shown as usual
             Stack(
               alignment: Alignment.centerLeft,
               children: [
@@ -1064,7 +1065,7 @@ class _NpRow extends StatelessWidget {
   }
 }
 
-// ───────────── 底部播放条（封面色上） ─────────────
+// ───────────── Bottom player bar (on cover color) ─────────────
 
 class _BottomBar extends StatelessWidget {
   const _BottomBar();
@@ -1075,7 +1076,7 @@ class _BottomBar extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        // 收起在最左（定稿 v33）
+        // Collapse at the far left (final v33)
         _CoverSeg(
           icon: 'chevron-down',
           tip: context.l10n.actionCollapse,
@@ -1208,7 +1209,7 @@ class _WhiteControls extends StatelessWidget {
       tip: tip,
       tipOnCover: true,
       onTap: onTap,
-      // Sketch 组件 NP Bar「Button Hover」：58×72，圆角 24，#000 12%
+      // Sketch component NP Bar "Button Hover": 58×72, radius 24, #000 12%
       builder: (_, h, p) => AnimatedContainer(
         duration: fast,
         width: w,
@@ -1340,8 +1341,8 @@ class _Progress extends StatelessWidget {
                               width: 2,
                               child: Container(color: white),
                             ),
-                          // 时间画两层：底层白字；黑字只在白色进度条盖住的范围里
-                          // 显示。进度边缘压在某个数字中间时，数字一半黑一半白。
+                          // Time is drawn in two layers: white text underneath; black text is shown only where the white progress bar
+                          // covers it. When the progress edge falls in the middle of a digit, the digit is half black, half white.
                           Positioned.fill(child: labels(white)),
                           Positioned(
                             left: 0,

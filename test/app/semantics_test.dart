@@ -1,4 +1,4 @@
-// 读屏：按钮、图标按钮、开关要有名字和状态。
+// Screen readers: buttons, icon buttons and switches need names and states.
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/ui.dart';

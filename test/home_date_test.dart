@@ -6,8 +6,8 @@ import 'package:yesplaymusic/l10n/l10n.dart';
 void main() {
   final d = DateTime(2026, 11, 23);
 
-  // 首页日期行：没初始化日期数据时不能抛异常（原来连英文兜底也会抛），
-  // 初始化后按界面语言格式化。两步有先后，写在一个测试里。
+  // Home date line: must not throw before date data is initialised (it used to throw even for the English fallback),
+  // and after initialisation it's formatted for the UI language. The two steps are ordered, so they're in one test.
   test('formatHomeDate', () async {
     expect(formatHomeDate(d, const Locale('zh')), 'Monday, November 23');
     await initializeDateFormatting();

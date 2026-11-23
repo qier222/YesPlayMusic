@@ -1,11 +1,11 @@
-// 输入法消息不能在一帧中间处理。
+// Text input messages must not be handled in the middle of a frame.
 //
-// macOS 开着辅助功能时，Flutter 每帧末尾把语义树发给系统（FlutterView.updateSemantics），
-// 系统在这次调用里会顺带把输入法的更新（flutter/textinput 的 updateEditingValue）
-// 同步送回 Dart。这时输入框改值、要求重建，触发 "Build scheduled during frame"，
-// 那一帧中断，之后界面不再刷新，看起来就是卡死。
+// With accessibility on, macOS gets the semantics tree at the end of each frame (FlutterView.updateSemantics),
+// and during that call the system synchronously sends text input updates
+// (updateEditingValue on flutter/textinput) back to Dart. The text field changes value and asks to rebuild,
+// triggering "Build scheduled during frame"; that frame aborts and the UI never refreshes again, i.e. it looks frozen.
 //
-// 这里把一帧中间到达的输入法消息排到这一帧结束后，按到达顺序处理。
+// Here, input messages arriving mid-frame are queued until the frame ends and handled in arrival order.
 
 import 'dart:async';
 
@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class AppBinding extends WidgetsFlutterBinding {
-  /// 在 main 的第一行调用，代替 WidgetsFlutterBinding.ensureInitialized。
+  /// Call on the first line of main instead of WidgetsFlutterBinding.ensureInitialized.
   static void init() => AppBinding();
 
   @override
@@ -22,12 +22,12 @@ class AppBinding extends WidgetsFlutterBinding {
       TextInputDeferral(super.createBinaryMessenger());
 }
 
-/// 只改 flutter/textinput 这一个频道的收消息方式，其他原样转给 [inner]。
+/// Only changes how messages on the flutter/textinput channel are received; everything else goes to [inner] unchanged.
 class TextInputDeferral implements BinaryMessenger {
   TextInputDeferral(this.inner);
   final BinaryMessenger inner;
 
-  // 还没处理完的消息；有排队的，后到的也得排在后面，保证顺序。
+  // Messages not yet handled; while any are queued, later ones must queue behind them to keep the order.
   Future<void> _queue = Future.value();
   int _pending = 0;
 

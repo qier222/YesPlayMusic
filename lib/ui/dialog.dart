@@ -1,4 +1,4 @@
-// 通用组件：文字弹窗。
+// Common widgets: text dialog.
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -7,12 +7,12 @@ import '../l10n/l10n.dart';
 import '../theme.dart';
 import 'buttons.dart';
 
-// ───────────── 文字弹窗 ─────────────
+// ───────────── Text dialog ─────────────
 
 OverlayEntry? _dialogEntry;
 
-/// 居中的弹窗卡片：标题 + 关闭按钮 + [body]。点外面、按 Esc 或关闭按钮收起。
-/// 返回关闭函数；[onClose] 在收起时调用（不管怎么收起的）。
+/// A centered dialog card: title + close button + [body]. Dismissed by clicking outside, Esc or the close button.
+/// Returns a close function; [onClose] is called on dismissal (however it was dismissed).
 VoidCallback showDialogCard(
   BuildContext context, {
   required String title,
@@ -113,7 +113,7 @@ VoidCallback showDialogCard(
   return close;
 }
 
-/// 弹窗看一段长文字（歌单说明全文这类）。
+/// A dialog for reading a long text (e.g. a full playlist description).
 void showTextDialog(BuildContext context, String title, String text) {
   showDialogCard(
     context,

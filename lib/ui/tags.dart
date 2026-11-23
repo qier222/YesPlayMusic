@@ -1,4 +1,4 @@
-// 通用组件：标签、徽标、Tab、分区标题。
+// Common widgets: tags, badges, tabs, section titles.
 
 import 'package:flutter/widgets.dart';
 
@@ -6,8 +6,8 @@ import '../l10n/l10n.dart';
 import '../theme.dart';
 import 'tap.dart';
 
-/// 小标签（Sketch 组件 Tag：高 28、胶囊、白 8%，悬停白 20%），能点。
-/// 选中的（子 tab）是 #F7F7F8 底黑字。
+/// Small tag (Sketch component Tag: 28 high, capsule, white 8%, hover white 20%), tappable.
+/// Selected ones (sub-tabs) are black text on #F7F7F8.
 class UiTag extends StatelessWidget {
   const UiTag(
     this.label, {
@@ -29,7 +29,7 @@ class UiTag extends StatelessWidget {
         duration: fast,
         height: 28,
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        // 不设 alignment：设了会在 Wrap 里撑满整行
+        // No alignment: setting it makes it fill the whole row inside Wrap
         decoration: squircle(
           14,
           color: selected
@@ -51,7 +51,7 @@ class UiTag extends StatelessWidget {
   );
 }
 
-/// 小徽章（Sketch 组件 Badge：高 20、圆角 6、内边距 6；强调 / 普通）。
+/// Small badge (Sketch component Badge: 20 high, radius 6, padding 6; emphasis / normal).
 class UiBadge extends StatelessWidget {
   const UiBadge(this.label, {super.key, this.accented = false});
   final String label;
@@ -71,7 +71,7 @@ class UiBadge extends StatelessWidget {
   }
 }
 
-/// 在封面色上的胶囊 Tab（正在播放、Coverflow 顶部；Sketch Tab / 胶囊规范）。
+/// Capsule tabs on a cover-color background (top of Now Playing and Coverflow; Sketch Tab / capsule spec).
 class CoverPill extends StatelessWidget {
   const CoverPill({
     super.key,
@@ -137,7 +137,7 @@ class CoverPill extends StatelessWidget {
   }
 }
 
-/// 「标题 A-Z / 发行时间」那种带下划线的文字切换。
+/// Underlined text toggle like "Title A–Z / Release date".
 class TextTabs extends StatelessWidget {
   const TextTabs({
     super.key,
@@ -194,7 +194,7 @@ class TextTabs extends StatelessWidget {
   }
 }
 
-/// 区块标题 + 右侧「全部」。
+/// Section title + "All" on the right.
 class SectionTitle extends StatelessWidget {
   const SectionTitle(
     this.title, {

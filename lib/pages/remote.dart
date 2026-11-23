@@ -1,7 +1,7 @@
-// 插件来源的页面：音乐库（插件首页）、搜索、专辑、歌手、歌单。
+// Pages for plugin sources: library (plugin home), search, album, artist, playlist.
 //
-// 本地音乐的页面按设计稿做了很多专门的排版；插件返回的数据形状统一（models.dart），
-// 这里用一套通用的排版显示，所有插件共用。
+// Local music pages have much custom layout per the design; plugin data has a uniform shape (models.dart),
+// so one generic layout here is shared by all plugins.
 
 import 'dart:async';
 
@@ -28,9 +28,9 @@ import 'page_skeletons.dart';
 import 'search_results.dart';
 import 'links.dart';
 
-// ───── 加载 ─────
+// ───── Loading ─────
 
-/// 从插件加载数据：加载中、出错（可重试）、完成。结果按 [cacheKey] 缓存在 AppState。
+/// Loads data from a plugin: loading, error (retryable), done. Results are cached in AppState by [cacheKey].
 class Loaded<T> extends StatefulWidget {
   const Loaded({
     super.key,
@@ -41,17 +41,17 @@ class Loaded<T> extends StatefulWidget {
     this.onData,
   });
 
-  /// 要的数据：有缓存马上显示（旧的也显示，后台重取），没有就取。
+  /// The data wanted: shown immediately if cached (even stale, refetched in the background), otherwise fetched.
   final DataReq<T> req;
   final Widget Function(BuildContext context, T value) builder;
 
-  /// 加载时显示的东西（比如骨架）；给了就在它和内容之间淡入淡出。
+  /// What to show while loading (e.g. a skeleton); when given, it cross-fades with the content.
   final Widget? placeholder;
 
-  /// 出错提示外面再包一层（比如带上页面标题）。
+  /// An extra wrapper around the error message (e.g. adding the page title).
   final Widget Function(Widget child)? frame;
 
-  /// 每拿到一份新数据（第一次、后台重取到新的）调一次，在 builder 之前。
+  /// Called once for each new piece of data (first time, or a background refetch), before builder.
   final void Function(T value)? onData;
 
   @override
@@ -59,8 +59,8 @@ class Loaded<T> extends StatefulWidget {
 }
 
 class _LoadedState<T> extends State<Loaded<T>> {
-  // 内容一直用 builder 直接建；后台取到新的就原地换上，不回到骨架、不重播
-  // 入场动画。
+  // Content is always built directly with builder; a background refetch swaps in place without going back to the skeleton or replaying
+  // the entrance animation.
   Object? _error;
   bool _loading = false;
   Object? _seen;
@@ -96,7 +96,7 @@ class _LoadedState<T> extends State<Loaded<T>> {
 
   @override
   Widget build(BuildContext context) {
-    // 换账号后 key 变了也会走到这里：新账号没有缓存就取
+    // Also reached when the key changes after switching accounts: fetch if the new account has no cache
     final v = context.app.peekData(widget.req);
     if (v == null && !_loading && _error == null) _load();
     if (v != null && !identical(v, _seen)) {
@@ -139,7 +139,7 @@ String errorText(Object e) => switch (e) {
   _ => '$e',
 };
 
-/// 页面里的一句提示，可带一个按钮。
+/// A message on the page, optionally with a button.
 class Notice extends StatelessWidget {
   const Notice(this.text, {super.key, this.action, this.onAction});
   final String text;
@@ -174,14 +174,14 @@ Source? _src(BuildContext context, String id) => context.app.sources[id];
 
 Widget _missing(String id) => Notice(L.remotePluginMissing(id));
 
-/// 插件给的歌曲列表：补上来源，转成界面用的 Track。
+/// Song list from a plugin: fill in the source and convert to UI Tracks.
 List<Track> _tracks(List<m.Track> ts, String source) => [
   for (final t in ts) Track.of(t.source.isEmpty ? t.withSource(source) : t),
 ];
 
-// ───── 通用部件 ─────
+// ───── Common widgets ─────
 
-/// 封面；插件没给图时用一块底色。
+/// The cover; a plain background when the plugin gives no image.
 class Art extends StatelessWidget {
   const Art(this.url, {super.key, required this.size, this.round = false});
   final String url;
@@ -204,7 +204,7 @@ class Art extends StatelessWidget {
   }
 }
 
-/// 页面骨架：可滚动，左右留白，底部给播放条让位。
+/// Page scaffold: scrollable, horizontal margins, room at the bottom for the player bar.
 class _Scroll extends StatelessWidget {
   const _Scroll({required this.children});
   final List<Widget> children;
@@ -224,7 +224,7 @@ Widget _heading(String s) => Padding(
   child: tx(s, 20, w: w700, f: F.semi),
 );
 
-/// 歌曲列表，宽时排两列。点一首就用整个列表替换队列。
+/// Song list, in two columns when wide. Tapping a song replaces the queue with the whole list.
 class TrackList extends StatelessWidget {
   const TrackList(
     this.tracks, {
@@ -237,10 +237,10 @@ class TrackList extends StatelessWidget {
   final List<Track> tracks;
   final bool numbered;
 
-  /// 双击放了某首歌之后（搜索页用来记下点开过的结果）。
+  /// After a song is double-clicked to play (the search page uses it to remember opened results).
   final void Function(Track)? onPlay;
 
-  /// 双击放歌时的 [AppState.queueName] / [AppState.queueFrom]。
+  /// [AppState.queueName] / [AppState.queueFrom] when a song is double-clicked to play.
   final String name, from;
 
   @override
@@ -304,7 +304,7 @@ class _TrackRow extends StatelessWidget {
     final current = app.track.key == t.key;
     void play() {
       if (current) return app.togglePlay();
-      // 放不了的歌不进队列。
+      // Songs that can't be played don't go into the queue.
       final ok = list.where((x) => !(x.ref?.unavailable ?? false)).toList();
       app.playList(ok, start: ok.indexOf(t), name: name, from: from);
       onPlay?.call(t);
@@ -369,7 +369,7 @@ class _TrackRow extends StatelessWidget {
   }
 }
 
-/// 专辑、歌手或歌单的卡片。
+/// Card for an album, artist or playlist.
 class _Card extends StatelessWidget {
   const _Card({
     required this.image,
@@ -497,7 +497,7 @@ List<Widget> _playlistCards(
     ),
 ];
 
-/// 一个首页分区：标题，加上歌曲列表和卡片。
+/// A home section: title plus a song list and cards.
 List<Widget> _section(BuildContext context, String src, m.Section s) => [
   if (s.title.isNotEmpty) _heading(s.title),
   if (s.tracks.isNotEmpty) TrackList(_tracks(s.tracks, src), name: s.title),
@@ -513,12 +513,12 @@ List<Widget> _section(BuildContext context, String src, m.Section s) => [
   ],
 ];
 
-// ───── 音乐库（插件首页） ─────
+// ───── Library (plugin home) ─────
 
-/// 首页顶部日期行（跟随当前语言格式化）。
+/// Date line at the top of the home page (formatted for the current locale).
 String dateLine(DateTime d, Locale locale) => formatHomeDate(d, locale);
 
-/// 按钟点问好。
+/// Greeting by time of day.
 String greet(DateTime d, AppLocalizations l) => switch (d.hour) {
   < 5 => l.greetingLateNight,
   < 11 => l.greetingMorning,
@@ -537,18 +537,18 @@ class RemoteHomePage extends StatelessWidget {
   });
   final String source;
 
-  /// 首页：标题换成「11月22日 星期日」和「下午好，名字」。
+  /// Home page: the title becomes "Sunday, November 22" and "Good afternoon, name".
   final bool greeting;
 
-  /// 发现页：用插件的 browse，没有就提示。否则是首页（插件的 home）。
+  /// Discover page: uses the plugin's browse, or shows a message if missing. Otherwise the home page (the plugin's home).
   final bool discover;
 
   String get _key => discover ? '$source/discover' : source;
 
-  /// 页面大标题；为空时用插件名，下面再说明来自插件。
+  /// Large page title; when empty, the plugin name, with a note below that it comes from the plugin.
   final String? title;
 
-  /// 骨架里每个区块的「样式:数量」。
+  /// "style:count" for each section in the skeleton.
   static String? _spec(m.Section x) => switch (x.style) {
     'modes' => 'modes:${x.modes.length}',
     'shelf' =>
@@ -586,7 +586,7 @@ class RemoteHomePage extends StatelessWidget {
         tx(l.remoteSwitchToLocalHint, 13, w: w600, c: P.faint),
       ],
     ];
-    // 插件还没加载完：先显示骨架
+    // Plugin not loaded yet: show the skeleton first
     if (s == null && !app.pluginsLoaded) {
       return HomeSkeleton(head: head, layout: app.homeLayout(_key));
     }
@@ -610,7 +610,7 @@ class RemoteHomePage extends StatelessWidget {
   }
 }
 
-/// 首页、发现页的内容：认识的组件按定稿画，其余按旧的列表和卡片。
+/// Content of the home and Discover pages: recognised components drawn per the final design, others as the old list and cards.
 class _BrowseBody extends StatelessWidget {
   const _BrowseBody({
     required this.source,
@@ -628,7 +628,7 @@ class _BrowseBody extends StatelessWidget {
   );
 }
 
-/// 页面的区块；记下布局给下次的骨架用。没有内容时是一条提示。
+/// Page sections; the layout is remembered for the next skeleton. A message when there's no content.
 List<Widget> browseSections(
   BuildContext context,
   String source,
@@ -665,10 +665,10 @@ List<Widget> browseSections(
   ];
 }
 
-// ───── 发现页：顶部 tab、子 tab ─────
+// ───── Discover page: top tabs, sub-tabs ─────
 
-/// 插件的发现页（browse）。插件给 tabs 就在标题下面画一排 tab，给 filters
-/// 就在 tab 下面画几排标签；点了用选项的 page 再取一次。
+/// The plugin's Discover page (browse). With tabs, a row of tabs is drawn below the title; with filters,
+/// rows of labels below the tabs; tapping fetches again with the option's page.
 class _Discover extends StatefulWidget {
   const _Discover({required this.source, required this.head});
   final String source;
@@ -679,42 +679,42 @@ class _Discover extends StatefulWidget {
 }
 
 class _DiscoverState extends State<_Discover> {
-  /// 正在看的 page；空的是插件的默认页。
+  /// The page being viewed; empty is the plugin's default page.
   String _page = '';
 
-  /// 当前 tab 的 page，骨架的布局按它记（子 tab 不单独记）。
+  /// The current tab's page; the skeleton layout is remembered by it (sub-tabs aren't remembered separately).
   String _tab = '';
 
-  /// 当前 page 取到的内容；还在加载是 null。
+  /// Content fetched for the current page; null while loading.
   m.Browse? _cur;
   Object? _error;
   int _serial = 0;
 
-  /// 上一次取到的页面：加载新页时 tab 和标签先照它画，不跳。
+  /// The last fetched page: while loading a new one, tabs and labels are drawn from it so nothing jumps.
   m.Browse? _last;
 
-  /// 新页是点标签来的：加载时标签还留着。
+  /// The new page came from tapping a label: keep the labels while loading.
   bool _fromFilter = false;
 
-  /// 顶部组卡展开成全部分类。
+  /// The top group card expanded to all categories.
   bool _expanded = false;
 
-  /// 「更多分类」面板开着。
+  /// The "More categories" panel is open.
   bool _more = false;
 
   String get _cacheKey => _page.isEmpty
       ? '${widget.source}/browse'
       : '${widget.source}/browse:$_page';
 
-  // 默认页（启动时打开的）单独记，那时还不知道是哪个 tab
+  // The default page (opened at launch) is remembered separately, since the tab isn't known yet then
   String get _layoutKey => _page.isEmpty || _tab.isEmpty
       ? '${widget.source}/discover'
       : '${widget.source}/discover:$_tab';
 
   String get _barsKey => '$_layoutKey#bars';
 
-  // 同一类 tab（page 冒号前一样，比如 style:欧美 和 style:爵士）结构一样：
-  // 第一次打开某个 tab 时，先照同类 tab 上次的样子画骨架
+  // Tabs of the same kind (same part before the colon in page, e.g. style:欧美 and style:爵士) share a structure:
+  // the first time a tab opens, draw the skeleton from how a tab of the same kind last looked
   String? get _familyKey {
     final i = _tab.indexOf(':');
     if (_page.isEmpty || i < 0) return null;
@@ -734,8 +734,8 @@ class _DiscoverState extends State<_Discover> {
     if (family != null) app.rememberHomeLayout(family, layout);
   }
 
-  // 顶部分类和标签一直是同一个组件，只有下面的内容在骨架和页面之间换：
-  // 这样点 tab 时分类那一排能平滑地滚过去，不会整块重建。
+  // The top categories and labels are always the same widget; only the content below switches between skeleton and page:
+  // that way tapping a tab scrolls the category row smoothly instead of rebuilding the whole block.
   DataReq<m.Browse> get _req => DataReq.browse(widget.source, _page);
 
   void _load() {
@@ -788,7 +788,7 @@ class _DiscoverState extends State<_Discover> {
       _load();
       return;
     }
-    // 后台取到了新的默认页（启动时先显示的是存盘的）：换上
+    // A new default page arrived in the background (the stored one is shown first at launch): swap it in
     final cur = _cur;
     final fresh = context.appRead.peekData(_req);
     if (cur != null && fresh != null && !identical(fresh, cur)) _got(fresh);
@@ -810,7 +810,7 @@ class _DiscoverState extends State<_Discover> {
 
   Widget _bars(bool loading) {
     final b = _cur ?? _last;
-    // 加载中、标签换掉了：照上次这个 tab 有几排标签画外框
+    // Loading and the labels changed: draw outlines for as many label rows as this tab had last time
     final bones = loading && (b == null || !_fromFilter)
         ? int.tryParse(
                 _layoutOf(
@@ -850,7 +850,7 @@ class _DiscoverState extends State<_Discover> {
   @override
   Widget build(BuildContext context) {
     final app = context.app;
-    // 缓存没了（换了账号、改了插件设置）：重新取
+    // Cache is gone (account switched, plugin settings changed): fetch again
     if (_cur != null && app.peekData(_req) == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) setState(_load);
@@ -898,8 +898,8 @@ class _DiscoverState extends State<_Discover> {
   }
 }
 
-/// 标题下面的分类组件（定稿「分类 · 组卡（两层）」）：上层组卡是 tab，
-/// 下层胶囊是子 tab（可以有几排，比如歌手的 地区、类型、首字母）。
+/// The category widget below the title (final "分类 · 组卡（两层）"): top group cards are tabs,
+/// the pills below are sub-tabs (possibly several rows, e.g. region, genre, initial for artists).
 class _DiscoverBars extends StatefulWidget {
   const _DiscoverBars({
     required this.tabs,
@@ -916,13 +916,13 @@ class _DiscoverBars extends StatefulWidget {
   final bool expanded;
   final ValueChanged<bool> onExpand;
 
-  /// 「更多分类」面板开着；选中的分类在面板里时也算开着。
+  /// The "More categories" panel is open; also counts as open when the selected category is inside the panel.
   final bool more;
   final ValueChanged<bool> onMore;
   final List<m.Choice> tabs;
   final List<List<m.Choice>> filters;
 
-  /// 加载中刚点的 page：先把它画成选中。
+  /// The page just tapped while loading: draw it as selected first.
   final String? page;
   final String tab;
   final ValueChanged<String> onTab, onFilter;
@@ -940,7 +940,7 @@ class _DiscoverBarsState extends State<_DiscoverBars> {
     var on = widget.page != null
         ? tabs.indexWhere((t) => t.page == widget.page)
         : tabs.indexWhere((t) => t.selected);
-    // 加载中点的是胶囊（不是组卡）：组卡还是原来的
+    // Tapped a pill (not a group card) while loading: the group card stays as it was
     if (on < 0) on = tabs.indexWhere((t) => t.page == widget.tab);
     return CategoryCards(
       items: tabs,
@@ -964,7 +964,7 @@ class _DiscoverBarsState extends State<_DiscoverBars> {
 
   @override
   Widget build(BuildContext context) {
-    // 带分组的标签（「更多分类」）：面板开着，或者选中的分类在里面时，展开面板
+    // Labels with groups ("More categories"): expand the panel when it's open or the selected category is in it
     m.Choice? grouped;
     for (final row in widget.filters) {
       for (final c in row) {
@@ -1000,7 +1000,7 @@ class _DiscoverBarsState extends State<_DiscoverBars> {
   }
 }
 
-// ───── 搜索 ─────
+// ───── Search ─────
 
 String _lastQuery = '';
 
@@ -1017,7 +1017,7 @@ class _RemoteSearchPageState extends State<RemoteSearchPage> {
   final _focus = FocusNode();
   Timer? _debounce;
 
-  /// 正在显示结果的词；空的时候显示搜索记录。
+  /// The term whose results are shown; search history when empty.
   late String _shown = _lastQuery.trim();
 
   @override
@@ -1043,9 +1043,9 @@ class _RemoteSearchPageState extends State<RemoteSearchPage> {
     setState(() => _shown = q);
   }
 
-  // 停止输入 450ms 后再搜；输入法还在拼写（有未上屏的拼音）时不搜。
-  // 看整个输入状态而不是 onChanged：选字上屏时文字没变、只是拼写结束了，
-  // onChanged 不会触发。
+  // Search 450ms after typing stops; don't search while the IME is still composing (uncommitted pinyin).
+  // Watch the whole input state rather than onChanged: when a candidate is committed the text doesn't change, only composing ends,
+  // so onChanged doesn't fire.
   late String _typed = _ctl.text;
 
   void _valueChanged() {
@@ -1054,7 +1054,7 @@ class _RemoteSearchPageState extends State<RemoteSearchPage> {
     if (v.text == _typed) return;
     _typed = v.text;
     _debounce?.cancel();
-    // 清空了马上回到搜索记录
+    // Cleared: go back to search history right away
     if (v.text.trim().isEmpty) return _search();
     _debounce = Timer(const Duration(milliseconds: 450), _search);
   }
@@ -1076,7 +1076,7 @@ class _RemoteSearchPageState extends State<RemoteSearchPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 搜索是侧边栏的一级页面，不放返回按钮；留出原来的高度，搜索框不跳
+          // Search is a top-level sidebar page, so no back button; keep the original height so the search field doesn't jump
           const SizedBox(height: 64),
           SearchFieldBar(
             controller: _ctl,
@@ -1117,7 +1117,7 @@ class _RemoteSearchPageState extends State<RemoteSearchPage> {
   }
 }
 
-// ───── 专辑、歌手、歌单 ─────
+// ───── Album, artist, playlist ─────
 
 class RemoteAlbumPage extends StatelessWidget {
   const RemoteAlbumPage({super.key, required this.source, required this.id});
@@ -1137,7 +1137,7 @@ class RemoteAlbumPage extends StatelessWidget {
     }
     return Loaded<m.AlbumPage>(
       req: DataReq.album(source, id),
-      // 转成界面的 Album 记下来，AlbumPage 按 id 找它
+      // Remember the converted UI Album; AlbumPage looks it up by id
       onData: (p) => app.putAlbum(source, p),
       placeholder: const AlbumSkeleton(),
       builder: (_, p) => AlbumPage(id: '@$source/${p.album.id}'),
@@ -1161,7 +1161,7 @@ class RemoteArtistPage extends StatelessWidget {
         ],
       );
     }
-    // 和设计稿同一个歌手页（定稿 · 歌手页）
+    // The same artist page as the design (final · artist page)
     return Loaded<m.ArtistPage>(
       req: DataReq.artist(source, id),
       onData: (p) => app.checkLiked(_tracks(p.tracks, source)),
@@ -1212,7 +1212,7 @@ ArtistData _artistData(AppLocalizations l, Source s, m.ArtistPage page) {
     play: (app) => playAlbum(app, al),
   );
 
-  // 按发行日期从新到旧
+  // By release date, newest first
   final albums = [...page.albums]
     ..sort((x, y) => y.released.compareTo(x.released));
   final full = [
@@ -1258,7 +1258,7 @@ class RemotePlaylistPage extends StatelessWidget {
         ],
       );
     }
-    // 和本地歌单同一个页面（定稿 · 歌单页）
+    // The same page as local playlists (final · playlist page)
     return Loaded<m.Playlist>(
       req: DataReq.playlist(source, id),
       onData: (p) => app.checkLiked(_tracks(p.tracks, source)),

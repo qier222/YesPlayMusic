@@ -1,5 +1,5 @@
-// 页面冒烟测试：整个外壳（Shell）+ 本地音乐源、不加载插件，挨个打开页面，
-// 空状态下都要能画出来、不抛异常。
+// Page smoke tests: the whole Shell + the local music source, no plugins loaded; open every page in turn,
+// and each must render in its empty state without throwing.
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -40,17 +40,17 @@ Widget appFor(AppState state) => WidgetsApp(
   },
 );
 
-/// 页面里有转圈、入场动画，pumpAndSettle 等不完，固定推几帧。
+/// Pages have spinners and entrance animations that pumpAndSettle never finishes, so pump a fixed number of frames.
 Future<void> _frames(WidgetTester t) async {
   for (var i = 0; i < 10; i++) {
     await t.pump(const Duration(milliseconds: 100));
   }
 }
 
-/// 准备页面测试环境：
-/// - 和 main() 一样载入日期数据（首页日期行要用）；
-/// - 测试默认的 Ahem 字体每个字都是方块，英文比真实字体宽得多，会画出假的溢出。
-///   把应用自带的 Archivo 加载进来（中文仍是 Ahem，宽度和真实字形接近）。
+/// Sets up the page test environment:
+/// - loads date data like main() does (needed by the home date line);
+/// - the default test font Ahem draws every glyph as a box, much wider than real fonts for Latin text, producing fake overflows.
+///   Load the app's bundled Archivo (CJK is still Ahem, whose width is close to real glyphs).
 Future<void> prepareEnv() async {
   await initializeDateFormatting();
   final families = <String, List<String>>{};
@@ -85,7 +85,7 @@ void main() {
   });
   tearDown(() => app.dispose());
 
-  /// 默认是应用允许的最小窗口（macOS / Windows 都是 1280×800）。
+  /// The default is the smallest window the app allows (1280×800 on both macOS and Windows).
   Future<void> boot(WidgetTester t, {double width = 1280}) async {
     t.view.physicalSize = Size(width, 800);
     t.view.devicePixelRatio = 1;
@@ -112,12 +112,12 @@ void main() {
       await _frames(t);
       expect(t.takeException(), isNull);
       expect(app.path, '/$route');
-      // 页面真的画出了文字，不是一片空白
+      // The page actually drew text, not a blank screen
       expect(find.byType(Text), findsWidgets);
     });
   }
 
-  // 正在播放：队列是空的时候打开、切换各个标签页。
+  // Now Playing: open with an empty queue and switch between its tabs.
   testWidgets('空队列打开正在播放', (t) async {
     await boot(t);
     for (final tab in NpTab.values) {
@@ -127,9 +127,9 @@ void main() {
     }
   });
 
-  // 设置页的每个标签页。
-  // 最小窗口（1280）下「通用」「快捷键」「MCP」两列 512 固定宽放不下，溢出 160px，
-  // 要先定设计怎么收窄；这里先用 1440 宽测，最小窗口那条见下面 skip 的测试。
+  // Every tab of the settings page.
+  // At the minimum window (1280), the two fixed 512-wide columns of "General", "Shortcuts" and "MCP" don't fit and overflow by 160px;
+  // the design for narrowing them needs deciding first. Tested at 1440 wide for now; for the minimum window see the skipped test below.
   Future<void> settingsTabs(WidgetTester t, double width) async {
     await boot(t, width: width);
     app.open('/settings');
@@ -169,6 +169,7 @@ void main() {
   testWidgets(
     '设置页各标签（最小窗口）',
     (t) => settingsTabs(t, 1280),
-    skip: true, // 已知问题：两列设置页在最小窗口下溢出，等设计
+    // Known issue: the two-column settings page overflows at the minimum window, waiting on design
+    skip: true,
   );
 }

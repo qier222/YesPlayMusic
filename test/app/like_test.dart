@@ -6,7 +6,7 @@ import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/state.dart';
 
-/// like 什么时候返回由测试决定。
+/// When like returns is decided by the test.
 class _LikeSource extends Source {
   @override
   final info = const m.SourceInfo(id: 'likes', name: 'Likes');

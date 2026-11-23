@@ -27,7 +27,7 @@ void main() {
     if (tmp.existsSync()) tmp.deleteSync(recursive: true);
   });
 
-  // 取到的存进内存和磁盘；「重启」后从磁盘读回来，转好的模型只转一次。
+  // Fetched data goes to memory and disk; after a "restart" it's read back from disk, and the model is decoded only once.
   test('fetch, persist, read back after restart', () async {
     final s = store();
     expect(s.peek('a@1/x', pol), isNull);
@@ -46,14 +46,14 @@ void main() {
     expect(e.value(dec), 1);
     expect(calls, 1);
 
-    // 不存盘的重启后没有
+    // Entries not stored on disk are gone after a restart
     await s.fetch('a@1/y', memOnly, () async => 1);
     await s.flush();
     s.dropMemory();
     expect(s.peek('a@1/y', memOnly), isNull);
   });
 
-  // fresh 内不重取；过了 fresh 先给旧的、后台重取；过了 maxAge 当作没有。
+  // No refetch within fresh; past fresh, serve the old one and refetch in the background; past maxAge, treat as missing.
   test('freshness', () async {
     final s = store();
     var n = 0;
@@ -70,7 +70,7 @@ void main() {
     expect(s.peek('a@1/x', pol), isNull);
   });
 
-  // 同一个 key 同时只发一个请求。
+  // Only one request per key at a time.
   test('dedupe', () async {
     final s = store();
     final c = Completer<Object?>();
@@ -89,7 +89,7 @@ void main() {
     expect(calls, 1);
   });
 
-  // 取的途中被 invalidate：结果不进缓存；别的 key 不受影响。
+  // Invalidated mid-fetch: the result isn't cached; other keys are unaffected.
   test('invalidate drops in-flight results only for its prefix', () async {
     final s = store();
     final c1 = Completer<Object?>(), c2 = Completer<Object?>();
@@ -102,11 +102,11 @@ void main() {
     await f2;
     expect(s.peek('a@1/x', pol), isNull);
     expect(s.peek('b@1/x', pol)!.data, 2);
-    // 再取会发新的请求
+    // Fetching again sends a new request
     expect(await s.fetch('b@1/y', pol, () async => 3), 3);
   });
 
-  // invalidate 也删磁盘：整个命名空间、所有账号、某个前缀。
+  // invalidate also deletes from disk: a whole namespace, all accounts, or a prefix.
   test('invalidate on disk', () async {
     final s = store();
     for (final k in ['a@1/p/1', 'a@1/p/2', 'a@1/q', 'a@2/q', 'b@1/q']) {
@@ -126,7 +126,7 @@ void main() {
     expect(s.peek('b@1/q', pol), isNotNull);
   });
 
-  // 乐观更新：改了马上能读到，出错放回去；时间不变。
+  // Optimistic update: readable right after the change, put back on error; the time stays.
   test('mutate and restore', () async {
     final s = store();
     await s.fetch('a@1/x', pol, () async => {'liked': false});
@@ -140,7 +140,7 @@ void main() {
     expect(s.mutate('a@1/none', pol, (r) => r), isNull);
   });
 
-  // 失败后等一会儿再试；旧的照样能用。
+  // After a failure, wait before retrying; the old data still works.
   test('backoff after failure', () async {
     final s = store();
     await s.fetch('a@1/x', pol, () async => 1);
@@ -153,14 +153,14 @@ void main() {
     expect(s.revalidate('a@1/x', pol, () async => 2), isTrue);
   });
 
-  // 超过上限时删最久没用过的。
+  // Over the cap, the least recently used are deleted.
   test('trim to max bytes', () async {
     final s = store(max: 3000);
     final big = 'x' * 900;
     for (var i = 0; i < 6; i++) {
       await s.fetch('a@1/$i', pol, () async => big);
       await s.flush();
-      // 文件时间错开：越早写的越旧
+      // Stagger file times: the earlier written, the older
       final f = tmp
           .listSync(recursive: true)
           .whereType<File>()
@@ -183,12 +183,13 @@ void main() {
     final a = SwrStore(dir: dir.path)..put('src@a/library/tracks', pol, big);
     await a.flush();
     final b = SwrStore(dir: dir.path);
-    expect(b.peek('src@a/library/tracks', pol), isNull); // 超过 1 MB 不同步读
+    // Over 1 MB isn't read synchronously
+    expect(b.peek('src@a/library/tracks', pol), isNull);
     final e = await b.read('src@a/library/tracks', pol);
     expect((e!.data as List).length, 60000);
   });
 
-  // 写盘还没完成就 invalidate：删除要排在写入之后，不能让旧数据在重启后复活。
+  // invalidate before the disk write finishes: the delete must queue behind the write so old data doesn't come back after a restart.
   test('invalidate right after put does not resurrect on disk', () async {
     final s = store();
     s.put('a@1/x', pol, {'n': 1});
@@ -221,13 +222,13 @@ void main() {
     expect(s.peek('a@1/x', pol), isNull);
   });
 
-  // 删过文件后计数偏大：trim 要按实际占用判断，不能误删还在上限内的缓存。
+  // After deleting files the tally is too high: trim must check actual usage and not delete caches still under the cap.
   test(
     'trim after invalidate does not evict entries under the limit',
     () async {
       final big = 'x' * 4000;
       final s = store(max: 20000);
-      await s.size(); // 让 store 开始记账
+      await s.size(); // let the store start keeping count
       for (var i = 0; i < 4; i++) {
         s.put('a@1/k$i', pol, big);
       }

@@ -1,4 +1,4 @@
-// 首页电台大卡片：放了一个电台再换去放另一个，前一个停在刚才放的那首（封面不能消失、歌不能变）。
+// Home station hero card: play one station, then switch to another; the first stays on the song it was playing (the cover mustn't disappear and the song mustn't change).
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
@@ -55,7 +55,7 @@ Future<void> _frames(WidgetTester t) async {
   }
 }
 
-/// 电台卡片上铺的封面（大卡片里宽度最大的那张）。
+/// The cover laid across a station card (the widest image in the large card).
 Iterable<String> _heroCovers(WidgetTester t) => t
     .widgetList<Cover>(find.byType(Cover))
     .where((c) => (c.w ?? 0) > 200)
@@ -77,7 +77,7 @@ void main() {
     await _frames(t);
     expect(_heroCovers(t).length, 2);
 
-    // 点卡片上的播放：先放甲，再放乙
+    // Tap play on the cards: play A first, then B
     await t.tap(find.byType(PlayPill).at(0));
     await _frames(t);
     expect(app.queueName, '电台甲');
@@ -85,11 +85,11 @@ void main() {
     await t.tap(find.byType(PlayPill).at(1));
     await _frames(t);
     expect(app.queueName, '电台乙');
-    // 甲不在放了：卡片停在刚才放的那首，封面也是它
+    // A isn't playing anymore: the card stays on the song just played, with its cover
     expect(_heroCovers(t).length, 2);
     expect(_heroCovers(t).first, playedA);
     expect(find.text(titleA), findsOneWidget);
-    // 再放甲：从那首接着放
+    // Play A again: continues from that song
     await t.tap(find.byType(PlayPill).at(0));
     await _frames(t);
     expect(app.track.title, titleA);

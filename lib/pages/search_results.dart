@@ -14,10 +14,10 @@ import 'library.dart' show HeartSmall;
 import 'links.dart';
 import 'remote.dart' show errorText;
 
-int _tab = 0; // 跨页面保留
+int _tab = 0; // kept across pages
 
-/// 插件的搜索结果，按定稿「搜索（v8）」排：
-/// 全部 / 歌曲 / 专辑 / 歌手 / 歌单 五个分类；「全部」左边歌曲和专辑，右边歌手和歌单。
+/// A plugin's search results, laid out per the final "搜索（v8）":
+/// five categories All / Songs / Albums / Artists / Playlists; "All" has songs and albums on the left, artists and playlists on the right.
 class SearchResults extends StatefulWidget {
   const SearchResults({
     super.key,
@@ -27,7 +27,7 @@ class SearchResults extends StatefulWidget {
   });
   final String source, query;
 
-  /// 从结果里点开了一样东西。
+  /// Something was opened from the results.
   final void Function(SearchHit) onHit;
 
   @override
@@ -73,7 +73,7 @@ class _SearchResultsState extends State<SearchResults> {
           _error ??= r;
         }
       }
-      // 四类都失败才算出错
+      // Only an error when all four kinds fail
       if (_res.isNotEmpty) _error = null;
     });
     final ts = _res[m.SearchKind.tracks]?.tracks ?? const [];
@@ -125,7 +125,7 @@ class _SearchResultsState extends State<SearchResults> {
 
   @override
   Widget build(BuildContext context) {
-    // 加载中：屏幕中间转圈（和「没有找到」同一个位置）
+    // Loading: a spinner in the middle of the screen (same position as "Nothing found")
     if (!_done) {
       return const Align(alignment: Alignment(0, -0.25), child: Spinner());
     }
@@ -344,15 +344,15 @@ class _SearchResultsState extends State<SearchResults> {
         ),
       );
 
-  // ── 歌曲 ──
+  // ── Songs ──
 
   Widget _songs(List<Track> songs, int limit) {
     final shown = songs.take(limit).toList();
-    // 行的悬停底色比文字往左右各多出 8
+    // The row's hover background extends 8 beyond the text on each side
     return Transform.translate(
       offset: const Offset(-8, 0),
       child: LayoutBuilder(
-        // 放在滚动区里高度不限：按内容的高度，不要撑满
+        // Unbounded height inside the scroll area: size to content, don't fill
         builder: (context, c) => OverflowBox(
           fit: OverflowBoxFit.deferToChild,
           alignment: Alignment.topLeft,
@@ -377,7 +377,7 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
-  // ── 专辑 ──
+  // ── Albums ──
 
   Widget _albums(List<m.Album> list, int limit) {
     final app = context.appRead;
@@ -431,7 +431,7 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
-  // ── 歌手 ──
+  // ── Artists ──
 
   Widget _artists(List<m.Artist> list, int limit) {
     final app = context.app;
@@ -498,14 +498,14 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
-  // ── 歌单 ──
+  // ── Playlists ──
 
   Widget _playlists(List<m.Playlist> list, int limit) {
     final app = context.appRead;
     return Transform.translate(
       offset: const Offset(-8, 0),
       child: LayoutBuilder(
-        // 放在滚动区里高度不限：按内容的高度，不要撑满
+        // Unbounded height inside the scroll area: size to content, don't fill
         builder: (context, c) => OverflowBox(
           fit: OverflowBoxFit.deferToChild,
           alignment: Alignment.topLeft,
@@ -574,7 +574,7 @@ class _SearchResultsState extends State<SearchResults> {
       : (p.trackCount > 0 ? L.countTracks(p.trackCount) : '');
 }
 
-/// 一行歌：封面（悬停出播放）、歌名和艺人、专辑、年份、爱心、时长。
+/// A song row: cover (play on hover), title and artist, album, year, heart, duration.
 class _SongRow extends StatelessWidget {
   const _SongRow({
     required this.track,

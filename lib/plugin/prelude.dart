@@ -1,9 +1,9 @@
-// 插件运行前先执行的 JS：在唯一的原生出口 __host(op, json) 之上，搭出插件能用的
-// 全局对象——console、定时器、fetch/Headers/Response、URL/URLSearchParams、
-// TextEncoder/TextDecoder、AbortController，以及 host（存储、设置、语言等），
-// 和宿主驱动插件用的内部对象 __ypm。
+// JS run before the plugin: on top of the only native exit __host(op, json), it builds the globals
+// plugins can use — console, timers, fetch/Headers/Response, URL/URLSearchParams,
+// TextEncoder/TextDecoder, AbortController, and host (storage, settings, language etc.),
+// plus the internal object __ypm the host uses to drive the plugin.
 //
-// 对应的 Dart 侧见 runtime.dart 里的 _host()。
+// For the Dart side, see _host() in runtime.dart.
 
 const prelude = r'''
 (() => {
@@ -19,7 +19,7 @@ const sync = (op, args) => {
 
 let seq = 0;
 const waiting = new Map();
-// 异步的宿主调用：Dart 完成后调 __ypm.resolve(id, ok, value)。
+// Async host calls: when Dart finishes it calls __ypm.resolve(id, ok, value).
 const later = (op, args) => {
   const id = ++seq;
   const promise = new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ g.console = Object.freeze({
   log: log("log"), info: log("info"), warn: log("warn"), error: log("error"), debug: log("debug"),
 });
 
-// ── 定时器 ──
+// ── Timers ──
 const timers = new Map();
 const addTimer = (fn, ms, args, repeat) => {
   if (typeof fn !== "function") throw new TypeError("callback must be a function");
@@ -53,7 +53,7 @@ g.setTimeout = (fn, ms, ...a) => addTimer(fn, ms, a, false);
 g.setInterval = (fn, ms, ...a) => addTimer(fn, ms, a, true);
 g.clearTimeout = g.clearInterval = (id) => { if (timers.delete(id)) sync("clearTimer", { id }); };
 
-// ── 字节 ──
+// ── Bytes ──
 const bytesToB64 = (u8) => {
   let s = "";
   for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
@@ -426,7 +426,7 @@ g.host = Object.freeze({
   removeDataDir: unsupported("removeDataDir"),
 });
 
-// ── 宿主驱动插件 ──
+// ── Host drives the plugin ──
 let mod = null;
 const describe = (e) => ({
   code: e && typeof e === "object" && typeof e.code === "string" ? e.code : "",
@@ -440,7 +440,7 @@ const settle = (id, ok, value) => {
 Object.defineProperty(g, "__ypm", { value: Object.freeze({
   load: (main) => import(main).then(
     (ns) => { mod = ns; settle(0, true, Object.keys(ns).filter((k) => typeof ns[k] === "function")); },
-    // 加载失败给开发者看：带上错误类型和位置。
+    // Load failures are for developers: include the error type and location.
     (e) => settle(0, false, {
       message: (e && e.name ? e.name + ": " : "") + (e && e.message !== undefined ? e.message : fmt(e)) +
         (e && e.stack ? " (" + String(e.stack).trim().split("\n")[0].trim().replace(/^at /, "") + ")" : ""),

@@ -1,5 +1,5 @@
-// 插件的网页登录（host.webSignIn）：macOS 上由原生窗口完成，见
-// macos/Runner/MainFlutterWindow.swift 里的 WebSignIn。
+// Plugin web sign-in (host.webSignIn): done by a native window on macOS, see
+// WebSignIn in macos/Runner/MainFlutterWindow.swift.
 
 import 'dart:io';
 
@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 
 const _channel = MethodChannel('yesplaymusic/websignin');
 
-/// 打开登录窗口，等到要的 Cookie 都有了返回 `{cookie}`。用户关掉窗口时抛错。
+/// Opens the sign-in window and returns `{cookie}` once all the required cookies are present. Throws if the user closes the window.
 Future<Map<String, Object?>> webSignIn(Map<String, Object?> args) async {
   if (!Platform.isMacOS) {
     throw StateError('webSignIn is only available on macOS for now');

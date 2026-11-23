@@ -1,4 +1,4 @@
-// 通用组件。按类别放在 lib/ui/ 下，这里统一导出，页面照常 import 'ui.dart'。
+// Common widgets. Organised by category under lib/ui/ and re-exported here, so pages keep importing 'ui.dart'.
 
 export 'ui/buttons.dart';
 export 'ui/dialog.dart';

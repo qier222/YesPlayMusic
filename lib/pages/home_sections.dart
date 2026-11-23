@@ -1,7 +1,7 @@
-// 插件首页的组件：特殊模式、两行横向滚动的卡片、歌曲翻页网格、榜单卡片。
+// Plugin home page components: special modes, two-row horizontally scrolling cards, paged song grid, chart cards.
 //
-// 插件只决定用哪个组件（Section.style）、顺序和数据；样式全部在这里，
-// 对应 Sketch 定稿页「首页与发现 · 组件（v1）」和「插件源 · 首页」。
+// Plugins only decide which component (Section.style), the order and the data; all styling is here,
+// matching the Sketch final pages "首页与发现 · 组件（v1）" and "插件源 · 首页".
 
 import 'dart:math' as math;
 
@@ -18,7 +18,7 @@ import 'common.dart';
 import 'remote.dart' show Art;
 import 'links.dart';
 
-/// 首页上认识的组件；不认识的 style 返回 null，由调用方按旧样式显示。
+/// Components the home page recognises; unknown styles return null and the caller uses the old style.
 Widget? homeSection(String src, m.Section s) => switch (s.style) {
   'modes' when s.modes.isNotEmpty => ModesSection(src: src, modes: s.modes),
   'shelf'
@@ -40,7 +40,7 @@ Widget? homeSection(String src, m.Section s) => switch (s.style) {
 Color get _card => P.dark ? wa(0.05) : ba(0.04);
 Color get _cardHover => P.dark ? wa(0.08) : ba(0.06);
 
-/// 分区标题：标题、可选的说明，右边放按钮。
+/// Section header: title, optional description, buttons on the right.
 class _Head extends StatelessWidget {
   const _Head(this.title, {this.sub = '', this.trailing = const []});
   final String title, sub;
@@ -52,7 +52,7 @@ class _Head extends StatelessWidget {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // 标题和说明占满左边，按钮靠右
+        // Title and description fill the left, buttons on the right
         Expanded(
           child: Row(
             children: [
@@ -74,7 +74,7 @@ class _Head extends StatelessWidget {
   );
 }
 
-/// 左右翻页的一对小圆按钮。
+/// A pair of small round buttons for paging left and right.
 List<Widget> _pager({
   required bool prev,
   required bool next,
@@ -98,15 +98,15 @@ List<Widget> _pager({
   ),
 ];
 
-// ───── 特殊模式 ─────
+// ───── Special modes ─────
 
-/// 前两个模式是 200 高的大卡片，其余是 80 高的小行，一排 3 个。
+/// The first two modes are 200-high large cards; the rest are 80-high small rows, 3 per row.
 class ModesSection extends StatelessWidget {
   const ModesSection({super.key, required this.src, required this.modes});
   final String src;
   final List<m.Mode> modes;
 
-  // 按电台 id 认卡片：首页刷新后顺序变了，状态（预告的歌）跟着电台走
+  // Identify cards by station id: if the order changes after a home refresh, state (previewed songs) follows the station
   Widget _hero(m.Mode x) => x.station.isNotEmpty
       ? _StationHero(key: ValueKey('station:${x.station}'), src: src, mode: x)
       : _CoversHero(src: src, mode: x);
@@ -155,7 +155,7 @@ class ModesSection extends StatelessWidget {
   }
 }
 
-/// 大卡片左边的文字：小字、标题、说明，底部一排按钮。
+/// Text on the left of a large card: small text, title, description, and a row of buttons at the bottom.
 class _HeroText extends StatelessWidget {
   const _HeroText({
     required this.eyebrow,
@@ -169,7 +169,7 @@ class _HeroText extends StatelessWidget {
   final String title, sub;
   final List<Widget> buttons;
 
-  /// 给了就用能点的文字代替 [title] / [sub]。
+  /// When given, tappable text replaces [title] / [sub].
   final List<LinkPart>? titleLinks, subLinks;
 
   @override
@@ -200,7 +200,7 @@ class _HeroText extends StatelessWidget {
   );
 }
 
-/// 每日推荐这类：右边三张封面像纸一样错落叠放。
+/// Daily picks and the like: three covers on the right, staggered like sheets of paper.
 class _CoversHero extends StatelessWidget {
   const _CoversHero({required this.src, required this.mode});
   final String src;
@@ -223,7 +223,7 @@ class _CoversHero extends StatelessWidget {
       for (final t in ts.take(3)) t.cover,
       if (ts.isEmpty && mode.imageUrl.isNotEmpty) mode.imageUrl,
     ];
-    // 从下往上：第三首、第二首、第一首（最上面、最右边）
+    // Bottom to top: third, second, first song (topmost, rightmost)
     const spots = [
       (-224.0, 4.0, -9.0),
       (-160.0, -6.0, 6.0),
@@ -299,11 +299,11 @@ class _CoversHero extends StatelessWidget {
   }
 }
 
-/// 电台卡片上显示的歌，按 源/电台 存。还没放过时是预先取的一批；放过以后是
-/// 停下时队列里剩下的歌（从当时那首开始），再点播放就从那首接着放。
+/// Songs shown on station cards, stored per source/station. Before playing, a prefetched batch; after playing,
+/// the songs left in the queue when it stopped (from the song at that time), so playing again resumes from there.
 final Map<String, List<Track>> _stationPreview = {};
 
-/// 私人漫游这类电台：封面铺底往左淡出，大字是正在放（或将要放）的歌。
+/// Stations like personal FM: the cover fills the background and fades out to the left; the large text is the playing (or upcoming) song.
 class _StationHero extends StatefulWidget {
   const _StationHero({super.key, required this.src, required this.mode});
   final String src;
@@ -322,7 +322,7 @@ class _StationHeroState extends State<_StationHero> {
     _preview();
   }
 
-  // 卡片换了电台（首页刷新后）要重新取预告，不然封面是空的
+  // When the card's station changes (after a home refresh), fetch the preview again or the cover is empty
   @override
   void didUpdateWidget(_StationHero old) {
     super.didUpdateWidget(old);
@@ -349,7 +349,7 @@ class _StationHeroState extends State<_StationHero> {
     final app = context.app;
     final mode = widget.mode;
     final on = app.station == (widget.src, mode.station);
-    // 正在放：记下队列里从当前这首起的歌，换去放别的以后卡片停在这首
+    // While playing: remember the queue from the current song, so the card stays on this song after switching to something else
     if (on && app.queue.isNotEmpty) {
       _stationPreview[_key] = app.queue.sublist(app.index);
     }
@@ -366,7 +366,7 @@ class _StationHeroState extends State<_StationHero> {
       );
     }
 
-    // 还没开始放时，「下一首」直接从预告的下一首开始放
+    // Before playback starts, "next" starts right from the next previewed song
     void next() {
       if (on) return app.next();
       if (preview.length > 1) preview.removeAt(0);
@@ -386,7 +386,7 @@ class _StationHeroState extends State<_StationHero> {
           fit: StackFit.expand,
           children: [
             if (t != null) ...[
-              // 封面铺满整张卡片，左边用底色盖住、往右淡出
+              // The cover fills the whole card; the left side is covered by the background color, fading to the right
               LayoutBuilder(
                 builder: (_, c) =>
                     Cover(t.cover, w: c.maxWidth, h: c.maxHeight, r: 0),
@@ -442,7 +442,7 @@ class _StationHeroState extends State<_StationHero> {
                   onTap: on ? app.togglePlay : start,
                 ),
                 const SizedBox(width: 8),
-                // 喜欢、不喜欢放在右键菜单里
+                // Like and dislike are in the context menu
                 IconBtn(
                   'next',
                   tip: context.l10n.actionNext,
@@ -458,7 +458,7 @@ class _StationHeroState extends State<_StationHero> {
   }
 }
 
-/// 80 高的小行：雷达歌单、心动模式、相似歌曲…
+/// 80-high small rows: radar playlists, heartbeat mode, similar songs…
 class _ModeRow extends StatelessWidget {
   const _ModeRow({required this.src, required this.mode});
   final String src;
@@ -469,7 +469,7 @@ class _ModeRow extends StatelessWidget {
     final app = context.app;
     final isStation = mode.station.isNotEmpty;
     final on = isStation && app.station == (src, mode.station);
-    // 电台没给图：用正在放的歌的封面（相似歌曲就是从它开始的）
+    // The station has no image: use the playing song's cover (similar songs start from it)
     var image = mode.imageUrl;
     if (image.isEmpty && isStation && app.track.ref?.source == src) {
       image = app.track.cover;
@@ -560,9 +560,9 @@ class _ModeRow extends StatelessWidget {
   }
 }
 
-// ───── 卡片：两行横向滚动 ─────
+// ───── Cards: two horizontally scrolling rows ─────
 
-/// 歌单、专辑、歌曲或歌手（圆头像）的卡片。一屏 6 列半，超过一屏排两行，可以横向滚动。
+/// Cards for playlists, albums, songs or artists (round avatars). 6.5 columns per screen; over one screen, two rows that scroll horizontally.
 class Shelf extends StatefulWidget {
   const Shelf({super.key, required this.src, required this.section});
   final String src;
@@ -663,7 +663,7 @@ class _ShelfState extends State<Shelf> {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, c) {
-      // 卡片宽度跟着窗口变：一屏放得下几列整卡就放几列（每张约 180），再露半张提示能滚动
+      // Card width follows the window: as many whole cards as fit (about 180 each), plus half a card to hint at scrolling
       final n = ((c.maxWidth + gap) / (180 + gap)).floor().clamp(3, 10);
       final w = ((c.maxWidth - gap * n) / (n + 0.5)).floorToDouble();
       final s = widget.section;
@@ -672,7 +672,7 @@ class _ShelfState extends State<Shelf> {
           s.albums.length +
           s.tracks.length +
           s.artists.length;
-      // 两行要两行都铺满一屏才用；不够就一行横排，免得两行都只占半屏、末尾缺一格
+      // Use two rows only when both fill a screen; otherwise one row, so two half-filled rows don't leave a gap at the end
       final rows = count >= 2 * (n + 1) ? 2 : 1;
       final cards = _cards(context, w);
       final cols = (cards.length / rows).ceil();
@@ -711,9 +711,9 @@ class _ShelfState extends State<Shelf> {
             child: SingleChildScrollView(
               controller: _c,
               scrollDirection: Axis.horizontal,
-              // 悬停时封面放大 3%，上下留出空间，不被裁掉
+              // Covers grow 3% on hover; leave room above and below so they aren't clipped
               padding: const EdgeInsets.symmetric(vertical: 6),
-              // 按行而不是按列排，保证每一行的封面顶边严格对齐，不受标题行数或副标题有无影响
+              // Lay out by rows, not columns, so cover tops align exactly in each row regardless of title line count or subtitle
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -755,13 +755,13 @@ class _ShelfCard extends StatelessWidget {
   });
   final double w;
 
-  /// 歌手：圆头像，名字居中。
+  /// Artist: round avatar, name centered.
   final bool round;
   final String image, title, sub;
   final VoidCallback onTap;
   final void Function(Offset)? onMenu;
 
-  /// 播放次数，大于 0 时封面右上角显示耳机胶囊。
+  /// Play count; when above 0, a headphone pill shows at the top right of the cover.
   final int plays;
 
   @override
@@ -800,12 +800,12 @@ class _ShelfCard extends StatelessWidget {
   );
 }
 
-// ───── 分类：发现页顶部 ─────
-// 定稿「发现 · 顶部分类与更多分类」：上层彩色圆点分类卡（横向滚动 + 展开），
-// 下层子分类胶囊，「更多分类」在胶囊下面原地展开。
+// ───── Categories: top of the Discover page ─────
+// Final "发现 · 顶部分类与更多分类": top row of colored-dot category cards (horizontal scroll + expand),
+// below them sub-category pills, with "More categories" expanding in place below the pills.
 
-/// 上层分类卡：一排横向滚动，最右边是展开按钮，展开后所有卡片换行铺开。
-/// 卡片是彩色圆点 + 名字；选中反色（和胶囊一样），悬停白 8%，平时 5%。
+/// Top category cards: a horizontally scrolling row with an expand button at the far right; expanded, all cards wrap.
+/// Cards are a colored dot + name; selected is inverted (like pills), hover white 8%, normally 5%.
 class CategoryCards extends StatefulWidget {
   const CategoryCards({
     super.key,
@@ -865,7 +865,7 @@ class _CategoryCardsState extends State<CategoryCards> {
     }
   }
 
-  /// 选中的卡片滚到看得见的地方（比如从展开的面板里选了后面的频道）。
+  /// Scrolls the selected card into view (e.g. after picking a later channel from the expanded panel).
   void _reveal(bool animate) {
     if (!mounted) return;
     _edges();
@@ -955,7 +955,7 @@ class _CategoryCardsState extends State<CategoryCards> {
   }
 }
 
-/// 分类圆点的颜色：设置里的 6 个主题色，再按同样的亮度、饱和度补 6 个（定稿「圆点颜色」）。
+/// Category dot colors: the 6 theme colors from Settings, plus 6 more with the same lightness and saturation (final "圆点颜色").
 const _dotsDark = [
   Color(0xFFD6B0FA), Color(0xFF8EC5FF), Color(0xFF8FE3C0), //
   Color(0xFFF6C453), Color(0xFFFF9EB5), Color(0xFFFF9A5C),
@@ -969,9 +969,9 @@ const _dotsLight = [
   Color(0xFFD9483D), Color(0xFFB24FA6), Color(0xFFA6743F),
 ];
 
-/// 按名字挑圆点颜色：FNV-1a 哈希，同一个名字每次都是同一个颜色
-/// （String.hashCode 每次启动都不一样，不能用）。[onInk] 是圆点放在反色底上
-/// （选中的卡），这时用另一套颜色才看得清。
+/// Picks a dot color by name: FNV-1a hash, so the same name always gets the same color
+/// (String.hashCode differs on every launch, so it can't be used). [onInk] means the dot sits on an inverted background
+/// (selected card), which needs a different set of colors to stay visible.
 Color categoryDot(String name, {bool onInk = false}) {
   var h = 0x811c9dc5;
   for (final c in name.codeUnits) {
@@ -981,7 +981,7 @@ Color categoryDot(String name, {bool onInk = false}) {
   return dots[h % dots.length];
 }
 
-/// 一张分类卡：彩色圆点 + 名字，高 48、圆角 14。
+/// A category card: colored dot + name, 48 high, radius 14.
 class _GroupCard extends StatelessWidget {
   const _GroupCard({
     super.key,
@@ -1029,8 +1029,8 @@ class _GroupCard extends StatelessWidget {
   );
 }
 
-/// 「更多分类」原地展开（定稿方案 A）：一块白 5% 的面板，一组一行，组名在左，
-/// 后面是小标签。
+/// "More categories" expands in place (final option A): a white 5% panel, one row per group, group name on the left,
+/// followed by small labels.
 class CategoryPanel extends StatelessWidget {
   const CategoryPanel({
     super.key,
@@ -1086,7 +1086,7 @@ class CategoryPanel extends StatelessWidget {
   );
 }
 
-/// 下层子分类胶囊：高 36、字 14、左右 16。选中 #F7F7F8 黑字，悬停白 12%，平时白 8%。
+/// Sub-category pills: 36 high, 14 text, 16 horizontal padding. Selected #F7F7F8 with black text, hover white 12%, normally white 8%.
 class CategoryChip extends StatelessWidget {
   const CategoryChip(
     this.label, {
@@ -1099,7 +1099,7 @@ class CategoryChip extends StatelessWidget {
   final VoidCallback onTap;
   final bool selected;
 
-  /// 「更多分类」的面板开着：保持悬停的底色。
+  /// The "More categories" panel is open: keep the hover background.
   final bool open;
 
   @override
@@ -1112,7 +1112,7 @@ class CategoryChip extends StatelessWidget {
         duration: fast,
         height: 36,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        // 不设 alignment：设了会在 Wrap 里撑满整行
+        // No alignment: setting it makes it fill the whole row inside Wrap
         decoration: squircle(
           18,
           color: selected
@@ -1136,10 +1136,10 @@ class CategoryChip extends StatelessWidget {
   );
 }
 
-// ───── 卡片网格 ─────
+// ───── Card grid ─────
 
-/// 卡片铺满一行、往下排：歌单广场、歌手列表、排行榜分组。
-/// 列数和书架一样按每张约 180 算，卡片宽度撑满整行。
+/// Cards filling each row and wrapping down: playlist plaza, artist list, chart groups.
+/// Column count is computed like the shelf at about 180 per card; card width fills the row.
 class CardGrid extends StatelessWidget {
   const CardGrid({super.key, required this.src, required this.section});
   final String src;
@@ -1198,7 +1198,7 @@ class CardGrid extends StatelessWidget {
                       app.go(AppState.remoteRoute('artist', src, a.id)),
                 ),
             ];
-            // 悬停时封面放大 3%，上下留出空间
+            // Covers grow 3% on hover; leave room above and below
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Wrap(spacing: gap, runSpacing: 32, children: cards),
@@ -1210,9 +1210,9 @@ class CardGrid extends StatelessWidget {
   }
 }
 
-// ───── 歌曲：翻页网格 ─────
+// ───── Songs: paged grid ─────
 
-/// 3 列 × 4 行一页，标题右边是「播放全部」和翻页。
+/// 3 columns × 4 rows per page, with "Play all" and paging to the right of the title.
 class SongGrid extends StatefulWidget {
   const SongGrid({super.key, required this.src, required this.section});
   final String src;
@@ -1233,7 +1233,7 @@ class _SongGridState extends State<SongGrid> {
     super.dispose();
   }
 
-  // 所有页横向排开，翻页时整页滑过去（和书架的翻页一样的时长和曲线）。
+  // All pages sit side by side; paging slides a whole page over (same duration and curve as the shelf).
   void _go(int page) => _c.animateToPage(
     page,
     duration: const Duration(milliseconds: 420),
@@ -1248,7 +1248,7 @@ class _SongGridState extends State<SongGrid> {
     final ok = ts.where((t) => !(t.ref?.unavailable ?? false)).toList();
     final pages = (ts.length / per).ceil();
     final page = _page.clamp(0, math.max(0, pages - 1)).toInt();
-    // 高度按第一页（最满的一页）算，后面不满的页上对齐
+    // Height is based on the first (fullest) page; later partial pages align to the top
     final rows = (math.min(ts.length, per) / cols).ceil();
     void play(Track t) {
       if (app.track.key == t.key) return app.togglePlay();
@@ -1411,9 +1411,9 @@ class _SongCell extends StatelessWidget {
   }
 }
 
-// ───── 榜单 ─────
+// ───── Charts ─────
 
-/// 一排最多 4 张榜单卡片：封面、名字、更新时间，下面是前三名。
+/// Up to 4 chart cards per row: cover, name, update time, and the top three below.
 class ChartCards extends StatelessWidget {
   const ChartCards({super.key, required this.src, required this.section});
   final String src;
@@ -1494,7 +1494,7 @@ class _ChartCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           for (var j = 0; j < p.tracks.length && j < 3; j++)
-            // 16 + 64 + 20 + 52 + 52 + 44 + 16 = 264，放进 268 高的卡片
+            // 16 + 64 + 20 + 52 + 52 + 44 + 16 = 264, fits in the 268-high card
             SizedBox(
               height: j < 2 ? 52 : 44,
               child: Row(
@@ -1535,10 +1535,10 @@ class _ChartCard extends StatelessWidget {
   );
 }
 
-/// 播放次数：中文 1.2 亿 / 71.4 万，英文 120M / 714K。
+/// Play count: Chinese 1.2 亿 / 71.4 万, English 120M / 714K.
 String playsText(int n) => formatShortCount(n, currentLocale);
 
-/// 封面右上角的播放次数胶囊：耳机图标 + 数字。
+/// Play count pill at the top right of the cover: headphone icon + number.
 class PlaysPill extends StatelessWidget {
   const PlaysPill(this.plays, {super.key});
   final int plays;

@@ -1,18 +1,18 @@
-// 插件清单 plugin.json，字段与 MyGo Music 一致：
+// Plugin manifest plugin.json, with the same fields as MyGo Music:
 //
 //   {
 //     "id": "example", "name": "Example", "version": "1.0.0",
 //     "minAppVersion": "0.1.0", "main": "index.js",
-//     "description": "一句介绍", "author": "作者", "icon": "icon.png",
+//     "description": "A one-line intro", "author": "Author", "icon": "icon.png",
 //     "playback": "stream",
 //     "permissions": {"network": ["api.example.com", "*.example.net"]},
 //     "settings": [...], "navigation": [...]
 //   }
 //
-// permissions.network 是 fetch 能访问的主机：精确主机名、*.example.com（只匹配
-// 子域名）、{setting:key}（设置里填的服务器地址的主机）或 *（任意）。不写就不能联网。
-// permissions.process 是 host.spawn 能启动的程序（见 process.dart）；true 等于 ["*"]。
-// 用户还要在设置里允许这个插件运行程序。
+// permissions.network lists hosts fetch may reach: exact host names, *.example.com (matches
+// subdomains only), {setting:key} (the host of a server address entered in settings) or * (any). Without it there's no network access.
+// permissions.process lists programs host.spawn may start (see process.dart); true equals ["*"].
+// The user must also allow this plugin to run programs in settings.
 
 import 'dart:convert';
 
@@ -39,20 +39,20 @@ class PluginManifest {
   final String main, minAppVersion;
   final List<String> network, process;
 
-  /// 一两句介绍和作者，显示在插件卡片上；都可以不写。
+  /// A sentence or two of description and the author, shown on the plugin card; both optional.
   final String description, author;
 
-  /// 插件图标，插件目录里的 .png/.jpg/.webp 相对路径；不写就用名字首字母。
+  /// Plugin icon, a relative path to a .png/.jpg/.webp in the plugin directory; the name's initial is used when unset.
   final String icon;
 
-  /// 原始 JSON，传给插件 isolate 用。
+  /// Raw JSON, passed to the plugin isolate.
   final Map<String, Object?> raw;
 
   static final _id = RegExp(r'^[a-z0-9][a-z0-9._-]{0,63}$');
 
-  /// 插件目录里的相对路径：不是绝对路径、没有盘符、任何一段都不是 `..`。
-  /// `/` 和 `\` 都当分隔符，否则 macOS 上的 `..\x` 到 Windows（或经安装器换成 `/`）
-  /// 就会跳出插件目录。
+  /// A relative path inside the plugin directory: not absolute, no drive letter, no segment is `..`.
+  /// Both `/` and `\` count as separators, otherwise `..\x` on macOS would escape the plugin directory
+  /// on Windows (or once the installer converts it to `/`).
   static bool _safeRelative(String path) {
     final unified = path.replaceAll(r'\', '/');
     if (unified.startsWith('/') || p.isAbsolute(path)) return false;
@@ -60,7 +60,7 @@ class PluginManifest {
     return !segs.any((x) => x == '..' || x.contains(':'));
   }
 
-  /// 解析并检查。不合格抛 [FormatException]，消息可以直接给用户看。
+  /// Parses and validates. Throws [FormatException] when invalid, with a message that can be shown to the user as-is.
   factory PluginManifest.parse(String text) {
     final Object? j;
     try {
@@ -123,8 +123,8 @@ class PluginManifest {
   }
 }
 
-/// [host] 是否在 [allowed]（permissions.network）之内。[settingHost] 把
-/// `{setting:key}` 换成设置里那个地址的主机名。
+/// Whether [host] is within [allowed] (permissions.network). [settingHost] replaces
+/// `{setting:key}` with the host name of that address in settings.
 bool hostAllowed(
   String host,
   List<String> allowed, {

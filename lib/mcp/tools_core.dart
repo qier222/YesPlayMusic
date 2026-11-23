@@ -1,4 +1,4 @@
-// 核心工具（Eager，懒加载模式下始终直接暴露）与懒加载元工具。
+// Core tools (eager; always exposed directly in lazy mode) and the lazy meta tools.
 
 import '../data.dart';
 import '../l10n/l10n.dart';
@@ -558,7 +558,7 @@ List<McpTool> buildCoreTools() => [
       }
     },
   ),
-  // ── 懒加载元工具 ──
+  // ── Lazy meta tools ──
   McpTool(
     name: 'ypm_discover_tools',
     category: 'meta',

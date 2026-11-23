@@ -25,7 +25,7 @@ import 'updater.dart';
 
 const _window = MethodChannel('yesplaymusic/window');
 
-/// 按住空白处拖动窗口（macOS 隐藏了标题栏）。
+/// Drag the window by holding empty space (macOS hides the title bar).
 class DragWindow extends StatelessWidget {
   const DragWindow({super.key, this.child});
   final Widget? child;
@@ -62,8 +62,8 @@ class Shell extends StatelessWidget {
               child: TipScope(child: MiniPlayer(onDark: true, collapse: true)),
             ),
           ] else ...[
-            // 页面左边不裁：封面投影等可以自然铺到侧边栏下面，不在 x72 断出一条边。
-            // 侧边栏画在页面上面，图标不受影响。
+            // Don't clip the left side of the page: cover shadows etc. can extend under the sidebar instead of being cut at x72.
+            // The sidebar is painted above the page, so icons are unaffected.
             const Positioned(
               left: 72,
               top: 0,
@@ -78,7 +78,7 @@ class Shell extends StatelessWidget {
               width: 72,
               child: Rail(),
             ),
-            // 顶部标题栏留白区域支持拖动与双击缩放（避开左侧返回与右侧按钮）
+            // The empty area of the top title bar supports dragging and double-click to zoom (avoiding the back button on the left and buttons on the right)
             const Positioned(
               left: 168,
               right: 96,
@@ -95,8 +95,8 @@ class Shell extends StatelessWidget {
           ],
           const Positioned.fill(child: NowPlayingHost()),
           const Positioned.fill(child: SignInPromptLayer()),
-          // 轻提示在底部、播放条上方 12，和播放条一样在页面区域里居中：
-          // 悬浮播放条底边 16 + 高 64；正在播放页的播放条底边 32 + 高 72。
+          // Toasts sit at the bottom, 12 above the player bar, centered in the page area like the player bar:
+          // floating player bar bottom 16 + height 64; on Now Playing the bar's bottom is 32 + height 72.
           Positioned(
             left: full || app.npOpen ? 0 : 72,
             right: 0,
@@ -109,11 +109,11 @@ class Shell extends StatelessWidget {
   }
 }
 
-/// 侧边栏左下角的头像，显示当前音乐来源：
-/// - 插件已登录且有头像：账号头像，右下角叠插件图标；
-/// - 插件没有头像：插件图标裁成圆形；
-/// - 本地音乐：Music 图标。
-/// 点击（或右键）弹出「音乐来源」菜单，里面也能进个人主页。
+/// The avatar at the bottom left of the sidebar, showing the current music source:
+/// - plugin signed in with an avatar: the account avatar, with the plugin icon overlaid at the bottom right;
+/// - plugin without an avatar: the plugin icon clipped to a circle;
+/// - local music: the Music icon.
+/// Click (or right-click) opens the "Music source" menu, which also leads to the profile page.
 class _Avatar extends StatelessWidget {
   const _Avatar();
 
@@ -142,7 +142,7 @@ class _Avatar extends StatelessWidget {
                     ? Cover(img, w: 40, h: 40, r: 20)
                     : SourceIcon(id: id, name: name, size: 40, round: true),
               ),
-              // 悬停时稍微提亮
+              // Slightly brighter on hover
               Positioned.fill(
                 child: AnimatedContainer(
                   duration: fast,
@@ -170,7 +170,7 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-/// 只裁上、右、下三边，左边向侧边栏多留 72。
+/// Clips only the top, right and bottom; the left extends an extra 72 under the sidebar.
 class _BleedLeft extends CustomClipper<Rect> {
   const _BleedLeft();
   @override
@@ -179,14 +179,14 @@ class _BleedLeft extends CustomClipper<Rect> {
   bool shouldReclip(_BleedLeft old) => false;
 }
 
-// ───────────── 页面切换 ─────────────
+// ───────────── Page transitions ─────────────
 
 class PageHost extends StatelessWidget {
   const PageHost({super.key});
 
   Widget _page(BuildContext context, AppState app, String path) {
     final seg = path.split('/');
-    // 插件的专辑、歌手、歌单：/album/@<源>/<id>
+    // Plugin albums, artists, playlists: /album/@<source>/<id>
     final kind = seg.length > 1 ? seg[1] : '';
     if (seg.length > 3 && seg[2].startsWith('@')) {
       final src = seg[2].substring(1), id = Uri.decodeComponent(seg[3]);
@@ -200,14 +200,14 @@ class PageHost extends StatelessWidget {
       }
     }
     switch (kind) {
-      // 当前源没有首页或发现（本地模式、插件不提供；后退回到这两页时）
+      // The current source has no home or Discover (local mode, or the plugin doesn't provide them; when going back to these pages)
       case 'home' when !app.hasHome:
         return const LibraryPage(tab: 'albums');
       case 'discover' when !app.hasDiscover:
         return const LibraryPage(tab: 'albums');
       case 'home' || 'discover':
-        // 首页（home）和发现页（browse）都由当前音乐源提供；插件还在加载时
-        // 先按设置里选的源显示骨架。本地音乐还没扫到歌时显示音乐库的空状态。
+        // Home and Discover both come from the current music source; while the plugin is still loading,
+        // show a skeleton for the source chosen in settings. While local music has found no songs yet, show the library's empty state.
         final src = app.remote || app.pluginsLoaded
             ? app.sourceId
             : app.chosenSource;
@@ -241,9 +241,9 @@ class PageHost extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.app;
     final path = app.path;
-    // 音乐库四个子页之间不做整页切换，由页面内部处理。
-    // 换了音乐源，内容来自音乐源的页面要整页换掉；设置页等不跟着换，
-    // 不然在设置里切换音乐源整页会闪一下。
+    // No full-page transition between the four library subpages; the page handles it internally.
+    // When the music source changes, pages whose content comes from it are replaced entirely; Settings etc. aren't,
+    // or switching the music source in Settings would flash the whole page.
     final base = path.startsWith('/library') ? '/library' : path;
     final bySource = RegExp(
       r'^/(library|coverflow|home|discover|search|profile)(/|$)',
@@ -271,7 +271,7 @@ class PageHost extends StatelessWidget {
             ),
           );
         },
-        // 不裁：页面可以往左透到侧边栏下面，由 Shell 的 _BleedLeft 统一裁
+        // Not clipped: pages can show through to the left under the sidebar; Shell's _BleedLeft clips them all
         layoutBuilder: (current, previous) => Stack(
           fit: StackFit.expand,
           clipBehavior: Clip.none,
@@ -286,7 +286,7 @@ class PageHost extends StatelessWidget {
   }
 }
 
-// ───────────── 左侧图标栏 ─────────────
+// ───────────── Left icon bar ─────────────
 
 class Rail extends StatelessWidget {
   const Rail({super.key});
@@ -296,7 +296,7 @@ class Rail extends StatelessWidget {
     final app = context.app;
     final path = app.path;
     bool on(String p) => path.startsWith(p);
-    // 不填色：底色由 Shell 的 P.ground 提供，专辑页的封面色背景会透上来。
+    // No fill: the background comes from Shell's P.ground, letting the album page's cover-color background show through.
     return SizedBox(
       width: 72,
       child: Stack(
@@ -306,7 +306,7 @@ class Rail extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 92),
-                // 点 logo 打开 GitHub 仓库
+                // Clicking the logo opens the GitHub repository
                 Tap(
                   tip: 'GitHub',
                   onTap: () => openExternal(Updater.repoPage),
@@ -332,7 +332,7 @@ class Rail extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 36),
-                // 当前源不提供首页或发现时不显示（本地模式两个都没有）
+                // Hidden when the current source provides no home or Discover (local mode has neither)
                 if (app.hasHome) ...[
                   _NavBtn(
                     'home',
@@ -416,7 +416,7 @@ class _NavBtn extends StatelessWidget {
   }
 }
 
-// ───────────── 迷你播放条 ─────────────
+// ───────────── Mini player bar ─────────────
 
 BoxShadow _segShadow(bool dark) => BoxShadow(
   color: ba(dark ? 0.63 : 0.12),
@@ -458,7 +458,7 @@ class MiniPlayer extends StatefulWidget {
   const MiniPlayer({super.key, this.onDark = false, this.collapse = false});
   final bool onDark;
 
-  /// Coverflow 里在最左加「收起」（定稿 v33）；队列为空时只剩这一段
+  /// In Coverflow, "Collapse" is added at the far left (final v33); with an empty queue only this part remains
   final bool collapse;
 
   @override
@@ -479,13 +479,13 @@ class _MiniPlayerState extends State<MiniPlayer> {
       onDark: onDark,
       onTap: app.back,
     );
-    // 队列为空时不显示（定稿 · 空状态）；Coverflow 里留下收起
+    // Hidden when the queue is empty (final · empty state); Coverflow keeps the collapse button
     if (!app.hasQueue && !widget.collapse) return const SizedBox();
     return SizedBox(
       height: 260,
       child: Stack(
         children: [
-          // 底部渐变，让内容滑到播放条下面时淡出
+          // Bottom gradient so content fades as it slides under the player bar
           Positioned(
             left: 0,
             right: 0,
@@ -513,7 +513,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
             right: 0,
             bottom: 16,
             height: 240,
-            // 贴底对齐：音量条展开高度（160）比这块区域矮，居中会把整条播放条抬高。
+            // Align to the bottom: the expanded volume bar (160) is shorter than this area, so centering would lift the whole player bar.
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Row(
@@ -703,10 +703,10 @@ class _NowSeg extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 歌名和歌手同一套字体：宽体在这么窄的地方太挤
+                    // Title and artist use the same font: the wide face is too cramped in such a narrow space
                     tx(t.title, 15, w: w700, c: pal.ink),
                     const SizedBox(height: 4),
-                    // 歌手只显示不可点：这里点一下就打开正在播放，做成链接容易误触
+                    // The artist is display-only, not clickable: a click here opens Now Playing, so a link would be easy to hit by mistake
                     tx(t.artist, 13, w: w500, c: pal.muted),
                   ],
                 ),
@@ -726,9 +726,9 @@ class _NowSeg extends StatelessWidget {
   }
 }
 
-/// 悬浮播放器封面圆角蒙版：用解析抗锯齿的 drawRSuperellipse 生成离屏蒙版再以 dstIn 合成，
-/// 绕开 ClipRRect/ClipRSuperellipse 在 Impeller 下基于 4x MSAA stencil 裁切的圆角锯齿毛边，
-/// 同时把封面与悬停遮罩统一裁切，避免双层圆角叠加漏边。
+/// Rounded mask for the floating player cover: renders an offscreen mask with analytically anti-aliased drawRSuperellipse and composites with dstIn,
+/// avoiding the jagged rounded corners of ClipRRect/ClipRSuperellipse, which clip with a 4x MSAA stencil under Impeller,
+/// and clipping the cover and hover overlay together so two stacked rounded corners don't leak at the edges.
 class _SmoothRRectMask extends StatefulWidget {
   const _SmoothRRectMask({required this.radius, required this.child});
   final double radius;
@@ -805,7 +805,7 @@ class _SmoothRRectMaskState extends State<_SmoothRRectMask> {
   }
 }
 
-/// 喜欢按钮：点亮时弹一下。
+/// Like button: pops when lit.
 class HeartButton extends StatelessWidget {
   const HeartButton({
     super.key,
@@ -848,7 +848,7 @@ class HeartButton extends StatelessWidget {
   }
 }
 
-/// 进度条那一节：已播放是半透明白，悬停预览、拖动时边缘一条紫线。
+/// The progress bar section: played part is translucent white; a purple line at the edge for hover preview and dragging.
 class _LyricSeg extends StatefulWidget {
   const _LyricSeg({this.onDark = false});
   final bool onDark;
@@ -876,10 +876,10 @@ class _LyricSegState extends State<_LyricSeg> {
             onChanged: app.scrub,
             onCommit: app.seek,
             builder: (_, at, dragging) {
-              // 只有鼠标在进度条上（或正在拖）才换成歌词；悬停播放条其他按钮不变。
+              // Switch to lyrics only when the mouse is over the progress bar (or dragging); hovering other player bar buttons doesn't.
               final showLyric =
                   (at != null || dragging) && app.miniLyric && app.hasLyrics;
-              // 拖动时左边的时间跟着手走。
+              // While dragging, the time on the left follows the hand.
               final elapsed = dragging && at != null
                   ? at * t.seconds
                   : app.position;
@@ -930,10 +930,10 @@ class _LyricSegState extends State<_LyricSeg> {
                             width: 2,
                             child: Container(color: pal.ink),
                           ),
-                        // 定稿：平时「已播 … 总长」垂直居中；悬停且有歌词时这一行
-                        // 滑到下面，上面淡入当前歌词。歌词换句直接替换，不做动画。
-                        // 带 key：悬停时前面会插进预览条、光标线，没 key 的话
-                        // 这两层会被当成新组件重建，隐式动画就没了。
+                        // Final: normally "played … total" is vertically centered; when hovering with lyrics, this line
+                        // slides down and the current lyric fades in above. Lyric changes replace directly without animation.
+                        // With keys: on hover a preview bar and cursor line are inserted before; without keys
+                        // these two layers would rebuild as new widgets and the implicit animations would be lost.
                         Positioned(
                           key: const ValueKey('lyric'),
                           left: 18,
@@ -970,13 +970,13 @@ class _LyricSegState extends State<_LyricSeg> {
                           bottom: 0,
                           child: IgnorePointer(
                             child: AnimatedAlign(
-                              // 64 高的条里：0 居中（top 25），0.44 约 top 36。
+                              // In the 64-high bar: 0 is centered (top 25), 0.44 is about top 36.
                               alignment: Alignment(-1, showLyric ? 0.44 : 0),
                               duration: _lyricAnim,
                               curve: Curves.easeOutCubic,
                               child: Row(
                                 children: [
-                                  // 悬停时让位给歌词：已播时间从白变灰。
+                                  // Make room for lyrics on hover: played time goes from white to gray.
                                   TweenAnimationBuilder<Color?>(
                                     tween: ColorTween(
                                       end: showLyric ? pal.muted : pal.ink,
@@ -1072,9 +1072,9 @@ class _ControlsSeg extends StatelessWidget {
   }
 }
 
-// ───────────── 音量（竖向展开） ─────────────
+// ───────────── Volume (expands vertically) ─────────────
 
-/// 收起时按钮里显示音量高度；悬停向上展开成竖条，拖动或滚轮调节，点图标静音。
+/// When collapsed, the button shows the volume level; on hover it expands upward into a vertical bar, adjusted by drag or wheel; clicking the icon mutes.
 class VolumeSeg extends StatefulWidget {
   const VolumeSeg({
     super.key,
@@ -1098,7 +1098,8 @@ class VolumeSeg extends StatefulWidget {
 class _VolumeSegState extends State<VolumeSeg> {
   bool _hover = false;
   bool _drag = false;
-  static const _open = 160.0; // 展开高度：原 240 的 2/3，保持偶数
+  // Expanded height: 2/3 of the original 240, kept even
+  static const _open = 160.0;
 
   void _setFrom(double dy, double h) {
     context.appRead.setVolume(1 - dy / h);
@@ -1125,7 +1126,7 @@ class _VolumeSegState extends State<VolumeSeg> {
             duration: const Duration(milliseconds: 380),
             curve: const SpringCurve(bounce: 0.12),
             builder: (context, h, _) {
-              // 数字在展开到 1/4 时开始出现、3/4 时完全显示（按比例，改高度不用跟着调）
+              // The number starts appearing at 1/4 expanded and is fully shown at 3/4 (proportional, so changing the height needs no retuning)
               final span = _open - base;
               final reveal = ((h - base - span / 4) / (span / 2)).clamp(
                 0.0,
@@ -1171,7 +1172,7 @@ class _VolumeSegState extends State<VolumeSeg> {
                     clipBehavior: Clip.antiAlias,
                     child: Stack(
                       children: [
-                        // 填充 = 当前音量
+                        // Fill = current volume
                         Positioned(
                           left: 0,
                           right: 0,
@@ -1230,7 +1231,7 @@ class _VolumeSegState extends State<VolumeSeg> {
                                       : P.ink),
                           ),
                         ),
-                        // 在封面上：白色填充里的图标变深色（模拟差值混合）
+                        // On the cover: the icon inside the white fill turns dark (simulating a difference blend)
                         if (widget.onCover)
                           Positioned(
                             left: 0,
@@ -1259,7 +1260,7 @@ class _VolumeSegState extends State<VolumeSeg> {
   }
 }
 
-// ───────────── 正在播放：从底部升起 ─────────────
+// ───────────── Now Playing: rises from the bottom ─────────────
 
 class NowPlayingHost extends StatefulWidget {
   const NowPlayingHost({super.key});
@@ -1296,7 +1297,7 @@ class _NowPlayingHostState extends State<NowPlayingHost>
 
   @override
   Widget build(BuildContext context) {
-    context.app; // 订阅
+    context.app; // subscribe
     return AnimatedBuilder(
       animation: _c,
       builder: (context, child) {
@@ -1326,7 +1327,7 @@ class _NowPlayingHostState extends State<NowPlayingHost>
   }
 }
 
-// ───────────── 轻提示 ─────────────
+// ───────────── Toast ─────────────
 
 class ToastView extends StatelessWidget {
   const ToastView({super.key});
@@ -1367,7 +1368,7 @@ class ToastView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // 按文字收缩：不设 alignment，否则 Container 会撑满整行。
+                    // Shrink to the text: no alignment, or Container fills the whole row.
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

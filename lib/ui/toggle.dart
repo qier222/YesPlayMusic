@@ -1,13 +1,13 @@
-// 通用组件：开关、分段。
+// Common widgets: switch, segments.
 
 import 'package:flutter/widgets.dart';
 
 import '../theme.dart';
 import 'tap.dart';
 
-// ───────────── 开关 / 分段 ─────────────
+// ───────────── Switch / segments ─────────────
 
-/// 44×26 的开关，滑块弹簧移动，按下时拉长。
+/// A 44×26 switch whose knob moves with a spring and stretches when pressed.
 class Toggle extends StatelessWidget {
   const Toggle({super.key, required this.value, required this.onChanged});
   final bool value;
@@ -66,7 +66,7 @@ class Toggle extends StatelessWidget {
   }
 }
 
-/// 带白色滑块的分段选择。
+/// Segmented control with a white knob.
 class Segmented extends StatelessWidget {
   const Segmented({
     super.key,

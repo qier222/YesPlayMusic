@@ -1,8 +1,8 @@
-// 音乐数据模型：本地源和插件源共用。
+// Music data models, shared by the local source and plugin sources.
 //
-// JSON 字段名与 MyGo Music 插件协议（internal/music/music.go）保持一致，
-// 这样插件返回的对象可以直接 fromJson，已有的 mygo 插件也更容易移植。
-// 时间一律是毫秒。ID 只在各自的源内有意义。
+// JSON field names match the MyGo Music plugin protocol (internal/music/music.go),
+// so objects returned by plugins can go straight into fromJson and existing mygo plugins are easier to port.
+// All times are in milliseconds. IDs are only meaningful within their own source.
 
 typedef Json = Map<String, dynamic>;
 
@@ -11,7 +11,7 @@ int _i(Object? v) => v is num ? v.toInt() : int.tryParse('$v') ?? 0;
 double _d(Object? v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
 bool _b(Object? v) => v == true;
 
-/// 是对象就转成 Json，否则当作空对象（插件返回的类型不对时不抛）。
+/// Converts to Json if it's an object, otherwise an empty object (doesn't throw when a plugin returns the wrong type).
 Json _map(Object? v) =>
     v is Map ? v.cast<String, dynamic>() : <String, dynamic>{};
 
@@ -22,7 +22,7 @@ List<T> _list<T>(Object? v, T Function(Json) f) => v is List
       ]
     : <T>[];
 
-/// 去掉空值，对应 Go 的 omitempty。
+/// Drops null values, like Go's omitempty.
 Json _compact(Json m) => m
   ..removeWhere(
     (_, v) =>
@@ -76,18 +76,18 @@ class Album {
   final String id, name, imageUrl;
   final List<Artist> artists;
 
-  /// 版权行，原样显示在专辑页底部，例如 ℗ 2022 XX Records。不知道为空。
+  /// Copyright line, shown as-is at the bottom of the album page, e.g. ℗ 2022 XX Records. Empty if unknown.
   final String copyright;
 
-  /// album、single、ep、compilation；不知道为空（当作专辑）。
+  /// album, single, ep, compilation; empty if unknown (treated as album).
   final String kind;
   final int trackCount;
 
-  /// 源给出的原样字符串，例如 2024-03-01 或 2024。
+  /// The raw string from the source, e.g. 2024-03-01 or 2024.
   final String released;
   final bool saved;
 
-  /// 加进音乐库的时间，ISO 8601（2024-03-01 或带时刻）。不知道就是空。
+  /// When it was added to the library, ISO 8601 (2024-03-01 or with a time). Empty if unknown.
   final String added;
 
   int? get year => int.tryParse(released.split('-').first);
@@ -137,25 +137,25 @@ class Track {
 
   final String id, name;
 
-  /// 来源的 id。源自己返回时可以不填，由 [Sources] 统一补上。
+  /// The source id. Sources may leave it out when returning; [Sources] fills it in.
   final String source;
   final List<Artist> artists;
   final Album album;
 
-  /// 毫秒。
+  /// Milliseconds.
   final int duration;
 
-  /// 歌曲在来源处的网页，用于分享。
+  /// The song's web page at its source, used for sharing.
   final String url;
   final bool unavailable;
 
-  // 播客单集也是 Track。
+  // Podcast episodes are Tracks too.
   final String showId, description, published;
 
-  /// 加进音乐库的时间，ISO 8601。不知道就是空。
+  /// When it was added to the library, ISO 8601. Empty if unknown.
   final String added;
 
-  /// 全局唯一键：同一个 id 在不同源里是不同的歌。
+  /// Globally unique key: the same id in different sources is a different song.
   String get key => '$source:$id';
   String get artistNames => artists.map((a) => a.name).join(', ');
   Duration get length => Duration(milliseconds: duration);
@@ -228,20 +228,20 @@ class Playlist {
 
   final String id, name, imageUrl, description, owner;
 
-  /// 播放次数；0 表示不知道，卡片上就不显示。
+  /// Play count; 0 means unknown and the card doesn't show it.
   final int plays;
 
-  /// 卡片上标题下面的一行（播放次数、简介…）；空的时候界面用创建者和歌曲数。
+  /// The line under the title on the card (play count, description…); when empty the UI uses the creator and song count.
   final String subtitle;
   final int trackCount;
 
-  /// 用户自己的歌单。
+  /// The user's own playlists.
   final bool mine;
 
-  /// 收藏的别人的歌单。
+  /// Other people's playlists the user saved.
   final bool saved;
 
-  /// 用户的、但由源维护（比如"我喜欢的音乐"），不能改名、删除、增删歌曲。
+  /// The user's, but maintained by the source (e.g. "Liked Songs"); can't be renamed, deleted or have songs added/removed.
   final bool fixed;
   final List<Track> tracks;
 
@@ -283,7 +283,7 @@ class ArtistPage {
   final List<Track> tracks;
   final List<Album> albums;
 
-  /// 相似歌手。
+  /// Similar artists.
   final List<Artist> related;
 
   factory ArtistPage.fromJson(Json j) => ArtistPage(
@@ -303,7 +303,7 @@ class Account {
   });
   final String id, name, imageUrl;
 
-  /// 用户自己的 browse 页（"我的主页"）。
+  /// The user's own browse page ("My home").
   final String page;
 
   factory Account.fromJson(Json j) => Account(
@@ -314,7 +314,7 @@ class Account {
   );
 }
 
-/// 个人主页（profile 操作）：账号资料、统计、听得最多的艺人和歌、自己的歌单。
+/// Profile page (the profile op): account info, stats, top artists and songs, own playlists.
 class Profile {
   const Profile({
     required this.name,
@@ -330,21 +330,21 @@ class Profile {
   });
   final String name, imageUrl, signature;
 
-  /// 名字下面的小标签，比如「Lv.9」「黑胶 VIP」。
+  /// Small badges under the name, e.g. "Lv.9" or "Vinyl VIP".
   final List<String> badges;
 
-  /// 名字下面的几项资料，比如（关注, 32）。
+  /// A few facts under the name, e.g. (Following, 32).
   final List<({String label, String value})> facts;
 
-  /// 统计卡片，最多显示前三个。
+  /// Stat cards; at most the first three are shown.
   final List<ProfileStat> stats;
   final List<({Artist artist, int plays})> topArtists;
 
-  /// 听歌排行的标题，比如「最近一周最常听」。
+  /// Title of the listening chart, e.g. "Most played this week".
   final String topTitle;
   final List<({Track track, int plays})> topTracks;
 
-  /// 自己创建的歌单。
+  /// Playlists the user created.
   final List<Playlist> playlists;
 
   factory Profile.fromJson(Json j) {
@@ -389,7 +389,7 @@ class ProfileStat {
   final String label, unit;
   final int value;
 
-  /// 点卡片去音乐库的哪个标签：songs、albums、playlists、artists；空的不能点。
+  /// Which library tab tapping the card opens: songs, albums, playlists, artists; not tappable when empty.
   final String link;
 
   factory ProfileStat.fromJson(Json j) => ProfileStat(
@@ -416,10 +416,10 @@ class SearchResult {
   final List<Artist> artists;
   final List<Playlist> playlists;
 
-  /// 还有下一页。
+  /// There is another page.
   final bool more;
 
-  /// 一共有多少条（源知道的话）；0 表示不知道。
+  /// Total count (if the source knows); 0 means unknown.
   final int total;
 
   int get length =>
@@ -435,7 +435,7 @@ class SearchResult {
   );
 }
 
-/// 一页歌曲。
+/// A page of songs.
 class TrackPage {
   const TrackPage({this.tracks = const [], this.more = false});
   final List<Track> tracks;
@@ -447,8 +447,8 @@ class TrackPage {
   );
 }
 
-/// 歌曲下面的一条评论。回复别人的评论也是一条普通评论，[replyTo] 是被回复的那条
-/// （界面上在正文下面引用它，不做楼中楼）。
+/// A comment on a song. A reply to someone else's comment is also a normal comment; [replyTo] is the comment replied to
+/// (the UI quotes it under the body, no nested threads).
 class Comment {
   const Comment({
     required this.id,
@@ -463,7 +463,7 @@ class Comment {
   });
   final String id, text, userId, userName, userImageUrl;
 
-  /// 发表时间，毫秒时间戳；0 表示不知道。
+  /// Post time as a millisecond timestamp; 0 means unknown.
   final int time;
   final int likes;
   final bool liked;
@@ -498,7 +498,7 @@ class Comment {
   }
 }
 
-/// 被回复的那条评论：谁说的、说了什么。
+/// The comment being replied to: who said what.
 class CommentQuote {
   const CommentQuote({
     this.id = '',
@@ -514,7 +514,7 @@ class CommentQuote {
   );
 }
 
-/// 一页评论。[total] 是这首歌的评论总数（不知道时 0），[more] 表示还能往下翻。
+/// A page of comments. [total] is the song's total comment count (0 if unknown); [more] means there are more pages.
 class CommentPage {
   const CommentPage({
     this.comments = const [],
@@ -532,7 +532,7 @@ class CommentPage {
   );
 }
 
-/// 源自己组织的页面：首页，以及从链接、导航打开的页面。
+/// A page organised by the source: the home page, and pages opened from links or navigation.
 class Browse {
   const Browse({
     this.title = '',
@@ -546,10 +546,10 @@ class Browse {
   final String title, subtitle, imageUrl, description;
   final List<Section> sections;
 
-  /// 页面顶部的一排 tab（比如 精选、歌单广场、排行榜…）。点了用它的 page 再取一次。
+  /// A row of tabs at the top of the page (e.g. Featured, Playlists, Charts…). Tapping one fetches again with its page.
   final List<Choice> tabs;
 
-  /// tab 下面的子 tab：一排或几排标签（比如歌手的 地区、类型、首字母）。
+  /// Sub-tabs under a tab: one or more rows of labels (e.g. region, genre, initial for artists).
   final List<List<Choice>> filters;
 
   factory Browse.fromJson(Json j) => Browse(
@@ -567,7 +567,7 @@ class Browse {
   );
 }
 
-/// 页面上的一个选项（tab 或标签）。有 [groups] 时点开是分组菜单（比如「更多分类」）。
+/// An option on the page (tab or label). With [groups] it opens a grouped menu (e.g. "More categories").
 class Choice {
   const Choice({
     required this.title,
@@ -580,7 +580,7 @@ class Choice {
   final bool selected;
   final List<ChoiceGroup> groups;
 
-  /// 顶部组卡右边叠的封面（最多三张）。
+  /// Covers stacked to the right of the top group card (at most three).
   final List<String> images;
 
   factory Choice.fromJson(Json j) => Choice(
@@ -624,13 +624,13 @@ class Section {
   });
   final String title;
 
-  /// 用哪个首页组件显示：
-  /// - `modes`：特殊模式（[modes]）。前两个是大卡片，其余是小行。
-  /// - `shelf`：卡片，超过一屏时排两行、横向滚动。
-  /// - `songs`：歌曲翻页网格（3 列 × 4 行）。
-  /// - `charts`：排行榜卡片，歌单的 tracks 是前几名。
-  /// - `grid`：卡片铺满一行、往下排（歌单、专辑、歌手）。
-  /// 空的或不认识的：按原来的列表和卡片显示。
+  /// Which home component to display it with:
+  /// - `modes`: special modes ([modes]). The first two are large cards, the rest small rows.
+  /// - `shelf`: cards; over one screen they go in two rows and scroll horizontally.
+  /// - `songs`: paged song grid (3 columns × 4 rows).
+  /// - `charts`: chart cards; the playlist's tracks are the top entries.
+  /// - `grid`: cards filling each row, wrapping downward (playlists, albums, artists).
+  /// Empty or unrecognised: shown as the original list and cards.
   final String style;
   final List<Mode> modes;
   final List<Track> tracks;
@@ -656,7 +656,7 @@ class Section {
   );
 }
 
-/// 特殊模式：一组每天更新的歌（[tracks]）、一个歌单（[playlist]）或一个电台（[station]）。
+/// Special mode: a set of songs updated daily ([tracks]), a playlist ([playlist]) or a station ([station]).
 class Mode {
   const Mode({
     required this.title,
@@ -669,15 +669,15 @@ class Mode {
   });
   final String title, subtitle;
 
-  /// 标题上面的小字，比如「每天 6:00 更新」。
+  /// Small text above the title, e.g. "Updated daily at 6:00".
   final String note;
   final String imageUrl;
   final List<Track> tracks;
 
-  /// 歌单 id：点开是歌单页，播放按钮放整个歌单。
+  /// Playlist id: opens the playlist page, and the play button plays the whole playlist.
   final String playlist;
 
-  /// 电台 id：交给 [Source.station] 一批一批地取歌。
+  /// Station id: passed to [Source.station] to fetch songs batch by batch.
   final String station;
 
   factory Mode.fromJson(Json j) => Mode(
@@ -708,7 +708,7 @@ class Link {
   );
 }
 
-/// 交给播放器播放的音频。
+/// Audio handed to the player.
 class AudioStream {
   const AudioStream({
     required this.url,
@@ -721,7 +721,7 @@ class AudioStream {
     this.headers = const {},
   });
 
-  /// http(s):// 或 file://。
+  /// http(s):// or file://.
   final String url;
 
   /// mp3, flac, ogg, wav, m4a, aac…
@@ -748,7 +748,7 @@ class AudioStream {
   );
 }
 
-/// 歌词：可以是 LRC 文本，也可以是逐行（可逐字）的 [lines]，有 lines 时优先用它。
+/// Lyrics: either LRC text or line-by-line (optionally per-word) [lines]; lines take precedence when present.
 class Lyrics {
   const Lyrics({this.lrc = '', this.translation = '', this.lines = const []});
   final String lrc, translation;
@@ -797,8 +797,8 @@ class LyricWord {
       LyricWord(start: _i(j['start']), end: _i(j['end']), text: _s(j['text']));
 }
 
-/// 歌曲怎么被听到：stream 交给本应用播放；remote 在别处播放（如 Apple Music、
-/// Spotify Connect），本应用只负责遥控。
+/// How the song is heard: stream is played by this app; remote plays elsewhere (e.g. Apple Music,
+/// Spotify Connect) and this app only acts as a remote control.
 enum Playback { stream, remote }
 
 class Setting {
@@ -814,13 +814,13 @@ class Setting {
   });
   final String key, label, help, link;
 
-  /// text、password、boolean、select；不认识的当 text。值始终是字符串。
+  /// text, password, boolean, select; unknown ones are treated as text. The value is always a string.
   final String type;
 
-  /// 未保存过时的默认值（比如 boolean 写 "true" 默认开启）。
+  /// Default value when never saved (e.g. "true" for a boolean that defaults to on).
   final String defaultValue;
 
-  /// boolean 开关对应的可选能力（比如 "comments"），关掉时视为不支持该能力。
+  /// Optional capability tied to a boolean switch (e.g. "comments"); when off, the capability counts as unsupported.
   final String op;
   final List<SettingOption> options;
 
@@ -844,7 +844,7 @@ class SettingOption {
   final String value, label;
 }
 
-/// 侧边栏条目：源自己的 browse 页（[page]），或应用内置页（[builtin]：
+/// Sidebar entry: the source's own browse page ([page]) or a built-in app page ([builtin]:
 /// home、liked、savedAlbums、stations、shows）。
 class NavItem {
   const NavItem({
@@ -863,7 +863,7 @@ class NavItem {
   );
 }
 
-/// 源的自我介绍；插件的 plugin.json 也是这个形状（外加 main、permissions 等）。
+/// The source's self-description; a plugin's plugin.json has the same shape (plus main, permissions, etc.).
 class SourceInfo {
   const SourceInfo({
     required this.id,
@@ -888,10 +888,10 @@ class SourceInfo {
   );
 }
 
-/// 音质档位，从低到高。源可以有别的档位或没有档位，按它自己有的返回。
+/// Audio quality levels, low to high. Sources may have other levels or none, and return what they have.
 const qualities = ['standard', 'high', 'lossless'];
 
-/// 一条热门搜索：词，加上一句可选的说明。
+/// A trending search: the term plus an optional note.
 class HotSearch {
   const HotSearch(this.word, [this.hint = '']);
   final String word, hint;
@@ -906,7 +906,7 @@ class HotSearch {
   ];
 }
 
-/// 插件加在歌曲右键菜单里的一项。点了调插件的 menuAction。
+/// An item a plugin adds to the song context menu. Clicking it calls the plugin's menuAction.
 class MenuEntry {
   const MenuEntry({
     required this.id,
@@ -916,7 +916,7 @@ class MenuEntry {
   });
   final String id, title;
 
-  /// 应用自带图标的名字（如 radio、music、arrow-right）；空或不认识时用默认图标。
+  /// Name of a built-in icon (e.g. radio, music, arrow-right); the default icon is used when empty or unknown.
   final String icon;
   final bool danger;
 
@@ -928,16 +928,16 @@ class MenuEntry {
   );
 }
 
-/// 插件对一首歌右键菜单的定制：加的条目，和要藏起来的自带条目。
+/// A plugin's customisation of a song's context menu: items to add and built-in items to hide.
 class TrackMenu {
   const TrackMenu({this.items = const [], this.hide = const {}});
   final List<MenuEntry> items;
 
-  /// 自带条目的名字：play、next、queue、like、addToPlaylist、album、artist、
+  /// Names of built-in items: play, next, queue, like, addToPlaylist, album, artist,
   /// similar、dislike、remove。
   final Set<String> hide;
 
-  /// 插件可以直接返回条目数组，也可以返回 {items, hide}。
+  /// Plugins can return an array of items directly, or {items, hide}.
   factory TrackMenu.fromJson(Object? v) {
     if (v is List) {
       return TrackMenu(items: _list(v, MenuEntry.fromJson));
@@ -956,7 +956,7 @@ class TrackMenu {
   }
 }
 
-/// 插件执行完菜单项后要应用做的事，都可以没有。
+/// What the app should do after a plugin runs a menu item; all optional.
 class MenuResult {
   const MenuResult({
     this.toast = '',
@@ -969,20 +969,20 @@ class MenuResult {
     this.seed = '',
   });
 
-  /// 提示一句话。
+  /// A one-line message.
   final String toast;
 
-  /// 复制到剪贴板的文字（比如分享链接）。
+  /// Text to copy to the clipboard (e.g. a share link).
   final String copy;
 
-  /// 打开页面：kind 为 album、artist、playlist。
+  /// Page to open: kind is album, artist or playlist.
   final String openKind, openId;
 
-  /// 播放这些歌，[name] 显示在「正在播放 · 来自 …」。
+  /// Songs to play; [name] is shown in "Now Playing · from …".
   final List<Track> tracks;
   final String name;
 
-  /// 放这个电台（插件 station 的 id），[seed] 为起点歌曲。
+  /// Station to play (the plugin's station id), with [seed] as the starting song.
   final String station, seed;
 
   factory MenuResult.fromJson(Object? v) {

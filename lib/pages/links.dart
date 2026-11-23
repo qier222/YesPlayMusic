@@ -5,10 +5,10 @@ import '../data.dart';
 import '../state.dart';
 import '../theme.dart';
 
-/// 一段可能能点的文字；[route] 为空就是普通文字（比如分隔符）。
+/// A piece of text that may be tappable; when [route] is empty it's plain text (e.g. a separator).
 typedef LinkPart = ({String text, String? route});
 
-/// 一首歌的每位艺人，各自带艺人页（去不了的为 null）。
+/// Each artist of a song, each with its artist page (null when it can't be opened).
 List<LinkPart> artistLinks(AppState app, Track t) {
   final r = t.ref;
   if (r == null || r.artists.isEmpty) return [(text: t.artist, route: null)];
@@ -18,11 +18,11 @@ List<LinkPart> artistLinks(AppState app, Track t) {
   ];
 }
 
-/// 一首歌的专辑名，带专辑页。
+/// A song's album name, with the album page.
 List<LinkPart> albumLinks(AppState app, Track t) =>
     t.album.isEmpty ? const [] : [(text: t.album, route: app.albumRouteOf(t))];
 
-/// 把几组链接用 [sep] 接起来；组内用 [inner] 隔开。空组跳过。
+/// Joins several groups of links with [sep], separating items within a group with [inner]. Empty groups are skipped.
 List<LinkPart> joinLinks(
   List<List<LinkPart>> groups, {
   String sep = '，',
@@ -39,8 +39,8 @@ List<LinkPart> joinLinks(
   return out;
 }
 
-/// 一行文字，里面能点的部分各自悬停（变 [hover] 色 + 下划线），点了去对应页面
-/// （正在播放开着就先收起）。整行一个 Text，放不下照常省略。
+/// A line of text whose tappable parts each have their own hover ([hover] color + underline) and open the matching page
+/// (collapsing Now Playing first if open). The whole line is one Text and ellipsizes as usual when it doesn't fit.
 class LinkText extends StatefulWidget {
   const LinkText(
     this.parts, {
@@ -52,7 +52,7 @@ class LinkText extends StatefulWidget {
   final List<LinkPart> parts;
   final TextStyle style;
 
-  /// 悬停颜色；默认 [P.ink]。
+  /// Hover color; [P.ink] by default.
   final Color? hover;
   final int lines;
 

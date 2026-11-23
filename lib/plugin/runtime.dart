@@ -1,8 +1,8 @@
-// 一个插件的运行时：QuickJS + prelude + 宿主能力（fetch、定时器、存储…）。
+// A plugin's runtime: QuickJS + prelude + host capabilities (fetch, timers, storage…).
 //
-// 只在一个 isolate 里用（见 plugin_source.dart 把它放进独立 isolate）。
-// 所有 JS 都由 Dart 事件驱动：调用、fetch 完成、定时器触发时进入 JS，跑完
-// Promise 任务就出来。每次进入 JS 有时限（[sliceMs]），超时中断后插件停用。
+// Used in only one isolate (see plugin_source.dart, which puts it in its own isolate).
+// All JS is driven by Dart events: calls, fetch completions and timer firings enter JS, and it returns after running
+// Promise jobs. Each entry into JS has a time limit ([sliceMs]); on timeout it's interrupted and the plugin is disabled.
 
 import 'dart:async';
 import 'dart:convert';
@@ -30,7 +30,7 @@ import 'process.dart';
 import 'prelude.dart';
 import 'qjs.dart';
 
-/// 插件调用失败。[code] 是插件给的错误码（signIn、setup…），可能为空。
+/// A plugin call failed. [code] is the plugin's error code (signIn, setup…), may be empty.
 class PluginError implements Exception {
   PluginError(this.message, {this.code = '', this.stack = ''});
   final String code, message, stack;
@@ -57,7 +57,7 @@ class PluginRuntime {
     HttpProxy? proxy,
     this.allowPrograms = false,
     this.onAsk,
-  }) : // 命名参数不能是私有的，用不了 this._language
+  }) : // named parameters can't be private, so this._language can't be used
        // ignore: prefer_initializing_formals
        _language = language,
        _settings = {...settings},
@@ -72,7 +72,7 @@ class PluginRuntime {
   final PluginManifest manifest;
   final String dir, dataDir;
 
-  /// 应用界面语言（BCP-47），host.language() 返回它，host.t() 按它找 locales/。
+  /// App UI language (BCP-47); host.language() returns it and host.t() uses it to find locales/.
   String get language => _language;
   set language(String v) {
     if (v == _language) return;
@@ -88,20 +88,20 @@ class PluginRuntime {
   final HttpClient _http;
   final HttpProxy? _proxy;
 
-  /// 用户在设置里允许了这个插件运行本机程序（host.spawn）。
+  /// The user allowed this plugin to run local programs (host.spawn) in settings.
   final bool allowPrograms;
 
-  /// 要应用来做的事（如 webSignIn 弹登录窗口），转给主 isolate。
+  /// Things for the app to do (e.g. webSignIn showing a sign-in window), forwarded to the main isolate.
   final Future<Object?> Function(String op, Map<String, Object?> args)? onAsk;
 
   final _procs = <int, PluginProcess>{};
   var _nextProc = 0;
   late final JsRuntime _js;
 
-  /// 运行超时或内存耗尽后插件停用，原因在这里。
+  /// The plugin is disabled after a timeout or running out of memory; the reason is here.
   String? broken;
 
-  /// 插件因为死循环、内存用尽被停用时调用，参数是给用户看的原因。
+  /// Called when the plugin is disabled for an infinite loop or running out of memory, with a user-facing reason.
   void Function(String why)? onBroken;
 
   var _nextCall = 0, _nextBody = 0;
@@ -113,12 +113,12 @@ class PluginRuntime {
   Map<String, Object?>? _storage;
   Map<String, String>? _locale;
 
-  /// 插件导出的函数名。
+  /// Function names the plugin exports.
   List<String> exports = const [];
 
-  // ── 驱动 ──
+  // ── Driving ──
 
-  /// 进入 JS 执行 [src]，再跑完 Promise 任务。超时/内存耗尽时停用插件。
+  /// Enters JS to run [src], then runs Promise jobs. Disables the plugin on timeout / out of memory.
   void _enter(String src) {
     if (broken != null || _js.disposed) return;
     try {
@@ -149,7 +149,7 @@ class PluginRuntime {
     }
   }
 
-  /// 加载 main 模块，返回导出的函数名。
+  /// Loads the main module and returns the exported function names.
   Future<List<String>> load() async {
     final c = _calls[0] = Completer<Object?>();
     _enter('__ypm.load(${jsonEncode(manifest.main)})');
@@ -160,13 +160,13 @@ class PluginRuntime {
     return exports = [for (final x in v as List) x as String];
   }
 
-  /// 调用插件导出的 [op]，参数是一个对象。返回插件给的 JSON 值。
+  /// Calls the plugin's exported [op] with an object argument. Returns the plugin's JSON value.
   Future<Object?> call(String op, [Map<String, Object?>? params]) {
     if (broken != null) return Future.error(PluginError(broken!));
     final id = ++_nextCall;
     final c = _calls[id] = Completer<Object?>();
     _enter('__ypm.call($id, ${jsonEncode(op)}, ${jsonEncode(params)})');
-    // 登录要等用户在网页里操作；取播放地址可能要靠外部程序，慢一些。
+    // Sign-in waits for the user to act in a web page; getting a playback URL may rely on an external program and be slower.
     final limit = switch (op) {
       'signIn' => const Duration(minutes: 10),
       'stream' => callTimeout * 2,
@@ -203,7 +203,7 @@ class PluginRuntime {
   void _resolve(int id, bool ok, Object? value) =>
       _enter('__ypm.resolve($id, $ok, ${jsonEncode(value)})');
 
-  // ── 宿主能力 ──
+  // ── Host capabilities ──
 
   String? _host(String op, String json) {
     if (op == 'module') return _module(json);
@@ -311,7 +311,7 @@ class PluginRuntime {
     return null;
   }
 
-  /// 模块加载：只能读插件目录里的文件（解析符号链接后也要在目录里）。
+  /// Module loading: can only read files in the plugin directory (also after resolving symlinks).
   String _module(String name) {
     final root = Directory(dir).resolveSymbolicLinksSync();
     final path = p.normalize(p.join(root, name));
@@ -324,7 +324,7 @@ class PluginRuntime {
     return f.readAsStringSync();
   }
 
-  // ── 存储：dataDir/storage.json ──
+  // ── Storage: dataDir/storage.json ──
 
   File get _storeFile => File(p.join(dataDir, 'storage.json'));
 
@@ -355,7 +355,7 @@ class PluginRuntime {
     return null;
   }
 
-  // ── 本地化：locales/<language>.json（含回退） ──
+  // ── Localisation: locales/<language>.json (with fallback) ──
 
   String _t(String text) {
     _locale ??= loadPluginLocale(dir, language);
@@ -372,7 +372,7 @@ class PluginRuntime {
         : Platform.isWindows
         ? ('rundll32', ['url.dll,FileProtocolHandler', url])
         : ('xdg-open', [url]);
-    // 打开失败（比如 Linux 上没有 xdg-open）不能变成 isolate 里的未捕获异常。
+    // A failure to open (e.g. no xdg-open on Linux) must not become an uncaught exception in the isolate.
     Process.start(
       cmd,
       args,
@@ -383,8 +383,8 @@ class PluginRuntime {
 
   // ── fetch ──
 
-  /// permissions.network 里有没有这个主机。
-  // ── 本机程序（host.spawn） ──
+  /// Whether permissions.network includes this host.
+  // ── Local programs (host.spawn) ──
 
   Object? _spawn(Map<String, Object?> a) {
     final cmd = a['command'];
@@ -406,7 +406,7 @@ class PluginRuntime {
       if (args is List)
         for (final x in args) '$x',
     ], environment: childEnvironment(_proxy));
-    // 程序结束、输出读完后就不用再留着了。
+    // Once the program has ended and its output is read, there's no need to keep it.
     pr
         .wait()
         .then((_) => Future.delayed(const Duration(minutes: 1)))
@@ -422,7 +422,7 @@ class PluginRuntime {
     return null;
   }
 
-  /// 异步的宿主调用：在 host 回调返回之后再开始，完成时 resolve JS 的 promise。
+  /// Async host call: starts after the host callback returns, resolving the JS promise when done.
   Object? _later(Map<String, Object?> a, Future<Object?> Function() f) {
     final id = a['id'] as int;
     Future(f).then(
@@ -440,9 +440,9 @@ class PluginRuntime {
     return null;
   }
 
-  // ── 加密（host.crypto.aesEcbEncrypt） ──
+  // ── Crypto (host.crypto.aesEcbEncrypt) ──
 
-  /// AES-ECB，PKCS#7 填充；key 和明文都按 UTF-8，返回小写 hex。
+  /// AES-ECB with PKCS#7 padding; key and plaintext are UTF-8; returns lowercase hex.
   static String _aesEcbEncrypt(String key, String text) {
     final k = Uint8List.fromList(utf8.encode(key));
     if (k.length != 16 && k.length != 24 && k.length != 32) {
@@ -460,9 +460,9 @@ class PluginRuntime {
     return sb.toString();
   }
 
-  // ── 登录提示（host.signInPrompt） ──
+  // ── Sign-in prompt (host.signInPrompt) ──
 
-  /// 登录过程中要应用显示的东西：二维码和说明。不等应用回复。
+  /// What the app should show during sign-in: a QR code and instructions. Doesn't wait for the app to reply.
   Object? _signInPrompt(Map<String, Object?> a) {
     onAsk?.call('signInPrompt', {
       'qr': '${a['qr'] ?? ''}',
@@ -471,7 +471,7 @@ class PluginRuntime {
     return null;
   }
 
-  // ── 网页登录（host.webSignIn） ──
+  // ── Web sign-in (host.webSignIn) ──
 
   Object? _webSignIn(Map<String, Object?> a) {
     final url = Uri.tryParse('${a['url']}');
@@ -504,7 +504,7 @@ class PluginRuntime {
   }
 
   bool allows(Uri u) =>
-      // 允许运行程序后，也能访问本机（和自己启动的程序通信）。
+      // Once allowed to run programs, it may also reach localhost (to talk to programs it started).
       (allowPrograms &&
           manifest.process.isNotEmpty &&
           const {'localhost', '127.0.0.1', '::1'}.contains(u.host)) ||
@@ -524,7 +524,7 @@ class PluginRuntime {
         'fetch: ${u.host} is not in the plugin\'s network permission',
       );
     }
-    // 不能在 host 回调里重入 JS，所以放到回调返回之后再开始。
+    // JS can't be re-entered from a host callback, so start after the callback returns.
     Future(() => _fetch(a['id'] as int, u, a));
     return null;
   }
@@ -592,14 +592,14 @@ class PluginRuntime {
           if (++redirects > 10) throw HostError('fetch: too many redirects');
           final from = uri;
           uri = uri.resolve(loc);
-          // 跳到别的域名：登录凭据不跟过去，免得 token、Cookie 泄露给第三方
+          // Redirect to another domain: credentials don't follow, so tokens and cookies don't leak to third parties
           if (!_sameOrigin(from, uri)) {
             headers = [
               for (final h in headers)
                 if (!_credentialHeaders.contains(h.$1.toLowerCase())) h,
             ];
           }
-          // 跳转到的地址也要在权限里。
+          // The redirect target must be in the permissions too.
           if (!allows(uri)) {
             throw HostError(
               'fetch: redirected to ${uri.host}, which is not in the plugin\'s network permission',
@@ -624,7 +624,7 @@ class PluginRuntime {
         if (_aborted.remove(id)) return;
         final rid = ++_nextBody;
         _bodies[rid] = bytes.takeBytes();
-        // 没读的响应体不会一直占着。
+        // An unread response body isn't held forever.
         while (_bodies.length > 32) {
           _bodies.remove(_bodies.keys.first);
         }

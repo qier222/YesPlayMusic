@@ -18,7 +18,7 @@ void main() {
   });
   tearDown(() => js.dispose());
 
-  // JS 通过 __host 同步拿到 Dart 的返回值（含中文）；Dart 抛 HostError 时 JS 能接住。
+  // JS gets Dart's return value synchronously through __host (including CJK); when Dart throws HostError, JS can catch it.
   test('host round trip', () {
     js.eval('''
       globalThis.r = __host("echo", "晚風");
@@ -28,7 +28,7 @@ void main() {
     expect(calls, ['echo 晚風', 'fail ', 'got nope', 'back 晚風']);
   });
 
-  // Promise 要 pump 才会往下走。
+  // Promises only advance when pumped.
   test('promises run on pump', () {
     js.eval('Promise.resolve(1).then(v => __host("done", String(v)))');
     expect(calls, isEmpty);
@@ -36,7 +36,7 @@ void main() {
     expect(calls, ['done 1']);
   });
 
-  // 语法错误、未接住的异常带消息和栈。
+  // Syntax errors and uncaught exceptions carry a message and stack.
   test('errors carry message', () {
     expect(
       () => js.eval('throw new TypeError("bad")'),
@@ -50,7 +50,7 @@ void main() {
     );
   });
 
-  // 死循环在时限后被中断；中断后运行时还能用。
+  // Infinite loops are interrupted after the time limit; the runtime still works afterwards.
   test('budget interrupts infinite loop', () {
     final sw = Stopwatch()..start();
     expect(
@@ -64,7 +64,7 @@ void main() {
     expect(calls, ['alive ']);
   });
 
-  // 超出内存上限抛错而不是拖垮进程。
+  // Exceeding the memory limit throws instead of taking down the process.
   test('memory limit', () {
     expect(
       () => js.eval('const a = []; for(;;) a.push(new Array(1e5).fill(1))'),
@@ -72,7 +72,7 @@ void main() {
     );
   });
 
-  // 没有文件、进程等能力。
+  // No file, process or similar capabilities.
   test('no std/os', () {
     js.eval(
       '__host("t", [typeof std, typeof os, typeof require, typeof process].join())',

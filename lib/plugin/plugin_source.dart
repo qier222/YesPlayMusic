@@ -1,9 +1,9 @@
-// 把插件变成一个音乐源：每个插件跑在自己的 isolate 里（QuickJS 运行时只在
-// 那个 isolate 里用），主 isolate 这边的 PluginSource 把 Source 的方法翻译成
-// 插件调用，把结果 JSON 转成模型。
+// Turns a plugin into a music source: each plugin runs in its own isolate (the QuickJS runtime is only used
+// in that isolate), and PluginSource on the main isolate translates Source methods into
+// plugin calls and converts the resulting JSON into models.
 //
-// 插件目录：<应用支持目录>/plugins/<id>/plugin.json
-// 插件数据：<应用支持目录>/plugin-data/<id>/（storage.json、settings.json）
+// Plugin directory: <app support dir>/plugins/<id>/plugin.json
+// Plugin data: <app support dir>/plugin-data/<id>/ (storage.json, settings.json)
 
 import 'dart:async';
 import 'dart:convert';
@@ -22,7 +22,7 @@ import 'manifest.dart';
 import 'qjs.dart' show HostError;
 import 'runtime.dart';
 
-/// 插件 isolate 的启动参数。
+/// Startup arguments for the plugin isolate.
 class _Boot {
   _Boot(
     this.port,
@@ -44,7 +44,7 @@ class _Boot {
 Future<void> _worker(_Boot b) async {
   final inbox = ReceivePort();
   b.port.send(inbox.sendPort);
-  // 要主 isolate 做的事（弹登录窗口等）：发 ask，等 answer。
+  // Things the main isolate must do (showing a sign-in window etc.): send ask, wait for answer.
   final asks = <int, Completer<Object?>>{};
   var nextAsk = 0;
   Future<Object?> ask(String op, Map<String, Object?> args) {
@@ -54,7 +54,7 @@ Future<void> _worker(_Boot b) async {
     return c.future;
   }
 
-  // 这个 isolate 里的报错文案也跟应用语言走
+  // Error messages in this isolate also follow the app language
   L = l10nForTag(b.language);
   final rt = PluginRuntime(
     language: b.language,
@@ -112,8 +112,8 @@ Future<void> _worker(_Boot b) async {
   }
 }
 
-/// 插件要应用做的事，由应用设置。webSignIn 返回 `{cookie}`；做不到时抛错，
-/// 消息会交给插件。
+/// Things a plugin asks the app to do, set by the app. webSignIn returns `{cookie}`; when it can't, it throws,
+/// and the message is passed to the plugin.
 typedef PluginAsk = Future<Object?> Function(
   PluginSource plugin,
   String op,
@@ -129,35 +129,35 @@ class PluginSource extends Source {
     this.allowPrograms,
   );
 
-  /// 应用处理插件请求的地方（在主 isolate）。没设置时请求都失败。
+  /// Where the app handles plugin requests (on the main isolate). All requests fail when unset.
   static PluginAsk? onAsk;
 
-  /// 应用界面语言（BCP-47），新启动的插件用它；改了用 [setLanguage] 通知已启动的。
+  /// App UI language (BCP-47) used by newly started plugins; when it changes, [setLanguage] notifies running ones.
   static String language = 'zh-CN';
 
-  /// 告诉插件界面语言变了（host.language() 和 host.t() 跟着变）。
+  /// Tells the plugin the UI language changed (host.language() and host.t() follow).
   void setLanguage(String tag) {
     if (_closed != null || _dead) return;
     _to.send(['language', tag]);
   }
 
-  /// 用插件目录里的 locales/<语言>.json 翻译静态文案（如 plugin.json 字段）。
+  /// Translates static text (e.g. plugin.json fields) with `locales/<language>.json` in the plugin directory.
   String tr(String text) => pluginTranslate(dir, language, text);
 
-  /// 用户允许了这个插件运行本机程序。
+  /// The user allowed this plugin to run local programs.
   final bool allowPrograms;
 
   final PluginManifest manifest;
   final String dir, dataDir;
   final Map<String, String> _settings;
 
-  /// 插件 console 输出。
+  /// Plugin console output.
   void Function(String level, String message)? onLog;
 
-  /// 插件运行中途停掉的原因（死循环、内存用尽、进程退出）；正常运行时为 null。
+  /// Why the plugin stopped mid-run (infinite loop, out of memory, process exit); null while running normally.
   String? stopped;
 
-  /// 插件运行中途停掉时调用（不包括 [close]）。
+  /// Called when the plugin stops mid-run (not including [close]).
   void Function(PluginSource source)? onStopped;
 
   void _stop(String why) {
@@ -188,7 +188,7 @@ class PluginSource extends Source {
   @override
   SourceInfo get info => manifest.info;
 
-  /// 应用认识的插件导出（别的导出忽略）。
+  /// Plugin exports the app recognises (other exports are ignored).
   static Set<String> get knownOps => _known;
 
   static const _known = {
@@ -218,8 +218,8 @@ class PluginSource extends Source {
     return true;
   }
 
-  /// 读 [dir]/plugin.json，在新 isolate 里启动插件。失败抛 [SourceError]
-  /// （kind 为 setup），reason 可以直接给用户看。
+  /// Reads [dir]/plugin.json and starts the plugin in a new isolate. Throws [SourceError]
+  /// (kind setup) on failure; the reason can be shown to the user as-is.
   static Future<PluginSource> start(
     String dir, {
     required String dataRoot,
@@ -286,7 +286,7 @@ class PluginSource extends Source {
     _from.listen((m) {
       if (m is SendPort) return port.complete(m);
       if (m == null) {
-        // isolate 退出了（正常关闭或崩溃）：没完成的调用都失败。
+        // The isolate exited (closed normally or crashed): all pending calls fail.
         _dead = true;
         _failPending();
         if (!ready.isCompleted) {
@@ -378,7 +378,7 @@ class PluginSource extends Source {
         _ => SourceErrorKind.failed,
       }, message);
 
-  /// 调插件；结果里所有歌曲标上本源的 id。
+  /// Calls the plugin; every song in the result is tagged with this source's id.
   Future<Object?> invoke(String op, [Map<String, Object?>? params]) async {
     if (_closed != null || _dead) {
       throw SourceError(SourceErrorKind.failed, L.pluginErrStopped(info.name));
@@ -403,9 +403,9 @@ class PluginSource extends Source {
     return v;
   }
 
-  /// 插件返回的原始对象（歌曲已经标上本源 id）。首页、发现页存盘用：
-  /// 下次启动先用存下的 JSON 画页面。
-  /// [trackList]：返回的直接是歌曲列表（比如 similar），每首标上本源 id。
+  /// The raw object returned by the plugin (songs already tagged with this source's id). Stored for the home and Discover pages:
+  /// the next launch draws the page from the stored JSON first.
+  /// [trackList]: the result is a plain list of songs (e.g. similar), each tagged with this source's id.
   Future<Object?> raw(
     String op, [
     Map<String, Object?>? params,
@@ -451,7 +451,7 @@ class PluginSource extends Source {
       Track.fromJson(t),
   ];
 
-  // ── 设置 ──
+  // ── Settings ──
 
   @override
   String setting(String key) => _settings[key] ?? '';
@@ -465,7 +465,7 @@ class PluginSource extends Source {
         .writeAsString(jsonEncode(_settings));
   }
 
-  // ── 账号 ──
+  // ── Account ──
 
   Future<Account?> _account(String op) async {
     final v = await invoke(op);
@@ -481,7 +481,7 @@ class PluginSource extends Source {
   @override
   Future<Profile> profile() async => Profile.fromJson(await _obj(Op.profile));
 
-  // ── 发现 ──
+  // ── Discover ──
 
   @override
   Future<Browse> home() async => Browse.fromJson(await _obj(Op.home));
@@ -519,7 +519,7 @@ class PluginSource extends Source {
     ];
   }
 
-  // ── 资料库 ──
+  // ── Library ──
 
   @override
   Future<List<Track>> recent() => _tracks(Op.recent);
@@ -596,7 +596,7 @@ class PluginSource extends Source {
     if (v is Map) {
       return {for (final e in v.entries) '${e.key}': e.value == true};
     }
-    // 也接受与 ids 一一对应的布尔数组。
+    // Also accepts a boolean array matching ids one-to-one.
     if (v is List) {
       return {
         for (var i = 0; i < ids.length && i < v.length; i++)
@@ -623,7 +623,7 @@ class PluginSource extends Source {
       invoke(Op.followArtist, {'id': id, 'on': on});
   @override
   Future<List<Album>> savedAlbums({int offset = 0}) async {
-    // 也接受 {albums, more}，和 library 的返回一样
+    // Also accepts {albums, more}, same as what library returns
     final v = await invoke(Op.savedAlbums, {'offset': offset});
     if (v is Map) return SearchResult.fromJson(v.cast()).albums;
     if (v == null || v is List) {
@@ -638,7 +638,7 @@ class PluginSource extends Source {
     );
   }
 
-  // ── 歌单 ──
+  // ── Playlists ──
 
   @override
   Future<List<Playlist>> playlists() async => [
@@ -669,7 +669,7 @@ class PluginSource extends Source {
   Future<void> movePlaylistTrack(String id, int from, int to) =>
       invoke(Op.movePlaylistTrack, {'id': id, 'from': from, 'to': to});
 
-  // ── 播放 ──
+  // ── Playback ──
 
   @override
   Future<Lyrics> lyrics(String id) async =>
@@ -683,7 +683,7 @@ class PluginSource extends Source {
     final u = Uri.tryParse(s.url);
     final ok = switch (u?.scheme) {
       'http' || 'https' => true,
-      // 插件自带或自己下载的音频可以，本机其他文件不行。
+      // Audio bundled with or downloaded by the plugin is allowed; other local files aren't.
       'file' => _ownsFile(u!.toFilePath()),
       _ => false,
     };
@@ -725,7 +725,7 @@ class PluginSource extends Source {
   }
 }
 
-/// 启动 [root] 下每个子目录里的插件。加载失败的放进 [failed]（目录 → 原因）。
+/// Starts the plugin in each subdirectory of [root]. Failures go into [failed] (directory → reason).
 Future<List<PluginSource>> startPlugins(
   String root, {
   required String dataRoot,
@@ -744,7 +744,7 @@ Future<List<PluginSource>> startPlugins(
   final out = <PluginSource>[];
   final ids = <String>{};
   for (final dir in dirs) {
-    // 用户停用的插件不启动，只读 plugin.json 给设置页显示
+    // Plugins the user disabled aren't started; only plugin.json is read for the settings page
     if (disabled.contains(_idIn(dir))) {
       try {
         final m = PluginManifest.parse(
@@ -771,15 +771,15 @@ Future<List<PluginSource>> startPlugins(
     } on SourceError catch (e) {
       failed?[dir] = e.reason;
     } catch (e) {
-      // 意外的错误（读不了目录、isolate 起不来等）只算这一个插件失败，
-      // 不能让其他插件也跟着起不来
+      // Unexpected errors (can't read the directory, isolate won't start, etc.) only fail this one plugin;
+      // they must not stop the other plugins from starting
       failed?[dir] = '$e';
     }
   }
   return out;
 }
 
-/// 目录里插件的 id（读不出来时用目录名），用来查用户给它的权限。
+/// The id of the plugin in a directory (the directory name if unreadable), used to look up permissions the user granted.
 String _idIn(String dir) {
   try {
     final j = jsonDecode(File(p.join(dir, 'plugin.json')).readAsStringSync());

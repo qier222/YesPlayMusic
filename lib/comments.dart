@@ -1,4 +1,4 @@
-// 一首歌的评论：按热门或最新分页取，点赞和发评论先改界面，源报错再改回来。
+// Comments for a song: paged by hot or newest; likes and new comments update the UI first and revert if the source errors.
 
 import 'package:flutter/foundation.dart';
 
@@ -6,14 +6,14 @@ import 'l10n/l10n.dart';
 import 'music/models.dart' as m;
 import 'music/source.dart';
 
-/// 评论的排序。名字就是传给插件的 sort。
+/// Comment sort order. The name is the sort passed to the plugin.
 enum CommentSort { hot, new_ }
 
 extension CommentSortName on CommentSort {
   String get id => this == CommentSort.hot ? 'hot' : 'new';
 }
 
-/// 评论字数上限。
+/// Maximum comment length.
 const commentLimit = 1000;
 
 class CommentFeed extends ChangeNotifier {
@@ -28,7 +28,7 @@ class CommentFeed extends ChangeNotifier {
   int total = 0;
   bool more = true, loading = false;
 
-  /// 第一页就失败时的说明；之后翻页失败只是停下来。
+  /// Message when the first page fails; later page failures just stop loading.
   String? error;
 
   bool _disposed = false;
@@ -68,7 +68,7 @@ class CommentFeed extends ChangeNotifier {
     }
   }
 
-  /// 点赞或取消。失败时改回来并抛出，让界面提示。
+  /// Likes or unlikes. On failure reverts and throws so the UI can show a message.
   Future<void> like(m.Comment c) async {
     final i = items.indexWhere((x) => x.id == c.id);
     if (i < 0) return;
@@ -88,7 +88,7 @@ class CommentFeed extends ChangeNotifier {
     }
   }
 
-  /// 发评论（[replyTo] 不为空时是回复它）。源返回了发出去的那条就插到最上面。
+  /// Posts a comment (a reply to [replyTo] when it's not null). If the source returns the posted comment, it goes on top.
   Future<void> post(String text, {m.Comment? replyTo}) async {
     final c = await source.postComment(
       trackId,

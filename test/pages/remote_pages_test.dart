@@ -1,4 +1,4 @@
-// 插件页面：有数据时把内容画出来；源报错时显示错误、不抛异常。
+// Plugin pages: render content when there's data; show the error without throwing when the source errors.
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/music/models.dart' as m;

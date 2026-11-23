@@ -53,7 +53,7 @@ void main() {
       resolveAppLocale([const Locale('ru', 'RU')], supported),
       const Locale('ru'),
     );
-    // 未知语言回退英语
+    // Unknown languages fall back to English
     expect(
       resolveAppLocale([const Locale('it', 'IT')], supported),
       const Locale('en'),
@@ -86,7 +86,7 @@ void main() {
     expect(bcp47Of(const Locale('ja')), 'ja');
   });
 
-  // 插件 isolate 按 BCP-47 标签挑文案：繁中、未知语言回退英文。
+  // The plugin isolate picks strings by BCP-47 tag: Traditional Chinese, unknown languages fall back to English.
   test('l10nForTag', () {
     expect(l10nForTag('zh-CN').localeName, 'zh');
     expect(l10nForTag('zh-TW').localeName, 'zh_Hant');

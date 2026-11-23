@@ -3,14 +3,14 @@ import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/state.dart';
 
-/// 没有对应源的歌：_sync 取地址时直接失败，不会创建播放引擎。
+/// Songs with no matching source: _sync fails right away when fetching the URL, without creating a playback engine.
 Track _t(String id) => Track.of(
   m.Track(id: id, name: 'Song $id', source: 'nosrc', duration: 180000),
 );
 
 List<String> _ids(AppState a) => [for (final t in a.queue) t.ref!.id];
 
-/// 等 _sync 取地址失败、放下这首（否则下一次选中同一首会去碰真正的播放引擎）。
+/// Waits for _sync to fail fetching the URL and drop the song (otherwise selecting the same song again would touch the real playback engine).
 Future<void> _settle() =>
     Future<void>.delayed(const Duration(milliseconds: 350));
 
@@ -24,7 +24,7 @@ void main() {
     if (app.shuffle) app.toggleShuffle();
   });
   tearDown(() async {
-    await _settle(); // 等挂着的 _sync 结束，再 dispose
+    await _settle(); // wait for the pending _sync to finish, then dispose
     app.dispose();
   });
 
@@ -63,10 +63,10 @@ void main() {
     app.next();
     app.next();
     expect(app.index, 2);
-    app.next(); // 循环回到第一首
+    app.next(); // repeat wraps back to the first song
     expect(app.index, 0);
     await _settle();
-    app.toggleRepeat(); // 关掉循环
+    app.toggleRepeat(); // turn repeat off
     app.playQueueAt(2);
     await _settle();
     app.next();
@@ -76,7 +76,8 @@ void main() {
     expect(app.index, 1);
     await _settle();
     app.position = 10;
-    app.prev(); // 放了 3 秒以上：回到开头而不是上一首
+    // Played over 3 seconds: back to the start, not the previous song
+    app.prev();
     expect(app.index, 1);
     expect(app.position, 0);
   });
@@ -85,10 +86,10 @@ void main() {
     app.playList([for (final i in ids.take(5)) _t(i)], start: 2);
     app.removeQueueAt(0);
     expect(app.track.ref!.id, '2');
-    app.removeQueueAt(3); // 删掉当前之后的
+    app.removeQueueAt(3); // remove one after the current
     expect(app.track.ref!.id, '2');
     expect(_ids(app), ['1', '2', '3']);
-    app.removeQueueAt(1); // 删掉当前：接着放下一首
+    app.removeQueueAt(1); // remove the current one: continue with the next
     expect(app.track.ref!.id, '3');
     app.removeQueueAt(-1);
     app.removeQueueAt(99);

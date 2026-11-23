@@ -1,6 +1,6 @@
-// 网络图片的磁盘缓存：封面、头像下载一次存进 cache/images，重启后不用再下。
-// 和 API 缓存分开算容量（上限 2 GB），超了删最久没用过的。
-// 封面显示（DiskCachedImage）和取主色（CoverTone）用同一份，只下载一次。
+// Disk cache for network images: covers and avatars are downloaded once into cache/images and survive restarts.
+// Its size is counted separately from the API cache (cap 2 GB); over the cap, the least recently used are deleted.
+// Cover display (DiskCachedImage) and dominant color (CoverTone) share one copy and download only once.
 
 import 'dart:async';
 import 'dart:convert';
@@ -18,17 +18,17 @@ class ImageDiskCache {
   ImageDiskCache._();
   static final instance = ImageDiskCache._();
 
-  /// 缓存目录；没设（测试里）就只下载不存。
+  /// Cache directory; when unset (in tests) images are downloaded but not stored.
   String? dir;
   int maxBytes = 2 << 30; // 2 GB
 
-  // 部分图床 CDN 会拦截 Dart 默认 UA 返回 403，
-  // 且 Dart HttpClient 不会自动读取 macOS 系统代理。
+  // Some image CDNs block Dart's default UA with 403,
+  // and Dart's HttpClient doesn't read the macOS system proxy on its own.
   final HttpClient _http = _createHttp();
 
-  // 不能用 HttpClient.maxConnectionsPerHost：走代理访问 https 时，排队的请求
-  // 挂在代理那一组上，建好的隧道却算到目标主机那一组，排队的请求永远不会被唤醒，
-  // 一直挂到超时（Dart SDK 的问题），表现为一部分图片加载不出来。所以自己限并发。
+  // Can't use HttpClient.maxConnectionsPerHost: through a proxy to https, queued requests
+  // wait in the proxy's group while the established tunnel counts toward the target host's group, so they are never woken up
+  // and hang until timeout (a Dart SDK issue), showing up as some images never loading. So we limit concurrency ourselves.
   static const _maxDownloads = 8;
   int _downloading = 0;
   final _waiting = <Completer<void>>[];
@@ -52,16 +52,16 @@ class ImageDiskCache {
   Timer? _trimTimer;
 
   String _path(String url) {
-    // 用 UTF-8 字节算：codeUnits 是 UTF-16，超过 255 的会被截断，
-    // 带中文的地址会和别的地址撞上同一个文件
+    // Hash UTF-8 bytes: codeUnits are UTF-16 and anything above 255 gets truncated,
+    // so URLs containing CJK would collide on the same file
     final h = sha1.convert(utf8.encode(url)).toString();
     return p.join(dir!, h.substring(0, 2), '$h.img');
   }
 
-  /// [url] 的图片数据：磁盘上有就读，没有就下载并存盘。同一张同时只下载一次。
+  /// Image data for [url]: read from disk if present, otherwise download and store. Only one download per image at a time.
   Future<Uint8List> bytes(String url) =>
-      // 回调不能写成 `=> _inflight.remove(url)`：remove 返回的就是这个 future 本身，
-      // whenComplete 会等它完成，等于自己等自己，永远不结束（图片全部空白）。
+      // The callback must not be `=> _inflight.remove(url)`: remove returns this very future,
+      // and whenComplete would wait for it, i.e. wait for itself forever (all images blank).
       _inflight[url] ??= _get(url).whenComplete(() {
         _inflight.remove(url);
       });
@@ -74,13 +74,13 @@ class ImageDiskCache {
         if (await f.exists()) {
           final b = await f.readAsBytes();
           if (b.isNotEmpty) {
-            // 读到了更新文件时间：清理时按它判断最久没用过的
+            // Touch the file time on read: cleanup uses it to find the least recently used
             f.setLastModified(DateTime.now()).ignore();
             return b;
           }
         }
       } on FileSystemException {
-        // 读不了就重新下
+        // Can't read it, download again
       }
     }
     final b = await _download(url);
@@ -88,7 +88,7 @@ class ImageDiskCache {
     return b;
   }
 
-  /// 整个下载（等响应 + 读完数据）的上限。
+  /// Limit for the whole download (waiting for the response + reading the data).
   static const _timeout = Duration(seconds: 30);
 
   Future<Uint8List> _download(String url) async {
@@ -107,10 +107,10 @@ class ImageDiskCache {
   }
 
   Future<Uint8List> _fetch(String url) async {
-    // 连接走代理时，代理重启或断网会让请求一直挂着、既不成功也不报错。
-    // 这个 future 会留在 _inflight 里，之后每次显示同一张图都复用它，
-    // 图片就永远出不来（直到重启 App）。所以必须有总超时，超时后中断请求，
-    // 报错后 DiskCachedImage 会把自己从内存缓存移掉，下次显示重新下载。
+    // Through a proxy, a proxy restart or network loss leaves the request hanging, neither succeeding nor failing.
+    // The future stays in _inflight and every later display of the same image reuses it,
+    // so the image never appears (until the app restarts). Hence the overall timeout: abort the request on timeout,
+    // and after the error DiskCachedImage evicts itself from the memory cache and downloads again next time.
     final uri = Uri.parse(url);
     final req = await _http.getUrl(uri).timeout(_timeout);
     try {
@@ -118,19 +118,22 @@ class ImageDiskCache {
         final res = await req.close();
         if (res.statusCode != HttpStatus.ok) {
           await res.drain<void>();
-          throw HttpException('图片下载失败（HTTP ${res.statusCode}）', uri: uri);
+          throw HttpException(
+            'Image download failed (HTTP ${res.statusCode})',
+            uri: uri,
+          );
         }
         final b = await consolidateHttpClientResponseBytes(res);
-        if (b.isEmpty) throw HttpException('图片是空的', uri: uri);
+        if (b.isEmpty) throw HttpException('Image is empty', uri: uri);
         return b;
       }().timeout(_timeout);
     } on TimeoutException {
       req.abort();
-      throw HttpException('图片下载超时', uri: uri);
+      throw HttpException('Image download timed out', uri: uri);
     }
   }
 
-  /// 正在存盘的：evict 要等它写完再删，否则刚删完又被写回来。
+  /// Being stored: evict must wait for the write to finish, or it gets written back right after deletion.
   final Map<String, Future<void>> _saving = {};
 
   void _save(String path, Uint8List b) {
@@ -154,7 +157,7 @@ class ImageDiskCache {
     _saving[path] = w;
   }
 
-  /// 删掉 [url] 在磁盘上的那份（比如存下来的其实不是图片，解码失败）。
+  /// Deletes the on-disk copy of [url] (e.g. what was stored isn't actually an image and failed to decode).
   Future<void> evict(String url) async {
     if (dir == null) return;
     final path = _path(url);
@@ -163,11 +166,11 @@ class ImageDiskCache {
       final f = File(path);
       if (await f.exists()) await f.delete();
     } on FileSystemException {
-      // 删不了下次再说
+      // Can't delete it, try next time
     }
   }
 
-  /// 已经占用的字节数。
+  /// Bytes in use.
   Future<int> size() async {
     final d = dir;
     if (d == null || !await Directory(d).exists()) return _bytes = 0;
@@ -178,7 +181,7 @@ class ImageDiskCache {
     return _bytes = n;
   }
 
-  /// 超过上限时删最久没用过的，删到上限的九成。
+  /// Over the cap, deletes the least recently used down to 90% of the cap.
   Future<void> trim() async {
     final d = dir;
     if (d == null || _trimming) return;
@@ -201,7 +204,7 @@ class ImageDiskCache {
           await f.delete();
           n -= sz;
         } on FileSystemException {
-          // 下次再说
+          // Try next time
         }
       }
       _bytes = n;
@@ -212,7 +215,7 @@ class ImageDiskCache {
     }
   }
 
-  /// 清空磁盘上的图片（内存里已经解码的不动）。
+  /// Clears images on disk (images already decoded in memory are untouched).
   Future<void> clear() async {
     final d = dir;
     if (d == null) return;
@@ -226,7 +229,7 @@ class ImageDiskCache {
   }
 }
 
-/// 先看磁盘缓存的网络图片。和 NetworkImage 一样用，按 url 区分。
+/// Network image that checks the disk cache first. Used like NetworkImage, keyed by url.
 @immutable
 class DiskCachedImage extends ImageProvider<DiskCachedImage> {
   const DiskCachedImage(this.url);
@@ -251,17 +254,17 @@ class DiskCachedImage extends ImageProvider<DiskCachedImage> {
     try {
       b = await ImageDiskCache.instance.bytes(url);
     } catch (_) {
-      // 下载失败别留在内存缓存里，下次显示时再试
+      // Don't keep a failed download in the memory cache; retry on next display
       scheduleMicrotask(() => PaintingBinding.instance.imageCache.evict(this));
       rethrow;
     }
     try {
       return await decode(await ui.ImmutableBuffer.fromUint8List(b));
     } catch (_) {
-      // 存下来的不是图片（错误页、被截断）：磁盘上那份也删掉，否则以后每次都读到
-      // 这份坏数据、永远不重新下载。
+      // What was stored isn't an image (error page, truncated): delete the disk copy too, or every
+      // later read gets this bad data and it is never downloaded again.
       await ImageDiskCache.instance.evict(url);
-      // 内存缓存里也不留
+      // Don't keep it in the memory cache either
       scheduleMicrotask(() => PaintingBinding.instance.imageCache.evict(this));
       rethrow;
     }

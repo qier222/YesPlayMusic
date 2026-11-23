@@ -7,14 +7,14 @@ import '../state.dart';
 import '../theme.dart';
 import '../ui.dart';
 
-/// 搜索框空着时的内容（定稿「搜索 · 未输入」两张）：
-/// 有记录时是最近搜索、最近搜索结果，再加热门搜索标签；
-/// 没有记录时只有热门搜索的排行列表。源不给热门搜索就不显示那一块。
+/// Content while the search box is empty (final "搜索 · 未输入", two variants):
+/// with history, recent searches and recent results, plus trending search tags;
+/// without history, only the trending search chart. That block is hidden if the source gives no trending searches.
 class SearchIdle extends StatelessWidget {
   const SearchIdle({super.key, required this.source, required this.onWord});
   final String source;
 
-  /// 点了一个词：填进搜索框并搜索。
+  /// A term was tapped: fill it into the search box and search.
   final ValueChanged<String> onWord;
 
   @override
@@ -101,7 +101,7 @@ class _Tags extends StatelessWidget {
   );
 }
 
-/// 两列：先排满左列再排右列。
+/// Two columns: fill the left column first, then the right.
 class _Columns extends StatelessWidget {
   const _Columns(this.children);
   final List<Widget> children;
@@ -109,7 +109,7 @@ class _Columns extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final per = (children.length + 1) ~/ 2;
-    // 行的悬停底色比文字往左右各多出 8
+    // The row's hover background extends 8 beyond the text on each side
     return LayoutBuilder(
       builder: (context, c) => Transform.translate(
         offset: const Offset(-8, 0),
@@ -227,7 +227,7 @@ class _HitRow extends StatelessWidget {
   }
 }
 
-/// 没有记录时的热门搜索：两列排行，前三名的序号是白色。
+/// Trending searches when there's no history: a two-column chart with the top three indices in white.
 class _HotList extends StatelessWidget {
   const _HotList(this.hot, this.onWord);
   final List<m.HotSearch> hot;

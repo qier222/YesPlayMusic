@@ -1,4 +1,4 @@
-// MCP Resources（天然懒加载的只读上下文：客户端仅在需要时 resources/read）。
+// MCP Resources (naturally lazy read-only context: clients only call resources/read when needed).
 
 import 'dart:convert';
 

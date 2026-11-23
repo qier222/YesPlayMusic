@@ -1,4 +1,4 @@
-// 插件卡片、设置弹窗、安装弹窗共用的小部件（Sketch 定稿「v31 / 设置 · 插件」）。
+// Small widgets shared by plugin cards, the settings dialog and the install dialog (Sketch final "v31 / 设置 · 插件").
 
 import 'dart:io';
 
@@ -24,16 +24,16 @@ const _pluginColors = [
   Color(0xFFB84C72),
 ];
 
-/// 插件自带图标的完整路径；没写或文件不在时为 null。
+/// Full path of the plugin's own icon; null when not set or the file is missing.
 String? pluginIconPath(PluginManifest mf, String dir) {
   if (mf.icon.isEmpty) return null;
   final f = p.join(dir, mf.icon);
   return File(f).existsSync() ? f : null;
 }
 
-/// 插件图标：插件给了图标就用它；[bundled] 时用 App 自带的官方插件图标
-/// （只给「官方插件」里还没装的用）；否则按 id 取一个颜色写名字的第一个字。
-/// [round] 时裁成圆形（侧边栏头像）。
+/// Plugin icon: the plugin's icon if it has one; with [bundled], the app's bundled official plugin icon
+/// (only for official plugins not yet installed); otherwise the first character of the name on a color picked by id.
+/// With [round], clipped to a circle (sidebar avatar).
 class PluginIcon extends StatelessWidget {
   const PluginIcon({
     super.key,
@@ -99,7 +99,7 @@ class PluginIcon extends StatelessWidget {
 String versionLabel(String v) =>
     v.isEmpty ? '' : (v.startsWith('v') ? v : 'v$v');
 
-/// 插件导出的功能，换成给人看的名字（去重，按这里的顺序）。
+/// Features the plugin exports, as human-readable names (deduplicated, in this order).
 List<String> capabilityLabels(Set<String> ops, [AppLocalizations? l10n]) {
   final l = l10n ?? L;
   final groups = <(String, List<String>)>[
@@ -150,18 +150,18 @@ List<String> capabilityLabels(Set<String> ops, [AppLocalizations? l10n]) {
   ];
 }
 
-/// 用插件目录里的 locales/<语言>.json 翻译 plugin.json 里的静态文案。
+/// Translates static text in plugin.json with `locales/<language>.json` in the plugin directory.
 String pluginTr(String dir, String text) =>
     pluginTranslate(dir, bcp47Of(currentLocale), text);
 
-/// 插件在侧边栏加的自己的页面（内置页面已经由功能表示）。
+/// The plugin's own pages added to the sidebar (built-in pages are already represented by features).
 List<String> navTitles(PluginManifest mf, {String? dir}) => [
   for (final n in mf.info.navigation)
     if (n.builtin.isEmpty && n.title.isNotEmpty)
       dir == null ? n.title : pluginTr(dir, n.title),
 ];
 
-/// permissions.network 换成给人看的一句话；[short] 时最多列两个。
+/// permissions.network as a human-readable sentence; with [short], lists at most two.
 String hostsText(
   PluginManifest mf, {
   bool short = false,
@@ -199,7 +199,7 @@ String programsText(List<String> ps, [AppLocalizations? l10n]) =>
     ? (l10n ?? L).pluginAnyProgram
     : {for (final x in ps) x.split('/').last}.join(listJoiner(currentLocale));
 
-/// 必填但还空着的服务器设置（network 里写了 {setting:key} 的）。
+/// Required server settings still empty (those referenced as {setting:key} in network).
 m.Setting? missingServer(PluginManifest mf, String Function(String) value) {
   for (final h in mf.network) {
     final mm = RegExp(r'^\{setting:([^{}]+)\}$').firstMatch(h.trim());
@@ -211,7 +211,7 @@ m.Setting? missingServer(PluginManifest mf, String Function(String) value) {
   return null;
 }
 
-/// 弹窗里的能力标签（28 高，可带图标）。
+/// Capability tag in the dialog (28 high, optionally with an icon).
 class InfoChip extends StatelessWidget {
   const InfoChip(this.label, {super.key, this.icon});
   final String label;
@@ -235,10 +235,10 @@ class InfoChip extends StatelessWidget {
   );
 }
 
-/// 弹窗里的小节标题。
+/// Section title in the dialog.
 Widget sectionLabel(String s) => tx(s, 13, w: w600, c: P.faint);
 
-/// 权限一行：圆形图标、标题（可带徽章）、说明，右边可放开关。
+/// A permission row: round icon, title (optionally with a badge), description, an optional switch on the right.
 class PermRow extends StatelessWidget {
   const PermRow({
     super.key,
@@ -294,7 +294,7 @@ class PermRow extends StatelessWidget {
   );
 }
 
-/// 弹窗标题区：插件图标、名字、版本、作者，右上角关闭。
+/// Dialog header: plugin icon, name, version, author, close at the top right.
 class PluginDialogHeader extends StatelessWidget {
   const PluginDialogHeader({
     super.key,
@@ -353,8 +353,8 @@ class PluginDialogHeader extends StatelessWidget {
 
 OverlayEntry? _dialog;
 
-/// 打开一个插件弹窗（遮罩、Esc 关闭、淡入）。返回关闭函数。[width] 为空时
-/// 由内容决定宽度（安装弹窗两步宽度不同）。[onDismiss] 在点遮罩或按 Esc 时调用。
+/// Opens a plugin dialog (scrim, Esc closes, fade in). Returns a close function. When [width] is null
+/// the content decides the width (the two install steps differ). [onDismiss] is called on scrim tap or Esc.
 VoidCallback showPluginDialog(
   BuildContext context, {
   double? width,
@@ -447,7 +447,7 @@ VoidCallback showPluginDialog(
   return close;
 }
 
-/// 输入框外壳：40 或 48 高的胶囊，聚焦时亮一点。
+/// Input field shell: a 40- or 48-high capsule, a little brighter when focused.
 class FieldShell extends StatelessWidget {
   const FieldShell({
     super.key,
@@ -481,7 +481,7 @@ class FieldShell extends StatelessWidget {
   );
 }
 
-/// 红色的文字按钮（卸载）。
+/// Red text button (uninstall).
 class DangerTextBtn extends StatelessWidget {
   const DangerTextBtn({
     super.key,
@@ -525,12 +525,12 @@ class DangerTextBtn extends StatelessWidget {
 const warnColor = Color(0xFFF5B14C);
 const errorColor = Color(0xFFFF8589);
 
-// ───── 音乐来源（设置页的单选和侧边栏头像弹出的菜单共用） ─────
+// ───── Music sources (shared by the settings page radio list and the sidebar avatar menu) ─────
 
-/// 能当音乐来源的插件：提供音乐库或搜索。只补歌词这类插件不算。
+/// Plugins that can be a music source: provide a library or search. Plugins that only add lyrics etc. don't count.
 bool isMusicSource(PluginSource s) => s.can(Op.library) || s.can(Op.search);
 
-/// 可选的音乐来源：本地音乐在前，然后是在运行的插件。
+/// Selectable music sources: local music first, then running plugins.
 List<({String id, String name})> musicSources(AppState app) => [
   (id: 'local', name: L.sourceLocal),
   for (final s in app.plugins)
@@ -538,7 +538,7 @@ List<({String id, String name})> musicSources(AppState app) => [
       (id: s.id, name: s.tr(s.info.name)),
 ];
 
-/// 来源名字下面的一行小字。
+/// The small line under the source name.
 ({String text, Color? color}) sourceLine(AppState app, String id) {
   if (id == 'local') {
     if (app.scanning) return (text: L.sourceScanning, color: null);
@@ -570,7 +570,7 @@ void useSource(AppState app, String id, String name) {
   showToast(L.sourceSwitchedTo(name));
 }
 
-/// 来源图标：本地音乐是 Music 图标，插件用自己的图标。[round] 时是圆形。
+/// Source icon: the Music icon for local music, the plugin's own icon for plugins. Round with [round].
 class SourceIcon extends StatelessWidget {
   const SourceIcon({
     super.key,
@@ -605,15 +605,15 @@ class SourceIcon extends StatelessWidget {
   }
 }
 
-/// 官方插件，显示在插件页「官方插件」里。
-/// 图标随 App 带在 `assets/plugins/<id>.png`，还没装时也能显示。
+/// Official plugins, shown under "Official plugins" on the plugins page.
+/// Icons ship with the app at `assets/plugins/<id>.png`, so they show even before installing.
 class OfficialPlugin {
   const OfficialPlugin(this.id, this.name, this.link);
 
-  /// 和插件 plugin.json 里的 id 一致，用来判断装没装。
+  /// Same as the id in the plugin's plugin.json, used to tell whether it's installed.
   final String id, name;
 
-  /// 安装链接（GitHub 仓库或 Release）；空的表示还没发布。
+  /// Install link (GitHub repo or Release); empty means not released yet.
   final String link;
 
   String descOf(AppLocalizations l) => switch (id) {

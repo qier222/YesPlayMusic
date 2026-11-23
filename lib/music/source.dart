@@ -1,26 +1,26 @@
-// 音乐源：本地音乐是一个源，每个插件也是一个源。
+// Music sources: local music is one source, and each plugin is a source too.
 //
-// 操作名与插件导出的函数名一一对应（search、album、stream…）。源没实现的操作，
-// can() 返回 false，界面就不显示对应入口；调用了也只会抛 unsupported。
+// Op names map one-to-one to the functions plugins export (search, album, stream…). For ops a source doesn't implement,
+// can() returns false and the UI hides the entry; calling it anyway just throws unsupported.
 
 import '../l10n/l10n.dart';
 import 'models.dart';
 
-/// 插件或源可以抛的几类错误，对应插件里 `throw {code: 'signIn', ...}`。
+/// Kinds of errors plugins or sources can throw, matching `throw {code: 'signIn', ...}` in plugins.
 enum SourceErrorKind {
-  /// 需要先登录。
+  /// Sign-in required.
   signIn,
 
-  /// 缺少必要的设置（如 API Key）。
+  /// A required setting is missing (e.g. an API key).
   setup,
 
-  /// 这首歌放不了（版权、地区、VIP…）。
+  /// This song can't be played (licensing, region, VIP…).
   unavailable,
 
-  /// 源不支持这个操作。
+  /// The source doesn't support this op.
   unsupported,
 
-  /// 其他失败。
+  /// Other failures.
   failed,
 }
 
@@ -28,7 +28,7 @@ class SourceError implements Exception {
   const SourceError(this.kind, [this.reason = '']);
   final SourceErrorKind kind;
 
-  /// 源给用户的说明，比如"请在设置里填写 Cookie"。
+  /// The source's message to the user, e.g. "Please fill in the Cookie in settings".
   final String reason;
 
   @override
@@ -37,7 +37,7 @@ class SourceError implements Exception {
       : 'SourceError(${kind.name}): $reason';
 }
 
-/// 源的全部操作名，也是插件可以导出的函数名。
+/// All op names for a source, which are also the function names plugins can export.
 abstract final class Op {
   static const signIn = 'signIn', signOut = 'signOut', account = 'account';
   static const profile = 'profile';
@@ -64,16 +64,16 @@ abstract final class Op {
   static const comments = 'comments', postComment = 'postComment';
   static const likeComment = 'likeComment';
 
-  /// 歌曲右键菜单：插件加自己的条目（trackMenu），点了执行（menuAction）。
+  /// Song context menu: plugins add their own items (trackMenu) and run them when clicked (menuAction).
   static const trackMenu = 'trackMenu', menuAction = 'menuAction';
 }
 
-/// 一个音乐源。子类只覆盖自己支持的方法，并在 [ops] 里列出它们。
+/// A music source. Subclasses override only the methods they support and list them in [ops].
 abstract class Source {
   SourceInfo get info;
   String get id => info.id;
 
-  /// 这个源支持的操作（[Op] 里的名字）。
+  /// Ops this source supports (names from [Op]).
   Set<String> get ops;
   bool can(String op) => ops.contains(op);
 
@@ -82,19 +82,19 @@ abstract class Source {
     L.sourceErrUnsupported(info.name, op),
   );
 
-  // ── 设置 ──
+  // ── Settings ──
   String setting(String key) => '';
   Future<void> setSetting(String key, String value) async => _no('setSetting');
 
-  // ── 账号 ──
+  // ── Account ──
   Future<Account?> signIn() async => _no(Op.signIn);
   Future<void> signOut() async => _no(Op.signOut);
   Future<Account?> account() async => _no(Op.account);
 
-  /// 登录账号的个人主页。
+  /// The signed-in account's profile page.
   Future<Profile> profile() async => _no(Op.profile);
 
-  // ── 发现 ──
+  // ── Discover ──
   Future<Browse> home() async => _no(Op.home);
   Future<Browse> browse(String page) async => _no(Op.browse);
   Future<SearchResult> search(
@@ -104,17 +104,17 @@ abstract class Source {
   }) async => _no(Op.search);
   Future<List<String>> suggest(String query) async => _no(Op.suggest);
 
-  /// 热门搜索词；搜索框空着时显示。
+  /// Trending search terms, shown while the search box is empty.
   Future<List<HotSearch>> hotSearches() async => _no(Op.hotSearches);
 
-  /// 音乐库里的全部歌曲、专辑或艺人（[SearchKind.tracks]/albums/artists），
-  /// 从 [offset] 起的一页；结果放在 [SearchResult] 对应的字段里，还有就 more。
-  /// 自建服务器、本地音乐这类「整个曲库就是用户的」源才有；流媒体源用
-  /// liked、savedAlbums 表示音乐库。
+  /// All songs, albums or artists in the library ([SearchKind.tracks]/albums/artists),
+  /// one page from [offset]; results go in the matching [SearchResult] field, with more if there's more.
+  /// Only for sources where "the whole library is the user's", like self-hosted servers and local music; streaming sources
+  /// represent the library with liked and savedAlbums.
   Future<SearchResult> library(SearchKind kind, {int offset = 0}) async =>
       _no(Op.library);
 
-  // ── 资料库 ──
+  // ── Library ──
   Future<List<Track>> recent() async => _no(Op.recent);
   Future<void> played(Track track) async {}
   Future<TrackPage> liked({int offset = 0}) async => _no(Op.liked);
@@ -127,7 +127,7 @@ abstract class Source {
   Future<List<Album>> savedAlbums({int offset = 0}) async =>
       _no(Op.savedAlbums);
 
-  // ── 歌单 ──
+  // ── Playlists ──
   Future<List<Playlist>> playlists() async => _no(Op.playlists);
   Future<Playlist> playlist(String id) async => _no(Op.playlist);
   Future<void> savePlaylist(String id, bool on) async => _no(Op.savePlaylist);
@@ -142,59 +142,59 @@ abstract class Source {
   Future<void> movePlaylistTrack(String id, int from, int to) async =>
       _no(Op.movePlaylistTrack);
 
-  // ── 播放 ──
+  // ── Playback ──
   Future<Lyrics> lyrics(String id) async => _no(Op.lyrics);
 
-  /// 和某首歌相似的歌（正在播放页的「相似歌曲」）。
+  /// Songs similar to a song ("Similar songs" on the Now Playing page).
   Future<List<Track>> similar(String id) async => _no(Op.similar);
 
-  /// 电台的下一批歌。[seed] 是接着哪首歌放（当前或队列最后一首），可以为空。
+  /// The next batch of songs for a station. [seed] is the song to continue from (current or last in queue); may be empty.
   Future<TrackPage> station(String id, {String seed = ''}) async =>
       _no(Op.station);
 
-  /// 不喜欢这首歌：以后别再推荐。[station] 是正在放的电台，可以为空。
+  /// Dislike this song: don't recommend it again. [station] is the station playing; may be empty.
   Future<void> dislike(String id, {String station = ''}) async =>
       _no(Op.dislike);
 
-  /// 歌曲 [id] 的评论，从 [offset] 起的一页。[sort] 是 hot（热门）或 new（最新）。
+  /// One page of comments for song [id] from [offset]. [sort] is hot or new.
   Future<CommentPage> comments(
     String id, {
     String sort = 'hot',
     int offset = 0,
   }) async => _no(Op.comments);
 
-  /// 给歌曲 [id] 发评论；[replyTo] 是被回复的评论 id，空表示直接评论这首歌。
-  /// 源能给出发出去的那条就返回它（界面直接插到列表最上面），否则返回 null。
+  /// Posts a comment on song [id]; [replyTo] is the id of the comment replied to, empty to comment on the song itself.
+  /// Returns the posted comment if the source can provide it (the UI inserts it at the top), otherwise null.
   Future<Comment?> postComment(
     String id,
     String text, {
     String replyTo = '',
   }) async => _no(Op.postComment);
 
-  /// 给歌曲 [id] 下的评论 [commentId] 点赞或取消。
+  /// Likes or unlikes comment [commentId] on song [id].
   Future<void> likeComment(String id, String commentId, bool on) async =>
       _no(Op.likeComment);
 
-  /// 这首歌右键菜单的定制。[playlist] 是右键时所在的歌单 id，可以为空。
-  /// 只应该看歌曲数据决定，不要联网：菜单打开时等它。
+  /// Context menu customisation for this song. [playlist] is the playlist id the menu was opened in; may be empty.
+  /// Should decide from the song data only, without network access: the menu waits for it to open.
   Future<TrackMenu> trackMenu(Track track, {String playlist = ''}) async =>
       _no(Op.trackMenu);
 
-  /// 执行 [trackMenu] 给的一项。
+  /// Runs an item given by [trackMenu].
   Future<MenuResult> menuAction(
     String id,
     Track track, {
     String playlist = '',
   }) async => _no(Op.menuAction);
 
-  /// [quality] 取 [qualities] 之一；源按自己有的返回最接近的。
+  /// [quality] is one of [qualities]; the source returns the closest one it has.
   Future<AudioStream> stream(String id, {String quality = 'high'}) async =>
       _no(Op.stream);
 
   Future<void> close() async {}
 }
 
-/// 所有已加载的源。按 id 找源，并给源返回的歌曲补上 [Track.source]。
+/// All loaded sources. Finds sources by id and fills in [Track.source] on songs returned by a source.
 class Sources {
   final Map<String, Source> _byId = {};
 
@@ -203,14 +203,14 @@ class Sources {
 
   void add(Source s) {
     if (_byId.containsKey(s.id)) {
-      throw StateError('已有 id 为 ${s.id} 的源');
+      throw StateError('A source with id ${s.id} already exists');
     }
     _byId[s.id] = s;
   }
 
   Future<void> remove(String id) async => _byId.remove(id)?.close();
 
-  /// 歌曲所属的源。
+  /// The source a song belongs to.
   Source of(Track t) =>
       _byId[t.source] ??
       (throw SourceError(

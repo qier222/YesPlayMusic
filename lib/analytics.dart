@@ -1,12 +1,12 @@
-// 匿名使用统计（Google Analytics 4 Measurement Protocol）。
+// Anonymous usage stats (Google Analytics 4 Measurement Protocol).
 //
-// 事件先排队，攒 30 秒一起发。启动后和之后每天发一次：
-// - app_active：应用版本、操作系统、系统语言、自动检查更新开关（数活跃用户）
-// - [snapshot] 给的设置偏好和装了哪些插件
-// 用的时候 AppState 还会报 page_open（打开了哪个页面，不带 id）、play（在哪个源播放）、
-// 插件的安装 / 启用 / 停用 / 卸载。不含歌曲、账号、搜索词、文件路径。
-// 设置 → 关于 里可以关。只有 release 构建、并且填了下面的 ID 才会发，调试和
-// 跑测试时不发。
+// Events are queued and sent together every 30 seconds. Sent at launch and once a day after:
+// - app_active: app version, OS, system language, auto-update setting (counts active users)
+// - preferences and installed plugins from [snapshot]
+// While in use, AppState also reports page_open (which page, no ids), play (which source),
+// and plugin install / enable / disable / uninstall. No songs, accounts, search terms or file paths.
+// Can be turned off in Settings → About. Only sent from release builds with the IDs below set;
+// never sent from debug builds or tests.
 
 import 'dart:async';
 import 'dart:convert';
@@ -20,18 +20,18 @@ import 'state.dart';
 import 'updater.dart';
 import 'version.dart';
 
-// GA4 数据流的衡量 ID（G-XXXXXXXXXX）和 Measurement Protocol API 密钥
+// GA4 data stream measurement ID (G-XXXXXXXXXX) and Measurement Protocol API secret
 const _measurementId = 'G-QY9X326Z43';
 const _apiSecret = 'VzrXdPVbQMOyAPoiqrIZCw';
 
-/// 事件名和参数。
+/// Event name and parameters.
 typedef AnalyticsEvent = (String, Map<String, Object>);
 
 class Analytics extends ChangeNotifier {
   Analytics._();
   static final instance = Analytics._();
 
-  /// 发送匿名统计（设置里可以关）。
+  /// Sends anonymous stats (can be turned off in Settings).
   bool enabled = true;
 
   String _clientId = '';
@@ -39,7 +39,7 @@ class Analytics extends ChangeNotifier {
   List<AnalyticsEvent> Function()? _snapshot;
   final _queue = <Map<String, Object>>[];
 
-  // 每次启动算一个会话
+  // Each launch counts as one session
   final _sessionId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
   static String get _file => p.join(AppState.supportDir(), 'analytics.json');
@@ -50,7 +50,7 @@ class Analytics extends ChangeNotifier {
       _measurementId.isNotEmpty &&
       _apiSecret.isNotEmpty;
 
-  /// [snapshot] 每天发一次的额外事件（设置、插件列表）。
+  /// [snapshot] extra events sent once a day (settings, plugin list).
   Future<void> start({List<AnalyticsEvent> Function()? snapshot}) async {
     _snapshot = snapshot;
     try {
@@ -61,7 +61,7 @@ class Analytics extends ChangeNotifier {
       }
     } catch (_) {}
     if (_clientId.isEmpty) {
-      // 和网页版 GA 一样的格式：随机数.首次运行时间
+      // Same format as GA on the web: random number.first run time
       _clientId = '${Random.secure().nextInt(1 << 31)}.$_sessionId';
       await _save();
     }
@@ -71,7 +71,7 @@ class Analytics extends ChangeNotifier {
   void _schedule() {
     _timer?.cancel();
     if (!_active) return;
-    // 等插件加载完再发，插件列表才是全的
+    // Wait for plugins to load so the plugin list is complete
     _timer = Timer(const Duration(seconds: 30), () {
       _daily();
       _timer = Timer.periodic(const Duration(days: 1), (_) => _daily());
@@ -91,7 +91,7 @@ class Analytics extends ChangeNotifier {
     }
   }
 
-  /// 记一个事件；参数值只能是字符串或数字，字符串超过 100 字会被截断。
+  /// Records an event; parameter values must be strings or numbers, strings over 100 chars are truncated.
   void event(String name, [Map<String, Object> params = const {}]) {
     if (!_active) return;
     _queue.add({
@@ -102,7 +102,7 @@ class Analytics extends ChangeNotifier {
             final String s when s.length > 100 => s.substring(0, 100),
             final v => v,
           },
-        // 报告里要算作活跃用户，这两个参数必须有
+        // Both parameters are required for the report to count an active user
         'session_id': '$_sessionId',
         'engagement_time_msec': 100,
       },
@@ -131,7 +131,7 @@ class Analytics extends ChangeNotifier {
   Future<void> _flush() async {
     _flushTimer = null;
     if (!_active || _clientId.isEmpty) return _queue.clear();
-    // 一次请求最多 25 个事件
+    // At most 25 events per request
     while (_queue.isNotEmpty) {
       final batch = _queue.take(25).toList();
       _queue.removeRange(0, batch.length);
@@ -139,7 +139,7 @@ class Analytics extends ChangeNotifier {
     }
   }
 
-  // HttpClient 走 main.dart 里设好的系统代理
+  // HttpClient uses the system proxy set up in main.dart
   Future<void> _post(List<Map<String, Object>> events) async {
     final http = HttpClient()..connectionTimeout = const Duration(seconds: 15);
     try {

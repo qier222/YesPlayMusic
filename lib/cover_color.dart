@@ -8,13 +8,13 @@ import 'package:flutter/widgets.dart';
 
 import 'cache/image_cache.dart';
 
-/// 从封面提取出来的一组颜色。
+/// A set of colors extracted from a cover.
 ///
-/// - [dominant]：封面里最有代表性的颜色（原色，未调整）。
-/// - [deep]：压暗后的版本，用作大面积背景（正在播放、Coverflow、专辑页顶部、歌单详情面板），
-///   保证白字可读，明度和设计稿里 Moon River 的酒红 #7B1D2E 接近。
-/// - [card]：卡片底色，保留封面本身的明暗倾向（浅色封面得到浅色卡片）。
-/// - [onCard]：卡片上的文字颜色，按 [card] 的亮度在白/黑之间选。
+/// - [dominant]: the most representative color in the cover (original, unadjusted).
+/// - [deep]: a darkened version for large backgrounds (Now Playing, Coverflow, album page header, playlist detail panel),
+///   keeping white text readable, with lightness close to the Moon River burgundy #7B1D2E in the design.
+/// - [card]: card background, keeping the cover's own lightness (a light cover gives a light card).
+/// - [onCard]: text color on the card, white or black depending on the brightness of [card].
 @immutable
 class CoverPalette {
   const CoverPalette({
@@ -26,7 +26,7 @@ class CoverPalette {
 
   final Color dominant, deep, card, onCard;
 
-  /// 卡片底色是否偏浅（需要深色文字）。
+  /// Whether the card background is light (needs dark text).
   bool get darkText => onCard != const Color(0xFFFFFFFF);
 
   static const fallback = CoverPalette(
@@ -36,7 +36,7 @@ class CoverPalette {
     onCard: Color(0xFFFFFFFF),
   );
 
-  /// 纯函数：从 RGBA 像素里算出调色板。单独拿出来方便测试。
+  /// Pure function: computes the palette from RGBA pixels. Separate so it can be tested.
   factory CoverPalette.fromPixels(Uint8List rgba) {
     final dominant = _dominant(rgba);
     return CoverPalette.fromColor(dominant);
@@ -44,7 +44,7 @@ class CoverPalette {
 
   factory CoverPalette.fromColor(Color c) {
     final hsl = HSLColor.fromColor(c);
-    // 几乎没有颜色的封面（黑白照片等）保持中性，不硬造色相
+    // Nearly colorless covers (black-and-white photos etc.) stay neutral instead of inventing a hue
     final chromatic = hsl.saturation > 0.12;
     final s = chromatic ? math.min(hsl.saturation, 0.72) : 0.0;
     final deep = HSLColor.fromAHSL(
@@ -66,11 +66,11 @@ class CoverPalette {
   }
 }
 
-/// 主色算法：
-/// 1. 每通道量化到 4 bit（4096 个桶），统计数量和颜色总和；
-/// 2. 每个桶打分 = 数量 × (0.01 + 彩度²)，太暗、太亮的桶降权，鲜艳且面积大的颜色胜出；
-/// 3. 以胜出桶的色相为中心，把 ±18° 内足够鲜艳的像素再平均一次，结果更稳定；
-/// 4. 彩色像素太少（<4%）时认为是黑白封面，返回整体平均色。
+/// Dominant color algorithm:
+/// 1. Quantize each channel to 4 bits (4096 buckets), counting pixels and summing colors;
+/// 2. Score each bucket = count × (0.01 + chroma²), down-weighting too dark / too light buckets, so vivid, large areas win;
+/// 3. Around the winning bucket's hue, average the vivid enough pixels within ±18° again for a steadier result;
+/// 4. With too few colorful pixels (<4%) the cover is treated as black-and-white and the overall average is returned.
 Color _dominant(Uint8List rgba) {
   final count = Int32List(4096);
   final sumR = Int32List(4096), sumG = Int32List(4096), sumB = Int32List(4096);
@@ -102,7 +102,7 @@ Color _dominant(Uint8List rgba) {
     final chroma = mx - mn;
     final l = (mx + mn) / 2;
     if (chroma > 0.16) chromaticPixels += n;
-    // 彩度平方：小面积但鲜艳的颜色（比如红外套）能压过大片灰褐背景
+    // Chroma squared: a small but vivid color (e.g. a red coat) can beat a large gray-brown background
     var w = 0.01 + chroma * chroma;
     if (l < 0.12 || l > 0.92) w *= 0.15;
     final score = n * w;
@@ -141,8 +141,8 @@ Color _dominant(Uint8List rgba) {
   return Color.fromARGB(255, r ~/ n, g ~/ n, b ~/ n);
 }
 
-/// 封面颜色缓存。启动时 [preload] 全部封面，之后页面里可以同步取色；
-/// 没预加载到的封面会异步计算，算完通知监听者重建。
+/// Cover color cache. At launch [preload] all covers, so pages can get colors synchronously;
+/// covers not preloaded are computed asynchronously, notifying listeners to rebuild when done.
 class CoverColors extends ChangeNotifier {
   CoverColors._();
   static final instance = CoverColors._();
@@ -150,7 +150,7 @@ class CoverColors extends ChangeNotifier {
   final _cache = <String, CoverPalette>{};
   final _pending = <String, Future<CoverPalette>>{};
 
-  /// 同步取色；还没算出来时返回 null 并开始计算。
+  /// Gets colors synchronously; returns null and starts computing if not ready yet.
   CoverPalette? peek(String coverId) {
     final hit = _cache[coverId];
     if (hit == null) load(coverId);
@@ -173,7 +173,7 @@ class CoverColors extends ChangeNotifier {
 
   static Future<Uint8List> _bytes(String id) async {
     if (id.startsWith('http://') || id.startsWith('https://')) {
-      // 和封面显示同一份磁盘缓存，只下载一次
+      // Shares the disk cache with cover display, downloads only once
       return ImageDiskCache.instance.bytes(id);
     }
     final path = id.startsWith('file://') ? Uri.parse(id).toFilePath() : id;
@@ -201,7 +201,7 @@ class CoverColors extends ChangeNotifier {
   }
 }
 
-/// 按封面取色并在封面切换时平滑过渡。
+/// Picks colors from the cover and transitions smoothly when the cover changes.
 ///
 /// ```dart
 /// CoverTone(coverId: al.cover, builder: (context, p) => Container(color: p.deep))
@@ -245,7 +245,7 @@ class _PaletteTween extends Tween<CoverPalette> {
       dominant: Color.lerp(a.dominant, b.dominant, t)!,
       deep: Color.lerp(a.deep, b.deep, t)!,
       card: Color.lerp(a.card, b.card, t)!,
-      // 文字颜色不渐变，过半时切换
+      // Text color doesn't animate; it switches halfway
       onCard: t < 0.5 ? a.onCard : b.onCard,
     );
   }

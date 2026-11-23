@@ -1,4 +1,4 @@
-// 插件返回的 JSON 不可信：字段类型写错时解析不能抛异常，否则整页白屏。
+// JSON from plugins can't be trusted: parsing must not throw on wrong field types, or the whole page goes blank.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/music/models.dart';
 
@@ -98,7 +98,7 @@ const _keys = [
   'words',
 ];
 
-/// 各种写错的值：字符串、数字、布尔、空、列表（含杂项）、对象。
+/// All sorts of wrong values: strings, numbers, booleans, null, lists (with mixed items), objects.
 const List<Object?> _wrong = [
   'x',
   '12.5',
@@ -156,7 +156,7 @@ void main() {
         for (final v in _wrong) {
           try {
             parse(<String, dynamic>{k: v});
-            // 嵌在列表里的对象也写错
+            // Objects nested in lists are wrong too
             parse(<String, dynamic>{
               k: [
                 {k: v},
@@ -167,7 +167,7 @@ void main() {
           }
         }
       }
-      // 所有字段一起写错
+      // Every field wrong at once
       for (final v in _wrong) {
         try {
           parse({for (final k in _keys) k: v});

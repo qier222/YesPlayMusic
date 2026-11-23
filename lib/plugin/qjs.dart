@@ -1,7 +1,7 @@
-// QuickJS 的 Dart 绑定（native/qjs_shim.c 编译成的原生资源）。
+// Dart bindings for QuickJS (native asset compiled from native/qjs_shim.c).
 //
-// JsRuntime 是同步的、只能在创建它的 isolate 里用。JS 只有一个出口：
-// 全局函数 __host(op, json)，同步回到 [JsRuntime.host]。
+// JsRuntime is synchronous and can only be used in the isolate that created it. JS has a single exit:
+// the global function __host(op, json), which calls back into [JsRuntime.host] synchronously.
 
 @DefaultAsset('package:yesplaymusic/qjs')
 library;
@@ -55,22 +55,22 @@ external Pointer<Utf8> _qjsError(Pointer<_Qjs> q);
 @Native<Int64 Function(Pointer<_Qjs>)>(symbol: 'qjs_memory')
 external int _qjsMemory(Pointer<_Qjs> q);
 
-/// JS 里抛出、没被接住的错误。[message] 含名字、消息和栈。
+/// An error thrown in JS and not caught. [message] includes the name, message and stack.
 class JsError implements Exception {
   JsError(this.message);
   final String message;
 
-  /// 超出单次运行时间被中断。
+  /// Interrupted for exceeding the per-run time limit.
   bool get interrupted => message.startsWith('InternalError: interrupted');
 
-  /// 超出内存上限。
+  /// Exceeded the memory limit.
   bool get outOfMemory => message.contains('out of memory');
 
   @override
   String toString() => 'JsError: $message';
 }
 
-/// [JsRuntime.host] 抛这个，JS 里就抛一个带 [message] 的 Error。
+/// When [JsRuntime.host] throws this, JS throws an Error with [message].
 class HostError implements Exception {
   HostError(this.message);
   final String message;
@@ -78,11 +78,11 @@ class HostError implements Exception {
   String toString() => message;
 }
 
-/// 一个 QuickJS 运行时 + 上下文。
+/// A QuickJS runtime + context.
 ///
-/// [host] 收到 JS 调用的 `__host(op, json)`，返回的字符串原样成为 JS 里的
-/// 返回值（null 为 undefined）。它在 JS 执行过程中被同步调用，不能反过来
-/// 再调 [eval]/[pump]。
+/// [host] receives JS calls to `__host(op, json)`; the returned string becomes the return value in JS
+/// as-is (null is undefined). It's called synchronously during JS execution and must not call back
+/// into [eval]/[pump].
 class JsRuntime {
   JsRuntime({
     required this.host,
@@ -93,7 +93,7 @@ class JsRuntime {
     _q = _qjsNew(0, memoryLimit, stackSize, _cb.nativeFunction);
     if (_q == nullptr) {
       _cb.close();
-      throw StateError('QuickJS 运行时创建失败');
+      throw StateError('Failed to create QuickJS runtime');
     }
   }
 
@@ -131,8 +131,8 @@ class JsRuntime {
   }
 
   T _enter<T>(int budgetMs, T Function() f) {
-    if (disposed) throw StateError('运行时已释放');
-    if (_inside) throw StateError('不能在 host 回调里重入 JS');
+    if (disposed) throw StateError('Runtime already disposed');
+    if (_inside) throw StateError('Cannot re-enter JS from a host callback');
     _inside = true;
     _qjsSetBudget(_q, budgetMs);
     try {
@@ -145,8 +145,8 @@ class JsRuntime {
 
   String get _error => _qjsError(_q).toDartString();
 
-  /// 作为全局脚本执行 [src]（不跑 Promise 任务，见 [pump]）。
-  /// 执行超过 [budgetMs] 毫秒会被中断，抛 [JsError]。
+  /// Runs [src] as a global script (doesn't run Promise jobs, see [pump]).
+  /// Interrupted with [JsError] after [budgetMs] milliseconds.
   void eval(String src, {String name = '<eval>', int budgetMs = 0}) {
     _enter(budgetMs, () {
       final bytes = utf8.encode(src);
@@ -161,14 +161,14 @@ class JsRuntime {
     });
   }
 
-  /// 跑完所有待执行的 Promise 任务。
+  /// Runs all pending Promise jobs.
   void pump({int budgetMs = 0}) {
     _enter(budgetMs, () {
       if (_qjsPump(_q) != 0) throw JsError(_error);
     });
   }
 
-  /// 当前占用的内存（字节）。
+  /// Memory currently in use (bytes).
   int get memory => _qjsMemory(_q);
 
   void dispose() {

@@ -7,9 +7,9 @@ import 'package:yesplaymusic/music/local/local_source.dart';
 import 'package:yesplaymusic/music/models.dart';
 import 'package:yesplaymusic/music/source.dart';
 
-/// 写一个 [ms] 毫秒长的静音 WAV（8kHz 单声道 16 位），[info] 写成 RIFF LIST/INFO
-/// 标签（INAM 歌名、IART 艺人、IPRD 专辑、ITRK 曲目号、ICRD 日期）。
-/// 用的标签库只能改写已有的 INFO 块、不能新建，所以这里直接写字节。
+/// Writes a silent WAV [ms] milliseconds long (8kHz mono 16-bit), with [info] as RIFF LIST/INFO
+/// tags (INAM title, IART artist, IPRD album, ITRK track number, ICRD date).
+/// The tag library can only rewrite existing INFO chunks, not create them, so bytes are written directly here.
 File wav(String path, {int ms = 1000, Map<String, String> info = const {}}) {
   const rate = 8000;
   final b = BytesBuilder();
@@ -37,7 +37,7 @@ File wav(String path, {int ms = 1000, Map<String, String> info = const {}}) {
   b.add('fmt '.codeUnits);
   u32(16);
   u16(1); // PCM
-  u16(1); // 单声道
+  u16(1); // mono
   u32(rate);
   u32(rate * 2);
   u16(2);
@@ -63,7 +63,7 @@ void main() {
   setUp(() async {
     tmp = Directory.systemTemp.createTempSync('ypm_local_');
     music = p.join(tmp.path, 'Music');
-    // 专辑：文件名顺序和曲目号顺序相反，扫描后要按曲目号排。
+    // Album: file name order is the reverse of track number order; after scanning it must be sorted by track number.
     wav(
       p.join(music, 'SZA', 'SOS', 'a.wav'),
       ms: 1500,
@@ -87,11 +87,11 @@ void main() {
     );
     File(p.join(music, 'SZA', 'SOS', 'Cover.JPG'))
         .writeAsBytesSync([0xFF, 0xD8]);
-    // 没有标签：从文件名猜艺人和歌名；带同名 .lrc。
+    // No tags: guess artist and title from the file name; with a .lrc of the same name.
     wav(p.join(music, 'loose', '03. 陳婧霏 - 晚風.wav'));
     File(p.join(music, 'loose', '03. 陳婧霏 - 晚風.lrc'))
         .writeAsStringSync('[00:00.50]晚风吹过\n[00:00.50]The evening wind');
-    // 不该被收录的：macOS 资源分叉文件、非音频文件。
+    // Shouldn't be included: macOS resource fork files and non-audio files.
     File(p.join(music, 'loose', '._junk.wav')).writeAsBytesSync([0]);
     File(p.join(music, 'loose', 'notes.txt')).writeAsStringSync('x');
 
@@ -104,12 +104,12 @@ void main() {
 
   tearDown(() => tmp.deleteSync(recursive: true));
 
-  // 只收录音频文件；同一个文件夹列两次不会重复。
+  // Only audio files are included; listing the same folder twice doesn't duplicate.
   test('scans audio files once', () {
     expect(src.trackCount, 3);
   });
 
-  // 专辑按曲目号排序，带上文件夹封面、年份和时长。
+  // Albums are sorted by track number, with the folder cover, year and duration.
   test('album groups tagged tracks in track order', () async {
     final home = await src.home();
     final album = home.sections
@@ -125,14 +125,14 @@ void main() {
     expect(page.tracks.every((t) => t.source == 'local'), isTrue);
   });
 
-  // 没标签的文件：去掉曲目号前缀，按 "艺人 - 歌名" 拆开，不归入任何专辑。
+  // Files without tags: strip the track number prefix, split "Artist - Title", and don't assign to any album.
   test('untagged file falls back to filename', () async {
     final r = await src.search('晚風', SearchKind.tracks);
     final t = r.tracks.single;
     expect((t.name, t.artistNames, t.album.id), ('晚風', '陳婧霏', ''));
   });
 
-  // 艺人页汇总该艺人的歌和专辑；搜索不分大小写。
+  // The artist page collects that artist's songs and albums; search is case-insensitive.
   test('artist page and case-insensitive search', () async {
     final found = await src.search('sza', SearchKind.artists);
     final page = await src.artist(found.artists.single.id);
@@ -144,7 +144,7 @@ void main() {
     );
   });
 
-  // 同名 .lrc 作为歌词，同时间戳的第二行是翻译。
+  // A .lrc with the same name is used as lyrics; a second line with the same timestamp is the translation.
   test('sidecar lrc lyrics', () async {
     final t = (await src.search('晚風', SearchKind.tracks)).tracks.single;
     final l = await src.lyrics(t.id);
@@ -157,7 +157,7 @@ void main() {
     );
   });
 
-  // 通过 Sources 按歌曲的来源路由到本地源，拿到 file:// 地址；文件删掉后报 unavailable。
+  // Sources routes by the song's source to the local source and gets a file:// URL; after the file is deleted it reports unavailable.
   test('stream routes through Sources and reports missing files', () async {
     final sources = Sources()..add(src);
     final t = (await src.search('Kill Bill', SearchKind.tracks)).tracks.single;
@@ -177,7 +177,7 @@ void main() {
     );
   });
 
-  // 源没实现的操作：can() 为 false，调用抛 unsupported。
+  // Ops the source doesn't implement: can() is false and calling throws unsupported.
   test('unsupported ops say so', () async {
     expect(src.can(Op.playlists), isFalse);
     await expectLater(
@@ -192,14 +192,14 @@ void main() {
     );
   });
 
-  // 按明确分隔符拆多位艺人，不拆 "&"。
+  // Multiple artists are split on unambiguous separators, not "&".
   test('splitArtists', () {
     expect(splitArtists('A; B / C、D'), ['A', 'B', 'C', 'D']);
     expect(splitArtists('Simon & Garfunkel'), ['Simon & Garfunkel']);
   });
 
-  // 回归：原声带里有一首歌是别的艺人、标签又没写专辑艺人时，曾被拆成两张同名专辑。
-  // 分碟子文件夹（CD1/CD2）里的歌也要算同一张。
+  // Regression: a soundtrack with one song by another artist and no album artist tag used to split into two albums with the same name.
+  // Songs in per-disc subfolders (CD1/CD2) count as the same album too.
   test(
     'album without album artist stays whole across artists and discs',
     () async {
@@ -234,7 +234,7 @@ void main() {
     },
   );
 
-  // 回归：哈希高位为 1 时，缓存文件名曾带负号。
+  // Regression: when the hash's high bit was 1, cache file names used to contain a minus sign.
   test('fnv1a is unsigned fixed-width hex', () {
     for (final k in ['', 'a', 'Bohemian Rhapsody', '晚風']) {
       expect(fnv1a(k), matches(RegExp(r'^[0-9a-f]{16}$')));

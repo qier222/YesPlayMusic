@@ -18,20 +18,23 @@ import 'remote.dart' show errorText;
 
 const _designH = 900.0;
 const _designSize = 487.2;
-const _designCoverTop = 172.0; // 设计稿正面封面 y = 172
+const _designCoverTop = 172.0; // front cover y = 172 in the design
 const _designCenterY = _designCoverTop + _designSize / 2;
 
-// 仿 iPod Coverflow：所有封面共用一个视点（舞台中央），侧边封面不缩小，
-// 而是转 75° 后推远，靠中间的一边远、外边近；第一张的内边贴着正面封面。
-// 下面的 3D 长度都是 900 高设计稿的基准值，运行时按窗口高度等比缩放。
+// Mimics iPod Coverflow: all covers share one viewpoint (stage center); side covers aren't scaled down
+// but rotated 75° and pushed back, with the inner edge far and the outer edge near; the first one's inner edge touches the front cover.
+// The 3D lengths below are baseline values for the 900-high design, scaled proportionally to the window height at runtime.
 const _angle = 75.0;
-const _camera = 2000.0; // 视点到舞台的距离（透视强度）
-const _gap1 = 420.0; // 第一张侧边封面中心离正中的距离（3D 空间）
-const _depth = 745.0; // 侧边封面推远多少
-const _step = 165.0; // 侧边封面之间的间距（3D 空间）
-const _pace = 120.0; // 屏幕上大约多少像素换一张：拖动和可见范围按它算
+// Distance from viewpoint to stage (perspective strength)
+const _camera = 2000.0;
+// Distance from center to the first side cover's center (3D space)
+const _gap1 = 420.0;
+const _depth = 745.0; // how far side covers are pushed back
+const _step = 165.0; // spacing between side covers (3D space)
+// Roughly how many screen pixels per cover: drag and visible range are based on it
+const _pace = 120.0;
 
-/// 按窗口尺寸换算后的 Coverflow 舞台布局与 3D 几何参数。
+/// Coverflow stage layout and 3D geometry scaled to the window size.
 class _StageMetrics {
   const _StageMetrics._({
     required this.scale,
@@ -47,7 +50,7 @@ class _StageMetrics {
   });
 
   factory _StageMetrics.from(double w, double h) {
-    // 以 900 高设计稿为基准，按窗口高度等比缩放；极窄窗口下也受宽度约束，避免封面撑满屏幕。
+    // Based on the 900-high design, scaled to window height; very narrow windows are also width-constrained so covers don't fill the screen.
     final s = math.min(h / _designH, w / 780.0).clamp(0.45, 2.5);
     final size = _designSize * s;
     final coverTop = math.max(84.0, h * (_designCenterY / _designH) - size / 2);
@@ -84,7 +87,7 @@ class _StageMetrics {
   double get titleTop => coverBottom + 9.8 * scale;
 }
 
-/// 四个标签，和音乐库的路由、SourceLibrary 的部分名一一对应。
+/// Four tabs, matching the library routes and part names of SourceLibrary one-to-one.
 const _tabs = ['songs', 'albums', 'playlists', 'artists'];
 const _parts = ['tracks', 'albums', 'playlists', 'artists'];
 List<String> _labels(AppLocalizations l) => [
@@ -100,7 +103,7 @@ List<String> _empty(AppLocalizations l) => [
   l.libraryNoArtists,
 ];
 
-/// Coverflow 里的一张封面。
+/// A cover in Coverflow.
 class _Item {
   const _Item({
     required this.title,
@@ -116,25 +119,25 @@ class _Item {
   });
   final String title, sub, cover;
 
-  /// 点进去的页面；为空就不能点进去。
+  /// The page it opens; can't be opened when empty.
   final String route;
 
-  /// 播放它。
+  /// Plays it.
   final VoidCallback? play;
 
-  /// 歌曲的 key，用来判断正面这首是不是正在播放。
+  /// Song key, used to tell whether the front one is playing.
   final String? trackKey;
 
-  /// 专辑、歌单、艺人放起来后的 [AppState.queueFrom]，用来判断它是不是正在播放。
+  /// [AppState.queueFrom] once the album, playlist or artist is played, used to tell whether it's playing.
   final String? from;
 
-  /// 艺人封面用圆形显示。
+  /// Artist covers are shown round.
   final bool round;
 
-  /// 艺人在当前源里的 id；头像还没取到时按需补取。
+  /// The artist's id in the current source; the avatar is fetched on demand if not yet available.
   final String artistId;
 
-  /// [cover] 本身已经是艺人头像。
+  /// [cover] is already the artist avatar.
   final bool hasAvatar;
 
   bool playingIn(AppState app) =>
@@ -148,7 +151,7 @@ String _count(int n) =>
 class CoverflowPage extends StatefulWidget {
   const CoverflowPage({super.key, this.tab = 'albums'});
 
-  /// 打开时选中的标签：songs、albums、playlists、artists。
+  /// Tab selected on open: songs, albums, playlists, artists.
   final String tab;
 
   @override
@@ -160,23 +163,27 @@ class _CoverflowPageState extends State<CoverflowPage>
   int _target = 0;
   late int _tab = math.max(0, _tabs.indexOf(widget.tab));
   bool _frontHover = false;
-  int _dir = 0; // 上一次移动的方向：1 往右翻（新封面从右边来），-1 往左，0 换标签
-  bool _placed = false; // 当前标签已经定位到起始封面
-  String? _lastTrackKey; // 歌曲页里上一次见到的正在播放曲目，切歌时自动滚过去
-  double? _drag; // 拖动中的连续位置
+  // Direction of the last move: 1 flips right (new cover comes from the right), -1 left, 0 tab change
+  int _dir = 0;
+  // The current tab has been positioned at its starting cover
+  bool _placed = false;
+  // Last playing track seen on the songs tab; scrolls to it when the song changes
+  String? _lastTrackKey;
+  double? _drag; // continuous position while dragging
   late final AnimationController _anim = AnimationController.unbounded(
     vsync: this,
   );
   final _focus = FocusNode();
 
   List<_Item> _items = const [];
-  Object? _itemsSrc = const Object(); // _items 由哪个列表生成，没变就不重建
+  // Which list _items was built from; not rebuilt if unchanged
+  Object? _itemsSrc = const Object();
   int _itemsTab = -1;
   Locale? _itemsLocale;
   final Map<String, String> _artistAvatars = {}; // '$source/$id' -> avatar url
   final Set<String> _artistAvatarLoading = {};
 
-  /// 取这张封面要显示的图片：艺人优先用真正的头像（缓存或按需拉取）。
+  /// The image to show for this cover: artists prefer the real avatar (cached or fetched on demand).
   String _coverOf(AppState app, _Item it, {bool fetch = false}) {
     if (!it.round || it.hasAvatar || it.artistId.isEmpty) return it.cover;
     final source = app.sourceId;
@@ -209,7 +216,7 @@ class _CoverflowPageState extends State<CoverflowPage>
     return it.cover;
   }
 
-  /// 当前标签的封面：当前源的音乐库；没有音乐库时是空的。
+  /// Covers for the current tab: the current source's library; empty when there's no library.
   List<_Item> _itemsFor(AppState app, AppLocalizations l, Locale locale) {
     final lib = app.library;
     final Object? src = lib == null
@@ -282,7 +289,7 @@ class _CoverflowPageState extends State<CoverflowPage>
     };
   }
 
-  /// 刚打开或换标签时停在哪张：正在播放的那首（歌曲）/ 那张专辑。
+  /// Where to stop on open or tab change: the playing song (songs) / album.
   int _start(AppState app, List<_Item> items) {
     final t = app.track;
     var i = items.indexWhere((it) => it.playingIn(app));
@@ -343,7 +350,7 @@ class _CoverflowPageState extends State<CoverflowPage>
       _placed = false;
       _lastTrackKey = trackKey;
     } else if (!_placed) {
-      // 第一次有内容（或换了标签）：直接跳到起始封面，不播动画
+      // First content (or tab changed): jump straight to the starting cover without animation
       _placed = true;
       _lastTrackKey = trackKey;
       _anim.stop();
@@ -351,7 +358,7 @@ class _CoverflowPageState extends State<CoverflowPage>
       _anim.value = _target.toDouble();
     } else {
       if (_target >= n) {
-        // 音乐库重新加载后变少了
+        // The library shrank after reloading
         _target = n - 1;
         _anim.value = _target.toDouble();
       }
@@ -415,7 +422,7 @@ class _CoverflowPageState extends State<CoverflowPage>
             return Stack(
               clipBehavior: Clip.hardEdge,
               children: [
-                // 上半部分背景：当前封面的主色，向下渐变到黑；切换封面时颜色平滑过渡
+                // Top half background: the current cover's dominant color fading down to black; color transitions smoothly when the cover changes
                 Positioned.fill(
                   child: IgnorePointer(
                     child: CoverTone(
@@ -427,7 +434,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            // 空状态没有封面：中性深灰渐到黑（定稿 · Coverflow 空）
+                            // Empty state has no cover: neutral dark gray fading to black (final · Coverflow empty)
                             colors: cur == null
                                 ? const [Color(0xFF1C1C20), black, black]
                                 : [
@@ -445,7 +452,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                     ),
                   ),
                 ),
-                // 封面带（按窗口高度等比缩放）
+                // Cover strip (scaled proportionally to window height)
                 Positioned(
                   left: 0,
                   right: 0,
@@ -489,7 +496,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                           animation: _anim,
                           builder: (context, _) {
                             final idx = _anim.value;
-                            // 曲库可能有几千首，只排屏幕上看得到的那一段
+                            // The library may have thousands of songs; only lay out the part visible on screen
                             final reach = (w / 2 / metrics.pace).ceil() + 2;
                             final lo = math.max(0, idx.floor() - reach);
                             final hi = math.min(n - 1, idx.ceil() + reach);
@@ -511,7 +518,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                     ),
                   ),
                 ),
-                // 倒影下沿渐隐
+                // Fade out the bottom edge of the reflection
                 Positioned(
                   left: 0,
                   right: 0,
@@ -536,7 +543,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                   bottom: 0,
                   child: IgnorePointer(child: Container(color: black)),
                 ),
-                // 当前标签还没有内容：加载中、出错或空（定稿 · Coverflow 空 v30）
+                // The current tab has no content yet: loading, error or empty (final · Coverflow empty v30)
                 if (n == 0 && !app.scanning)
                   Positioned.fill(
                     left: 40,
@@ -546,7 +553,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                       child: _emptyMessage(app),
                     ),
                   ),
-                // 顶部标题栏拖动区（置于顶部按钮下层）
+                // Title bar drag area at the top (beneath the top buttons)
                 const Positioned(
                   left: 0,
                   right: 0,
@@ -575,7 +582,7 @@ class _CoverflowPageState extends State<CoverflowPage>
                     ),
                   ),
                 ),
-                // 封面下方标题与艺人
+                // Title and artist below the cover
                 if (cur != null)
                   Positioned(
                     left: 0,
@@ -586,8 +593,8 @@ class _CoverflowPageState extends State<CoverflowPage>
                         duration: const Duration(milliseconds: 320),
                         switchInCurve: Curves.easeOutCubic,
                         switchOutCurve: Curves.easeInCubic,
-                        // 跟着封面运动方向横移：新标题从翻过来的那一侧进来，
-                        // 旧标题往另一侧出去
+                        // Slide along with the cover motion: the new title enters from the side being flipped in,
+                        // the old title exits the other side
                         transitionBuilder: (c, a) {
                           final incoming = c.key == titleKey;
                           final dx = 72.0 * (incoming ? _dir : -_dir);
@@ -658,7 +665,7 @@ class _CoverflowPageState extends State<CoverflowPage>
     return EmptyMessage(title: _empty(l)[_tab], onDark: true);
   }
 
-  /// 一张封面图；没有封面或加载失败时是深灰底加图标。
+  /// A cover image; dark gray with an icon when there's no cover or it fails to load.
   Widget _art(String cover, double size, double dpr, {bool round = false}) {
     final blank = ColoredBox(
       color: const Color(0xFF1C1C1E),
@@ -671,10 +678,10 @@ class _CoverflowPageState extends State<CoverflowPage>
       ),
     );
     if (cover.isEmpty) return blank;
-    // 解码宽度按 128px 向上取整，拖拽缩放窗口时不会每一像素都重新解码。
+    // Decode width rounds up to multiples of 128px so resizing the window doesn't re-decode every pixel.
     final cacheW = (((size * dpr) / 128).ceil() * 128).clamp(128, 4096);
     return Image(
-      // 本地 / 网络封面可能很大，按显示尺寸解码；倒影用同一个缓存
+      // Local / network covers can be large; decode at display size, and the reflection shares the cache
       image: ResizeImage.resizeIfNeeded(cacheW, null, coverImage(cover)),
       width: size,
       height: size,
@@ -697,8 +704,8 @@ class _CoverflowPageState extends State<CoverflowPage>
     final cover = _coverOf(app, it, fetch: true);
     final size = metrics.size;
     final dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 2;
-    // 正面封面的主操作：正在播放的那首切换播放 / 暂停；其余播放它，
-    // 不能播放的点进去。
+    // Main action on the front cover: toggle play / pause for the playing one; otherwise play it,
+    // or open it if it can't be played.
     final current = it.playingIn(app);
     final VoidCallback? action = current
         ? context.appRead.togglePlay
@@ -720,18 +727,18 @@ class _CoverflowPageState extends State<CoverflowPage>
     if (ad > 1) off += (ad - 1) * metrics.step;
     final z = k * metrics.depth;
     final a = _angle * k * math.pi / 180;
-    // 内边（靠中间那条）投影到屏幕上的位置；它都出了舞台就不用画
+    // Where the inner edge (toward the center) projects on screen; skip drawing if it's off stage
     final inX = off - size / 2 * math.cos(a);
     final inZ = z + size / 2 * math.sin(a);
     if (inX * metrics.camera / (metrics.camera + inZ) > stageW / 2) return null;
-    // Flutter 的 rotateY 方向与设计工具相反：正角度让左边往里退
+    // Flutter's rotateY goes the opposite way from design tools: positive angles move the left edge inward
     final rot = sign * a;
     final shade = math.min(0.08 * ad, 0.48);
     final refl = math.max(0.24 - 0.02 * ad, 0.12);
     final btnSize = (80.0 * metrics.scale).clamp(64.0, 108.0);
     final btnIconSize = (36.0 * metrics.scale).clamp(28.0, 48.0);
 
-    // 透视 × 平移 × 旋转：每张都放在舞台正中再移开，视点因此是共用的
+    // Perspective × translate × rotate: each one is placed at stage center and then moved, so the viewpoint is shared
     final m = Matrix4.identity()
       ..setEntry(3, 2, 1 / metrics.camera)
       ..translateByDouble(sign * off, 0, z, 1)
@@ -742,7 +749,7 @@ class _CoverflowPageState extends State<CoverflowPage>
       children: [
         _art(cover, size, dpr, round: it.round),
         if (shade > 0.005) ColoredBox(color: ba(shade)),
-        // 悬停当前正面封面时出现播放 / 暂停浮层（Sketch: 25% 黑遮罩 + 80 白圆 + 36 图标）
+        // Hovering the front cover shows a play / pause overlay (Sketch: 25% black scrim + 80 white circle + 36 icon)
         if (isFront && action != null)
           IgnorePointer(
             ignoring: !_frontHover,
@@ -817,7 +824,7 @@ class _CoverflowPageState extends State<CoverflowPage>
       top: metrics.stripPadTop,
       width: size,
       child: Transform(
-        // 原点 = 封面中心（下面还挂着 0.42 高的倒影），侧边封面上下居中对齐
+        // Origin = cover center (with a 0.42-high reflection below); side covers are vertically centered
         alignment: const Alignment(0, 0.5 / 1.42 * 2 - 1),
         transform: m,
         child: GestureDetector(
@@ -827,7 +834,7 @@ class _CoverflowPageState extends State<CoverflowPage>
             mainAxisSize: MainAxisSize.min,
             children: [
               art,
-              // 倒影
+              // Reflection
               Opacity(
                 opacity: refl,
                 child: SizedBox(

@@ -66,7 +66,7 @@ void main() {
     expect(pluginTranslate(dir.path, 'en', '未翻译'), '未翻译');
 
     writeLocale('en.json', '{"设置": "Preferences"}');
-    // 清理缓存前仍走旧缓存
+    // Before clearing the cache, the old cache is still used
     expect(pluginTranslate(dir.path, 'en', '设置'), 'Settings');
 
     clearPluginLocaleCache(dir.path);

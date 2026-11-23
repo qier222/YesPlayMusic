@@ -11,7 +11,7 @@ import '../ui.dart';
 import 'common.dart';
 import 'links.dart';
 
-/// 歌手页上的一张专辑 / 单曲。
+/// An album / single on the artist page.
 class ArtistDisc {
   const ArtistDisc({
     required this.title,
@@ -26,16 +26,16 @@ class ArtistDisc {
   });
   final String title, cover, year, route;
 
-  /// 「最新发布」卡片上的类型、日期和曲目信息。
+  /// Type, date and track info on the "Latest release" card.
   final String kind, date, meta;
   final MenuSpec Function(BuildContext context)? menu;
   final void Function(AppState app)? play;
 }
 
-/// 相似歌手。
+/// Similar artists.
 typedef ArtistLink = ({String name, String cover, String route});
 
-/// 歌手页的数据。
+/// Data for the artist page.
 class ArtistData {
   const ArtistData({
     required this.name,
@@ -51,12 +51,12 @@ class ArtistData {
   final String name, avatar;
   final bool following;
 
-  /// 关注 / 取消关注；源不支持时为 null，不显示关注按钮。
+  /// Follow / unfollow; null when the source doesn't support it, hiding the follow button.
   final Future<void> Function(bool on)? follow;
   final List<Track> hot;
   final ArtistDisc? latest;
 
-  /// 专辑、单曲与 EP… 每个分页一组；空的分页不显示。
+  /// One group per section: albums, singles & EPs…; empty sections aren't shown.
   final List<(String, List<ArtistDisc>)> tabs;
   final List<ArtistLink> similar;
   final MenuSpec Function(BuildContext context)? menu;
@@ -73,13 +73,13 @@ class ArtistPage extends StatefulWidget {
 
 class _ArtistPageState extends State<ArtistPage> {
   final _scroll = ScrollController();
-  // 每个分页一个：切换时新旧两行同时在淡入淡出，不能共用一个
+  // One per section: when switching, the old and new rows fade at the same time, so they can't share one
   final _discs = <int, ScrollController>{};
   ScrollController _disc(int i) => _discs.putIfAbsent(i, ScrollController.new);
   bool _sticky = false;
   int _tab = 0;
 
-  /// 关注状态：点了先变，再告诉源。null 表示跟着数据走。
+  /// Follow state: changes on tap first, then tells the source. null means follow the data.
   bool? _following;
 
   @override
@@ -205,7 +205,7 @@ class _ArtistPageState extends State<ArtistPage> {
                           ),
                         ],
                         const Spacer(),
-                        // 超过一屏（6 张）可以横向翻页，不放「全部」
+                        // Over one screen (6 cards) it pages horizontally, with no "All"
                         if (tabs[tab].$2.length > 6)
                           _DiscPager(
                             key: ValueKey(tab),
@@ -282,7 +282,7 @@ class _ArtistPageState extends State<ArtistPage> {
             ),
           ),
         ),
-        // 滑过头像之后出现的顶栏（设计稿 Sticky Header 高 80）
+        // Top bar that appears after scrolling past the avatar (Sticky Header in the design, height 80)
         Positioned(
           left: 0,
           right: 0,
@@ -405,7 +405,7 @@ class _Top extends StatefulWidget {
 }
 
 class _TopState extends State<_Top> {
-  /// 热门歌曲默认 5 首，点「全部」展开。
+  /// Top songs show 5 by default; "All" expands them.
   bool _all = false;
 
   @override
@@ -442,7 +442,7 @@ class _TopState extends State<_Top> {
                         padding: const EdgeInsets.all(22),
                         decoration: squircle(
                           28,
-                          // 卡片底色取自最新专辑封面
+                          // Card background is taken from the latest album cover
                           color: pal.deep,
                           shadows: [
                             BoxShadow(
@@ -593,7 +593,7 @@ class _HotRow extends StatelessWidget {
     final liked = app.liked.contains(track.key);
     void play() => current ? app.togglePlay() : onPlay();
     return LayoutBuilder(
-      // 悬停底色左右各外扩 12，和设计稿一致；高度要给死，否则在滚动视图里纵向无界
+      // Hover background extends 12 on each side, as in the design; the height must be fixed, or it's vertically unbounded in a scroll view
       builder: (context, box) => SizedBox(
         height: 52,
         child: OverflowBox(
@@ -765,7 +765,7 @@ class _DiscCard extends StatelessWidget {
   }
 }
 
-/// 专辑一行超过一屏时的翻页按钮，一次翻一屏。
+/// Paging buttons when an album row exceeds one screen; pages one screen at a time.
 class _DiscPager extends StatefulWidget {
   const _DiscPager({super.key, required this.controller});
   final ScrollController controller;
@@ -784,7 +784,7 @@ class _DiscPagerState extends State<_DiscPager> {
   @override
   void didUpdateWidget(_DiscPager old) {
     super.didUpdateWidget(old);
-    // 换了 controller（比如切到另一个歌手）：监听跟着换
+    // The controller changed (e.g. switched to another artist): move the listener with it
     if (old.controller != widget.controller) {
       old.controller.removeListener(_tick);
       widget.controller.addListener(_tick);

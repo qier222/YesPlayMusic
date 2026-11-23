@@ -1,11 +1,11 @@
-// YesPlayMusic 本体端 MCP Server（Streamable HTTP + SSE 通知 + 懒加载）。
+// YesPlayMusic's in-app MCP server (Streamable HTTP + SSE notifications + lazy loading).
 //
-// 仅绑定 127.0.0.1，校验 Origin 防 CSRF/DNS Rebinding，支持可选 Bearer Token。
-// 端点：
-//   POST   /mcp     JSON-RPC 2.0 请求（initialize / tools/* / resources/* / ping）
-//   GET    /mcp     SSE 通知通道（推送 notifications/tools/list_changed）
-//   DELETE /mcp     结束会话
-//   GET    /health  健康检查（供 stdio 桥接探测 App 是否已启动）
+// Binds to 127.0.0.1 only, checks Origin against CSRF/DNS rebinding, optional Bearer token.
+// Endpoints:
+//   POST   /mcp     JSON-RPC 2.0 requests (initialize / tools/* / resources/* / ping)
+//   GET    /mcp     SSE notification channel (pushes notifications/tools/list_changed)
+//   DELETE /mcp     ends the session
+//   GET    /health  health check (lets the stdio bridge detect whether the app is running)
 
 import 'dart:async';
 import 'dart:convert';
@@ -40,10 +40,10 @@ class McpServer {
   bool _listeningState = false;
   Timer? _heartbeat;
 
-  /// SSE 心跳间隔：用来发现已断开的通知通道。
+  /// SSE heartbeat interval: used to detect disconnected notification channels.
   static const Duration heartbeatInterval = Duration(seconds: 25);
 
-  /// 没有通知通道、这么久没来请求的会话清掉（心跳时检查）。测试里可以改短。
+  /// Sessions without a notification channel and no requests for this long are removed (checked on heartbeat). Tests can shorten it.
   static Duration sessionIdle = const Duration(minutes: 30);
 
   McpConfig get config => _config;
@@ -54,7 +54,7 @@ class McpServer {
   ({int core, int lazy, int total}) get toolCounts =>
       registry.counts(app, _config);
 
-  /// 应用新配置：按需启动、重启（端口变更时）或停止服务。
+  /// Applies a new config: starts, restarts (on port change) or stops the server as needed.
   Future<void> applyConfig(McpConfig next) async {
     final prev = _config;
     _config = next;
@@ -135,8 +135,8 @@ class McpServer {
     return entries.join('|');
   }
 
-  /// 仅在已加载音乐源或其支持的操作集变化时通知客户端刷新 tools/list，
-  /// 避免播放进度刷新（250ms）带来任何额外开销。
+  /// Tells clients to refresh tools/list only when the loaded source or its supported ops change,
+  /// so playback progress updates (250ms) add no overhead.
   void _onAppStateChanged() {
     if (_sessions.isEmpty) return;
     final fp = _computeSourceFingerprint();
@@ -151,13 +151,13 @@ class McpServer {
     }
   }
 
-  // ───── HTTP 路由与安全校验 ─────
+  // ───── HTTP routing and security checks ─────
 
   Future<void> _handleHttp(HttpRequest req) async {
     final res = req.response;
     final path = req.uri.path;
 
-    // 1. Origin 校验（防浏览器 CSRF / DNS Rebinding）
+    // 1. Origin check (against browser CSRF / DNS rebinding)
     final origin = req.headers.value('origin');
     if (origin != null && origin.isNotEmpty && !_isLocalOrigin(origin)) {
       res.statusCode = HttpStatus.forbidden;
@@ -167,7 +167,7 @@ class McpServer {
       return;
     }
 
-    // 2. 健康检查（供 stdio 桥接探测，不泄露任何用户数据）
+    // 2. Health check (for the stdio bridge; leaks no user data)
     if (path == '/health' && req.method == 'GET') {
       res.statusCode = HttpStatus.ok;
       res.headers.contentType = ContentType.json;
@@ -188,7 +188,7 @@ class McpServer {
       return;
     }
 
-    // 3. 可选 Bearer Token 鉴权
+    // 3. Optional Bearer token auth
     if (_config.requireAuth && _config.token.isNotEmpty) {
       final auth = req.headers.value(HttpHeaders.authorizationHeader) ?? '';
       if (!_constantTimeEquals(auth, 'Bearer ${_config.token}')) {
@@ -214,7 +214,7 @@ class McpServer {
     }
   }
 
-  /// 等长逐字节比较，避免按前缀匹配长度泄露 token 的计时差异。
+  /// Constant-time byte comparison, so prefix-match timing can't leak the token.
   static bool _constantTimeEquals(String a, String b) {
     final x = utf8.encode(a), y = utf8.encode(b);
     var diff = x.length ^ y.length;
@@ -225,8 +225,8 @@ class McpServer {
   }
 
   static bool _isLocalOrigin(String origin) {
-    // `Origin: null` 来自 sandbox iframe、file:// 页面等不透明来源，任何网页都能伪造，
-    // 不能当作本机来源放行。
+    // `Origin: null` comes from opaque origins such as sandboxed iframes and file:// pages; any web page can forge it,
+    // so it must not be allowed as a local origin.
     if (origin == 'null') return false;
     final uri = Uri.tryParse(origin);
     if (uri == null) return false;
@@ -243,7 +243,7 @@ class McpServer {
     return sb.toString();
   }
 
-  /// 清掉空闲的会话：没有通知通道，而且超过 [sessionIdle] 没来请求。
+  /// Removes idle sessions: no notification channel and no request for over [sessionIdle].
   @visibleForTesting
   void dropIdleSessions() {
     final now = DateTime.now();
@@ -260,12 +260,12 @@ class McpServer {
     onStatusChanged?.call();
   }
 
-  /// 这个请求用的会话（MCP 规范的会话管理）：
-  /// - 带着认识的会话 ID：就是它；
-  /// - 带着不认识的 ID（过期了、App 重启过）：返回 null，调用方回 404，
-  ///   客户端按规范重新 initialize；
-  /// - 没带 ID：initialize 时新建并登记；其他请求用一个不登记的临时会话，
-  ///   兼容不管会话的简单客户端，又不会每个请求都留下一个会话。
+  /// The session for this request (MCP spec session management):
+  /// - a known session ID: that session;
+  /// - an unknown ID (expired, or the app restarted): returns null, the caller answers 404,
+  ///   and the client re-initializes per the spec;
+  /// - no ID: on initialize a new session is created and registered; other requests get an unregistered temporary session,
+  ///   which supports simple clients that ignore sessions without leaving a session behind per request.
   McpSession? _sessionFor(HttpRequest req, {bool initialize = false}) {
     final sid = req.headers.value('mcp-session-id');
     if (sid != null && sid.isNotEmpty) {
@@ -298,8 +298,8 @@ class McpServer {
     final res = req.response;
     res.headers.contentType = ContentType.json;
 
-    // MCP 规定 POST 必须是 application/json。text/plain 之类的“简单请求”浏览器不做
-    // CORS 预检，放行它们等于允许任意网页跨站触发工具调用。
+    // MCP requires POST to be application/json. Browsers skip the CORS preflight for "simple requests" like text/plain,
+    // so allowing them would let any web page trigger tool calls cross-site.
     if (req.headers.contentType?.mimeType != 'application/json') {
       res.statusCode = HttpStatus.unsupportedMediaType;
       res.write(
@@ -349,13 +349,13 @@ class McpServer {
       initialize: decoded is List ? decoded.any(isInit) : isInit(decoded),
     );
     if (session == null) return _sessionNotFound(res);
-    // 临时会话不给 ID：客户端下次还是不带，不会撞上 404
+    // Temporary sessions get no ID: the client keeps sending none and won't hit 404
     if (_sessions.containsKey(session.id)) {
       res.headers.set('Mcp-Session-Id', session.id);
     }
 
     if (decoded is List && decoded.isEmpty) {
-      // JSON-RPC 2.0：空数组是无效请求
+      // JSON-RPC 2.0: an empty array is an invalid request
       res.statusCode = HttpStatus.badRequest;
       res.write(
         jsonEncode(
@@ -415,7 +415,7 @@ class McpServer {
 
   Future<void> _handleSse(HttpRequest req) async {
     final res = req.response;
-    // 通知通道只能挂在 initialize 建立的会话上
+    // The notification channel can only attach to a session created by initialize
     final sid = req.headers.value('mcp-session-id');
     final session = sid == null ? null : _sessions[sid];
     if (session == null) {
@@ -451,7 +451,7 @@ class McpServer {
     await res.close();
   }
 
-  // ───── JSON-RPC 2.0 / MCP 方法分发 ─────
+  // ───── JSON-RPC 2.0 / MCP method dispatch ─────
 
   Future<Map<String, Object?>?> _dispatch(
     Map<String, Object?> msg,
@@ -468,7 +468,7 @@ class McpServer {
         ? (msg['params'] as Map).cast<String, Object?>()
         : const <String, Object?>{};
 
-    // 通知（无 id）直接处理且不返回响应体。
+    // Notifications (no id) are handled directly with no response body.
     if (!hasId) {
       if (method == 'notifications/initialized') {
         session.initialized = true;

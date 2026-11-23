@@ -27,11 +27,11 @@ void main() {
         });
     final deliver = inner.handlers[SystemChannels.textInput.name]!;
 
-    // 空闲时直接处理。
+    // Handled directly when idle.
     await deliver(_msg(0));
     expect(seen, [0]);
 
-    // 一帧中间（build 里）到达的两条：这一帧结束后按顺序处理。
+    // Two arriving mid-frame (during build): handled in order after the frame ends.
     var inFrame = <int>[];
     await tester.pumpWidget(
       Builder(
@@ -44,7 +44,7 @@ void main() {
       ),
     );
     expect(inFrame, [0]);
-    // 排着队时空闲到达的，也排在后面。
+    // One arriving while idle with others queued also goes behind them.
     await deliver(_msg(3));
     await tester.pump();
     expect(seen, [0, 1, 2, 3]);

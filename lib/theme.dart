@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'l10n/l10n.dart';
 
-/// 设计稿「Color Tokens · 深 / 浅」。
+/// The design's "Color Tokens · dark / light".
 class Palette {
   const Palette({
     required this.dark,
@@ -22,17 +22,17 @@ class Palette {
   });
 
   final bool dark;
-  final Color ground; // 页面底色
-  final Color surface; // 卡片、列表悬停
-  final Color raised; // 按钮、输入框、轨道
-  final Color hover; // 按钮悬停
-  final Color line; // 分隔线
-  final Color ink; // 主要文字、图标
-  final Color muted; // 次要文字
-  final Color faint; // 辅助文字
-  final Color thumb; // 分段选中 / 开关圆点
-  final Color floating; // 迷你播放条
-  final Color tip; // 提示胶囊
+  final Color ground; // page background
+  final Color surface; // cards, list hover
+  final Color raised; // buttons, inputs, tracks
+  final Color hover; // button hover
+  final Color line; // dividers
+  final Color ink; // primary text, icons
+  final Color muted; // secondary text
+  final Color faint; // tertiary text
+  final Color thumb; // segment selection / switch knob
+  final Color floating; // mini player bar
+  final Color tip; // tooltip pill
 
   static const darkPalette = Palette(
     dark: true,
@@ -65,10 +65,10 @@ class Palette {
   );
 }
 
-/// 全局当前色板。主题切换时整棵树会重建。
+/// The global current palette. The whole tree rebuilds when the theme changes.
 Palette P = Palette.darkPalette;
 
-/// 主题色（设置里可换），深浅两套。
+/// Theme colors (changeable in Settings), dark and light sets.
 Color accent = const Color(0xFFD6B0FA);
 
 const swatchesDark = [
@@ -97,18 +97,19 @@ List<String> swatchNamesOf(AppLocalizations l) => [
 ];
 
 const heart = Color(0xFFFF5C7A);
-const wine = Color(0xFF7B1D2E); // Moon River 的封面色
+const wine = Color(0xFF7B1D2E); // Moon River cover color
 const white = Color(0xFFFFFFFF);
 const black = Color(0xFF000000);
 const darkInk = Color(0xFF0B0B0D);
 
-/// 半透明版的实心色：叠在页面底色 P.ground 上，看到的颜色和 [solid] 完全一样；
-/// 叠在封面色背景上则透出底下的颜色，不会是一块突兀的灰。
-/// 透明度取能做到的最小值，颜色按底色反算。
+/// A translucent version of a solid color: over the page background P.ground it looks exactly like [solid];
+/// over a cover-color background the color underneath shows through instead of an abrupt gray block.
+/// Uses the smallest achievable opacity, with the color solved back from the background.
 Color glass(Color solid) {
   final g = P.ground;
   final gs = [g.r, g.g, g.b], ts = [solid.r, solid.g, solid.b];
-  final up = ts[0] + ts[1] + ts[2] >= gs[0] + gs[1] + gs[2]; // 深色主题往亮叠
+  // Dark theme layers toward lighter
+  final up = ts[0] + ts[1] + ts[2] >= gs[0] + gs[1] + gs[2];
   var a = 0.0;
   for (var i = 0; i < 3; i++) {
     final room = up ? 1 - gs[i] : gs[i];
@@ -123,7 +124,7 @@ Color glass(Color solid) {
 Color wa(double a) => Color.fromRGBO(255, 255, 255, a);
 Color ba(double a) => Color.fromRGBO(0, 0, 0, a);
 
-/// 连续圆角（超椭圆）装饰，统一替代带圆角的 [BoxDecoration]。
+/// Continuous-corner (superellipse) decoration, used everywhere instead of a rounded [BoxDecoration].
 ShapeDecoration squircle(
   double radius, {
   Color? color,
@@ -144,7 +145,7 @@ ShapeDecoration squircle(
   );
 }
 
-/// 字体：Archivo 三种宽度切成三个家族。
+/// Fonts: Archivo's three widths split into three families.
 enum F { body, semi, wide }
 
 const _families = {
@@ -185,7 +186,7 @@ TextStyle ts(
   );
 }
 
-/// 单行省略文本。
+/// Single-line ellipsized text.
 Widget tx(
   String s,
   double size, {
@@ -215,18 +216,18 @@ const w700 = FontWeight.w700;
 const w800 = FontWeight.w800;
 const w900 = FontWeight.w900;
 
-/// 常用动效时长与曲线。
+/// Common animation durations and curves.
 const fast = Duration(milliseconds: 120);
 const medium = Duration(milliseconds: 200);
 
-/// 带一点回弹的弹簧曲线（近似 Sketch 原型里的 spring）。
+/// A spring curve with a little bounce (approximating the spring in the Sketch prototype).
 class SpringCurve extends Curve {
   const SpringCurve({this.bounce = 0.15});
   final double bounce;
 
   @override
   double transformInternal(double t) {
-    // 阻尼振荡：bounce 越大，过冲越多。
+    // Damped oscillation: the larger the bounce, the more overshoot.
     final zeta = 1 - bounce.clamp(0.0, 0.9);
     const omega = 12.0;
     if (zeta >= 1) {

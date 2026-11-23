@@ -1,9 +1,9 @@
-// 检查更新。
+// Update checks.
 //
-// 正式发布的 macOS / Windows 版本（构建时带 --dart-define=YPM_SPARKLE=true）用
-// Sparkle / WinSparkle：后台定期检查，在系统对话框里下载、校验签名、安装重启。
-// 其他情况（Linux、自己编译的版本）查 GitHub 上的最新 Release，有新版本就在
-// 设置 → 关于 里提示，点了打开下载页。
+// Official macOS / Windows releases (built with --dart-define=YPM_SPARKLE=true) use
+// Sparkle / WinSparkle: periodic background checks, with download, signature verification, install and relaunch in system dialogs.
+// Otherwise (Linux, self-built versions) check the latest Release on GitHub, and when there's a new version
+// show it in Settings → About; clicking opens the download page.
 
 import 'dart:async';
 import 'dart:convert';
@@ -29,18 +29,18 @@ class Updater extends ChangeNotifier {
   static const repoPage = 'https://github.com/$_repo';
   static const releasesPage = 'https://github.com/$_repo/releases';
 
-  /// 用 Sparkle / WinSparkle 自动更新。
+  /// Auto-update with Sparkle / WinSparkle.
   bool get native => _sparkle && (Platform.isMacOS || Platform.isWindows);
 
-  /// 自动检查更新（设置里可以关）。
+  /// Automatically check for updates (can be turned off in Settings).
   bool autoCheck = true;
 
-  /// 查到的更新版本和下载页；没有更新为 null。
+  /// The newer version found and its download page; null when there's no update.
   String? latest;
   String? latestPage;
   bool checking = false;
 
-  /// 上一次手动检查的结果，给设置页显示。
+  /// Result of the last manual check, shown on the settings page.
   String _statusKind = '';
   String _statusVer = '';
 
@@ -78,7 +78,7 @@ class Updater extends ChangeNotifier {
   void _schedule() {
     _timer?.cancel();
     if (!autoCheck) return;
-    // 启动一会儿后查一次，之后每天一次
+    // Check once shortly after launch, then once a day
     _timer = Timer(const Duration(seconds: 30), () {
       check();
       _timer = Timer.periodic(const Duration(days: 1), (_) => check());
@@ -98,7 +98,7 @@ class Updater extends ChangeNotifier {
     }
   }
 
-  /// 检查更新。[manual] 是用户点了「检查更新」：Sparkle 会弹出结果对话框。
+  /// Checks for updates. [manual] means the user clicked "Check for updates": Sparkle shows a result dialog.
   Future<void> check({bool manual = false}) async {
     if (native) {
       await autoUpdater.checkForUpdates(inBackground: !manual);
@@ -128,10 +128,10 @@ class Updater extends ChangeNotifier {
     }
   }
 
-  /// 打开新版本（或所有版本）的下载页。
+  /// Opens the download page for the new version (or all versions).
   void openDownload() => openExternal(latestPage ?? releasesPage);
 
-  /// GitHub 上最新的正式版：(版本号, 页面)。
+  /// The latest stable release on GitHub: (version, page).
   static Future<(String, String)?> _latestRelease() async {
     final proxy = systemProxy();
     final http = HttpClient()
@@ -144,7 +144,7 @@ class Updater extends ChangeNotifier {
       );
       req.headers.set('Accept', 'application/vnd.github+json');
       final res = await req.close().timeout(const Duration(seconds: 30));
-      if (res.statusCode == 404) return null; // 还没有发布过
+      if (res.statusCode == 404) return null; // never released yet
       if (res.statusCode != 200) throw HttpException('HTTP ${res.statusCode}');
       final j = jsonDecode(
         await res

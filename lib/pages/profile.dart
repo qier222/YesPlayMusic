@@ -13,7 +13,7 @@ import 'common.dart';
 import 'remote.dart' show Loaded, Notice;
 import 'settings.dart' show openPluginSettings;
 
-/// 个人主页：当前音乐源登录账号的资料、统计、听歌排行和自己的歌单（profile 操作）。
+/// Profile page: the current music source's signed-in account info, stats, listening charts and own playlists (profile op).
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -133,7 +133,7 @@ class _Header extends StatelessWidget {
                     const SizedBox(width: 8),
                   ],
                   if (p.badges.isNotEmpty) const SizedBox(width: 6),
-                  // 几项之间留空隙分开，数字用主色突出
+                  // Items are separated by gaps, with numbers highlighted in the primary color
                   for (final (i, f) in p.facts.indexed) ...[
                     if (i > 0) const SizedBox(width: 16),
                     tx('${f.label} ', 13, w: w600, c: P.muted),
@@ -194,7 +194,7 @@ String _num(int n) {
   return b.toString();
 }
 
-/// 统计卡片（最多三张）和「最常听的艺人」。
+/// Stat cards (at most three) and "Top artists".
 class _Stats extends StatelessWidget {
   const _Stats({required this.source, required this.profile});
   final String source;

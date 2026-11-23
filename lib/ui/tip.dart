@@ -1,4 +1,4 @@
-// 通用组件：提示胶囊。
+// Common widgets: tooltip pill.
 
 import 'dart:async';
 
@@ -6,9 +6,9 @@ import 'package:flutter/widgets.dart';
 
 import '../theme.dart';
 
-// ───────────── 提示胶囊 ─────────────
+// ───────────── Tooltip pill ─────────────
 
-/// 设计稿里的深色胶囊提示，放在元素正上方 10px。
+/// The design's dark pill tooltip, placed 10px above the element.
 class TipAnchor extends StatefulWidget {
   const TipAnchor({
     super.key,
@@ -21,7 +21,8 @@ class TipAnchor extends StatefulWidget {
   final String text;
   final bool show;
   final bool onCover;
-  final double? dx; // 指定时，提示放在元素内横向 dx 处（进度条预览）
+  // When set, the tooltip sits at horizontal offset dx within the element (progress preview)
+  final double? dx;
   final Widget child;
 
   @override
@@ -49,13 +50,13 @@ class _TipAnchorState extends State<TipAnchor> {
     if (!mounted) return;
     if (widget.show && !_ctrl.isShowing) {
       _delay?.cancel();
-      // 按钮提示延后出现，鼠标路过时不打扰；进度预览（dx）立即显示
+      // Button tooltips appear after a delay so passing the mouse over doesn't bother; progress previews (dx) show immediately
       _delay = Timer(Duration(milliseconds: widget.dx != null ? 0 : 600), () {
         if (mounted && widget.show) _ctrl.show();
       });
     } else if (!widget.show) {
       _delay?.cancel();
-      // 不能在 build 阶段直接隐藏 OverlayPortal，放到这一帧之后
+      // OverlayPortal can't be hidden directly during build, so defer it until after this frame
       if (_ctrl.isShowing) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted && !widget.show && _ctrl.isShowing) _ctrl.hide();
@@ -129,7 +130,7 @@ class TipPill extends StatelessWidget {
                   ),
                 ],
         ),
-        // widthFactor: 1 让胶囊按文字收缩，否则会被 overlay 的整宽约束撑满
+        // widthFactor: 1 makes the pill shrink to the text, otherwise the overlay's full-width constraint stretches it
         child: Center(
           widthFactor: 1,
           child: tx(text, 12, w: w700, c: const Color(0xFFF7F7F8), tnum: true),

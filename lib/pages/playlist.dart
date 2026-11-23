@@ -13,7 +13,7 @@ import 'common.dart';
 import 'library.dart' show HeartSmall;
 import 'links.dart';
 
-/// 歌单页要显示的内容。
+/// Content shown on the playlist page.
 class PlaylistData {
   const PlaylistData({
     required this.name,
@@ -27,18 +27,18 @@ class PlaylistData {
     this.editable = '',
   });
 
-  /// 自己的歌单在源里的 id：右键可以「从歌单中删除」。别人的歌单为空。
+  /// The id in the source of the user's own playlist: enables "Remove from playlist" in the context menu. Empty for other people's playlists.
   final String editable;
 
   final String name, owner, description, cover;
 
-  /// 每行：歌曲和「加入时间」文字。
+  /// Each row: the song and its "Date added" text.
   final List<({Track track, String added})> rows;
 
-  /// 源报的歌曲数；0 时按 [rows] 数。
+  /// Song count reported by the source; when 0, the number of [rows].
   final int count;
 
-  /// 双击放歌时的 [AppState.queueFrom]。
+  /// [AppState.queueFrom] when a song is double-clicked to play.
   final String from;
   final List<(String, String)> tags;
 
@@ -74,7 +74,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   PlaylistData get _data => widget.data;
 
-  /// 这次从歌单里删掉的歌（key），删完直接从列表拿掉。
+  /// Songs (keys) removed from the playlist this time; removed from the list right away.
   final _removed = <String>{};
 
   List<({Track track, String added})> get _rows {
@@ -91,7 +91,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     return rows;
   }
 
-  /// 放这个歌单，从 [t] 开始；放不了的歌不进队列。[shuffled] 见 [AppState.playList]。
+  /// Plays this playlist from [t]; songs that can't be played are left out of the queue. For [shuffled] see [AppState.playList].
   void _play(Track? t, {bool? shuffled}) {
     final app = context.appRead;
     final d = _data;
@@ -277,7 +277,7 @@ class _Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = data;
-    // 面板底色取自歌单封面
+    // Panel background is taken from the playlist cover
     return CoverTone(
       coverId: d.cover,
       builder: (context, pal) => _body(context, pal),
@@ -288,11 +288,11 @@ class _Panel extends StatelessWidget {
     final l = context.l10n;
     final d = data;
     final meta = d.owner.isNotEmpty ? d.owner : l.countTracks(d.total);
-    // 标题最多三行；超过两行时说明少两行，播放按钮的位置不被挤下去
+    // Title is at most three lines; past two lines the description loses two lines, so the play button isn't pushed down
     final titleLines = _lines(d.name, _titleStyle, 294, 3);
     final base = d.tags.isEmpty ? 5 : 3;
     final descLines = titleLines > 2 ? math.max(1, base - 2) : base;
-    // 卡片高度跟着内容稍微浮动：按钮离底边和左边一样是 24
+    // Card height floats slightly with the content: the button is 24 from the bottom, same as from the left
     return Container(
       width: 340,
       constraints: const BoxConstraints(minHeight: 600),
@@ -442,7 +442,7 @@ class _Panel extends StatelessWidget {
 
 final _titleStyle = ts(34, w: w900, f: F.wide, c: white, h: 1.1);
 
-/// [text] 按 [style] 排在 [width] 宽里占几行，最多 [max] 行。
+/// How many lines [text] takes in [style] at [width], at most [max].
 int _lines(String text, TextStyle style, double width, int max) {
   final tp = TextPainter(
     text: TextSpan(text: text, style: style),
@@ -454,7 +454,7 @@ int _lines(String text, TextStyle style, double width, int max) {
   return n.clamp(1, max);
 }
 
-/// 歌单说明：超过 [lines] 行用省略号收起，点一下弹窗看全文。
+/// Playlist description: over [lines] lines it's collapsed with an ellipsis; tap to see the full text in a dialog.
 class _Description extends StatelessWidget {
   const _Description({
     required this.text,
@@ -575,7 +575,7 @@ class _PlRowView extends StatelessWidget {
             const SizedBox(width: 12),
             tx(added, 13, w: w500, c: P.faint),
             const Spacer(),
-            // 已喜欢的歌常驻红心；其余只在悬停时出现空心爱心
+            // Liked songs always show a red heart; others show an outlined heart only on hover
             if (h || liked) ...[
               HeartSmall(liked: liked, onTap: () => app.toggleLike(track)),
               const SizedBox(width: 8),

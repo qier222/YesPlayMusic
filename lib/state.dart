@@ -38,17 +38,17 @@ enum NpTab { lyrics, queue, similar, comments }
 
 enum LyricMode { original, both, trans }
 
-/// 整个界面的状态：路由、音乐来源、播放器、设置。
+/// State for the whole UI: routing, music sources, player, settings.
 class AppState extends ChangeNotifier {
   AppState() {
     ImageDiskCache.instance.dir = p.join(supportDir(), 'cache', 'images');
-    // 启动后过一会儿看看三份磁盘缓存有没有超过上限或过期
+    // Shortly after launch, check whether the three disk caches are over their caps or expired
     _trimTimer = Timer(const Duration(seconds: 20), () {
       cache.trim().ignore();
       ImageDiskCache.instance.trim().ignore();
       audioCache.trim().ignore();
     });
-    // 旧版只存首页、发现页的 page-cache，已经由 cache/api 取代
+    // Older versions only stored page-cache for home and Discover, now replaced by cache/api
     Directory(p.join(supportDir(), 'page-cache'))
         .delete(recursive: true)
         .then((_) {}, onError: (_) {});
@@ -66,10 +66,10 @@ class AppState extends ChangeNotifier {
     _trackPage();
   }
 
-  // ───── 匿名统计 ─────
+  // ───── Anonymous stats ─────
   String _trackedPage = '';
 
-  /// 换了页面（或正在播放的标签）就记一次；只记页面种类，不带 id 和参数。
+  /// Records once whenever the page (or the Now Playing tab) changes; only the page kind, no ids or params.
   void _trackPage() {
     final page = npOpen ? '/now-playing/${npTab.name}' : pageKind(path);
     if (page == _trackedPage) return;
@@ -77,7 +77,7 @@ class AppState extends ChangeNotifier {
     Analytics.instance.event('page_open', {'app_page': page});
   }
 
-  /// `/album/@源/id` → `/album`，`/library/albums` 保留第二段。
+  /// `/album/@source/id` → `/album`; `/library/albums` keeps the second segment.
   static String pageKind(String path) {
     final s = path.split('?').first.split('/').where((x) => x.isNotEmpty);
     if (s.isEmpty) return '/';
@@ -86,7 +86,7 @@ class AppState extends ChangeNotifier {
         : '/${s.first}';
   }
 
-  /// 每天随 app_active 发一次：设置偏好和装了哪些插件。
+  /// Sent once a day with app_active: preferences and installed plugins.
   List<AnalyticsEvent> analyticsSnapshot() => [
     (
       'settings_state',
@@ -119,10 +119,10 @@ class AppState extends ChangeNotifier {
       ),
   ];
 
-  // ───── 路由 ─────
-  // 调试用：--dart-define=ROUTE=/search 直接打开某页，NP=lyrics|queue|similar 打开正在播放，TRACK=n 选队列第 n 首
-  // 启动页：有首页进首页，否则进发现，再否则进音乐库。插件加载完才知道，
-  // 先用上次算出来的，加载完再改（用户还没点别处时）。
+  // ───── Routing ─────
+  // For debugging: --dart-define=ROUTE=/search opens a page directly, NP=lyrics|queue|similar opens Now Playing, TRACK=n selects the nth song in the queue
+  // Start page: home if there is one, otherwise Discover, otherwise the library. Only known after plugins load,
+  // so use the last computed one first and change it after loading (if the user hasn't navigated elsewhere yet).
   final List<String> _stack = [
     _prefs()['start'] as String? ?? '/library/albums',
     if (const String.fromEnvironment('ROUTE').isNotEmpty)
@@ -130,10 +130,11 @@ class AppState extends ChangeNotifier {
   ];
   String get path => _stack.last;
   bool get canBack => _stack.length > 1;
-  int navSerial = 0; // 每次跳转加一，用来驱动页面切换动画
+  // Incremented on every navigation, drives page transition animations
+  int navSerial = 0;
   bool navBack = false;
 
-  /// 后退过的页面，⌘] 前进用；跳到新页面时清空。
+  /// Pages navigated back from, for ⌘] forward; cleared when navigating to a new page.
   final List<String> _forward = [];
   bool get canForward => _forward.isNotEmpty;
 
@@ -174,8 +175,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 侧边栏第 [i] 个页面（0 首页、1 发现、2 音乐库、3 搜索），和侧边栏按钮去同一个地方。
-  /// 当前源没有首页或发现（本地模式两个都没有）时去音乐库。
+  /// The [i]th sidebar page (0 home, 1 Discover, 2 library, 3 search), going to the same place as the sidebar button.
+  /// Goes to the library when the current source has no home or Discover (local mode has neither).
   void goTab(int i) => go(switch (i) {
     0 when !hasHome => '/library/albums',
     1 when !hasDiscover => '/library/albums',
@@ -185,14 +186,14 @@ class AppState extends ChangeNotifier {
     _ => '/search',
   });
 
-  /// 侧边栏上显示的一级页面（goTab 的序号）。⌘1～4 按这个顺序。
+  /// Top-level pages shown in the sidebar (goTab indices). ⌘1–4 follow this order.
   List<int> get visibleTabs => [if (hasHome) 0, if (hasDiscover) 1, 2, 3];
 
-  /// 当前源有没有首页（插件提供 home）。本地音乐没有；插件还在加载时
-  /// 先当作有（显示骨架），加载完再看插件给不给。
+  /// Whether the current source has a home page (the plugin provides home). Local music doesn't; while a plugin is still loading
+  /// assume it does (show the skeleton), then check whether the plugin provides it after loading.
   bool get hasHome => _hasTab(Op.home);
 
-  /// 当前源有没有发现页（插件提供 browse）。规则同 [hasHome]。
+  /// Whether the current source has a Discover page (the plugin provides browse). Same rule as [hasHome].
   bool get hasDiscover => _hasTab(Op.browse);
 
   bool _hasTab(String op) {
@@ -201,8 +202,8 @@ class AppState extends ChangeNotifier {
     return s == null ? !pluginsLoaded : s.can(op);
   }
 
-  /// 换源后回到新源的起始页（首页、发现或音乐库），前后历史都清掉（是上一个源的页面）。
-  /// 在设置里换的就留在设置，后退回到起始页。
+  /// After switching sources, go to the new source's start page (home, Discover or library) and clear back/forward history (those were the previous source's pages).
+  /// If switched from Settings, stay in Settings, and going back leads to the start page.
   void _resetToStart() {
     final start = _startPath;
     final cur = path;
@@ -214,7 +215,7 @@ class AppState extends ChangeNotifier {
     navBack = false;
   }
 
-  /// 换了源以后还停在它没有的首页或发现：换到音乐库。
+  /// Still on a home or Discover page the new source doesn't have: switch to the library.
   void _leaveMissingTabs() {
     if ((path == '/home' && !hasHome) ||
         (path == '/discover' && !hasDiscover)) {
@@ -222,14 +223,14 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// ⌘F：去搜索页并让搜索框获得焦点（已经在搜索页也会重新聚焦）。
+  /// ⌘F: go to the search page and focus the search field (refocuses even when already on the search page).
   final ValueNotifier<int> searchFocus = ValueNotifier(0);
   void focusSearch() {
     go('/search');
     searchFocus.value++;
   }
 
-  // ───── 正在播放 ─────
+  // ───── Now Playing ─────
   bool npOpen = const String.fromEnvironment('NP').isNotEmpty;
   NpTab npTab = NpTab.values.firstWhere(
     (t) => t.name == const String.fromEnvironment('NP'),
@@ -253,11 +254,11 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ───── 音乐来源 ─────
+  // ───── Music sources ─────
   final Sources sources = Sources();
   LocalSource? local;
 
-  /// 本地专辑（书架用）。
+  /// Local albums (for the shelf).
   List<Album> libraryAlbums = const [];
   final Map<String, List<Track>> _albumTracks = {};
 
@@ -265,11 +266,11 @@ class AppState extends ChangeNotifier {
   Album? albumOf(String id) =>
       _remoteAlbums[id] ?? libraryAlbums.where((a) => a.id == id).firstOrNull;
 
-  /// 专辑的曲目；没加载过的返回 null。
+  /// An album's tracks; null if never loaded.
   List<Track>? albumTracks(String id) => _albumTracks[id];
 
-  /// 专辑页路由。真实专辑的 id 里可能有 / 等字符，要编码。插件的专辑
-  /// （id 是 `@源/id`）去插件专辑页，没加载过曲目也能打开。
+  /// Album page route. Real album ids may contain / and other characters and must be encoded. Plugin albums
+  /// (id `@source/id`) go to the plugin album page, which opens even when tracks haven't loaded.
   static String albumRoute(String id) {
     final i = id.indexOf('/');
     if (id.startsWith('@') && i > 1) {
@@ -280,8 +281,8 @@ class AppState extends ChangeNotifier {
 
   static String get _home => homeDir;
 
-  /// 默认扫描的文件夹：~/Music 和 ~/Documents/Music（存在的那些）。
-  /// 也可以用 --dart-define=MUSIC_DIRS=/a:/b 指定（Windows 上用 ; 分隔）。
+  /// Default folders to scan: ~/Music and ~/Documents/Music (those that exist).
+  /// Can also be set with --dart-define=MUSIC_DIRS=/a:/b (separated by ; on Windows).
   static List<String> defaultMusicFolders() {
     const env = String.fromEnvironment('MUSIC_DIRS');
     final dirs = env.isNotEmpty
@@ -290,8 +291,8 @@ class AppState extends ChangeNotifier {
     return dirs.where((d) => Directory(d).existsSync()).toList();
   }
 
-  /// `flutter test` 下的数据目录：每个测试进程一个临时目录。否则测试里的
-  /// AppState 会读写用户真实的 prefs.json、player.json（比如把当前源改成测试用的假源）。
+  /// Data directory under `flutter test`: a temp directory per test process. Otherwise AppState in tests
+  /// would read and write the user's real prefs.json and player.json (e.g. switching the current source to a fake test source).
   static final String? _testRoot =
       Platform.environment['FLUTTER_TEST'] == 'true'
       ? Directory.systemTemp.createTempSync('ypm_test_').path
@@ -316,24 +317,24 @@ class AppState extends ChangeNotifier {
     return p.join(Directory.systemTemp.path, 'YesPlayMusic');
   }
 
-  /// 正在扫描本地音乐。扫描期间音乐库为空也不显示空状态，免得启动时闪一下。
+  /// Local music is being scanned. While scanning, an empty library doesn't show the empty state, avoiding a flash at launch.
   bool scanning = false;
 
-  /// 本地音乐要扫描的文件夹，存在 prefs 里；没设置过时用 [defaultMusicFolders]。
+  /// Folders to scan for local music, stored in prefs; [defaultMusicFolders] when never set.
   late List<String> musicFolders = [
     for (final x
         in (_prefs()['musicFolders'] as List?) ?? defaultMusicFolders())
       '$x',
   ];
 
-  /// 加一个音乐文件夹并重新扫描。已经在列表里（或在已有文件夹里面）就不加。
+  /// Adds a music folder and rescans. Not added if it's already in the list (or inside an existing folder).
   Future<void> addMusicFolder(String dir) async {
     dir = p.normalize(dir);
     if (musicFolders.any((f) => f == dir || p.isWithin(f, dir))) {
       showToast(L.sourceFolderAlreadyScanned);
       return;
     }
-    // 新加的文件夹包含了已有的，就把已有的去掉
+    // If the new folder contains existing ones, remove those
     musicFolders = [...musicFolders.where((f) => !p.isWithin(dir, f)), dir];
     _savePrefs({'musicFolders': musicFolders});
     await rescanLibrary();
@@ -345,13 +346,13 @@ class AppState extends ChangeNotifier {
     await loadLibrary();
   }
 
-  /// 空状态里的「重新扫描」：扫完还是空的就提示一下。
+  /// "Rescan" in the empty state: shows a message if it's still empty after scanning.
   Future<void> rescanLibrary() async {
     await loadLibrary();
     if (!hasLibrary) showToast(L.sourceNoMusicFound);
   }
 
-  /// 扫描本地音乐，生成书架；有歌时把播放队列换成第一张专辑（不自动播放）。
+  /// Scans local music and builds the shelf; when there are songs, replaces the queue with the first album (without playing).
   Future<void> loadLibrary({List<String>? folders}) async {
     scanning = true;
     notifyListeners();
@@ -390,7 +391,7 @@ class AppState extends ChangeNotifier {
           added: DateTime.tryParse(a.added)?.toLocal(),
           released: DateTime.tryParse(a.released),
           copyright: a.copyright,
-          // 书脊宽度随曲目数变化，和设计稿的 42~64 区间一致
+          // Spine width varies with track count, within the design's 42–64 range
           spine: 42 + page.tracks.length.clamp(0, 22).toDouble(),
         ),
       );
@@ -409,24 +410,24 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ───── 插件 ─────
-  // 插件由第三方提供，应用本身不带任何插件。每个插件是 plugins/<id>/ 下的一个目录。
+  // ───── Plugins ─────
+  // Plugins come from third parties; the app itself ships none. Each plugin is a directory under plugins/<id>/.
 
-  /// 已加载的插件。
+  /// Loaded plugins.
   List<PluginSource> plugins = const [];
 
-  /// 设置里选的源，插件还没加载完时也有。
+  /// The source chosen in settings, available even before plugins finish loading.
   String get chosenSource => _sourceId;
 
-  /// 本地模式：当前源是本地音乐（插件还在加载时按设置里选的算）。
-  /// 没有首页和发现。
+  /// Local mode: the current source is local music (while plugins are loading, based on the choice in settings).
+  /// No home or Discover.
   bool get localMode =>
       (remote || pluginsLoaded ? sourceId : chosenSource) == 'local';
 
-  /// 第一次加载插件结束了（之前插件的页面先显示骨架）。
+  /// The first plugin load has finished (plugin pages show skeletons before then).
   bool pluginsLoaded = false;
 
-  /// 当前源的起始页：有首页去首页，否则发现，再否则音乐库。
+  /// The current source's start page: home if available, otherwise Discover, otherwise the library.
   String get _startPath {
     final s = remote ? sources[sourceId] : null;
     return s != null && s.can(Op.home)
@@ -442,7 +443,7 @@ class AppState extends ChangeNotifier {
     if (_stack.length == 1 && _stack.first != start) _stack[0] = start;
   }
 
-  // 每个源的首页上次有哪些区块（「样式:数量」），加载时照着画骨架，内容到了布局不跳。
+  // Sections ("style:count") each source's home had last time; the skeleton is drawn from them while loading so the layout doesn't jump when content arrives.
   final Map<String, List<String>> _homeLayouts = {
     for (final e in ((_prefs()['homeLayout'] as Map?) ?? const {}).entries)
       '${e.key}': [for (final x in e.value as List) '$x'],
@@ -454,7 +455,7 @@ class AppState extends ChangeNotifier {
           ? const ['shelf:14', 'songs:12']
           : const ['modes:5', 'shelf:10', 'songs:12']);
 
-  /// 记过的布局；没记过是 null（不给默认的）。
+  /// Remembered layout; null if never remembered (no default given).
   List<String>? savedHomeLayout(String key) => _homeLayouts[key];
 
   void rememberHomeLayout(String source, List<String> layout) {
@@ -463,10 +464,10 @@ class AppState extends ChangeNotifier {
     _savePrefs({'homeLayout': _homeLayouts});
   }
 
-  /// 没能加载的插件：目录 → 原因。
+  /// Plugins that failed to load: directory → reason.
   Map<String, String> pluginErrors = const {};
 
-  /// 应用数据目录：macOS 上是 ~/Library/Application Support/YesPlayMusic。
+  /// App data directory: ~/Library/Application Support/YesPlayMusic on macOS.
   static String supportDir() {
     if (_testRoot case final t?) return p.join(t, 'support');
     if (Platform.isMacOS) {
@@ -484,7 +485,7 @@ class AppState extends ChangeNotifier {
 
   static String pluginsDir() => p.join(supportDir(), 'plugins');
 
-  /// （重新）加载插件目录里的所有插件。
+  /// (Re)loads all plugins in the plugin directory.
   Future<void> loadPlugins() async {
     _pluginGen++;
     for (final s in plugins) {
@@ -496,7 +497,7 @@ class AppState extends ChangeNotifier {
       'signInPrompt' => _signInPrompted(plugin, args),
       _ => throw StateError('$op is not available'),
     };
-    // 插件跟应用界面语言走（host.language()、host.t() 和插件报错文案）
+    // Plugins follow the app UI language (host.language(), host.t() and plugin error messages)
     clearPluginLocaleCache();
     PluginSource.language = bcp47Of(currentLocale);
     onGlobalLocaleChanged ??= (loc) {
@@ -531,7 +532,7 @@ class AppState extends ChangeNotifier {
       }
     }
     plugins = list;
-    // 启动期间界面语言可能刚同步过来，再发一次（没变时插件那边忽略）
+    // The UI language may have just synced during startup, so send it again (plugins ignore it if unchanged)
     for (final s in list) {
       s.setLanguage(PluginSource.language);
     }
@@ -550,22 +551,22 @@ class AppState extends ChangeNotifier {
     for (final s in list) {
       if (s.can(Op.account)) _refreshAccount(s);
     }
-    // 上次放的歌是插件的：插件到了才知道喜欢没有、才取得到歌词
+    // The last song played was from a plugin: whether it's liked and its lyrics are only available once the plugin is up
     if (hasQueue && track.ref!.source != 'local') {
       checkLiked([track]);
       if (_lyrics.isEmpty) _loadLyrics(track);
     }
   }
 
-  /// 每次 loadPlugins 加一：自动重启途中整体重新加载过，重启出来的就作废。
+  /// Incremented on every loadPlugins: if everything was reloaded during an auto-restart, the restarted one is discarded.
   int _pluginGen = 0;
 
-  /// 插件目录 → 上次自动重启的时间。
+  /// Plugin directory → time of the last auto-restart.
   final _pluginRestarts = <String, DateTime>{};
 
-  /// 插件运行中途停掉（死循环、内存用尽、进程崩溃）：先自动重启一次；
-  /// 60 秒内又停掉就移到设置页的失败卡片，显示原因，用户点「重新加载」再启动。
-  /// 音乐源的选择不动。
+  /// A plugin stopped mid-run (infinite loop, out of memory, process crash): auto-restart once first;
+  /// if it stops again within 60 seconds, move it to a failure card on the settings page showing the reason, and the user clicks "Reload" to start it again.
+  /// The music source selection stays as is.
   void _pluginStopped(PluginSource s) {
     if (!plugins.contains(s)) return;
     debugPrint('[plugin ${s.id}] stopped: ${s.stopped}');
@@ -579,7 +580,7 @@ class AppState extends ChangeNotifier {
     _dropPlugin(s, s.stopped ?? L.pluginErrStopped(s.info.name));
   }
 
-  /// 把停掉的插件移到失败卡片。
+  /// Moves a stopped plugin to the failure cards.
   void _dropPlugin(PluginSource s, String why) {
     plugins = [...plugins]..remove(s);
     if (identical(sources[s.id], s)) sources.remove(s.id).ignore();
@@ -590,11 +591,11 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 重新启动停掉的插件。重启期间旧的那个留在原处（调用会直接失败），
-  /// 新的起来后原地换掉：插件卡片、当前音乐源、账号都不会闪一下。
+  /// Restarts a stopped plugin. While restarting, the old one stays in place (calls fail right away),
+  /// and the new one replaces it in place once up: the plugin card, current music source and account don't flash.
   Future<void> _restartPlugin(PluginSource old) async {
     final gen = _pluginGen;
-    debugPrint('[plugin ${old.id}] 自动重启');
+    debugPrint('[plugin ${old.id}] auto-restarting');
     final PluginSource s;
     try {
       s = await PluginSource.start(
@@ -610,7 +611,7 @@ class AppState extends ChangeNotifier {
       }
       return;
     }
-    // 重启期间整体重新加载过，或者旧的已经被移走了：这个不要了
+    // Everything was reloaded during the restart, or the old one was already moved away: drop this one
     if (gen != _pluginGen || !plugins.contains(old)) {
       await s.close();
       return;
@@ -631,7 +632,7 @@ class AppState extends ChangeNotifier {
     if (s.can(Op.account)) _refreshAccount(s);
   }
 
-  /// 用户允许运行本机程序的插件（host.spawn）。改了要重新加载插件才生效。
+  /// Plugins the user allowed to run local programs (host.spawn). Changes take effect after reloading plugins.
   Set<String> get allowPrograms => {
     for (final x in _prefs()['allowPrograms'] as List? ?? const []) '$x',
   };
@@ -643,14 +644,14 @@ class AppState extends ChangeNotifier {
     await loadPlugins();
   }
 
-  /// 用户停用的插件：目录 → plugin.json。不启动，只在设置页显示。
+  /// Plugins the user disabled: directory → plugin.json. Not started, only shown on the settings page.
   Map<String, PluginManifest> disabledPlugins = const {};
 
   Set<String> get _disabledIds => {
     for (final x in _prefs()['disabledPlugins'] as List? ?? const []) '$x',
   };
 
-  /// 启用或停用插件。停用当前音乐源时切回本地音乐。
+  /// Enables or disables a plugin. Disabling the current music source switches back to local music.
   Future<void> setPluginEnabled(String id, bool on) async {
     final s = _disabledIds;
     on ? s.remove(id) : s.add(id);
@@ -662,17 +663,17 @@ class AppState extends ChangeNotifier {
     await loadPlugins();
   }
 
-  /// 插件是从哪个链接装的（检查更新用）：id → 链接。手动放进目录的没有。
+  /// The link each plugin was installed from (for update checks): id → link. Absent for ones placed in the directory manually.
   Map<String, String> get pluginOrigins => {
     for (final e in ((_prefs()['pluginOrigins'] as Map?) ?? const {}).entries)
       '${e.key}': '${e.value}',
   };
 
-  /// 有新版本的插件：id → 版本号。
+  /// Plugins with a new version: id → version.
   final Map<String, String> pluginUpdates = {};
   var _pluginUpdatesChecked = false;
 
-  /// 检查从 GitHub 装的插件有没有新的 Release（每次启动查一次）。
+  /// Checks plugins installed from GitHub for new Releases (once per launch).
   Future<void> checkPluginUpdates({bool force = false}) async {
     if (_pluginUpdatesChecked && !force) return;
     _pluginUpdatesChecked = true;
@@ -683,7 +684,7 @@ class AppState extends ChangeNotifier {
     for (final e in pluginOrigins.entries) {
       final gh = parseGitHub(e.value);
       final cur = versions[e.key];
-      // 装的是某个分支时没有「新版本」可言
+      // When a branch was installed there's no such thing as a "new version"
       if (gh == null || gh.ref != null || cur == null) continue;
       final v = await latestGitHubVersion(gh);
       if (v != null && compareVersions(v, cur) > 0) {
@@ -695,14 +696,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 下载插件、读出权限和能力，等用户确认。
+  /// Downloads a plugin, reads its permissions and capabilities, and waits for the user to confirm.
   Future<PluginPackage> fetchPluginPackage(String link) =>
       fetchPlugin(link, pluginsRoot: pluginsDir());
 
   Future<PluginPackage> fetchPluginFolder(String folder) =>
       fetchPluginFromFolder(folder, pluginsRoot: pluginsDir());
 
-  /// 装好（或更新）确认过的插件并重新加载。
+  /// Installs (or updates) a confirmed plugin and reloads.
   Future<void> installPluginPackage(PluginPackage pkg) async {
     final id = pkg.manifest.id;
     final old = [
@@ -724,13 +725,13 @@ class AppState extends ChangeNotifier {
     await loadPlugins();
   }
 
-  /// 卸载插件：删掉插件目录和它的数据（设置、登录状态、缓存）。
+  /// Uninstalls a plugin: deletes the plugin directory and its data (settings, sign-in state, cache).
   Future<void> uninstallPlugin(String id, String dir) async {
     if (_sourceId == id) setSource('local');
     if (id.isNotEmpty) {
       Analytics.instance.event('plugin_uninstall', {'plugin_id': id});
     }
-    // id 为空（没能加载、读不出 id 的插件）时只删插件目录
+    // When the id is empty (a plugin that failed to load or whose id can't be read), only delete the plugin directory
     for (final d in [
       dir,
       if (id.isNotEmpty) p.join(supportDir(), 'plugin-data', id),
@@ -738,7 +739,7 @@ class AppState extends ChangeNotifier {
       try {
         await Directory(d).delete(recursive: true);
       } on FileSystemException {
-        // 已经没有了
+        // Already gone
       }
     }
     _savePrefs({
@@ -751,19 +752,19 @@ class AppState extends ChangeNotifier {
     await loadPlugins();
   }
 
-  // ───── 插件账号 ─────
+  // ───── Plugin accounts ─────
 
-  /// 插件里登录的账号；没登录的不在这里。
+  /// Accounts signed in through plugins; plugins not signed in aren't here.
   final Map<String, m.Account> accounts = {};
 
-  /// 正在登录的插件。
+  /// Plugins currently signing in.
   final Set<String> signingIn = {};
 
   Future<void> _refreshAccount(Source s) async {
     try {
       final a = await s.account();
       a == null ? accounts.remove(s.id) : accounts[s.id] = a;
-      // 确认了是谁（或者没登录）才换缓存的命名空间；取账号出错时不动
+      // Only switch the cache namespace once we know who it is (or that nobody's signed in); leave it alone if fetching the account fails
       _rememberAccount(s.id, a);
     } catch (e) {
       accounts.remove(s.id);
@@ -771,8 +772,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 保存插件设置（plugin.json 的 settings）。插件马上能读到新值；缓存的内容
-  /// 和账号按新设置重新取。
+  /// Saves plugin settings (settings in plugin.json). The plugin can read the new values right away; cached content
+  /// and the account are fetched again with the new settings.
   Future<void> setPluginSettings(
     PluginSource s,
     Map<String, String> values,
@@ -794,10 +795,10 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 插件登录时要显示的东西（host.signInPrompt）：二维码和说明。
+  /// What to show while a plugin signs in (host.signInPrompt): a QR code and instructions.
   SignInPrompt? signInPrompt;
 
-  // 每次登录一个编号；取消后，插件晚到的结果不再算数。
+  // Each sign-in gets a number; after cancelling, late results from the plugin no longer count.
   final Map<String, int> _signInGen = {};
 
   Future<Object?> _signInPrompted(
@@ -824,7 +825,7 @@ class AppState extends ChangeNotifier {
       final a = await s.signIn();
       if (!current()) return;
       if (a != null) accounts[s.id] = a;
-      // 换成这个账号的缓存；插件没给账号时去问一次
+      // Switch to this account's cache; ask once if the plugin didn't provide an account
       if (a != null) {
         _rememberAccount(s.id, a);
       } else if (s.can(Op.account)) {
@@ -845,7 +846,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 关掉登录窗口：不再等这次登录。
+  /// Closes the sign-in window: stops waiting for this sign-in.
   void cancelSignIn() {
     final id = signInPrompt?.source;
     signInPrompt = null;
@@ -864,22 +865,22 @@ class AppState extends ChangeNotifier {
       return;
     }
     accounts.remove(s.id);
-    // 回到未登录的那套缓存；这个账号的留着，再登录时马上能用
+    // Go back to the signed-out cache; this account's cache stays and is usable right away on the next sign-in
     _rememberAccount(s.id, null);
     _scheduleRefresh(Duration.zero);
     notifyListeners();
   }
 
-  // ───── 当前音乐源 ─────
-  // 在设置里选：本地音乐，或某个插件。选了插件后，音乐库、搜索、专辑、歌手、
-  // 歌单页显示这个插件的内容。换源时清空播放队列，关掉正在播放。
+  // ───── Current music source ─────
+  // Chosen in Settings: local music or a plugin. With a plugin chosen, the library, search, album, artist
+  // and playlist pages show that plugin's content. Switching sources clears the queue and closes Now Playing.
 
   String _sourceId = _prefs()['source'] as String? ?? 'local';
 
-  /// 当前源的 id。选中的插件没加载时退回本地。
+  /// The current source's id. Falls back to local when the chosen plugin isn't loaded.
   String get sourceId => sources[_sourceId] != null ? _sourceId : 'local';
 
-  /// 当前源是插件。
+  /// The current source is a plugin.
   bool get remote => sourceId != 'local';
 
   void setSource(String id) {
@@ -887,7 +888,7 @@ class AppState extends ChangeNotifier {
     _sourceId = id;
     _savePrefs({'source': id});
     Analytics.instance.event('source_change', {'music_source': id});
-    // 上一个源的歌不留在队列里
+    // Songs from the previous source don't stay in the queue
     npOpen = false;
     clearQueue();
     _scheduleRefresh();
@@ -916,14 +917,14 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 插件页面的路由：`/album/@源/id`，id 编码后不含 /。
+  /// Route for plugin pages: `/album/@source/id`, with the id encoded so it has no /.
   static String remoteRoute(String kind, String source, String id) =>
       '/$kind/@$source/${Uri.encodeComponent(id)}';
 
-  // ───── 插件数据缓存（SWR） ─────
-  // 有缓存就先给（旧的也给），旧了就在后台重取，取到后通知界面换上。插件源的
-  // 原始 JSON 存盘，重启后马上有内容。key 是「源@账号/路径」：换账号就是换一套
-  // 缓存，旧账号的留着，切回来不用重新加载。
+  // ───── Plugin data cache (SWR) ─────
+  // Serve the cache first if any (even stale), refetch in the background when stale, and notify the UI to swap in the result. Plugin sources'
+  // raw JSON is stored on disk, so there's content right after a restart. Keys are "source@account/path": switching accounts switches to another
+  // set of caches, and the old account's stay, so switching back needs no reload.
 
   final SwrStore cache = SwrStore(dir: p.join(supportDir(), 'cache', 'api'));
   final AudioDiskCache audioCache = AudioDiskCache(
@@ -931,11 +932,11 @@ class AppState extends ChangeNotifier {
   );
   StreamSubscription<String>? _cacheSub;
 
-  /// 本地音乐这类不进缓存的源：取到的放在内存里，这次运行有效。
+  /// Sources that aren't cached, like local music: results are kept in memory for this run.
   final Map<String, Object?> _direct = {};
   final Map<String, Future<Object?>> _directInflight = {};
 
-  /// 每个源上次确认的账号 id（存在 prefs）：启动时账号还没取到，先按它找缓存。
+  /// The account id last confirmed for each source (stored in prefs): at launch the account isn't fetched yet, so caches are found by it first.
   final Map<String, String> _accountIds = {
     for (final e in ((_prefs()['accountIds'] as Map?) ?? const {}).entries)
       '${e.key}': '${e.value}',
@@ -948,7 +949,7 @@ class AppState extends ChangeNotifier {
     _savePrefs({'accountIds': _accountIds});
   }
 
-  /// 「源@账号」：缓存的命名空间。
+  /// "source@account": the cache namespace.
   String cacheSpace(String source) {
     final a = _accountIds[source] ?? '';
     return '$source@${a.isEmpty ? 'guest' : a}';
@@ -961,7 +962,7 @@ class AppState extends ChangeNotifier {
     _cacheSub ??= cache.changes.listen((_) => _notifySoon());
   }
 
-  /// 好几条缓存一起更新时只通知一次。
+  /// Notifies only once when several cache entries update together.
   bool _notifyQueued = false;
   void _notifySoon() {
     if (_notifyQueued) return;
@@ -972,7 +973,7 @@ class AppState extends ChangeNotifier {
     });
   }
 
-  /// 现在有的数据（旧的也给）；旧了顺便在后台重取。没有返回 null。
+  /// The data available now (even stale); refetches in the background when stale. Returns null if none.
   T? peekData<T>(DataReq<T> r) {
     final s = sources[r.source];
     if (s == null) return null;
@@ -987,7 +988,7 @@ class AppState extends ChangeNotifier {
     return e?.value(r.decode);
   }
 
-  /// 取新的（同一份正在取就等它）。
+  /// Fetches new data (waits if the same data is already being fetched).
   Future<T> loadData<T>(DataReq<T> r) async {
     final s = sources[r.source];
     if (s == null) {
@@ -997,7 +998,7 @@ class AppState extends ChangeNotifier {
       final k = '${r.source}/${r.path}';
       final v = await (_directInflight[k] ??= r
           .direct(s)
-          // 不能写成 `=> remove(k)`：返回值就是这个 future，会自己等自己
+          // Can't be `=> remove(k)`: the return value is this very future, which would wait for itself
           .whenComplete(() {
             _directInflight.remove(k);
           }));
@@ -1013,16 +1014,16 @@ class AppState extends ChangeNotifier {
     return r.decode(raw);
   }
 
-  /// 不在页面里用的数据：有缓存马上返回（旧了后台重取），没有就等新的。
+  /// Data not used within a page: returns the cache right away if present (refetching in the background when stale), otherwise waits for new data.
   Future<T> getData<T>(DataReq<T> r) async => peekData(r) ?? await loadData(r);
 
-  /// 缓存里的这份数据作废（比如改了歌单）：下次用到时重取。
+  /// Invalidates this data in the cache (e.g. after changing a playlist): refetched the next time it's used.
   void dropData(DataReq<Object?> r) {
     cache.invalidate(_cacheKey(r));
     _direct.remove('${r.source}/${r.path}');
   }
 
-  /// 清掉一个源所有账号的缓存（插件设置改了，比如换了服务器地址或音质）。
+  /// Clears a source's caches for all accounts (plugin settings changed, e.g. a different server address or audio quality).
   void _dropCache(String id) {
     cache.invalidate('$id@');
     audioCache.invalidate('$id@');
@@ -1035,9 +1036,9 @@ class AppState extends ChangeNotifier {
     _scheduleRefresh();
   }
 
-  // ── 空闲时预取 ──
-  // 插件加载完、切换源、登录退出后，在后台把当前源的首页和发现默认页取好；
-  // 之后每 5 分钟看一眼，旧了就重取。页面打开时已经有内容。
+  // ── Prefetch when idle ──
+  // After plugins load, the source switches, or sign-in/out, prefetch the current source's home and default Discover page in the background;
+  // then check every 5 minutes and refetch when stale. Pages already have content when opened.
 
   Timer? _refreshTimer;
 
@@ -1064,10 +1065,10 @@ class AppState extends ChangeNotifier {
     _scheduleRefresh(const Duration(minutes: 5));
   }
 
-  // 插件专辑：转成界面的 Album，和本地专辑一样由 AlbumPage 显示。
+  // Plugin albums: converted to a UI Album and shown by AlbumPage like local albums.
   final Map<String, Album> _remoteAlbums = {};
 
-  /// 记下插件专辑，返回 AlbumPage 用的 id。
+  /// Remembers a plugin album and returns the id for AlbumPage.
   String putAlbum(String source, m.AlbumPage page) {
     final a = page.album;
     final id = '@$source/${a.id}';
@@ -1097,15 +1098,15 @@ class AppState extends ChangeNotifier {
     return id;
   }
 
-  // ───── 音乐库 ─────
-  // 音乐库四个标签（歌曲、专辑、歌单、艺人）的数据，按源分开，第一次打开时
-  // 从源加载并缓存。有 library 的源（本地、Subsonic 这类自建服务器）是整个
-  // 曲库；流媒体源用喜欢的歌、收藏的专辑。艺人没有单独的数据时，从歌曲和
-  // 专辑里统计。
+  // ───── Library ─────
+  // Data for the four library tabs (songs, albums, playlists, artists), per source, loaded from the source
+  // and cached on first open. Sources with library (local, self-hosted servers like Subsonic) give the whole
+  // collection; streaming sources use liked songs and saved albums. When there's no separate artist data, artists are counted from songs and
+  // albums.
 
   final Map<String, SourceLibrary> _libraries = {};
 
-  /// 当前源的音乐库。本地没扫到音乐时为 null，界面显示空状态。
+  /// The current source's library. null when no local music was found; the UI shows the empty state.
   SourceLibrary? get library {
     final id = sourceId;
     if (id == 'local' && !hasLibrary) return null;
@@ -1118,8 +1119,8 @@ class AppState extends ChangeNotifier {
     });
   }
 
-  /// 在后台重取当前插件源的音乐库（在音乐平台的官方客户端里喜欢、收藏的歌要
-  /// 这样才看得到）。界面上的列表不清空，取到后整体换上。30 秒内取过就不取。
+  /// Refetches the current plugin source's library in the background (needed to see songs liked or saved in the music platform's official client).
+  /// The list in the UI isn't cleared; the result is swapped in as a whole. Skipped if fetched within 30 seconds.
   void refreshLibrary() {
     final s = sources[sourceId];
     final lib = _libraries[sourceId];
@@ -1137,17 +1138,17 @@ class AppState extends ChangeNotifier {
     ).whenComplete(() => lib.refreshing = false);
   }
 
-  /// 在音乐库或 Coverflow 页时重取音乐库：进入这些页面、窗口回到前台时调用。
+  /// Refetches the library while on the library or Coverflow page: called when entering those pages and when the window comes to the front.
   void _refreshLibraryIfShown() {
     if (path.startsWith('/library') || path.startsWith('/coverflow')) {
       refreshLibrary();
     }
   }
 
-  /// 窗口回到前台。
+  /// The window came to the front.
   void onAppResume() => _refreshLibraryIfShown();
 
-  /// 重新加载当前源的音乐库。
+  /// Reloads the current source's library.
   void reloadLibrary() {
     _libraries.remove(sourceId);
     notifyListeners();
@@ -1169,7 +1170,7 @@ class AppState extends ChangeNotifier {
       }
     }
 
-    // 一页一页取，每页到了就显示。
+    // Fetch page by page, showing each page as it arrives.
     Future<List<T>> pages<T>(
       Future<(List<T>, bool)> Function(int offset) load,
       void Function(List<T>) show,
@@ -1239,8 +1240,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 插件源的音乐库：每部分取完整份存进缓存（原始 JSON）。下次打开先显示
-  /// 存的那份，后台全部重取完再整份换上；没存过的才一页一页显示、显示骨架。
+  /// Plugin source library: each part is fetched in full and cached (raw JSON). The next open shows the stored copy first
+  /// and swaps in the full refetch when done; only when nothing is stored does it show page by page with a skeleton.
   Future<void> _loadPluginLibrary(
     PluginSource s,
     SourceLibrary lib,
@@ -1269,7 +1270,7 @@ class AppState extends ChangeNotifier {
           show(had);
           artistsChanged();
         } catch (_) {
-          // 存的格式不对就当没有
+          // Treat a stored copy in the wrong format as missing
         }
       } else {
         lib.loading.add(name);
@@ -1361,8 +1362,8 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 专辑发行日期的缓存（专辑 id → yyyy-MM-dd，查过但不知道的是空串），
-  /// 存在缓存目录里，免得每次启动都去查一遍专辑详情。
+  /// Cache of album release dates (album id → yyyy-MM-dd; an empty string when looked up but unknown),
+  /// stored in the cache directory so album details aren't looked up on every launch.
   Map<String, String>? _released;
   File get _releasedFile => File(p.join(_cacheDir(), 'released.json'));
 
@@ -1376,7 +1377,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 音乐库列表没带发行日期的专辑，逐个查专辑详情补上，查完一起换上去。
+  /// For albums whose library listing has no release date, look up album details one by one and swap them in together when done.
   Future<void> _fillReleased(
     Source s,
     SourceLibrary lib,
@@ -1398,7 +1399,7 @@ class AppState extends ChangeNotifier {
           final page = await s.album(id.substring(prefix.length));
           cache[id] = page.album.released;
         } catch (_) {
-          // 查不到就下次再试
+          // Can't find it, try again next time
         }
       }
     }
@@ -1436,7 +1437,7 @@ class AppState extends ChangeNotifier {
         added: DateTime.tryParse(a.added)?.toLocal(),
         released: DateTime.tryParse(a.released),
         copyright: a.copyright,
-        // 不知道曲目数，书脊宽度按 id 散开在设计稿的 42~64 之间
+        // Track count unknown: spread the spine width by id within the design's 42–64
         spine: 42 + (a.id.hashCode % 23).abs().toDouble(),
         artistRoute: first == null || first.id.isEmpty
             ? ''
@@ -1447,8 +1448,8 @@ class AppState extends ChangeNotifier {
     return al;
   }
 
-  /// 气泡里的艺人：源给的全部艺人，或者从歌曲、专辑里统计出来的；按歌曲数
-  /// （没有歌曲时按专辑数）从多到少。
+  /// Artists in the bubbles: all artists from the source, or counted from songs and albums; sorted by song count
+  /// (album count when there are no songs), descending.
   List<LibraryArtist> _libraryArtists(
     String source,
     SourceLibrary lib,
@@ -1492,7 +1493,7 @@ class AppState extends ChangeNotifier {
     return out;
   }
 
-  /// 播放一张专辑；插件的专辑还没取过曲目时先取。
+  /// Plays an album; fetches the tracks first if a plugin album's tracks haven't been fetched yet.
   Future<void> playAlbumById(String id) async {
     if (albumTracks(id)?.isNotEmpty ?? false) return playAlbum(id);
     final i = id.indexOf('/');
@@ -1507,7 +1508,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 播放一个歌单。
+  /// Plays a playlist.
   Future<void> playPlaylist(String source, String id) async {
     final s = sources[source];
     if (s == null) return;
@@ -1526,7 +1527,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 随机播放一位艺人的所有歌曲。
+  /// Shuffles all songs by an artist.
   Future<void> playArtistShuffle(
     String source, {
     required String id,
@@ -1587,8 +1588,8 @@ class AppState extends ChangeNotifier {
     return t.artist.split(', ').any((n) => n.trim().toLowerCase() == lowerName);
   }
 
-  // ───── 搜索记录 ─────
-  // 最近搜索的词、从搜索结果里点开过的东西，存在 search_history.json。
+  // ───── Search history ─────
+  // Recent search terms and things opened from search results, stored in search_history.json.
 
   static String _historyPath() => p.join(supportDir(), 'search_history.json');
 
@@ -1631,7 +1632,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 记下一个搜过的词，放到最前面。
+  /// Records a searched term, moving it to the front.
   void rememberQuery(String q) {
     q = q.trim();
     if (q.isEmpty) return;
@@ -1643,7 +1644,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 记下从搜索结果里点开的东西，放到最前面。
+  /// Records something opened from the search results, moving it to the front.
   void rememberHit(SearchHit h) {
     searchHits = [
       h,
@@ -1665,7 +1666,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 某个源的热门搜索（缓存一小时）。源不支持或取不到就是空的。
+  /// A source's trending searches (cached for an hour). Empty if the source doesn't support it or it can't be fetched.
   Future<List<m.HotSearch>> hotSearches(String source) {
     final s = sources[source];
     if (s == null || !s.can(Op.hotSearches)) return Future.value(const []);
@@ -1673,29 +1674,29 @@ class AppState extends ChangeNotifier {
         .catchError((Object e) => <m.HotSearch>[]);
   }
 
-  // ───── 播放器 ─────
-  // 队列里的歌交给 AudioEngine 播放。
+  // ───── Player ─────
+  // Songs in the queue are played by AudioEngine.
   List<Track> queue = [];
 
-  /// 队列里有能播的歌。
+  /// The queue has playable songs.
   bool get hasQueue => queue.any((t) => t.ref != null);
   int index = const int.fromEnvironment('TRACK');
 
-  /// 当前这首；队列为空时是一首空白的歌（界面不显示播放器）。
+  /// The current song; a blank song when the queue is empty (the UI hides the player).
   Track get track => queue.isEmpty ? Track.none : queue[index];
   @visibleForTesting
   Track? get nextTrack => index + 1 < queue.length
       ? queue[index + 1]
       : (repeat && queue.isNotEmpty ? queue.first : null);
 
-  /// 接下来要放的歌。
+  /// Songs coming up next.
   List<Track> get upNext => hasQueue ? queue.sublist(index + 1) : const [];
 
   bool playing = false;
 
-  // ───── 记住播放状态 ─────
-  // 队列、第几首、进度、来源存在 player.json；下次启动恢复成暂停状态。
-  // 只存真实歌曲，没放过真实歌曲就什么都不存，悬浮播放器也不显示。
+  // ───── Remembering playback state ─────
+  // Queue, current index, position and origin are stored in player.json and restored paused on the next launch.
+  // Only real songs are stored; if no real song was ever played nothing is stored and the floating player isn't shown.
 
   static String _playerPath() => p.join(supportDir(), 'player.json');
   Timer? _playerSave;
@@ -1728,7 +1729,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 状态变了：最多每 2 秒写一次。
+  /// State changed: written at most once every 2 seconds.
   void _savePlayerSoon() {
     if (_playerSave?.isActive ?? false) return;
     _playerSave = Timer(const Duration(seconds: 2), _savePlayer);
@@ -1760,16 +1761,16 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 当前队列是从哪里放的：`album:<专辑 id>`、`playlist:<源>/<歌单 id>`、
-  /// `library`（音乐库的歌曲）；其他（一组歌、示例队列）为空。
+  /// Where the current queue was played from: `album:<album id>`, `playlist:<source>/<playlist id>`,
+  /// `library` (library songs); empty for anything else (a set of songs, the sample queue).
   String queueFrom = '';
 
-  /// 「正在播放 · 来自 …」里的名字：专辑名、歌单名、「音乐库」等；空的不显示。
-  /// 音乐库的名字显示时才翻译：存下来的是放歌时的语言，换语言后会对不上。
+  /// The name in "Now Playing · from …": album name, playlist name, "Library", etc.; hidden when empty.
+  /// The library name is translated only when displayed: what's stored is in the language at play time and would mismatch after switching languages.
   String get queueName => queueFrom == 'library' ? L.navLibrary : _queueName;
   String _queueName = '';
 
-  /// 「来自 …」能点进去的页面：来源是专辑或歌单时有，电台、搜索结果、音乐库这类没有。
+  /// The page "from …" links to: present when the origin is an album or playlist, absent for stations, search results, the library and the like.
   String? get queueFromRoute {
     final f = queueFrom;
     if (f.startsWith('album:') && f.length > 6) {
@@ -1785,7 +1786,7 @@ class AppState extends ChangeNotifier {
     return null;
   }
 
-  /// 一首歌的专辑页；源不支持或不知道是哪张专辑时为 null。
+  /// A song's album page; null when the source doesn't support it or the album is unknown.
   String? albumRouteOf(Track t) {
     final r = t.ref;
     if (r == null || r.album.id.isEmpty) return null;
@@ -1794,33 +1795,33 @@ class AppState extends ChangeNotifier {
     return remoteRoute('album', r.source, r.album.id);
   }
 
-  /// 某个源里一位艺人的页面；源不支持或没有 id 时为 null。
+  /// An artist's page in a source; null when the source doesn't support it or there's no id.
   String? artistRouteFor(String source, String id) {
     final s = sources[source];
     if (id.isEmpty || s == null || !s.can(Op.artist)) return null;
     return remoteRoute('artist', source, id);
   }
 
-  /// 去某个页面；正在播放开着就先收起。
+  /// Goes to a page, collapsing Now Playing first if open.
   void open(String route) {
     npOpen = false;
     go(route);
     notifyListeners();
   }
 
-  /// 随机播放前的队列顺序，关掉随机时恢复。
+  /// Queue order before shuffling, restored when shuffle is turned off.
   List<Track>? _unshuffled;
 
-  /// 播放进度（秒）。单独做成 ValueNotifier，只让进度相关的组件每帧重建。
+  /// Playback position (seconds). A separate ValueNotifier so only progress-related widgets rebuild each frame.
   final ValueNotifier<double> pos = ValueNotifier(0);
   double get position => pos.value;
   set position(double v) => pos.value = v;
   double get progress =>
       track.seconds == 0 ? 0 : (position / track.seconds).clamp(0.0, 1.0);
 
-  /// 滑块位置；实际响度按 AudioEngine.mpvVolume 的指数曲线换算。
-  /// 0.72 约 −11 dB，和改曲线前默认的 0.65 一样响。
-  // 音量和静音记在 prefs 里，重启后还是上次的
+  /// Slider position; actual loudness is converted with AudioEngine.mpvVolume's exponential curve.
+  /// 0.72 is about −11 dB, as loud as the default 0.65 before the curve changed.
+  // Volume and mute are stored in prefs, so they survive restarts
   double volume = ((_prefs()['volume'] as num?) ?? 0.72).toDouble().clamp(
     0.0,
     1.0,
@@ -1828,7 +1829,7 @@ class AppState extends ChangeNotifier {
   bool muted = _prefs()['muted'] == true;
   Timer? _volumeSave;
 
-  /// 拖音量条时一直在变，停下来半秒后再写盘。
+  /// Changes constantly while dragging the volume bar; written to disk half a second after it stops.
   void _saveVolumeSoon() {
     _volumeSave?.cancel();
     _volumeSave = Timer(
@@ -1845,11 +1846,11 @@ class AppState extends ChangeNotifier {
 
   AudioEngine? _engine;
 
-  /// 引擎里当前加载的是哪首歌（Track.key）。
+  /// Which song is currently loaded in the engine (Track.key).
   String? _loadedKey;
 
-  /// 引擎里真正已经打开的是哪首歌。切歌后、新歌打开前它还是旧歌（或空），
-  /// 旧歌的进度和「播完」都不能算到新歌头上。
+  /// Which song the engine has actually opened. After switching songs and before the new one opens, it's still the old song (or empty),
+  /// so the old song's progress and "finished" must not be credited to the new one.
   String? _engineKey;
   bool get _real => track.ref != null;
   bool get _engineOnTrack => _real && _engineKey == track.key;
@@ -1860,7 +1861,7 @@ class AppState extends ChangeNotifier {
     final e = AudioEngine();
     e.onPosition = (d) {
       if (!_engineOnTrack || _scrubbing || _seeking > 0) return;
-      // mpv 每秒上报很多次位置；界面 10 次/秒足够，往回跳（seek）时立即更新。
+      // mpv reports the position many times a second; 10 per second is enough for the UI, with immediate updates on seek.
       final v = d.inMilliseconds / 1000;
       if (v < position || v - position >= 0.1) position = v;
     };
@@ -1916,7 +1917,7 @@ class AppState extends ChangeNotifier {
     return p.stream;
   }
 
-  /// 当前歌稳定播放后，在后台预载下一首的歌词和音源。
+  /// Once the current song plays steadily, preload the next song's lyrics and audio in the background.
   void _schedulePreloadNext([
     Duration delay = const Duration(milliseconds: 1200),
   ]) {
@@ -1937,7 +1938,7 @@ class AppState extends ChangeNotifier {
     if (ref == null) return;
     _preloadKey = t.key;
 
-    // 1. 预载歌词（走数据缓存，切过去时可直接同步命中）
+    // 1. Preload lyrics (through the data cache, so switching to it hits synchronously)
     final src = sources[ref.source];
     if (src != null && src.can(Op.lyrics)) {
       final req = DataReq.lyrics(ref.source, ref.id);
@@ -1946,7 +1947,7 @@ class AppState extends ChangeNotifier {
       }
     }
 
-    // 2. 预载音源：先看磁盘缓存，没有就提前取播放地址并在后台缓存音频文件
+    // 2. Preload audio: check the disk cache first; if absent, fetch the playback URL early and cache the audio file in the background
     if (ref.source == 'local') return;
     final audioKey = '${cacheSpace(ref.source)}/${ref.id}';
     if (await audioCache.get(audioKey) != null) return;
@@ -1980,11 +1981,11 @@ class AppState extends ChangeNotifier {
         }).ignore();
       }
     } catch (_) {
-      // 预载失败不影响当前播放，切到这首时再正常重试
+      // A preload failure doesn't affect current playback; it retries normally when switching to that song
     }
   }
 
-  /// 让引擎跟上当前状态：换歌就重新打开，否则只切换播放/暂停。
+  /// Brings the engine in line with the current state: reopens on song change, otherwise just toggles play/pause.
   Future<void> _sync() async {
     _topUpStation();
     final t = track;
@@ -2000,9 +2001,9 @@ class AppState extends ChangeNotifier {
     }
     _loadedKey = t.key;
     _scrubbing = false;
-    // 歌词已在缓存里（比如预载好了）就同步填上，切歌首帧不闪无歌词界面
+    // If lyrics are already cached (e.g. preloaded), fill them in synchronously so the first frame after switching doesn't flash the no-lyrics view
     if (_applyCachedLyrics(t)) notifyListeners();
-    // 先停掉旧歌：取新歌地址期间旧歌不再出声，也不再上报进度
+    // Stop the old song first: while fetching the new URL, the old song stays silent and stops reporting progress
     if (_engineKey != null) {
       _engineKey = null;
       _engine?.stop();
@@ -2015,7 +2016,7 @@ class AppState extends ChangeNotifier {
       _cachingAudioKey = null;
     }
     if (audioKey != null && _preloadingAudioKey == audioKey) {
-      // 正在预载的刚好就是切过来的这首，转成当前下载任务，不要取消
+      // The song being preloaded is exactly the one switched to: turn it into the current download instead of cancelling
       _cachingAudioKey = audioKey;
       _preloadingAudioKey = null;
       _preloadTimer?.cancel();
@@ -2024,14 +2025,14 @@ class AppState extends ChangeNotifier {
     } else {
       _cancelPreload(keepAudioKey: audioKey);
     }
-    // 命中磁盘音频缓存（一个月内有效）：直接播放本地文件，不走网络也不做 SWR
+    // Disk audio cache hit (valid for a month): play the local file directly, no network and no SWR
     m.AudioStream? cached;
     if (audioKey != null) {
       cached = await audioCache.get(audioKey);
       if (_loadedKey != t.key) return;
     }
     final preloaded = cached == null ? _takePreloadedStream(t.key) : null;
-    // 连续切歌时，只给停下来的那首向插件要地址和歌词；已预载的直接开播。
+    // When skipping through songs quickly, only ask the plugin for the URL and lyrics of the song that's settled on; preloaded ones start right away.
     if (ref.source != 'local' && cached == null && preloaded == null) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
       if (_loadedKey != t.key) return;
@@ -2039,7 +2040,8 @@ class AppState extends ChangeNotifier {
     _loadLyrics(t);
     try {
       final s = cached ?? preloaded ?? await sources.stream(ref);
-      if (_loadedKey != t.key) return; // 取地址期间已经切到别的歌
+      // Switched to another song while fetching the URL
+      if (_loadedKey != t.key) return;
       final at = position;
       await _eng.open(
         s,
@@ -2048,7 +2050,7 @@ class AppState extends ChangeNotifier {
       );
       if (_loadedKey == t.key) {
         _engineKey = t.key;
-        // 只记哪个源，不记哪首歌；启动时恢复队列（不自动播放）不算
+        // Record only which source, not which song; restoring the queue at launch (without playing) doesn't count
         if (playing) {
           Analytics.instance.event('play', {
             'music_source': ref.source,
@@ -2070,8 +2072,8 @@ class AppState extends ChangeNotifier {
       showToast(e.reason.isEmpty ? L.toastCannotPlayTrack(t.title) : e.reason);
       notifyListeners();
     } catch (e) {
-      // 引擎打开失败等意外错误：同样放下这首。否则 _loadedKey 停在这首上，
-      // 之后点播放只会对空引擎 play，这首再也放不出来；错误还会变成未捕获异常。
+      // Unexpected errors like the engine failing to open: drop this song too. Otherwise _loadedKey would stay on it,
+      // and later pressing play would only play an empty engine, so this song could never play again; the error would also become uncaught.
       debugPrint('play: $e');
       if (_loadedKey != t.key) return;
       _loadedKey = null;
@@ -2100,17 +2102,17 @@ class AppState extends ChangeNotifier {
     _sync();
   }
 
-  // 拖进度条时只移动显示的位置，松手才真正跳转；跳转完成前忽略 mpv 报来的旧位置。
+  // Dragging the progress bar only moves the displayed position; the real seek happens on release, and old positions from mpv are ignored until it completes.
   bool _scrubbing = false;
   int _seeking = 0;
 
-  /// 拖动中：只更新显示的位置。
+  /// While dragging: only update the displayed position.
   void scrub(double frac) {
     _scrubbing = true;
     position = frac.clamp(0.0, 1.0) * track.seconds;
   }
 
-  /// 跳到 [frac]（0~1）。拖进度条时在松手时调用。
+  /// Seeks to [frac] (0–1). Called on release when dragging the progress bar.
   void seek(double frac) {
     _scrubbing = false;
     position = frac.clamp(0.0, 1.0) * track.seconds;
@@ -2122,7 +2124,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 快进 / 快退 [s] 秒。
+  /// Seeks forward / back [s] seconds.
   void seekBy(double s) {
     if (track.seconds <= 0) return;
     seek((position + s) / track.seconds);
@@ -2130,13 +2132,13 @@ class AppState extends ChangeNotifier {
 
   void next() {
     if (queue.isEmpty) return;
-    // 电台放到最后一首：等下一批到了再接着放
+    // A station reached its last song: wait for the next batch, then continue
     if (index + 1 >= queue.length && station != null && !repeat) {
       _stationStalled = true;
       _topUpStation();
       return;
     }
-    // 暂停时点下一首也直接开始播放
+    // Pressing next while paused also starts playing right away
     if (index + 1 < queue.length) {
       index++;
       playing = true;
@@ -2163,7 +2165,7 @@ class AppState extends ChangeNotifier {
     _sync();
   }
 
-  /// 播放某首歌：队列里有就跳过去，没有就插到当前之后。
+  /// Plays a song: jumps to it if it's in the queue, otherwise inserts it after the current one.
   void playTrack(Track t) {
     checkLiked([t]);
     final i = queue.indexWhere((q) => q.key == t.key);
@@ -2182,8 +2184,8 @@ class AppState extends ChangeNotifier {
     _sync();
   }
 
-  /// 用一张真实专辑替换队列，从第 [start] 首开始播放。
-  /// [shuffled] 见 [playList]。
+  /// Replaces the queue with a real album and plays from song [start].
+  /// For [shuffled] see [playList].
   void playAlbum(String id, {int start = 0, bool? shuffled}) {
     final ts = _albumTracks[id];
     if (ts != null) {
@@ -2197,10 +2199,10 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 用一组歌替换队列，从第 [start] 首开始播放。
-  /// [from] 见 [queueFrom]，[name] 见 [queueName]。
-  /// [shuffled]：true 是随机播放（打开随机模式，从随机一首开始，[start] 不用）；
-  /// false 是按顺序播放（关掉随机模式）；null 跟着当前的随机模式。
+  /// Replaces the queue with a set of songs and plays from song [start].
+  /// For [from] see [queueFrom]; for [name] see [queueName].
+  /// [shuffled]: true shuffles (turns shuffle on and starts from a random song, ignoring [start]);
+  /// false plays in order (turns shuffle off); null follows the current shuffle mode.
   void playList(
     List<Track> ts, {
     int start = 0,
@@ -2217,7 +2219,7 @@ class AppState extends ChangeNotifier {
     _unshuffled = null;
     if (shuffled != null) shuffle = shuffled;
     if (shuffled == true) {
-      // 整张随机：随机挑一首先放，其余打乱接在后面；关掉随机时回到原顺序
+      // Shuffle everything: pick a random song to play first and shuffle the rest after it; turning shuffle off restores the original order
       _unshuffled = List.of(queue);
       final first = queue.removeAt(math.Random().nextInt(queue.length));
       queue = [first, ...queue..shuffle()];
@@ -2260,7 +2262,7 @@ class AppState extends ChangeNotifier {
     }
     final removingCurrent = i == index;
     final removed = queue.removeAt(i);
-    // 随机期间删掉的歌也要从原顺序里去掉，否则关掉随机时又回来了
+    // Songs removed while shuffled must also be removed from the original order, or they'd come back when shuffle is turned off
     _unshuffled?.remove(removed);
     if (i < index) {
       index--;
@@ -2285,18 +2287,18 @@ class AppState extends ChangeNotifier {
     _queueName = '';
     _unshuffled = null;
     _stopEngine();
-    // 不然下次启动又恢复成清空前的队列
+    // Otherwise the next launch would restore the queue from before it was cleared
     _playerSave?.cancel();
     _playerSaved = '';
     try {
       File(_playerPath()).deleteSync();
     } on FileSystemException {
-      // 本来就没有
+      // Wasn't there to begin with
     }
     notifyListeners();
   }
 
-  /// 随机播放：打乱当前这首之后的歌；关掉时恢复原来的顺序，当前这首不变。
+  /// Shuffle: shuffles the songs after the current one; turning it off restores the original order, keeping the current song.
   void toggleShuffle() {
     shuffle = !shuffle;
     if (shuffle) {
@@ -2304,7 +2306,7 @@ class AppState extends ChangeNotifier {
       _shuffleRest();
     } else if (_unshuffled != null) {
       final cur = track;
-      // 随机期间加进队列的歌接在原顺序后面
+      // Songs added to the queue while shuffled are appended to the original order
       final extra = queue.where((t) => !_unshuffled!.contains(t));
       queue = [..._unshuffled!, ...extra];
       index = math.max(0, queue.indexOf(cur));
@@ -2321,10 +2323,10 @@ class AppState extends ChangeNotifier {
     queue = [...queue.sublist(0, index + 1), ...rest];
   }
 
-  // ───── 电台 ─────
-  // 电台的队列从 [queueFrom] = `station:<源>/<电台 id>` 认出来；快放完时向源要下一批。
+  // ───── Stations ─────
+  // Station queues are recognised by [queueFrom] = `station:<source>/<station id>`; near the end, the next batch is requested from the source.
 
-  /// 正在放的电台 (源, 电台 id)；不是电台时为 null。
+  /// The station playing (source, station id); null when not a station.
   (String, String)? get station {
     if (!queueFrom.startsWith('station:')) return null;
     final v = queueFrom.substring(8);
@@ -2334,10 +2336,10 @@ class AppState extends ChangeNotifier {
 
   bool _stationBusy = false;
 
-  /// 放到了最后一首，在等下一批。
+  /// Reached the last song and waiting for the next batch.
   bool _stationStalled = false;
 
-  /// 电台的一批歌，放不了的去掉。
+  /// A batch of station songs, minus those that can't be played.
   Future<List<Track>> stationBatch(
     String source,
     String id, {
@@ -2350,13 +2352,13 @@ class AppState extends ChangeNotifier {
       for (final t in p.tracks)
         if (!t.unavailable) Track.of(t.withSource(source)),
     ];
-    // 卡片上的红心要对：取到就查一下喜欢没有
+    // The heart on the card must be right: check whether it's liked once fetched
     checkLiked(out);
     return out;
   }
 
-  /// 放一个电台，[name] 显示在「正在播放 · 来自 …」。[first] 是已经取到的
-  /// 第一批（首页上预览的那些），没有就现取，接着当前这首歌放。
+  /// Plays a station; [name] is shown in "Now Playing · from …". [first] is a batch already
+  /// fetched (the ones previewed on the home page); if absent it's fetched now, continuing from the current song.
   Future<void> playStation(
     String source,
     String id,
@@ -2381,11 +2383,11 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // ───── 歌曲右键菜单要用的 ─────
+  // ───── For the song context menu ─────
 
   final Map<String, Future<List<m.Playlist>>> _editable = {};
 
-  /// 这个源里自己建的、能往里加歌的歌单（「我喜欢的音乐」这类固定歌单除外）。
+  /// Playlists the user created in this source that songs can be added to (excluding fixed playlists like "Liked Songs").
   Future<List<m.Playlist>> editablePlaylists(String source) {
     final s = sources[source];
     if (s == null || !s.can(Op.playlists)) return Future.value(const []);
@@ -2398,7 +2400,7 @@ class AppState extends ChangeNotifier {
         });
   }
 
-  /// 歌单内容变了：下次进歌单页重新取，音乐库里的歌单列表也重新取。
+  /// Playlist content changed: refetch next time the playlist page opens, and refetch the playlist list in the library.
   void _playlistChanged(String source, String id) {
     dropData(DataReq.playlist(source, id));
     _editable.remove(source);
@@ -2436,7 +2438,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 从歌单 [playlist] 里删掉这首。成功返回 true。
+  /// Removes this song from playlist [playlist]. Returns true on success.
   Future<bool> removeFromPlaylist(Track t, String playlist) async {
     final r = t.ref;
     final s = r == null ? null : sources[r.source];
@@ -2452,7 +2454,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 放这首歌的相似歌曲。
+  /// Plays songs similar to this one.
   Future<void> playSimilar(Track t) async {
     final r = t.ref;
     final s = r == null ? null : sources[r.source];
@@ -2469,7 +2471,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// 执行插件加的菜单项，再按插件的结果提示、复制、打开页面或放歌。
+  /// Runs a menu item added by a plugin, then shows a message, copies, opens a page or plays songs per the plugin's result.
   Future<void> runMenuAction(
     m.MenuEntry e,
     Track t, {
@@ -2549,13 +2551,13 @@ class AppState extends ChangeNotifier {
         .whenComplete(() => _stationBusy = false);
   }
 
-  /// 源能不能对这首歌说「不喜欢」。
+  /// Whether the source can be told "dislike" for this song.
   bool canDislike(Track t) {
     final r = t.ref;
     return r != null && (sources[r.source]?.can(Op.dislike) ?? false);
   }
 
-  /// 不喜欢：告诉源，并从队列里拿掉；正在放的就跳到下一首。
+  /// Dislike: tells the source and removes it from the queue; skips to the next song if it's playing.
   Future<void> dislike(Track t) async {
     final ref = t.ref;
     final s = ref == null ? null : sources[ref.source];
@@ -2586,16 +2588,16 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // ───── 评论 ─────
+  // ───── Comments ─────
   final Map<String, CommentFeed> _comments = {};
 
-  /// 当前歌曲的源有没有评论。
+  /// Whether the current song's source has comments.
   bool get canComments {
     final r = track.ref;
     return r != null && (sources[r.source]?.can(Op.comments) ?? false);
   }
 
-  /// [t] 按 [sort] 排的评论；切回来时还是原来那份，翻到哪里接着翻。
+  /// Comments on [t] sorted by [sort]; switching back gives the same instance, continuing where paging left off.
   CommentFeed? commentsOf(Track t, CommentSort sort) {
     final r = t.ref;
     final s = r == null ? null : sources[r.source];
@@ -2610,18 +2612,18 @@ class AppState extends ChangeNotifier {
     return _comments[k] = CommentFeed(s, r.id, sort);
   }
 
-  // ───── 相似歌曲 ─────
-  // 存在缓存里（一天内不重取）；转成界面的 Track 按源数据的那份列表记一次。
+  // ───── Similar songs ─────
+  // Stored in the cache (not refetched within a day); conversion to UI Tracks is remembered once per source data list.
   final _similarTracks = Expando<List<Track>>();
   final Set<String> _similarLoading = {}, _similarFailed = {};
 
-  /// 当前歌曲的源能不能给出相似歌曲（本地音乐不能）。
+  /// Whether the current song's source can give similar songs (local music can't).
   bool get canSimilar {
     final r = track.ref;
     return r != null && (sources[r.source]?.can(Op.similar) ?? false);
   }
 
-  /// 和 [t] 相似的歌；还没取过时开始取，取到前返回 null。
+  /// Songs similar to [t]; starts fetching if not yet fetched, returning null until done.
   List<Track>? similarTo(Track t) {
     final r = t.ref;
     if (r == null) return const [];
@@ -2653,12 +2655,12 @@ class AppState extends ChangeNotifier {
     if (playing) _schedulePreloadNext();
   }
 
-  /// 喜欢 / 取消喜欢一首歌。来自插件的歌同步到源（比如平台上的「我喜欢的音乐」歌单），
-  /// 先改界面，源报错再改回来。
+  /// Likes / unlikes a song. Songs from plugins sync to the source (e.g. the platform's "Liked Songs" playlist);
+  /// the UI changes first and reverts if the source errors.
   void toggleLike([Track? t]) {
     final tr = t ?? track;
     final k = tr.key;
-    // 上一次还没回来：再点会和失败回滚互相打架，先不理
+    // The previous one hasn't returned yet: another tap would fight with the failure rollback, so ignore it for now
     if (_liking.contains(k)) return;
     final on = !liked.contains(k);
     void set(bool v) => v ? liked.add(k) : liked.remove(k);
@@ -2688,11 +2690,11 @@ class AppState extends ChangeNotifier {
         .whenComplete(() => _liking.remove(k));
   }
 
-  /// 正在告诉源喜欢 / 取消喜欢的歌（key）。
+  /// Songs (keys) whose like / unlike is being sent to the source.
   final _liking = <String>{};
 
-  /// 流媒体源的音乐库就是喜欢的歌和收藏的专辑：喜欢 / 收藏成功后直接改已加载的
-  /// 音乐库，不用整个重新加载。自建服务器这类「整个曲库」的源不受影响。
+  /// A streaming source's library is its liked songs and saved albums: after a successful like / save, update the loaded
+  /// library directly instead of reloading it all. "Whole collection" sources like self-hosted servers are unaffected.
   SourceLibrary? _streamingLibrary(Source s) =>
       s.can(Op.library) ? null : _libraries[s.id];
 
@@ -2741,12 +2743,12 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 已经向源问过是否喜欢的歌（Track.key）。
+  /// Songs (Track.key) already asked about at the source for liked status.
   final Set<String> _likeKnown = {};
 
-  /// 向源查一批歌是否已喜欢，更新 [liked]。问过的不再问；查不到就算了。
+  /// Asks the source whether a batch of songs is liked and updates [liked]. Songs already asked aren't asked again; failures are ignored.
   Future<void> checkLiked(Iterable<Track> ts) async {
-    final bySource = <String, Map<String, String>>{}; // 源 → 歌 id → key
+    final bySource = <String, Map<String, String>>{}; // source → song id → key
     for (final t in ts) {
       final ref = t.ref;
       if (ref == null || ref.id.isEmpty || !_likeKnown.add(t.key)) continue;
@@ -2777,7 +2779,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 音量加减 [d]（0~1）；静音时先取消静音。
+  /// Changes volume by [d] (0–1); unmutes first if muted.
   void volumeBy(double d) {
     if (muted) {
       muted = false;
@@ -2793,17 +2795,17 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ───── 歌词 ─────
+  // ───── Lyrics ─────
   List<LyricLine> _lyrics = const [];
   String? _lyricsKey;
 
-  /// 当前歌曲的歌词，从来源加载（异步，加载前为空）。
+  /// Lyrics for the current song, loaded from the source (async, empty before loading).
   List<LyricLine> get lyricLines =>
       _lyricsKey == track.key ? _lyrics : const [];
 
   bool get hasLyrics => lyricLines.isNotEmpty;
 
-  /// 当前歌曲还在向来源取歌词（源支持歌词且尚未完成）。
+  /// Lyrics for the current song are still being fetched from the source (the source supports lyrics and isn't done yet).
   bool get lyricsLoading {
     if (_lyricsKey == track.key) return false;
     final ref = track.ref;
@@ -2830,7 +2832,7 @@ class AppState extends ChangeNotifier {
     return true;
   }
 
-  /// 正在唱的那一行。读 [position]，所以要放在 [pos] 的监听里用。
+  /// The line being sung. Reads [position], so use it inside a [pos] listener.
   int get lyricIndex {
     final ls = lyricLines;
     if (ls.isEmpty) return 0;
@@ -2848,7 +2850,7 @@ class AppState extends ChangeNotifier {
     return ans;
   }
 
-  /// 点歌词跳到那一行。
+  /// Tapping a lyric seeks to that line.
   void seekLyric(int i) {
     final ls = lyricLines;
     if (i < 0 || i >= ls.length) return;
@@ -2872,7 +2874,7 @@ class AppState extends ChangeNotifier {
       _lyricsKey = t.key;
       notifyListeners();
     } catch (_) {
-      // 歌词不是必需的，加载失败就当没有
+      // Lyrics are optional; treat a load failure as none
       if (track.key == t.key) {
         _lyrics = const [];
         _lyricsKey = t.key;
@@ -2883,7 +2885,7 @@ class AppState extends ChangeNotifier {
 
   double get effectiveVolume => muted ? 0 : volume;
 
-  // ───── 设置 ─────
+  // ───── Settings ─────
   int swatch = 0;
   String lang = _prefs()['lang'] as String? ?? 'system';
   bool miniLyric = true;
@@ -2899,14 +2901,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 三份磁盘缓存现在各占多少字节：(数据, 图片, 音频)。
+  /// Bytes each of the three disk caches uses now: (data, images, audio).
   Future<(int, int, int)> cacheSizes() async => (
     await cache.size(),
     await ImageDiskCache.instance.size(),
     await audioCache.size(),
   );
 
-  /// 清空数据、图片和音频缓存；正在显示的页面没了缓存会自己重取。
+  /// Clears the data, image and audio caches; pages on screen refetch on their own once their cache is gone.
   Future<void> clearCache() async {
     _cancelPreload();
     _preloadedStream = null;
@@ -2918,7 +2920,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 只提供深色主题（设置里不再有深浅色切换）。
+  /// Only the dark theme is offered (Settings no longer has a light/dark switch).
   bool get isDark => true;
 
   void applyTheme() {
@@ -2931,14 +2933,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ───── 页面里需要跨页保留的一点状态 ─────
+  // ───── A bit of page state kept across pages ─────
   String shelfId = '';
   int shelfSort = 1;
 
-  /// 收藏的专辑（[albumOf] 用的 id）。
+  /// Saved albums (ids as used by [albumOf]).
   final Set<String> savedAlbums = {};
 
-  /// 收藏 / 取消收藏一张专辑；插件的专辑同步到源，源报错就改回来。
+  /// Saves / unsaves an album; plugin albums sync to the source and revert if the source errors.
   Future<void> toggleSaveAlbum(Album al) async {
     final on = !savedAlbums.contains(al.id);
     void set(bool v) => v ? savedAlbums.add(al.id) : savedAlbums.remove(al.id);
@@ -2988,13 +2990,13 @@ class AppState extends ChangeNotifier {
 
   @override
   void dispose() {
-    _pluginGen++; // 正在自动重启的插件不再放回来
+    _pluginGen++; // plugins being auto-restarted aren't put back
     mcp.stop(notify: false);
     _trimTimer?.cancel();
     _refreshTimer?.cancel();
     _preloadTimer?.cancel();
     _cacheSub?.cancel();
-    // 拖完音量半秒内退出：把还没写的音量写掉
+    // Quitting within half a second of dragging the volume: write the pending volume
     if (_volumeSave?.isActive ?? false) {
       _volumeSave!.cancel();
       _savePrefs({'volume': volume, 'muted': muted});
@@ -3010,7 +3012,7 @@ class AppState extends ChangeNotifier {
   }
 }
 
-/// 通过 InheritedNotifier 下发，任何改动都会让依赖它的组件重建。
+/// Provided through InheritedNotifier; any change rebuilds dependent widgets.
 class AppScope extends InheritedNotifier<AppState> {
   const AppScope({super.key, required AppState state, required super.child})
     : super(notifier: state);
@@ -3018,7 +3020,7 @@ class AppScope extends InheritedNotifier<AppState> {
   static AppState of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<AppScope>()!.notifier!;
 
-  /// 只读取，不订阅。
+  /// Reads only, without subscribing.
   static AppState read(BuildContext context) =>
       context.getInheritedWidgetOfExactType<AppScope>()!.notifier!;
 }
@@ -3028,9 +3030,9 @@ extension AppX on BuildContext {
   AppState get appRead => AppScope.read(this);
 }
 
-/// 一个源的音乐库，加载中会逐步填上。
+/// A source's library, filled in gradually while loading.
 class SourceLibrary {
-  /// 上次开始从源加载的时间，[AppState.refreshLibrary] 用来限制频率。
+  /// When loading from the source last started, used by [AppState.refreshLibrary] to limit frequency.
   DateTime loadedAt = DateTime.now();
   bool refreshing = false;
 
@@ -3039,12 +3041,12 @@ class SourceLibrary {
   List<m.Playlist> playlists = const [];
   List<LibraryArtist> artists = const [];
 
-  /// 正在加载的部分：tracks、albums、playlists、artists。
+  /// Parts being loaded: tracks, albums, playlists, artists.
   final Set<String> loading = {};
   final Map<String, Object> errors = {};
 }
 
-/// 音乐库「艺人」里的一位。
+/// One entry in the library's "Artists".
 class LibraryArtist {
   const LibraryArtist({
     this.id = '',
@@ -3056,17 +3058,17 @@ class LibraryArtist {
   });
   final String id, name, cover;
 
-  /// cover 本身就是艺人头像（而不是从曲目或专辑封面凑的）。
+  /// cover is the artist's own avatar (not pieced together from track or album covers).
   final bool hasAvatar;
 
-  /// 点进去的页面；为空就不能点。
+  /// The page it opens; not tappable when empty.
   final String route;
 
-  /// 曲库里这位艺人的歌曲数（或专辑数），决定气泡大小。
+  /// Number of songs (or albums) by this artist in the library, which decides the bubble size.
   final int weight;
 }
 
-/// 插件登录时要应用显示的东西。
+/// What the app should show while a plugin signs in.
 class SignInPrompt {
   const SignInPrompt({
     required this.source,
@@ -3077,7 +3079,7 @@ class SignInPrompt {
   final String source, name, qr, text;
 }
 
-/// 从搜索结果里点开过的一样东西：歌、专辑、歌手或歌单。
+/// Something opened from search results: a song, album, artist or playlist.
 class SearchHit {
   const SearchHit({
     required this.kind,
@@ -3093,7 +3095,7 @@ class SearchHit {
   final String kind;
   final String source, id, title, sub, cover;
 
-  /// 歌曲本身，点了直接放。
+  /// The song itself; tapping plays it directly.
   final m.Track? track;
 
   String get key => '$source:$kind:$id';

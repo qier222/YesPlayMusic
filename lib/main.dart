@@ -23,20 +23,20 @@ import 'theme.dart';
 
 Future<void> main() async {
   AppBinding.init();
-  // 先开日志，后面初始化出的错也能记下
+  // Open the log first so errors during later initialization are recorded too
   AppLog.init(p.join(AppState.supportDir(), 'logs'));
   AppLog.captureErrors();
   AppLog.write(
     'I',
-    'YesPlayMusic $appVersion 启动（${Platform.operatingSystem} '
+    'YesPlayMusic $appVersion starting (${Platform.operatingSystem} '
         '${Platform.operatingSystemVersion}）',
   );
-  // 网络封面等也走系统代理（HttpClient 自己不读 macOS 的代理设置）。
+  // Network covers etc. also use the system proxy (HttpClient doesn't read macOS proxy settings itself).
   HttpOverrides.global = _AppHttpOverrides(systemProxy());
   AudioEngine.init();
-  // 首页日期行用 DateFormat 按界面语言格式化，要先载入各语言的日期数据
+  // The home page date line is formatted with DateFormat for the UI language, so load date data for all locales first
   await initializeDateFormatting();
-  // 预先算好所有封面的主色（48×48 缩略图，几十毫秒），页面里就能同步取色、不闪
+  // Precompute the dominant color of every cover (48×48 thumbnails, tens of ms) so pages get colors synchronously without flicker
   final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
   await CoverColors.instance.preload(
     manifest
@@ -51,8 +51,8 @@ class _AppHttpOverrides extends HttpOverrides {
   _AppHttpOverrides(this.proxy);
   final HttpProxy? proxy;
 
-  // 有的图床拒绝 UA 里带 "Dart" 的请求，返回 403。在请求头里
-  // add User-Agent 只会追加在默认值后面，所以直接换掉客户端的 userAgent。
+  // Some image hosts reject requests with "Dart" in the UA and return 403. Adding
+  // User-Agent in the headers only appends to the default value, so replace the client's userAgent instead.
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     final c = super.createHttpClient(context)..userAgent = 'YesPlayMusic';
@@ -82,7 +82,7 @@ class _YesPlayMusicState extends State<YesPlayMusic> {
     state.addListener(_onState);
     _keys.attach();
     _media.attach();
-    // 窗口回到前台时重取音乐库（可能在官方客户端里刚喜欢了歌）
+    // Refetch the library when the window comes back to the front (a song may have just been liked in the official client)
     _lifecycle = AppLifecycleListener(onResume: state.onAppResume);
     state.loadLibrary();
     state.loadPlugins();
@@ -91,9 +91,9 @@ class _YesPlayMusicState extends State<YesPlayMusic> {
     Analytics.instance.start(snapshot: state.analyticsSnapshot);
   }
 
-  /// 主题色是全局变量，const 组件不会自己重建。
-  /// 以前用 key 让整棵树重新挂载，会让页面的入场动画重播；
-  /// 现在原地把所有元素标记为需要重建，状态和动画都保留。
+  /// Theme colors are globals; const widgets don't rebuild on their own.
+  /// We used to remount the whole tree with a key, which replayed the pages' entrance animations;
+  /// now every element is marked for rebuild in place, keeping state and animations.
   void _onState() {
     final swatchChanged = state.swatch != _swatch;
     final langChanged = state.lang != _lang;

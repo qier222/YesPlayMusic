@@ -1,8 +1,8 @@
-// 插件设置弹窗（Sketch 定稿「v31 / 设置 · 插件 · 设置弹窗」）：
-// 账号、plugin.json 里 settings 声明的项、权限，左下角卸载。
+// Plugin settings dialog (Sketch final "v31 / 设置 · 插件 · 设置弹窗"):
+// account, items declared in settings in plugin.json, permissions, uninstall at the bottom left.
 //
-// 设置项类型 text、password、boolean、select；值都是字符串，boolean 存
-// "true"/""。停用的插件没在运行，设置直接写进它的 settings.json。
+// Setting types are text, password, boolean, select; values are all strings, booleans stored as
+// "true"/"". Disabled plugins aren't running, so settings are written straight into their settings.json.
 
 import 'dart:convert';
 import 'dart:io';
@@ -23,7 +23,7 @@ import '../ui.dart';
 import 'common.dart';
 import 'plugin_ui.dart';
 
-/// 打开插件设置。[running] 是在运行的插件；停用的插件传 null。
+/// Opens plugin settings. [running] is the running plugin; pass null for disabled plugins.
 void showPluginSettings(
   BuildContext context,
   PluginManifest manifest,
@@ -78,8 +78,8 @@ class _PluginSettingsState extends State<_PluginSettings> {
     for (final s in _items)
       if (_isText(s)) s.key: FocusNode(),
   };
-  final Set<String> _shown = {}; // 显示明文的密码项
-  // 停用的插件没在运行，从源码里的 export 看它提供什么
+  final Set<String> _shown = {}; // password fields shown in plain text
+  // Disabled plugins aren't running; see what they provide from the exports in the source
   late final Set<String> _ops =
       widget.running?.ops ?? exportsOf(widget.dir, _mf.main);
   late bool _programs = context.appRead.allowPrograms.contains(_mf.id);
@@ -142,7 +142,7 @@ class _PluginSettingsState extends State<_PluginSettings> {
   Future<void> _uninstall() async {
     final app = context.appRead;
     final l = context.l10n;
-    // 弹窗关掉后这个 context 就没了，确认框挂在根 Overlay 上
+    // This context is gone once the dialog closes, so the confirmation hangs on the root Overlay
     final root = Overlay.of(context, rootOverlay: true).context;
     widget.onClose();
     final name = pluginTr(widget.dir, _mf.info.name);

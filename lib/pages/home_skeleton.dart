@@ -2,16 +2,16 @@ import 'package:flutter/widgets.dart';
 
 import '../theme.dart';
 
-/// 首页加载中的骨架（定稿「插件源 · 首页加载中（骨架）」「首页与发现 · 骨架组件」）：
-/// 只画卡片和封面的外框，位置和尺寸跟真实组件一样，内容到了布局不跳。
-/// 整页不能滚动，一道很淡的光带从左往右扫。
+/// Loading skeleton for the home page (final "插件源 · 首页加载中（骨架）" and "首页与发现 · 骨架组件"):
+/// draws only card and cover outlines, positioned and sized like the real components, so the layout doesn't jump when content arrives.
+/// The page doesn't scroll; a faint band of light sweeps from left to right.
 class HomeSkeleton extends StatelessWidget {
   const HomeSkeleton({super.key, required this.head, required this.layout});
 
-  /// 页面标题，和加载完的页面一样。
+  /// Page title, same as the loaded page.
   final List<Widget> head;
 
-  /// 区块：「样式:数量」，比如 `shelf:18`。认不出的样式跳过。
+  /// Sections: "style:count", e.g. `shelf:18`. Unknown styles are skipped.
   final List<String> layout;
 
   @override
@@ -27,7 +27,7 @@ class HomeSkeleton extends StatelessWidget {
   );
 }
 
-/// 骨架的区块部分（不带标题和滚动），发现页在顶部分类下面单独用。
+/// The skeleton's section part (no title or scrolling), used separately by the Discover page below its top categories.
 class SkeletonSections extends StatefulWidget {
   const SkeletonSections(this.layout, {super.key});
   final List<String> layout;
@@ -68,7 +68,7 @@ class _SkeletonSectionsState extends State<SkeletonSections>
   }
 }
 
-/// 很淡的光带从左往右扫过骨架。
+/// A faint band of light sweeping left to right across the skeleton.
 class Shine extends StatelessWidget {
   const Shine({super.key, required this.animation, required this.child});
   final Animation<double> animation;
@@ -99,8 +99,8 @@ class Shine extends StatelessWidget {
   }
 }
 
-/// 发现页第一次加载、还不知道有哪些分类时：一排分类卡的外框。
-/// [chips] 是下面几排子分类胶囊。
+/// On the Discover page's first load, before the categories are known: outlines of a row of category cards.
+/// [chips] are the rows of sub-category pills below.
 class CategoryBones extends StatelessWidget {
   const CategoryBones({super.key, this.cards = true, this.chips = 0});
   final bool cards;
@@ -191,7 +191,7 @@ Widget? _section(String spec) {
   };
 }
 
-// 卡片、封面白 5%，标题条白 7%（浅色时换成黑）。
+// Cards and covers white 5%, title bars white 7% (black in light mode).
 Color get _card => P.dark ? wa(0.05) : ba(0.04);
 Color get _bone => P.dark ? wa(0.07) : ba(0.06);
 
@@ -203,7 +203,7 @@ Widget _box({double? w, double? h, double r = 0, Color? c}) => Container(
 
 Widget _dot(double d) => _box(w: d, h: d, r: d / 2);
 
-/// 分区标题：一根标题条，右边放按钮的位置。
+/// Section header: a title bar, with room for buttons on the right.
 Widget _head(double title, [List<Widget> trailing = const []]) => SizedBox(
   height: 32,
   child: Row(
@@ -259,7 +259,7 @@ class _Modes extends StatelessWidget {
   }
 }
 
-/// 和 Shelf 一样算卡片宽度和行数；文字的位置空着。
+/// Computes card width and rows like Shelf; text areas are left empty.
 class _Shelf extends StatelessWidget {
   const _Shelf(this.count);
   final int count;
@@ -274,7 +274,7 @@ class _Shelf extends StatelessWidget {
       final cols = (count / rows).ceil();
       final scrolls = cols * (w + gap) - gap > c.maxWidth;
       final shown = cols.clamp(0, n + 1);
-      // 封面下面：12 间距、标题一行或两行、4 间距、说明一行
+      // Below the cover: 12 spacing, one or two title lines, 4 spacing, one description line
       final text = 12.0 + (rows == 2 ? 40 : 20) + 4 + 18;
       final fade = w / 2 + gap;
       return Column(
@@ -393,8 +393,8 @@ class _Charts extends StatelessWidget {
   );
 }
 
-/// 和 CardGrid 一样铺满整行；最多画两行，下面本来也看不见。
-/// [head]：区块有标题。
+/// Fills each row like CardGrid; draws at most two rows, since anything below isn't visible anyway.
+/// [head]: the section has a title.
 class _Grid extends StatelessWidget {
   const _Grid(this.count, {this.head = false});
   final int count;

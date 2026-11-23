@@ -1,4 +1,4 @@
-// 测试用的插件和本地 HTTP 服务器。插件只是测试夹具，不随应用分发。
+// Test plugins and a local HTTP server. The plugins are only test fixtures and aren't shipped with the app.
 
 import 'dart:convert';
 import 'dart:io';
@@ -83,7 +83,7 @@ export function stream({ id, quality }) {
 export function escape() { return import("../../outside.js"); }
 ''';
 
-/// 在 [root] 下写一个插件，返回插件目录。
+/// Writes a plugin under [root] and returns the plugin directory.
 String writeFixture(
   String root, {
   String id = 'fixture',
@@ -118,7 +118,7 @@ String writeFixture(
   return dir;
 }
 
-/// 本地测试服务器。
+/// Local test server.
 Future<HttpServer> fixtureServer() async {
   final s = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   s.listen((req) async {

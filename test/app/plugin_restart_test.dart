@@ -9,7 +9,7 @@ import '../plugin/fixture.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // 插件死循环被停掉：先自动重启一次；60 秒内又停掉就进失败卡片。
+  // A plugin stuck in an infinite loop is stopped: auto-restart once first; if it stops again within 60 seconds it goes to a failure card.
   test('crashed plugin restarts once, then goes to failed', () async {
     final dir = writeFixture(AppState.pluginsDir(), id: 'restart-me');
     final app = AppState();
@@ -22,7 +22,7 @@ void main() {
 
     final first = plugin();
     var gaps = 0;
-    // 重启期间插件和音乐源一直都在，不会闪一下
+    // During the restart the plugin and music source stay present, with no flash
     void watch() {
       if (!app.plugins.any((s) => s.dir == dir) ||
           app.sources[first.id] == null) {

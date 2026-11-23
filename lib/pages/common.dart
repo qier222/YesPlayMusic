@@ -12,13 +12,13 @@ import '../state.dart';
 import '../theme.dart';
 import '../ui.dart';
 
-/// 在这个元素正下方弹出菜单（「更多」按钮用）。
+/// Shows a menu right below this element (for "More" buttons).
 void menuBelow(BuildContext context, MenuSpec spec) {
   final box = context.findRenderObject() as RenderBox;
   showMenu(context, box.localToGlobal(Offset(0, box.size.height + 6)), spec);
 }
 
-/// 规范圆形图标按钮（次要样式，开着时图标变主题色）。
+/// Standard round icon button (secondary style; the icon turns the theme color when on).
 class RoundBtn extends StatelessWidget {
   const RoundBtn({
     super.key,
@@ -76,8 +76,8 @@ class RoundBtn extends StatelessWidget {
   }
 }
 
-/// 页面上半部分的封面色背景：顶部是封面深色，向下渐变到页面底色。
-/// 取代原来的封面模糊背景。
+/// Cover-color background for the top half of the page: the cover's deep color at the top, fading down to the page background.
+/// Replaces the old blurred cover background.
 class CoverWash extends StatelessWidget {
   const CoverWash({super.key, required this.coverId, this.height = 640});
   final String coverId;
@@ -126,7 +126,7 @@ class InputBox extends StatelessWidget {
     this.maxLength,
   });
 
-  /// 最多多少个字（按字符算，不是 UTF-16 单元）。
+  /// Maximum number of characters (counted as characters, not UTF-16 units).
   final int? maxLength;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -172,7 +172,7 @@ class InputBox extends StatelessWidget {
   }
 }
 
-/// 列表行最左边：悬停变播放/暂停，正在播放显示音符，否则是序号。
+/// Leftmost cell of a list row: play/pause on hover, a note while playing, otherwise the index.
 class RowIndex extends StatelessWidget {
   const RowIndex({
     super.key,
@@ -191,7 +191,7 @@ class RowIndex extends StatelessWidget {
   final Alignment align;
   final VoidCallback? onTap;
 
-  /// 序号的颜色，默认 [P.faint]；要和同一行的时长一个颜色时传进来。
+  /// Color of the index, [P.faint] by default; pass one in to match the duration color on the same row.
   final Color? color;
 
   @override
@@ -235,7 +235,7 @@ class RowIndex extends StatelessWidget {
   }
 }
 
-/// Sketch 组件 `Search Field/胶囊 56`：56 高全圆角胶囊、白 8% 底、22 放大镜、20 字、右侧清除/状态。
+/// Sketch component `Search Field/胶囊 56`: 56 high fully rounded capsule, white 8% fill, 22 magnifier, 20 text, clear/status on the right.
 class SearchFieldBar extends StatelessWidget {
   const SearchFieldBar({
     super.key,
@@ -305,8 +305,8 @@ class SearchFieldBar extends StatelessWidget {
   }
 }
 
-/// Sketch 组件 `Tab/文字`；`showLine` 为 true 时带全宽分割线与底部选中指示条（搜索页、插件搜索页），
-/// 为 false 时仅显示文字与数量（音乐库顶部导航）。
+/// Sketch component `Tab/文字`; with `showLine` true it has a full-width divider and a selected indicator at the bottom (search page, plugin search page);
+/// with false it shows only text and count (library top navigation).
 class LineTabs extends StatelessWidget {
   const LineTabs({
     super.key,
@@ -402,8 +402,8 @@ class LineTabs extends StatelessWidget {
   }
 }
 
-/// Sketch 组件「播放中」：18×18，5 根 2px 竖条、圆角 0.7，中间最活跃（钟形包络）。
-/// 播放时跳动；暂停时 5 根都收成 3px 并停住。
+/// Sketch component "播放中" (playing): 18×18, five 2px bars with 0.7 corner radius, the middle most active (bell envelope).
+/// Bounces while playing; when paused all five shrink to 3px and stop.
 class PlayingBars extends StatefulWidget {
   const PlayingBars({
     super.key,
@@ -414,7 +414,7 @@ class PlayingBars extends StatefulWidget {
   final bool playing;
   final Color? color;
 
-  /// 暂停时条的高度（0~1）。0 是几个小点；首页电台卡片上停着也要看得出是指示条。
+  /// Bar height when paused (0–1). 0 is a few dots; it still has to read as an indicator when stopped on the home station card.
   final double rest;
 
   @override
@@ -423,7 +423,7 @@ class PlayingBars extends StatefulWidget {
 
 class _PlayingBarsState extends State<PlayingBars>
     with SingleTickerProviderStateMixin {
-  // 一个周期 6 秒，每根条在周期里转整数圈，循环衔接处不跳。
+  // One cycle is 6 seconds and each bar makes a whole number of turns per cycle, so the loop seam doesn't jump.
   late final _c = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 6),
@@ -470,8 +470,9 @@ class _BarsPainter extends CustomPainter {
   final double t, level;
   final Color color;
 
-  static const _peak = [8.0, 12.0, 16.0, 12.0, 8.0]; // 钟形包络
-  static const _turns = [5, 7, 6, 8, 5]; // 每 6 秒转几圈（约 0.8~1.3 Hz）
+  static const _peak = [8.0, 12.0, 16.0, 12.0, 8.0]; // bell envelope
+  // Turns per 6 seconds (about 0.8–1.3 Hz)
+  static const _turns = [5, 7, 6, 8, 5];
   static const _phase = [0.0, 1.7, 0.6, 2.9, 4.1];
 
   @override
@@ -497,10 +498,10 @@ class _BarsPainter extends CustomPainter {
       o.t != t || o.level != level || o.color != color;
 }
 
-// ───────────── 通用弹窗（Sketch 组件对比「通用弹窗 · 定稿」） ─────────────
-// 宽 400，内边距 32，圆角 28。顶部 64 的图标圆，下面依次是居中的标题（20）、
-// 说明（14，行高 22）、可选的内容（输入框），最后是两个等宽的 L 按钮：
-// 取消在左，确定在右。危险操作的图标圆和按钮是红的。Esc 取消，回车确定。
+// ───────────── Common dialog (Sketch component comparison "通用弹窗 · 定稿") ─────────────
+// Width 400, padding 32, radius 28. A 64 icon circle on top, then the centered title (20),
+// description (14, line height 22), optional content (input field), and finally two equal-width L buttons:
+// cancel on the left, confirm on the right. For dangerous actions the icon circle and button are red. Esc cancels, Enter confirms.
 
 OverlayEntry? _actionEntry;
 
@@ -688,8 +689,8 @@ void _openActionDialog(
   Overlay.of(context, rootOverlay: true).insert(self);
 }
 
-/// 确认弹窗：确定返回 true，取消（按钮、Esc、点外面）返回 false。
-/// [danger] 用在删除、退出登录这类操作上。[message] 里可以用 \n 自己断行。
+/// Confirmation dialog: confirm returns true, cancel (button, Esc, clicking outside) returns false.
+/// Use [danger] for actions like delete or sign out. [message] can use \n for manual line breaks.
 Future<bool> confirmAction(
   BuildContext context, {
   required String icon,
@@ -719,8 +720,8 @@ Future<bool> confirmAction(
   return done.future;
 }
 
-/// 弹窗让用户起个名字（新建歌单这类）。取消返回 null；名字去掉首尾空格，
-/// 空的不让提交。输入框下面是左对齐的说明 [hint]，右边显示字数。
+/// Dialog asking the user for a name (e.g. new playlist). Cancel returns null; the name is trimmed,
+/// and empty names can't be submitted. Below the input is a left-aligned [hint], with the character count on the right.
 Future<String?> askName(
   BuildContext context, {
   required String title,
@@ -800,12 +801,12 @@ Future<String?> askName(
     onCancel: () => finish(null),
     bindClose: (c) => close = c,
   );
-  // 弹窗外层也要焦点（接 Esc），输入框得在它之后再要
+  // The dialog's outer layer needs focus too (for Esc); the input field must request it after that
   WidgetsBinding.instance.addPostFrameCallback((_) => focus.requestFocus());
   return done.future;
 }
 
-/// 退出某个源的账号前先问一下。退出了返回 true。
+/// Asks before signing out of a source's account. Returns true if signed out.
 Future<bool> confirmSignOut(BuildContext context, Source s) async {
   final l = context.l10n;
   final ok = await confirmAction(

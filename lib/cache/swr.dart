@@ -1,12 +1,12 @@
-// SWR 缓存：先给缓存里的内容（旧的也给），旧了就在后台取新的，取到再换上。
+// SWR cache: serve what's cached (even stale), refetch in the background when stale, swap in the new data.
 //
-// 存的是插件返回的原始 JSON：插件给的就是 JSON，模型都有 fromJson，不用给
-// 每个模型写 toJson。转好的模型记在内存里，同一份数据只转一次。
+// Stores the raw JSON from plugins: plugins return JSON and every model has fromJson, so no model
+// needs a toJson. Decoded models are kept in memory; the same data is decoded only once.
 //
-// 磁盘上一个 key 一个文件：<dir>/<命名空间>/<key 的哈希>.json，内容是
-// {v, key, at, data}。命名空间是 key 第一个 / 之前的部分（「源@账号」），
-// 换账号就是换目录，旧账号的缓存留着。写盘先写临时文件再改名；总大小超过
-// 上限时删最久没用过的（读到时会更新文件时间）。
+// One file per key on disk: <dir>/<namespace>/<hash of key>.json, containing
+// {v, key, at, data}. The namespace is the part of the key before the first / ("source@account"),
+// so switching accounts switches directories and the old account's cache stays. Writes go to a temp file then rename;
+// when the total size exceeds the cap the least recently used are deleted (reads touch the file time).
 
 import 'dart:async';
 import 'dart:convert';
@@ -16,7 +16,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
-/// 一种数据的新鲜度。
+/// Freshness for one kind of data.
 class CachePolicy {
   const CachePolicy({
     required this.fresh,
@@ -24,30 +24,30 @@ class CachePolicy {
     this.persist = true,
   });
 
-  /// 取到后这么久之内直接用，不重取。
+  /// Used as-is within this long after fetching, no refetch.
   final Duration fresh;
 
-  /// 超过这么久的当作没有（不显示，等新的）。
+  /// Older than this counts as missing (not shown, wait for new data).
   final Duration maxAge;
 
-  /// 存不存盘。
+  /// Whether to store on disk.
   final bool persist;
 }
 
-/// 缓存里的一条。
+/// One entry in the cache.
 class CacheEntry {
   CacheEntry(this.data, this.at);
 
-  /// 插件返回的原始 JSON。
+  /// Raw JSON returned by the plugin.
   final Object? data;
 
-  /// 取到的时间。
+  /// When it was fetched.
   final DateTime at;
 
   Object? _value;
   Object? _decoder;
 
-  /// 用 [decode] 转成模型；同一个 decode 只转一次。
+  /// Decodes into a model with [decode]; each decode runs only once.
   T value<T>(T Function(Object? raw) decode) {
     if (!identical(_decoder, decode)) {
       _value = decode(data);
@@ -68,23 +68,23 @@ class SwrStore {
   final String dir;
   final int maxBytes;
 
-  /// 缓存格式版本：改了存盘格式就加一，旧文件作废。
+  /// Cache format version: bump when the on-disk format changes; old files become invalid.
   final int version;
   final DateTime Function() _now;
 
   final Map<String, CacheEntry> _mem = {};
   final Map<String, Future<Object?>> _inflight = {};
 
-  /// 某个 key 变了（取到新的、改了、删了）。
+  /// A key changed (fetched, modified or deleted).
   final _changes = StreamController<String>.broadcast(sync: true);
   Stream<String> get changes => _changes.stream;
 
-  /// 后台重取失败的 key：下次什么时候再试、已经连续失败几次。
+  /// Keys whose background refetch failed: when to retry next and how many times in a row it failed.
   final Map<String, (DateTime, int)> _backoff = {};
 
-  // ── 读 ──
+  // ── Read ──
 
-  /// 现在有的（内存没有就同步读盘），超过 maxAge 的不算。
+  /// What's there now (reads disk synchronously if not in memory); anything older than maxAge doesn't count.
   CacheEntry? peek(String key, CachePolicy policy) {
     var e = _mem[key];
     if (e == null && policy.persist) {
@@ -96,7 +96,7 @@ class SwrStore {
     return e;
   }
 
-  /// 和 [peek] 一样，但磁盘上的大文件也读（异步，不卡界面）。
+  /// Like [peek], but also reads large files on disk (async, doesn't block the UI).
   Future<CacheEntry?> read(String key, CachePolicy policy) async {
     var e = peek(key, policy);
     if (e == null && policy.persist && !_mem.containsKey(key)) {
@@ -108,15 +108,15 @@ class SwrStore {
     return e;
   }
 
-  /// [key] 不在新鲜期内（没有，或者过了 fresh）。
+  /// [key] is not fresh (missing, or past fresh).
   bool isStale(String key, CachePolicy policy) {
     final e = peek(key, policy);
     return e == null || _now().difference(e.at) >= policy.fresh;
   }
 
-  // ── 取 ──
+  // ── Fetch ──
 
-  /// 取新的：同一个 key 正在取就等那一个。取到存进缓存（要存盘就写盘）。
+  /// Fetches new data: if the same key is already being fetched, waits for that one. Stores the result (and writes to disk if needed).
   Future<Object?> fetch(
     String key,
     CachePolicy policy,
@@ -125,10 +125,10 @@ class SwrStore {
     final going = _inflight[key];
     if (going != null) return going;
     late final Future<Object?> f;
-    // 还是这个 key 登记着的请求：中途被 invalidate / clear 掉的，结果不要
+    // Still the request registered for this key: if it was invalidated / cleared meanwhile, discard the result
     bool current() => identical(_inflight[key], f);
     f = () async {
-      await null; // 先登记再开始
+      await null; // register first, then start
       try {
         final data = await load();
         if (current()) {
@@ -156,8 +156,8 @@ class SwrStore {
 
   static const _maxBackoff = Duration(minutes: 5);
 
-  /// 旧了就在后台重取（出错不抛：旧的照样能用）。返回有没有发请求。
-  /// 刚失败过的 key 等一会儿再试，间隔越来越长，最长 5 分钟。
+  /// Refetches in the background when stale (doesn't throw: the old data still works). Returns whether a request was sent.
+  /// Keys that just failed wait before retrying, with growing intervals up to 5 minutes.
   bool revalidate(
     String key,
     CachePolicy policy,
@@ -171,7 +171,7 @@ class SwrStore {
     return true;
   }
 
-  // ── 写 ──
+  // ── Write ──
 
   void _put(String key, Object? data, CachePolicy policy) {
     _mem[key] = CacheEntry(data, _now());
@@ -179,16 +179,16 @@ class SwrStore {
     _changes.add(key);
   }
 
-  /// 直接存一份（自己拼好的数据，比如分页取完的整个列表）。
+  /// Stores data directly (data assembled by the caller, e.g. a whole list after fetching all pages).
   void put(String key, CachePolicy policy, Object? data) {
     _inflight.remove(key);
     _backoff.remove(key);
     _put(key, data, policy);
   }
 
-  /// 直接改缓存里的内容（乐观更新）。[update] 拿到旧的原始 JSON，返回新的；
-  /// 没有这条时不改。时间不变：该重取还是会重取。返回改之前的，出错时
-  /// 用 [restore] 放回去。
+  /// Changes cached content directly (optimistic update). [update] gets the old raw JSON and returns the new one;
+  /// does nothing when the entry is missing. The time stays: it will still be refetched when due. Returns the previous value,
+  /// to put back with [restore] on error.
   Object? mutate(
     String key,
     CachePolicy policy,
@@ -203,11 +203,11 @@ class SwrStore {
     return old.data;
   }
 
-  /// 把 [mutate] 之前的内容放回去。
+  /// Puts back the content from before [mutate].
   void restore(String key, CachePolicy policy, Object? raw) =>
       mutate(key, policy, (_) => raw);
 
-  /// 删掉 [prefix] 开头的所有 key（内存和磁盘），正在取的也不要了。
+  /// Deletes all keys starting with [prefix] (memory and disk), and drops fetches in progress too.
   void invalidate(String prefix) {
     _inflight.removeWhere((k, _) => k.startsWith(prefix));
     _backoff.removeWhere((k, _) => k.startsWith(prefix));
@@ -216,20 +216,20 @@ class SwrStore {
       _mem.remove(k);
       _deleteDisk(k);
     }
-    // 磁盘上内存里没读过的：整个命名空间都删时删目录；否则逐个看 key
+    // On-disk entries never read into memory: delete the directory when removing a whole namespace; otherwise check each key
     _deletePrefixOnDisk(prefix);
     for (final k in gone) {
       _changes.add(k);
     }
   }
 
-  /// 清空全部。
+  /// Clears everything.
   Future<void> clear() async {
     _inflight.clear();
     _backoff.clear();
     final keys = _mem.keys.toList();
     _mem.clear();
-    // 等已经排队的写盘完成再删，否则写完会把旧数据带回来。
+    // Wait for queued disk writes to finish before deleting, or they'd bring the old data back.
     await _settleWrites();
     try {
       final d = Directory(dir);
@@ -243,7 +243,7 @@ class SwrStore {
     }
   }
 
-  // ── 磁盘 ──
+  // ── Disk ──
 
   static String _ns(String key) {
     final i = key.indexOf('/');
@@ -257,7 +257,7 @@ class SwrStore {
     '${sha1.convert(utf8.encode(key)).toString().substring(0, 24)}.json',
   );
 
-  /// 1 MB 以上的文件不同步读（会卡一帧），留给页面自己取。
+  /// Files of 1 MB or more aren't read synchronously (would drop a frame); pages fetch them themselves.
   static const _syncLimit = 1 << 20;
 
   CacheEntry? _readDisk(String key) {
@@ -266,7 +266,7 @@ class SwrStore {
       if (!f.existsSync() || f.lengthSync() > _syncLimit) return null;
       final j = jsonDecode(f.readAsStringSync());
       if (j is! Map || j['v'] != version || j['key'] != key) return null;
-      // 读到了就更新文件时间：清理时按它判断最久没用过的
+      // Touch the file time on read: cleanup uses it to find the least recently used
       f.setLastModified(_now()).ignore();
       return CacheEntry(
         j['data'],
@@ -293,7 +293,7 @@ class SwrStore {
     }
   }
 
-  /// 正在写的：同一个文件后写的等先写的写完，免得旧的覆盖新的。
+  /// Writes in progress: a later write to the same file waits for the earlier one, so old data never overwrites new.
   final Map<String, Future<void>> _writing = {};
   int? _bytes;
   bool _trimming = false;
@@ -327,22 +327,22 @@ class SwrStore {
     });
   }
 
-  /// 删除排在这个文件正在进行的写入之后，不然写完会把旧数据带回来。
+  /// Deletion queues behind writes in progress for this file, or the write would bring the old data back.
   void _deleteDisk(String key) {
     final path = _path(key);
     final prev = _writing[path] ?? Future.value();
     prev.then((_) => File(path).delete()).then((_) {}, onError: (_) {});
   }
 
-  /// 等现在排队的写盘都完成（出错也算完成）。
+  /// Waits for all queued disk writes to finish (errors count as finished).
   Future<void> _settleWrites() async {
     final pending = _writing.values.toList();
     if (pending.isEmpty) return;
     await Future.wait(pending.map((w) => w.catchError((Object _) {})));
   }
 
-  /// [prefix] 是「源@」（所有账号）、「源@账号/」（整个命名空间）或者更细的
-  /// 前缀。前两种直接删目录，最后一种要打开文件看 key。
+  /// [prefix] is "source@" (all accounts), "source@account/" (a whole namespace) or a finer
+  /// prefix. The first two delete the directory; the last has to open files to check the key.
   void _deletePrefixOnDisk(String prefix) {
     () async {
       await _settleWrites();
@@ -374,7 +374,7 @@ class SwrStore {
     }().catchError((Object e) => debugPrint('swr invalidate: $e'));
   }
 
-  /// 已经占用的字节数（扫一遍目录）。
+  /// Bytes in use (scans the directory).
   Future<int> size() async {
     var n = 0;
     final d = Directory(dir);
@@ -391,15 +391,15 @@ class SwrStore {
     _trimTimer = Timer(const Duration(seconds: 2), () => trim().ignore());
   }
 
-  /// 超过上限时删最久没用过的，删到上限的九成。
+  /// Over the cap, deletes the least recently used down to 90% of the cap.
   Future<void> trim() async {
     if (_trimming) return;
     _trimming = true;
     try {
       final total = _bytes ?? await size();
       if (total <= maxBytes) return;
-      // 记账只增不减（删文件时不扣），所以超了要按实际占用再判断一次，
-      // 否则会多删还在上限内的缓存。
+      // The tally only grows (deleting files doesn't subtract), so when over the cap recheck against actual usage,
+      // or caches still under the cap would be deleted too.
       final files = <(File, DateTime, int)>[];
       var n = 0;
       await for (final f in Directory(dir).list(recursive: true)) {
@@ -418,7 +418,7 @@ class SwrStore {
           await f.delete();
           n -= sz;
         } on FileSystemException {
-          // 正在写，下次再说
+          // Being written, try next time
         }
       }
       _bytes = n;
@@ -429,7 +429,7 @@ class SwrStore {
     }
   }
 
-  /// 测试用：等所有写盘完成。
+  /// For tests: waits for all disk writes to finish.
   @visibleForTesting
   Future<void> flush() async {
     while (_writing.isNotEmpty) {
@@ -437,7 +437,7 @@ class SwrStore {
     }
   }
 
-  /// 测试用：只清内存，模拟重启。
+  /// For tests: clears memory only, simulating a restart.
   @visibleForTesting
   void dropMemory() => _mem.clear();
 

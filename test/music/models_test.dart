@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/music/models.dart';
 
 void main() {
-  // 插件返回的 JSON（MyGo 插件协议的形状）能直接解析：嵌套对象、
-  // 字符串形式的数字、缺省字段都要容忍。
+  // JSON from plugins (shaped per the MyGo plugin protocol) parses directly: nested objects,
+  // numbers as strings and missing fields must all be tolerated.
   test('parses plugin-shaped album page', () {
     final page = AlbumPage.fromJson({
       'album': {
@@ -36,13 +36,13 @@ void main() {
     expect(page.tracks.first.artistNames, 'SZA');
   });
 
-  // 同一个 id 在不同源里是不同的歌，key 要带上源。
+  // The same id in different sources is a different song, so the key must include the source.
   test('track key includes source', () {
     const t = Track(id: '1', name: 'x');
     expect(t.withSource('demo').key, isNot(t.withSource('other').key));
   });
 
-  // toJson 省略空值，fromJson 读回来不丢字段。
+  // toJson omits nulls, and fromJson reads it back without losing fields.
   test('track json round trip omits empties', () {
     const t = Track(
       id: '1',
@@ -62,7 +62,7 @@ void main() {
     );
   });
 
-  // plugin.json 的 playback/settings/navigation 解析，不认识的设置类型按 text。
+  // plugin.json playback/settings/navigation parsing; unknown setting types are treated as text.
   test('source info from manifest', () {
     final info = SourceInfo.fromJson({
       'id': 'example',

@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/mcp/tool_registry.dart';
 
-/// 起一个只挂 SSE 的本机服务，返回会话、客户端收到的文本和清理函数。
+/// Starts a local server with only SSE attached, returning the session, the text the client received, and a cleanup function.
 Future<
   ({
     McpSession session,
@@ -67,12 +67,12 @@ void main() {
   test('客户端断开后推送：通道被移除，不抛未捕获异常', () async {
     final h = await _sse();
     await h.disconnect();
-    // 不用心跳，读端 onDone 就能发现对端关闭。
+    // No heartbeat: the read side's onDone notices the peer closing.
     for (var i = 0; i < 40 && h.session.sseCount > 0; i++) {
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
     expect(h.session.sseCount, 0);
-    // 移除之后再推送也不能抛未捕获异常（测试 zone 会报错）。
+    // Pushing after removal must not throw an uncaught exception either (the test zone would report it).
     h.session.keepAlive();
     h.session.notify('late');
     await Future<void>.delayed(const Duration(milliseconds: 100));

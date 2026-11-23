@@ -1,10 +1,10 @@
-// 流媒体音频文件的磁盘缓存：下载一次存进 cache/audio，缓存有效期内直接播
-// 本地文件，不做 SWR 后台重取。默认有效期一个月（30 天），上限 1 GB；
-// 清理时先删过期文件，仍超上限再按最久没播过的删（播到时会更新文件时间）。
+// Disk cache for streamed audio files: downloaded once into cache/audio and played from the
+// local file while valid, with no SWR background refetch. Default lifetime one month (30 days), cap 1 GB;
+// cleanup removes expired files first, then the least recently played until under the cap (playing touches the file time).
 //
-// 磁盘布局：<dir>/<命名空间>/<key 的哈希>.json + <key 的哈希>.<扩展名>。
-// 命名空间是 key 第一个 / 之前的部分（「源@账号」），换账号互不污染（比如
-// 未登录时的试听片段不会盖住登录后的完整音频）。写盘先写 .tmp 再改名。
+// Disk layout: <dir>/<namespace>/<hash of key>.json + <hash of key>.<extension>.
+// The namespace is the part of the key before the first / ("source@account"), so accounts don't mix (e.g.
+// a preview clip from before sign-in won't shadow the full audio after sign-in). Writes go to .tmp then rename.
 
 import 'dart:async';
 import 'dart:convert';
@@ -32,10 +32,10 @@ class AudioDiskCache {
   final String dir;
   final int maxBytes;
 
-  /// 缓存有效期：超过这么久视为过期，删除并重新拉取。
+  /// Cache lifetime: older than this counts as expired and is deleted and fetched again.
   final Duration ttl;
 
-  /// 缓存格式版本：改了存盘格式就加一，旧文件作废。
+  /// Cache format version: bump when the on-disk format changes; old files become invalid.
   final int version;
   final DateTime Function() _now;
   final HttpClient _http;
@@ -43,8 +43,8 @@ class AudioDiskCache {
   static HttpClient _createHttp() {
     final c = HttpClient()
       ..connectionTimeout = const Duration(seconds: 20)
-      // 不设 maxConnectionsPerHost：走代理访问 https 时排队的请求不会被唤醒，
-      // 会一直挂着（Dart SDK 的问题，见 image_cache.dart）。
+      // No maxConnectionsPerHost: through a proxy to https, queued requests are never woken up
+      // and hang forever (a Dart SDK issue, see image_cache.dart).
       ..userAgent =
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
           'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -54,7 +54,7 @@ class AudioDiskCache {
     return c;
   }
 
-  /// 等响应头、两块数据之间的最长间隔；超过就放弃这次缓存。
+  /// Longest wait for response headers or between two chunks; past that, give up caching this time.
   final Duration idleTimeout;
 
   final Map<String, _DownloadTask> _inflight = {};
@@ -65,7 +65,7 @@ class AudioDiskCache {
   bool _disposed = false;
   Timer? _trimTimer;
 
-  /// 这条音频流能不能按单个文件缓存（跳过本地文件和 HLS/DASH 分片清单）。
+  /// Whether this audio stream can be cached as a single file (skips local files and HLS/DASH manifests).
   static bool isCacheable(AudioStream s) {
     final uri = Uri.tryParse(s.url);
     if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
@@ -80,10 +80,10 @@ class AudioDiskCache {
     return true;
   }
 
-  // ── 读 ──
+  // ── Read ──
 
-  /// 查磁盘缓存：命中且未过期时返回指向本地文件的 [AudioStream]；
-  /// 已过期或文件损坏时清理并返回 null。
+  /// Looks up the disk cache: on a fresh hit returns an [AudioStream] pointing at the local file;
+  /// if expired or corrupt, cleans up and returns null.
   Future<AudioStream?> get(String key) async {
     if (_disposed) return null;
     final metaFile = File(_metaPath(key));
@@ -118,7 +118,7 @@ class AudioDiskCache {
         await _deleteEntry(metaFile, audioFile);
         return null;
       }
-      // 播到了就更新文件时间：清理时按它判断最久没用过的；json 里的 at 不变
+      // Touch the file time when played: cleanup uses it to find the least recently used; `at` in the json stays
       audioFile.setLastModified(_now()).ignore();
       return AudioStream(
         url: Uri.file(audioFile.path).toString(),
@@ -134,9 +134,9 @@ class AudioDiskCache {
     }
   }
 
-  // ── 写（后台下载缓存） ──
+  // ── Write (background download cache) ──
 
-  /// 下载 [stream] 并持久化到磁盘。同一个 [key] 同时只下载一次；出错不抛出。
+  /// Downloads [stream] and persists it to disk. Only one download per [key] at a time; never throws.
   Future<void> cache(String key, AudioStream stream) {
     if (_disposed || !isCacheable(stream)) return Future.value();
     final existing = _inflight[key];
@@ -150,13 +150,13 @@ class AudioDiskCache {
     return task.done;
   }
 
-  /// 取消某个 [key] 正在进行的缓存下载。
+  /// Cancels the cache download in progress for [key].
   void cancel(String key) {
     final task = _inflight.remove(key);
     task?.cancel();
   }
 
-  /// 取消所有正在进行的缓存下载。
+  /// Cancels all cache downloads in progress.
   void cancelAll() {
     final tasks = _inflight.values.toList();
     _inflight.clear();
@@ -186,7 +186,7 @@ class AudioDiskCache {
         req.abort();
         return;
       }
-      // 弱网 / 代理卡住时请求会一直挂着，占着 _inflight，这首歌以后都不会再缓存
+      // On a weak network / stuck proxy the request hangs forever, holding _inflight, and this song would never be cached again
       final HttpClientResponse res;
       try {
         res = await req.close().timeout(idleTimeout);
@@ -270,7 +270,7 @@ class AudioDiskCache {
         return;
       }
 
-      // 如果旧缓存存在且扩展名不同，顺手清掉旧音频文件
+      // If an old cache exists with a different extension, remove the old audio file too
       final oldMetaFile = File(metaPath);
       String? oldAudioName;
       var oldSize = 0;
@@ -375,10 +375,10 @@ class AudioDiskCache {
     };
   }
 
-  // ── 清理与失效 ──
+  // ── Cleanup and invalidation ──
 
-  /// 删掉 [prefix] 开头的所有缓存，并取消对应正在进行的下载。
-  /// [prefix] 可以是「源@」（所有账号）、「源@账号/」（整个命名空间）或更细的前缀。
+  /// Deletes all caches starting with [prefix] and cancels the matching downloads in progress.
+  /// [prefix] can be "source@" (all accounts), "source@account/" (a whole namespace) or a finer prefix.
   void invalidate(String prefix) {
     final matching = _inflight.keys.where((k) => k.startsWith(prefix)).toList();
     for (final k in matching) {
@@ -426,7 +426,7 @@ class AudioDiskCache {
     }().catchError((Object e) => debugPrint('audio cache invalidate: $e'));
   }
 
-  /// 已经占用的字节数（扫一遍目录，不含正在写的 .tmp）。
+  /// Bytes in use (scans the directory, excluding .tmp files being written).
   Future<int> size() async {
     final d = Directory(dir);
     if (!await d.exists()) return _bytes = 0;
@@ -436,7 +436,7 @@ class AudioDiskCache {
         try {
           n += await f.length();
         } on FileSystemException {
-          // 刚被删了
+          // Just deleted
         }
       }
     }
@@ -448,7 +448,7 @@ class AudioDiskCache {
     _trimTimer = Timer(const Duration(seconds: 5), () => trim().ignore());
   }
 
-  /// 先删过期（超过 [ttl]）和损坏/残留文件；仍超过上限时删最久没播过的，删到上限的九成。
+  /// Deletes expired (older than [ttl]) and corrupt/leftover files first; if still over the cap, deletes the least recently played down to 90% of the cap.
   Future<void> trim() async {
     if (_disposed || _trimming) return;
     _trimming = true;
@@ -459,8 +459,8 @@ class AudioDiskCache {
         return;
       }
       final now = _now();
-      // 刚写的文件（比如音频已到位、.json 还没写完）先不动。mtime 是真实时间，
-      // 所以这里用真实时钟，不用 _now
+      // Leave just-written files alone (e.g. audio in place but .json not written yet). mtime is wall-clock time,
+      // so use the real clock here, not _now
       final wall = DateTime.now();
       bool fresh(DateTime modified) =>
           wall.difference(modified) < const Duration(minutes: 1);
@@ -527,7 +527,7 @@ class AudioDiskCache {
         }
       }
 
-      // 清理没有对应 .json 的孤儿音频文件
+      // Remove orphan audio files with no matching .json
       for (final f in others) {
         if (referenced.contains(f.path)) continue;
         try {
@@ -557,7 +557,7 @@ class AudioDiskCache {
     }
   }
 
-  /// 清空全部音频缓存。
+  /// Clears the whole audio cache.
   Future<void> clear() async {
     _clearGen++;
     cancelAll();
@@ -577,7 +577,7 @@ class AudioDiskCache {
     _http.close(force: true);
   }
 
-  // ── 路径与工具 ──
+  // ── Paths and helpers ──
 
   static String _ns(String key) {
     final i = key.indexOf('/');
@@ -602,7 +602,7 @@ class AudioDiskCache {
     try {
       if (await f.exists()) await f.delete();
     } on FileSystemException {
-      // 正在写或已删除，下次再说
+      // Being written or already deleted; try again next time
     }
   }
 }

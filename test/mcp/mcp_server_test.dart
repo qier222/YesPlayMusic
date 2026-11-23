@@ -96,7 +96,7 @@ Future<({int status, String? sessionId, Map<String, Object?>? body})> _rpc(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  // TestWidgetsFlutterBinding 默认把 HttpClient 拦截成 400，这里恢复真实本机回环连接。
+  // TestWidgetsFlutterBinding intercepts HttpClient with 400 by default; restore real loopback connections here.
   HttpOverrides.global = null;
 
   late AppState app;
@@ -121,7 +121,7 @@ void main() {
     app.sources.add(fake);
     app.setSource('fake');
 
-    // 使用空闲随机端口（由系统分配）避免端口冲突
+    // Use a free random port (assigned by the OS) to avoid port conflicts
     final probe = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     port = probe.port;
     await probe.close();
@@ -173,7 +173,7 @@ void main() {
           'ypm_call_tool',
         ]),
       );
-      // 懒加载工具初始不应出现在 tools/list 中
+      // Lazy tools must not appear in tools/list initially
       expect(names, isNot(contains('get_lyrics')));
       expect(names, isNot(contains('list_playlists')));
     },
@@ -187,7 +187,7 @@ void main() {
     });
     final sid = init.sessionId!;
 
-    // 连接 SSE 通道监听 notifications/tools/list_changed
+    // Connect the SSE channel to listen for notifications/tools/list_changed
     final sseReq = await client.getUrl(Uri.parse('http://127.0.0.1:$port/mcp'));
     sseReq.headers.set('Mcp-Session-Id', sid);
     final sseRes = await sseReq.close();
@@ -199,7 +199,7 @@ void main() {
       }
     });
 
-    // 通过 ypm_discover_tools 发现 lyrics 分类
+    // Discover the lyrics category via ypm_discover_tools
     final disc = await _rpc(client, port, {
       'jsonrpc': '2.0',
       'id': 2,
@@ -216,16 +216,16 @@ void main() {
     final discJson = jsonDecode(discText) as Map;
     expect(discJson['matchedCount'], 1);
     expect(discJson['unlockedInSession'], true);
-    // 不被当前源支持的 comments 分类不应出现在可用分类里
+    // The comments category, unsupported by the current source, must not appear among available categories
     expect((discJson['categories'] as Map).containsKey('comments'), isFalse);
 
-    // 应收到 SSE list_changed 通知
+    // Should receive an SSE list_changed notification
     final sseChunk = await sseReceived.future.timeout(
       const Duration(seconds: 3),
     );
     expect(sseChunk, contains('notifications/tools/list_changed'));
 
-    // 再次 tools/list 应已包含 get_lyrics
+    // tools/list should now include get_lyrics
     final list2 = await _rpc(client, port, {
       'jsonrpc': '2.0',
       'id': 3,
@@ -237,7 +237,7 @@ void main() {
     };
     expect(names2, contains('get_lyrics'));
 
-    // 通过 ypm_call_tool 调用懒加载工具 get_lyrics
+    // Call the lazy tool get_lyrics via ypm_call_tool
     final call = await _rpc(client, port, {
       'jsonrpc': '2.0',
       'id': 4,
@@ -279,7 +279,7 @@ void main() {
       expect(names, contains('list_playlists'));
       expect(names, isNot(contains('ypm_discover_tools')));
       expect(names, isNot(contains('ypm_call_tool')));
-      // fake 源不支持 Op.comments，因此不暴露 get_comments
+      // The fake source doesn't support Op.comments, so get_comments isn't exposed
       expect(names, isNot(contains('get_comments')));
     },
   );
@@ -531,8 +531,8 @@ void main() {
     await s.close();
   });
 
-  // 会话按规范管理：不认识的 ID 回 404（客户端重新 initialize），
-  // 不带 ID 的普通请求能用但不留下会话。
+  // Sessions are managed per the spec: unknown IDs get 404 (the client re-initializes),
+  // plain requests without an ID work but leave no session behind.
   test('session: 不认识的会话 404，不带会话不登记', () async {
     final stale = await _rpc(client, port, {
       'jsonrpc': '2.0',
@@ -551,7 +551,7 @@ void main() {
     expect(anon.sessionId, isNull);
     expect(server.sessionCount, 0);
 
-    // 带着过期 ID 重新 initialize：拿到新会话
+    // Re-initialize with an expired ID: get a new session
     final init = await _rpc(client, port, {
       'jsonrpc': '2.0',
       'id': 1,
@@ -561,7 +561,7 @@ void main() {
     expect(init.sessionId, isNot('ypm_old'));
     expect(server.sessionCount, 1);
 
-    // 通知通道：没带会话 400，不认识的会话 404
+    // Notification channel: 400 without a session, 404 for an unknown session
     for (final (sid, code) in [
       (null, HttpStatus.badRequest),
       ('ypm_old', HttpStatus.notFound),
@@ -634,7 +634,7 @@ void main() {
     });
     expect(init['result'], isNotNull);
 
-    // 模拟 App 重启：会话全部丢失
+    // Simulate an app restart: all sessions are lost
     await server.stop();
     server = McpServer(app);
     await server.applyConfig(

@@ -1,17 +1,17 @@
-// 从链接安装插件。
+// Installing plugins from links.
 //
-// 支持的链接：
-//   - GitHub 仓库：github.com/owner/repo（或 owner/repo）。有正式版时装最新
-//     Release（优先用 Release 里的 .zip 附件，否则用源码包），没有就装默认分支。
-//   - GitHub Release 页面：github.com/owner/repo/releases/tag/v1.2.0
-//   - GitHub 目录或文件：github.com/owner/repo/tree/main/plugins/x、
+// Supported links:
+//   - GitHub repo: github.com/owner/repo (or owner/repo). With a release, installs the latest
+//     Release (preferring a .zip asset in the Release, otherwise the source archive); without one, the default branch.
+//   - GitHub Release page: github.com/owner/repo/releases/tag/v1.2.0
+//   - GitHub directory or file: github.com/owner/repo/tree/main/plugins/x,
 //     .../blob/main/plugins/x/plugin.json
-//   - .zip 链接：解压后找 plugin.json 所在的目录。
-//   - plugin.json 链接：下载它、main 指向的入口，以及入口相对 import 的文件。
+//   - .zip link: extracted, then the directory containing plugin.json is used.
+//   - plugin.json link: downloads it, the entry main points to, and files the entry imports relatively.
 //
-// 下载的东西先放在插件目录下的 .staging-*（以 . 开头，加载插件时会跳过），
-// 用户在安装确认里看过权限和能力、点了「安装」才移到 plugins/<id>/。
-// 确认之前不运行插件的任何代码：能力是从源码里的 export 看出来的。
+// Downloads go to .staging-* under the plugin directory first (starting with ., so plugin loading skips it),
+// and only move to plugins/<id>/ after the user has reviewed permissions and capabilities and clicked "Install".
+// No plugin code runs before confirmation: capabilities are read from the exports in the source.
 
 import 'dart:convert';
 import 'dart:io';
@@ -26,7 +26,7 @@ import '../version.dart';
 import 'manifest.dart';
 import 'plugin_source.dart';
 
-/// 下载好、还没安装的插件。
+/// A plugin downloaded but not yet installed.
 class PluginPackage {
   PluginPackage._({
     required this.dir,
@@ -39,27 +39,27 @@ class PluginPackage {
     this.published,
   });
 
-  /// plugin.json 所在的目录（在暂存目录里）。
+  /// The directory containing plugin.json (inside the staging directory).
   final String dir;
 
-  /// 暂存目录，装好或放弃后删掉。
+  /// Staging directory, deleted after installing or giving up.
   final String stage;
   final PluginManifest manifest;
 
-  /// 源码里导出的、应用认识的功能（Op）。
+  /// Features (Ops) exported in the source that the app recognises.
   final Set<String> ops;
 
-  /// 记下来用于检查更新的链接（规范化过）；从本地文件夹装的为空。
+  /// The (normalised) link remembered for update checks; empty when installed from a local folder.
   final String origin;
 
-  /// 给用户看的来源：github.com/owner/repo 或链接的主机和路径。
+  /// The origin shown to the user: github.com/owner/repo, or the link's host and path.
   final String source;
 
-  /// Release 的 tag；装的是分支或别的链接时为空。
+  /// The Release tag; empty when a branch or another link was installed.
   final String release;
   final DateTime? published;
 
-  /// 当前应用版本装不了时的原因。
+  /// Why it can't be installed on the current app version.
   String? get blocked =>
       manifest.minAppVersion.isNotEmpty &&
           compareVersions(appVersion, manifest.minAppVersion) < 0
@@ -73,7 +73,7 @@ class PluginPackage {
   }
 }
 
-/// 安装失败，[message] 可以直接给用户看。
+/// Installation failed; [message] can be shown to the user as-is.
 class InstallError implements Exception {
   InstallError(this.message);
   final String message;
@@ -81,7 +81,7 @@ class InstallError implements Exception {
   String toString() => message;
 }
 
-/// GitHub 上的位置。[ref] 是分支或提交，[tag] 是 Release；都空时用最新 Release。
+/// A location on GitHub. [ref] is a branch or commit, [tag] a Release; when both are empty the latest Release is used.
 class GitHubRef {
   const GitHubRef(this.owner, this.repo, {this.tag, this.ref, this.path = ''});
   final String owner, repo;
@@ -91,10 +91,10 @@ class GitHubRef {
   String get slug => '$owner/$repo';
 }
 
-/// 把用户填的链接解析成 GitHub 位置；不是 GitHub 仓库链接时返回 null。
+/// Parses the link the user entered into a GitHub location; returns null when it isn't a GitHub repo link.
 GitHubRef? parseGitHub(String input) {
   var s = input.trim();
-  // owner/repo 简写；GitHub 用户名里没有点，借此和 github.com/owner 区分开
+  // owner/repo shorthand; GitHub usernames have no dots, which tells it apart from github.com/owner
   if (RegExp(r'^[\w-]+/[\w.-]+$').hasMatch(s)) s = 'github.com/$s';
   if (!s.contains('://')) s = 'https://$s';
   final u = Uri.tryParse(s);
@@ -113,7 +113,7 @@ GitHubRef? parseGitHub(String input) {
       if (seg.length == 3 || (seg.length == 4 && seg[3] == 'latest')) {
         return GitHubRef(owner, repo);
       }
-      return null; // releases/download/... 是附件直链
+      return null; // releases/download/... is a direct asset link
     case 'tree' when seg.length >= 4:
       return GitHubRef(owner, repo, ref: seg[3], path: seg.skip(4).join('/'));
     case 'blob' when seg.length >= 5:
@@ -126,11 +126,11 @@ GitHubRef? parseGitHub(String input) {
 
 const _maxBytes = 50 * 1024 * 1024;
 
-/// 解压后的总大小和文件数上限，防 zip 炸弹。
+/// Limits on total extracted size and file count, against zip bombs.
 const _maxUnzippedBytes = 200 * 1024 * 1024;
 const _maxUnzippedFiles = 5000;
 
-/// 下载插件到 [pluginsRoot]/.staging-*，读出 plugin.json 和导出的功能。
+/// Downloads the plugin into [pluginsRoot]/.staging-* and reads plugin.json and the exported features.
 Future<PluginPackage> fetchPlugin(
   String input, {
   required String pluginsRoot,
@@ -186,7 +186,7 @@ Future<PluginPackage> fetchPlugin(
   }
 }
 
-/// 从本地文件夹安装：复制到暂存目录，和链接安装走同一套确认。
+/// Installs from a local folder: copies to the staging directory and goes through the same confirmation as link installs.
 Future<PluginPackage> fetchPluginFromFolder(
   String folder, {
   required String pluginsRoot,
@@ -207,8 +207,8 @@ Future<PluginPackage> fetchPluginFromFolder(
   }
 }
 
-/// 把 [pkg] 装到 `plugins/<id>/`。[replace] 是同一个插件现在的目录（更新时），
-/// 会先删掉。返回装好的目录。
+/// Installs [pkg] into `plugins/<id>/`. [replace] is the current directory of the same plugin (when updating),
+/// which is deleted first. Returns the installed directory.
 Future<String> installPlugin(
   PluginPackage pkg, {
   required String pluginsRoot,
@@ -228,7 +228,7 @@ Future<String> installPlugin(
   return target;
 }
 
-/// GitHub 仓库最新 Release 的版本号（去掉 v）；没有 Release 或查不到时 null。
+/// Version of the GitHub repo's latest Release (without v); null when there's no Release or it can't be fetched.
 Future<String?> latestGitHubVersion(GitHubRef gh) async {
   final http = _client();
   try {
@@ -270,7 +270,7 @@ Future<PluginPackage> _fromGitHub(
       allow404: gh.tag == null,
     );
     if (rel == null) {
-      // 还没有发布过：用默认分支。先确认仓库存在，错误信息才准确。
+      // Never released: use the default branch. Check the repo exists first so the error message is accurate.
       if (await _json(http, Uri.parse(api), allow404: true) == null) {
         throw InstallError(L.pluginErrRepoNotFound(gh.slug));
       }
@@ -290,7 +290,7 @@ Future<PluginPackage> _fromGitHub(
     }
   }
   await _unzip(await _get(http, zip), stage);
-  // GitHub 的源码包外面套了一层 owner-repo-sha/，plugin.json 按路径往下找
+  // GitHub source archives are wrapped in owner-repo-sha/; plugin.json is searched for down the path
   var root = stage;
   if (gh.path.isNotEmpty) {
     final top = Directory(stage).listSync().whereType<Directory>().toList();
@@ -312,7 +312,7 @@ Future<PluginPackage> _fromGitHub(
   );
 }
 
-// ───────────── 散装文件（plugin.json 链接） ─────────────
+// ───────────── Loose files (plugin.json link) ─────────────
 
 final _importRe = RegExp(
   r'''(?:import|export)\s*(?:[^'"]*?\sfrom\s*)?['"](\.{1,2}/[^'"]+)['"]''',
@@ -328,7 +328,7 @@ Future<void> _fetchLoose(HttpClient http, Uri manifestUrl, String dir) async {
   }
   await Directory(dir).create(recursive: true);
   await File(p.join(dir, 'plugin.json')).writeAsString(text);
-  // 入口和它相对 import 的文件；只在插件目录里
+  // The entry and files it imports relatively; only inside the plugin directory
   final todo = [m.main], done = <String>{};
   while (todo.isNotEmpty && done.length < 200) {
     final rel = p.posix.normalize(todo.removeLast().replaceAll(r'\', '/'));
@@ -345,7 +345,7 @@ Future<void> _fetchLoose(HttpClient http, Uri manifestUrl, String dir) async {
       todo.add(p.posix.join(p.posix.dirname(rel), mm[1]!));
     }
   }
-  // 图标不是必需的，下载失败就算了
+  // The icon is optional; never mind if it fails to download
   if (m.icon.isNotEmpty) {
     final rel = p.posix.normalize(m.icon.replaceAll(r'\', '/'));
     final path = _inside(dir, rel);
@@ -360,8 +360,8 @@ Future<void> _fetchLoose(HttpClient http, Uri manifestUrl, String dir) async {
   }
 }
 
-/// 把以 `/` 分隔的相对路径 [rel] 放进 [dir]；会落到 [dir] 外面（`..`、绝对路径、
-/// Windows 盘符或反斜杠）时返回 null。
+/// Places the `/`-separated relative path [rel] inside [dir]; returns null when it would land outside [dir] (`..`, absolute paths,
+/// Windows drive letters or backslashes).
 String? _inside(String dir, String rel) {
   final segs = rel.replaceAll(r'\', '/').split('/');
   if (rel.startsWith('/') || segs.any((x) => x == '..' || x.contains(':'))) {
@@ -373,7 +373,7 @@ String? _inside(String dir, String rel) {
   return p.isWithin(dir, path) ? path : null;
 }
 
-// ───────────── 读插件 ─────────────
+// ───────────── Reading plugins ─────────────
 
 Future<PluginPackage> _package(
   String stage,
@@ -408,7 +408,7 @@ Future<PluginPackage> _package(
   );
 }
 
-/// 最浅的、有 plugin.json 的目录。
+/// The shallowest directory containing plugin.json.
 String? _findManifest(String root) {
   var level = [root];
   for (var depth = 0; depth < 4 && level.isNotEmpty; depth++) {
@@ -428,8 +428,8 @@ String? _findManifest(String root) {
   return null;
 }
 
-/// 从源码里看入口模块导出了哪些应用认识的函数（不运行插件）。
-/// 跟着 `export * from` / `export {…} from` 进相对路径的模块。
+/// Reads from the source which app-recognised functions the entry module exports (without running the plugin).
+/// Follows `export * from` / `export {…} from` into relative modules.
 Set<String> exportsOf(String dir, String main) {
   final names = <String>{};
   final seen = <String>{};
@@ -474,7 +474,7 @@ Set<String> exportsOf(String dir, String main) {
   return names.intersection(PluginSource.knownOps);
 }
 
-// ───────────── 下载、解压 ─────────────
+// ───────────── Download, extract ─────────────
 
 HttpClient _client() {
   final proxy = systemProxy();
@@ -489,7 +489,7 @@ Future<Uint8List> _get(HttpClient http, Uri url) async =>
     (await _tryGet(http, url)) ??
     (throw InstallError(L.pluginErrNotFoundUrl('$url')));
 
-/// 404 时返回 null。
+/// Returns null on 404.
 Future<Uint8List?> _tryGet(HttpClient http, Uri url) async {
   final req = await http.getUrl(url);
   if (url.host == 'api.github.com') {

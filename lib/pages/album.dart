@@ -9,8 +9,8 @@ import '../ui.dart';
 import 'common.dart';
 import 'library.dart' show HeartSmall;
 
-// 右侧文字叠在封面取色的背景上，实心灰会和封面色打架；改用白 / 黑 + 透明度，
-// 叠在纯黑（浅色主题：纯白）上和原来的 P.muted / P.faint 灰度相同。
+// Text on the right sits on a background taken from the cover, where solid gray clashes with the cover color; use white / black + opacity instead,
+// which on pure black (light theme: pure white) matches the original P.muted / P.faint gray.
 Color get _muted =>
     P.dark ? wa(161 / 255) : ba(1 - 82 / 255); // #A1A1AA / #52525B
 Color get _faint =>
@@ -47,8 +47,8 @@ class AlbumPage extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // 往左多铺 96（侧边栏 72 + 切页滑动 24），往右多铺 24：背景铺到窗口
-        // 最左边、透到通透的侧边栏下面，并且和页面一起淡入淡出、滑动，切页时两边不会露底。
+        // Extend 96 to the left (sidebar 72 + page slide 24) and 24 to the right: the background reaches the window's
+        // left edge, shows under the translucent sidebar, and fades and slides with the page, so no edge shows during page changes.
         Positioned(
           left: -96,
           right: -24,
@@ -56,7 +56,7 @@ class AlbumPage extends StatelessWidget {
           bottom: 0,
           child: CoverWash(coverId: al.cover),
         ),
-        // 左侧封面信息固定，只有右侧曲目列表滚动
+        // The cover info on the left stays fixed; only the track list on the right scrolls
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -165,7 +165,7 @@ class AlbumPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 64),
-                // 和歌单页一样：表头固定，只有下面的曲目滚动
+                // Same as the playlist page: the header stays fixed, only the tracks below scroll
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +230,7 @@ class AlbumPage extends StatelessWidget {
   }
 }
 
-/// 列表底部：发行日期（只知道年份时只写年份），下一行是版权。
+/// Bottom of the list: release date (just the year when only the year is known), copyright on the next line.
 String _footer(Album al, AppLocalizations l) {
   final d = al.released;
   final date = d != null

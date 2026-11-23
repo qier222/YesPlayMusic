@@ -6,9 +6,9 @@ import 'package:flutter/widgets.dart';
 import 'l10n/l10n.dart';
 import 'state.dart';
 
-/// 全局快捷键：一张表，键盘处理、macOS 菜单栏、设置页的说明都从这里来。
-/// macOS 用 ⌘ / ⌥ / ⇧，Windows 换成 Ctrl / Alt / Shift。
-/// 正在输入文字时只有 [AppShortcut.whileTyping] 的（⌘F、Esc）生效。
+/// Global shortcuts: one table that keyboard handling, the macOS menu bar and the settings page reference all come from.
+/// macOS uses ⌘ / ⌥ / ⇧; Windows uses Ctrl / Alt / Shift instead.
+/// While typing, only [AppShortcut.whileTyping] ones (⌘F, Esc) work.
 
 final bool _mac = Platform.isMacOS;
 
@@ -29,28 +29,28 @@ class AppShortcut {
 
   final String id;
 
-  /// 设置页里的分组：播放、界面。
+  /// Groups on the settings page: playback, interface.
   final ShortcutGroup group;
   final String Function(AppLocalizations l) label;
 
-  /// 设置页里显示的键帽（mac 写法，Windows 由 [keysFor] 换成文字）；
-  /// `null` 是键帽之间的「到」，`'SPACE'` 由 [keysFor] 换成本地化空格名。
+  /// Keycaps shown on the settings page (mac notation; [keysFor] converts to text on Windows);
+  /// `null` is the "to" between keycaps, and `'SPACE'` becomes the localised space name via [keysFor].
   final List<String?> keys;
   final List<SingleActivator> activators;
 
-  /// 返回 false 表示这次没处理（比如没打开正在播放时按 Esc），按键接着往下传。
+  /// Returning false means it wasn't handled this time (e.g. Esc with Now Playing closed), so the key keeps propagating.
   final bool Function(AppState app) run;
   final bool whileTyping;
 
-  /// macOS 菜单栏里带快捷键。方向键和空格不放：系统菜单可能先于输入框拿到按键，
-  /// 会抢掉输入框里移动光标、输入空格。
+  /// Shown with its shortcut in the macOS menu bar. Arrow keys and space are left out: the system menu may get keys before text fields,
+  /// stealing cursor movement and space input from them.
   final bool inMenu;
 
-  /// 是否允许长按重复触发（音量和快进快退）。
+  /// Whether holding the key repeats (volume and seeking).
   final bool repeatable;
 }
 
-/// 主修饰键：mac ⌘，Windows Ctrl。
+/// Primary modifier: ⌘ on mac, Ctrl on Windows.
 SingleActivator _cmd(LogicalKeyboardKey k, {bool alt = false}) =>
     SingleActivator(k, meta: _mac, control: !_mac, alt: alt);
 
@@ -60,7 +60,7 @@ bool _do(void Function() f) {
 }
 
 final List<AppShortcut> appShortcuts = [
-  // ───── 播放 ─────
+  // ───── Playback ─────
   AppShortcut(
     id: 'playPause',
     group: ShortcutGroup.playback,
@@ -165,7 +165,7 @@ final List<AppShortcut> appShortcuts = [
     activators: [_cmd(LogicalKeyboardKey.keyL)],
     run: (a) => _do(a.toggleLike),
   ),
-  // ───── 界面 ─────
+  // ───── Interface ─────
   AppShortcut(
     id: 'nowPlaying',
     group: ShortcutGroup.ui,
@@ -180,7 +180,7 @@ final List<AppShortcut> appShortcuts = [
     label: (l) => l.shortcutDismissOverlay,
     keys: const ['Esc'],
     activators: const [SingleActivator(LogicalKeyboardKey.escape)],
-    // 只管正在播放；弹窗自己接 Esc（没处理就往下传给它们）
+    // Only handles Now Playing; dialogs take Esc themselves (passed on to them when unhandled)
     run: (a) {
       if (!a.npOpen) return false;
       a.closeNowPlaying();
@@ -239,7 +239,7 @@ final List<AppShortcut> appShortcuts = [
       _cmd(LogicalKeyboardKey.digit3),
       _cmd(LogicalKeyboardKey.digit4),
     ],
-    // 具体去第几页在 [_onKey] 里按按键算
+    // Which page to go to is computed from the key in [_onKey]
     run: (_) => true,
     inMenu: false,
   ),
@@ -252,7 +252,7 @@ const _digits = [
   LogicalKeyboardKey.digit4,
 ];
 
-/// 设置页显示用的键帽文字：Windows 把符号换成 Ctrl / Alt / Shift。
+/// Keycap text for the settings page: Windows replaces the symbols with Ctrl / Alt / Shift.
 List<String?> keysFor(AppShortcut s, AppLocalizations l) => [
   for (final k in s.keys)
     k == 'SPACE'
@@ -267,7 +267,7 @@ List<String?> keysFor(AppShortcut s, AppLocalizations l) => [
                 }),
 ];
 
-/// 焦点在输入框里（正在输入文字）。
+/// Focus is in a text field (the user is typing).
 bool get _typing {
   final c = FocusManager.instance.primaryFocus?.context;
   if (c == null) return false;
@@ -275,8 +275,8 @@ bool get _typing {
       c.findAncestorWidgetOfExactType<EditableText>() != null;
 }
 
-/// 在 [HardwareKeyboard] 上挂全局处理：比页面里的焦点处理更早拿到按键，
-/// 所以书架、Coverflow 里的空格不会被处理两次。
+/// Installs a global handler on [HardwareKeyboard]: it gets keys before focus handling in pages,
+/// so space in the shelf or Coverflow isn't handled twice.
 class ShortcutHandler {
   ShortcutHandler(this.app);
   final AppState app;
@@ -291,12 +291,12 @@ class ShortcutHandler {
       if (typing && !s.whileTyping) continue;
       for (final a in s.activators) {
         if (!a.accepts(e, HardwareKeyboard.instance)) continue;
-        // 重复按住只给音量和快进快退
+        // Key repeat only for volume and seeking
         if (e is KeyRepeatEvent && !s.repeatable) {
           return true;
         }
         if (_digits.contains(a.trigger)) {
-          // ⌘1～4 按侧边栏上显示的顺序（没有首页、发现时往前补）
+          // ⌘1–4 follow the order shown in the sidebar (shifted forward when there's no home or Discover)
           final tabs = app.visibleTabs;
           final i = _digits.indexOf(a.trigger);
           if (i < tabs.length) {
@@ -312,8 +312,8 @@ class ShortcutHandler {
   }
 }
 
-/// macOS 菜单栏：应用、播放、显示、窗口。带快捷键的项按下时只会触发一次——
-/// 键盘处理先拿到就不会再走菜单；输入文字时菜单项也不执行（⌘F 除外）。
+/// macOS menu bar: app, playback, view, window. Items with shortcuts fire only once when pressed —
+/// if keyboard handling gets the key first the menu doesn't run; menu items also don't run while typing (except ⌘F).
 class AppMenuBar extends StatelessWidget {
   const AppMenuBar({super.key, required this.app, required this.child});
   final AppState app;

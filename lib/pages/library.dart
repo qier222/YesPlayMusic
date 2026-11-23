@@ -27,7 +27,7 @@ class LibraryPage extends StatelessWidget {
     Widget body;
     Widget? right;
     if (app.library == null) {
-      // 本地没扫到音乐、也没选插件：整个音乐库为空（定稿 · 空状态 v30）
+      // No local music found and no plugin chosen: the whole library is empty (final · empty state v30)
       body = const _LibraryEmpty();
     } else {
       switch (tab) {
@@ -84,7 +84,7 @@ class _LibraryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.app;
     final lib = app.library;
-    // 还在加载、一个都没到的显示省略号
+    // Still loading with nothing arrived yet: show an ellipsis
     String n(String part, int count) =>
         count == 0 && (lib?.loading.contains(part) ?? false)
         ? '…'
@@ -109,13 +109,13 @@ class _LibraryHeader extends StatelessWidget {
       ),
     ];
     final selected = math.max(0, tabs.indexWhere((t) => t.$3 == active));
-    // 整个音乐库为空（没加音乐来源、本地也没歌）：只留空状态，标签和 Coverflow 都不显示
+    // The whole library is empty (no music source added, no local songs): show only the empty state, no tabs or Coverflow
     if (lib == null) return const SizedBox(height: 140);
     return SizedBox(
       height: 140,
       child: Stack(
         children: [
-          // 音乐库是侧边栏的一级页面，不放返回按钮
+          // The library is a top-level sidebar page, so no back button
           Positioned(
             right: 40,
             top: 20,
@@ -146,14 +146,14 @@ class _LibraryHeader extends StatelessWidget {
 String _count(int n) =>
     n < 1000 ? '$n' : '${n ~/ 1000},${(n % 1000).toString().padLeft(3, '0')}';
 
-/// 唱片架上的专辑：当前源的音乐库。
+/// Albums on the record shelf: the current source's library.
 List<Album> _shelf(AppState app) => app.library?.albums ?? const [];
 
-/// 空状态在内容区里的位置：定稿里标题在窗口 y≈360，内容区从 140 开始。
+/// Position of the empty state in the content area: in the final design the title is at window y≈360, and content starts at 140.
 Widget _emptyAt(Widget child) =>
     Align(alignment: const Alignment(0, -0.3), child: child);
 
-/// 整个音乐库为空：扫描中提示正在扫描，否则引导添加音乐文件夹或装插件。
+/// The whole library is empty: while scanning say so, otherwise prompt to add a music folder or install a plugin.
 class _LibraryEmpty extends StatelessWidget {
   const _LibraryEmpty();
 
@@ -185,8 +185,8 @@ class _LibraryEmpty extends StatelessWidget {
   }
 }
 
-/// 扫描中文案：去掉末尾静态省略号，用三个依次淡入的点表示进行中；
-/// 点始终占位，避免主文字左右晃动。
+/// Scanning text: drop the trailing static ellipsis and use three dots fading in one after another to show progress;
+/// the dots always take up space so the main text doesn't shift sideways.
 class _ScanningTitle extends StatefulWidget {
   const _ScanningTitle(this.label);
   final String label;
@@ -208,7 +208,7 @@ class _ScanningTitleState extends State<_ScanningTitle>
     super.dispose();
   }
 
-  /// 第 [i] 个点（0..2）在周期 [v]（0..1）里的透明度：依次淡入，末尾一同淡出。
+  /// Opacity of dot [i] (0..2) at cycle position [v] (0..1): fades in one by one, then all fade out at the end.
   double _dotOpacity(double v, int i) {
     final start = 0.20 + i * 0.22;
     if (v < start) return 0;
@@ -245,7 +245,7 @@ class _ScanningTitleState extends State<_ScanningTitle>
   }
 }
 
-/// 音乐库某个标签还没有内容时：加载中、出错或空。
+/// A library tab with no content yet: loading, error or empty.
 Widget? _emptyState(
   BuildContext context,
   AppState app,
@@ -273,15 +273,15 @@ Widget? _emptyState(
   );
 }
 
-// ═════════════ 专辑：唱片架 ═════════════
+// ═════════════ Albums: record shelf ═════════════
 
-/// 书脊卡片上的发行年份，例如「2022」；不知道时为空。
+/// Release year on the spine card, e.g. "2022"; empty if unknown.
 String _releasedText(Album a) {
   final y = a.released?.year ?? a.year;
   return y > 0 ? '$y' : '';
 }
 
-/// 发行时间换成可比较的数：有日期用日期，只有年份按年初算，都没有为 null。
+/// Release time as a comparable number: the date if known, the start of the year if only the year, otherwise null.
 double? _releasedAt(Album a) {
   final d = a.released;
   if (d != null) return d.year + (d.month - 1) / 12 + (d.day - 1) / 365;
@@ -299,22 +299,22 @@ class _AlbumsBodyState extends State<_AlbumsBody>
     with SingleTickerProviderStateMixin {
   final _focus = FocusNode();
 
-  // 手感照搬 Coverflow：
-  // - 整个唱片架只由一个连续位置 [_anim]（选中下标，可以是小数）决定，
-  //   每本的位置和抽出程度都是它的函数，没有各自独立的动画；
-  // - 拖动（鼠标、触控板都走 GestureDetector）固定 [_dragPx] 走一本；
-  // - 松手按速度多走 0.15 秒，取整，弹簧落位；滚轮一格一本；
-  // - 拖动中不改选中，落位时才写回。
+  // Feel copied from Coverflow:
+  // - the whole shelf is driven by one continuous position [_anim] (selected index, may be fractional);
+  //   each record's position and how far it's pulled out are functions of it, with no separate animations;
+  // - dragging (mouse and trackpad both through GestureDetector) moves one record per fixed [_dragPx];
+  // - on release, continue 0.15 s at the current velocity, round, and spring into place; one record per wheel notch;
+  // - the selection doesn't change while dragging, only when settled.
   late final AnimationController _anim = AnimationController.unbounded(
     vsync: this,
   )..addStatusListener((_) => mounted ? setState(() {}) : null);
-  int _target = -1; // 要停的下标；-1 是还没定位
-  double? _drag; // 拖动中的连续位置
+  int _target = -1; // index to stop at; -1 means not positioned yet
+  double? _drag; // continuous position while dragging
 
-  /// 设计稿尺寸：唱片架 + 时间轴在 760 高的区域里（1440×900 窗口）。
+  /// Design size: shelf + timeline in a 760-high area (1440×900 window).
   static const _designH = 760.0;
 
-  /// 拖多少（设计稿像素）走一本，和 Coverflow 一样。
+  /// How far to drag (design pixels) per record, same as Coverflow.
   static const _dragPx = 115.0;
 
   List<Album> _order(int sort) {
@@ -324,7 +324,7 @@ class _AlbumsBodyState extends State<_AlbumsBody>
         (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
       );
     } else {
-      // 发行时间：最新的在最左，不知道的放最后，保持原来的顺序
+      // Release time: newest on the far left, unknown last, keeping their original order
       final at = {for (final (i, a) in list.indexed) a: i};
       list.sort((a, b) {
         final x = _releasedAt(a), y = _releasedAt(b);
@@ -337,7 +337,7 @@ class _AlbumsBodyState extends State<_AlbumsBody>
     return list;
   }
 
-  /// 选中第 [i] 本并弹簧滑过去。
+  /// Selects record [i] and springs over to it.
   void _goTo(List<Album> list, int i) {
     _target = i.clamp(0, list.length - 1);
     _drag = null;
@@ -375,11 +375,11 @@ class _AlbumsBodyState extends State<_AlbumsBody>
     final n = list.length;
     final sel = math.max(0, list.indexWhere((a) => a.id == app.shelfId));
     if (_target < 0) {
-      // 第一次显示：直接停在选中的那本
+      // First display: stop right at the selected record
       _target = sel;
       _anim.value = sel.toDouble();
     } else if (sel != _target && _drag == null) {
-      // 选中从别处变了（排序、菜单）：滑过去
+      // Selection changed elsewhere (sorting, menu): slide over
       _target = sel;
       _anim.animateTo(
         sel.toDouble(),
@@ -408,7 +408,7 @@ class _AlbumsBodyState extends State<_AlbumsBody>
         }
         return KeyEventResult.ignored;
       },
-      // 整块按窗口高度等比缩放，宽度按比例换算，保证不同窗口大小下比例一致
+      // The whole block scales with window height, with width converted proportionally, so proportions stay the same at any window size
       child: LayoutBuilder(
         builder: (context, box) {
           final s = (box.maxHeight / _designH).clamp(0.55, 2.0);
@@ -448,7 +448,7 @@ class _AlbumsBodyState extends State<_AlbumsBody>
                         if (_drag != null) _goTo(list, _drag!.round());
                       },
                       child: Listener(
-                        // 鼠标滚轮一格一本
+                        // One record per mouse wheel notch
                         onPointerSignal: (e) {
                           if (e is PointerScrollEvent) {
                             final d =
@@ -503,7 +503,7 @@ class _AlbumsBodyState extends State<_AlbumsBody>
                                 },
                               ),
                             ),
-                            // 两侧边缘渐隐
+                            // Fade out on both edges
                             for (final left in [true, false])
                               Positioned(
                                 left: left ? 0 : null,
@@ -535,7 +535,7 @@ class _AlbumsBodyState extends State<_AlbumsBody>
                       ),
                     ),
                   ),
-                  // 书架底到时间轴顶 12（定稿 · 音乐库 · 专辑 v16）
+                  // 12 from the shelf bottom to the timeline top (final · Library · Albums v16)
                   const SizedBox(height: 12),
                   _timeline(list, _target),
                 ],
@@ -547,8 +547,8 @@ class _AlbumsBodyState extends State<_AlbumsBody>
     );
   }
 
-  /// 时间轴。发行时间排序：专辑加进音乐库的时间，都不知道时按设计稿均匀铺开；
-  /// 标题排序：按书架顺序均匀铺开，底下标首字母（定稿 · 书脊时间轴 D′）。
+  /// Timeline. Sorted by release time: when albums were added to the library, spread evenly per the design when all unknown;
+  /// sorted by title: spread evenly in shelf order, with initials below (final · spine timeline D′).
   Widget _timeline(List<Album> list, int sel) {
     void pick(int i) => _goTo(list, i);
     if (context.appRead.shelfSort == 0) {
@@ -581,8 +581,8 @@ class _AlbumsBodyState extends State<_AlbumsBody>
         onPick: pick,
       );
     }
-    // 发行时间：和书架一样一本一格、最新的在最左，跨度几十年也不会挤在一头。
-    // 底下在每年第一本的位置标年份，放不下时优先留整十年、整五年。
+    // Release time: one slot per record like the shelf, newest on the left, so decades of span don't bunch up at one end.
+    // Below, label the year at the first record of each year; when space is short, prefer whole decades, then half decades.
     int yearOf(Album a) => a.released?.year ?? a.year;
     final cur = yearOf(list[sel]);
     final marks = <TickMark>[];
@@ -614,13 +614,13 @@ class _AlbumsBodyState extends State<_AlbumsBody>
   }
 }
 
-/// 第 [i] 本在连续位置 [pos] 时的抽出程度：正中间是 1，离开一格就收回成书脊。
-/// 和 Coverflow 里正面封面转向侧面一样，只取决于和当前位置的距离。
+/// How far record [i] is pulled out at continuous position [pos]: 1 at the center, back to a spine one slot away.
+/// Like the front cover in Coverflow turning to the side, it depends only on the distance from the current position.
 double _shelfOpen(int i, double pos) => (1 - (i - pos).abs()).clamp(0.0, 1.0);
 
-/// 唱片架排版：书脊从左到右依次排开（间距 4），整体平移使「当前位置」落在正中间。
-/// [pos] 可以是小数，在相邻两本的中心之间插值；各本宽度也是 pos 的函数，
-/// 所以同一个 pos 排出来永远一样，拖动、停住、动画都不会抖。
+/// Shelf layout: spines laid out left to right (spacing 4), shifted so the "current position" lands in the center.
+/// [pos] can be fractional, interpolating between neighbouring centers; each width is also a function of pos,
+/// so the same pos always gives the same layout, and dragging, resting and animating never jitter.
 class _CenterShelf extends MultiChildLayoutDelegate {
   _CenterShelf({required this.n, required this.pos});
   final int n;
@@ -638,7 +638,7 @@ class _CenterShelf extends MultiChildLayoutDelegate {
       centers.add(x + sz.width / 2);
       x += sz.width + 4;
     }
-    // 两端允许拖出去一点（橡皮筋），按最边上那一格外推
+    // Allow dragging a little past both ends (rubber band), extrapolating from the outermost slot
     final double anchor;
     if (n == 1) {
       anchor = centers[0] + pos * 48;
@@ -667,10 +667,10 @@ class _ShelfItem extends StatelessWidget {
   });
   final Album album;
 
-  /// 抽出程度 0~1，由唱片架的连续位置直接算出（见 [_shelfOpen]）。
+  /// How far it's pulled out, 0–1, computed directly from the shelf's continuous position (see [_shelfOpen]).
   final double open;
 
-  /// 书架静止；只有静止时悬停才让书脊上浮。
+  /// The shelf is at rest; only at rest does hovering lift the spine.
   final bool still;
   final VoidCallback onTap;
 
@@ -684,7 +684,7 @@ class _ShelfItem extends StatelessWidget {
 
   Widget _build(BuildContext context) {
     final al = album;
-    // 书脊和卡片用封面提取色
+    // Spines and cards use colors extracted from the cover
     final pal = CoverColors.instance.peek(al.cover) ?? CoverPalette.fallback;
     final bg = pal.card;
     final fg = pal.onCard;
@@ -722,7 +722,7 @@ class _ShelfItem extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.hardEdge,
                 children: [
-                  // 书脊
+                  // Spine
                   if (o < 0.6)
                     Positioned.fill(
                       child: Opacity(
@@ -740,7 +740,7 @@ class _ShelfItem extends StatelessWidget {
                                 height: hgt - al.spine - 30,
                                 child: RotatedBox(
                                   quarterTurns: 1,
-                                  // Align 放松交叉轴约束，文字才会在书脊宽度内居中
+                                  // Align loosens the cross-axis constraint so text centers within the spine width
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Row(
@@ -784,14 +784,14 @@ class _ShelfItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                  // 抽出的卡片
+                  // The pulled-out card
                   if (o > 0.4)
                     Positioned(
                       left: 20,
                       top: 20,
                       child: Opacity(
                         opacity: ((o - 0.4) / 0.6).clamp(0.0, 1.0),
-                        // 只限宽度：中文标题的回退字体行高更大，固定高度会溢出
+                        // Constrain width only: fallback fonts for CJK titles have taller line heights, so a fixed height would overflow
                         child: SizedBox(
                           width: 380,
                           child: Column(
@@ -804,7 +804,7 @@ class _ShelfItem extends StatelessWidget {
                               const SizedBox(height: 6),
                               Padding(
                                 padding: const EdgeInsets.only(left: 2),
-                                // 艺人和发行年份之间留空隙，年份淡一点
+                                // Leave a gap between artist and release year, with the year a bit fainter
                                 child: Row(
                                   children: [
                                     Flexible(
@@ -832,7 +832,7 @@ class _ShelfItem extends StatelessWidget {
                                 children: [
                                   Tap(
                                     tip: context.l10n.actionPlay,
-                                    // 播放整张（插件的先取曲目）
+                                    // Play the whole album (plugins fetch the tracks first)
                                     onTap: () =>
                                         context.appRead.playAlbumById(al.id),
                                     builder: (_, h, p) => PressScale(
@@ -847,7 +847,7 @@ class _ShelfItem extends StatelessWidget {
                                           shape: BoxShape.circle,
                                         ),
                                         alignment: Alignment.center,
-                                        // 图标的三角形本身已按视觉重心摆放，不再额外右移
+                                        // The icon's triangle is already placed at its visual center; no extra shift right
                                         child: const Ico(
                                           'play',
                                           size: 24,
@@ -894,8 +894,8 @@ class _ShelfItem extends StatelessWidget {
   }
 }
 
-/// 唱片架下面的「水柱」刻度（定稿 · 书脊时间轴，悬停样式 D）：
-/// 隆起只跟着当前专辑；光标下那根水柱变成白 60% 的指针，上方写它对应的时间或专辑名。
+/// The "water column" ticks below the shelf (final · spine timeline, hover style D):
+/// the bulge follows only the current album; the column under the cursor becomes a white 60% pointer, with its time or album name above.
 class _Timeline extends StatefulWidget {
   const _Timeline({
     required this.positions,
@@ -908,15 +908,15 @@ class _Timeline extends StatefulWidget {
   });
   final List<double> positions;
 
-  /// 刻度的起止（发行时间排序是年份，标题排序是专辑下标）。
+  /// Start and end of the ticks (years when sorted by release time, album index when sorted by title).
   final double from, to;
   final int current;
   final ValueChanged<int> onPick;
 
-  /// 指针上方的文字：参数是光标处的刻度值和离它最近的专辑。
+  /// Text above the pointer: arguments are the tick value at the cursor and the nearest album.
   final String Function(double pos, int nearest) hoverLabel;
 
-  /// 底部刻度文字；为空时按年份标。
+  /// Tick labels at the bottom; labelled by year when empty.
   final List<TickMark>? marks;
 
   @override
@@ -925,7 +925,8 @@ class _Timeline extends StatefulWidget {
 
 class _TimelineState extends State<_Timeline> {
   double? _hx;
-  double _lastHx = 0; // 离开后保留，指针淡出时还画在原处
+  // Kept after leaving so the pointer is drawn in place while fading out
+  double _lastHx = 0;
 
   int _nearest(double pos) {
     var best = 0;
@@ -950,7 +951,7 @@ class _TimelineState extends State<_Timeline> {
           final w = box.maxWidth;
           final span = (w - 3) / (to - from);
           final curX = (widget.positions[widget.current] - from) * span;
-          // 指针吸附到最近的刻度
+          // Snap the pointer to the nearest tick
           final n = ((w - 3) / TicksPainter.step).floor();
           final hi = (_lastHx / TicksPainter.step).round().clamp(0, n);
           final hpos = from + hi * TicksPainter.step / span;
@@ -995,11 +996,11 @@ class _TimelineState extends State<_Timeline> {
   }
 }
 
-/// 刻度文字：[pos] 和时间轴的刻度值同一单位。
-/// 放不下时先保留 [strong]，再按 [level] 从高到低，同级按先后。
+/// Tick labels: [pos] is in the same unit as the timeline's tick values.
+/// When space is short, keep [strong] first, then by [level] from high to low, and by order within a level.
 typedef TickMark = ({double pos, String text, bool strong, int level});
 
-/// 横向刻度。
+/// Horizontal ticks.
 class TicksPainter extends CustomPainter {
   TicksPainter({
     required this.curX,
@@ -1019,8 +1020,8 @@ class TicksPainter extends CustomPainter {
 
   static const step = 11.5;
 
-  /// 和定稿 Shelf Timeline 一致（以水柱底边 [base] 为基准）：
-  /// 悬停文字 0–12，三角形 12–18，留 6 的空隙，当前水柱 24–44，刻度文字从 54 开始。
+  /// Matches the final Shelf Timeline (relative to the column bottom [base]):
+  /// hover text 0–12, triangle 12–18, a 6 gap, current column 24–44, tick labels from 54.
   static const label = 12.0, arrow = 6.0, gap = 6.0, column = 20.0;
   static const base = label + arrow + gap + column, height = base + 24;
 
@@ -1028,7 +1029,7 @@ class TicksPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final strong = Paint()..color = ink;
-    // 当前位置吸附到最近的刻度，白色水柱、三角形和隆起都以它为准
+    // Snap the current position to the nearest tick; the white column, triangle and bulge all follow it
     final n = ((w - 3) / step).floor();
     final ci = (curX / step).round().clamp(0, n);
     final cx = ci * step;
@@ -1049,7 +1050,7 @@ class TicksPainter extends CustomPainter {
         i == ci ? strong : (Paint()..color = ink.withValues(alpha: a)),
       );
     }
-    // 三角形 10×6，尖端离当前水柱上沿留 [gap]
+    // Triangle 10×6, its tip [gap] above the top of the current column
     const triTip = base - column - gap;
     final tri = Path()
       ..moveTo(cx - 3.5, triTip - arrow)
@@ -1057,7 +1058,7 @@ class TicksPainter extends CustomPainter {
       ..lineTo(cx + 1.5, triTip)
       ..close();
     canvas.drawPath(tri, strong);
-    // 指针上方的时间 / 专辑名，写在三角形上面那一行
+    // Time / album name above the pointer, on the line above the triangle
     if (hoverT > 0 && hover != ci && hoverLabel.isNotEmpty) {
       final tp = TextPainter(
         text: TextSpan(
@@ -1085,7 +1086,7 @@ class TicksPainter extends CustomPainter {
           for (var y = from.ceil(); y <= to; y++)
             (pos: y.toDouble(), text: '$y', strong: false, level: 0),
         ];
-    // 先排好每个文字的位置，再按优先级放，和已放的挤在一起就不画
+    // Lay out every label's position first, then place them by priority, skipping any that collide with ones already placed
     final laid = <(TickMark, TextPainter, double)>[];
     for (final (i, m) in ms.indexed) {
       final x = (m.pos - from) / (to - from) * (w - 3);
@@ -1136,7 +1137,7 @@ class TicksPainter extends CustomPainter {
       old.ink != ink;
 }
 
-// ═════════════ 歌曲 ═════════════
+// ═════════════ Songs ═════════════
 
 class _SongsBody extends StatefulWidget {
   const _SongsBody();
@@ -1181,7 +1182,7 @@ class _SongsBodyState extends State<_SongsBody> {
     if (empty != null) return empty;
     final tracks = _byAdded(lib.tracks);
     final months = _months(tracks, l);
-    // 一行一个：月份标题或歌曲。歌曲可能有几千首，按需构建。
+    // One per row: a month header or a song. There may be thousands of songs, so build on demand.
     final rows =
         <(({SongMonth month, int? year, int? monthNum}), SongRow?, int)>[];
     for (final m in months) {
@@ -1262,7 +1263,7 @@ class _SongsBodyState extends State<_SongsBody> {
                   years: years,
                   labelAt: (f) {
                     if (rows.isEmpty) return '';
-                    // 按行数估算该滚动位置的那一行，取它所在月份
+                    // Estimate the row at the scroll position from the row count and use its month
                     final m = rows[(f * (rows.length - 1)).round()].$1;
                     return m.year == null || m.monthNum == null
                         ? m.month.label
@@ -1286,7 +1287,7 @@ class _SongsBodyState extends State<_SongsBody> {
   }
 }
 
-/// 新加的在前；不知道时间的放最后，保持原来的顺序。
+/// Newest first; unknown times last, keeping their original order.
 List<Track> _byAdded(List<Track> ts) {
   final list = List.of(ts);
   final at = {for (final (i, t) in list.indexed) t: i};
@@ -1300,7 +1301,7 @@ List<Track> _byAdded(List<Track> ts) {
   return list;
 }
 
-/// 按加进来的月份分组；[ts] 已按时间排好。行号是在 [ts] 里的位置 + 1。
+/// Grouped by month added; [ts] is already sorted by time. Row numbers are the position in [ts] + 1.
 List<({SongMonth month, int? year, int? monthNum})> _months(
   List<Track> ts,
   AppLocalizations l,
@@ -1336,7 +1337,7 @@ List<({SongMonth month, int? year, int? monthNum})> _months(
   return out;
 }
 
-/// 「加入时间」列的文字：今天、昨天、几天前、几月几日。
+/// Text for the "Date added" column: today, yesterday, n days ago, month and day.
 String addedText(DateTime? d) {
   if (d == null) return '';
   final now = DateTime.now();
@@ -1365,7 +1366,7 @@ class _SongRowView extends StatelessWidget {
   final SongRow row;
   final Track track;
 
-  /// 从这首开始播放（整个列表进队列）。
+  /// Plays from this song (the whole list goes into the queue).
   final VoidCallback onPlay;
 
   @override
@@ -1429,7 +1430,7 @@ class _SongRowView extends StatelessWidget {
             Expanded(
               child: tx(s.added, 13, w: w500, c: P.faint),
             ),
-            // 和专辑页一样：悬停出现爱心，已喜欢的歌常驻红心
+            // Same as the album page: a heart appears on hover, liked songs always show a red heart
             AnimatedOpacity(
               duration: fast,
               opacity: h || liked ? 1 : 0,
@@ -1468,7 +1469,7 @@ class HeartSmall extends StatelessWidget {
   final bool liked;
   final VoidCallback onTap;
 
-  /// 未收藏时的颜色，默认 P.muted（专辑页传跟时长一样的颜色）
+  /// Color when not liked, P.muted by default (the album page passes the duration color)
   final Color? color;
 
   @override
@@ -1499,8 +1500,8 @@ class HeartSmall extends StatelessWidget {
   }
 }
 
-/// 歌曲列表右侧竖着的「水柱」刻度，跟专辑页下面那条是一套（悬停样式 D）：
-/// 隆起只跟着当前位置；光标下那根水柱变成白 60% 的指针，左边写它对应的月份。
+/// The vertical "water column" ticks to the right of the song list, the same as the one under the album shelf (hover style D):
+/// the bulge follows only the current position; the column under the cursor becomes a white 60% pointer, with its month on the left.
 class _YearScrubber extends StatefulWidget {
   const _YearScrubber({
     required this.frac,
@@ -1510,11 +1511,11 @@ class _YearScrubber extends StatefulWidget {
   });
   final double frac;
 
-  /// 从新到旧的年份标签；为空时用设计稿的 2026~2021。
+  /// Year labels from newest to oldest; when empty, the design's 2026–2021 are used.
   final List<String>? years;
   final ValueChanged<double> onPick;
 
-  /// 滚动位置 [0, 1] 处的时间，写在指针旁边。
+  /// Time at scroll position [0, 1], written next to the pointer.
   final String Function(double frac)? labelAt;
 
   @override
@@ -1522,8 +1523,9 @@ class _YearScrubber extends StatefulWidget {
 }
 
 class _YearScrubberState extends State<_YearScrubber> {
-  double? _hy; // 悬停的纵坐标
-  double _lastHy = 0; // 离开后保留，指针淡出时还画在原处
+  double? _hy; // vertical position of the hover
+  // Kept after leaving so the pointer is drawn in place while fading out
+  double _lastHy = 0;
   static const n = 56;
   static const step = 9.786;
 
@@ -1532,7 +1534,7 @@ class _YearScrubberState extends State<_YearScrubber> {
   @override
   Widget build(BuildContext context) {
     final cur = (3 + widget.frac * (n - 4)).round();
-    // 指针吸附到最近的刻度
+    // Snap the pointer to the nearest tick
     final hi = ((_lastHy - 1.5) / step).round().clamp(0, n - 1);
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -1612,7 +1614,7 @@ class _VTicks extends CustomPainter {
       ..lineTo(right - 21, peak)
       ..close();
     canvas.drawPath(tri, strong);
-    // 指针旁的时间，写在三角形那一列：右对齐、和水柱垂直居中
+    // Time next to the pointer, in the triangle's column: right-aligned and vertically centered on the column
     if (hoverT > 0 && hover != cur && hoverLabel.isNotEmpty) {
       final tp = TextPainter(
         text: TextSpan(
@@ -1659,7 +1661,7 @@ class _VTicks extends CustomPainter {
       old.years != years;
 }
 
-// ═════════════ 歌单 ═════════════
+// ═════════════ Playlists ═════════════
 
 int _playlistTab = 0;
 
@@ -1759,7 +1761,7 @@ class _PlaylistCardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.appRead;
     final p = card;
-    // 卡片底色和文字颜色都从封面提取
+    // Card background and text color are both extracted from the cover
     final pal = CoverColors.instance.peek(p.cover) ?? CoverPalette.fallback;
     final fg = pal.onCard;
     return Tap(
@@ -1868,7 +1870,7 @@ class _PlaylistCardView extends StatelessWidget {
   }
 }
 
-// ═════════════ 艺人：气泡 ═════════════
+// ═════════════ Artists: bubbles ═════════════
 
 class _ArtistsBody extends StatelessWidget {
   const _ArtistsBody();
@@ -1889,12 +1891,12 @@ class _ArtistsBody extends StatelessWidget {
   }
 }
 
-/// 真实艺人的气泡：歌多的大、排在中间，向外螺旋铺开，可以上下滚动。
+/// Bubbles of real artists: those with more songs are larger and nearer the center, spiralling outward; scrolls vertically.
 class _ArtistCloud extends StatelessWidget {
   const _ArtistCloud({required this.artists});
   final List<LibraryArtist> artists;
 
-  // 设计稿里气泡直径 96~184
+  // Bubble diameter 96–184 in the design
   static const minD = 96.0, maxD = 184.0, label = 28.0, gap = 18.0;
 
   @override
@@ -1939,8 +1941,8 @@ class _ArtistCloud extends StatelessWidget {
 final _clouds =
     Expando<(double, List<(LibraryArtist, Offset, double)>, double)>();
 
-/// 气泡排版：从中心沿螺线往外，每个气泡放在第一个不和已有气泡（含名字）
-/// 重叠的位置；只受宽度限制，高度随数量增长。按列表和宽度缓存。
+/// Bubble layout: from the center along a spiral, each bubble goes in the first spot that doesn't overlap existing bubbles
+/// (names included); only width-constrained, height grows with the count. Cached by list and width.
 (List<(LibraryArtist, Offset, double)>, double) _cloud(
   List<LibraryArtist> artists,
   double width,
@@ -1958,7 +1960,7 @@ final _clouds =
         .roundToDouble();
     final r = d / 2;
     var p = const Offset(0, 0);
-    // 每步沿螺线走大约 8 像素
+    // Each step moves about 8 pixels along the spiral
     for (var ang = 0.0, rad = 0.0; rad < 100000; ang += 8 / math.max(rad, 8)) {
       rad = 4.0 * ang;
       p = Offset(cx + rad * math.cos(ang), rad * 0.6 * math.sin(ang));
@@ -1966,7 +1968,7 @@ final _clouds =
       final free = out.every((q) {
         final need = r + q.$3 / 2 + gap;
         final dx = p.dx - q.$2.dx;
-        // 下面那个气泡还要让出上面那个的名字
+        // The bubble below must also leave room for the name of the one above
         final dy = (p.dy - q.$2.dy).abs() * need / (need + label);
         return dx * dx + dy * dy >= need * need;
       });
@@ -1985,7 +1987,7 @@ final _clouds =
   return (shifted, height);
 }
 
-/// 封面；没有封面时是一块带音符的底色。
+/// The cover; a background with a music note when there's no cover.
 Widget _art(String cover, double icon) => cover.isEmpty
     ? ColoredBox(
         color: P.dark ? wa(0.08) : ba(0.06),
@@ -2008,7 +2010,7 @@ class _BubbleView extends StatelessWidget {
   final Bubble bubble;
   final bool selected;
 
-  /// 艺人页；为空时不能点。
+  /// Artist page; not tappable when empty.
   final String route;
 
   @override

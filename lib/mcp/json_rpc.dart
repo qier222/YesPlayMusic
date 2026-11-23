@@ -1,4 +1,4 @@
-// JSON-RPC 2.0 与 MCP 协议消息工具函数。
+// JSON-RPC 2.0 and MCP protocol message helpers.
 
 import 'dart:convert';
 
@@ -46,7 +46,7 @@ Map<String, Object?> jsonRpcNotification(
   Map<String, Object?>? params,
 ]) => {'jsonrpc': '2.0', 'method': method, 'params': ?params};
 
-/// 将任意结构化结果包装为 MCP CallToolResult。
+/// Wraps any structured result as an MCP CallToolResult.
 Map<String, Object?> toolResult(Object? data, {bool isError = false}) {
   final text = data is String ? data : jsonEncode(data);
   return {

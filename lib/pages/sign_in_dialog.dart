@@ -1,5 +1,5 @@
-// 插件登录窗口：插件用 host.signInPrompt 给出二维码和说明，这里显示出来，
-// 直到登录结束或用户取消。
+// Plugin sign-in window: the plugin provides a QR code and instructions via host.signInPrompt, shown here
+// until sign-in finishes or the user cancels.
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';

@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 
 import 'state.dart';
 
-/// 系统的「正在播放」：把当前歌曲告诉系统（控制中心、锁屏），并接住键盘上的
-/// 媒体键和耳机按键。macOS 走 MPRemoteCommandCenter（原生代码在
-/// MainFlutterWindow.swift）；其他平台还没有接，调用会静默失败。
+/// The system "Now Playing": tells the system the current song (Control Center, lock screen) and receives
+/// keyboard media keys and headphone buttons. macOS uses MPRemoteCommandCenter (native code in
+/// MainFlutterWindow.swift); other platforms aren't wired up yet and calls fail silently.
 class MediaSession {
   MediaSession(this.app);
   final AppState app;
@@ -15,7 +15,7 @@ class MediaSession {
   static const _channel = MethodChannel('yesplaymusic/media');
   Timer? _drift;
 
-  // 上次告诉系统的状态；系统按播放速度自己推算进度，只在变化或进度对不上时再发。
+  // State last sent to the system; it extrapolates progress from the playback rate, so only resend on changes or when progress drifts.
   String? _key;
   bool? _playing;
   double _sentPos = 0;
@@ -25,7 +25,7 @@ class MediaSession {
     if (!Platform.isMacOS) return;
     _channel.setMethodCallHandler(_onCommand);
     app.addListener(_sync);
-    // 拖进度条、快进快退不一定会通知，每秒对一下进度
+    // Seeking and skipping don't always notify, so check progress every second
     _drift = Timer.periodic(const Duration(seconds: 1), (_) => _sync());
     _sync();
   }
@@ -61,13 +61,13 @@ class MediaSession {
           'duration': t.seconds.toDouble(),
           'position': pos,
           'playing': app.playing,
-          // 换歌时才重新取封面
+          // Only fetch the cover again when the song changes
           if (!sameTrack) 'art': _art(t.cover),
         })
         .catchError((_) => null);
   }
 
-  /// 系统只能取网络封面或本地文件。
+  /// The system can only take network covers or local files.
   static String _art(String cover) =>
       cover.startsWith('http') || cover.startsWith('/') ? cover : '';
 

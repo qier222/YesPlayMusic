@@ -22,7 +22,7 @@ const _scutil = '''
 ''';
 
 void main() {
-  // 读 macOS 的 HTTPS 代理（优先于 HTTP）和例外列表。
+  // Reads the macOS HTTPS proxy (preferred over HTTP) and the exceptions list.
   test('parses scutil output', () {
     final p = parseScutil(_scutil)!;
     expect((p.host, p.port, p.url), ('10.0.0.2', 7890, 'http://10.0.0.2:7890'));
@@ -35,7 +35,7 @@ void main() {
     expect(parseScutil('<dictionary> {\n  HTTPEnable : 0\n}'), isNull);
   });
 
-  // 本机、局域网网段、例外主机直连，其余走代理。
+  // Localhost, LAN ranges and excepted hosts connect directly; the rest go through the proxy.
   test('bypass rules', () {
     final p = parseScutil(_scutil)!;
     for (final h in [

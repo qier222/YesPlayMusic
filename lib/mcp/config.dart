@@ -1,4 +1,4 @@
-// MCP Server 配置模型：持久化在 prefs.json 的 `mcp` 字段里。
+// MCP server config model: persisted in the `mcp` field of prefs.json.
 
 import 'dart:convert';
 import 'dart:math';
@@ -15,23 +15,23 @@ class McpConfig {
 
   static const int defaultPort = 18888;
 
-  /// 是否启用本地 MCP Server（监听 127.0.0.1:[port]）。
+  /// Whether the local MCP server is enabled (listening on 127.0.0.1:[port]).
   final bool enabled;
 
-  /// 监听端口（1024~65535）。
+  /// Listening port (1024–65535).
   final int port;
 
-  /// 懒加载模式：开启后 tools/list 仅暴露核心工具 + discover/call 元工具，
-  /// 按需发现并解锁扩展工具；关闭后全量暴露当前源支持的所有工具。
+  /// Lazy mode: when on, tools/list exposes only core tools + the discover/call meta tools,
+  /// and extended tools are discovered and unlocked on demand; when off, every tool the current source supports is exposed.
   final bool lazyLoading;
 
-  /// 只读安全模式：屏蔽会修改远程/用户数据的工具（删改歌单、发评论、喜欢/不喜欢等）。
+  /// Read-only safe mode: blocks tools that modify remote/user data (editing or deleting playlists, posting comments, like/dislike, etc.).
   final bool readOnly;
 
-  /// 是否要求 Bearer Token 鉴权。
+  /// Whether Bearer token auth is required.
   final bool requireAuth;
 
-  /// Bearer Token；启用鉴权时若为空会自动生成。
+  /// Bearer token; generated automatically if empty when auth is enabled.
   final String token;
 
   String get endpointUrl => 'http://127.0.0.1:$port/mcp';
@@ -77,7 +77,7 @@ class McpConfig {
     'token': token,
   };
 
-  /// 生成 32 位十六进制随机 Token。
+  /// Generates a random 32-digit hex token.
   static String generateToken() {
     final rng = Random.secure();
     final sb = StringBuffer();
@@ -87,7 +87,7 @@ class McpConfig {
     return sb.toString();
   }
 
-  /// Streamable HTTP 客户端配置片段（Cursor / Antigravity / Claude 等通用）。
+  /// Streamable HTTP client config snippet (works for Cursor / Antigravity / Claude, etc.).
   String httpClientConfigJson() {
     final server = <String, Object?>{
       'url': endpointUrl,
@@ -99,7 +99,7 @@ class McpConfig {
     });
   }
 
-  /// stdio 桥接客户端配置片段（适用于仅支持 stdio 的客户端，支持自动唤醒 App）。
+  /// stdio bridge client config snippet (for clients that only support stdio; can wake the app automatically).
   String stdioBridgeConfigJson({
     String bridgeScript = 'bin/ypm_mcp_bridge.dart',
   }) {

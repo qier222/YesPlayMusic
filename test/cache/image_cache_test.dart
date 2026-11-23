@@ -62,7 +62,7 @@ void main() {
   });
 
   test('带中文的地址不和别的地址撞文件名', () async {
-    // 「中」是 U+4E2D，按 UTF-16 截断成一个字节就是 0x2D「-」
+    // "中" is U+4E2D; truncated to one byte from UTF-16 it becomes 0x2D "-"
     served['/a%E4%B8%AD.png'] = [1];
     served['/a-.png'] = [2];
     final c = ImageDiskCache.instance;

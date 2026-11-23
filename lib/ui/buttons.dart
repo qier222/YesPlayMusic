@@ -1,4 +1,4 @@
-// 通用组件：按钮。
+// Common widgets: buttons.
 
 import 'package:flutter/widgets.dart';
 
@@ -7,7 +7,7 @@ import '../theme.dart';
 import 'icons.dart';
 import 'tap.dart';
 
-// ───────────── 按钮（Sketch 组件规范：L 48 / M 40 / S 32 × 主要 / 次要） ─────────────
+// ───────────── Buttons (Sketch component spec: L 48 / M 40 / S 32 × primary / secondary) ─────────────
 
 enum BtnSize {
   l(48, 18, 20, 8, 14),
@@ -24,7 +24,7 @@ enum BtnSize {
   }
 }
 
-/// danger：删除、退出这类不可撤销的操作，红底白字。
+/// danger: irreversible actions like delete or sign out, white text on red.
 enum BtnKind { primary, secondary, danger }
 
 ({Color bg, Color hover, Color press, Color fg}) _btnColors(
@@ -57,7 +57,7 @@ enum BtnKind { primary, secondary, danger }
       fg: white,
     );
   }
-  // 次要按钮：深色/封面底用白 8%（悬停 12%、按下 4%），浅色底用黑 6%（悬停 10%、按下 4%）。
+  // Secondary buttons: white 8% on dark/cover backgrounds (hover 12%, pressed 4%), black 6% on light backgrounds (hover 10%, pressed 4%).
   if (darkSurface) {
     return (
       bg: wa(0.08),
@@ -74,7 +74,7 @@ enum BtnKind { primary, secondary, danger }
   );
 }
 
-/// 规范胶囊按钮（L 48 / M 40 / S 32 × 主要 / 次要，文字或图标+文字）。
+/// Standard capsule button (L 48 / M 40 / S 32 × primary / secondary, text or icon + text).
 class Btn extends StatelessWidget {
   const Btn({
     super.key,
@@ -92,7 +92,7 @@ class Btn extends StatelessWidget {
     this.expand = false,
   });
 
-  /// 撑满给的宽度（弹窗里两个等宽按钮），内容居中。
+  /// Fills the given width (two equal-width buttons in a dialog), content centered.
   final bool expand;
   final String label;
   final String? icon;
@@ -145,7 +145,7 @@ class Btn extends StatelessWidget {
   }
 }
 
-/// 规范圆形图标按钮（L 48 / M 40 / S 32 × 主要 / 次要，图标 L 20 / M 18 / S 16）。
+/// Standard round icon button (L 48 / M 40 / S 32 × primary / secondary, icons L 20 / M 18 / S 16).
 class IconBtn extends StatelessWidget {
   const IconBtn(
     this.icon, {
@@ -169,7 +169,7 @@ class IconBtn extends StatelessWidget {
   final Color? fg;
   final String? tip;
 
-  /// 方向性三角图标在圆形按钮里几何居中会视觉偏一边，轻微偏移做视觉居中。
+  /// Directional triangle icons look off-center when geometrically centered in a round button, so they're nudged to center visually.
   static double _opticalDx(String icon) => switch (icon) {
     'next' => 1.5,
     'previous' => -1.5,
@@ -208,7 +208,7 @@ class IconBtn extends StatelessWidget {
   }
 }
 
-/// 圆形图标按钮（沿用旧名，内部按 Icon Button 规范渲染）。
+/// Round icon button (keeps the old name; rendered per the Icon Button spec internally).
 class CircleBtn extends StatelessWidget {
   const CircleBtn(
     this.icon, {
@@ -287,7 +287,7 @@ class BackBtn extends StatelessWidget {
   );
 }
 
-/// 主按钮：规范 Primary 胶囊「▶ 播放」。
+/// Primary button: the spec's Primary capsule "▶ Play".
 class PlayPill extends StatelessWidget {
   const PlayPill({
     super.key,
@@ -314,7 +314,7 @@ class PlayPill extends StatelessWidget {
   );
 }
 
-/// 次按钮：规范 Secondary 胶囊，可带图标。
+/// Secondary button: the spec's Secondary capsule, optionally with an icon.
 class SoftPill extends StatelessWidget {
   const SoftPill({
     super.key,
@@ -344,7 +344,7 @@ class SoftPill extends StatelessWidget {
   );
 }
 
-/// 顶部分类胶囊：标签 + 数量；选中是白底。
+/// Top category pill: label + count; white background when selected.
 class CountPill extends StatelessWidget {
   const CountPill({
     super.key,
