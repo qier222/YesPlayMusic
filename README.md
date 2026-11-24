@@ -2,7 +2,7 @@
 
 # YesPlayMusic
 
-**高颜值的桌面音乐播放器，音乐源由插件提供**
+**A good-looking desktop music player, with music sources provided by plugins**
 
 macOS · Windows · Linux
 
@@ -10,101 +10,101 @@ macOS · Windows · Linux
 [![CI](https://img.shields.io/github/actions/workflow/status/qier222/YesPlayMusic/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/qier222/YesPlayMusic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0-8FE3C0?style=flat-square)](./LICENSE)
 
-简体中文 · [English](README.en.md)
+[简体中文](README.zh-CN.md) · English
 
-[下载](#下载) · [功能](#功能) · [截图](#截图) · [安装插件](#安装插件) · [开发插件](#开发插件) · [AI 助手（MCP）](#ai-助手mcp) · [从源码构建](#从源码构建)
+[Download](#download) · [Features](#features) · [Screenshots](#screenshots) · [Installing plugins](#installing-plugins) · [Writing plugins](#writing-plugins) · [AI assistants (MCP)](#ai-assistants-mcp) · [Building from source](#building-from-source)
 
 </div>
 
-## 这是什么
+## What is this
 
-YesPlayMusic 3.0 是用 Flutter 从头重写的桌面音乐播放器。
+YesPlayMusic 3.0 is a desktop music player rewritten from scratch in Flutter.
 
-它本身**不内置任何在线音乐服务**：开箱即可播放本地音乐，在线曲库、歌单、歌词、评论等都来自第三方插件。插件跑在应用内置的沙箱里，能访问哪些网站、能不能启动本机程序，都要在插件清单里声明。
+It **ships with no online music service**: it plays local music out of the box, and online catalogs, playlists, lyrics, comments and so on all come from third-party plugins. Plugins run in a sandbox built into the app, and each plugin's manifest must declare which websites it can access and whether it can launch programs on your computer.
 
-## 下载
+## Download
 
-在 [Releases](https://github.com/qier222/YesPlayMusic/releases/latest) 页面下载对应系统的安装包：
+Download the package for your system from [Releases](https://github.com/qier222/YesPlayMusic/releases/latest):
 
-| 系统              | 文件                                        | 说明                                                                        |
-| ----------------- | ------------------------------------------- | --------------------------------------------------------------------------- |
-| macOS 12+         | `YesPlayMusic-<版本>-macos.dmg`             | 只支持 Apple Silicon（M 系列芯片）                                          |
-| Windows 10/11 x64 | `-windows-x64-setup.exe` 或 `-portable.zip` | 安装包没有代码签名，SmartScreen 提示时点「更多信息 → 仍要运行」             |
-| Linux x64         | `-linux-x64.tar.gz`                         | 需要系统装有 libmpv：`sudo apt install libmpv2`（较旧的发行版是 `libmpv1`） |
+| System            | File                                          | Notes                                                                                      |
+| ----------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| macOS 12+         | `YesPlayMusic-<version>-macos.dmg`            | Apple Silicon (M-series chips) only                                                        |
+| Windows 10/11 x64 | `-windows-x64-setup.exe` or `-portable.zip`   | The installer is not code-signed; if SmartScreen warns, click "More info → Run anyway"     |
+| Linux x64         | `-linux-x64.tar.gz`                           | Requires libmpv: `sudo apt install libmpv2` (`libmpv1` on older distributions)             |
 
-macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关于 里提示新版本。
+The macOS and Windows builds check for updates automatically; on Linux, new versions are shown in Settings → About.
 
-## 功能
+## Features
 
-- **唱片架式的音乐库**：专辑像书脊一样排在架上，按标题或发行时间排列；歌曲按加入时间分月显示，艺人以气泡呈现。
-- **3D Coverflow**：拖拽、滚轮或方向键翻阅专辑、歌单、歌曲和艺人，点一下就播放。
-- **封面取色**：专辑页、正在播放页的背景跟随封面主色；6 种主题色可选（丁香紫、天蓝、薄荷、日光、玫瑰、橙焰）。
-- **正在播放**：歌词和翻译、播放队列、相似歌曲、歌曲评论，同一页里切换。
-- **本地音乐**：扫描本地音乐文件夹，读取标签、内嵌封面和 `.lrc` 歌词，支持 FLAC、MP3、M4A、WAV、AIFF、OGG、OPUS、APE 等格式。
-- **多个音乐源**：本地音乐和每个插件都是一个音乐源，右键左下角头像随时切换；首页、发现、搜索、专辑、歌手、歌单都由当前音乐源提供。
-- **系统集成**：macOS 控制中心和锁屏的「正在播放」、媒体键和耳机按键；跟随系统代理。
-- **键盘操作**：常用操作都有快捷键，打字时不会误触。
+- **A record-shelf library**: albums stand on a shelf like book spines, sorted by title or release date; songs are grouped by the month they were added, and artists are shown as bubbles.
+- **3D Coverflow**: flip through albums, playlists, songs and artists by dragging, scrolling or using the arrow keys, and click to play.
+- **Colors from cover art**: the album and Now Playing pages take their background from the cover's dominant color; choose from 6 accent colors (Lilac, Sky, Mint, Sun, Rose, Flame).
+- **Now Playing**: lyrics with translations, the play queue, similar songs and song comments, all on one page.
+- **Local music**: scans your music folders and reads tags, embedded cover art and `.lrc` lyrics; supports FLAC, MP3, M4A, WAV, AIFF, OGG, OPUS, APE and more.
+- **Multiple music sources**: local music and each plugin are separate music sources; right-click the avatar in the bottom-left corner to switch at any time. Home, Explore, Search, albums, artists and playlists all come from the current source.
+- **System integration**: Now Playing in the macOS Control Center and lock screen, media keys and headphone buttons; follows the system proxy.
+- **Keyboard control**: common actions have shortcuts, which won't fire while you're typing.
 
-### 截图
+### Screenshots
 
 <table>
   <tr>
-    <td colspan="2" align="center"><img src="docs/screenshots/library.webp" alt="音乐库" width="100%" /><br /><sub>音乐库：专辑排在唱片架上，下方按发行时间定位</sub></td>
+    <td colspan="2" align="center"><img src="docs/screenshots/en/library.webp" alt="Library" width="100%" /><br /><sub>Library: albums on a record shelf, with a release-date timeline below</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/coverflow.webp" alt="Coverflow" width="100%" /><br /><sub>3D Coverflow</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/album.webp" alt="专辑" width="100%" /><br /><sub>专辑：背景跟随封面主色</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/coverflow.webp" alt="Coverflow" width="100%" /><br /><sub>3D Coverflow</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/album.webp" alt="Album" width="100%" /><br /><sub>Album: background follows the cover's dominant color</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/now-playing.webp" alt="正在播放" width="100%" /><br /><sub>正在播放：歌词和翻译</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/comments.webp" alt="评论" width="100%" /><br /><sub>正在播放：歌曲评论</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/now-playing.webp" alt="Now Playing" width="100%" /><br /><sub>Now Playing: lyrics and translations</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/comments.webp" alt="Comments" width="100%" /><br /><sub>Now Playing: song comments</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/home.webp" alt="首页" width="100%" /><br /><sub>首页：由当前音乐源提供</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/search.webp" alt="搜索" width="100%" /><br /><sub>搜索</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/home.webp" alt="Home" width="100%" /><br /><sub>Home: provided by the current music source</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/search.webp" alt="Search" width="100%" /><br /><sub>Search</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/playlist.webp" alt="歌单" width="100%" /><br /><sub>歌单</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/artist.webp" alt="歌手" width="100%" /><br /><sub>歌手</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/playlist.webp" alt="Playlist" width="100%" /><br /><sub>Playlist</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/artist.webp" alt="Artist" width="100%" /><br /><sub>Artist</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/settings-general.webp" alt="设置" width="100%" /><br /><sub>设置：6 种主题色</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/settings-plugins.webp" alt="插件" width="100%" /><br /><sub>设置：插件</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/settings-general.webp" alt="Settings" width="100%" /><br /><sub>Settings: 6 accent colors</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/settings-plugins.webp" alt="Plugins" width="100%" /><br /><sub>Settings: plugins</sub></td>
   </tr>
 </table>
 
-## 安装插件
+## Installing plugins
 
-**官方插件**
+**Official plugins**
 
-| 插件     | 适用于                                                       |
-| -------- | ------------------------------------------------------------ |
-| Emby     | Emby 服务器                                                  |
-| Jellyfin | Jellyfin 服务器                                              |
-| Plex     | Plex 服务器                                                  |
-| Subsonic | Navidrome、Gonic、Airsonic、Ampache 等兼容 Subsonic 的服务器 |
+| Plugin   | For                                                                  |
+| -------- | -------------------------------------------------------------------- |
+| Emby     | Emby servers                                                         |
+| Jellyfin | Jellyfin servers                                                     |
+| Plex     | Plex servers                                                         |
+| Subsonic | Navidrome, Gonic, Airsonic, Ampache and other Subsonic-compatible servers |
 
-**第三方插件**：在 GitHub 上搜索 [`yesplaymusic-plugin`](https://github.com/topics/yesplaymusic-plugin) topic。发布插件时也请给仓库加上这个 topic。
+**Third-party plugins**: search GitHub for the [`yesplaymusic-plugin`](https://github.com/topics/yesplaymusic-plugin) topic. Please add this topic to your repository when you publish a plugin.
 
-**安装方法**：设置 → 插件 → 安装插件。官方插件点一下就能装；第三方插件粘贴 GitHub 仓库、Release 或 .zip 链接，也可以从本地文件夹安装。装好后右键左下角头像切换到这个音乐源。
+**How to install**: Settings → Plugins → Install Plugin. Official plugins install with one click; for third-party plugins, paste a GitHub repository, Release or .zip link, or install from a local folder. Once installed, right-click the avatar in the bottom-left corner to switch to the new music source.
 
-**安全**：安装插件等于在本机运行别人写的代码，请只安装信任的插件。应用对插件做的限制见 [SECURITY.md](SECURITY.md)，主要有：
+**Security**: installing a plugin means running someone else's code on your computer, so only install plugins you trust. The restrictions the app places on plugins are described in [SECURITY.md](SECURITY.md); the main ones are:
 
-- 每个插件跑在独立的 QuickJS 沙箱里，不能直接读写文件或启动进程，有内存和超时限制；
-- 只能访问 `permissions.network` 里声明的网站；
-- 启动本机程序（比如 `yt-dlp`）要在清单里声明，并由你在设置里单独允许。
+- each plugin runs in its own QuickJS sandbox, cannot read or write files or start processes directly, and has memory and time limits;
+- it can only access the websites declared in `permissions.network`;
+- launching a program on your computer (such as `yt-dlp`) must be declared in the manifest and separately allowed by you in Settings.
 
-## 开发插件
+## Writing plugins
 
-一个插件就是一份 `plugin.json` 加一个 JavaScript 模块，导出哪些函数，应用就显示哪些功能。
+A plugin is a `plugin.json` plus a JavaScript module; the app shows whatever features the exported functions provide.
 
-首页和发现页由插件自己组织：应用内置了多种组件（特殊模式卡片、横向卡片架、歌曲翻页网格、排行榜、卡片网格），插件可以自由组合。需要其他形态的组件，请[提 Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
+Plugins lay out their own Home and Explore pages: the app has several built-in components (special-mode cards, horizontal card shelves, paged song grids, charts, card grids) that plugins can combine freely. If you need a different kind of component, please [open an issue](https://github.com/qier222/YesPlayMusic/issues/new/choose).
 
-完整接口见 [插件开发指南](docs/plugins.md)。
+See the [plugin development guide](docs/plugins.md) (in Chinese) for the full API.
 
-## AI 助手（MCP）
+## AI assistants (MCP)
 
-应用内置一个 MCP Server，可以让 Claude、Cursor 等 AI Agent 帮你搜歌、播放、管理队列和歌单。在 设置 → MCP 里开启，默认只监听 `127.0.0.1:18888`，可以开启 Token 鉴权和只读模式。
+The app has a built-in MCP server that lets AI agents such as Claude and Cursor search for songs, play music, and manage the queue and playlists for you. Turn it on in Settings → MCP. By default it only listens on `127.0.0.1:18888`, and you can enable token authentication and read-only mode.
 
 ```json
 {
@@ -114,32 +114,31 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 }
 ```
 
-只支持 stdio 的客户端可以用仓库里的 `bin/ypm_mcp_bridge.dart` 桥接，设置页里能一键复制配置。
+Clients that only support stdio can use the `bin/ypm_mcp_bridge.dart` bridge in this repository; the settings page can copy the configuration for you.
 
-## 从源码构建
+## Building from source
 
-需要 Flutter 3.50 或更新的版本（Dart 3.14，用 Build Hooks 编译内置的 QuickJS）。
+Requires Flutter 3.50 or later (Dart 3.14, which uses Build Hooks to compile the bundled QuickJS).
 
 ```sh
 git clone https://github.com/qier222/YesPlayMusic.git
 cd YesPlayMusic
 flutter pub get
-flutter run -d macos      # 或 windows / linux
+flutter run -d macos      # or windows / linux
 flutter test
 ```
 
-各平台额外需要：
+Additional requirements per platform:
 
-- **macOS**：Xcode 和 CocoaPods
-- **Windows**：Visual Studio 2022，勾选「使用 C++ 的桌面开发」
-- **Linux**：`sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`
+- **macOS**: Xcode and CocoaPods
+- **Windows**: Visual Studio 2022 with the "Desktop development with C++" workload
+- **Linux**: `sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`
 
-## 反馈
+## Feedback
 
-- 问题和建议请提 [Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
-- 安全问题请私下报告，见 [SECURITY.md](SECURITY.md)。
-- 本项目**不接受 Pull Request**。
+- Report problems and suggestions in [Issues](https://github.com/qier222/YesPlayMusic/issues/new/choose).
+- Report security issues privately; see [SECURITY.md](SECURITY.md).
 
-## 协议
+## License
 
-[GPL-3.0](LICENSE)。使用的第三方组件及其协议见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)，版本变化见 [CHANGELOG.md](CHANGELOG.md)。
+[GPL-3.0](LICENSE). Third-party components and their licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); see [CHANGELOG.md](CHANGELOG.md) for version history.
