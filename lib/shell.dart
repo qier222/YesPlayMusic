@@ -25,6 +25,21 @@ import 'updater.dart';
 
 const _window = MethodChannel('yesplaymusic/window');
 
+/// Tells the native side whether closing the window should keep the app running,
+/// plus the localized tray menu labels (Windows). Only sends when something changed.
+String? _sentWindowPrefs;
+void _syncWindowPrefs(bool keepRunning, AppLocalizations l) {
+  final args = {
+    'keepRunning': keepRunning,
+    'show': l.trayShowWindow,
+    'quit': l.trayQuit,
+  };
+  final key = '$args';
+  if (key == _sentWindowPrefs) return;
+  _sentWindowPrefs = key;
+  _window.invokeMethod('prefs', args).catchError((_) => null);
+}
+
 /// Drag the window by holding empty space (macOS hides the title bar).
 class DragWindow extends StatelessWidget {
   const DragWindow({super.key, this.child});
@@ -48,6 +63,7 @@ class Shell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.app;
+    _syncWindowPrefs(app.keepRunning, context.l10n);
     final full = app.path.startsWith('/coverflow');
     return Container(
       color: P.ground,

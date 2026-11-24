@@ -7,6 +7,11 @@
 struct _MyApplication {
   GtkApplication parent_instance;
   char** dart_entrypoint_arguments;
+  // "yesplaymusic/window": settings the window needs from Dart.
+  FlMethodChannel* window_channel;
+  // Settings → "keep running after closing the window". Without a tray icon
+  // to come back from, closing minimizes the window instead.
+  gboolean keep_running;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
@@ -14,6 +19,30 @@ G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+}
+
+static void window_method_cb(FlMethodChannel* channel, FlMethodCall* call,
+                             gpointer user_data) {
+  MyApplication* self = MY_APPLICATION(user_data);
+  if (g_strcmp0(fl_method_call_get_name(call), "prefs") != 0) {
+    fl_method_call_respond_not_implemented(call, nullptr);
+    return;
+  }
+  FlValue* args = fl_method_call_get_args(call);
+  FlValue* keep = fl_value_get_type(args) == FL_VALUE_TYPE_MAP
+                      ? fl_value_lookup_string(args, "keepRunning")
+                      : nullptr;
+  self->keep_running = keep != nullptr &&
+                       fl_value_get_type(keep) == FL_VALUE_TYPE_BOOL &&
+                       fl_value_get_bool(keep);
+  fl_method_call_respond_success(call, nullptr, nullptr);
+}
+
+static gboolean delete_event_cb(GtkWidget* window, GdkEvent* event,
+                                MyApplication* self) {
+  if (!self->keep_running) return FALSE;
+  gtk_window_iconify(GTK_WINDOW(window));
+  return TRUE;
 }
 
 // Implements GApplication::activate.
@@ -69,6 +98,15 @@ static void my_application_activate(GApplication* application) {
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
 
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  g_clear_object(&self->window_channel);
+  self->window_channel = fl_method_channel_new(
+      fl_engine_get_binary_messenger(fl_view_get_engine(view)),
+      "yesplaymusic/window", FL_METHOD_CODEC(codec));
+  fl_method_channel_set_method_call_handler(self->window_channel,
+                                            window_method_cb, self, nullptr);
+  g_signal_connect(window, "delete-event", G_CALLBACK(delete_event_cb), self);
+
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }
 
@@ -115,6 +153,7 @@ static void my_application_shutdown(GApplication* application) {
 static void my_application_dispose(GObject* object) {
   MyApplication* self = MY_APPLICATION(object);
   g_clear_pointer(&self->dart_entrypoint_arguments, g_strfreev);
+  g_clear_object(&self->window_channel);
   G_OBJECT_CLASS(my_application_parent_class)->dispose(object);
 }
 

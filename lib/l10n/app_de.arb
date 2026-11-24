@@ -144,7 +144,9 @@
   "settingsLanguage": "Sprache",
   "langSystem": "Systemsprache",
   "settingsMiniLyric": "Songtext im Mini-Player immer anzeigen",
-  "settingsMinimizeToTray": "Beim Schließen in den Infobereich minimieren",
+  "settingsKeepRunning": "Nach dem Schließen im Hintergrund weiterlaufen",
+  "trayShowWindow": "Fenster anzeigen",
+  "trayQuit": "Beenden",
 
   "aboutDownloadVersion": "{version} herunterladen",
   "aboutChecking": "Wird geprüft…",

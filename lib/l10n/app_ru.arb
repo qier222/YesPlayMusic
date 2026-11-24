@@ -144,7 +144,9 @@
   "settingsLanguage": "Язык",
   "langSystem": "Как в системе",
   "settingsMiniLyric": "Всегда показывать текст в мини-плеере",
-  "settingsMinimizeToTray": "Сворачивать в трей при закрытии окна",
+  "settingsKeepRunning": "Работать в фоне после закрытия окна",
+  "trayShowWindow": "Показать окно",
+  "trayQuit": "Выйти",
 
   "aboutDownloadVersion": "Скачать {version}",
   "aboutChecking": "Проверка…",

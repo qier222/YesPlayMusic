@@ -94,7 +94,7 @@ class AppState extends ChangeNotifier {
         'ui_language': lang,
         'music_source': sourceId,
         'mini_lyric': '$miniLyric',
-        'minimize_to_tray': '$tray',
+        'minimize_to_tray': '$keepRunning',
         'mcp_enabled': '${mcpConfig.enabled}',
         'plugin_count': plugins.length + disabledPlugins.length,
       },
@@ -2912,7 +2912,14 @@ class AppState extends ChangeNotifier {
     _savePrefs({'miniLyric': v});
   }
 
-  bool tray = false;
+  /// Closing the window hides it and keeps the app (and playback) running.
+  /// The native side learns about it through _syncWindowPrefs in shell.dart.
+  bool _keepRunning = _prefs()['keepRunning'] == true;
+  bool get keepRunning => _keepRunning;
+  set keepRunning(bool v) {
+    _keepRunning = v;
+    _savePrefs({'keepRunning': v});
+  }
 
   Locale? get locale => AppLanguage.byCode(lang).locale;
 

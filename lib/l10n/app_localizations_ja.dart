@@ -422,7 +422,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsMiniLyric => 'ミニプレイヤーに常に歌詞を表示';
 
   @override
-  String get settingsMinimizeToTray => 'ウィンドウを閉じる時にトレイに最小化';
+  String get settingsKeepRunning => 'ウィンドウを閉じてもバックグラウンドで実行';
+
+  @override
+  String get trayShowWindow => 'ウィンドウを表示';
+
+  @override
+  String get trayQuit => '終了';
 
   @override
   String aboutDownloadVersion(String version) {

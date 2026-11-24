@@ -424,8 +424,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsMiniLyric => 'Songtext im Mini-Player immer anzeigen';
 
   @override
-  String get settingsMinimizeToTray =>
-      'Beim Schließen in den Infobereich minimieren';
+  String get settingsKeepRunning =>
+      'Nach dem Schließen im Hintergrund weiterlaufen';
+
+  @override
+  String get trayShowWindow => 'Fenster anzeigen';
+
+  @override
+  String get trayQuit => 'Beenden';
 
   @override
   String aboutDownloadVersion(String version) {

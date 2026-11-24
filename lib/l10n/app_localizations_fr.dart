@@ -426,8 +426,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Toujours afficher les paroles dans le mini-lecteur';
 
   @override
-  String get settingsMinimizeToTray =>
-      'Réduire dans la barre d\'état à la fermeture';
+  String get settingsKeepRunning =>
+      'Continuer en arrière-plan après la fermeture';
+
+  @override
+  String get trayShowWindow => 'Afficher la fenêtre';
+
+  @override
+  String get trayQuit => 'Quitter';
 
   @override
   String aboutDownloadVersion(String version) {

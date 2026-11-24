@@ -927,11 +927,23 @@ abstract class AppLocalizations {
   /// **'迷你播放器始终显示歌词'**
   String get settingsMiniLyric;
 
-  /// No description provided for @settingsMinimizeToTray.
+  /// Settings toggle: closing the window hides it and the app keeps running (macOS: reopen from the Dock; Windows: from the tray icon; Linux: the window is minimized)
   ///
   /// In zh, this message translates to:
-  /// **'关闭窗口时最小化到托盘'**
-  String get settingsMinimizeToTray;
+  /// **'关闭窗口后继续在后台运行'**
+  String get settingsKeepRunning;
+
+  /// Windows tray icon menu item that brings the hidden window back
+  ///
+  /// In zh, this message translates to:
+  /// **'显示窗口'**
+  String get trayShowWindow;
+
+  /// Windows tray icon menu item that quits the app
+  ///
+  /// In zh, this message translates to:
+  /// **'退出'**
+  String get trayQuit;
 
   /// No description provided for @aboutDownloadVersion.
   ///

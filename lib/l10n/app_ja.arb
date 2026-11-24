@@ -144,7 +144,9 @@
   "settingsLanguage": "言語",
   "langSystem": "システムに従う",
   "settingsMiniLyric": "ミニプレイヤーに常に歌詞を表示",
-  "settingsMinimizeToTray": "ウィンドウを閉じる時にトレイに最小化",
+  "settingsKeepRunning": "ウィンドウを閉じてもバックグラウンドで実行",
+  "trayShowWindow": "ウィンドウを表示",
+  "trayQuit": "終了",
 
   "aboutDownloadVersion": "{version} をダウンロード",
   "aboutChecking": "確認中…",

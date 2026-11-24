@@ -422,7 +422,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsMiniLyric => '迷你播放器始终显示歌词';
 
   @override
-  String get settingsMinimizeToTray => '关闭窗口时最小化到托盘';
+  String get settingsKeepRunning => '关闭窗口后继续在后台运行';
+
+  @override
+  String get trayShowWindow => '显示窗口';
+
+  @override
+  String get trayQuit => '退出';
 
   @override
   String aboutDownloadVersion(String version) {
@@ -2082,7 +2088,13 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsMiniLyric => '迷你播放器一律顯示歌詞';
 
   @override
-  String get settingsMinimizeToTray => '關閉視窗時最小化到系統匣';
+  String get settingsKeepRunning => '關閉視窗後繼續在背景執行';
+
+  @override
+  String get trayShowWindow => '顯示視窗';
+
+  @override
+  String get trayQuit => '結束';
 
   @override
   String aboutDownloadVersion(String version) {

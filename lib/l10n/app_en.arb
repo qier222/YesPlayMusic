@@ -144,7 +144,9 @@
   "settingsLanguage": "Language",
   "langSystem": "Follow System",
   "settingsMiniLyric": "Always show lyrics in mini player",
-  "settingsMinimizeToTray": "Minimize to tray when closing window",
+  "settingsKeepRunning": "Keep running after closing window",
+  "trayShowWindow": "Show window",
+  "trayQuit": "Quit",
 
   "aboutDownloadVersion": "Download {version}",
   "aboutChecking": "Checking…",

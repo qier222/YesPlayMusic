@@ -425,7 +425,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsMiniLyric => 'Always show lyrics in mini player';
 
   @override
-  String get settingsMinimizeToTray => 'Minimize to tray when closing window';
+  String get settingsKeepRunning => 'Keep running after closing window';
+
+  @override
+  String get trayShowWindow => 'Show window';
+
+  @override
+  String get trayQuit => 'Quit';
 
   @override
   String aboutDownloadVersion(String version) {

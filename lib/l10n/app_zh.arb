@@ -157,7 +157,18 @@
   "@settingsMiniLyric": {
     "description": "Settings toggle: on, the mini player always shows the current lyric; off, only while hovering its progress bar"
   },
-  "settingsMinimizeToTray": "关闭窗口时最小化到托盘",
+  "settingsKeepRunning": "关闭窗口后继续在后台运行",
+  "@settingsKeepRunning": {
+    "description": "Settings toggle: closing the window hides it and the app keeps running (macOS: reopen from the Dock; Windows: from the tray icon; Linux: the window is minimized)"
+  },
+  "trayShowWindow": "显示窗口",
+  "@trayShowWindow": {
+    "description": "Windows tray icon menu item that brings the hidden window back"
+  },
+  "trayQuit": "退出",
+  "@trayQuit": {
+    "description": "Windows tray icon menu item that quits the app"
+  },
 
   "aboutDownloadVersion": "下载 {version}",
   "@aboutDownloadVersion": {

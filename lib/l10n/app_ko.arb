@@ -144,7 +144,9 @@
   "settingsLanguage": "언어",
   "langSystem": "시스템 설정 따르기",
   "settingsMiniLyric": "미니 플레이어에 항상 가사 표시",
-  "settingsMinimizeToTray": "창을 닫을 때 트레이로 최소화",
+  "settingsKeepRunning": "창을 닫아도 백그라운드에서 계속 실행",
+  "trayShowWindow": "창 표시",
+  "trayQuit": "종료",
 
   "aboutDownloadVersion": "{version} 다운로드",
   "aboutChecking": "확인 중…",

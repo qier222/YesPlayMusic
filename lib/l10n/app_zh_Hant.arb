@@ -144,7 +144,9 @@
   "settingsLanguage": "語言",
   "langSystem": "跟隨系統",
   "settingsMiniLyric": "迷你播放器一律顯示歌詞",
-  "settingsMinimizeToTray": "關閉視窗時最小化到系統匣",
+  "settingsKeepRunning": "關閉視窗後繼續在背景執行",
+  "trayShowWindow": "顯示視窗",
+  "trayQuit": "結束",
 
   "aboutDownloadVersion": "下載 {version}",
   "aboutChecking": "正在檢查…",

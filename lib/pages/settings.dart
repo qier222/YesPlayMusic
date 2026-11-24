@@ -514,10 +514,10 @@ class _Playback extends StatelessWidget {
         // Audio quality is decided by each plugin in its own settings, so it's no longer here
         _row(
           66,
-          context.l10n.settingsMinimizeToTray,
+          context.l10n.settingsKeepRunning,
           Toggle(
-            value: app.tray,
-            onChanged: (v) => app.update(() => app.tray = v),
+            value: app.keepRunning,
+            onChanged: (v) => app.update(() => app.keepRunning = v),
           ),
         ),
       ],

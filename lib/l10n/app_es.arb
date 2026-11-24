@@ -144,7 +144,9 @@
   "settingsLanguage": "Idioma",
   "langSystem": "Seguir al sistema",
   "settingsMiniLyric": "Mostrar siempre la letra en el minirreproductor",
-  "settingsMinimizeToTray": "Minimizar a la bandeja al cerrar la ventana",
+  "settingsKeepRunning": "Seguir en segundo plano al cerrar la ventana",
+  "trayShowWindow": "Mostrar ventana",
+  "trayQuit": "Salir",
 
   "aboutDownloadVersion": "Descargar {version}",
   "aboutChecking": "Comprobando…",
