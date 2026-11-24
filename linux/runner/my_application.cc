@@ -49,6 +49,11 @@ static gboolean delete_event_cb(GtkWidget* window, GdkEvent* event,
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
 
+  // The UI is always dark, so ask the GTK theme for its dark variant too: the
+  // titlebar and native dialogs (e.g. the folder picker) then match the app.
+  g_object_set(gtk_settings_get_default(), "gtk-application-prefer-dark-theme",
+               TRUE, nullptr);
+
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
   // 界面按 1440 × 900 设计，至少要 1280 × 800
