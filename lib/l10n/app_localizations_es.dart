@@ -1750,4 +1750,54 @@ class AppLocalizationsEs extends AppLocalizations {
   String sourceErrNotFound(String source) {
     return 'No se encontró la fuente $source';
   }
+
+  @override
+  String get actionReplace => 'Reemplazar';
+
+  @override
+  String pluginIdConflict(String name, String source) {
+    return '«$name» ya está instalado desde $source, otro origen con el mismo id. Al reemplazarlo se borran sus ajustes, su sesión y los permisos concedidos.';
+  }
+
+  @override
+  String pluginIdConflictUnknown(String name) {
+    return '«$name» ya está instalado con el mismo id, pero no se puede confirmar que venga del mismo origen. Al reemplazarlo se borran sus ajustes, su sesión y los permisos concedidos.';
+  }
+
+  @override
+  String get pluginCheckUpdate => 'Buscar actualizaciones';
+
+  @override
+  String pluginUpToDate(String name) {
+    return '«$name» está actualizado';
+  }
+
+  @override
+  String pluginUpdateFoundToast(String name, String version) {
+    return '«$name» se puede actualizar a $version';
+  }
+
+  @override
+  String pluginUpdateCheckFailed(String error) {
+    return 'No se pudieron buscar actualizaciones: $error';
+  }
+
+  @override
+  String get pluginSectionUpdates => 'Actualizaciones';
+
+  @override
+  String get pluginAutoUpdate => 'Actualizar automáticamente';
+
+  @override
+  String get pluginAutoUpdateDetail =>
+      'Instala las versiones nuevas en segundo plano. Las versiones que piden permisos nuevos siguen necesitando tu confirmación.';
+
+  @override
+  String get pluginAutoUpdateUnsupported =>
+      'Solo disponible para plugins instalados desde GitHub o que indiquen un repositorio de GitHub en plugin.json.';
+
+  @override
+  String pluginAutoUpdatedToast(String name, String version) {
+    return '«$name» se actualizó a $version';
+  }
 }

@@ -622,25 +622,33 @@ class OfficialPlugin {
   final String link;
 
   String descOf(AppLocalizations l) => switch (id) {
-    'jellyfin' => l.officialJellyfinDesc,
-    'plex' => l.officialPlexDesc,
-    'subsonic' => l.officialSubsonicDesc,
-    'emby' => l.officialEmbyDesc,
+    'yesplaymusic.jellyfin' => l.officialJellyfinDesc,
+    'yesplaymusic.plex' => l.officialPlexDesc,
+    'yesplaymusic.subsonic' => l.officialSubsonicDesc,
+    'yesplaymusic.emby' => l.officialEmbyDesc,
     _ => '',
   };
 }
 
 const officialPlugins = [
   OfficialPlugin(
-    'jellyfin',
+    'yesplaymusic.jellyfin',
     'Jellyfin',
     'github.com/qier222/ypm-plugin-jellyfin',
   ),
-  OfficialPlugin('plex', 'Plex', 'github.com/qier222/ypm-plugin-plex'),
   OfficialPlugin(
-    'subsonic',
+    'yesplaymusic.plex',
+    'Plex',
+    'github.com/qier222/ypm-plugin-plex',
+  ),
+  OfficialPlugin(
+    'yesplaymusic.subsonic',
     'Subsonic',
     'github.com/qier222/ypm-plugin-subsonic',
   ),
-  OfficialPlugin('emby', 'Emby', 'github.com/qier222/ypm-plugin-emby'),
+  OfficialPlugin(
+    'yesplaymusic.emby',
+    'Emby',
+    'github.com/qier222/ypm-plugin-emby',
+  ),
 ];

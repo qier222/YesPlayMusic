@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "Délai dépassé pour {op} ({seconds} s)",
   "pluginErrClosed": "Le plugin est fermé",
   "sourceErrUnsupported": "{name} ne prend pas en charge {op}",
-  "sourceErrNotFound": "Source introuvable : {source}"
+  "sourceErrNotFound": "Source introuvable : {source}",
+  "actionReplace": "Remplacer",
+  "pluginIdConflict": "« {name} » est déjà installé depuis {source}, une autre source avec le même identifiant. Le remplacer efface ses réglages, sa connexion et les autorisations accordées.",
+  "pluginIdConflictUnknown": "« {name} » est déjà installé avec le même identifiant, mais rien ne confirme qu’il vienne de la même source. Le remplacer efface ses réglages, sa connexion et les autorisations accordées.",
+  "pluginCheckUpdate": "Rechercher des mises à jour",
+  "pluginUpToDate": "« {name} » est à jour",
+  "pluginUpdateFoundToast": "« {name} » peut être mis à jour vers {version}",
+  "pluginUpdateCheckFailed": "Impossible de rechercher des mises à jour : {error}",
+  "pluginSectionUpdates": "Mises à jour",
+  "pluginAutoUpdate": "Mettre à jour automatiquement",
+  "pluginAutoUpdateDetail": "Installe les nouvelles versions en arrière-plan. Les versions qui demandent de nouvelles autorisations nécessitent toujours votre confirmation.",
+  "pluginAutoUpdateUnsupported": "Disponible uniquement pour les plugins installés depuis GitHub ou indiquant un dépôt GitHub dans plugin.json.",
+  "pluginAutoUpdatedToast": "« {name} » a été mis à jour vers {version}"
 }

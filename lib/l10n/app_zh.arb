@@ -1115,5 +1115,86 @@
     "placeholders": {
       "source": { "type": "String" }
     }
+  },
+  "actionReplace": "替换",
+  "@actionReplace": {
+    "description": "Install button when it replaces a different plugin that has the same id"
+  },
+  "pluginIdConflict": "已安装的「{name}」来自 {source}，和这个插件 id 相同但来源不同。替换后会清除它的设置、登录状态和已授予的权限。",
+  "@pluginIdConflict": {
+    "description": "Install dialog warning: a plugin with the same id from a different source is installed",
+    "placeholders": {
+      "name": { "type": "String" },
+      "source": { "type": "String" }
+    }
+  },
+  "pluginIdConflictUnknown": "已安装的「{name}」和这个插件 id 相同，但无法确认来自同一个地方。替换后会清除它的设置、登录状态和已授予的权限。",
+  "@pluginIdConflictUnknown": {
+    "description": "Install dialog warning: a plugin with the same id is installed and its source is unknown (local folder or placed manually)",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "pluginCheckUpdate": "检查更新",
+  "@pluginCheckUpdate": {
+    "description": "Plugin card menu item: check this plugin for a new Release now"
+  },
+  "pluginUpToDate": "「{name}」已是最新版本",
+  "@pluginUpToDate": {
+    "description": "Toast after checking: the plugin is already the latest version",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginUpdateFoundToast": "「{name}」可更新到 {version}",
+  "@pluginUpdateFoundToast": {
+    "description": "Toast after checking: a new version of the plugin is available",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginUpdateCheckFailed": "检查更新失败：{error}",
+  "@pluginUpdateCheckFailed": {
+    "description": "Toast when the update check could not reach GitHub",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginSectionUpdates": "更新",
+  "@pluginSectionUpdates": {
+    "description": "Section title in the plugin settings dialog"
+  },
+  "pluginAutoUpdate": "自动更新",
+  "@pluginAutoUpdate": {
+    "description": "Toggle in plugin settings: install new versions in the background"
+  },
+  "pluginAutoUpdateDetail": "有新版本时在后台安装。需要新权限的版本仍要你手动确认。",
+  "@pluginAutoUpdateDetail": {
+    "description": "Explains the auto update toggle"
+  },
+  "pluginAutoUpdateUnsupported": "仅支持从 GitHub 安装或在 plugin.json 中声明了 GitHub 仓库的插件。",
+  "@pluginAutoUpdateUnsupported": {
+    "description": "Explains why auto update is disabled for non-GitHub plugins"
+  },
+  "pluginAutoUpdatedToast": "已自动更新「{name}」到 {version}",
+  "@pluginAutoUpdatedToast": {
+    "description": "Toast after a plugin was updated in the background",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
   }
 }

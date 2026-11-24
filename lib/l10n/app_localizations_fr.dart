@@ -1757,4 +1757,54 @@ class AppLocalizationsFr extends AppLocalizations {
   String sourceErrNotFound(String source) {
     return 'Source introuvable : $source';
   }
+
+  @override
+  String get actionReplace => 'Remplacer';
+
+  @override
+  String pluginIdConflict(String name, String source) {
+    return '« $name » est déjà installé depuis $source, une autre source avec le même identifiant. Le remplacer efface ses réglages, sa connexion et les autorisations accordées.';
+  }
+
+  @override
+  String pluginIdConflictUnknown(String name) {
+    return '« $name » est déjà installé avec le même identifiant, mais rien ne confirme qu’il vienne de la même source. Le remplacer efface ses réglages, sa connexion et les autorisations accordées.';
+  }
+
+  @override
+  String get pluginCheckUpdate => 'Rechercher des mises à jour';
+
+  @override
+  String pluginUpToDate(String name) {
+    return '« $name » est à jour';
+  }
+
+  @override
+  String pluginUpdateFoundToast(String name, String version) {
+    return '« $name » peut être mis à jour vers $version';
+  }
+
+  @override
+  String pluginUpdateCheckFailed(String error) {
+    return 'Impossible de rechercher des mises à jour : $error';
+  }
+
+  @override
+  String get pluginSectionUpdates => 'Mises à jour';
+
+  @override
+  String get pluginAutoUpdate => 'Mettre à jour automatiquement';
+
+  @override
+  String get pluginAutoUpdateDetail =>
+      'Installe les nouvelles versions en arrière-plan. Les versions qui demandent de nouvelles autorisations nécessitent toujours votre confirmation.';
+
+  @override
+  String get pluginAutoUpdateUnsupported =>
+      'Disponible uniquement pour les plugins installés depuis GitHub ou indiquant un dépôt GitHub dans plugin.json.';
+
+  @override
+  String pluginAutoUpdatedToast(String name, String version) {
+    return '« $name » a été mis à jour vers $version';
+  }
 }

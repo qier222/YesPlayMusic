@@ -3032,6 +3032,78 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'找不到源 {source}'**
   String sourceErrNotFound(String source);
+
+  /// Install button when it replaces a different plugin that has the same id
+  ///
+  /// In zh, this message translates to:
+  /// **'替换'**
+  String get actionReplace;
+
+  /// Install dialog warning: a plugin with the same id from a different source is installed
+  ///
+  /// In zh, this message translates to:
+  /// **'已安装的「{name}」来自 {source}，和这个插件 id 相同但来源不同。替换后会清除它的设置、登录状态和已授予的权限。'**
+  String pluginIdConflict(String name, String source);
+
+  /// Install dialog warning: a plugin with the same id is installed and its source is unknown (local folder or placed manually)
+  ///
+  /// In zh, this message translates to:
+  /// **'已安装的「{name}」和这个插件 id 相同，但无法确认来自同一个地方。替换后会清除它的设置、登录状态和已授予的权限。'**
+  String pluginIdConflictUnknown(String name);
+
+  /// Plugin card menu item: check this plugin for a new Release now
+  ///
+  /// In zh, this message translates to:
+  /// **'检查更新'**
+  String get pluginCheckUpdate;
+
+  /// Toast after checking: the plugin is already the latest version
+  ///
+  /// In zh, this message translates to:
+  /// **'「{name}」已是最新版本'**
+  String pluginUpToDate(String name);
+
+  /// Toast after checking: a new version of the plugin is available
+  ///
+  /// In zh, this message translates to:
+  /// **'「{name}」可更新到 {version}'**
+  String pluginUpdateFoundToast(String name, String version);
+
+  /// Toast when the update check could not reach GitHub
+  ///
+  /// In zh, this message translates to:
+  /// **'检查更新失败：{error}'**
+  String pluginUpdateCheckFailed(String error);
+
+  /// Section title in the plugin settings dialog
+  ///
+  /// In zh, this message translates to:
+  /// **'更新'**
+  String get pluginSectionUpdates;
+
+  /// Toggle in plugin settings: install new versions in the background
+  ///
+  /// In zh, this message translates to:
+  /// **'自动更新'**
+  String get pluginAutoUpdate;
+
+  /// Explains the auto update toggle
+  ///
+  /// In zh, this message translates to:
+  /// **'有新版本时在后台安装。需要新权限的版本仍要你手动确认。'**
+  String get pluginAutoUpdateDetail;
+
+  /// Explains why auto update is disabled for non-GitHub plugins
+  ///
+  /// In zh, this message translates to:
+  /// **'仅支持从 GitHub 安装或在 plugin.json 中声明了 GitHub 仓库的插件。'**
+  String get pluginAutoUpdateUnsupported;
+
+  /// Toast after a plugin was updated in the background
+  ///
+  /// In zh, this message translates to:
+  /// **'已自动更新「{name}」到 {version}'**
+  String pluginAutoUpdatedToast(String name, String version);
 }
 
 class _AppLocalizationsDelegate

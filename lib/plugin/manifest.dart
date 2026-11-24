@@ -31,6 +31,7 @@ class PluginManifest {
     this.description = '',
     this.author = '',
     this.icon = '',
+    this.repository = '',
     this.raw = const {},
   });
 
@@ -44,6 +45,9 @@ class PluginManifest {
 
   /// Plugin icon, a relative path to a .png/.jpg/.webp in the plugin directory; the name's initial is used when unset.
   final String icon;
+
+  /// Optional GitHub repository URL, used for update checks when no install origin was recorded.
+  final String repository;
 
   /// Raw JSON, passed to the plugin isolate.
   final Map<String, Object?> raw;
@@ -118,6 +122,11 @@ class PluginManifest {
         _ => '',
       },
       icon: icon.isEmpty ? '' : p.normalize(icon),
+      repository: switch (j['repository']) {
+        final String r => r.trim(),
+        {'url': final String r} => r.trim(),
+        _ => '',
+      },
       raw: j,
     );
   }

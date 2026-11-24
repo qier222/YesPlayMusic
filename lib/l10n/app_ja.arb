@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "{op} がタイムアウトしました（{seconds} 秒）",
   "pluginErrClosed": "プラグインは終了しています",
   "sourceErrUnsupported": "{name} は {op} に対応していません",
-  "sourceErrNotFound": "ソースが見つかりません：{source}"
+  "sourceErrNotFound": "ソースが見つかりません：{source}",
+  "actionReplace": "置き換え",
+  "pluginIdConflict": "「{name}」は {source} からインストール済みで、id は同じですが入手元が異なります。置き換えると、その設定・ログイン状態・許可した権限は消去されます。",
+  "pluginIdConflictUnknown": "「{name}」は同じ id でインストール済みですが、同じ入手元か確認できません。置き換えると、その設定・ログイン状態・許可した権限は消去されます。",
+  "pluginCheckUpdate": "アップデートを確認",
+  "pluginUpToDate": "「{name}」は最新です",
+  "pluginUpdateFoundToast": "「{name}」を {version} にアップデートできます",
+  "pluginUpdateCheckFailed": "アップデートを確認できませんでした：{error}",
+  "pluginSectionUpdates": "アップデート",
+  "pluginAutoUpdate": "自動アップデート",
+  "pluginAutoUpdateDetail": "新しいバージョンをバックグラウンドでインストールします。新しい権限を求めるバージョンは手動で確認が必要です。",
+  "pluginAutoUpdateUnsupported": "GitHub からインストールされたプラグイン、または plugin.json に GitHub リポジトリが記載されたプラグインのみ対応しています。",
+  "pluginAutoUpdatedToast": "「{name}」を {version} にアップデートしました"
 }

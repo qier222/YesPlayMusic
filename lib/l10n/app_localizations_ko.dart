@@ -1706,4 +1706,54 @@ class AppLocalizationsKo extends AppLocalizations {
   String sourceErrNotFound(String source) {
     return '소스를 찾을 수 없습니다: $source';
   }
+
+  @override
+  String get actionReplace => '교체';
+
+  @override
+  String pluginIdConflict(String name, String source) {
+    return '「$name」이(가) $source에서 이미 설치되어 있습니다. id는 같지만 출처가 다릅니다. 교체하면 해당 플러그인의 설정, 로그인 상태, 허용한 권한이 삭제됩니다.';
+  }
+
+  @override
+  String pluginIdConflictUnknown(String name) {
+    return '「$name」이(가) 같은 id로 이미 설치되어 있지만 같은 출처인지 확인할 수 없습니다. 교체하면 해당 플러그인의 설정, 로그인 상태, 허용한 권한이 삭제됩니다.';
+  }
+
+  @override
+  String get pluginCheckUpdate => '업데이트 확인';
+
+  @override
+  String pluginUpToDate(String name) {
+    return '「$name」은(는) 최신 버전입니다';
+  }
+
+  @override
+  String pluginUpdateFoundToast(String name, String version) {
+    return '「$name」을(를) $version(으)로 업데이트할 수 있습니다';
+  }
+
+  @override
+  String pluginUpdateCheckFailed(String error) {
+    return '업데이트를 확인하지 못했습니다: $error';
+  }
+
+  @override
+  String get pluginSectionUpdates => '업데이트';
+
+  @override
+  String get pluginAutoUpdate => '자동 업데이트';
+
+  @override
+  String get pluginAutoUpdateDetail =>
+      '새 버전을 백그라운드에서 설치합니다. 새 권한을 요청하는 버전은 직접 확인해야 합니다.';
+
+  @override
+  String get pluginAutoUpdateUnsupported =>
+      'GitHub에서 설치했거나 plugin.json에 GitHub 저장소가 지정된 플러그인만 지원합니다.';
+
+  @override
+  String pluginAutoUpdatedToast(String name, String version) {
+    return '「$name」을(를) $version(으)로 업데이트했습니다';
+  }
 }

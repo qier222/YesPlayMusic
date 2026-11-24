@@ -108,7 +108,9 @@ class _InstallFlowState extends State<_InstallFlow> {
     final pkg = _pkg;
     if (pkg == null || _installing) return;
     final app = context.appRead;
-    final update = _installedVersion(app, pkg.manifest) != null;
+    final update =
+        _installedVersion(app, pkg.manifest) != null &&
+        app.pluginIdConflict(pkg) == null;
     final name = pluginTr(pkg.dir, pkg.manifest.info.name);
     setState(() => _installing = true);
     try {
@@ -122,6 +124,17 @@ class _InstallFlowState extends State<_InstallFlow> {
       showToast(L.pluginInstallFailed('$e'));
       if (mounted) setState(() => _installing = false);
     }
+  }
+
+  /// Display name of the installed plugin with the same id.
+  static String _installedName(AppState app, PluginManifest mf) {
+    for (final s in app.plugins) {
+      if (s.id == mf.id) return s.tr(s.info.name);
+    }
+    for (final e in app.disabledPlugins.entries) {
+      if (e.value.id == mf.id) return pluginTr(e.key, e.value.info.name);
+    }
+    return mf.id;
   }
 
   static String? _installedVersion(AppState app, PluginManifest mf) {
@@ -271,6 +284,7 @@ class _InstallFlowState extends State<_InstallFlow> {
     final l = context.l10n;
     final mf = pkg.manifest;
     final installed = _installedVersion(app, mf);
+    final conflict = app.pluginIdConflict(pkg);
     final blocked = pkg.blocked;
     final caps = capabilityLabels(pkg.ops, l);
     final nav = navTitles(mf, dir: pkg.dir);
@@ -347,6 +361,32 @@ class _InstallFlowState extends State<_InstallFlow> {
                           w: w500,
                           c: errorColor,
                           lines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (conflict != null) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Ico('warning', size: 16, color: warnColor),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: CjkText(
+                          conflict.isEmpty
+                              ? l.pluginIdConflictUnknown(
+                                  _installedName(app, mf),
+                                )
+                              : l.pluginIdConflict(
+                                  _installedName(app, mf),
+                                  conflict,
+                                ),
+                          style: ts(13, w: w500, c: warnColor, h: 20 / 13),
                         ),
                       ),
                     ],
@@ -451,6 +491,8 @@ class _InstallFlowState extends State<_InstallFlow> {
                 child: Btn(
                   label: _installing
                       ? l.pluginInstalling
+                      : conflict != null
+                      ? l.actionReplace
                       : (installed != null ? l.actionUpdate : l.actionInstall),
                   size: BtnSize.l,
                   kind: BtnKind.primary,

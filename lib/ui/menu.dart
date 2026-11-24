@@ -17,6 +17,7 @@ class MenuItem {
     this.icon,
     this.label, {
     this.onTap,
+    this.enabled = true,
     this.danger = false,
     this.sub,
     this.checked = false,
@@ -27,6 +28,7 @@ class MenuItem {
   final String icon;
   final String label;
   final VoidCallback? onTap;
+  final bool enabled;
   final bool danger;
   final List<MenuItem>? sub;
   final bool checked;
@@ -293,11 +295,12 @@ class _MenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final col = item.danger ? heart : P.ink;
-    final icol = item.danger ? heart : P.muted;
+    final enabled = item.enabled;
+    final col = !enabled ? P.faint : (item.danger ? heart : P.ink);
+    final icol = !enabled ? P.faint : (item.danger ? heart : P.muted);
     Widget row = Tap(
-      onHover: onHover,
-      onTap: item.hasSub
+      onHover: enabled ? onHover : null,
+      onTap: !enabled || item.hasSub
           ? null
           : () {
               closeMenu();
@@ -310,7 +313,7 @@ class _MenuRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: squircle(
           8,
-          color: (h || subOpen)
+          color: enabled && (h || subOpen)
               ? (P.dark ? const Color(0xFF232327) : P.surface)
               : const Color(0x00000000),
         ),

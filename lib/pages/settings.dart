@@ -11,6 +11,7 @@ import '../l10n/l10n.dart';
 import '../log.dart';
 import '../mcp/config.dart';
 import '../music/source.dart';
+import '../plugin/installer.dart';
 import '../plugin/manifest.dart';
 import '../plugin/plugin_source.dart';
 import '../shortcuts.dart';
@@ -808,6 +809,20 @@ void _openPluginsDir() {
   openExternal(dir);
 }
 
+/// "Check for updates" in a plugin's menu: reports the result in a toast; a new version shows on the card.
+Future<void> _checkPluginUpdate(AppState app, String id, String name) async {
+  try {
+    final v = await app.checkPluginUpdate(id);
+    showToast(
+      v == null
+          ? L.pluginUpToDate(name)
+          : L.pluginUpdateFoundToast(name, versionLabel(v)),
+    );
+  } on InstallError catch (e) {
+    showToast(L.pluginUpdateCheckFailed(e.message));
+  }
+}
+
 Future<void> _reloadPlugins(AppState app) async {
   await app.loadPlugins();
   showToast(L.pluginsLoadedToast(app.plugins.length));
@@ -1566,7 +1581,7 @@ class _RunningCard extends StatelessWidget {
     final isCurrent = app.sourceId == s.id;
     final account = app.accounts[s.id];
     final update = app.pluginUpdates[s.id];
-    final origin = app.pluginOrigins[s.id];
+    final origin = app.pluginUpdateOrigin(s.id);
     final ver = versionLabel(s.info.version);
     final missing = missingServer(mf, s.setting);
     final _Status status = update != null
@@ -1634,6 +1649,12 @@ class _RunningCard extends StatelessWidget {
           [
             MenuItem('pause', l.pluginDisable, onTap: disable),
             MenuItem(
+              'download',
+              l.pluginCheckUpdate,
+              enabled: app.canCheckPluginUpdate(s.id),
+              onTap: () => _checkPluginUpdate(app, s.id, name),
+            ),
+            MenuItem(
               'folder',
               l.sourceShowInFileManager,
               onTap: () => openExternal(s.dir),
@@ -1671,7 +1692,7 @@ class _DisabledCard extends StatelessWidget {
     final mf = manifest;
     final name = pluginTr(dir, mf.info.name);
     final update = app.pluginUpdates[mf.id];
-    final origin = app.pluginOrigins[mf.id];
+    final origin = app.pluginUpdateOrigin(mf.id);
     final ver = versionLabel(mf.info.version);
     return _PluginCard(
       icon: PluginIcon(
@@ -1715,6 +1736,12 @@ class _DisabledCard extends StatelessWidget {
       menu: () => MenuSpec(
         groups: [
           [
+            MenuItem(
+              'download',
+              l.pluginCheckUpdate,
+              enabled: app.canCheckPluginUpdate(mf.id),
+              onTap: () => _checkPluginUpdate(app, mf.id, name),
+            ),
             MenuItem(
               'folder',
               l.sourceShowInFileManager,

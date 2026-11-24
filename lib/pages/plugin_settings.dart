@@ -83,6 +83,8 @@ class _PluginSettingsState extends State<_PluginSettings> {
   late final Set<String> _ops =
       widget.running?.ops ?? exportsOf(widget.dir, _mf.main);
   late bool _programs = context.appRead.allowPrograms.contains(_mf.id);
+  late final bool _updatable = context.appRead.canCheckPluginUpdate(_mf.id);
+  late bool _autoUpdate = context.appRead.autoUpdatePlugins.contains(_mf.id);
   var _saving = false;
 
   static bool _isText(m.Setting s) =>
@@ -131,6 +133,9 @@ class _PluginSettingsState extends State<_PluginSettings> {
       if (_programs != app.allowPrograms.contains(_mf.id)) {
         await app.setAllowPrograms(_mf.id, _programs);
       }
+      if (_autoUpdate != app.autoUpdatePlugins.contains(_mf.id)) {
+        app.setAutoUpdatePlugin(_mf.id, _autoUpdate);
+      }
       showToast(L.stateSaved);
       widget.onClose();
     } catch (e) {
@@ -165,7 +170,7 @@ class _PluginSettingsState extends State<_PluginSettings> {
     final l = context.l10n;
     final r = widget.running;
     final isCurrent = app.sourceId == _mf.id;
-    final hasForm = _items.isNotEmpty || _mf.process.isNotEmpty;
+    final hasForm = _items.isNotEmpty || _mf.process.isNotEmpty || _updatable;
     final caps = capabilityLabels(_ops, l);
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -234,6 +239,22 @@ class _PluginSettingsState extends State<_PluginSettings> {
                     ),
                   ),
                 ],
+                const SizedBox(height: 28),
+                sectionLabel(l.pluginSectionUpdates),
+                const SizedBox(height: 12),
+                PermRow(
+                  icon: 'download',
+                  title: l.pluginAutoUpdate,
+                  detail: _updatable
+                      ? l.pluginAutoUpdateDetail
+                      : l.pluginAutoUpdateUnsupported,
+                  trailing: Toggle(
+                    value: _updatable && _autoUpdate,
+                    onChanged: _updatable
+                        ? (v) => setState(() => _autoUpdate = v)
+                        : null,
+                  ),
+                ),
                 if (r == null) ...[
                   const SizedBox(height: 20),
                   tx(l.pluginDisabledHint, 12, w: w500, c: P.faint),

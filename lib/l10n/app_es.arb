@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "Tiempo agotado para {op} ({seconds} s)",
   "pluginErrClosed": "El plugin está cerrado",
   "sourceErrUnsupported": "{name} no admite {op}",
-  "sourceErrNotFound": "No se encontró la fuente {source}"
+  "sourceErrNotFound": "No se encontró la fuente {source}",
+  "actionReplace": "Reemplazar",
+  "pluginIdConflict": "«{name}» ya está instalado desde {source}, otro origen con el mismo id. Al reemplazarlo se borran sus ajustes, su sesión y los permisos concedidos.",
+  "pluginIdConflictUnknown": "«{name}» ya está instalado con el mismo id, pero no se puede confirmar que venga del mismo origen. Al reemplazarlo se borran sus ajustes, su sesión y los permisos concedidos.",
+  "pluginCheckUpdate": "Buscar actualizaciones",
+  "pluginUpToDate": "«{name}» está actualizado",
+  "pluginUpdateFoundToast": "«{name}» se puede actualizar a {version}",
+  "pluginUpdateCheckFailed": "No se pudieron buscar actualizaciones: {error}",
+  "pluginSectionUpdates": "Actualizaciones",
+  "pluginAutoUpdate": "Actualizar automáticamente",
+  "pluginAutoUpdateDetail": "Instala las versiones nuevas en segundo plano. Las versiones que piden permisos nuevos siguen necesitando tu confirmación.",
+  "pluginAutoUpdateUnsupported": "Solo disponible para plugins instalados desde GitHub o que indiquen un repositorio de GitHub en plugin.json.",
+  "pluginAutoUpdatedToast": "«{name}» se actualizó a {version}"
 }

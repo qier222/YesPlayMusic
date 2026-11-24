@@ -1706,4 +1706,54 @@ class AppLocalizationsJa extends AppLocalizations {
   String sourceErrNotFound(String source) {
     return 'ソースが見つかりません：$source';
   }
+
+  @override
+  String get actionReplace => '置き換え';
+
+  @override
+  String pluginIdConflict(String name, String source) {
+    return '「$name」は $source からインストール済みで、id は同じですが入手元が異なります。置き換えると、その設定・ログイン状態・許可した権限は消去されます。';
+  }
+
+  @override
+  String pluginIdConflictUnknown(String name) {
+    return '「$name」は同じ id でインストール済みですが、同じ入手元か確認できません。置き換えると、その設定・ログイン状態・許可した権限は消去されます。';
+  }
+
+  @override
+  String get pluginCheckUpdate => 'アップデートを確認';
+
+  @override
+  String pluginUpToDate(String name) {
+    return '「$name」は最新です';
+  }
+
+  @override
+  String pluginUpdateFoundToast(String name, String version) {
+    return '「$name」を $version にアップデートできます';
+  }
+
+  @override
+  String pluginUpdateCheckFailed(String error) {
+    return 'アップデートを確認できませんでした：$error';
+  }
+
+  @override
+  String get pluginSectionUpdates => 'アップデート';
+
+  @override
+  String get pluginAutoUpdate => '自動アップデート';
+
+  @override
+  String get pluginAutoUpdateDetail =>
+      '新しいバージョンをバックグラウンドでインストールします。新しい権限を求めるバージョンは手動で確認が必要です。';
+
+  @override
+  String get pluginAutoUpdateUnsupported =>
+      'GitHub からインストールされたプラグイン、または plugin.json に GitHub リポジトリが記載されたプラグインのみ対応しています。';
+
+  @override
+  String pluginAutoUpdatedToast(String name, String version) {
+    return '「$name」を $version にアップデートしました';
+  }
 }

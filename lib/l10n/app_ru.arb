@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "Тайм-аут {op} ({seconds} с)",
   "pluginErrClosed": "Плагин закрыт",
   "sourceErrUnsupported": "{name} не поддерживает {op}",
-  "sourceErrNotFound": "Источник не найден: {source}"
+  "sourceErrNotFound": "Источник не найден: {source}",
+  "actionReplace": "Заменить",
+  "pluginIdConflict": "«{name}» уже установлен из {source} — это другой источник с тем же id. При замене его настройки, вход и выданные разрешения будут удалены.",
+  "pluginIdConflictUnknown": "«{name}» уже установлен с тем же id, но нельзя подтвердить, что он из того же источника. При замене его настройки, вход и выданные разрешения будут удалены.",
+  "pluginCheckUpdate": "Проверить обновления",
+  "pluginUpToDate": "«{name}» — последняя версия",
+  "pluginUpdateFoundToast": "«{name}» можно обновить до {version}",
+  "pluginUpdateCheckFailed": "Не удалось проверить обновления: {error}",
+  "pluginSectionUpdates": "Обновления",
+  "pluginAutoUpdate": "Обновлять автоматически",
+  "pluginAutoUpdateDetail": "Устанавливает новые версии в фоне. Версии, запрашивающие новые разрешения, по-прежнему нужно подтвердить вручную.",
+  "pluginAutoUpdateUnsupported": "Доступно только для плагинов, установленных с GitHub или указавших репозиторий GitHub в plugin.json.",
+  "pluginAutoUpdatedToast": "«{name}» обновлён до {version}"
 }

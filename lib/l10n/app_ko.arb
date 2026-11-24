@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "{op} 시간 초과 ({seconds}초)",
   "pluginErrClosed": "플러그인이 종료되었습니다",
   "sourceErrUnsupported": "{name}에서 {op}을(를) 지원하지 않습니다",
-  "sourceErrNotFound": "소스를 찾을 수 없습니다: {source}"
+  "sourceErrNotFound": "소스를 찾을 수 없습니다: {source}",
+  "actionReplace": "교체",
+  "pluginIdConflict": "「{name}」이(가) {source}에서 이미 설치되어 있습니다. id는 같지만 출처가 다릅니다. 교체하면 해당 플러그인의 설정, 로그인 상태, 허용한 권한이 삭제됩니다.",
+  "pluginIdConflictUnknown": "「{name}」이(가) 같은 id로 이미 설치되어 있지만 같은 출처인지 확인할 수 없습니다. 교체하면 해당 플러그인의 설정, 로그인 상태, 허용한 권한이 삭제됩니다.",
+  "pluginCheckUpdate": "업데이트 확인",
+  "pluginUpToDate": "「{name}」은(는) 최신 버전입니다",
+  "pluginUpdateFoundToast": "「{name}」을(를) {version}(으)로 업데이트할 수 있습니다",
+  "pluginUpdateCheckFailed": "업데이트를 확인하지 못했습니다: {error}",
+  "pluginSectionUpdates": "업데이트",
+  "pluginAutoUpdate": "자동 업데이트",
+  "pluginAutoUpdateDetail": "새 버전을 백그라운드에서 설치합니다. 새 권한을 요청하는 버전은 직접 확인해야 합니다.",
+  "pluginAutoUpdateUnsupported": "GitHub에서 설치했거나 plugin.json에 GitHub 저장소가 지정된 플러그인만 지원합니다.",
+  "pluginAutoUpdatedToast": "「{name}」을(를) {version}(으)로 업데이트했습니다"
 }

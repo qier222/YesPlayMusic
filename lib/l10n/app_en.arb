@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "{op} timed out ({seconds}s)",
   "pluginErrClosed": "Plugin is closed",
   "sourceErrUnsupported": "{name} does not support {op}",
-  "sourceErrNotFound": "Source not found: {source}"
+  "sourceErrNotFound": "Source not found: {source}",
+  "actionReplace": "Replace",
+  "pluginIdConflict": "“{name}” is already installed from {source}, a different source with the same id. Replacing it clears its settings, sign-in and granted permissions.",
+  "pluginIdConflictUnknown": "“{name}” is already installed with the same id, but it can’t be confirmed to come from the same source. Replacing it clears its settings, sign-in and granted permissions.",
+  "pluginCheckUpdate": "Check for Updates",
+  "pluginUpToDate": "“{name}” is up to date",
+  "pluginUpdateFoundToast": "“{name}” can be updated to {version}",
+  "pluginUpdateCheckFailed": "Couldn’t check for updates: {error}",
+  "pluginSectionUpdates": "Updates",
+  "pluginAutoUpdate": "Update Automatically",
+  "pluginAutoUpdateDetail": "Installs new versions in the background. Versions that ask for new permissions still need your confirmation.",
+  "pluginAutoUpdateUnsupported": "Only available for plugins installed from GitHub or with a GitHub repository in plugin.json.",
+  "pluginAutoUpdatedToast": "Updated “{name}” to {version}"
 }

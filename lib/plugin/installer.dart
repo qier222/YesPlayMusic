@@ -124,6 +124,36 @@ GitHubRef? parseGitHub(String input) {
   return null;
 }
 
+/// Whether two install links are the same plugin: the same GitHub repo (any branch, Release or path),
+/// or otherwise the same link. Two local-folder installs (both empty) count as the same.
+bool sameOrigin(String a, String b) {
+  if (a == b) return true;
+  final ga = parseGitHub(a), gb = parseGitHub(b);
+  return ga != null &&
+      gb != null &&
+      ga.slug.toLowerCase() == gb.slug.toLowerCase();
+}
+
+/// An install link as shown to the user: github.com/owner/repo, or the link's host and path. Empty stays empty.
+String originLabel(String origin) {
+  if (origin.isEmpty) return '';
+  final gh = parseGitHub(origin);
+  if (gh != null) return 'github.com/${gh.slug}';
+  final u = Uri.tryParse(origin);
+  return u == null || u.host.isEmpty ? origin : '${u.host}${u.path}';
+}
+
+/// Whether [next] asks for permissions [current] doesn't have: a network host or a program not granted before.
+/// Such an update must be reviewed by the user, so it's never installed automatically.
+bool permissionsGrow(PluginManifest current, PluginManifest next) {
+  final hosts = current.network.toSet(), programs = current.process.toSet();
+  final net =
+      !hosts.contains('*') && next.network.any((h) => !hosts.contains(h));
+  final proc =
+      !programs.contains('*') && next.process.any((x) => !programs.contains(x));
+  return net || proc;
+}
+
 const _maxBytes = 50 * 1024 * 1024;
 
 /// Limits on total extracted size and file count, against zip bombs.
@@ -229,7 +259,8 @@ Future<String> installPlugin(
 }
 
 /// Version of the GitHub repo's latest Release (without v); null when there's no Release or it can't be fetched.
-Future<String?> latestGitHubVersion(GitHubRef gh) async {
+/// With [strict], a failed request throws [InstallError] instead of returning null.
+Future<String?> latestGitHubVersion(GitHubRef gh, {bool strict = false}) async {
   final http = _client();
   try {
     final j = await _json(
@@ -239,7 +270,8 @@ Future<String?> latestGitHubVersion(GitHubRef gh) async {
     );
     final tag = '${j?['tag_name'] ?? ''}';
     return tag.isEmpty ? null : tag.replaceFirst(RegExp(r'^v'), '');
-  } catch (_) {
+  } catch (e) {
+    if (strict) throw e is InstallError ? e : InstallError('$e');
     return null;
   } finally {
     http.close(force: true);

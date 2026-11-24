@@ -304,4 +304,106 @@ export * from '../outside.js';
       });
     });
   });
+
+  group('sameOrigin', () {
+    test(
+      'same GitHub repo counts as the same plugin, whatever the link form',
+      () {
+        expect(
+          sameOrigin(
+            'https://github.com/alice/ypm-foo',
+            'https://github.com/Alice/ypm-foo/tree/dev',
+          ),
+          isTrue,
+        );
+      },
+    );
+    test('different repos, links or local vs link differ', () {
+      expect(
+        sameOrigin(
+          'https://github.com/alice/ypm-foo',
+          'https://github.com/bob/ypm-foo',
+        ),
+        isFalse,
+      );
+      expect(
+        sameOrigin('https://a.com/foo.zip', 'https://b.com/foo.zip'),
+        isFalse,
+      );
+      expect(sameOrigin('', 'https://github.com/alice/ypm-foo'), isFalse);
+    });
+    test('two local folder installs are the same', () {
+      expect(sameOrigin('', ''), isTrue);
+    });
+  });
+
+  test('originLabel', () {
+    expect(
+      originLabel('https://github.com/alice/ypm-foo/tree/dev'),
+      'github.com/alice/ypm-foo',
+    );
+    expect(originLabel('https://a.com/p/foo.zip'), 'a.com/p/foo.zip');
+    expect(originLabel(''), '');
+  });
+
+  group('permissionsGrow', () {
+    PluginManifest mf({List<String> net = const [], Object proc = const []}) =>
+        PluginManifest.parse(
+          jsonEncode({
+            'id': 'a.b',
+            'name': 'B',
+            'main': 'index.js',
+            'permissions': {'network': net, 'process': proc},
+          }),
+        );
+
+    test('same or fewer permissions is fine', () {
+      expect(
+        permissionsGrow(mf(net: ['a.com', 'b.com']), mf(net: ['a.com'])),
+        isFalse,
+      );
+      expect(
+        permissionsGrow(mf(proc: ['ffmpeg']), mf(proc: ['ffmpeg'])),
+        isFalse,
+      );
+    });
+    test('a new host or program needs the user', () {
+      expect(
+        permissionsGrow(mf(net: ['a.com']), mf(net: ['a.com', 'c.com'])),
+        isTrue,
+      );
+      expect(permissionsGrow(mf(), mf(proc: ['ffmpeg'])), isTrue);
+      expect(permissionsGrow(mf(net: ['a.com']), mf(net: ['*'])), isTrue);
+    });
+    test('* already covers everything', () {
+      expect(permissionsGrow(mf(net: ['*']), mf(net: ['c.com'])), isFalse);
+      expect(permissionsGrow(mf(proc: true), mf(proc: ['ffmpeg'])), isFalse);
+    });
+  });
+
+  group('manifest repository', () {
+    test('parses string and object repository', () {
+      final a = PluginManifest.parse(
+        jsonEncode({
+          'id': 'a.b',
+          'name': 'B',
+          'repository': ' https://github.com/alice/ypm-b ',
+        }),
+      );
+      expect(a.repository, 'https://github.com/alice/ypm-b');
+      final b = PluginManifest.parse(
+        jsonEncode({
+          'id': 'a.b',
+          'name': 'B',
+          'repository': {
+            'type': 'git',
+            'url': 'https://github.com/alice/ypm-b',
+          },
+        }),
+      );
+      expect(b.repository, 'https://github.com/alice/ypm-b');
+      final c = PluginManifest.parse(jsonEncode({'id': 'a.b', 'name': 'B'}));
+      expect(c.repository, isEmpty);
+    });
+  });
 }

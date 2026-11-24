@@ -1702,6 +1702,55 @@ class AppLocalizationsZh extends AppLocalizations {
   String sourceErrNotFound(String source) {
     return '找不到源 $source';
   }
+
+  @override
+  String get actionReplace => '替换';
+
+  @override
+  String pluginIdConflict(String name, String source) {
+    return '已安装的「$name」来自 $source，和这个插件 id 相同但来源不同。替换后会清除它的设置、登录状态和已授予的权限。';
+  }
+
+  @override
+  String pluginIdConflictUnknown(String name) {
+    return '已安装的「$name」和这个插件 id 相同，但无法确认来自同一个地方。替换后会清除它的设置、登录状态和已授予的权限。';
+  }
+
+  @override
+  String get pluginCheckUpdate => '检查更新';
+
+  @override
+  String pluginUpToDate(String name) {
+    return '「$name」已是最新版本';
+  }
+
+  @override
+  String pluginUpdateFoundToast(String name, String version) {
+    return '「$name」可更新到 $version';
+  }
+
+  @override
+  String pluginUpdateCheckFailed(String error) {
+    return '检查更新失败：$error';
+  }
+
+  @override
+  String get pluginSectionUpdates => '更新';
+
+  @override
+  String get pluginAutoUpdate => '自动更新';
+
+  @override
+  String get pluginAutoUpdateDetail => '有新版本时在后台安装。需要新权限的版本仍要你手动确认。';
+
+  @override
+  String get pluginAutoUpdateUnsupported =>
+      '仅支持从 GitHub 安装或在 plugin.json 中声明了 GitHub 仓库的插件。';
+
+  @override
+  String pluginAutoUpdatedToast(String name, String version) {
+    return '已自动更新「$name」到 $version';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3400,5 +3449,54 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   @override
   String sourceErrNotFound(String source) {
     return '找不到來源 $source';
+  }
+
+  @override
+  String get actionReplace => '取代';
+
+  @override
+  String pluginIdConflict(String name, String source) {
+    return '已安裝的「$name」來自 $source，與這個外掛 id 相同但來源不同。取代後會清除它的設定、登入狀態和已授予的權限。';
+  }
+
+  @override
+  String pluginIdConflictUnknown(String name) {
+    return '已安裝的「$name」與這個外掛 id 相同，但無法確認來自同一個地方。取代後會清除它的設定、登入狀態和已授予的權限。';
+  }
+
+  @override
+  String get pluginCheckUpdate => '檢查更新';
+
+  @override
+  String pluginUpToDate(String name) {
+    return '「$name」已是最新版本';
+  }
+
+  @override
+  String pluginUpdateFoundToast(String name, String version) {
+    return '「$name」可更新至 $version';
+  }
+
+  @override
+  String pluginUpdateCheckFailed(String error) {
+    return '檢查更新失敗：$error';
+  }
+
+  @override
+  String get pluginSectionUpdates => '更新';
+
+  @override
+  String get pluginAutoUpdate => '自動更新';
+
+  @override
+  String get pluginAutoUpdateDetail => '有新版本時在背景安裝。需要新權限的版本仍須由你手動確認。';
+
+  @override
+  String get pluginAutoUpdateUnsupported =>
+      '僅支援從 GitHub 安裝或在 plugin.json 中宣告 GitHub 儲存庫的外掛。';
+
+  @override
+  String pluginAutoUpdatedToast(String name, String version) {
+    return '已自動將「$name」更新至 $version';
   }
 }

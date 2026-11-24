@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "{op} 逾時（{seconds} 秒）",
   "pluginErrClosed": "外掛已關閉",
   "sourceErrUnsupported": "{name} 不支援 {op}",
-  "sourceErrNotFound": "找不到來源 {source}"
+  "sourceErrNotFound": "找不到來源 {source}",
+  "actionReplace": "取代",
+  "pluginIdConflict": "已安裝的「{name}」來自 {source}，與這個外掛 id 相同但來源不同。取代後會清除它的設定、登入狀態和已授予的權限。",
+  "pluginIdConflictUnknown": "已安裝的「{name}」與這個外掛 id 相同，但無法確認來自同一個地方。取代後會清除它的設定、登入狀態和已授予的權限。",
+  "pluginCheckUpdate": "檢查更新",
+  "pluginUpToDate": "「{name}」已是最新版本",
+  "pluginUpdateFoundToast": "「{name}」可更新至 {version}",
+  "pluginUpdateCheckFailed": "檢查更新失敗：{error}",
+  "pluginSectionUpdates": "更新",
+  "pluginAutoUpdate": "自動更新",
+  "pluginAutoUpdateDetail": "有新版本時在背景安裝。需要新權限的版本仍須由你手動確認。",
+  "pluginAutoUpdateUnsupported": "僅支援從 GitHub 安裝或在 plugin.json 中宣告 GitHub 儲存庫的外掛。",
+  "pluginAutoUpdatedToast": "已自動將「{name}」更新至 {version}"
 }

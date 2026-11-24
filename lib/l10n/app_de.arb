@@ -514,5 +514,17 @@
   "pluginErrOpTimeout": "Zeitüberschreitung bei {op} ({seconds} Sek.)",
   "pluginErrClosed": "Plugin ist geschlossen",
   "sourceErrUnsupported": "{name} unterstützt {op} nicht",
-  "sourceErrNotFound": "Quelle nicht gefunden: {source}"
+  "sourceErrNotFound": "Quelle nicht gefunden: {source}",
+  "actionReplace": "Ersetzen",
+  "pluginIdConflict": "„{name}“ ist bereits aus {source} installiert – eine andere Quelle mit derselben ID. Beim Ersetzen werden seine Einstellungen, Anmeldung und erteilten Berechtigungen gelöscht.",
+  "pluginIdConflictUnknown": "„{name}“ ist bereits mit derselben ID installiert, aber es lässt sich nicht bestätigen, dass es aus derselben Quelle stammt. Beim Ersetzen werden seine Einstellungen, Anmeldung und erteilten Berechtigungen gelöscht.",
+  "pluginCheckUpdate": "Nach Updates suchen",
+  "pluginUpToDate": "„{name}“ ist aktuell",
+  "pluginUpdateFoundToast": "„{name}“ kann auf {version} aktualisiert werden",
+  "pluginUpdateCheckFailed": "Suche nach Updates fehlgeschlagen: {error}",
+  "pluginSectionUpdates": "Updates",
+  "pluginAutoUpdate": "Automatisch aktualisieren",
+  "pluginAutoUpdateDetail": "Installiert neue Versionen im Hintergrund. Versionen, die neue Berechtigungen anfordern, musst du weiterhin selbst bestätigen.",
+  "pluginAutoUpdateUnsupported": "Nur verfügbar für Plugins, die von GitHub installiert wurden oder ein GitHub-Repository in plugin.json angeben.",
+  "pluginAutoUpdatedToast": "„{name}“ wurde auf {version} aktualisiert"
 }
