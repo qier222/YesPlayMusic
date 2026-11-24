@@ -2,6 +2,9 @@
 import dart from '../../../lib/version.dart?raw';
 export const version = dart.match(/appVersion\s*=\s*'([^']+)'/)?.[1] ?? '0.0.0';
 
+// Google Analytics 4 measurement ID for the landing page
+export const gaMeasurementId = 'G-QNV2Z238M3';
+
 export const repo = 'https://github.com/qier222/YesPlayMusic';
 const base = `${repo}/releases/download/v${version}/YesPlayMusic-${version}`;
 

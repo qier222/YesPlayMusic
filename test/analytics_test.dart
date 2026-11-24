@@ -31,6 +31,7 @@ void main() {
         hitCount: 1,
         firstVisit: true,
         locale: 'zh_CN',
+        screenResolution: '1728x1117',
       );
       expect(first.host, 'www.google-analytics.com');
       expect(first.path, '/g/collect');
@@ -44,6 +45,7 @@ void main() {
       expect(first.queryParameters['_ss'], '1');
       expect(first.queryParameters['_fv'], '1');
       expect(first.queryParameters['ul'], 'zh-cn');
+      expect(first.queryParameters['sr'], '1728x1117');
 
       final second = Analytics.buildCollectUri(
         measurementId: 'G-TEST123456',
@@ -58,6 +60,7 @@ void main() {
       expect(second.queryParameters.containsKey('_ss'), isFalse);
       expect(second.queryParameters.containsKey('_fv'), isFalse);
       expect(second.queryParameters.containsKey('ul'), isFalse);
+      expect(second.queryParameters.containsKey('sr'), isFalse);
     },
   );
 
@@ -81,5 +84,83 @@ void main() {
     expect(e1['_et'], '100');
     expect(e1['epn.plugin_count'], '3');
     expect(e1['ep.ui_language'], 'zh');
+  });
+
+  test('parseArch extracts CPU architecture from Platform.version', () {
+    expect(
+      Analytics.parseArch(
+        '3.11.0 (stable) (Tue Feb 10 12:00:00 2026) on "macos_arm64"',
+      ),
+      'arm64',
+    );
+    expect(Analytics.parseArch('3.11.0 (stable) on "windows_x64"'), 'x64');
+    expect(Analytics.parseArch('3.11.0 (stable) on "linux_arm64"'), 'arm64');
+    expect(Analytics.parseArch('unexpected'), 'unknown');
+  });
+
+  test('normalizeOsVersion extracts coarse OS major version', () {
+    expect(
+      Analytics.normalizeOsVersion('macos', 'Version 15.3.1 (Build 24D70)'),
+      'macos 15',
+    );
+    expect(
+      Analytics.normalizeOsVersion(
+        'windows',
+        '"Windows 10 Pro" 10.0 (Build 22631)',
+      ),
+      'windows 11',
+    );
+    expect(
+      Analytics.normalizeOsVersion(
+        'windows',
+        '"Windows 10 Pro" 10.0 (Build 19045)',
+      ),
+      'windows 10',
+    );
+    expect(
+      Analytics.normalizeOsVersion(
+        'linux',
+        'Linux 6.8.0-45-generic #45-Ubuntu SMP',
+      ),
+      'linux 6.8',
+    );
+  });
+
+  test(
+    'display scale, window size, and library size helpers bucket cleanly',
+    () {
+      expect(Analytics.formatDisplayScale(1.0), '1x');
+      expect(Analytics.formatDisplayScale(1.25), '1.25x');
+      expect(Analytics.formatDisplayScale(1.5), '1.5x');
+      expect(Analytics.formatDisplayScale(2.0), '2x');
+
+      expect(Analytics.windowSizeBucket(900), 'compact');
+      expect(Analytics.windowSizeBucket(1200), 'medium');
+      expect(Analytics.windowSizeBucket(1440), 'wide');
+
+      expect(Analytics.librarySizeBucket(0), '0');
+      expect(Analytics.librarySizeBucket(42), '1-100');
+      expect(Analytics.librarySizeBucket(500), '101-1000');
+      expect(Analytics.librarySizeBucket(2500), '1000+');
+    },
+  );
+
+  test('shouldRotateSession rotates on 30m idle or calendar day rollover', () {
+    final t0 = DateTime(2026, 11, 24, 23, 50);
+    expect(
+      Analytics.shouldRotateSession(t0, DateTime(2026, 11, 24, 23, 59)),
+      isFalse,
+    );
+    expect(
+      Analytics.shouldRotateSession(t0, DateTime(2026, 11, 25, 0, 5)),
+      isTrue,
+    );
+    expect(
+      Analytics.shouldRotateSession(
+        DateTime(2026, 11, 24, 10, 0),
+        DateTime(2026, 11, 24, 10, 30),
+      ),
+      isTrue,
+    );
   });
 }

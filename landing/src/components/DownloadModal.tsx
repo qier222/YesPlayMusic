@@ -21,8 +21,12 @@ function detect(): Os {
   return 'mac';
 }
 
+function track(event: string, params: Record<string, string>) {
+  (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag?.('event', event, params);
+}
+
 // 页面上任何带 data-download 的按钮都会打开这个弹窗
-export default function DownloadModal({ t, urls }: { t: Texts; urls: Urls }) {
+export default function DownloadModal({ t, urls, lang, version }: { t: Texts; urls: Urls; lang: string; version: string }) {
   const [open, setOpen] = useState(false);
   const [os, setOs] = useState<Os>('mac');
   const [pkg, setPkg] = useState<'winSetup' | 'winPortable'>('winSetup');
@@ -32,11 +36,19 @@ export default function DownloadModal({ t, urls }: { t: Texts; urls: Urls }) {
     setOs(detect());
     if (isArm()) setArch('linuxArm64');
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element).closest('[data-download]')) { e.preventDefault(); setOpen(true); }
+      const trigger = (e.target as Element).closest('[data-download]');
+      if (trigger) {
+        e.preventDefault();
+        setOpen(true);
+        track('download_modal_open', {
+          location: trigger.getAttribute('data-download') || 'unknown',
+          lang,
+        });
+      }
     };
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     if (!open) return;
@@ -95,7 +107,11 @@ export default function DownloadModal({ t, urls }: { t: Texts; urls: Urls }) {
             <span>{t.macNote}</span>
           </div>
         )}
-        <a className="btn btn-white btn-block" href={urls[key]}>
+        <a
+          className="btn btn-white btn-block"
+          href={urls[key]}
+          onClick={() => track('download_click', { os, package: key, app_version: version, lang })}
+        >
           <Icon name="download" size={20} />
           {t.cta[key]}
         </a>

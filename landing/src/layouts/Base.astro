@@ -2,6 +2,7 @@
 import '@fontsource-variable/inter';
 import '../styles/global.css';
 import type { Dict } from '../i18n';
+import { gaMeasurementId } from '../lib/site';
 interface Props { d: Dict; alt: { href: string; hreflang: string }[] }
 const { d, alt } = Astro.props;
 // Social card: public/og/og-{zh,en}.jpg (1280×640, exported from the Sketch 定稿 page)
@@ -37,6 +38,18 @@ const ogImage = new URL(`/og/og-${zh ? 'zh' : 'en'}.jpg`, site).href;
     <meta name="twitter:title" content={d.title} />
     <meta name="twitter:description" content={d.description} />
     <meta name="twitter:image" content={ogImage} />
+    {import.meta.env.PROD && gaMeasurementId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`} />
+        <script is:inline define:vars={{ gaMeasurementId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          window.gtag = gtag;
+          gtag('js', new Date());
+          gtag('config', gaMeasurementId);
+        </script>
+      </>
+    )}
   </head>
   <body>
     <slot />

@@ -88,6 +88,8 @@ const swatchesLight = [
   Color(0xFFD6406A),
   Color(0xFFD9601E),
 ];
+const swatchKeys = ['lilac', 'sky', 'mint', 'sun', 'rose', 'flame'];
+
 List<String> swatchNamesOf(AppLocalizations l) => [
   l.swatchLilac,
   l.swatchSky,

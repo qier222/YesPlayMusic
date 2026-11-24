@@ -93,6 +93,11 @@ class AppState extends ChangeNotifier {
       {
         'ui_language': lang,
         'music_source': sourceId,
+        'theme_mode': isDark ? 'dark' : 'light',
+        'accent_swatch': swatchKeys[swatch.clamp(0, swatchKeys.length - 1)],
+        'local_library_size': Analytics.librarySizeBucket(
+          local?.trackCount ?? 0,
+        ),
         'mini_lyric': '$miniLyric',
         'minimize_to_tray': '$keepRunning',
         'mcp_enabled': '${mcpConfig.enabled}',

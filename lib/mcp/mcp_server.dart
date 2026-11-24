@@ -14,6 +14,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import '../analytics.dart';
 import '../l10n/l10n.dart';
 import '../state.dart';
 import '../version.dart';
@@ -502,6 +503,13 @@ class McpServer {
     McpSession session,
   ) {
     session.initialized = true;
+    final clientInfo = params['clientInfo'];
+    final clientName = clientInfo is Map && clientInfo['name'] is String
+        ? (clientInfo['name'] as String).trim()
+        : '';
+    Analytics.instance.event('mcp_session_start', {
+      'client_name': clientName.isEmpty ? 'unknown' : clientName,
+    });
     final reqVer = params['protocolVersion'] is String
         ? params['protocolVersion'] as String
         : mcpProtocolVersion;
@@ -541,7 +549,20 @@ class McpServer {
     final args = params['arguments'] is Map
         ? (params['arguments'] as Map).cast<String, Object?>()
         : const <String, Object?>{};
-    return registry.callTool(name, args, app, _config, session);
+    try {
+      final result = await registry.callTool(name, args, app, _config, session);
+      Analytics.instance.event('mcp_tool_call', {
+        'tool_name': name,
+        'success': '${result['isError'] != true}',
+      });
+      return result;
+    } catch (_) {
+      Analytics.instance.event('mcp_tool_call', {
+        'tool_name': name,
+        'success': 'false',
+      });
+      rethrow;
+    }
   }
 
   Map<String, Object?> _onResourcesRead(Map<String, Object?> params) {

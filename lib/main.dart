@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' show AppExitResponse;
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -83,7 +84,13 @@ class _YesPlayMusicState extends State<YesPlayMusic> {
     _keys.attach();
     _media.attach();
     // Refetch the library when the window comes back to the front (a song may have just been liked in the official client)
-    _lifecycle = AppLifecycleListener(onResume: state.onAppResume);
+    _lifecycle = AppLifecycleListener(
+      onResume: state.onAppResume,
+      onExitRequested: () async {
+        await Analytics.instance.flush(timeout: const Duration(seconds: 2));
+        return AppExitResponse.exit;
+      },
+    );
     state.loadLibrary();
     state.loadPlugins();
     state.startMcpIfEnabled();
