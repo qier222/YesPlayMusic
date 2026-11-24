@@ -13,7 +13,7 @@
    git push origin main v3.0.1
    ```
 
-4. GitHub Actions 的 Release 工作流会构建三个平台的安装包，创建一个**草稿** Release。下载装一下确认没问题，然后在 GitHub 上点 **Publish release**。发布之后已安装的应用才会收到更新（应用读的是 `releases/latest/download/appcast-*.xml`）。
+4. GitHub Actions 的 Release 工作流会构建三个平台的安装包，创建一个**草稿** Release。下载装一下确认没问题，然后在 GitHub 上点 **Publish release**。发布之后已安装的应用才会收到更新（应用读的是 `releases/latest/download/appcast-*.xml`），同时会触发官网自动部署以更新下载链接。
 
    Release 里的 `latest.yml`、`latest-mac.yml`、`latest-linux.yml` 是给 0.4.x 旧版（Electron）看的：旧版检查到它们就弹窗提示去 Releases 页下载新版，别删。旧版代码在 `1.x` 分支，不再发版；如果哪天要在那里发，记得取消「Set as latest release」，不然 3.x 的自动更新会读错 Release。
 
@@ -61,6 +61,15 @@ openssl dsa -in dsa_priv.pem -pubout -out dsa_pub.pem  # 文件内容 → WINDOW
 ```
 
 配好之后，正式版会带上 `--dart-define=YPM_SPARKLE=true`，macOS 和 Windows 上由 Sparkle / WinSparkle 每天检查一次更新。自己编译的版本和 Linux 版本在 设置 → 关于 里检查 GitHub 上的最新版本。
+
+### 官网自动部署（Cloudflare Workers）
+
+`landing/` 的改动合入 `main`，或正式 Release 点击 **Publish release** 时，`.github/workflows/landing.yml` 会自动构建并部署官网到 Cloudflare Workers。未配置以下 Secrets 时工作流只执行构建检查，跳过部署。
+
+| 名字 | 类型 | 内容 |
+| --- | --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Secret | Cloudflare API Token（使用「Edit Cloudflare Workers」模板，范围选对应账户和域名 Zone） |
+| `CLOUDFLARE_ACCOUNT_ID` | Secret | Cloudflare Dashboard → Workers & Pages 右侧显示的 Account ID |
 
 ## 本地出包
 
