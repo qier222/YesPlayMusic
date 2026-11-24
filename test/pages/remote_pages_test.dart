@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/state.dart';
+import 'package:yesplaymusic/ui.dart';
 
 import 'pages_smoke_test.dart' show appFor, prepareEnv;
 
@@ -17,8 +18,9 @@ m.Track _track(int i) => m.Track(
 );
 
 class _Demo extends Source {
-  _Demo({this.fail = false});
+  _Demo({this.fail = false, this.albumCount = 0});
   final bool fail;
+  final int albumCount;
 
   @override
   final info = const m.SourceInfo(id: 'demo', name: 'Demo');
@@ -75,6 +77,15 @@ class _Demo extends Source {
       : m.ArtistPage(
           artist: const m.Artist(id: 'a1', name: '测试歌手'),
           tracks: [for (var i = 0; i < 10; i++) _track(i)],
+          albums: [
+            for (var i = 0; i < albumCount; i++)
+              m.Album(
+                id: 'disc$i',
+                name: '发行 $i',
+                released:
+                    '${2026 - i ~/ 12}-${(12 - i % 12).toString().padLeft(2, '0')}-01',
+              ),
+          ],
         );
 }
 
@@ -87,13 +98,17 @@ Future<void> _frames(WidgetTester t) async {
 void main() {
   setUpAll(prepareEnv);
 
-  Future<AppState> boot(WidgetTester t, {bool fail = false}) async {
+  Future<AppState> boot(
+    WidgetTester t, {
+    bool fail = false,
+    int albumCount = 0,
+  }) async {
     t.view.physicalSize = const Size(1280, 800);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
     final app = AppState()..clearQueue();
     addTearDown(app.dispose);
-    app.sources.add(_Demo(fail: fail));
+    app.sources.add(_Demo(fail: fail, albumCount: albumCount));
     app.setSource('demo');
     await t.pumpWidget(appFor(app));
     await _frames(t);
@@ -115,6 +130,27 @@ void main() {
       find.text('发行于 2022 年 12 月 9 日\n℗ 2022 Demo Records'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('歌手页按需构建专辑卡片，翻页后显示下一屏', (t) async {
+    final app = await boot(t, albumCount: 100);
+    app.open('/artist/@demo/a1');
+    await _frames(t);
+
+    expect(find.text('发行 5'), findsOneWidget);
+    expect(find.text('发行 11'), findsNothing);
+    expect(find.text('发行 99'), findsNothing);
+
+    await t.tap(
+      find.byWidgetPredicate((w) => w is IconBtn && w.icon == 'chevron-right'),
+    );
+    await _frames(t);
+
+    final nextPage = find.text('发行 11');
+    expect(nextPage, findsOneWidget);
+    expect(t.getCenter(nextPage).dx, lessThan(1280));
+    expect(find.text('发行 99'), findsNothing);
+    expect(t.takeException(), isNull);
   });
 
   for (final e in pages.entries) {
