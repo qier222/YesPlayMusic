@@ -3,11 +3,16 @@ import Icon from './Icon';
 
 type Os = 'mac' | 'win' | 'linux';
 type Texts = {
-  title: string; pickOs: string; pickWin: string; setup: string; portable: string; smartscreen: string; linuxNote: string; close: string; macNote: string;
-  cta: Record<'mac' | 'winSetup' | 'winPortable' | 'linux', string>;
+  title: string; pickOs: string; pickWin: string; pickLinux: string; setup: string; portable: string; smartscreen: string; linuxNote: string; close: string; macNote: string;
+  cta: Record<Pkg, string>;
   os: Record<Os, string[]>;
 };
-type Urls = Record<'mac' | 'winSetup' | 'winPortable' | 'linux', string>;
+type Pkg = 'mac' | 'winSetup' | 'winPortable' | 'linuxX64' | 'linuxArm64';
+type Urls = Record<Pkg, string>;
+
+function isArm(): boolean {
+  return /aarch64|arm64|armv8/i.test(navigator.userAgent);
+}
 
 function detect(): Os {
   const p = ((navigator as any).userAgentData?.platform || navigator.platform || navigator.userAgent).toLowerCase();
@@ -21,9 +26,11 @@ export default function DownloadModal({ t, urls }: { t: Texts; urls: Urls }) {
   const [open, setOpen] = useState(false);
   const [os, setOs] = useState<Os>('mac');
   const [pkg, setPkg] = useState<'winSetup' | 'winPortable'>('winSetup');
+  const [arch, setArch] = useState<'linuxX64' | 'linuxArm64'>('linuxX64');
 
   useEffect(() => {
     setOs(detect());
+    if (isArm()) setArch('linuxArm64');
     const onClick = (e: MouseEvent) => {
       if ((e.target as Element).closest('[data-download]')) { e.preventDefault(); setOpen(true); }
     };
@@ -40,7 +47,7 @@ export default function DownloadModal({ t, urls }: { t: Texts; urls: Urls }) {
   }, [open]);
 
   if (!open) return null;
-  const key = os === 'win' ? pkg : os;
+  const key: Pkg = os === 'win' ? pkg : os === 'linux' ? arch : 'mac';
   const file = urls[key].split('/').pop();
 
   return (
@@ -70,10 +77,22 @@ export default function DownloadModal({ t, urls }: { t: Texts; urls: Urls }) {
             </div>
             {pkg === 'winSetup' && <p className="modal-note">{t.smartscreen}</p>}
           </>
+        ) : os === 'linux' ? (
+          <>
+            <p className="modal-label">{t.pickLinux}</p>
+            <div className="segmented" role="radiogroup" aria-label={t.pickLinux}>
+              <button role="radio" aria-checked={arch === 'linuxX64'} className={arch === 'linuxX64' ? 'on' : ''} onClick={() => setArch('linuxX64')}>x64</button>
+              <button role="radio" aria-checked={arch === 'linuxArm64'} className={arch === 'linuxArm64' ? 'on' : ''} onClick={() => setArch('linuxArm64')}>arm64</button>
+            </div>
+            <div className="file-row">
+              <code>{file}</code>
+              <span>{t.linuxNote}</span>
+            </div>
+          </>
         ) : (
           <div className="file-row">
             <code>{file}</code>
-            <span>{os === 'mac' ? t.macNote : t.linuxNote}</span>
+            <span>{t.macNote}</span>
           </div>
         )}
         <a className="btn btn-white btn-block" href={urls[key]}>

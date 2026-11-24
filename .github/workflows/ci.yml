@@ -34,26 +34,39 @@ jobs:
       - run: flutter test
 
   build:
-    name: Build (${{ matrix.os }})
+    name: Build (${{ matrix.name }})
     needs: test
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: macos
+          - name: macos
+            os: macos
             runner: macos-15
-          - os: windows
+          - name: windows
+            os: windows
             runner: windows-2022
-          - os: linux
+          - name: linux-x64
+            os: linux
             runner: ubuntu-22.04
+          - name: linux-arm64
+            os: linux
+            runner: ubuntu-22.04-arm
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
+        if: matrix.name != 'linux-arm64'
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
+      # Flutter publishes no prebuilt Linux arm64 SDK, so clone the release tag instead.
+      - name: Install Flutter (Linux arm64)
+        if: matrix.name == 'linux-arm64'
+        run: |
+          git clone --depth 1 -b "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
       - name: Install Linux dependencies
         if: matrix.os == 'linux'
         run: |

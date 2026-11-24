@@ -67,7 +67,7 @@ openssl dsa -in dsa_priv.pem -pubout -out dsa_pub.pem  # 文件内容 → WINDOW
 ```sh
 flutter build macos --release     # build/macos/Build/Products/Release/YesPlayMusic.app
 flutter build windows --release   # build\windows\x64\runner\Release\
-flutter build linux --release     # build/linux/x64/release/bundle/
+flutter build linux --release     # build/linux/x64/release/bundle/（arm64 机器上是 build/linux/arm64/...）
 ```
 
 Linux 构建需要：`clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`。

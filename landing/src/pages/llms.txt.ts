@@ -18,7 +18,7 @@ YesPlayMusic 3.0 is a free, open-source (GPL-3.0) desktop music player rewritten
 中文简介：${zh.description}本身不内置在线音乐服务，在线曲库、歌单、歌词等都由插件提供；内置 MCP 服务，AI 助手可以搜索、播放、管理播放队列和歌单。
 
 - Latest version: ${version}
-- Platforms: macOS 12+ (Apple Silicon), Windows 10 / 11 (x64), Linux (x64, needs libmpv: \`sudo apt install libmpv2\`)
+- Platforms: macOS 12+ (Apple Silicon), Windows 10 / 11 (x64), Linux (x64 / arm64, needs libmpv: \`sudo apt install libmpv2\`)
 - Sources: local files; Jellyfin, Plex, Emby, Subsonic / Navidrome and more via plugins
 - License: GPL-3.0
 
@@ -27,7 +27,8 @@ YesPlayMusic 3.0 is a free, open-source (GPL-3.0) desktop music player rewritten
 - [macOS (.dmg)](${downloads.mac})
 - [Windows installer (.exe)](${downloads.winSetup}): not code-signed yet; on SmartScreen choose "More info" → "Run anyway"
 - [Windows portable (.zip)](${downloads.winPortable})
-- [Linux (.tar.gz)](${downloads.linux})
+- [Linux x64 (.tar.gz)](${downloads.linuxX64})
+- [Linux arm64 (.tar.gz)](${downloads.linuxArm64})
 - [All releases](${repo}/releases)
 
 ## Docs

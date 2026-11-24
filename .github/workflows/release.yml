@@ -208,7 +208,14 @@ jobs:
 
   linux:
     needs: version
-    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-22.04
+          - arch: arm64
+            runner: ubuntu-22.04-arm
+    runs-on: ${{ matrix.runner }}
     env:
       VERSION: ${{ needs.version.outputs.version }}
       BUILD: ${{ needs.version.outputs.build }}
@@ -217,10 +224,17 @@ jobs:
         with:
           ref: ${{ env.TAG }}
       - uses: subosito/flutter-action@v2
+        if: matrix.arch == 'x64'
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
+      # Flutter publishes no prebuilt Linux arm64 SDK, so clone the release tag instead.
+      - name: Install Flutter (arm64)
+        if: matrix.arch == 'arm64'
+        run: |
+          git clone --depth 1 -b "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -229,14 +243,14 @@ jobs:
       - name: Package
         run: |
           mkdir -p dist
-          DIR="YesPlayMusic-$VERSION-linux-x64"
-          cp -r build/linux/x64/release/bundle "$DIR"
+          DIR="YesPlayMusic-$VERSION-linux-${{ matrix.arch }}"
+          cp -r "build/linux/${{ matrix.arch }}/release/bundle" "$DIR"
           cp linux/packaging/yesplaymusic.desktop linux/packaging/yesplaymusic.png "$DIR/"
           tar -czf "dist/$DIR.tar.gz" "$DIR"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: linux
+          name: linux-${{ matrix.arch }}
           path: dist/*
 
   release:
@@ -267,7 +281,7 @@ jobs:
 
           - macOS：下载 `.dmg`，只支持 Apple Silicon（M 系列芯片）。
           - Windows：下载 `-setup.exe` 安装，或 `-portable.zip` 解压即用。
-          - Linux：下载 `.tar.gz`，需要系统装有 libmpv（Debian / Ubuntu：`sudo apt install libmpv2`，较旧的系统是 `libmpv1`）。
+          - Linux：按架构下载 `-linux-x64.tar.gz` 或 `-linux-arm64.tar.gz`，需要系统装有 libmpv（Debian / Ubuntu：`sudo apt install libmpv2`，较旧的系统是 `libmpv1`）。
           EOF
       - name: Update notice for 0.4.x (Electron) users
         # 旧版用 electron-updater 读 releases/latest 里的 latest*.yml，发现新版本就弹窗跳到 Releases 页。

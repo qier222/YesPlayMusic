@@ -9,7 +9,8 @@ export const downloads = {
   mac: `${base}-macos.dmg`,
   winSetup: `${base}-windows-x64-setup.exe`,
   winPortable: `${base}-windows-x64-portable.zip`,
-  linux: `${base}-linux-x64.tar.gz`,
+  linuxX64: `${base}-linux-x64.tar.gz`,
+  linuxArm64: `${base}-linux-arm64.tar.gz`,
 };
 
 export const links = {
