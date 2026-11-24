@@ -33,6 +33,23 @@ jobs:
       - run: flutter analyze
       - run: flutter test
 
+  landing:
+    name: Landing page
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: landing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: landing/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
   build:
     name: Build (${{ matrix.name }})
     needs: test

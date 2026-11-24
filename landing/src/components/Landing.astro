@@ -5,7 +5,7 @@ import LangMenu from './LangMenu';
 import Carousel from './Carousel';
 import DownloadModal from './DownloadModal';
 import { languages, pathOf, t, type Lang } from '../i18n';
-import { downloads, links, version } from '../lib/site';
+import { links } from '../lib/site';
 
 import appIcon from '../assets/app-icon.webp';
 import jellyfin from '../assets/plugins/jellyfin.webp';
@@ -80,7 +80,7 @@ const pluginJson = `{
     <nav class="nav-right">
       <LangMenu client:idle current={lang} items={langItems} />
       <a class="nav-item github" href={links.repo}><Icon name="github" size={20} /><span class="label">GitHub</span></a>
-      <button class="btn btn-white btn-sm" data-download="nav">{d.nav.download}</button>
+      <a class="btn btn-white btn-sm" href={links.latestRelease} data-download="nav">{d.nav.download}</a>
     </nav>
   </header>
 
@@ -89,7 +89,7 @@ const pluginJson = `{
       <h1>{d.hero.title[0]}{d.hero.titlePunct && <span class="hang">{d.hero.titlePunct}</span>}<br />{d.hero.title[1]}</h1>
       <p class="hero-sub">{d.hero.subtitle[0]}<br />{d.hero.subtitle[1]}</p>
       <div class="hero-cta">
-        <button class="btn btn-white" data-download="hero"><Icon name="download" size={20} />{d.hero.download}</button>
+        <a class="btn btn-white" href={links.latestRelease} data-download="hero"><Icon name="download" size={20} />{d.hero.download}</a>
         <a class="btn btn-ghost" href={links.repo}><Icon name="github" size={20} />GitHub</a>
       </div>
       <ul class="sources">
@@ -235,5 +235,5 @@ const pluginJson = `{
     </nav>
   </footer>
 
-  <DownloadModal client:idle t={d.modal} urls={downloads} lang={lang} version={version} />
+  <DownloadModal client:idle t={d.modal} lang={lang} />
 </Base>
