@@ -275,15 +275,24 @@ class LocalSource extends Source {
         return SearchResult(
           tracks: page(all).map(track).toList(),
           more: more(all.length),
+          total: all.length,
         );
       case SearchKind.albums:
         final all = _albums(
           _entries.where((e) => hit(e.album) || hit(e.albumArtist)),
         );
-        return SearchResult(albums: page(all), more: more(all.length));
+        return SearchResult(
+          albums: page(all),
+          more: more(all.length),
+          total: all.length,
+        );
       case SearchKind.artists:
         final all = _artists().where((a) => hit(a.name)).toList();
-        return SearchResult(artists: page(all), more: more(all.length));
+        return SearchResult(
+          artists: page(all),
+          more: more(all.length),
+          total: all.length,
+        );
       case SearchKind.playlists:
       case SearchKind.shows:
         return const SearchResult();
