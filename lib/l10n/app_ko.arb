@@ -236,6 +236,9 @@
   "pluginEmptyTitle": "설치된 플러그인이 없습니다",
   "pluginEmptyHint": "GitHub 링크 지원",
   "pluginSettingsTitle": "플러그인 설정",
+  "pluginTestConnection": "연결 테스트",
+  "pluginTesting": "테스트 중…",
+  "pluginTestOk": "연결되었습니다",
   "pluginSectionAccount": "계정",
   "pluginSectionCapabilities": "기능",
   "pluginSectionPermissions": "권한",
@@ -288,6 +291,7 @@
   "officialLastfmDesc": "들은 곡을 Last.fm에 기록",
   "officialListenbrainzDesc": "들은 곡을 ListenBrainz나 자체 호스팅 서버에 기록",
   "officialDiscordDesc": "듣고 있는 곡을 Discord에 표시",
+  "officialWebdavDesc": "NAS, Nextcloud, OpenList 등 WebDAV 서버의 음악 재생",
 
   "capSuggest": "검색 제안",
   "capLyrics": "가사",

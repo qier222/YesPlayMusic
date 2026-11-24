@@ -61,6 +61,26 @@ export async function abort() {
   setTimeout(() => c.abort(), 20);
   try { await f; return "not aborted"; } catch (e) { return e.name; }
 }
+export async function testConnection({ settings }) {
+  const r = await fetch(settings.server + "/bin");
+  return { message: `ok ${(await r.arrayBuffer()).byteLength}` };
+}
+export async function fetchAt({ url }) { return (await fetch(url)).status; }
+export function files() {
+  const bin = host.files.write("covers/a.jpg", new Uint8Array([1, 2, 3]));
+  const text = host.files.write("index.json", '{"a":"中"}');
+  const bad = [];
+  for (const n of ["../x", "/abs", "a//b", "", "a/./b", "C:x"]) {
+    try { host.files.write(n, "no"); bad.push("written"); } catch (e) { bad.push(e.message.includes("invalid name")); }
+  }
+  const got = [...host.files.read("covers/a.jpg")];
+  const read = host.files.readText("index.json");
+  const missing = [host.files.read("nope"), host.files.readText("nope"), host.files.url("nope")];
+  const url = host.files.url("covers/a.jpg");
+  host.files.remove("covers/a.jpg");
+  host.files.remove("covers/a.jpg");
+  return { bin, text, bad, got, read, missing, url, gone: host.files.url("covers/a.jpg") };
+}
 export function misc() {
   return {
     md5: host.crypto.md5("abc"),

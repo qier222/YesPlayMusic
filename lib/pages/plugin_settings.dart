@@ -1,5 +1,6 @@
 // Plugin settings dialog (Sketch final "v31 / 设置 · 插件 · 设置弹窗"):
 // account, items declared in settings in plugin.json, permissions, uninstall at the bottom left.
+// When the plugin exports testConnection, a Test Connection button below the settings tries the unsaved values.
 //
 // Setting types are text, password, boolean, select; values are all strings, booleans stored as
 // "true"/"". Disabled plugins aren't running, so settings are written straight into their settings.json.
@@ -87,6 +88,11 @@ class _PluginSettingsState extends State<_PluginSettings> {
   late bool _autoUpdate = context.appRead.autoUpdatePlugins.contains(_mf.id);
   var _saving = false;
 
+  // Test Connection: in progress, and the result (the success / failure message).
+  var _testing = false;
+  bool? _testOk;
+  String _testText = '';
+
   static bool _isText(m.Setting s) =>
       s.type != 'boolean' && !(s.type == 'select' && s.options.isNotEmpty);
 
@@ -117,10 +123,7 @@ class _PluginSettingsState extends State<_PluginSettings> {
     if (_saving) return;
     setState(() => _saving = true);
     final app = context.appRead;
-    final values = {
-      ..._values,
-      for (final e in _text.entries) e.key: e.value.text.trim(),
-    };
+    final values = _formValues;
     try {
       final r = widget.running;
       if (r != null) {
@@ -142,6 +145,80 @@ class _PluginSettingsState extends State<_PluginSettings> {
       showToast(L.stateSaveFailed('$e'));
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  Map<String, String> get _formValues => {
+    ..._values,
+    for (final e in _text.entries) e.key: e.value.text.trim(),
+  };
+
+  Future<void> _test() async {
+    final r = widget.running;
+    if (r == null || _testing) return;
+    setState(() {
+      _testing = true;
+      _testOk = null;
+    });
+    bool ok;
+    String text;
+    try {
+      final msg = await r.testConnection(_formValues);
+      ok = true;
+      text = msg.isEmpty ? L.pluginTestOk : msg;
+    } on SourceError catch (e) {
+      ok = false;
+      text = e.reason.isEmpty ? e.kind.name : e.reason;
+    } catch (e) {
+      ok = false;
+      text = '$e';
+    }
+    if (!mounted) return;
+    setState(() {
+      _testing = false;
+      _testOk = ok;
+      _testText = text;
+    });
+  }
+
+  Widget _testRow() {
+    final l = context.l10n;
+    final ok = _testOk;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Btn(
+          label: _testing ? l.pluginTesting : l.pluginTestConnection,
+          icon: 'link',
+          size: BtnSize.s,
+          enabled: !_testing,
+          onTap: _test,
+        ),
+        if (ok != null && !_testing) ...[
+          const SizedBox(width: 12),
+          Padding(
+            padding: const EdgeInsets.only(top: 7),
+            child: Ico(
+              ok ? 'check-circle' : 'warning',
+              size: 16,
+              color: ok ? P.ink : errorColor,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: tx(
+                _testText,
+                13,
+                w: w500,
+                c: ok ? P.ink : errorColor,
+                lines: 4,
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   Future<void> _uninstall() async {
@@ -202,6 +279,10 @@ class _PluginSettingsState extends State<_PluginSettings> {
                   for (final s in _items) ...[
                     const SizedBox(height: 16),
                     _item(s),
+                  ],
+                  if (r != null && r.can(Op.testConnection)) ...[
+                    const SizedBox(height: 16),
+                    _testRow(),
                   ],
                   const SizedBox(height: 28),
                 ],

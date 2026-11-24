@@ -148,6 +148,39 @@ void main() {
     });
   });
 
+  // testConnection uses unsaved settings: it may reach their server during the call, other calls may not.
+  test('testConnection may reach the unsaved server', () async {
+    final other = 'localhost:${server.port}'; // not the saved 127.0.0.1
+    await expectLater(
+      rt.call('fetchAt', {'url': 'http://$other/bin'}),
+      throwsA(isA<PluginError>()),
+    );
+    final r = await rt.call('testConnection', {
+      'settings': {'server': 'http://$other'},
+    });
+    expect((r as Map)['message'], startsWith('ok '));
+    await expectLater(
+      rt.call('fetchAt', {'url': 'http://$other/bin'}),
+      throwsA(isA<PluginError>()),
+    );
+  });
+
+  // host.files reads and writes files in dataDir/files/, returns file:// URLs and can't leave that directory.
+  test('files stay in the data directory', () async {
+    final r = await rt.call('files') as Map;
+    final files = p.join(tmp.path, 'data', 'files');
+    expect(r['bin'], Uri.file(p.join(files, 'covers', 'a.jpg')).toString());
+    expect(r['text'], Uri.file(p.join(files, 'index.json')).toString());
+    expect(r['url'], r['bin']);
+    expect(r['bad'], List.filled(6, true));
+    expect(r['got'], [1, 2, 3]);
+    expect(r['read'], '{"a":"中"}');
+    expect(r['missing'], [null, null, null]);
+    expect(r['gone'], isNull);
+    expect(File(p.join(files, 'index.json')).readAsStringSync(), '{"a":"中"}');
+    expect(File(p.join(tmp.path, 'data', 'x')).existsSync(), isFalse);
+  });
+
   // Can't import files outside the plugin directory.
   test('modules stay inside the plugin', () async {
     await expectLater(

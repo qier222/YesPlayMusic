@@ -384,6 +384,15 @@ g.host = Object.freeze({
     set: (key, value) => { sync("storage.set", { key: String(key), value: value === undefined ? null : value }); },
     remove: (key) => { sync("storage.remove", { key: String(key) }); },
   }),
+  files: Object.freeze({
+    write: (name, data) => sync("files.write", typeof data === "string"
+      ? { name: String(name), text: data }
+      : { name: String(name), base64: bytesToB64(asBytes(data)) }),
+    read: (name) => { const b = sync("files.read", { name: String(name) }); return typeof b === "string" ? b64ToBytes(b) : null; },
+    readText: (name) => { const t = sync("files.read", { name: String(name), as: "text" }); return typeof t === "string" ? t : null; },
+    url: (name) => sync("files.url", { name: String(name) }) ?? null,
+    remove: (name) => { sync("files.remove", { name: String(name) }); },
+  }),
   language: () => sync("language"),
   t: (text) => sync("t", { text: String(text) }),
   setting: (key) => sync("setting", { key: String(key) }),

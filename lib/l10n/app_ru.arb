@@ -236,6 +236,9 @@
   "pluginEmptyTitle": "Плагины не установлены",
   "pluginEmptyHint": "Поддерживаются ссылки GitHub",
   "pluginSettingsTitle": "Настройки плагина",
+  "pluginTestConnection": "Проверить подключение",
+  "pluginTesting": "Проверка…",
+  "pluginTestOk": "Подключено",
   "pluginSectionAccount": "Аккаунт",
   "pluginSectionCapabilities": "Возможности",
   "pluginSectionPermissions": "Разрешения",
@@ -288,6 +291,7 @@
   "officialLastfmDesc": "Скробблинг прослушанного в Last.fm",
   "officialListenbrainzDesc": "Скробблинг в ListenBrainz или на свой сервер",
   "officialDiscordDesc": "Показывает в Discord, что вы слушаете",
+  "officialWebdavDesc": "Музыка с WebDAV-серверов: NAS, Nextcloud, OpenList и др.",
 
   "capSuggest": "Подсказки",
   "capLyrics": "Тексты",

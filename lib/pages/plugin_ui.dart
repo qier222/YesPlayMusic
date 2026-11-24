@@ -72,10 +72,12 @@ class PluginIcon extends StatelessWidget {
                         cacheWidth: (size * 3).round(),
                       )
                     : letter)
-              : Image.file(
-                  File(img),
+              : Image(
+                  image: ResizeImage(
+                    _IconFile(File(img)),
+                    width: (size * 3).round(),
+                  ),
                   fit: BoxFit.cover,
-                  cacheWidth: (size * 3).round(),
                   errorBuilder: (_, _, _) => letter,
                 ),
         ),
@@ -94,6 +96,32 @@ class PluginIcon extends StatelessWidget {
       child: tx(ch, size * 0.42, w: w800, c: white),
     );
   }
+}
+
+/// A plugin icon file. The image cache keys files by path, and after a plugin
+/// is updated or reloaded its icon may change while the path stays the same,
+/// so the modification time is part of the key: a changed file is read again.
+class _IconFile extends FileImage {
+  _IconFile(super.file) : modified = _mtime(file);
+  final DateTime? modified;
+
+  static DateTime? _mtime(File f) {
+    try {
+      return f.statSync().modified;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is _IconFile &&
+      other.file.path == file.path &&
+      other.scale == scale &&
+      other.modified == modified;
+
+  @override
+  int get hashCode => Object.hash(file.path, scale, modified);
 }
 
 String versionLabel(String v) =>
@@ -628,6 +656,7 @@ class OfficialPlugin {
     'yesplaymusic.plex' => l.officialPlexDesc,
     'yesplaymusic.subsonic' => l.officialSubsonicDesc,
     'yesplaymusic.emby' => l.officialEmbyDesc,
+    'yesplaymusic.webdav' => l.officialWebdavDesc,
     'yesplaymusic.lastfm' => l.officialLastfmDesc,
     'yesplaymusic.listenbrainz' => l.officialListenbrainzDesc,
     'yesplaymusic.discord' => l.officialDiscordDesc,
@@ -655,6 +684,11 @@ const officialPlugins = [
     'yesplaymusic.emby',
     'Emby',
     'github.com/qier222/ypm-plugin-emby',
+  ),
+  OfficialPlugin(
+    'yesplaymusic.webdav',
+    'WebDAV',
+    'github.com/qier222/ypm-plugin-webdav',
   ),
   OfficialPlugin(
     'yesplaymusic.lastfm',

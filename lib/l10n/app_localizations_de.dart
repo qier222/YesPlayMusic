@@ -758,6 +758,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get pluginSettingsTitle => 'Plugin-Einstellungen';
 
   @override
+  String get pluginTestConnection => 'Verbindung testen';
+
+  @override
+  String get pluginTesting => 'Wird getestet …';
+
+  @override
+  String get pluginTestOk => 'Verbunden';
+
+  @override
   String get pluginSectionAccount => 'Konto';
 
   @override
@@ -946,6 +955,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get officialDiscordDesc => 'Zeigt auf Discord, was du hörst';
+
+  @override
+  String get officialWebdavDesc =>
+      'Musik von WebDAV-Servern wie NAS, Nextcloud oder OpenList abspielen';
 
   @override
   String get capSuggest => 'Vorschläge';

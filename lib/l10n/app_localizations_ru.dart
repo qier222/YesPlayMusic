@@ -759,6 +759,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get pluginSettingsTitle => 'Настройки плагина';
 
   @override
+  String get pluginTestConnection => 'Проверить подключение';
+
+  @override
+  String get pluginTesting => 'Проверка…';
+
+  @override
+  String get pluginTestOk => 'Подключено';
+
+  @override
   String get pluginSectionAccount => 'Аккаунт';
 
   @override
@@ -942,6 +951,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get officialDiscordDesc => 'Показывает в Discord, что вы слушаете';
+
+  @override
+  String get officialWebdavDesc =>
+      'Музыка с WebDAV-серверов: NAS, Nextcloud, OpenList и др.';
 
   @override
   String get capSuggest => 'Подсказки';

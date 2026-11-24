@@ -86,6 +86,9 @@ class PluginRuntime {
   final Duration callTimeout;
   final int sliceMs, maxBody;
   final Map<String, String> _settings;
+
+  /// Settings brought by testConnection calls in progress, see [call].
+  final _trials = <Map<String, String>>[];
   final HttpClient _http;
   final HttpProxy? _proxy;
 
@@ -168,6 +171,15 @@ class PluginRuntime {
     if (broken != null) return Future.error(PluginError(broken!));
     final id = ++_nextCall;
     final c = _calls[id] = Completer<Object?>();
+    // Test Connection uses settings that aren't saved yet: during this call,
+    // {setting:key} also allows the hosts in them (the server just entered).
+    final trial = op == 'testConnection' && params?['settings'] is Map
+        ? {
+            for (final e in (params!['settings'] as Map).entries)
+              '${e.key}': '${e.value}',
+          }
+        : null;
+    if (trial != null) _trials.add(trial);
     _enter('__ypm.call($id, ${jsonEncode(op)}, ${jsonEncode(params)})');
     // Sign-in waits for the user to act in a web page; getting a playback URL may rely on an external program and be slower.
     final limit = switch (op) {
@@ -175,13 +187,14 @@ class PluginRuntime {
       'stream' => callTimeout * 2,
       _ => callTimeout,
     };
-    return c.future.timeout(
+    final out = c.future.timeout(
       limit,
       onTimeout: () {
         _calls.remove(id);
         throw PluginError(L.pluginErrOpTimeout(op, limit.inSeconds));
       },
     );
+    return trial == null ? out : out.whenComplete(() => _trials.remove(trial));
   }
 
   void setSetting(String key, String value) => _settings[key] = value;
@@ -234,6 +247,10 @@ class PluginRuntime {
       'storage.get' => _store[args['key']],
       'storage.set' => _storeSet(args['key'] as String, args['value']),
       'storage.remove' => _storeSet(args['key'] as String, null),
+      'files.write' => _fileWrite(args),
+      'files.read' => _fileRead(args),
+      'files.url' => _fileUrl(args),
+      'files.remove' => _fileRemove(args),
       'language' => language,
       't' => _t(args['text'] as String),
       'setting' => _settings[args['key']] ?? '',
@@ -373,6 +390,74 @@ class PluginRuntime {
     Directory(dataDir).createSync(recursive: true);
     final tmp = File('${_storeFile.path}.tmp')..writeAsStringSync(text);
     tmp.renameSync(_storeFile.path);
+    return null;
+  }
+
+  // ── Files: dataDir/files/ ──
+  // Files the plugin stores itself (covers, indexes…), only inside this
+  // directory, each at most [maxBody]. Returns file:// URLs that work directly
+  // as imageUrl or AudioStream.url.
+
+  String get _filesDir => p.join(dataDir, 'files');
+
+  File _file(Map<String, Object?> a) {
+    final name = '${a['name'] ?? ''}';
+    final parts = name.split(RegExp(r'[/\\]'));
+    // No colons: a drive-relative path like C:x escapes the directory on Windows.
+    if (name.isEmpty ||
+        name.contains(':') ||
+        p.isAbsolute(name) ||
+        parts.any((s) => s.isEmpty || s == '.' || s == '..')) {
+      throw HostError('files: invalid name: $name');
+    }
+    return File(p.joinAll([_filesDir, ...parts]));
+  }
+
+  String _fileUri(File f) => Uri.file(f.path).toString();
+
+  Object? _fileWrite(Map<String, Object?> a) {
+    final f = _file(a);
+    final List<int> bytes = a['base64'] is String
+        ? base64Decode(a['base64'] as String)
+        : utf8.encode('${a['text'] ?? ''}');
+    if (bytes.length > maxBody) {
+      throw HostError('files: ${a['name']} is larger than ${maxBody >> 20} MB');
+    }
+    try {
+      f.parent.createSync(recursive: true);
+      final tmp = File('${f.path}.tmp')..writeAsBytesSync(bytes, flush: true);
+      tmp.renameSync(f.path);
+    } on FileSystemException catch (e) {
+      throw HostError('files: can\'t write ${a['name']}: ${e.message}');
+    }
+    return _fileUri(f);
+  }
+
+  Object? _fileRead(Map<String, Object?> a) {
+    final f = _file(a);
+    if (!f.existsSync()) return null;
+    try {
+      final b = f.readAsBytesSync();
+      return a['as'] == 'text'
+          ? utf8.decode(b, allowMalformed: true)
+          : base64Encode(b);
+    } on FileSystemException catch (e) {
+      throw HostError('files: can\'t read ${a['name']}: ${e.message}');
+    }
+  }
+
+  Object? _fileUrl(Map<String, Object?> a) {
+    final f = _file(a);
+    return f.existsSync() ? _fileUri(f) : null;
+  }
+
+  Object? _fileRemove(Map<String, Object?> a) {
+    final f = _file(a);
+    try {
+      if (f.existsSync()) f.deleteSync();
+    } on FileSystemException catch (e) {
+      throw HostError('files: can\'t remove ${a['name']}: ${e.message}');
+    }
     return null;
   }
 
@@ -556,11 +641,20 @@ class PluginRuntime {
       (allowPrograms &&
           manifest.process.isNotEmpty &&
           const {'localhost', '127.0.0.1', '::1'}.contains(u.host)) ||
-      hostAllowed(
-        u.host,
-        manifest.network,
-        settingHost: (k) => Uri.tryParse(_settings[k] ?? '')?.host,
+      [_settings, ..._trials].any(
+        (s) => hostAllowed(
+          u.host,
+          manifest.network,
+          settingHost: (k) => _settingHost(s[k]),
+        ),
       );
+
+  /// The host of an address entered in settings, also without http:// (127.0.0.1:5244).
+  static String? _settingHost(String? v) {
+    final s = (v ?? '').trim();
+    if (s.isEmpty) return null;
+    return Uri.tryParse(s.contains('://') ? s : 'http://$s')?.host;
+  }
 
   Object? _fetchStart(Map<String, Object?> a) {
     final u = Uri.tryParse(a['url'] as String? ?? '');

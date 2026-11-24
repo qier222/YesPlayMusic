@@ -236,6 +236,9 @@
   "pluginEmptyTitle": "No hay plugins instalados",
   "pluginEmptyHint": "Compatible con enlaces de GitHub",
   "pluginSettingsTitle": "Ajustes del plugin",
+  "pluginTestConnection": "Probar conexión",
+  "pluginTesting": "Probando…",
+  "pluginTestOk": "Conectado",
   "pluginSectionAccount": "Cuenta",
   "pluginSectionCapabilities": "Capacidades",
   "pluginSectionPermissions": "Permisos",
@@ -288,6 +291,7 @@
   "officialLastfmDesc": "Registra lo que escuchas en Last.fm",
   "officialListenbrainzDesc": "Registra en ListenBrainz o en un servidor propio",
   "officialDiscordDesc": "Muestra en Discord lo que escuchas",
+  "officialWebdavDesc": "Reproduce música de servidores WebDAV como un NAS, Nextcloud u OpenList",
 
   "capSuggest": "Sugerencias",
   "capLyrics": "Letras",

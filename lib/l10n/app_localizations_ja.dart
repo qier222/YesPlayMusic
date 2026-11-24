@@ -737,6 +737,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pluginSettingsTitle => 'プラグイン設定';
 
   @override
+  String get pluginTestConnection => '接続をテスト';
+
+  @override
+  String get pluginTesting => 'テスト中…';
+
+  @override
+  String get pluginTestOk => '接続できました';
+
+  @override
   String get pluginSectionAccount => 'アカウント';
 
   @override
@@ -913,6 +922,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get officialDiscordDesc => '聴いている曲を Discord に表示';
+
+  @override
+  String get officialWebdavDesc =>
+      'NAS、Nextcloud、OpenList などの WebDAV サーバーの音楽を再生';
 
   @override
   String get capSuggest => '検索候補';

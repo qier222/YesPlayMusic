@@ -736,6 +736,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginSettingsTitle => '插件设置';
 
   @override
+  String get pluginTestConnection => '测试连接';
+
+  @override
+  String get pluginTesting => '正在测试…';
+
+  @override
+  String get pluginTestOk => '连接成功';
+
+  @override
   String get pluginSectionAccount => '账号';
 
   @override
@@ -911,6 +920,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get officialDiscordDesc => '在 Discord 上显示正在听的歌';
+
+  @override
+  String get officialWebdavDesc => '播放 NAS、Nextcloud、OpenList 等 WebDAV 服务器上的音乐';
 
   @override
   String get capSuggest => '搜索建议';
@@ -2513,6 +2525,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get pluginSettingsTitle => '外掛設定';
 
   @override
+  String get pluginTestConnection => '測試連線';
+
+  @override
+  String get pluginTesting => '正在測試…';
+
+  @override
+  String get pluginTestOk => '連線成功';
+
+  @override
   String get pluginSectionAccount => '帳號';
 
   @override
@@ -2688,6 +2709,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get officialDiscordDesc => '在 Discord 上顯示正在聽的歌';
+
+  @override
+  String get officialWebdavDesc => '播放 NAS、Nextcloud、OpenList 等 WebDAV 伺服器上的音樂';
 
   @override
   String get capSuggest => '搜尋建議';

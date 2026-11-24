@@ -83,6 +83,7 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 | Jellyfin | Jellyfin 服务器                                              |
 | Plex     | Plex 服务器                                                  |
 | Subsonic | Navidrome、Gonic、Airsonic、Ampache 等兼容 Subsonic 的服务器 |
+| WebDAV   | NAS、Nextcloud、OpenList / AList 等 WebDAV 服务器（3.1.0 起） |
 
 **第三方插件**：在 GitHub 上搜索 [`yesplaymusic-plugin`](https://github.com/topics/yesplaymusic-plugin) topic。发布插件时也请给仓库加上这个 topic。
 

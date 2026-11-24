@@ -738,6 +738,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get pluginSettingsTitle => '플러그인 설정';
 
   @override
+  String get pluginTestConnection => '연결 테스트';
+
+  @override
+  String get pluginTesting => '테스트 중…';
+
+  @override
+  String get pluginTestOk => '연결되었습니다';
+
+  @override
   String get pluginSectionAccount => '계정';
 
   @override
@@ -913,6 +922,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get officialDiscordDesc => '듣고 있는 곡을 Discord에 표시';
+
+  @override
+  String get officialWebdavDesc =>
+      'NAS, Nextcloud, OpenList 등 WebDAV 서버의 음악 재생';
 
   @override
   String get capSuggest => '검색 제안';

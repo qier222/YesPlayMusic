@@ -192,7 +192,8 @@ class PluginSource extends Source {
   static Set<String> get knownOps => _known;
 
   static const _known = {
-    Op.signIn, Op.signOut, Op.account, Op.profile, Op.home, Op.browse, //
+    Op.signIn, Op.signOut, Op.account, Op.testConnection, Op.profile, //
+    Op.home, Op.browse,
     Op.search,
     Op.hotSearches,
     Op.suggest, Op.library, Op.recent, Op.played, Op.liked, Op.isLiked, Op.like,
@@ -464,6 +465,14 @@ class PluginSource extends Source {
     await Directory(dataDir).create(recursive: true);
     await File(p.join(dataDir, 'settings.json'))
         .writeAsString(jsonEncode(_settings));
+  }
+
+  @override
+  Future<String> testConnection(Map<String, String> settings) async {
+    final v = await invoke(Op.testConnection, {'settings': settings});
+    if (v is String) return v;
+    if (v is Map && v['message'] is String) return v['message'] as String;
+    return '';
   }
 
   // ── Account ──

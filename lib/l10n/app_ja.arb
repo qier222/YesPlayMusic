@@ -236,6 +236,9 @@
   "pluginEmptyTitle": "プラグインはまだありません",
   "pluginEmptyHint": "GitHub リンクに対応",
   "pluginSettingsTitle": "プラグイン設定",
+  "pluginTestConnection": "接続をテスト",
+  "pluginTesting": "テスト中…",
+  "pluginTestOk": "接続できました",
   "pluginSectionAccount": "アカウント",
   "pluginSectionCapabilities": "機能",
   "pluginSectionPermissions": "権限",
@@ -288,6 +291,7 @@
   "officialLastfmDesc": "再生した曲を Last.fm に記録",
   "officialListenbrainzDesc": "再生した曲を ListenBrainz やセルフホストに記録",
   "officialDiscordDesc": "聴いている曲を Discord に表示",
+  "officialWebdavDesc": "NAS、Nextcloud、OpenList などの WebDAV サーバーの音楽を再生",
 
   "capSuggest": "検索候補",
   "capLyrics": "歌詞",

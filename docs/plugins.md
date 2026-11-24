@@ -105,6 +105,7 @@ export async function stream({ id }) {
 
 - `storage.json`：`host.storage` 存的东西。
 - `settings.json`：用户在插件设置弹窗里填的设置。
+- `files/`：`host.files` 写的文件。
 
 ## plugin.json
 
@@ -198,7 +199,11 @@ export async function stream({ id }) {
 | `host.dir` | 插件目录的绝对路径。 |
 | `host.dataDir` | 插件数据目录的绝对路径。 |
 | `host.pid` | 应用的进程 id。 |
-| `host.storage.get(key)` / `.set(key, value)` / `.remove(key)` | 同步的键值存储，值是任意 JSON。存在 `storage.json`，适合放登录状态、缓存。 |
+| `host.storage.get(key)` / `.set(key, value)` / `.remove(key)` | 同步的键值存储，值是任意 JSON。存在 `storage.json`（整个最多 8 MB），适合放登录状态、缓存。 |
+| `host.files.write(name, data)` | 把 `data`（字符串按 UTF-8 存，或 `Uint8Array` / `ArrayBuffer`）写进插件数据目录下的 `files/<name>`，返回它的 `file://` 地址，可以直接当 `imageUrl` 或 `AudioStream.url` 用。`name` 是相对路径，可以带子目录（`covers/1.jpg`），不能有 `..`、`:`、空段或开头的 `/`。单个文件最大 32 MB。适合存封面和放不进 `storage` 的大块数据。3.1.0 起可用。 |
+| `host.files.read(name)` / `.readText(name)` | 读 `files/<name>`，返回 `Uint8Array` / 字符串，没有这个文件返回 `null`。 |
+| `host.files.url(name)` | 文件存在时返回它的 `file://` 地址，否则 `null`。 |
+| `host.files.remove(name)` | 删掉这个文件，不存在也不报错。 |
 | `host.setting(key)` | 读用户在设置页填的值（字符串，没填是 `""`）。用户改设置后马上生效，不用重新加载。 |
 | `host.language()` | 应用的界面语言，例如 `zh-CN`、`zh-TW`、`en`、`ja`。 |
 | `host.t(text)` | 用插件目录里 `locales/<语言>.json` 翻译一句话（支持按前缀回退，例如 `zh-CN` → `zh`、`zh-TW` → `zh-Hant`、`en` → `en-US`），没有翻译时原样返回。同一份翻译表也会用于翻译 `plugin.json` 里的 `name`、`description`、`settings`（`label`、`help`、`options[].label`）和 `navigation[].title`。 |
@@ -257,6 +262,7 @@ export async function stream({ id }) {
 | `account` | | `Account \| null` | 当前登录的账号，没登录返回 `null`。应用启动和加载插件时调用。 |
 | `signIn` | | `Account \| null` | 登录。最长可以等 10 分钟（等用户扫码或在网页里操作）。 |
 | `signOut` | | | 退出登录，清掉保存的登录状态。 |
+| `testConnection` | `{ settings }` | `string` 或 `{ message }` | 插件设置弹窗里的「测试连接」。`settings` 是弹窗里还没保存的设置（键值都是字符串），请用它们而不是 `host.setting()`。成功返回一句显示给用户的话（可以为空，显示「连接成功」），失败抛错。调用期间 `{setting:key}` 权限也放行 `settings` 里的地址。3.1.0 起可用。 |
 | `profile` | | `Profile` | 登录账号的个人主页（点侧边栏左下角头像打开）。 |
 
 ### 发现

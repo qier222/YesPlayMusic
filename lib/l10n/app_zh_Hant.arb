@@ -236,6 +236,9 @@
   "pluginEmptyTitle": "尚未安裝外掛",
   "pluginEmptyHint": "支援 GitHub 連結",
   "pluginSettingsTitle": "外掛設定",
+  "pluginTestConnection": "測試連線",
+  "pluginTesting": "正在測試…",
+  "pluginTestOk": "連線成功",
   "pluginSectionAccount": "帳號",
   "pluginSectionCapabilities": "能力",
   "pluginSectionPermissions": "權限",
@@ -288,6 +291,7 @@
   "officialLastfmDesc": "把聽過的歌記到 Last.fm",
   "officialListenbrainzDesc": "把聽過的歌記到 ListenBrainz 或自架服務",
   "officialDiscordDesc": "在 Discord 上顯示正在聽的歌",
+  "officialWebdavDesc": "播放 NAS、Nextcloud、OpenList 等 WebDAV 伺服器上的音樂",
 
   "capSuggest": "搜尋建議",
   "capLyrics": "歌詞",

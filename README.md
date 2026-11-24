@@ -83,6 +83,7 @@ The macOS and Windows builds check for updates automatically; on Linux, new vers
 | Jellyfin | Jellyfin servers                                                     |
 | Plex     | Plex servers                                                         |
 | Subsonic | Navidrome, Gonic, Airsonic, Ampache and other Subsonic-compatible servers |
+| WebDAV   | WebDAV servers: a NAS, Nextcloud, OpenList / AList and more (3.1.0+) |
 
 **Third-party plugins**: search GitHub for the [`yesplaymusic-plugin`](https://github.com/topics/yesplaymusic-plugin) topic. Please add this topic to your repository when you publish a plugin.
 

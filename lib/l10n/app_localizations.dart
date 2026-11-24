@@ -1455,6 +1455,24 @@ abstract class AppLocalizations {
   /// **'插件设置'**
   String get pluginSettingsTitle;
 
+  /// Button in plugin settings that tries the unsaved settings
+  ///
+  /// In zh, this message translates to:
+  /// **'测试连接'**
+  String get pluginTestConnection;
+
+  /// Shown on the Test Connection button while the test runs
+  ///
+  /// In zh, this message translates to:
+  /// **'正在测试…'**
+  String get pluginTesting;
+
+  /// Result of Test Connection when it succeeds without a message
+  ///
+  /// In zh, this message translates to:
+  /// **'连接成功'**
+  String get pluginTestOk;
+
   /// No description provided for @pluginSectionAccount.
   ///
   /// In zh, this message translates to:
@@ -1766,6 +1784,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'在 Discord 上显示正在听的歌'**
   String get officialDiscordDesc;
+
+  /// Description of the official WebDAV plugin
+  ///
+  /// In zh, this message translates to:
+  /// **'播放 NAS、Nextcloud、OpenList 等 WebDAV 服务器上的音乐'**
+  String get officialWebdavDesc;
 
   /// No description provided for @capSuggest.
   ///
