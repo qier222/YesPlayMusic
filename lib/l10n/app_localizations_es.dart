@@ -406,9 +406,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsLyrics => 'Letras';
 
   @override
-  String get settingsPlayback => 'Reproducción';
-
-  @override
   String get settingsStorage => 'Almacenamiento';
 
   @override
@@ -422,10 +419,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => 'Mostrar letra actual en el minirreproductor';
-
-  @override
-  String get settingsMinimizeToTray =>
-      'Minimizar a la bandeja al cerrar la ventana';
 
   @override
   String aboutDownloadVersion(String version) {

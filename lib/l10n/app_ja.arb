@@ -138,13 +138,11 @@
   "settingsAbout": "このアプリについて",
   "settingsAppearance": "外観",
   "settingsLyrics": "歌詞",
-  "settingsPlayback": "再生",
   "settingsStorage": "ストレージ",
   "settingsAccentColor": "アクセントカラー",
   "settingsLanguage": "言語",
   "langSystem": "システムに従う",
   "settingsMiniLyric": "ミニプレイヤーに現在の歌詞を表示",
-  "settingsMinimizeToTray": "ウィンドウを閉じる時にトレイに最小化",
 
   "aboutDownloadVersion": "{version} をダウンロード",
   "aboutChecking": "確認中…",

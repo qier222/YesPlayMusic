@@ -406,9 +406,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsLyrics => 'Тексты песен';
 
   @override
-  String get settingsPlayback => 'Воспроизведение';
-
-  @override
   String get settingsStorage => 'Хранилище';
 
   @override
@@ -422,9 +419,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => 'Показывать текст песни в мини-плеере';
-
-  @override
-  String get settingsMinimizeToTray => 'Сворачивать в трей при закрытии окна';
 
   @override
   String aboutDownloadVersion(String version) {

@@ -404,9 +404,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsLyrics => '가사';
 
   @override
-  String get settingsPlayback => '재생';
-
-  @override
   String get settingsStorage => '저장 공간';
 
   @override
@@ -420,9 +417,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => '미니 플레이어에 현재 가사 표시';
-
-  @override
-  String get settingsMinimizeToTray => '창을 닫을 때 트레이로 최소화';
 
   @override
   String aboutDownloadVersion(String version) {

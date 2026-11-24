@@ -404,9 +404,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsLyrics => '歌词';
 
   @override
-  String get settingsPlayback => '播放';
-
-  @override
   String get settingsStorage => '存储';
 
   @override
@@ -420,9 +417,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => '在迷你播放器显示当前歌词';
-
-  @override
-  String get settingsMinimizeToTray => '关闭窗口时最小化到托盘';
 
   @override
   String aboutDownloadVersion(String version) {
@@ -2064,9 +2058,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get settingsLyrics => '歌詞';
 
   @override
-  String get settingsPlayback => '播放';
-
-  @override
   String get settingsStorage => '儲存空間';
 
   @override
@@ -2080,9 +2071,6 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get settingsMiniLyric => '在迷你播放器顯示目前歌詞';
-
-  @override
-  String get settingsMinimizeToTray => '關閉視窗時最小化到系統匣';
 
   @override
   String aboutDownloadVersion(String version) {

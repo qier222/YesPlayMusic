@@ -138,13 +138,11 @@
   "settingsAbout": "Acerca de",
   "settingsAppearance": "Apariencia",
   "settingsLyrics": "Letras",
-  "settingsPlayback": "Reproducción",
   "settingsStorage": "Almacenamiento",
   "settingsAccentColor": "Color de acento",
   "settingsLanguage": "Idioma",
   "langSystem": "Seguir al sistema",
   "settingsMiniLyric": "Mostrar letra actual en el minirreproductor",
-  "settingsMinimizeToTray": "Minimizar a la bandeja al cerrar la ventana",
 
   "aboutDownloadVersion": "Descargar {version}",
   "aboutChecking": "Comprobando…",

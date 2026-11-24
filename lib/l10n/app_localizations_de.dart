@@ -406,9 +406,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsLyrics => 'Songtexte';
 
   @override
-  String get settingsPlayback => 'Wiedergabe';
-
-  @override
   String get settingsStorage => 'Speicher';
 
   @override
@@ -422,10 +419,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => 'Aktuellen Songtext im Mini-Player anzeigen';
-
-  @override
-  String get settingsMinimizeToTray =>
-      'Beim Schließen in den Infobereich minimieren';
 
   @override
   String aboutDownloadVersion(String version) {

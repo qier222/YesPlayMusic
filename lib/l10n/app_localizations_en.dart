@@ -407,9 +407,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLyrics => 'Lyrics';
 
   @override
-  String get settingsPlayback => 'Playback';
-
-  @override
   String get settingsStorage => 'Storage';
 
   @override
@@ -423,9 +420,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => 'Show current lyric in mini player';
-
-  @override
-  String get settingsMinimizeToTray => 'Minimize to tray when closing window';
 
   @override
   String aboutDownloadVersion(String version) {

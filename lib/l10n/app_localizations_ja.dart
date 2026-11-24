@@ -404,9 +404,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsLyrics => '歌詞';
 
   @override
-  String get settingsPlayback => '再生';
-
-  @override
   String get settingsStorage => 'ストレージ';
 
   @override
@@ -420,9 +417,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => 'ミニプレイヤーに現在の歌詞を表示';
-
-  @override
-  String get settingsMinimizeToTray => 'ウィンドウを閉じる時にトレイに最小化';
 
   @override
   String aboutDownloadVersion(String version) {

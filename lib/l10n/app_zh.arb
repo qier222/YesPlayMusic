@@ -148,13 +148,11 @@
   "settingsAbout": "关于",
   "settingsAppearance": "外观",
   "settingsLyrics": "歌词",
-  "settingsPlayback": "播放",
   "settingsStorage": "存储",
   "settingsAccentColor": "主题色",
   "settingsLanguage": "语言",
   "langSystem": "跟随系统",
   "settingsMiniLyric": "在迷你播放器显示当前歌词",
-  "settingsMinimizeToTray": "关闭窗口时最小化到托盘",
 
   "aboutDownloadVersion": "下载 {version}",
   "@aboutDownloadVersion": {

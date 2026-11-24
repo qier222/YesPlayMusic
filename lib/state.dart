@@ -94,7 +94,6 @@ class AppState extends ChangeNotifier {
         'ui_language': lang,
         'music_source': sourceId,
         'mini_lyric': '$miniLyric',
-        'minimize_to_tray': '$tray',
         'mcp_enabled': '${mcpConfig.enabled}',
         'plugin_count': plugins.length + disabledPlugins.length,
       },
@@ -2887,7 +2886,6 @@ class AppState extends ChangeNotifier {
   int swatch = 0;
   String lang = _prefs()['lang'] as String? ?? 'system';
   bool miniLyric = true;
-  bool tray = false;
 
   Locale? get locale => AppLanguage.byCode(lang).locale;
 

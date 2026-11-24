@@ -138,13 +138,11 @@
   "settingsAbout": "About",
   "settingsAppearance": "Appearance",
   "settingsLyrics": "Lyrics",
-  "settingsPlayback": "Playback",
   "settingsStorage": "Storage",
   "settingsAccentColor": "Accent Color",
   "settingsLanguage": "Language",
   "langSystem": "Follow System",
   "settingsMiniLyric": "Show current lyric in mini player",
-  "settingsMinimizeToTray": "Minimize to tray when closing window",
 
   "aboutDownloadVersion": "Download {version}",
   "aboutChecking": "Checking…",

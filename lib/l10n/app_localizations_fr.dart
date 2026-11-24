@@ -407,9 +407,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsLyrics => 'Paroles';
 
   @override
-  String get settingsPlayback => 'Lecture';
-
-  @override
   String get settingsStorage => 'Stockage';
 
   @override
@@ -423,10 +420,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsMiniLyric => 'Afficher les paroles dans le mini-lecteur';
-
-  @override
-  String get settingsMinimizeToTray =>
-      'Réduire dans la barre d\'état à la fermeture';
 
   @override
   String aboutDownloadVersion(String version) {

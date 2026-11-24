@@ -138,13 +138,11 @@
   "settingsAbout": "Über",
   "settingsAppearance": "Erscheinungsbild",
   "settingsLyrics": "Songtexte",
-  "settingsPlayback": "Wiedergabe",
   "settingsStorage": "Speicher",
   "settingsAccentColor": "Akzentfarbe",
   "settingsLanguage": "Sprache",
   "langSystem": "Systemsprache",
   "settingsMiniLyric": "Aktuellen Songtext im Mini-Player anzeigen",
-  "settingsMinimizeToTray": "Beim Schließen in den Infobereich minimieren",
 
   "aboutDownloadVersion": "{version} herunterladen",
   "aboutChecking": "Wird geprüft…",

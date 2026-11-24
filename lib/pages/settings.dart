@@ -190,13 +190,7 @@ class _GeneralTab extends StatelessWidget {
         const SizedBox(width: 24),
         SizedBox(
           width: 512,
-          child: Column(
-            children: [
-              _Section(title: l.settingsPlayback, child: const _Playback()),
-              const SizedBox(height: 28),
-              _Section(title: l.settingsStorage, child: const _Storage()),
-            ],
-          ),
+          child: _Section(title: l.settingsStorage, child: const _Storage()),
         ),
       ],
     );
@@ -492,28 +486,6 @@ class _LyricsCard extends StatelessWidget {
                 onChanged: (v) => app.update(() => app.miniLyric = v),
               ),
             ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Playback extends StatelessWidget {
-  const _Playback();
-
-  @override
-  Widget build(BuildContext context) {
-    final app = context.app;
-    return Column(
-      children: [
-        // 音质由各插件在自己的设置里决定，这里不再放
-        _row(
-          66,
-          context.l10n.settingsMinimizeToTray,
-          Toggle(
-            value: app.tray,
-            onChanged: (v) => app.update(() => app.tray = v),
           ),
         ),
       ],

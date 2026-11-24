@@ -138,13 +138,11 @@
   "settingsAbout": "정보",
   "settingsAppearance": "외관",
   "settingsLyrics": "가사",
-  "settingsPlayback": "재생",
   "settingsStorage": "저장 공간",
   "settingsAccentColor": "강조 색상",
   "settingsLanguage": "언어",
   "langSystem": "시스템 설정 따르기",
   "settingsMiniLyric": "미니 플레이어에 현재 가사 표시",
-  "settingsMinimizeToTray": "창을 닫을 때 트레이로 최소화",
 
   "aboutDownloadVersion": "{version} 다운로드",
   "aboutChecking": "확인 중…",

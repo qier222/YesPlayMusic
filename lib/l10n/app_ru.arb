@@ -138,13 +138,11 @@
   "settingsAbout": "О программе",
   "settingsAppearance": "Внешний вид",
   "settingsLyrics": "Тексты песен",
-  "settingsPlayback": "Воспроизведение",
   "settingsStorage": "Хранилище",
   "settingsAccentColor": "Акцентный цвет",
   "settingsLanguage": "Язык",
   "langSystem": "Как в системе",
   "settingsMiniLyric": "Показывать текст песни в мини-плеере",
-  "settingsMinimizeToTray": "Сворачивать в трей при закрытии окна",
 
   "aboutDownloadVersion": "Скачать {version}",
   "aboutChecking": "Проверка…",

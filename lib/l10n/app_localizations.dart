@@ -891,12 +891,6 @@ abstract class AppLocalizations {
   /// **'歌词'**
   String get settingsLyrics;
 
-  /// No description provided for @settingsPlayback.
-  ///
-  /// In zh, this message translates to:
-  /// **'播放'**
-  String get settingsPlayback;
-
   /// No description provided for @settingsStorage.
   ///
   /// In zh, this message translates to:
@@ -926,12 +920,6 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'在迷你播放器显示当前歌词'**
   String get settingsMiniLyric;
-
-  /// No description provided for @settingsMinimizeToTray.
-  ///
-  /// In zh, this message translates to:
-  /// **'关闭窗口时最小化到托盘'**
-  String get settingsMinimizeToTray;
 
   /// No description provided for @aboutDownloadVersion.
   ///
