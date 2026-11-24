@@ -282,7 +282,7 @@ class PermRow extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 2),
-            Text(
+            CjkText(
               detail,
               style: ts(13, w: w500, c: P.muted, h: 20 / 13),
             ),

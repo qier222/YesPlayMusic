@@ -171,13 +171,13 @@ class _InstallFlowState extends State<_InstallFlow> {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
+          CjkText(
             l.pluginInstallTitle,
             textAlign: TextAlign.center,
             style: ts(20, w: w700),
           ),
           const SizedBox(height: 10),
-          Text(
+          CjkText(
             l.pluginInstallPrompt,
             textAlign: TextAlign.center,
             style: ts(14, w: w500, c: P.dark ? wa(0.6) : P.muted, h: 22 / 14),
@@ -214,7 +214,7 @@ class _InstallFlowState extends State<_InstallFlow> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
+          CjkText(
             _error ?? l.pluginInstallSupportHint,
             style: ts(
               12,
@@ -329,7 +329,7 @@ class _InstallFlowState extends State<_InstallFlow> {
                 ),
                 if (mf.description.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text(
+                  CjkText(
                     pluginTr(pkg.dir, mf.description),
                     style: ts(13, w: w500, c: P.muted, h: 20 / 13),
                   ),

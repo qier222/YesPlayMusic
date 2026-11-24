@@ -129,7 +129,7 @@ class AlbumPage extends StatelessWidget {
                                 f: F.semi,
                                 c: h ? accent : P.ink,
                               ),
-                              child: Text(al.artist),
+                              child: CjkText(al.artist),
                             ),
                           ],
                         ),

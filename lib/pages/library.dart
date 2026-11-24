@@ -231,11 +231,11 @@ class _ScanningTitleState extends State<_ScanningTitle>
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(base, style: style),
+              CjkText(base, style: style),
               for (var i = 0; i < 3; i++)
                 Opacity(
                   opacity: _dotOpacity(v, i).clamp(0.0, 1.0),
-                  child: Text('.', style: style),
+                  child: CjkText('.', style: style),
                 ),
             ],
           );
@@ -1061,9 +1061,9 @@ class TicksPainter extends CustomPainter {
     // Time / album name above the pointer, on the line above the triangle
     if (hoverT > 0 && hover != ci && hoverLabel.isNotEmpty) {
       final tp = TextPainter(
-        text: TextSpan(
-          text: hoverLabel,
-          style: ts(
+        text: cjkSpan(
+          hoverLabel,
+          ts(
             11,
             w: w600,
             h: 12 / 11,
@@ -1091,9 +1091,9 @@ class TicksPainter extends CustomPainter {
     for (final (i, m) in ms.indexed) {
       final x = (m.pos - from) / (to - from) * (w - 3);
       final tp = TextPainter(
-        text: TextSpan(
-          text: m.text,
-          style: ts(
+        text: cjkSpan(
+          m.text,
+          ts(
             11,
             w: m.strong ? w700 : w600,
             h: 12 / 11,
@@ -1617,9 +1617,9 @@ class _VTicks extends CustomPainter {
     // Time next to the pointer, in the triangle's column: right-aligned and vertically centered on the column
     if (hoverT > 0 && hover != cur && hoverLabel.isNotEmpty) {
       final tp = TextPainter(
-        text: TextSpan(
-          text: hoverLabel,
-          style: ts(
+        text: cjkSpan(
+          hoverLabel,
+          ts(
             11,
             w: w600,
             c: ink.withValues(alpha: 0.9 * hoverT),
@@ -1637,9 +1637,9 @@ class _VTicks extends CustomPainter {
     final labels = years ?? [for (var i = 0; i < ys.length; i++) '${2026 - i}'];
     for (var i = 0; i < ys.length && i < labels.length; i++) {
       final tp = TextPainter(
-        text: TextSpan(
-          text: labels[i],
-          style: ts(10, w: w600, c: ink.withValues(alpha: 0.4)),
+        text: cjkSpan(
+          labels[i],
+          ts(10, w: w600, c: ink.withValues(alpha: 0.4)),
         ),
         textDirection: TextDirection.ltr,
       )..layout();

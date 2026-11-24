@@ -119,7 +119,7 @@ void showTextDialog(BuildContext context, String title, String text) {
     context,
     title: title,
     body: (_) => SingleChildScrollView(
-      child: Text(
+      child: CjkText(
         text,
         style: ts(14, w: w500, c: P.muted, h: 24 / 14),
       ),

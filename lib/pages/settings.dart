@@ -75,7 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
           left: 38,
           top: 72,
           // Line height fixed to Archivo: CJK fallback fonts like PingFang have different line heights, so titles would jump when switching languages
-          child: Text(
+          child: CjkText(
             l.navSettings,
             maxLines: 1,
             softWrap: false,
@@ -128,7 +128,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: tx(
                                 it.$2,
                                 15,
-                                w: sel ? w700 : w500,
+                                w: w500,
                                 f: F.semi,
                                 c: fg,
                               ),
@@ -1340,7 +1340,7 @@ class _PluginCard extends StatelessWidget {
                 ),
                 if (description.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text(
+                  CjkText(
                     description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -1349,7 +1349,7 @@ class _PluginCard extends StatelessWidget {
                 ],
                 if (error != null) ...[
                   const SizedBox(height: 16),
-                  Text(
+                  CjkText(
                     error!,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,

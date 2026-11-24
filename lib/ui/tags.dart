@@ -173,7 +173,7 @@ class TextTabs extends StatelessWidget {
                       f: F.semi,
                       c: i == selected ? P.ink : (h ? P.muted : P.faint),
                     ),
-                    child: Text(labels[i]),
+                    child: CjkText(labels[i]),
                   ),
                   const SizedBox(height: 6),
                   AnimatedOpacity(
@@ -227,7 +227,7 @@ class SectionTitle extends StatelessWidget {
               builder: (_, h, _) => AnimatedDefaultTextStyle(
                 duration: fast,
                 style: ts(14, w: w700, f: F.semi, c: h ? P.ink : P.muted),
-                child: Text(allLabel ?? context.l10n.actionAll),
+                child: CjkText(allLabel ?? context.l10n.actionAll),
               ),
             ),
         ],

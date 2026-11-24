@@ -327,7 +327,7 @@ class _Panel extends StatelessWidget {
                     const SizedBox(height: 8),
                     Transform.translate(
                       offset: const Offset(-2, 0),
-                      child: Text(
+                      child: CjkText(
                         d.name,
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -445,7 +445,7 @@ final _titleStyle = ts(34, w: w900, f: F.wide, c: white, h: 1.1);
 /// How many lines [text] takes in [style] at [width], at most [max].
 int _lines(String text, TextStyle style, double width, int max) {
   final tp = TextPainter(
-    text: TextSpan(text: text, style: style),
+    text: cjkSpan(text, style),
     textDirection: TextDirection.ltr,
     maxLines: max,
   )..layout(maxWidth: width);
@@ -470,7 +470,7 @@ class _Description extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = ts(14, w: w500, c: wa(0.75), h: 22 / 14);
     final tp = TextPainter(
-      text: TextSpan(text: text, style: style),
+      text: cjkSpan(text, style),
       textDirection: TextDirection.ltr,
       maxLines: lines,
     )..layout(maxWidth: width);
@@ -478,7 +478,7 @@ class _Description extends StatelessWidget {
     tp.dispose();
     Widget body(bool h) => SizedBox(
       width: width,
-      child: Text(
+      child: CjkText(
         text,
         maxLines: lines,
         overflow: TextOverflow.ellipsis,

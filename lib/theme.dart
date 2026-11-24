@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'l10n/l10n.dart';
@@ -199,7 +200,7 @@ Widget tx(
   TextAlign? align,
   Key? key,
 }) {
-  return Text(
+  return CjkText(
     s,
     key: key,
     maxLines: lines,
@@ -208,6 +209,139 @@ Widget tx(
     textAlign: align,
     style: ts(size, w: w, c: c, f: f, tnum: tnum, h: h),
   );
+}
+
+/// Weight for CJK glyphs drawn at [size] when the surrounding text asks for [w].
+///
+/// macOS falls back to PingFang for CJK, whose heaviest face is Semibold (600).
+/// Asking for w800/w900 makes Flutter fake-bold that face, and at 13–16pt even
+/// real Semibold fills in the gaps of dense characters (粤, 霄). So on macOS
+/// CJK runs are capped at Semibold, and small text drops one step.
+FontWeight cjkWeight(FontWeight w, double size) {
+  if (defaultTargetPlatform != TargetPlatform.macOS) return w;
+  if (size <= 16) {
+    if (w.value >= 600) return FontWeight.w500;
+    if (w.value == 500) return FontWeight.w400;
+    return w;
+  }
+  return w.value > 600 ? FontWeight.w600 : w;
+}
+
+bool _isCjk(int r) =>
+    (r >= 0x2E80 &&
+        r <= 0x9FFF) || // radicals, CJK punctuation, kana, ideographs
+    (r >= 0xF900 && r <= 0xFAFF) || // compatibility ideographs
+    (r >= 0xFE30 && r <= 0xFE4F) || // compatibility forms
+    (r >= 0xFF00 && r <= 0xFFEF) || // fullwidth forms
+    (r >= 0x20000 && r <= 0x3FFFF); // extension ideographs
+
+/// Rebuilds [span] so CJK runs carry [cjkWeight] of the weight they inherit.
+/// [inherited] is the style the span is laid out under (DefaultTextStyle merged
+/// with the widget's style). Returns [span] itself when nothing changes.
+InlineSpan cjkify(InlineSpan span, TextStyle inherited) {
+  if (span is! TextSpan) return span;
+  final eff = inherited.merge(span.style);
+  final w = eff.fontWeight ?? FontWeight.w400;
+  final cw = cjkWeight(w, eff.fontSize ?? 14);
+  final kids = span.children;
+  final newKids = kids?.map((k) => cjkify(k, eff)).toList();
+  final kidsChanged =
+      newKids != null &&
+      Iterable.generate(kids!.length)
+          .any((i) => !identical(kids[i], newKids[i]));
+  final text = span.text;
+  final runs = <InlineSpan>[];
+  if (text != null && cw != w && text.runes.any(_isCjk)) {
+    final buf = StringBuffer();
+    bool? cur;
+    void flush() {
+      if (buf.isEmpty) return;
+      runs.add(
+        TextSpan(
+          text: buf.toString(),
+          style: cur! ? TextStyle(fontWeight: cw) : null,
+          recognizer: span.recognizer,
+          mouseCursor: span.mouseCursor,
+          onEnter: span.onEnter,
+          onExit: span.onExit,
+        ),
+      );
+      buf.clear();
+    }
+
+    for (final r in text.runes) {
+      final c = _isCjk(r);
+      if (cur != null && c != cur) flush();
+      cur = c;
+      buf.writeCharCode(r);
+    }
+    flush();
+  }
+  if (runs.isEmpty && !kidsChanged) return span;
+  return TextSpan(
+    style: span.style,
+    text: runs.isEmpty ? text : null,
+    children: [...runs, ...?(newKids ?? kids)],
+    recognizer: span.recognizer,
+    mouseCursor: span.mouseCursor,
+    onEnter: span.onEnter,
+    onExit: span.onExit,
+    semanticsLabel: span.semanticsLabel,
+    locale: span.locale,
+    spellOut: span.spellOut,
+  );
+}
+
+/// [text] in [style] as a span with CJK weights applied, for TextPainter measuring.
+InlineSpan cjkSpan(String text, TextStyle style) =>
+    cjkify(TextSpan(text: text, style: style), const TextStyle());
+
+/// [Text] that draws CJK runs at [cjkWeight]. Use it instead of Text for UI copy.
+class CjkText extends StatelessWidget {
+  const CjkText(
+    String this.data, {
+    super.key,
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.softWrap,
+    this.strutStyle,
+  }) : span = null;
+
+  const CjkText.rich(
+    InlineSpan this.span, {
+    super.key,
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.softWrap,
+    this.strutStyle,
+  }) : data = null;
+
+  final String? data;
+  final InlineSpan? span;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
+  final bool? softWrap;
+  final StrutStyle? strutStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final eff = DefaultTextStyle.of(context).style.merge(style);
+    return Text.rich(
+      cjkify(span ?? TextSpan(text: data), eff),
+      style: style,
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      softWrap: softWrap,
+      strutStyle: strutStyle,
+    );
+  }
 }
 
 const w500 = FontWeight.w500;

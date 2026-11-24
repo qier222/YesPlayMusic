@@ -191,7 +191,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                         ? P.ink
                                         : (h ? P.muted : P.faint),
                                   ),
-                                  child: Text(t.$1),
+                                  child: CjkText(t.$1),
                                 ),
                                 const SizedBox(width: 6),
                                 tx(

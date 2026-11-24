@@ -482,7 +482,7 @@ class _Link extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = route;
-    Widget line(bool h) => Text.rich(
+    Widget line(bool h) => CjkText.rich(
       TextSpan(
         children: [
           if (prefix.isNotEmpty) TextSpan(text: prefix),
@@ -752,10 +752,7 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
               double h,
             ) => _heights.putIfAbsent('$size|${w.value}|$f|$h|$s', () {
               final tp = TextPainter(
-                text: TextSpan(
-                  text: s,
-                  style: ts(size, w: w, f: f, h: h),
-                ),
+                text: cjkSpan(s, ts(size, w: w, f: f, h: h)),
                 textDirection: TextDirection.ltr,
               )..layout(maxWidth: maxW);
               final height = tp.height;
@@ -931,7 +928,7 @@ class _LyricRow extends StatelessWidget {
             final lyric = Transform.scale(
               scale: km,
               alignment: Alignment.topLeft,
-              child: Text(
+              child: CjkText(
                 main,
                 style: ts(size, w: w900, f: F.wide, c: white, h: 1.1),
               ),
@@ -949,7 +946,7 @@ class _LyricRow extends StatelessWidget {
                   child: Transform.scale(
                     scale: ks,
                     alignment: Alignment.topLeft,
-                    child: Text(
+                    child: CjkText(
                       s,
                       style: ts(subSize, w: w700, c: wa(0.85), h: 1.3),
                     ),

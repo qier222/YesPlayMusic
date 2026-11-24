@@ -130,7 +130,7 @@ class Segmented extends StatelessWidget {
                             f: F.semi,
                             c: i == selected ? darkInk : (h ? P.ink : P.muted),
                           ),
-                          child: Text(labels[i]),
+                          child: CjkText(labels[i]),
                         ),
                       ),
                     ),

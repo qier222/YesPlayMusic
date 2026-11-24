@@ -348,7 +348,7 @@ class LineTabs extends StatelessWidget {
                         f: F.semi,
                         c: active ? P.ink : (h ? P.muted : P.faint),
                       ),
-                      child: Text(it.$1),
+                      child: CjkText(it.$1),
                     ),
                     if (it.$2 != null) ...[
                       const SizedBox(width: 6),
@@ -656,14 +656,14 @@ void _openActionDialog(
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Text(
+                        CjkText(
                           title,
                           textAlign: TextAlign.center,
                           style: ts(20, w: w700),
                         ),
                         if (message != null) ...[
                           const SizedBox(height: 10),
-                          Text(
+                          CjkText(
                             message,
                             textAlign: TextAlign.center,
                             style: ts(14, w: w500, c: wa(0.6), h: 22 / 14),

@@ -185,7 +185,7 @@ class _SortTab extends StatelessWidget {
     builder: (_, h, _) => AnimatedDefaultTextStyle(
       duration: fast,
       style: ts(14, w: w700, c: wa(active ? 1 : (h ? 0.75 : 0.5))),
-      child: Text(label),
+      child: CjkText(label),
     ),
   );
 }
@@ -226,7 +226,7 @@ class _Quote extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Text.rich(
+            child: CjkText.rich(
               TextSpan(
                 children: [
                   if (q.userName.isNotEmpty)
@@ -279,7 +279,7 @@ class _CommentRow extends StatelessWidget {
                     c: white,
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  CjkText(
                     c.text,
                     style: ts(14, w: w500, c: wa(0.85), h: 1.57),
                   ),
@@ -572,7 +572,7 @@ class _ComposerState extends State<_Composer>
           listenable: _text,
           builder: (_, _) => _text.text.isEmpty
               ? IgnorePointer(
-                  child: Text(
+                  child: CjkText(
                     r == null
                         ? context.l10n.commentPlaceholder
                         : context.l10n.commentReplyPlaceholder(r.userName),

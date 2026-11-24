@@ -82,7 +82,7 @@ class _LinkTextState extends State<LinkText> {
   @override
   Widget build(BuildContext context) {
     final hc = widget.hover ?? P.ink;
-    return Text.rich(
+    return CjkText.rich(
       TextSpan(
         children: [
           for (final (i, p) in widget.parts.indexed)
