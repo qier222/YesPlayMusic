@@ -49,27 +49,27 @@ The macOS and Windows builds check for updates automatically; on Linux, new vers
 
 <table>
   <tr>
-    <td colspan="2" align="center"><img src="docs/screenshots/en/library.webp" alt="Library" width="100%" /><br /><sub>Library: albums on a record shelf, with a release-date timeline below</sub></td>
+    <td colspan="2" align="center"><img src="docs/screenshots/en/library_bcb62.webp" alt="Library" width="100%" /><br /><sub>Library: albums on a record shelf, with a release-date timeline below</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/en/coverflow.webp" alt="Coverflow" width="100%" /><br /><sub>3D Coverflow</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/en/album.webp" alt="Album" width="100%" /><br /><sub>Album: background follows the cover's dominant color</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/coverflow_1d44c.webp" alt="Coverflow" width="100%" /><br /><sub>3D Coverflow</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/album_e416f.webp" alt="Album" width="100%" /><br /><sub>Album: background follows the cover's dominant color</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/en/now-playing.webp" alt="Now Playing" width="100%" /><br /><sub>Now Playing: lyrics and translations</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/en/comments.webp" alt="Comments" width="100%" /><br /><sub>Now Playing: song comments</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/now-playing_5f60c.webp" alt="Now Playing" width="100%" /><br /><sub>Now Playing: lyrics and translations</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/comments_d4007.webp" alt="Comments" width="100%" /><br /><sub>Now Playing: song comments</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/en/home.webp" alt="Home" width="100%" /><br /><sub>Home: provided by the current music source</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/en/search.webp" alt="Search" width="100%" /><br /><sub>Search</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/home_1ae93.webp" alt="Home" width="100%" /><br /><sub>Home: provided by the current music source</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/search_85da5.webp" alt="Search" width="100%" /><br /><sub>Search</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/en/playlist.webp" alt="Playlist" width="100%" /><br /><sub>Playlist</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/en/artist.webp" alt="Artist" width="100%" /><br /><sub>Artist</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/playlist_9b24c.webp" alt="Playlist" width="100%" /><br /><sub>Playlist</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/artist_b34af.webp" alt="Artist" width="100%" /><br /><sub>Artist</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/en/settings-general.webp" alt="Settings" width="100%" /><br /><sub>Settings: 6 accent colors</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/en/settings-plugins.webp" alt="Plugins" width="100%" /><br /><sub>Settings: plugins</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/settings-general_93a1e.webp" alt="Settings" width="100%" /><br /><sub>Settings: 6 accent colors</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/en/settings-plugins_db41c.webp" alt="Plugins" width="100%" /><br /><sub>Settings: plugins</sub></td>
   </tr>
 </table>
 

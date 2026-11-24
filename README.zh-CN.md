@@ -49,27 +49,27 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 
 <table>
   <tr>
-    <td colspan="2" align="center"><img src="docs/screenshots/library.webp" alt="音乐库" width="100%" /><br /><sub>音乐库：专辑排在唱片架上，下方按发行时间定位</sub></td>
+    <td colspan="2" align="center"><img src="docs/screenshots/library_ad704.webp" alt="音乐库" width="100%" /><br /><sub>音乐库：专辑排在唱片架上，下方按发行时间定位</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/coverflow.webp" alt="Coverflow" width="100%" /><br /><sub>3D Coverflow</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/album.webp" alt="专辑" width="100%" /><br /><sub>专辑：背景跟随封面主色</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/coverflow_030e9.webp" alt="Coverflow" width="100%" /><br /><sub>3D Coverflow</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/album_8f721.webp" alt="专辑" width="100%" /><br /><sub>专辑：背景跟随封面主色</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/now-playing.webp" alt="正在播放" width="100%" /><br /><sub>正在播放：歌词和翻译</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/comments.webp" alt="评论" width="100%" /><br /><sub>正在播放：歌曲评论</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/now-playing_f8359.webp" alt="正在播放" width="100%" /><br /><sub>正在播放：歌词和翻译</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/comments_5814b.webp" alt="评论" width="100%" /><br /><sub>正在播放：歌曲评论</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/home.webp" alt="首页" width="100%" /><br /><sub>首页：由当前音乐源提供</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/search.webp" alt="搜索" width="100%" /><br /><sub>搜索</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/home_73ccc.webp" alt="首页" width="100%" /><br /><sub>首页：由当前音乐源提供</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/search_c66d2.webp" alt="搜索" width="100%" /><br /><sub>搜索</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/playlist.webp" alt="歌单" width="100%" /><br /><sub>歌单</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/artist.webp" alt="歌手" width="100%" /><br /><sub>歌手</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/playlist_0cce6.webp" alt="歌单" width="100%" /><br /><sub>歌单</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/artist_cff1f.webp" alt="歌手" width="100%" /><br /><sub>歌手</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><img src="docs/screenshots/settings-general.webp" alt="设置" width="100%" /><br /><sub>设置：6 种主题色</sub></td>
-    <td width="50%" align="center"><img src="docs/screenshots/settings-plugins.webp" alt="插件" width="100%" /><br /><sub>设置：插件</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/settings-general_7ac6d.webp" alt="设置" width="100%" /><br /><sub>设置：6 种主题色</sub></td>
+    <td width="50%" align="center"><img src="docs/screenshots/settings-plugins_3829d.webp" alt="插件" width="100%" /><br /><sub>设置：插件</sub></td>
   </tr>
 </table>
 
