@@ -1,10 +1,14 @@
 # 插件开发指南
 
+简体中文 · [English](plugins.en.md)
+
 YesPlayMusic 本身不带任何在线音乐服务。除了本地音乐，所有音乐源都由插件提供：一个插件就是一个文件夹，里面有一份 `plugin.json` 和一个 JavaScript 模块。应用在内置的 QuickJS 引擎里运行插件，插件导出哪些函数，应用就显示哪些功能。
 
 插件协议沿用 MyGo Music 的字段名，已有的 MyGo 插件改动很少就能移植。
 
-> 安全提示：插件可以访问它声明的网站、读写自己的数据目录，经用户允许后还能启动本机程序。只安装你信任的插件。详见 [SECURITY.md](../SECURITY.md)。
+> 安全提示：插件可以访问它声明的网站和本机应用通道、读写自己的数据目录，经用户允许后还能启动本机程序。只安装你信任的插件。详见 [SECURITY.md](../SECURITY.md)。
+
+这份指南跟随 `main` 分支。尚未发布的接口包括 `host.pid`、`host.ipc`、`host.files`、`testConnection`、听歌上报和播放状态回调，以及 `AudioStream` 的 ReplayGain 字段。为 3.0.0 开发时，请参照 [3.0.0 的插件指南](https://github.com/qier222/YesPlayMusic/blob/v3.0.0/docs/plugins.md)。
 
 ## 目录
 
@@ -18,6 +22,7 @@ YesPlayMusic 本身不带任何在线音乐服务。除了本地音乐，所有�
 - [导出的函数](#导出的函数)
 - [数据结构](#数据结构)
 - [错误](#错误)
+- [缓存](#缓存)
 - [限制](#限制)
 - [调试](#调试)
 
@@ -85,7 +90,7 @@ export async function stream({ id }) {
 | 以 `.zip` 结尾的链接 | 下载解压，用里面最浅的那份 `plugin.json` |
 | 以 `plugin.json` 结尾的链接 | 下载它和 `main` 指向的模块，以及模块里用相对路径 `import` 的文件 |
 
-也可以点「从本地文件夹安装…」，选一个有 `plugin.json` 的文件夹，应用会把它复制进插件目录。
+也可以点「从本地文件夹安装…」，选一个有 `plugin.json` 的文件夹，应用会把它复制进插件目录，不会跟随文件夹里的软链接。
 
 安装前应用会列出插件要的权限（`permissions`）和提供的能力。能力是从源码里的 `export` 语句读出来的，确认安装之前不会运行插件的任何代码。`minAppVersion` 比当前应用新时不能安装。已经装了同一个 id、来自同一个地方（同一个 GitHub 仓库，或者同一个链接）的插件时，按钮变成「更新」，旧版本会被替换，设置和登录状态保留。id 相同但来源不同（或者已装的那个来源不明，比如手动放进目录的）时，安装弹窗会给出警告，按钮变成「替换」：替换会清除旧插件的设置、登录状态和已授予的权限，当成全新安装。
 
@@ -93,7 +98,7 @@ export async function stream({ id }) {
 
 从 GitHub 仓库或 Release 链接装的插件，以及在 `plugin.json` 里写了 GitHub 仓库地址（`repository`）的插件，都可以检查更新：应用会拿仓库最新 Release 的 tag（去掉开头的 `v`）和已装插件 `plugin.json` 里的 `version` 比较，新的就算有更新。如果插件是通过链接安装的，优先使用安装时记下来的来源；没有记录来源（如本地文件夹安装或手动放进插件目录）时，才使用 `repository`。指定了分支（`/tree/...`、`/blob/...`）、`.zip`、`plugin.json` 链接或未声明 `repository` 的本地插件不支持检查更新，要更新就重新安装一次。
 
-- 每次启动后第一次打开设置里的插件页时，会把所有能检查的插件查一遍。有更新的插件卡片上显示「更新」，点了会打开安装弹窗，确认后替换，设置和登录状态保留。
+- 每次启动后第一次打开设置里的插件页时，如果后台还没检查过更新，会把所有能检查的插件查一遍。有更新的插件卡片上显示「更新」，点了会打开安装弹窗，确认后替换，设置和登录状态保留。
 - 插件卡片的 ⋯ 菜单里有「检查更新」，立即查这一个插件。
 - 插件设置弹窗的「更新」一栏可以打开「自动更新」（默认关闭）。打开后应用启动约 10 秒后查一次，之后每 6 小时查一次，有新版本就在后台下载安装。这几种情况不会自动装，仍然只在卡片上显示「更新」，等你手动确认：新版本要了旧版本没有的网络、程序或本机应用权限、要求更新的应用版本（`minAppVersion`）、插件 id 变了，或者正在播放这个插件的歌。
 
@@ -200,7 +205,7 @@ export async function stream({ id }) {
 | `host.dataDir` | 插件数据目录的绝对路径。 |
 | `host.pid` | 应用的进程 id。 |
 | `host.storage.get(key)` / `.set(key, value)` / `.remove(key)` | 同步的键值存储，值是任意 JSON。存在 `storage.json`（整个最多 8 MB），适合放登录状态、缓存。 |
-| `host.files.write(name, data)` | 把 `data`（字符串按 UTF-8 存，或 `Uint8Array` / `ArrayBuffer`）写进插件数据目录下的 `files/<name>`，返回它的 `file://` 地址，可以直接当 `imageUrl` 或 `AudioStream.url` 用。`name` 是相对路径，可以带子目录（`covers/1.jpg`），不能有 `..`、`:`、空段或开头的 `/`。单个文件最大 32 MB。适合存封面和放不进 `storage` 的大块数据。3.1.0 起可用。 |
+| `host.files.write(name, data)` | 把 `data`（字符串按 UTF-8 存，或 `Uint8Array` / `ArrayBuffer`）写进插件数据目录下的 `files/<name>`，返回它的 `file://` 地址，可以直接当 `imageUrl` 或 `AudioStream.url` 用。`name` 是相对路径，可以带子目录（`covers/1.jpg`），不能有 `..`、`:`、空段或开头的 `/`。单个文件最大 32 MB。适合存封面和放不进 `storage` 的大块数据。 |
 | `host.files.read(name)` / `.readText(name)` | 读 `files/<name>`，返回 `Uint8Array` / 字符串，没有这个文件返回 `null`。 |
 | `host.files.url(name)` | 文件存在时返回它的 `file://` 地址，否则 `null`。 |
 | `host.files.remove(name)` | 删掉这个文件，不存在也不报错。 |
@@ -262,7 +267,7 @@ export async function stream({ id }) {
 | `account` | | `Account \| null` | 当前登录的账号，没登录返回 `null`。应用启动和加载插件时调用。 |
 | `signIn` | | `Account \| null` | 登录。最长可以等 10 分钟（等用户扫码或在网页里操作）。 |
 | `signOut` | | | 退出登录，清掉保存的登录状态。 |
-| `testConnection` | `{ settings }` | `string` 或 `{ message }` | 插件设置弹窗里的「测试连接」。`settings` 是弹窗里还没保存的设置（键值都是字符串），请用它们而不是 `host.setting()`。成功返回一句显示给用户的话（可以为空，显示「连接成功」），失败抛错。调用期间 `{setting:key}` 权限也放行 `settings` 里的地址。3.1.0 起可用。 |
+| `testConnection` | `{ settings }` | `string` 或 `{ message }` | 插件设置弹窗里的「测试连接」。`settings` 是弹窗里还没保存的设置（键值都是字符串），请用它们而不是 `host.setting()`。成功返回一句显示给用户的话（可以为空，显示「连接成功」），失败抛错。调用期间 `{setting:key}` 权限也放行 `settings` 里的地址。 |
 | `profile` | | `Profile` | 登录账号的个人主页（点侧边栏左下角头像打开）。 |
 
 ### 发现
@@ -350,7 +355,7 @@ export async function stream({ id }) {
 
 ```json
 {
-  "id": "listenbrainz",
+  "id": "yourname.listenbrainz",
   "name": "ListenBrainz",
   "version": "1.0.0",
   "permissions": { "network": ["api.listenbrainz.org"] },

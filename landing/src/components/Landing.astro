@@ -63,7 +63,7 @@ const official = [
   { name: 'Emby', img: emby },
   { name: 'Subsonic', img: subsonic },
 ];
-const footerLinks = [links.repo, links.plugins, links.changelog, links.issues];
+const footerLinks = [links.repo, links.plugins[lang], links.changelog, links.issues];
 const pluginJson = `{
   "id": "yourname.hello",
   "name": "Hello",
@@ -199,7 +199,7 @@ const pluginJson = `{
           <h3>{d.plugins.develop.title}</h3>
           <p>{d.plugins.develop.body}</p>
           <pre class="code"><span class="code-name">plugin.json</span><code>{pluginJson}</code></pre>
-          <a class="btn btn-ghost" href={links.plugins}>{d.plugins.develop.cta}</a>
+          <a class="btn btn-ghost" href={links.plugins[lang]}>{d.plugins.develop.cta}</a>
         </article>
       </div>
       <ul class="safety">

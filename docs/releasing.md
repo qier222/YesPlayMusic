@@ -1,8 +1,10 @@
 # 发布流程
 
+简体中文 · [English](releasing.en.md)
+
 ## 发一个新版本
 
-`scripts/release/prepare.py` 可以帮忙做前两步：`notes` 从上个标签以来的提交起草更新日志，`bump 3.0.1` 改两处版本号并把 `[Unreleased]` 移到新版本下，`check` 在打标签前检查版本号、更新日志和标签。它只改本地文件。
+`scripts/release/prepare.py` 可以帮忙做前两步：`notes` 从上个标签以来的提交起草更新日志，`bump <版本号>` 改两处版本号并把 `[Unreleased]` 移到新版本下，`check` 在打标签前检查版本号、更新日志和标签。它只改本地文件。
 
 1. 改 `pubspec.yaml` 的 `version` 和 `lib/version.dart` 的 `appVersion`（`flutter test` 会检查两者一致）。
 2. 在 `CHANGELOG.md` 里把 `[Unreleased]` 的内容移到新版本下面。
@@ -13,11 +15,11 @@
    git push origin main v3.0.1
    ```
 
-4. GitHub Actions 的 Release 工作流会构建三个平台的安装包，macOS 分别构建 arm64 和 Intel x64，创建一个**草稿** Release。下载装一下确认没问题，然后在 GitHub 上点 **Publish release**。发布之后已安装的应用才会收到更新（应用读的是 `releases/latest/download/appcast-*.xml`）。Apple Silicon 保留 `appcast-macos.xml`，Intel 使用 `appcast-macos-x64.xml`，两者分别指向对应架构的 ZIP。
+4. GitHub Actions 的 Release 工作流会为 macOS（Apple Silicon arm64、Intel x64）、Windows（x64）和 Linux（x64、arm64）构建安装包，创建一个**草稿** Release。下载装一下确认没问题，然后在 GitHub 上点 **Publish release**。发布并设为最新版本后，启用了 Sparkle / WinSparkle 的应用才能从 `releases/latest/download/appcast-*.xml` 收到更新；其他构建在 设置 → 关于 里提示新版本。Apple Silicon 保留 `appcast-macos.xml`，Intel 使用 `appcast-macos-x64.xml`，两者分别指向对应架构的 ZIP。
 
    官网下载页会读取 GitHub 最新正式版的安装包，不用为每次发版重新部署网站。
 
-   Release 里的 `latest.yml`、`latest-mac.yml`、`latest-linux.yml` 是给 0.4.x 旧版（Electron）看的：旧版检查到它们就弹窗提示去 Releases 页下载新版，别删。旧版代码在 `1.x` 分支，不再发版；如果哪天要在那里发，记得取消「Set as latest release」，不然 3.x 的自动更新会读错 Release。
+   Release 里的 `latest.yml`、`latest-mac.yml`、`latest-linux.yml` 是给 0.4.x 旧版（Electron）看的：旧版检查到它们就弹窗提示去 Releases 页下载新版，别删。旧版代码在 `1.x` 分支；如果在那里发版，记得取消「Set as latest release」，不然 3.x 的自动更新会读错 Release。
 
 ## 需要配置的 Secrets 和 Variables
 
@@ -82,7 +84,7 @@ flutter build windows --release   # build\windows\x64\runner\Release\
 flutter build linux --release     # build/linux/x64/release/bundle/（arm64 机器上是 build/linux/arm64/...）
 ```
 
-Linux 构建需要：`clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`。
+Linux 构建需要：`clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`。Linux arm64 上请参照 [CI](../.github/workflows/ci.yml) 从 Git 标签安装 Flutter。
 
 macOS 两种架构分别构建，不生成通用包。脚本可以透传 Flutter 构建参数，例如 `scripts/build-macos.sh x64 --build-name 3.0.1 --build-number 30001`。它会检查主程序仅包含指定架构，内置原生库也支持该架构，然后把应用复制到独立目录。直接运行 `flutter build macos --release` 时默认只构建当前 Mac 的架构。
 
