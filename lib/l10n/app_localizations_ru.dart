@@ -442,6 +442,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get trayQuit => 'Выйти';
 
   @override
+  String get settingsDynamicIsland => 'Динамический остров';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      'Показывать текущий трек у выреза вверху экрана; наведите курсор, чтобы открыть управление';
+
+  @override
   String aboutDownloadVersion(String version) {
     return 'Скачать $version';
   }

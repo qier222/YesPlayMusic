@@ -515,6 +515,13 @@ class _Playback extends StatelessWidget {
             onChanged: (v) => app.update(() => app.keepRunning = v),
           ),
         ),
+        if (Platform.isMacOS)
+          _row(
+            66,
+            context.l10n.settingsDynamicIsland,
+            Toggle(value: app.island, onChanged: app.setIsland),
+            hint: context.l10n.settingsDynamicIslandHint,
+          ),
       ],
     );
   }

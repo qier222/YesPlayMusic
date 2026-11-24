@@ -443,6 +443,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get trayQuit => 'Beenden';
 
   @override
+  String get settingsDynamicIsland => 'Dynamic Island';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      'Zeigt die aktuelle Wiedergabe an der Notch oben am Bildschirm; zum Aufklappen mit der Maus darüberfahren';
+
+  @override
   String aboutDownloadVersion(String version) {
     return '$version herunterladen';
   }

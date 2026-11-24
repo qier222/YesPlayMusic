@@ -3164,6 +3164,16 @@ class AppState extends ChangeNotifier {
     _savePrefs({'keepRunning': v});
   }
 
+  /// 灵动岛（只有 macOS）：屏幕顶部刘海处的迷你播放器，默认开。
+  bool island = _prefs()['dynamicIsland'] as bool? ?? true;
+
+  void setIsland(bool v) {
+    if (island == v) return;
+    island = v;
+    _savePrefs({'dynamicIsland': v});
+    notifyListeners();
+  }
+
   Locale? get locale => AppLanguage.byCode(lang).locale;
 
   void setLang(String code) {

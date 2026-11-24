@@ -963,6 +963,18 @@ abstract class AppLocalizations {
   /// **'退出'**
   String get trayQuit;
 
+  /// No description provided for @settingsDynamicIsland.
+  ///
+  /// In zh, this message translates to:
+  /// **'灵动岛'**
+  String get settingsDynamicIsland;
+
+  /// No description provided for @settingsDynamicIslandHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'在屏幕顶部的刘海处显示正在播放，鼠标移上去展开控制'**
+  String get settingsDynamicIslandHint;
+
   /// No description provided for @aboutDownloadVersion.
   ///
   /// In zh, this message translates to:

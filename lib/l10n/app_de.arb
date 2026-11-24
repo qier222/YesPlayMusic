@@ -150,6 +150,8 @@
   "settingsKeepRunning": "Nach dem Schließen im Hintergrund weiterlaufen",
   "trayShowWindow": "Fenster anzeigen",
   "trayQuit": "Beenden",
+  "settingsDynamicIsland": "Dynamic Island",
+  "settingsDynamicIslandHint": "Zeigt die aktuelle Wiedergabe an der Notch oben am Bildschirm; zum Aufklappen mit der Maus darüberfahren",
 
   "aboutDownloadVersion": "{version} herunterladen",
   "aboutChecking": "Wird geprüft…",

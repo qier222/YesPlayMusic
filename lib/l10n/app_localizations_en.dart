@@ -443,6 +443,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get trayQuit => 'Quit';
 
   @override
+  String get settingsDynamicIsland => 'Dynamic Island';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      'Show what\'s playing around the notch at the top of the screen; hover to expand the controls';
+
+  @override
   String aboutDownloadVersion(String version) {
     return 'Download $version';
   }

@@ -445,6 +445,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get trayQuit => 'Quitter';
 
   @override
+  String get settingsDynamicIsland => 'Île dynamique';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      'Affiche la lecture en cours autour de l\'encoche en haut de l\'écran ; survolez pour afficher les commandes';
+
+  @override
   String aboutDownloadVersion(String version) {
     return 'Télécharger $version';
   }

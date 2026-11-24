@@ -440,6 +440,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get trayQuit => '종료';
 
   @override
+  String get settingsDynamicIsland => '다이내믹 아일랜드';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      '화면 상단 노치 주변에 재생 중인 곡을 표시하고, 마우스를 올리면 컨트롤이 펼쳐집니다';
+
+  @override
   String aboutDownloadVersion(String version) {
     return '$version 다운로드';
   }

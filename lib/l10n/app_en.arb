@@ -150,6 +150,8 @@
   "settingsKeepRunning": "Keep running after closing window",
   "trayShowWindow": "Show window",
   "trayQuit": "Quit",
+  "settingsDynamicIsland": "Dynamic Island",
+  "settingsDynamicIslandHint": "Show what's playing around the notch at the top of the screen; hover to expand the controls",
 
   "aboutDownloadVersion": "Download {version}",
   "aboutChecking": "Checking…",

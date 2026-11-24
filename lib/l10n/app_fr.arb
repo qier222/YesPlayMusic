@@ -150,6 +150,8 @@
   "settingsKeepRunning": "Continuer en arrière-plan après la fermeture",
   "trayShowWindow": "Afficher la fenêtre",
   "trayQuit": "Quitter",
+  "settingsDynamicIsland": "Île dynamique",
+  "settingsDynamicIslandHint": "Affiche la lecture en cours autour de l'encoche en haut de l'écran ; survolez pour afficher les commandes",
 
   "aboutDownloadVersion": "Télécharger {version}",
   "aboutChecking": "Vérification…",

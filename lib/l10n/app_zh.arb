@@ -181,6 +181,8 @@
   "@trayQuit": {
     "description": "Windows tray icon menu item that quits the app"
   },
+  "settingsDynamicIsland": "灵动岛",
+  "settingsDynamicIslandHint": "在屏幕顶部的刘海处显示正在播放，鼠标移上去展开控制",
 
   "aboutDownloadVersion": "下载 {version}",
   "@aboutDownloadVersion": {

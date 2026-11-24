@@ -18,6 +18,7 @@ class MediaSession {
   // State last sent to the system; it extrapolates progress from the playback rate, so only resend on changes or when progress drifts.
   String? _key;
   bool? _playing;
+  bool? _island;
   double _sentPos = 0;
   DateTime _sentAt = DateTime(0);
 
@@ -45,12 +46,14 @@ class MediaSession {
         : _sentPos;
     if (t.key == _key &&
         app.playing == _playing &&
+        app.island == _island &&
         (pos - expected).abs() < 1.5) {
       return;
     }
     final sameTrack = t.key == _key;
     _key = t.key;
     _playing = app.playing;
+    _island = app.island;
     _sentPos = pos;
     _sentAt = DateTime.now();
     _channel
@@ -61,6 +64,8 @@ class MediaSession {
           'duration': t.seconds.toDouble(),
           'position': pos,
           'playing': app.playing,
+          // Dynamic Island toggle (native code in DynamicIsland.swift)
+          'island': app.island,
           // Only fetch the cover again when the song changes
           if (!sameTrack) 'art': _art(t.cover),
         })
@@ -86,6 +91,8 @@ class MediaSession {
       case 'seek':
         final s = (call.arguments as num?)?.toDouble() ?? 0;
         if (app.track.seconds > 0) app.seek(s / app.track.seconds);
+      case 'openNowPlaying':
+        app.openNowPlaying();
     }
     _sync();
   }

@@ -440,6 +440,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get trayQuit => '終了';
 
   @override
+  String get settingsDynamicIsland => 'ダイナミックアイランド';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      '画面上部のノッチ周りに再生中の曲を表示。マウスを重ねると操作パネルが開きます';
+
+  @override
   String aboutDownloadVersion(String version) {
     return '$version をダウンロード';
   }

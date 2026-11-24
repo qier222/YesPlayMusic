@@ -73,6 +73,7 @@ class MainFlutterWindow: NSWindow {
     MediaSession.shared.attach(
       FlutterMethodChannel(
         name: "yesplaymusic/media", binaryMessenger: flutterViewController.engine.binaryMessenger))
+    DynamicIsland.shared.mainWindow = self
 
     // 插件的网页登录（host.webSignIn）：见 WebSignIn。
     let signIn = FlutterMethodChannel(
@@ -187,6 +188,10 @@ final class MediaSession {
 
   func attach(_ channel: FlutterMethodChannel) {
     self.channel = channel
+    // 灵动岛的按钮也走这条通道
+    DynamicIsland.shared.send = { [weak self] name, arg in
+      self?.channel?.invokeMethod(name, arguments: arg)
+    }
     channel.setMethodCallHandler { [weak self] call, result in
       guard call.method == "update", let a = call.arguments as? [String: Any] else {
         return result(FlutterMethodNotImplemented)
@@ -226,11 +231,18 @@ final class MediaSession {
     if let art = a["art"] as? String, art != artURL {
       artURL = art
       info.removeValue(forKey: MPMediaItemPropertyArtwork)
+      DynamicIsland.shared.setArt(nil)
       loadArt(art)
     }
     let center = MPNowPlayingInfoCenter.default()
     center.nowPlayingInfo = info
     center.playbackState = playing ? .playing : .paused
+    let island = DynamicIsland.shared
+    if let on = a["island"] as? Bool { island.setEnabled(on) }
+    island.update(
+      title: a["title"] as? String ?? "", artist: a["artist"] as? String ?? "",
+      duration: a["duration"] as? Double ?? 0, position: a["position"] as? Double ?? 0,
+      playing: playing)
   }
 
   private func loadArt(_ s: String) {
@@ -241,6 +253,7 @@ final class MediaSession {
       DispatchQueue.main.async {
         guard let self = self, self.artURL == s else { return }
         self.info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+        DynamicIsland.shared.setArt(image)
         MPNowPlayingInfoCenter.default().nowPlayingInfo = self.info
       }
     }

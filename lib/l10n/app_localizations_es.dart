@@ -444,6 +444,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get trayQuit => 'Salir';
 
   @override
+  String get settingsDynamicIsland => 'Isla dinámica';
+
+  @override
+  String get settingsDynamicIslandHint =>
+      'Muestra lo que suena junto al notch en la parte superior de la pantalla; pasa el ratón para ver los controles';
+
+  @override
   String aboutDownloadVersion(String version) {
     return 'Descargar $version';
   }

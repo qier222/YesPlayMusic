@@ -402,8 +402,9 @@ class LineTabs extends StatelessWidget {
   }
 }
 
-/// Sketch component "播放中" (playing): 18×18, five 2px bars with 0.7 corner radius, the middle most active (bell envelope).
-/// Bounces while playing; when paused all five shrink to 3px and stop.
+/// Now-playing waveform (matches macOS Dynamic Island): 18×18, four pill bars
+/// stepping to new rhythmic heights every 160ms with easeInOut; stops the timer
+/// when paused and settles to resting dots (or a static silhouette via [rest]).
 class PlayingBars extends StatefulWidget {
   const PlayingBars({
     super.key,
@@ -423,70 +424,119 @@ class PlayingBars extends StatefulWidget {
 
 class _PlayingBarsState extends State<PlayingBars>
     with SingleTickerProviderStateMixin {
-  // One cycle is 6 seconds and each bar makes a whole number of turns per cycle, so the loop seam doesn't jump.
-  late final _c = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 6),
-  );
+  static const _bars = 4;
+  static const _step = Duration(milliseconds: 160);
+  static const _settle = Duration(milliseconds: 220);
+
+  late final _c = AnimationController(vsync: this, duration: _step);
+  Timer? _timer;
+  int _tick = 0;
+  late List<double> _from = _target(widget.playing, 0);
+  late List<double> _to = List<double>.of(_from);
+
+  static double _waveLevel(int i, int tick) {
+    final a = math.sin(tick * 1.7 + i * 2.1);
+    final b = math.sin(tick * 0.9 + i * 1.3);
+    return 0.28 + 0.72 * (a * 0.6 + b * 0.4).abs();
+  }
+
+  List<double> _target(bool playing, int tick) => List.generate(_bars, (i) {
+    if (playing) return _waveLevel(i, tick);
+    if (widget.rest > 0) return _waveLevel(i, 1) * widget.rest;
+    return 0;
+  });
+
+  List<double> _current() {
+    final t = Curves.easeInOut.transform(_c.value);
+    return List.generate(_bars, (i) => _from[i] + (_to[i] - _from[i]) * t);
+  }
+
+  void _advance() {
+    _tick++;
+    _from = _current();
+    _to = _target(true, _tick);
+    _c
+      ..duration = _step
+      ..forward(from: 0);
+  }
+
+  void _start() {
+    _timer?.cancel();
+    _advance();
+    _timer = Timer.periodic(_step, (_) => _advance());
+  }
+
+  void _stop() {
+    _timer?.cancel();
+    _timer = null;
+    _from = _current();
+    _to = _target(false, _tick);
+    _c
+      ..duration = _settle
+      ..forward(from: 0);
+  }
 
   @override
   void initState() {
     super.initState();
-    if (widget.playing) _c.repeat();
+    if (widget.playing) {
+      _start();
+    } else {
+      _c.value = 1;
+    }
   }
 
   @override
   void didUpdateWidget(PlayingBars old) {
     super.didUpdateWidget(old);
-    if (widget.playing && !_c.isAnimating) _c.repeat();
-    if (!widget.playing && _c.isAnimating) _c.stop();
+    if (widget.playing != old.playing) {
+      widget.playing ? _start() : _stop();
+    } else if (!widget.playing && widget.rest != old.rest) {
+      _stop();
+    }
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _c.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(end: widget.playing ? 1 : widget.rest),
-      duration: const Duration(milliseconds: 260),
-      curve: Curves.easeOut,
-      builder: (_, level, _) => AnimatedBuilder(
-        animation: _c,
-        builder: (_, _) => CustomPaint(
-          size: const Size(18, 18),
-          painter: _BarsPainter(_c.value, level, widget.color ?? accent),
-        ),
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (_, _) => CustomPaint(
+        size: const Size(18, 18),
+        painter: _BarsPainter(_current(), widget.color ?? accent),
       ),
     );
   }
 }
 
 class _BarsPainter extends CustomPainter {
-  _BarsPainter(this.t, this.level, this.color);
-  final double t, level;
+  _BarsPainter(this.levels, this.color);
+  final List<double> levels;
   final Color color;
 
-  static const _peak = [8.0, 12.0, 16.0, 12.0, 8.0]; // bell envelope
-  // Turns per 6 seconds (about 0.8–1.3 Hz)
-  static const _turns = [5, 7, 6, 8, 5];
-  static const _phase = [0.0, 1.7, 0.6, 2.9, 4.1];
+  static const _barW = 2.5;
+  static const _gap = 2.0;
+  static const _maxH = 16.0;
 
   @override
   void paint(Canvas canvas, Size size) {
     final p = Paint()..color = color;
-    for (var k = 0; k < 5; k++) {
-      final wave =
-          0.5 + 0.5 * math.sin(2 * math.pi * _turns[k] * t + _phase[k]);
-      final h = 3 + (_peak[k] - 3) * (0.25 + 0.75 * wave) * level;
-      final x = 1.5 + 3.5 * k;
-      canvas.drawRSuperellipse(
-        RSuperellipse.fromRectAndRadius(
-          Rect.fromLTWH(x, (size.height - h) / 2, 2, h),
-          const Radius.circular(0.7),
+    final totalW = levels.length * _barW + (levels.length - 1) * _gap;
+    final startX = (size.width - totalW) / 2;
+    const radius = Radius.circular(_barW / 2);
+    for (var i = 0; i < levels.length; i++) {
+      final h = math.max(_barW, _maxH * levels[i]);
+      final x = startX + i * (_barW + _gap);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(x, (size.height - h) / 2, _barW, h),
+          radius,
         ),
         p,
       );
@@ -494,8 +544,13 @@ class _BarsPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_BarsPainter o) =>
-      o.t != t || o.level != level || o.color != color;
+  bool shouldRepaint(_BarsPainter o) {
+    if (o.color != color || o.levels.length != levels.length) return true;
+    for (var i = 0; i < levels.length; i++) {
+      if (o.levels[i] != levels[i]) return true;
+    }
+    return false;
+  }
 }
 
 // ───────────── Common dialog (Sketch component comparison "通用弹窗 · 定稿") ─────────────

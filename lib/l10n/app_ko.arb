@@ -150,6 +150,8 @@
   "settingsKeepRunning": "창을 닫아도 백그라운드에서 계속 실행",
   "trayShowWindow": "창 표시",
   "trayQuit": "종료",
+  "settingsDynamicIsland": "다이내믹 아일랜드",
+  "settingsDynamicIslandHint": "화면 상단 노치 주변에 재생 중인 곡을 표시하고, 마우스를 올리면 컨트롤이 펼쳐집니다",
 
   "aboutDownloadVersion": "{version} 다운로드",
   "aboutChecking": "확인 중…",

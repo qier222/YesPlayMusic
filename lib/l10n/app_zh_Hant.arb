@@ -150,6 +150,8 @@
   "settingsKeepRunning": "關閉視窗後繼續在背景執行",
   "trayShowWindow": "顯示視窗",
   "trayQuit": "結束",
+  "settingsDynamicIsland": "動態島",
+  "settingsDynamicIslandHint": "在螢幕頂部的瀏海處顯示正在播放，滑鼠移上去展開控制",
 
   "aboutDownloadVersion": "下載 {version}",
   "aboutChecking": "正在檢查…",

@@ -150,6 +150,8 @@
   "settingsKeepRunning": "Seguir en segundo plano al cerrar la ventana",
   "trayShowWindow": "Mostrar ventana",
   "trayQuit": "Salir",
+  "settingsDynamicIsland": "Isla dinámica",
+  "settingsDynamicIslandHint": "Muestra lo que suena junto al notch en la parte superior de la pantalla; pasa el ratón para ver los controles",
 
   "aboutDownloadVersion": "Descargar {version}",
   "aboutChecking": "Comprobando…",
