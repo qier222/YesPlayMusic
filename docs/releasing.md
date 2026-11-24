@@ -13,7 +13,9 @@
    git push origin main v3.0.1
    ```
 
-4. GitHub Actions 的 Release 工作流会构建三个平台的安装包，创建一个**草稿** Release。下载装一下确认没问题，然后在 GitHub 上点 **Publish release**。发布之后已安装的应用才会收到更新（应用读的是 `releases/latest/download/appcast-*.xml`），同时会触发官网自动部署以更新下载链接。
+4. GitHub Actions 的 Release 工作流会构建三个平台的安装包，macOS 分别构建 arm64 和 Intel x64，创建一个**草稿** Release。下载装一下确认没问题，然后在 GitHub 上点 **Publish release**。发布之后已安装的应用才会收到更新（应用读的是 `releases/latest/download/appcast-*.xml`）。Apple Silicon 保留 `appcast-macos.xml`，Intel 使用 `appcast-macos-x64.xml`，两者分别指向对应架构的 ZIP。
+
+   官网下载页会读取 GitHub 最新正式版的安装包，不用为每次发版重新部署网站。
 
    Release 里的 `latest.yml`、`latest-mac.yml`、`latest-linux.yml` 是给 0.4.x 旧版（Electron）看的：旧版检查到它们就弹窗提示去 Releases 页下载新版，别删。旧版代码在 `1.x` 分支，不再发版；如果哪天要在那里发，记得取消「Set as latest release」，不然 3.x 的自动更新会读错 Release。
 
@@ -64,7 +66,7 @@ openssl dsa -in dsa_priv.pem -pubout -out dsa_pub.pem  # 文件内容 → WINDOW
 
 ### 官网自动部署（Cloudflare Workers）
 
-`landing/` 的改动合入 `main`，或正式 Release 点击 **Publish release** 时，`.github/workflows/landing.yml` 会自动构建并部署官网到 Cloudflare Workers。未配置以下 Secrets 时工作流只执行构建检查，跳过部署。
+`landing/` 的改动合入 `main` 或手动运行 `.github/workflows/landing.yml` 时，工作流会构建并部署官网到 Cloudflare Workers。未配置以下 Secrets 时工作流只执行构建检查，跳过部署。
 
 | 名字 | 类型 | 内容 |
 | --- | --- | --- |
@@ -74,9 +76,14 @@ openssl dsa -in dsa_priv.pem -pubout -out dsa_pub.pem  # 文件内容 → WINDOW
 ## 本地出包
 
 ```sh
-flutter build macos --release     # build/macos/Build/Products/Release/YesPlayMusic.app
+scripts/build-macos.sh arm64      # build/macos/packages/arm64/YesPlayMusic.app
+scripts/build-macos.sh x64        # build/macos/packages/x64/YesPlayMusic.app
 flutter build windows --release   # build\windows\x64\runner\Release\
 flutter build linux --release     # build/linux/x64/release/bundle/（arm64 机器上是 build/linux/arm64/...）
 ```
 
 Linux 构建需要：`clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`。
+
+macOS 两种架构分别构建，不生成通用包。脚本可以透传 Flutter 构建参数，例如 `scripts/build-macos.sh x64 --build-name 3.0.1 --build-number 30001`。它会检查主程序仅包含指定架构，内置原生库也支持该架构，然后把应用复制到独立目录。直接运行 `flutter build macos --release` 时默认只构建当前 Mac 的架构。
+
+Release 工作流分别生成 Apple Silicon 的 `-macos.dmg` / `-macos.zip` 和 Intel 的 `-macos-x64.dmg` / `-macos-x64.zip`。两者分别读取 `appcast-macos.xml` 和 `appcast-macos-x64.xml`，不会互相下载对方的更新包。CI 在对应架构的运行器上验证构建。

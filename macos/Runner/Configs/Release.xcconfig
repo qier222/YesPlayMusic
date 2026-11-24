@@ -1,6 +1,6 @@
 #include "../../Flutter/Flutter-Release.xcconfig"
 #include "Warnings.xcconfig"
 
-// Release / Profile 只出 Apple Silicon 包，不再做通用包（体积小一半）。
-// Intel Mac 装不了。flutter 会把这个值传给 xcodebuild，Pods 和原生库也一样。
-EXCLUDED_ARCHS = x86_64
+// Build for the host architecture by default, not a universal binary.
+// scripts/build-macos.sh also sets the architecture for CocoaPods.
+ARCHS = $(NATIVE_ARCH_ACTUAL)

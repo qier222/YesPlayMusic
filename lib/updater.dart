@@ -7,6 +7,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi' show Abi;
 import 'dart:io';
 
 import 'package:auto_updater/auto_updater.dart';
@@ -21,6 +22,13 @@ import 'version.dart';
 
 const _repo = 'qier222/YesPlayMusic';
 const _sparkle = bool.fromEnvironment('YPM_SPARKLE');
+
+/// Intel uses a separate feed; Apple Silicon keeps the existing feed URL.
+String appcastFileName(Abi abi) => switch (abi) {
+  Abi.macosX64 => 'appcast-macos-x64.xml',
+  Abi.macosArm64 => 'appcast-macos.xml',
+  _ => 'appcast-windows.xml',
+};
 
 class Updater extends ChangeNotifier {
   Updater._();
@@ -64,9 +72,8 @@ class Updater extends ChangeNotifier {
       }
     } catch (_) {}
     if (native) {
-      final os = Platform.isMacOS ? 'macos' : 'windows';
       await autoUpdater.setFeedURL(
-        'https://github.com/$_repo/releases/latest/download/appcast-$os.xml',
+        'https://github.com/$_repo/releases/latest/download/${appcastFileName(Abi.current())}',
       );
       await autoUpdater.setScheduledCheckInterval(autoCheck ? 86400 : 0);
       if (autoCheck) await autoUpdater.checkForUpdates(inBackground: true);
