@@ -11,6 +11,7 @@ import 'package:yesplaymusic/l10n/l10n.dart';
 import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
 import 'package:yesplaymusic/theme.dart';
+import 'package:yesplaymusic/ui/tap.dart';
 
 Widget appFor(AppState state) => WidgetsApp(
   color: const Color(0xFF0B0B0D),
@@ -166,6 +167,37 @@ void main() {
   });
 
   testWidgets('设置页各标签', (t) => settingsTabs(t, 1440));
+
+  testWidgets('restores the selected accent color after restart', (t) async {
+    Future<void> openSettings(AppState state) async {
+      state.open('/settings');
+      await _frames(t);
+    }
+
+    await boot(t, width: 1440);
+    await openSettings(app);
+    expect(app.swatch, 0);
+
+    final mint = find.byWidgetPredicate(
+      (w) => w is Tap && w.tip == L.swatchMint,
+    );
+    await t.tap(mint);
+    await _frames(t);
+    expect(app.swatch, 2);
+
+    await t.pumpWidget(const SizedBox.shrink());
+    final restarted = AppState();
+    try {
+      await t.pumpWidget(appFor(restarted));
+      await openSettings(restarted);
+      expect(restarted.swatch, 2);
+      expect(accent, swatchesDark[2]);
+    } finally {
+      await t.pumpWidget(const SizedBox.shrink());
+      restarted.dispose();
+    }
+  });
+
   testWidgets(
     '设置页各标签（最小窗口）',
     (t) => settingsTabs(t, 1280),
