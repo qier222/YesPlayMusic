@@ -225,7 +225,8 @@ abstract class Source {
     required int positionMs,
   }) async => _no(Op.playback);
 
-  /// [quality] is one of [qualities]; the source returns the closest one it has.
+  /// [quality] is one of `standard`, `high`, or `lossless`; the source returns
+  /// the closest one it has.
   Future<AudioStream> stream(String id, {String quality = 'high'}) async =>
       _no(Op.stream);
 
