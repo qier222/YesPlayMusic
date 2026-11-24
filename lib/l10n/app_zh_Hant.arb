@@ -143,7 +143,7 @@
   "settingsAccentColor": "主題色",
   "settingsLanguage": "語言",
   "langSystem": "跟隨系統",
-  "settingsMiniLyric": "在迷你播放器顯示目前歌詞",
+  "settingsMiniLyric": "迷你播放器一律顯示歌詞",
   "settingsMinimizeToTray": "關閉視窗時最小化到系統匣",
 
   "aboutDownloadVersion": "下載 {version}",

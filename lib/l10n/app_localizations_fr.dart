@@ -422,7 +422,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get langSystem => 'Suivre le système';
 
   @override
-  String get settingsMiniLyric => 'Afficher les paroles dans le mini-lecteur';
+  String get settingsMiniLyric =>
+      'Toujours afficher les paroles dans le mini-lecteur';
 
   @override
   String get settingsMinimizeToTray =>

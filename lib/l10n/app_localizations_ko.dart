@@ -419,7 +419,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get langSystem => '시스템 설정 따르기';
 
   @override
-  String get settingsMiniLyric => '미니 플레이어에 현재 가사 표시';
+  String get settingsMiniLyric => '미니 플레이어에 항상 가사 표시';
 
   @override
   String get settingsMinimizeToTray => '창을 닫을 때 트레이로 최소화';

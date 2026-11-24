@@ -143,7 +143,7 @@
   "settingsAccentColor": "Couleur d'accentuation",
   "settingsLanguage": "Langue",
   "langSystem": "Suivre le système",
-  "settingsMiniLyric": "Afficher les paroles dans le mini-lecteur",
+  "settingsMiniLyric": "Toujours afficher les paroles dans le mini-lecteur",
   "settingsMinimizeToTray": "Réduire dans la barre d'état à la fermeture",
 
   "aboutDownloadVersion": "Télécharger {version}",

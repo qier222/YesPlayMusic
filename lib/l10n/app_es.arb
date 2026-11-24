@@ -143,7 +143,7 @@
   "settingsAccentColor": "Color de acento",
   "settingsLanguage": "Idioma",
   "langSystem": "Seguir al sistema",
-  "settingsMiniLyric": "Mostrar letra actual en el minirreproductor",
+  "settingsMiniLyric": "Mostrar siempre la letra en el minirreproductor",
   "settingsMinimizeToTray": "Minimizar a la bandeja al cerrar la ventana",
 
   "aboutDownloadVersion": "Descargar {version}",

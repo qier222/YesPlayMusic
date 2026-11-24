@@ -2903,7 +2903,15 @@ class AppState extends ChangeNotifier {
   // ───── Settings ─────
   int swatch = 0;
   String lang = _prefs()['lang'] as String? ?? 'system';
-  bool miniLyric = true;
+
+  /// On: the mini player always shows the current lyric. Off: only while hovering its progress bar.
+  bool _miniLyric = _prefs()['miniLyric'] == true;
+  bool get miniLyric => _miniLyric;
+  set miniLyric(bool v) {
+    _miniLyric = v;
+    _savePrefs({'miniLyric': v});
+  }
+
   bool tray = false;
 
   Locale? get locale => AppLanguage.byCode(lang).locale;

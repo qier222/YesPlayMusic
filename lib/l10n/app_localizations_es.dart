@@ -421,7 +421,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get langSystem => 'Seguir al sistema';
 
   @override
-  String get settingsMiniLyric => 'Mostrar letra actual en el minirreproductor';
+  String get settingsMiniLyric =>
+      'Mostrar siempre la letra en el minirreproductor';
 
   @override
   String get settingsMinimizeToTray =>

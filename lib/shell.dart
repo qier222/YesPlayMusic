@@ -876,9 +876,10 @@ class _LyricSegState extends State<_LyricSeg> {
             onChanged: app.scrub,
             onCommit: app.seek,
             builder: (_, at, dragging) {
-              // Switch to lyrics only when the mouse is over the progress bar (or dragging); hovering other player bar buttons doesn't.
+              // With the mini lyric setting on, the lyric is always shown; off, only while the mouse is over the
+              // progress bar (or dragging). Hovering other player bar buttons doesn't count.
               final showLyric =
-                  (at != null || dragging) && app.miniLyric && app.hasLyrics;
+                  app.hasLyrics && (app.miniLyric || at != null || dragging);
               // While dragging, the time on the left follows the hand.
               final elapsed = dragging && at != null
                   ? at * t.seconds

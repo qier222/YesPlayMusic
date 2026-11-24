@@ -419,7 +419,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get langSystem => 'システムに従う';
 
   @override
-  String get settingsMiniLyric => 'ミニプレイヤーに現在の歌詞を表示';
+  String get settingsMiniLyric => 'ミニプレイヤーに常に歌詞を表示';
 
   @override
   String get settingsMinimizeToTray => 'ウィンドウを閉じる時にトレイに最小化';

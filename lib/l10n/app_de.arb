@@ -143,7 +143,7 @@
   "settingsAccentColor": "Akzentfarbe",
   "settingsLanguage": "Sprache",
   "langSystem": "Systemsprache",
-  "settingsMiniLyric": "Aktuellen Songtext im Mini-Player anzeigen",
+  "settingsMiniLyric": "Songtext im Mini-Player immer anzeigen",
   "settingsMinimizeToTray": "Beim Schließen in den Infobereich minimieren",
 
   "aboutDownloadVersion": "{version} herunterladen",

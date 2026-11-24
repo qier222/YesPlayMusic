@@ -143,7 +143,7 @@
   "settingsAccentColor": "Accent Color",
   "settingsLanguage": "Language",
   "langSystem": "Follow System",
-  "settingsMiniLyric": "Show current lyric in mini player",
+  "settingsMiniLyric": "Always show lyrics in mini player",
   "settingsMinimizeToTray": "Minimize to tray when closing window",
 
   "aboutDownloadVersion": "Download {version}",
