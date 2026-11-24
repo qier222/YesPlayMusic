@@ -261,7 +261,7 @@ class AppState extends ChangeNotifier {
   List<Album> libraryAlbums = const [];
   final Map<String, List<Track>> _albumTracks = {};
 
-  bool get hasLibrary => libraryAlbums.isNotEmpty;
+  bool get hasLibrary => (local?.trackCount ?? 0) > 0;
   Album? albumOf(String id) =>
       _remoteAlbums[id] ?? libraryAlbums.where((a) => a.id == id).firstOrNull;
 
