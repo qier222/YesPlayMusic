@@ -2235,6 +2235,30 @@ abstract class AppLocalizations {
   /// **'从记录里删掉'**
   String get searchRemoveHistory;
 
+  /// No description provided for @searchNoSongs.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有找到歌曲'**
+  String get searchNoSongs;
+
+  /// No description provided for @searchNoAlbums.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有找到专辑'**
+  String get searchNoAlbums;
+
+  /// No description provided for @searchNoArtists.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有找到歌手'**
+  String get searchNoArtists;
+
+  /// No description provided for @searchNoPlaylists.
+  ///
+  /// In zh, this message translates to:
+  /// **'没有找到歌单'**
+  String get searchNoPlaylists;
+
   /// No description provided for @searchNoResults.
   ///
   /// In zh, this message translates to:

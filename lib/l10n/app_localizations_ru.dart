@@ -1194,6 +1194,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get searchRemoveHistory => 'Удалить из истории';
 
   @override
+  String get searchNoSongs => 'Треки не найдены';
+
+  @override
+  String get searchNoAlbums => 'Альбомы не найдены';
+
+  @override
+  String get searchNoArtists => 'Исполнители не найдены';
+
+  @override
+  String get searchNoPlaylists => 'Плейлисты не найдены';
+
+  @override
   String searchNoResults(String query) {
     return 'Ничего не найдено по запросу «$query»';
   }

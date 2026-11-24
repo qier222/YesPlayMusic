@@ -635,6 +635,10 @@
   "searchRecentResults": "最近搜索结果",
   "searchHot": "热门搜索",
   "searchRemoveHistory": "从记录里删掉",
+  "searchNoSongs": "没有找到歌曲",
+  "searchNoAlbums": "没有找到专辑",
+  "searchNoArtists": "没有找到歌手",
+  "searchNoPlaylists": "没有找到歌单",
   "searchNoResults": "没有找到「{query}」",
   "@searchNoResults": {
     "placeholders": {

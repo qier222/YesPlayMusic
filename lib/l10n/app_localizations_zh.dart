@@ -1177,6 +1177,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchRemoveHistory => '从记录里删掉';
 
   @override
+  String get searchNoSongs => '没有找到歌曲';
+
+  @override
+  String get searchNoAlbums => '没有找到专辑';
+
+  @override
+  String get searchNoArtists => '没有找到歌手';
+
+  @override
+  String get searchNoPlaylists => '没有找到歌单';
+
+  @override
   String searchNoResults(String query) {
     return '没有找到「$query」';
   }
@@ -2835,6 +2847,18 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get searchRemoveHistory => '從紀錄中移除';
+
+  @override
+  String get searchNoSongs => '找不到歌曲';
+
+  @override
+  String get searchNoAlbums => '找不到專輯';
+
+  @override
+  String get searchNoArtists => '找不到歌手';
+
+  @override
+  String get searchNoPlaylists => '找不到歌單';
 
   @override
   String searchNoResults(String query) {

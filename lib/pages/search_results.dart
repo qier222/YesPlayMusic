@@ -169,14 +169,40 @@ class _SearchResultsState extends State<SearchResults> {
           child: AnimatedSwitcher(
             transitionBuilder: fadeOnly,
             duration: const Duration(milliseconds: 220),
-            child: SingleChildScrollView(
-              key: ValueKey(_tab),
-              padding: const EdgeInsets.fromLTRB(0, 24, 0, 200),
-              child: _body(),
-            ),
+            child: _tabBody(),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _tabBody() {
+    if (_tab > 0) {
+      final kind = _kinds[_tab - 1];
+      final result = _res[kind];
+      if (result != null && _count(kind) == 0 && !result.more) {
+        final l = context.l10n;
+        final title = switch (kind) {
+          m.SearchKind.tracks => l.searchNoSongs,
+          m.SearchKind.albums => l.searchNoAlbums,
+          m.SearchKind.artists => l.searchNoArtists,
+          m.SearchKind.playlists => l.searchNoPlaylists,
+          m.SearchKind.shows => throw StateError('搜索页没有节目分类'),
+        };
+        return Align(
+          key: ValueKey(_tab),
+          alignment: const Alignment(0, -0.3),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: EmptyMessage(title: title),
+          ),
+        );
+      }
+    }
+    return SingleChildScrollView(
+      key: ValueKey(_tab),
+      padding: const EdgeInsets.fromLTRB(0, 24, 0, 200),
+      child: _body(),
     );
   }
 
