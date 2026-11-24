@@ -13,6 +13,7 @@
 // subdomains only), {setting:key} (the host of a server address entered in settings) or * (any). Without it there's no network access.
 // permissions.process lists programs host.spawn may start (see process.dart); true equals ["*"].
 // The user must also allow this plugin to run programs in settings.
+// permissions.ipc lists local channels host.ipc may connect to (see ipc.dart), e.g. "discord-ipc-*".
 
 import 'dart:convert';
 
@@ -28,6 +29,7 @@ class PluginManifest {
     this.minAppVersion = '',
     this.network = const [],
     this.process = const [],
+    this.ipc = const [],
     this.description = '',
     this.author = '',
     this.icon = '',
@@ -38,7 +40,7 @@ class PluginManifest {
   final SourceInfo info;
   String get id => info.id;
   final String main, minAppVersion;
-  final List<String> network, process;
+  final List<String> network, process, ipc;
 
   /// A sentence or two of description and the author, shown on the plugin card; both optional.
   final String description, author;
@@ -113,6 +115,7 @@ class PluginManifest {
       process: perms['process'] == true
           ? const ['*']
           : strings(perms['process']),
+      ipc: strings(perms['ipc']),
       description: j['description'] is String
           ? (j['description'] as String).trim()
           : '',

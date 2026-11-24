@@ -265,6 +265,8 @@
   "pluginPermProcess": "執行本機程式",
   "pluginPermProcessBadge": "需要單獨允許",
   "pluginPermProcessDetail": "{programs}，預設關閉，可在外掛設定中開啟",
+  "pluginPermIpc": "連線本機應用程式",
+  "pluginPermIpcDetail": "和本機其他應用程式通訊：{names}",
   "pluginPermStorage": "儲存資料",
   "pluginPermStorageDetail": "儲存設定、登入狀態與快取",
   "pluginCapabilitiesProvided": "提供以下能力",
@@ -281,6 +283,9 @@
   "officialPlexDesc": "連線至 Plex Media Server",
   "officialSubsonicDesc": "連線至 Navidrome 等 Subsonic 伺服器",
   "officialEmbyDesc": "連線至 Emby 伺服器",
+  "officialLastfmDesc": "把聽過的歌記到 Last.fm",
+  "officialListenbrainzDesc": "把聽過的歌記到 ListenBrainz 或自架服務",
+  "officialDiscordDesc": "在 Discord 上顯示正在聽的歌",
 
   "capSuggest": "搜尋建議",
   "capLyrics": "歌詞",
@@ -292,6 +297,8 @@
   "capRadio": "電台",
   "capSimilar": "相似推薦",
   "capHistory": "播放紀錄",
+  "capScrobble": "聽歌上報",
+  "capPlaybackStatus": "播放狀態",
   "capDislike": "不感興趣",
   "capTrackMenu": "歌曲選單",
 

@@ -434,6 +434,16 @@ class _InstallFlowState extends State<_InstallFlow> {
                     ),
                   ),
                 ],
+                if (mf.ipc.isNotEmpty) ...[
+                  const SizedBox(height: 18),
+                  PermRow(
+                    icon: 'plugin',
+                    title: l.pluginPermIpc,
+                    detail: l.pluginPermIpcDetail(
+                      mf.ipc.join(listJoiner(currentLocale)),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 18),
                 PermRow(
                   icon: 'database',

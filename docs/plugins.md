@@ -95,7 +95,7 @@ export async function stream({ id }) {
 
 - 每次启动后第一次打开设置里的插件页时，会把所有能检查的插件查一遍。有更新的插件卡片上显示「更新」，点了会打开安装弹窗，确认后替换，设置和登录状态保留。
 - 插件卡片的 ⋯ 菜单里有「检查更新」，立即查这一个插件。
-- 插件设置弹窗的「更新」一栏可以打开「自动更新」（默认关闭）。打开后应用启动约 10 秒后查一次，之后每 6 小时查一次，有新版本就在后台下载安装。这几种情况不会自动装，仍然只在卡片上显示「更新」，等你手动确认：新版本要了旧版本没有的网络或程序权限、要求更新的应用版本（`minAppVersion`）、插件 id 变了，或者正在播放这个插件的歌。
+- 插件设置弹窗的「更新」一栏可以打开「自动更新」（默认关闭）。打开后应用启动约 10 秒后查一次，之后每 6 小时查一次，有新版本就在后台下载安装。这几种情况不会自动装，仍然只在卡片上显示「更新」，等你手动确认：新版本要了旧版本没有的网络、程序或本机应用权限、要求更新的应用版本（`minAppVersion`）、插件 id 变了，或者正在播放这个插件的歌。
 
 发布新版本时，先改 `plugin.json` 的 `version`，再发一个 tag 和它一致的 GitHub Release（`v1.2.0` 或 `1.2.0` 都行）。
 
@@ -155,6 +155,7 @@ export async function stream({ id }) {
 | `playback` | | `stream`（默认）：应用自己播放 `stream` 给的地址。`remote`：在别处播放，应用只做遥控（预留）。 |
 | `permissions.network` | | `fetch` 能访问的主机，见下表。不写就不能联网。 |
 | `permissions.process` | | `host.spawn` 能启动的程序，见 [host.spawn](#hostspawncommand-args)。`true` 等于 `["*"]`。 |
+| `permissions.ipc` | | `host.ipc` 能连的本机通道名字，见 [host.ipc](#hostipcconnectname)。 |
 | `settings` | | 插件卡片上点「设置」打开的弹窗里显示的设置项。值始终是字符串（`boolean` 是 `"true"` / `""`）。`type` 可以是 `text`（默认）、`password`、`boolean`、`select`。`help` 是说明，`link` 是一个「去获取」链接。 |
 | `navigation` | | 侧边栏条目：`{ "builtin": "home" \| "liked" \| "savedAlbums" \| "stations" \| "shows" }`，或 `{ "title", "page", "icon" }` 打开插件的 `browse(page)`。 |
 
@@ -196,6 +197,7 @@ export async function stream({ id }) {
 | `host.arch` | `arm64`、`amd64` 等。 |
 | `host.dir` | 插件目录的绝对路径。 |
 | `host.dataDir` | 插件数据目录的绝对路径。 |
+| `host.pid` | 应用的进程 id。 |
 | `host.storage.get(key)` / `.set(key, value)` / `.remove(key)` | 同步的键值存储，值是任意 JSON。存在 `storage.json`，适合放登录状态、缓存。 |
 | `host.setting(key)` | 读用户在设置页填的值（字符串，没填是 `""`）。用户改设置后马上生效，不用重新加载。 |
 | `host.language()` | 应用的界面语言，例如 `zh-CN`、`zh-TW`、`en`、`ja`。 |
@@ -206,6 +208,7 @@ export async function stream({ id }) {
 | `host.signInPrompt({ qr, text })` | 在应用的登录弹窗里显示二维码（`qr` 是要编码的内容）和一句说明。在 `signIn` 里反复调用来更新状态（比如「已扫码，请在手机上确认」）。 |
 | `host.webSignIn({ url, cookiesOf, until, userAgent })` | 在一个独立的小浏览器窗口里打开服务自己的登录页。等 `until` 里列的 Cookie 都出现后关窗，返回 `{ cookie }`（访问 `cookiesOf` 时会带的 `Cookie` 请求头）。`cookiesOf` 必须在 `permissions.network` 里。窗口用不落盘的独立存储。用户关掉窗口时抛错。目前只有 macOS 支持，其他系统会抛错，请准备二维码或手动填 Cookie 的方案。 |
 | `host.spawn(command, args)` | 见下文。 |
+| `host.ipc.connect(name)` | 见下文。 |
 
 ### host.spawn(command, args)
 
@@ -226,6 +229,22 @@ export async function stream({ id }) {
 | `kill()` | 结束进程。 |
 
 子进程继承系统代理（`HTTPS_PROXY` 等）。插件停止时，它启动的程序会一起结束。同时最多 16 个。
+
+### host.ipc.connect(name)
+
+连本机其他应用开的本地通道，比如 Discord 的 `discord-ipc-0`。macOS 和 Linux 上是 Unix 套接字，依次在 `$XDG_RUNTIME_DIR`、`$TMPDIR`、`$TMP`、`$TEMP`、`/tmp` 里找 `name`；Windows 上是命名管道 `\\.\pipe\name`。
+
+`name` 必须在 `permissions.ipc` 里，列表项可以用 `*` 在一层目录内通配，例如 `"discord-ipc-*"`、`"snap.discord/discord-ipc-*"`（Windows 上没有子目录）。安装时会把列表显示给用户。
+
+返回 Promise，值是一个连接对象：
+
+| 成员 | 说明 |
+| --- | --- |
+| `write(bytes)` | 写入 `Uint8Array` / `ArrayBuffer`，返回 Promise。 |
+| `read()` | 读下一段数据，返回 Promise，值是 `Uint8Array`；对方关闭时是 `null`。数据怎么分段由系统决定，请自己拼帧。 |
+| `close()` | 关闭连接。 |
+
+读写按调用顺序一个个完成（Windows 的管道上，读着的时候写不进去），所以请在需要回复时才 `read()`。每个插件同时最多 4 个连接，插件停止时会一起关闭。
 
 ## 导出的函数
 
@@ -262,7 +281,7 @@ export async function stream({ id }) {
 | `saveAlbum` | `{ id, on }` | | |
 | `followArtist` | `{ id, on }` | | |
 | `recent` | | `Track[]` | 最近播放。 |
-| `played` | `{ id }` | | 一首歌播放了，可以用来上报听歌记录。出错会被忽略。 |
+| `played` | `{ id }` | | 自己的一首歌听够了（规则同 [听歌上报](#听歌上报)），可以用来记服务自己的播放记录。只有歌曲所属的源会收到。出错会被忽略。 |
 
 ### 专辑、歌手、歌单
 
@@ -304,6 +323,69 @@ export async function stream({ id }) {
 | --- | --- | --- | --- |
 | `trackMenu` | `{ track, playlist }` | `MenuEntry[]` 或 `{ items: MenuEntry[], hide: string[] }` | 给这首歌的右键菜单加条目、藏起自带条目。菜单打开时会等它（最多 2 秒），请只看歌曲数据决定，不要联网。`hide` 可以是 `play`、`next`、`queue`、`like`、`addToPlaylist`、`album`、`artist`、`similar`、`dislike`、`remove`。 |
 | `menuAction` | `{ id, track, playlist }` | `MenuResult` | 用户点了你加的条目。 |
+
+### 听歌上报
+
+| 函数 | 参数 | 返回 | 说明 |
+| --- | --- | --- | --- |
+| `nowPlaying` | `{ track }` | | 一首歌开始播放。 |
+| `scrobble` | `{ track, startedAt, played }` | | 一首歌听够了，应该记进听歌记录。`startedAt` 是开始播放的时刻（UTC 的 ISO 8601），`played` 是实际听了多久（毫秒）。 |
+| `playback` | `{ track, playing, position }` | | 播放状态变了：换歌、播放 / 暂停、拖进度、停止。`track` 为 `null` 表示什么都没在放，`position` 是此刻的进度（毫秒）。连续的变化只发最后一次。适合用来显示 Discord 这类「正在听」状态。 |
+
+和其他函数不同，这三个函数**不管歌来自哪个源都会调用**：本地音乐、其他插件的歌都算，只要插件启用着、导出了它们就会收到。所以只做听歌上报、不提供任何音乐的插件也可以，它不会出现在「音乐来源」里。`track.source` 是歌曲所属的源（`local` 是本地音乐）。
+
+什么时候算「听够了」沿用 Last.fm 的规则：短于 30 秒的歌不上报；实际听了一半或 4 分钟（先到哪个算哪个）就上报，拖进度条跳过的部分不算。一首歌每放一遍最多上报一次。
+
+调用失败会被忽略，用户看不到。网络不好时要不要缓存起来稍后补报，由插件自己用 `host.storage` 实现。
+
+下面是一个对接 [ListenBrainz](https://listenbrainz.org) 的最小插件（官方的 [ListenBrainz 插件](https://github.com/qier222/ypm-plugin-listenbrainz) 在此基础上加了自建服务和断网补报），用户在设置里填上 [User token](https://listenbrainz.org/settings/) 就能用：
+
+`plugin.json`
+
+```json
+{
+  "id": "listenbrainz",
+  "name": "ListenBrainz",
+  "version": "1.0.0",
+  "permissions": { "network": ["api.listenbrainz.org"] },
+  "settings": [
+    { "key": "token", "label": "User token", "type": "password", "link": "https://listenbrainz.org/settings/" }
+  ]
+}
+```
+
+`index.js`
+
+```js
+async function submit(type, track, listenedAt) {
+  const token = host.setting("token");
+  if (!token) return;
+  const listen = {
+    track_metadata: {
+      artist_name: (track.artists ?? []).map((a) => a.name).join(", "),
+      track_name: track.name,
+      release_name: track.album?.name || undefined,
+      additional_info: {
+        duration_ms: track.duration || undefined,
+        submission_client: "YesPlayMusic",
+      },
+    },
+  };
+  if (listenedAt) listen.listened_at = listenedAt;
+  const r = await fetch("https://api.listenbrainz.org/1/submit-listens", {
+    method: "POST",
+    headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ listen_type: type, payload: [listen] }),
+  });
+  if (!r.ok) throw new Error(`ListenBrainz ${r.status}: ${await r.text()}`);
+}
+
+export const nowPlaying = ({ track }) => submit("playing_now", track);
+export const scrobble = ({ track, startedAt }) =>
+  submit("single", track, Math.floor(Date.parse(startedAt) / 1000));
+```
+
+对接 Last.fm 时：从 2026 年 12 月 1 日起，Last.fm 的 API key 要求持有者订阅 Last.fm Pro，费用由**插件作者**（key 的持有者）承担，用户不需要 Pro。签名用的 `api_sig` 可以用 `host.crypto.md5` 算。官方的 [Last.fm 插件](https://github.com/qier222/ypm-plugin-lastfm) 让用户填自己的 API key，可以参考。
 
 ## 数据结构
 

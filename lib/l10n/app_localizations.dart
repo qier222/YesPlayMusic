@@ -1629,6 +1629,18 @@ abstract class AppLocalizations {
   /// **'{programs}，默认关闭，可在插件设置中开启'**
   String pluginPermProcessDetail(String programs);
 
+  /// Install dialog permission row: the plugin connects to local apps over IPC
+  ///
+  /// In zh, this message translates to:
+  /// **'连接本机应用'**
+  String get pluginPermIpc;
+
+  /// Install dialog permission detail; names are the IPC channel names the plugin may use
+  ///
+  /// In zh, this message translates to:
+  /// **'和本机其他应用通信：{names}'**
+  String pluginPermIpcDetail(String names);
+
   /// No description provided for @pluginPermStorage.
   ///
   /// In zh, this message translates to:
@@ -1725,6 +1737,24 @@ abstract class AppLocalizations {
   /// **'连接 Emby 服务器'**
   String get officialEmbyDesc;
 
+  /// Description of the official Last.fm plugin
+  ///
+  /// In zh, this message translates to:
+  /// **'把听过的歌记到 Last.fm'**
+  String get officialLastfmDesc;
+
+  /// Description of the official ListenBrainz plugin
+  ///
+  /// In zh, this message translates to:
+  /// **'把听过的歌记到 ListenBrainz 或自建服务'**
+  String get officialListenbrainzDesc;
+
+  /// Description of the official Discord plugin
+  ///
+  /// In zh, this message translates to:
+  /// **'在 Discord 上显示正在听的歌'**
+  String get officialDiscordDesc;
+
   /// No description provided for @capSuggest.
   ///
   /// In zh, this message translates to:
@@ -1784,6 +1814,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'播放记录'**
   String get capHistory;
+
+  /// Plugin capability chip: reports listens to services like Last.fm
+  ///
+  /// In zh, this message translates to:
+  /// **'听歌上报'**
+  String get capScrobble;
+
+  /// Plugin capability chip: receives playback state (e.g. for Discord status)
+  ///
+  /// In zh, this message translates to:
+  /// **'播放状态'**
+  String get capPlaybackStatus;
 
   /// No description provided for @capDislike.
   ///

@@ -66,6 +66,16 @@ abstract final class Op {
 
   /// Song context menu: plugins add their own items (trackMenu) and run them when clicked (menuAction).
   static const trackMenu = 'trackMenu', menuAction = 'menuAction';
+
+  /// Scrobbling: for a track from any source, nowPlaying is called when it
+  /// starts and scrobble once it has been listened to long enough. Every plugin
+  /// that exports them is called, not just the current music source.
+  static const nowPlaying = 'nowPlaying', scrobble = 'scrobble';
+
+  /// Playback state changed (track change, play / pause, seek, stop), e.g. to
+  /// show a Discord status. Sent to every plugin that exports it, like
+  /// scrobbling.
+  static const playback = 'playback';
 }
 
 /// A music source. Subclasses override only the methods they support and list them in [ops].
@@ -186,6 +196,26 @@ abstract class Source {
     Track track, {
     String playlist = '',
   }) async => _no(Op.menuAction);
+
+  /// A track from any source started playing ("now playing" for scrobbling).
+  Future<void> nowPlaying(Track track) async => _no(Op.nowPlaying);
+
+  /// A track from any source was listened to long enough to count as a listen.
+  /// [startedAt] is when playback started; [playedMs] is how long it was
+  /// actually listened to. See Scrobbler for the rules.
+  Future<void> scrobble(
+    Track track, {
+    required DateTime startedAt,
+    required int playedMs,
+  }) async => _no(Op.scrobble);
+
+  /// Playback state changed. [track] is null when nothing is playing;
+  /// [positionMs] is the position right now.
+  Future<void> playback(
+    Track? track, {
+    required bool playing,
+    required int positionMs,
+  }) async => _no(Op.playback);
 
   /// [quality] is one of [qualities]; the source returns the closest one it has.
   Future<AudioStream> stream(String id, {String quality = 'high'}) async =>

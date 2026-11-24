@@ -836,6 +836,14 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get pluginPermIpc => '连接本机应用';
+
+  @override
+  String pluginPermIpcDetail(String names) {
+    return '和本机其他应用通信：$names';
+  }
+
+  @override
   String get pluginPermStorage => '保存数据';
 
   @override
@@ -890,6 +898,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get officialEmbyDesc => '连接 Emby 服务器';
 
   @override
+  String get officialLastfmDesc => '把听过的歌记到 Last.fm';
+
+  @override
+  String get officialListenbrainzDesc => '把听过的歌记到 ListenBrainz 或自建服务';
+
+  @override
+  String get officialDiscordDesc => '在 Discord 上显示正在听的歌';
+
+  @override
   String get capSuggest => '搜索建议';
 
   @override
@@ -918,6 +935,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get capHistory => '播放记录';
+
+  @override
+  String get capScrobble => '听歌上报';
+
+  @override
+  String get capPlaybackStatus => '播放状态';
 
   @override
   String get capDislike => '不感兴趣';
@@ -2584,6 +2607,14 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
+  String get pluginPermIpc => '連線本機應用程式';
+
+  @override
+  String pluginPermIpcDetail(String names) {
+    return '和本機其他應用程式通訊：$names';
+  }
+
+  @override
   String get pluginPermStorage => '儲存資料';
 
   @override
@@ -2638,6 +2669,15 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get officialEmbyDesc => '連線至 Emby 伺服器';
 
   @override
+  String get officialLastfmDesc => '把聽過的歌記到 Last.fm';
+
+  @override
+  String get officialListenbrainzDesc => '把聽過的歌記到 ListenBrainz 或自架服務';
+
+  @override
+  String get officialDiscordDesc => '在 Discord 上顯示正在聽的歌';
+
+  @override
   String get capSuggest => '搜尋建議';
 
   @override
@@ -2666,6 +2706,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get capHistory => '播放紀錄';
+
+  @override
+  String get capScrobble => '聽歌上報';
+
+  @override
+  String get capPlaybackStatus => '播放狀態';
 
   @override
   String get capDislike => '不感興趣';

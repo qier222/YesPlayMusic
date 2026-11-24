@@ -347,15 +347,18 @@ export * from '../outside.js';
   });
 
   group('permissionsGrow', () {
-    PluginManifest mf({List<String> net = const [], Object proc = const []}) =>
-        PluginManifest.parse(
-          jsonEncode({
-            'id': 'a.b',
-            'name': 'B',
-            'main': 'index.js',
-            'permissions': {'network': net, 'process': proc},
-          }),
-        );
+    PluginManifest mf({
+      List<String> net = const [],
+      Object proc = const [],
+      List<String> ipc = const [],
+    }) => PluginManifest.parse(
+      jsonEncode({
+        'id': 'a.b',
+        'name': 'B',
+        'main': 'index.js',
+        'permissions': {'network': net, 'process': proc, 'ipc': ipc},
+      }),
+    );
 
     test('same or fewer permissions is fine', () {
       expect(
@@ -366,14 +369,19 @@ export * from '../outside.js';
         permissionsGrow(mf(proc: ['ffmpeg']), mf(proc: ['ffmpeg'])),
         isFalse,
       );
+      expect(
+        permissionsGrow(mf(ipc: ['discord-ipc-*']), mf(ipc: ['discord-ipc-*'])),
+        isFalse,
+      );
     });
-    test('a new host or program needs the user', () {
+    test('a new host, program or ipc name needs the user', () {
       expect(
         permissionsGrow(mf(net: ['a.com']), mf(net: ['a.com', 'c.com'])),
         isTrue,
       );
       expect(permissionsGrow(mf(), mf(proc: ['ffmpeg'])), isTrue);
       expect(permissionsGrow(mf(net: ['a.com']), mf(net: ['*'])), isTrue);
+      expect(permissionsGrow(mf(), mf(ipc: ['discord-ipc-*'])), isTrue);
     });
     test('* already covers everything', () {
       expect(permissionsGrow(mf(net: ['*']), mf(net: ['c.com'])), isFalse);

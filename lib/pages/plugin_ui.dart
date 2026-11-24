@@ -139,6 +139,8 @@ List<String> capabilityLabels(Set<String> ops, [AppLocalizations? l10n]) {
     (l.capRadio, [Op.station]),
     (l.capSimilar, [Op.similar]),
     (l.capHistory, [Op.recent, Op.played]),
+    (l.capScrobble, [Op.nowPlaying, Op.scrobble]),
+    (l.capPlaybackStatus, [Op.playback]),
     (l.npComments, [Op.comments, Op.postComment, Op.likeComment]),
     (l.navProfile, [Op.profile]),
     (l.capDislike, [Op.dislike]),
@@ -626,6 +628,9 @@ class OfficialPlugin {
     'yesplaymusic.plex' => l.officialPlexDesc,
     'yesplaymusic.subsonic' => l.officialSubsonicDesc,
     'yesplaymusic.emby' => l.officialEmbyDesc,
+    'yesplaymusic.lastfm' => l.officialLastfmDesc,
+    'yesplaymusic.listenbrainz' => l.officialListenbrainzDesc,
+    'yesplaymusic.discord' => l.officialDiscordDesc,
     _ => '',
   };
 }
@@ -650,5 +655,20 @@ const officialPlugins = [
     'yesplaymusic.emby',
     'Emby',
     'github.com/qier222/ypm-plugin-emby',
+  ),
+  OfficialPlugin(
+    'yesplaymusic.lastfm',
+    'Last.fm',
+    'github.com/qier222/ypm-plugin-lastfm',
+  ),
+  OfficialPlugin(
+    'yesplaymusic.listenbrainz',
+    'ListenBrainz',
+    'github.com/qier222/ypm-plugin-listenbrainz',
+  ),
+  OfficialPlugin(
+    'yesplaymusic.discord',
+    'Discord',
+    'github.com/qier222/ypm-plugin-discord',
   ),
 ];

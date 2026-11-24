@@ -378,6 +378,7 @@ g.host = Object.freeze({
   arch: info.arch,
   dir: info.dir,
   dataDir: info.dataDir,
+  pid: info.pid,
   storage: Object.freeze({
     get: (key) => sync("storage.get", { key: String(key) }),
     set: (key, value) => { sync("storage.set", { key: String(key), value: value === undefined ? null : value }); },
@@ -423,6 +424,19 @@ g.host = Object.freeze({
       errorOutput: () => sync("proc.stderr", { proc }),
     });
   },
+  ipc: Object.freeze({
+    connect: (name) => later("ipc.connect", { name: String(name) }).promise.then((conn) => {
+      let closed = false;
+      return Object.freeze({
+        write: (bytes) => {
+          try { return later("ipc.write", { conn, data: bytesToB64(asBytes(bytes)) }).promise.then(() => {}); }
+          catch (e) { return Promise.reject(e); }
+        },
+        read: () => later("ipc.read", { conn }).promise.then((b64) => (b64 == null ? null : b64ToBytes(b64))),
+        close: () => { if (!closed) { closed = true; sync("ipc.close", { conn }); } },
+      });
+    }),
+  }),
   removeDataDir: unsupported("removeDataDir"),
 });
 

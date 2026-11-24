@@ -265,6 +265,8 @@
   "pluginPermProcess": "Запуск локальных программ",
   "pluginPermProcessBadge": "Требуется разрешение",
   "pluginPermProcessDetail": "{programs}. По умолчанию выкл.; включается в настройках плагина",
+  "pluginPermIpc": "Подключение к локальным приложениям",
+  "pluginPermIpcDetail": "Обменивается данными с другими приложениями на этом компьютере: {names}",
   "pluginPermStorage": "Хранение данных",
   "pluginPermStorageDetail": "Сохраняет настройки, сессию и кэш",
   "pluginCapabilitiesProvided": "Предоставляемые возможности",
@@ -281,6 +283,9 @@
   "officialPlexDesc": "Подключение к Plex Media Server",
   "officialSubsonicDesc": "Подключение к Navidrome и серверам Subsonic",
   "officialEmbyDesc": "Подключение к серверу Emby",
+  "officialLastfmDesc": "Скробблинг прослушанного в Last.fm",
+  "officialListenbrainzDesc": "Скробблинг в ListenBrainz или на свой сервер",
+  "officialDiscordDesc": "Показывает в Discord, что вы слушаете",
 
   "capSuggest": "Подсказки",
   "capLyrics": "Тексты",
@@ -292,6 +297,8 @@
   "capRadio": "Радио",
   "capSimilar": "Похожие",
   "capHistory": "История",
+  "capScrobble": "Скробблинг",
+  "capPlaybackStatus": "Состояние воспроизведения",
   "capDislike": "Не интересно",
   "capTrackMenu": "Меню трека",
 

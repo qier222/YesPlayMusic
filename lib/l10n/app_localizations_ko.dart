@@ -837,6 +837,14 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get pluginPermIpc => '로컬 앱에 연결';
+
+  @override
+  String pluginPermIpcDetail(String names) {
+    return '이 컴퓨터의 다른 앱과 통신: $names';
+  }
+
+  @override
   String get pluginPermStorage => '데이터 저장';
 
   @override
@@ -891,6 +899,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get officialEmbyDesc => 'Emby 서버에 연결';
 
   @override
+  String get officialLastfmDesc => '들은 곡을 Last.fm에 기록';
+
+  @override
+  String get officialListenbrainzDesc => '들은 곡을 ListenBrainz나 자체 호스팅 서버에 기록';
+
+  @override
+  String get officialDiscordDesc => '듣고 있는 곡을 Discord에 표시';
+
+  @override
   String get capSuggest => '검색 제안';
 
   @override
@@ -919,6 +936,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get capHistory => '재생 기록';
+
+  @override
+  String get capScrobble => '스크로블';
+
+  @override
+  String get capPlaybackStatus => '재생 상태';
 
   @override
   String get capDislike => '관심 없음';

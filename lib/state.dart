@@ -23,6 +23,7 @@ import 'mcp/config.dart';
 import 'mcp/mcp_server.dart';
 import 'music/models.dart' as m;
 import 'music/player.dart';
+import 'music/scrobble.dart';
 import 'music/source.dart';
 import 'plugin/installer.dart';
 import 'plugin/locale.dart';
@@ -2042,6 +2043,56 @@ class AppState extends ChangeNotifier {
 
   AudioEngine get _eng => _engine ??= _makeEngine();
 
+  /// Scrobbling: decides the timing and notifies every plugin that exports
+  /// nowPlaying / scrobble. Once a track counts, its own source is told too
+  /// (played) so it can keep its own play history.
+  late final _scrobbler = Scrobbler(
+    onNowPlaying: (t) => _broadcast(Op.nowPlaying, (s) => s.nowPlaying(t)),
+    onScrobble: (t, at, ms) {
+      sources[t.source]
+          ?.played(t)
+          .catchError((Object e) => debugPrint('played ${t.source}: $e'));
+      _broadcast(
+        Op.scrobble,
+        (s) => s.scrobble(t, startedAt: at, playedMs: ms),
+      );
+    },
+  );
+
+  // ── Playback state (playback) ──
+  Timer? _playbackTimer;
+  String _playbackSent = '';
+
+  /// Playback state may have changed: wait briefly (rapid track changes or
+  /// play clicks send only the last one) and skip it if the track and
+  /// play / pause match what was last sent; [force] (a new track opened, a
+  /// seek) always sends.
+  void _playbackSoon({bool force = false}) {
+    if (!sources.all.any((s) => s.can(Op.playback))) return;
+    if (force) _playbackSent = '';
+    _playbackTimer?.cancel();
+    _playbackTimer = Timer(const Duration(milliseconds: 300), () {
+      final r = track.ref;
+      final on = r != null && playing;
+      final sig = '${r?.key}|$on';
+      if (sig == _playbackSent) return;
+      _playbackSent = sig;
+      final ms = (position * 1000).round();
+      _broadcast(
+        Op.playback,
+        (s) => s.playback(r, playing: on, positionMs: ms),
+      );
+    });
+  }
+
+  void _broadcast(String op, Future<void> Function(Source s) call) {
+    for (final s in sources.all.toList()) {
+      if (!s.can(op)) continue;
+      // Don't bother the user when a report fails; plugins handle retries and offline backlog
+      call(s).catchError((Object e) => debugPrint('$op ${s.id}: $e'));
+    }
+  }
+
   AudioEngine _makeEngine() {
     final e = AudioEngine();
     e.onPosition = (d) {
@@ -2049,9 +2100,12 @@ class AppState extends ChangeNotifier {
       // mpv reports the position many times a second; 10 per second is enough for the UI, with immediate updates on seek.
       final v = d.inMilliseconds / 1000;
       if (v < position || v - position >= 0.1) position = v;
+      _scrobbler.position(track.ref!, v, playing: playing);
     };
     e.onCompleted = () {
-      if (_engineOnTrack) next();
+      if (!_engineOnTrack) return;
+      _scrobbler.reset();
+      next();
     };
     e.onError = (msg) => showToast(L.toastPlaybackError(msg));
     e.setVolume(effectiveVolume);
@@ -2177,6 +2231,7 @@ class AppState extends ChangeNotifier {
 
   /// Brings the engine in line with the current state: reopens on song change, otherwise just toggles play/pause.
   Future<void> _sync() async {
+    _playbackSoon();
     _topUpStation();
     final t = track;
     final ref = t.ref;
@@ -2240,6 +2295,7 @@ class AppState extends ChangeNotifier {
       );
       if (_loadedKey == t.key) {
         _engineKey = t.key;
+        _playbackSoon(force: true);
         // Record only which source, not which song; restoring the queue at launch (without playing) doesn't count
         if (playing) {
           Analytics.instance.event('play', {
@@ -2306,6 +2362,7 @@ class AppState extends ChangeNotifier {
   void seek(double frac) {
     _scrubbing = false;
     position = frac.clamp(0.0, 1.0) * track.seconds;
+    _playbackSoon(force: true);
     if (_engineOnTrack) {
       _seeking++;
       _eng
@@ -2487,6 +2544,7 @@ class AppState extends ChangeNotifier {
     _queueName = '';
     _unshuffled = null;
     _stopEngine();
+    _playbackSoon();
     // Otherwise the next launch would restore the queue from before it was cleared
     _playerSave?.cancel();
     _playerSaved = '';

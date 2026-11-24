@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+- 听歌上报：插件可以导出 `nowPlaying` 和 `scrobble`，接入 ListenBrainz、Last.fm 这类听歌记录服务。不管歌来自本地还是哪个插件都会上报，规则沿用 Last.fm（听够一半或 4 分钟）。见 [插件开发指南](https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.md#听歌上报)。
+- 官方插件新增 Last.fm：用自己的 API key 登录后，把听过的歌记到 Last.fm。从 2026 年 12 月 1 日起 Last.fm 的 API key 需要订阅 Last.fm Pro。
+- 官方插件新增 ListenBrainz：填上 token 就能把听过的歌记到 ListenBrainz（免费），也支持 Koito、Maloja 等自建服务。
+- 官方插件新增 Discord：在 Discord 个人资料上显示正在听的歌（Rich Presence）。
+- 插件可以导出 `playback`，在换歌、播放 / 暂停、拖进度、停止时收到播放状态；新增 `host.ipc`（连本机应用的本地通道，需要在 `permissions.ipc` 里声明，安装时会列出来）和 `host.pid`。
+- 修复插件的 `played` 从来没被调用的问题：现在一首歌听够了（同上的规则）会告诉它所属的插件，Jellyfin 等插件导出的播放记录上报开始生效。
+
 ## [3.0.0] - 2026-11-24
 
 YesPlayMusic 用 Flutter 重写的第一个版本。

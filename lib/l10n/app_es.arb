@@ -265,6 +265,8 @@
   "pluginPermProcess": "Ejecutar programas locales",
   "pluginPermProcessBadge": "Requiere permiso",
   "pluginPermProcessDetail": "{programs}. Desactivado por defecto; activable en ajustes del plugin",
+  "pluginPermIpc": "Conectar con aplicaciones locales",
+  "pluginPermIpcDetail": "Se comunica con otras aplicaciones de este equipo: {names}",
   "pluginPermStorage": "Guardar datos",
   "pluginPermStorageDetail": "Guarda ajustes, sesión y caché",
   "pluginCapabilitiesProvided": "Capacidades ofrecidas",
@@ -281,6 +283,9 @@
   "officialPlexDesc": "Conectar a Plex Media Server",
   "officialSubsonicDesc": "Conectar a Navidrome y otros servidores Subsonic",
   "officialEmbyDesc": "Conectar a un servidor Emby",
+  "officialLastfmDesc": "Registra lo que escuchas en Last.fm",
+  "officialListenbrainzDesc": "Registra en ListenBrainz o en un servidor propio",
+  "officialDiscordDesc": "Muestra en Discord lo que escuchas",
 
   "capSuggest": "Sugerencias",
   "capLyrics": "Letras",
@@ -292,6 +297,8 @@
   "capRadio": "Radio",
   "capSimilar": "Similares",
   "capHistory": "Historial",
+  "capScrobble": "Scrobbling",
+  "capPlaybackStatus": "Estado de reproducción",
   "capDislike": "No me interesa",
   "capTrackMenu": "Menú de canción",
 

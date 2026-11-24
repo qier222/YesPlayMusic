@@ -265,6 +265,8 @@
   "pluginPermProcess": "ローカルプログラムの実行",
   "pluginPermProcessBadge": "個別許可が必要",
   "pluginPermProcessDetail": "{programs}。デフォルトでオフ、プラグイン設定で有効化できます",
+  "pluginPermIpc": "ローカルアプリに接続",
+  "pluginPermIpcDetail": "このコンピューター上の他のアプリと通信：{names}",
   "pluginPermStorage": "データの保存",
   "pluginPermStorageDetail": "設定、ログイン状態、キャッシュを保存します",
   "pluginCapabilitiesProvided": "提供される機能",
@@ -281,6 +283,9 @@
   "officialPlexDesc": "Plex Media Server に接続",
   "officialSubsonicDesc": "Navidrome などの Subsonic サーバーに接続",
   "officialEmbyDesc": "Emby サーバーに接続",
+  "officialLastfmDesc": "再生した曲を Last.fm に記録",
+  "officialListenbrainzDesc": "再生した曲を ListenBrainz やセルフホストに記録",
+  "officialDiscordDesc": "聴いている曲を Discord に表示",
 
   "capSuggest": "検索候補",
   "capLyrics": "歌詞",
@@ -292,6 +297,8 @@
   "capRadio": "ラジオ",
   "capSimilar": "類似曲おすすめ",
   "capHistory": "再生履歴",
+  "capScrobble": "Scrobble",
+  "capPlaybackStatus": "再生状態",
   "capDislike": "興味なし",
   "capTrackMenu": "曲メニュー",
 

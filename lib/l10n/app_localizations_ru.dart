@@ -861,6 +861,14 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get pluginPermIpc => 'Подключение к локальным приложениям';
+
+  @override
+  String pluginPermIpcDetail(String names) {
+    return 'Обменивается данными с другими приложениями на этом компьютере: $names';
+  }
+
+  @override
   String get pluginPermStorage => 'Хранение данных';
 
   @override
@@ -919,6 +927,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get officialEmbyDesc => 'Подключение к серверу Emby';
 
   @override
+  String get officialLastfmDesc => 'Скробблинг прослушанного в Last.fm';
+
+  @override
+  String get officialListenbrainzDesc =>
+      'Скробблинг в ListenBrainz или на свой сервер';
+
+  @override
+  String get officialDiscordDesc => 'Показывает в Discord, что вы слушаете';
+
+  @override
   String get capSuggest => 'Подсказки';
 
   @override
@@ -947,6 +965,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get capHistory => 'История';
+
+  @override
+  String get capScrobble => 'Скробблинг';
+
+  @override
+  String get capPlaybackStatus => 'Состояние воспроизведения';
 
   @override
   String get capDislike => 'Не интересно';

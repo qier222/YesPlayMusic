@@ -265,6 +265,8 @@
   "pluginPermProcess": "로컬 프로그램 실행",
   "pluginPermProcessBadge": "별도 허용 필요",
   "pluginPermProcessDetail": "{programs}. 기본 꺼짐, 플러그인 설정에서 켤 수 있음",
+  "pluginPermIpc": "로컬 앱에 연결",
+  "pluginPermIpcDetail": "이 컴퓨터의 다른 앱과 통신: {names}",
   "pluginPermStorage": "데이터 저장",
   "pluginPermStorageDetail": "설정, 로그인 상태 및 캐시 저장",
   "pluginCapabilitiesProvided": "제공하는 기능",
@@ -281,6 +283,9 @@
   "officialPlexDesc": "Plex Media Server에 연결",
   "officialSubsonicDesc": "Navidrome 등 Subsonic 서버에 연결",
   "officialEmbyDesc": "Emby 서버에 연결",
+  "officialLastfmDesc": "들은 곡을 Last.fm에 기록",
+  "officialListenbrainzDesc": "들은 곡을 ListenBrainz나 자체 호스팅 서버에 기록",
+  "officialDiscordDesc": "듣고 있는 곡을 Discord에 표시",
 
   "capSuggest": "검색 제안",
   "capLyrics": "가사",
@@ -292,6 +297,8 @@
   "capRadio": "라디오",
   "capSimilar": "비슷한 곡 추천",
   "capHistory": "재생 기록",
+  "capScrobble": "스크로블",
+  "capPlaybackStatus": "재생 상태",
   "capDislike": "관심 없음",
   "capTrackMenu": "곡 메뉴",
 

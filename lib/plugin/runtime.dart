@@ -24,6 +24,7 @@ import 'package:pointycastle/export.dart'
 import '../l10n/l10n.dart';
 import '../net/proxy.dart';
 
+import 'ipc.dart';
 import 'locale.dart';
 import 'manifest.dart';
 import 'process.dart';
@@ -96,6 +97,8 @@ class PluginRuntime {
 
   final _procs = <int, PluginProcess>{};
   var _nextProc = 0;
+  final _ipcs = <int, IpcConnection>{};
+  var _nextIpc = 0;
   late final JsRuntime _js;
 
   /// The plugin is disabled after a timeout or running out of memory; the reason is here.
@@ -195,6 +198,10 @@ class PluginRuntime {
       pr.kill();
     }
     _procs.clear();
+    for (final c in _ipcs.values) {
+      c.close();
+    }
+    _ipcs.clear();
     _failAll(PluginError(L.pluginErrClosed));
     _http.close(force: true);
     _js.dispose();
@@ -215,6 +222,7 @@ class PluginRuntime {
         'arch': _arch,
         'dir': dir,
         'dataDir': dataDir,
+        'pid': pid,
       },
       'log' => _log(args),
       'settle' => _settle(args),
@@ -246,6 +254,19 @@ class PluginRuntime {
       'proc.stderr' => _proc(args).errorOutput,
       'proc.readLine' => _later(args, () => _proc(args).readLine()),
       'proc.wait' => _later(args, () => _proc(args).wait()),
+      'ipc.connect' => _later(args, () => _ipcConnect(args)),
+      'ipc.write' => _later(
+        args,
+        () => _ipc(args).write(base64Decode(args['data'] as String)),
+      ),
+      'ipc.read' => _later(
+        args,
+        () async => switch (await _ipc(args).read()) {
+          final d? => base64Encode(d),
+          null => null,
+        },
+      ),
+      'ipc.close' => _ipcClose(args),
       _ => throw HostError('unknown host op: $op'),
     };
     return out == null ? null : jsonEncode(out);
@@ -419,6 +440,33 @@ class PluginRuntime {
 
   Object? _procDo(Map<String, Object?> a, void Function(PluginProcess) f) {
     f(_proc(a));
+    return null;
+  }
+
+  // ── Local channels (host.ipc) ──
+
+  Future<Object?> _ipcConnect(Map<String, Object?> a) async {
+    final name = a['name'];
+    if (name is! String || !ipcAllowed(name, manifest.ipc)) {
+      throw HostError("ipc: $name is not in the plugin's ipc permission");
+    }
+    if (_ipcs.length >= 4) throw HostError('ipc: too many connections');
+    final IpcConnection c;
+    try {
+      c = await IpcConnection.connect(name);
+    } catch (e) {
+      throw HostError('ipc: cannot connect to $name');
+    }
+    final id = ++_nextIpc;
+    _ipcs[id] = c;
+    return id;
+  }
+
+  IpcConnection _ipc(Map<String, Object?> a) =>
+      _ipcs[a['conn']] ?? (throw HostError('ipc: the connection is closed'));
+
+  Object? _ipcClose(Map<String, Object?> a) {
+    _ipcs.remove(a['conn'])?.close();
     return null;
   }
 

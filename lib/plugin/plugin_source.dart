@@ -202,6 +202,7 @@ class PluginSource extends Source {
     Op.removeFromPlaylist, Op.movePlaylistTrack, Op.lyrics, Op.stream,
     Op.similar, Op.station, Op.dislike, Op.trackMenu, Op.menuAction,
     Op.comments, Op.postComment, Op.likeComment,
+    Op.nowPlaying, Op.scrobble, Op.playback,
   };
 
   @override
@@ -586,6 +587,31 @@ class PluginSource extends Source {
       await invoke(Op.played, {'id': track.id});
     } on SourceError catch (_) {}
   }
+
+  @override
+  Future<void> nowPlaying(Track track) =>
+      invoke(Op.nowPlaying, {'track': track.toJson()});
+  @override
+  Future<void> scrobble(
+    Track track, {
+    required DateTime startedAt,
+    required int playedMs,
+  }) => invoke(Op.scrobble, {
+    'track': track.toJson(),
+    'startedAt': startedAt.toUtc().toIso8601String(),
+    'played': playedMs,
+  });
+
+  @override
+  Future<void> playback(
+    Track? track, {
+    required bool playing,
+    required int positionMs,
+  }) => invoke(Op.playback, {
+    'track': track?.toJson(),
+    'playing': playing,
+    'position': positionMs,
+  });
 
   @override
   Future<TrackPage> liked({int offset = 0}) async =>

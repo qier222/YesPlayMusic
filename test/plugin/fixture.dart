@@ -81,6 +81,8 @@ export function stream({ id, quality }) {
   return { url: id === "bad" ? "file:///etc/hosts" : id === "own" ? `file://${host.dir}/index.js` : host.setting("server") + "/bin?q=" + quality };
 }
 export function escape() { return import("../../outside.js"); }
+export function nowPlaying({ track }) { host.storage.set("k", ["now", track]); }
+export function scrobble(args) { host.storage.set("k", ["scrobble", args]); }
 ''';
 
 /// Writes a plugin under [root] and returns the plugin directory.

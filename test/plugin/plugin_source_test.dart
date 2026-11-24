@@ -64,6 +64,36 @@ void main() {
     );
   });
 
+  // Scrobbling: the track (with its source), start time (UTC ISO 8601) and listened time reach the plugin.
+  test('nowPlaying / scrobble', () async {
+    final s = await PluginSource.start(writeFixture(plugins), dataRoot: data);
+    addTearDown(s.close);
+    expect(s.can(Op.nowPlaying), isTrue);
+    expect(s.can(Op.scrobble), isTrue);
+    const t = Track(id: '7', name: '晚风', source: 'local', duration: 200000);
+    await s.nowPlaying(t);
+    expect(await s.invoke('store', {'v': null}), [
+      'now',
+      {
+        'id': '7',
+        'source': 'local',
+        'name': '晚风',
+        'album': <String, Object?>{},
+        'duration': 200000,
+      },
+    ]);
+    await s.scrobble(
+      t,
+      startedAt: DateTime.utc(2026, 11, 24, 8, 30),
+      playedMs: 100000,
+    );
+    final got = await s.invoke('store', {'v': null}) as List;
+    expect(got[0], 'scrobble');
+    expect((got[1] as Map)['startedAt'], '2026-11-24T08:30:00.000Z');
+    expect((got[1] as Map)['played'], 100000);
+    expect(((got[1] as Map)['track'] as Map)['source'], 'local');
+  });
+
   // Comments: paged fetching, posting with the replied-to id, likes; CommentFeed reverts when the source errors.
   test('comments', () async {
     final s = await PluginSource.start(writeFixture(plugins), dataRoot: data);

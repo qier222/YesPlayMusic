@@ -143,15 +143,18 @@ String originLabel(String origin) {
   return u == null || u.host.isEmpty ? origin : '${u.host}${u.path}';
 }
 
-/// Whether [next] asks for permissions [current] doesn't have: a network host or a program not granted before.
+/// Whether [next] asks for permissions [current] doesn't have: a network host, program, or IPC name not granted before.
 /// Such an update must be reviewed by the user, so it's never installed automatically.
 bool permissionsGrow(PluginManifest current, PluginManifest next) {
-  final hosts = current.network.toSet(), programs = current.process.toSet();
+  final hosts = current.network.toSet(),
+      programs = current.process.toSet(),
+      ipc = current.ipc.toSet();
   final net =
       !hosts.contains('*') && next.network.any((h) => !hosts.contains(h));
   final proc =
       !programs.contains('*') && next.process.any((x) => !programs.contains(x));
-  return net || proc;
+  final localIpc = next.ipc.any((x) => !ipc.contains(x));
+  return net || proc || localIpc;
 }
 
 const _maxBytes = 50 * 1024 * 1024;

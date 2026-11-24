@@ -440,6 +440,15 @@
       "programs": { "type": "String" }
     }
   },
+  "pluginPermIpc": "连接本机应用",
+  "@pluginPermIpc": { "description": "Install dialog permission row: the plugin connects to local apps over IPC" },
+  "pluginPermIpcDetail": "和本机其他应用通信：{names}",
+  "@pluginPermIpcDetail": {
+    "description": "Install dialog permission detail; names are the IPC channel names the plugin may use",
+    "placeholders": {
+      "names": { "type": "String" }
+    }
+  },
   "pluginPermStorage": "保存数据",
   "pluginPermStorageDetail": "保存设置、登录状态和缓存",
   "pluginCapabilitiesProvided": "提供这些能力",
@@ -472,6 +481,12 @@
   "officialPlexDesc": "连接 Plex Media Server",
   "officialSubsonicDesc": "连接 Navidrome 等 Subsonic 服务器",
   "officialEmbyDesc": "连接 Emby 服务器",
+  "officialLastfmDesc": "把听过的歌记到 Last.fm",
+  "@officialLastfmDesc": { "description": "Description of the official Last.fm plugin" },
+  "officialListenbrainzDesc": "把听过的歌记到 ListenBrainz 或自建服务",
+  "@officialListenbrainzDesc": { "description": "Description of the official ListenBrainz plugin" },
+  "officialDiscordDesc": "在 Discord 上显示正在听的歌",
+  "@officialDiscordDesc": { "description": "Description of the official Discord plugin" },
 
   "capSuggest": "搜索建议",
   "capLyrics": "歌词",
@@ -483,6 +498,10 @@
   "capRadio": "电台",
   "capSimilar": "相似推荐",
   "capHistory": "播放记录",
+  "capScrobble": "听歌上报",
+  "@capScrobble": { "description": "Plugin capability chip: reports listens to services like Last.fm" },
+  "capPlaybackStatus": "播放状态",
+  "@capPlaybackStatus": { "description": "Plugin capability chip: receives playback state (e.g. for Discord status)" },
   "capDislike": "不感兴趣",
   "capTrackMenu": "歌曲菜单",
 
