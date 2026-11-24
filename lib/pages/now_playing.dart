@@ -1195,6 +1195,25 @@ class _BottomBar extends StatelessWidget {
           fill: white,
           onCover: true,
         ),
+        const SizedBox(width: 8),
+        // More: sleep timer and so on; the menu opens upwards
+        Builder(
+          builder: (ctx) => _CoverSeg(
+            icon: 'more',
+            tip: context.l10n.actionMore,
+            color: white,
+            onTap: () {
+              final box = ctx.findRenderObject() as RenderBox;
+              showMenu(
+                ctx,
+                // No room on the right: align the menu's right edge with the button's
+                box.localToGlobal(Offset(box.size.width + 2, -6)),
+                npMoreMenu(ctx),
+                above: true,
+              );
+            },
+          ),
+        ),
       ],
     );
   }

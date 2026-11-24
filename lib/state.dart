@@ -22,7 +22,9 @@ import 'comments.dart';
 import 'mcp/config.dart';
 import 'mcp/mcp_server.dart';
 import 'music/models.dart' as m;
+import 'music/eq.dart';
 import 'music/player.dart';
+import 'music/replay_gain.dart';
 import 'music/scrobble.dart';
 import 'music/source.dart';
 import 'plugin/installer.dart';
@@ -2030,7 +2032,11 @@ class AppState extends ChangeNotifier {
 
   bool get isLiked => liked.contains(track.key);
 
-  AudioEngine? _engine;
+  PlaybackEngine? _engine;
+
+  /// Creates the playback engine; tests swap in a fake.
+  @visibleForTesting
+  static PlaybackEngine Function() engineFactory = AudioEngine.new;
 
   /// Which song is currently loaded in the engine (Track.key).
   String? _loadedKey;
@@ -2041,7 +2047,7 @@ class AppState extends ChangeNotifier {
   bool get _real => track.ref != null;
   bool get _engineOnTrack => _real && _engineKey == track.key;
 
-  AudioEngine get _eng => _engine ??= _makeEngine();
+  PlaybackEngine get _eng => _engine ??= _makeEngine();
 
   /// Scrobbling: decides the timing and notifies every plugin that exports
   /// nowPlaying / scrobble. Once a track counts, its own source is told too
@@ -2093,27 +2099,40 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  AudioEngine _makeEngine() {
-    final e = AudioEngine();
+  PlaybackEngine _makeEngine() {
+    final e = engineFactory();
     e.onPosition = (d) {
       if (!_engineOnTrack || _scrubbing || _seeking > 0) return;
       // mpv reports the position many times a second; 10 per second is enough for the UI, with immediate updates on seek.
       final v = d.inMilliseconds / 1000;
       if (v < position || v - position >= 0.1) position = v;
       _scrobbler.position(track.ref!, v, playing: playing);
+      _reconcileNext();
+    };
+    e.onDuration = (d) {
+      if (_engineOnTrack) _engineSeconds = d.inMilliseconds / 1000;
     };
     e.onCompleted = () {
       if (!_engineOnTrack) return;
       _scrobbler.reset();
+      // Sleep timer "after this track": stop at the start of the next one
+      if (sleepAfterTrack) {
+        _clearSleep();
+        next(play: false);
+        return;
+      }
       next();
     };
+    e.onAdvanced = _onAdvanced;
     e.onError = (msg) => showToast(L.toastPlaybackError(msg));
     e.setVolume(effectiveVolume);
+    e.setEq(eq);
     return e;
   }
 
   void _stopEngine() {
     _cancelPreload();
+    _armedSig = null;
     if (_loadedKey == null && _engineKey == null) return;
     _loadedKey = null;
     _engineKey = null;
@@ -2229,6 +2248,247 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  // ───── Gapless playback ─────
+  // Shortly before the current track ends, queue the next one (a local file or
+  // cached audio) in mpv, which continues by itself; [_onAdvanced] then moves the
+  // app's current track along. When the next track changes (play next, removal,
+  // shuffle, repeat, ReplayGain setting…) it's dropped and queued again, so queue
+  // operations don't need to sync mpv: the position callback reconciles it.
+
+  /// Seconds before the end at which the next track is queued.
+  static const _gaplessLead = 30.0;
+
+  /// The track queued in mpv: `key|replaygain`.
+  String? _armedSig;
+  bool _arming = false;
+
+  /// Which track last failed to queue (not cached yet) and when; retried after a second.
+  String? _armMissSig;
+  DateTime _armMissAt = DateTime(0);
+
+  /// Duration of the current track reported by mpv (seconds), more exact than the metadata; 0 until known.
+  double _engineSeconds = 0;
+
+  /// The stream playing in the engine, for ReplayGain setting changes.
+  m.AudioStream? _engineStream;
+
+  /// The track that should be queued in mpv now; null when none should.
+  Track? get _gaplessNext {
+    if (sleepAfterTrack) return null;
+    final n = _nextTrack;
+    if (n == null || n.ref == null || n.key == track.key) return null;
+    return n;
+  }
+
+  void _reconcileNext() {
+    final e = _engine;
+    if (e == null || !_engineOnTrack) return;
+    final n = _gaplessNext;
+    final sig = n == null ? null : '${n.key}|$_rg';
+    if (e.queuedKey != null && sig != _armedSig) {
+      _armedSig = null;
+      e.dropQueued().ignore();
+    }
+    if (n == null || sig == _armedSig || _arming || !playing) return;
+    final total = _engineSeconds > 0
+        ? _engineSeconds
+        : track.seconds.toDouble();
+    if (total <= 0 || total - position > _gaplessLead) return;
+    // If it isn't cached yet, check again every second (the preload may still be downloading)
+    if (sig == _armMissSig &&
+        DateTime.now().difference(_armMissAt) < const Duration(seconds: 1)) {
+      return;
+    }
+    _arming = true;
+    _armNext(n, sig!).whenComplete(() => _arming = false);
+  }
+
+  Future<void> _armNext(Track t, String sig) async {
+    final ref = t.ref!;
+    try {
+      // Only queue local files: no headers or expiring URLs, and mpv prefetches them fast
+      final m.AudioStream? s = ref.source == 'local'
+          ? await sources.stream(ref)
+          : await audioCache.get('${cacheSpace(ref.source)}/${ref.id}');
+      if (s == null || !s.url.startsWith('file:')) {
+        _armMissSig = sig;
+        _armMissAt = DateTime.now();
+        return;
+      }
+      final n = _gaplessNext;
+      if (!_engineOnTrack || n == null || '${n.key}|$_rg' != sig) return;
+      final rg = _rg;
+      await _eng.queueNext(s, key: t.key, rg: rg, gainDb: streamGainDb(s, rg));
+      _armedSig = sig;
+      _armedStream = s;
+    } catch (e) {
+      debugPrint('gapless: $e');
+    }
+  }
+
+  m.AudioStream? _armedStream;
+
+  /// mpv moved on to the queued track.
+  void _onAdvanced(String key) {
+    _armedSig = null;
+    final s = _armedStream;
+    _armedStream = null;
+    final n = _nextTrack;
+    if (n != null && n.key == key) {
+      index = index + 1 < queue.length ? index + 1 : 0;
+    } else {
+      // The queue changed at the last moment: follow mpv if its track is still queued, otherwise reopen from the queue
+      final i = queue.indexWhere((t) => t.key == key);
+      if (i < 0) {
+        _loadedKey = key;
+        _engineKey = key;
+        _sync();
+        return;
+      }
+      index = i;
+    }
+    final t = track;
+    position = 0;
+    _scrubbing = false;
+    _engineSeconds = 0;
+    _loadedKey = key;
+    _engineKey = key;
+    _engineStream = s;
+    _preloadedStream = null;
+    // A new listen for scrobbling, and tell plugins the track changed
+    _scrobbler.reset();
+    _playbackSoon(force: true);
+    _topUpStation();
+    if (!_applyCachedLyrics(t)) _loadLyrics(t);
+    final ref = t.ref;
+    if (ref != null) {
+      Analytics.instance.event('play', {
+        'music_source': ref.source,
+        'from_cache': '${ref.source != 'local'}',
+      });
+    }
+    notifyListeners();
+    _schedulePreloadNext();
+  }
+
+  // ───── Volume normalization ─────
+  GainMode gainMode = GainMode.values.firstWhere(
+    (x) => x.name == _prefs()['gainMode'],
+    orElse: () => GainMode.smart,
+  );
+
+  /// The replaygain value for mpv: in smart mode, album gain when an album plays in order.
+  String get _rg => mpvReplayGain(
+    gainMode,
+    albumOrder: queueFrom.startsWith('album:') && !shuffle,
+  );
+
+  void setGainMode(GainMode mode) {
+    if (gainMode == mode) return;
+    gainMode = mode;
+    _savePrefs({'gainMode': mode.name});
+    final rg = _rg;
+    final s = _engineStream;
+    if (_engineKey != null) {
+      _engine?.setReplayGain(rg, s == null ? 0 : streamGainDb(s, rg));
+    }
+    notifyListeners();
+  }
+
+  // ───── Equalizer ─────
+  EqSettings eq = EqSettings.fromJson(_prefs()['eq']);
+  Timer? _eqSave;
+
+  /// Changes continuously while dragging: the engine follows immediately, prefs are saved half a second after it stops.
+  void setEq(EqSettings s) {
+    eq = s;
+    _engine?.setEq(s);
+    _eqSave?.cancel();
+    _eqSave = Timer(
+      const Duration(milliseconds: 500),
+      () => _savePrefs({'eq': eq.toJson()}),
+    );
+    notifyListeners();
+  }
+
+  // ───── Sleep timer ─────
+  // Fades out over the last [sleepFade] and pauses at the deadline; can also stop
+  // after the current track. The fade only scales the engine volume, not the saved one.
+
+  /// The deadline; null when off or when stopping after the current track.
+  DateTime? sleepAt;
+
+  /// Stop when the current track ends.
+  bool sleepAfterTrack = false;
+
+  static const sleepFade = Duration(seconds: 20);
+  Timer? _sleepTick;
+
+  bool get sleepOn => sleepAt != null || sleepAfterTrack;
+
+  /// Time left; null unless a time was set.
+  Duration? get sleepLeft {
+    final at = sleepAt;
+    if (at == null) return null;
+    final d = at.difference(DateTime.now());
+    return d.isNegative ? Duration.zero : d;
+  }
+
+  /// Stop after [d]; null turns it off.
+  void setSleepTimer(Duration? d) {
+    _clearSleep();
+    if (d != null) {
+      sleepAt = DateTime.now().add(d);
+      _sleepTick = Timer.periodic(
+        const Duration(milliseconds: 250),
+        (_) => _onSleepTick(),
+      );
+    }
+    notifyListeners();
+  }
+
+  /// Stop when the current track ends.
+  void setSleepAfterTrack() {
+    _clearSleep();
+    sleepAfterTrack = true;
+    // Drop the track queued in mpv so playback really stops at the end of this one
+    _reconcileNext();
+    notifyListeners();
+  }
+
+  void _clearSleep() {
+    _sleepTick?.cancel();
+    _sleepTick = null;
+    sleepAt = null;
+    sleepAfterTrack = false;
+    _engine?.setFade(1);
+  }
+
+  void _onSleepTick() {
+    final left = sleepLeft;
+    if (left == null) return;
+    if (left == Duration.zero) {
+      // Pause before restoring the volume so there's no sudden burst
+      final e = _engine;
+      _sleepTick?.cancel();
+      _sleepTick = null;
+      sleepAt = null;
+      pause();
+      e?.setFade(1);
+      notifyListeners();
+      return;
+    }
+    _engine?.setFade(sleepFadeAt(left));
+  }
+
+  /// Volume factor (amplitude) with [left] to go: drops to 0 over the last [sleepFade]
+  /// on a square curve, which sounds more even than linear.
+  static double sleepFadeAt(Duration left) {
+    if (left >= sleepFade) return 1;
+    final x = left.inMilliseconds / sleepFade.inMilliseconds;
+    return (x * x).clamp(0.0, 1.0);
+  }
+
   /// Brings the engine in line with the current state: reopens on song change, otherwise just toggles play/pause.
   Future<void> _sync() async {
     _playbackSoon();
@@ -2246,6 +2506,7 @@ class AppState extends ChangeNotifier {
     }
     _loadedKey = t.key;
     _scrubbing = false;
+    _armedSig = null;
     // If lyrics are already cached (e.g. preloaded), fill them in synchronously so the first frame after switching doesn't flash the no-lyrics view
     if (_applyCachedLyrics(t)) notifyListeners();
     // Stop the old song first: while fetching the new URL, the old song stays silent and stops reporting progress
@@ -2288,13 +2549,19 @@ class AppState extends ChangeNotifier {
       // Switched to another song while fetching the URL
       if (_loadedKey != t.key) return;
       final at = position;
+      final rg = _rg;
+      _engineSeconds = 0;
       await _eng.open(
         s,
+        key: t.key,
         play: playing,
         start: at > 0.5 ? Duration(milliseconds: (at * 1000).round()) : null,
+        rg: rg,
+        gainDb: streamGainDb(s, rg),
       );
       if (_loadedKey == t.key) {
         _engineKey = t.key;
+        _engineStream = s;
         _playbackSoon(force: true);
         // Record only which source, not which song; restoring the queue at launch (without playing) doesn't count
         if (playing) {
@@ -2377,7 +2644,8 @@ class AppState extends ChangeNotifier {
     seek((position + s) / track.seconds);
   }
 
-  void next() {
+  /// Next track. With [play] false it only moves to it without playing (for the sleep timer).
+  void next({bool play = true}) {
     if (queue.isEmpty) return;
     // A station reached its last song: wait for the next batch, then continue
     if (index + 1 >= queue.length && station != null && !repeat) {
@@ -2389,10 +2657,10 @@ class AppState extends ChangeNotifier {
     _cameBackTo = null;
     if (index + 1 < queue.length) {
       index++;
-      playing = true;
+      playing = play;
     } else if (repeat) {
       index = 0;
-      playing = true;
+      playing = play;
     } else {
       playing = false;
     }
@@ -3279,6 +3547,11 @@ class AppState extends ChangeNotifier {
     _refreshTimer?.cancel();
     _pluginUpdateTimer?.cancel();
     _preloadTimer?.cancel();
+    _sleepTick?.cancel();
+    if (_eqSave?.isActive ?? false) {
+      _eqSave!.cancel();
+      _savePrefs({'eq': eq.toJson()});
+    }
     _cacheSub?.cancel();
     // Quitting within half a second of dragging the volume: write the pending volume
     if (_volumeSave?.isActive ?? false) {

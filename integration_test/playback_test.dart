@@ -7,6 +7,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:yesplaymusic/music/eq.dart';
 import 'package:yesplaymusic/music/local/local_source.dart';
 import 'package:yesplaymusic/music/models.dart';
 import 'package:yesplaymusic/music/player.dart';
@@ -79,11 +80,72 @@ void main() {
 
     await (() async {
       await engine.setVolume(0.2);
-      await engine.open(await sources.stream(track));
+      await engine.open(await sources.stream(track), key: 'tone');
       await done.future.timeout(const Duration(seconds: 10));
     })();
 
     expect(errors, isEmpty);
     expect(maxPos.inMilliseconds, greaterThan(1000));
+  });
+
+  // Gapless: while the first track plays, queue the second in mpv; mpv moves on by
+  // itself when the first ends and reports onAdvanced once, and completed only after
+  // the whole list. The equalizer and ReplayGain are on too, to check that the
+  // equalizer, af-command and per-file gain all work with the trimmed ffmpeg.
+  test('gapless: queued track follows without reopening', () async {
+    final tmp = Directory.systemTemp.createTempSync('ypm_gapless_');
+    addTearDown(() => tmp.deleteSync(recursive: true));
+    final a = p.join(tmp.path, 'a.wav'), b = p.join(tmp.path, 'b.wav');
+    sineWav(a, 1500);
+    sineWav(b, 1500);
+    AudioStream wav(String path) =>
+        AudioStream(url: Uri.file(path).toString(), type: 'wav');
+
+    final engine = AudioEngine();
+    addTearDown(engine.dispose);
+    final advanced = <String>[];
+    final errors = <String>[];
+    final done = Completer<void>();
+    // Read the gain once the second track starts (file-local: -3 for the first, -6 for the second)
+    final gainB = Completer<String>();
+    engine.onAdvanced = (k) {
+      advanced.add(k);
+      Future<void>.delayed(const Duration(milliseconds: 100)).then(
+        (_) async =>
+            gainB.complete(await engine.mpvProperty('replaygain-fallback')),
+      );
+    };
+    var completed = 0;
+    engine.onCompleted = () {
+      completed++;
+      if (!done.isCompleted) done.complete();
+    };
+    engine.onError = errors.add;
+
+    await engine.setVolume(0.2);
+    await engine.setEq(const EqSettings(enabled: true, preset: EqPreset.rock));
+    await engine.open(wav(a), key: 'a', rg: 'track', gainDb: -3);
+    await engine.queueNext(wav(b), key: 'b', rg: 'track', gainDb: -6);
+    expect(engine.queuedKey, 'b');
+    expect(await engine.mpvProperty('af'), contains('ypmeq9'));
+    expect(double.parse(await engine.mpvProperty('replaygain-fallback')), -3);
+    // Change the equalizer while playing: goes through af-command
+    await engine.setEq(
+      const EqSettings(
+        enabled: true,
+        preset: EqPreset.custom,
+        custom: [3, 0, 0, 0, 0, 0, 0, 0, 0, -3],
+      ),
+    );
+    await done.future.timeout(const Duration(seconds: 10));
+    // Wait a bit more: completed must not fire a second time
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    expect(errors, isEmpty);
+    expect(advanced, ['b']);
+    expect(engine.queuedKey, isNull);
+    expect(double.parse(await gainB.future), -6);
+    // The end of the first track doesn't count as completed; only the end of the second does, once
+    expect(completed, 1);
   });
 }

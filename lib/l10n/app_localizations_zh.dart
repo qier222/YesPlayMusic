@@ -1792,6 +1792,114 @@ class AppLocalizationsZh extends AppLocalizations {
   String pluginAutoUpdatedToast(String name, String version) {
     return '已自动更新「$name」到 $version';
   }
+
+  @override
+  String get settingsReplayGain => '音量均衡';
+
+  @override
+  String get settingsReplayGainHint => '让不同歌曲听起来一样响';
+
+  @override
+  String get gainModeOff => '关闭';
+
+  @override
+  String get gainModeTrack => '按单曲';
+
+  @override
+  String get gainModeAlbum => '按专辑';
+
+  @override
+  String get gainModeSmart => '智能';
+
+  @override
+  String get gainModeOffInfo => '按歌曲本来的音量播放，不做调整。';
+
+  @override
+  String get gainModeTrackInfo => '每首歌各自调到差不多的响度。适合随机播放，或者歌单里的歌来自不同专辑。';
+
+  @override
+  String get gainModeAlbumInfo => '整张专辑一起调，专辑里歌曲之间的轻重对比保持原样。适合完整地听专辑。';
+
+  @override
+  String get gainModeSmartInfo => '按顺序播放一张专辑时用「按专辑」，其他时候（随机、歌单、电台）用「按单曲」。';
+
+  @override
+  String get gainModeNote => '歌曲文件里要有 ReplayGain 标签，或者插件提供了响度信息；都没有的歌曲不调整。';
+
+  @override
+  String get settingsEqualizer => '均衡器';
+
+  @override
+  String get eqPresetFlat => '平直';
+
+  @override
+  String get eqPresetPop => '流行';
+
+  @override
+  String get eqPresetRock => '摇滚';
+
+  @override
+  String get eqPresetVocal => '人声';
+
+  @override
+  String get eqPresetBassBoost => '低音增强';
+
+  @override
+  String get eqPresetTrebleBoost => '高音增强';
+
+  @override
+  String get eqPresetClassical => '古典';
+
+  @override
+  String get eqPresetJazz => '爵士';
+
+  @override
+  String get eqPresetElectronic => '电子';
+
+  @override
+  String get eqPresetCustom => '自定义';
+
+  @override
+  String get sleepTimer => '睡眠定时';
+
+  @override
+  String sleepMinutes(int n) {
+    return '$n 分钟';
+  }
+
+  @override
+  String get sleepCustom => '自定义…';
+
+  @override
+  String get sleepAfterTrack => '放完这首';
+
+  @override
+  String get sleepOff => '关闭定时';
+
+  @override
+  String sleepLeft(String time) {
+    return '剩余 $time';
+  }
+
+  @override
+  String get sleepCustomTitle => '定时停止播放';
+
+  @override
+  String get sleepCustomPlaceholder => '分钟数';
+
+  @override
+  String get sleepCustomAction => '开始';
+
+  @override
+  String toastSleepIn(int n) {
+    return '$n 分钟后停止播放';
+  }
+
+  @override
+  String get toastSleepAfterTrack => '放完这首后停止播放';
+
+  @override
+  String get toastSleepOff => '已关闭睡眠定时';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -3581,4 +3689,112 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String pluginAutoUpdatedToast(String name, String version) {
     return '已自動將「$name」更新至 $version';
   }
+
+  @override
+  String get settingsReplayGain => '音量均衡';
+
+  @override
+  String get settingsReplayGainHint => '讓不同歌曲聽起來一樣響';
+
+  @override
+  String get gainModeOff => '關閉';
+
+  @override
+  String get gainModeTrack => '依單曲';
+
+  @override
+  String get gainModeAlbum => '依專輯';
+
+  @override
+  String get gainModeSmart => '智慧';
+
+  @override
+  String get gainModeOffInfo => '依歌曲原本的音量播放，不做調整。';
+
+  @override
+  String get gainModeTrackInfo => '每首歌各自調到差不多的響度。適合隨機播放，或者歌單裡的歌來自不同專輯。';
+
+  @override
+  String get gainModeAlbumInfo => '整張專輯一起調，專輯裡歌曲之間的輕重對比保持原樣。適合完整地聽專輯。';
+
+  @override
+  String get gainModeSmartInfo => '依順序播放一張專輯時用「依專輯」，其他時候（隨機、歌單、電台）用「依單曲」。';
+
+  @override
+  String get gainModeNote => '歌曲檔案裡要有 ReplayGain 標籤，或者外掛提供了響度資訊；都沒有的歌曲不調整。';
+
+  @override
+  String get settingsEqualizer => '等化器';
+
+  @override
+  String get eqPresetFlat => '平直';
+
+  @override
+  String get eqPresetPop => '流行';
+
+  @override
+  String get eqPresetRock => '搖滾';
+
+  @override
+  String get eqPresetVocal => '人聲';
+
+  @override
+  String get eqPresetBassBoost => '低音增強';
+
+  @override
+  String get eqPresetTrebleBoost => '高音增強';
+
+  @override
+  String get eqPresetClassical => '古典';
+
+  @override
+  String get eqPresetJazz => '爵士';
+
+  @override
+  String get eqPresetElectronic => '電子';
+
+  @override
+  String get eqPresetCustom => '自訂';
+
+  @override
+  String get sleepTimer => '睡眠定時';
+
+  @override
+  String sleepMinutes(int n) {
+    return '$n 分鐘';
+  }
+
+  @override
+  String get sleepCustom => '自訂…';
+
+  @override
+  String get sleepAfterTrack => '播完這首';
+
+  @override
+  String get sleepOff => '關閉定時';
+
+  @override
+  String sleepLeft(String time) {
+    return '剩餘 $time';
+  }
+
+  @override
+  String get sleepCustomTitle => '定時停止播放';
+
+  @override
+  String get sleepCustomPlaceholder => '分鐘數';
+
+  @override
+  String get sleepCustomAction => '開始';
+
+  @override
+  String toastSleepIn(int n) {
+    return '$n 分鐘後停止播放';
+  }
+
+  @override
+  String get toastSleepAfterTrack => '播完這首後停止播放';
+
+  @override
+  String get toastSleepOff => '已關閉睡眠定時';
 }

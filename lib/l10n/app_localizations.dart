@@ -3182,6 +3182,210 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'已自动更新「{name}」到 {version}'**
   String pluginAutoUpdatedToast(String name, String version);
+
+  /// Settings > Playback row title: volume normalization (ReplayGain)
+  ///
+  /// In zh, this message translates to:
+  /// **'音量均衡'**
+  String get settingsReplayGain;
+
+  /// First line of the volume normalization info dialog: what the feature does
+  ///
+  /// In zh, this message translates to:
+  /// **'让不同歌曲听起来一样响'**
+  String get settingsReplayGainHint;
+
+  /// Volume normalization mode: off
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭'**
+  String get gainModeOff;
+
+  /// Volume normalization mode: per-track gain
+  ///
+  /// In zh, this message translates to:
+  /// **'按单曲'**
+  String get gainModeTrack;
+
+  /// Volume normalization mode: per-album gain
+  ///
+  /// In zh, this message translates to:
+  /// **'按专辑'**
+  String get gainModeAlbum;
+
+  /// Volume normalization mode: album gain when an album plays in order, track gain otherwise
+  ///
+  /// In zh, this message translates to:
+  /// **'智能'**
+  String get gainModeSmart;
+
+  /// Info dialog: explains the Off mode
+  ///
+  /// In zh, this message translates to:
+  /// **'按歌曲本来的音量播放，不做调整。'**
+  String get gainModeOffInfo;
+
+  /// Info dialog: explains the Per Track mode
+  ///
+  /// In zh, this message translates to:
+  /// **'每首歌各自调到差不多的响度。适合随机播放，或者歌单里的歌来自不同专辑。'**
+  String get gainModeTrackInfo;
+
+  /// Info dialog: explains the Per Album mode
+  ///
+  /// In zh, this message translates to:
+  /// **'整张专辑一起调，专辑里歌曲之间的轻重对比保持原样。适合完整地听专辑。'**
+  String get gainModeAlbumInfo;
+
+  /// Info dialog: explains the Smart mode
+  ///
+  /// In zh, this message translates to:
+  /// **'按顺序播放一张专辑时用「按专辑」，其他时候（随机、歌单、电台）用「按单曲」。'**
+  String get gainModeSmartInfo;
+
+  /// Info dialog footnote: which tracks can be normalized
+  ///
+  /// In zh, this message translates to:
+  /// **'歌曲文件里要有 ReplayGain 标签，或者插件提供了响度信息；都没有的歌曲不调整。'**
+  String get gainModeNote;
+
+  /// Settings section title for the 10-band equalizer
+  ///
+  /// In zh, this message translates to:
+  /// **'均衡器'**
+  String get settingsEqualizer;
+
+  /// Equalizer preset: flat (all bands at 0 dB)
+  ///
+  /// In zh, this message translates to:
+  /// **'平直'**
+  String get eqPresetFlat;
+
+  /// Equalizer preset: pop
+  ///
+  /// In zh, this message translates to:
+  /// **'流行'**
+  String get eqPresetPop;
+
+  /// Equalizer preset: rock
+  ///
+  /// In zh, this message translates to:
+  /// **'摇滚'**
+  String get eqPresetRock;
+
+  /// Equalizer preset: vocal
+  ///
+  /// In zh, this message translates to:
+  /// **'人声'**
+  String get eqPresetVocal;
+
+  /// Equalizer preset: bass boost
+  ///
+  /// In zh, this message translates to:
+  /// **'低音增强'**
+  String get eqPresetBassBoost;
+
+  /// Equalizer preset: treble boost
+  ///
+  /// In zh, this message translates to:
+  /// **'高音增强'**
+  String get eqPresetTrebleBoost;
+
+  /// Equalizer preset: classical
+  ///
+  /// In zh, this message translates to:
+  /// **'古典'**
+  String get eqPresetClassical;
+
+  /// Equalizer preset: jazz
+  ///
+  /// In zh, this message translates to:
+  /// **'爵士'**
+  String get eqPresetJazz;
+
+  /// Equalizer preset: electronic
+  ///
+  /// In zh, this message translates to:
+  /// **'电子'**
+  String get eqPresetElectronic;
+
+  /// Equalizer preset: the user's own band settings
+  ///
+  /// In zh, this message translates to:
+  /// **'自定义'**
+  String get eqPresetCustom;
+
+  /// Now Playing more menu: sleep timer submenu
+  ///
+  /// In zh, this message translates to:
+  /// **'睡眠定时'**
+  String get sleepTimer;
+
+  /// Sleep timer menu item: stop playback after n minutes (abbreviated unit, no plural)
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 分钟'**
+  String sleepMinutes(int n);
+
+  /// Sleep timer menu item: enter a custom number of minutes
+  ///
+  /// In zh, this message translates to:
+  /// **'自定义…'**
+  String get sleepCustom;
+
+  /// Sleep timer menu item: stop when the current track ends
+  ///
+  /// In zh, this message translates to:
+  /// **'放完这首'**
+  String get sleepAfterTrack;
+
+  /// Sleep timer menu item: cancel the timer
+  ///
+  /// In zh, this message translates to:
+  /// **'关闭定时'**
+  String get sleepOff;
+
+  /// Appended to the cancel item: time left, e.g. 23:41
+  ///
+  /// In zh, this message translates to:
+  /// **'剩余 {time}'**
+  String sleepLeft(String time);
+
+  /// Custom sleep timer dialog title
+  ///
+  /// In zh, this message translates to:
+  /// **'定时停止播放'**
+  String get sleepCustomTitle;
+
+  /// Custom sleep timer dialog input placeholder: number of minutes
+  ///
+  /// In zh, this message translates to:
+  /// **'分钟数'**
+  String get sleepCustomPlaceholder;
+
+  /// Custom sleep timer dialog confirm button
+  ///
+  /// In zh, this message translates to:
+  /// **'开始'**
+  String get sleepCustomAction;
+
+  /// Toast after starting the sleep timer
+  ///
+  /// In zh, this message translates to:
+  /// **'{n} 分钟后停止播放'**
+  String toastSleepIn(int n);
+
+  /// Toast after choosing to stop after the current track
+  ///
+  /// In zh, this message translates to:
+  /// **'放完这首后停止播放'**
+  String get toastSleepAfterTrack;
+
+  /// Toast after cancelling the sleep timer
+  ///
+  /// In zh, this message translates to:
+  /// **'已关闭睡眠定时'**
+  String get toastSleepOff;
 }
 
 class _AppLocalizationsDelegate

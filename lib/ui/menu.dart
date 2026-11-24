@@ -20,6 +20,7 @@ class MenuItem {
     this.enabled = true,
     this.danger = false,
     this.sub,
+    this.subGroups,
     this.checked = false,
     this.subSplit = true,
     this.subLoad,
@@ -31,6 +32,9 @@ class MenuItem {
   final bool enabled;
   final bool danger;
   final List<MenuItem>? sub;
+
+  /// A grouped submenu with dividers between groups. When set, [sub] / [subSplit] are ignored.
+  final List<List<MenuItem>>? subGroups;
   final bool checked;
 
   /// Draws a divider between a submenu's first item and the rest ("New playlist" and existing playlists).
@@ -42,7 +46,7 @@ class MenuItem {
   /// Name of a built-in item, which plugins can use to hide it (see [MenuSpec.more]).
   final String? id;
 
-  bool get hasSub => sub != null || subLoad != null;
+  bool get hasSub => sub != null || subGroups != null || subLoad != null;
 }
 
 /// Late menu additions: groups to insert and item ids to hide.
@@ -79,19 +83,26 @@ void closeMenu() {
   menuOwner.value = null;
 }
 
-void showMenu(BuildContext context, Offset global, MenuSpec spec) {
+/// [above]: open the menu above [global] (for buttons on the bottom player bar).
+void showMenu(
+  BuildContext context,
+  Offset global,
+  MenuSpec spec, {
+  bool above = false,
+}) {
   closeMenu();
   final overlay = Overlay.of(context, rootOverlay: true);
   _menuEntry = OverlayEntry(
-    builder: (_) => _MenuLayer(at: global, spec: spec),
+    builder: (_) => _MenuLayer(at: global, spec: spec, above: above),
   );
   overlay.insert(_menuEntry!);
 }
 
 class _MenuLayer extends StatelessWidget {
-  const _MenuLayer({required this.at, required this.spec});
+  const _MenuLayer({required this.at, required this.spec, this.above = false});
   final Offset at;
   final MenuSpec spec;
+  final bool above;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +116,7 @@ class _MenuLayer extends StatelessWidget {
           ),
         ),
         CustomSingleChildLayout(
-          delegate: _MenuPos(at, size),
+          delegate: _MenuPos(at, size, above: above),
           child: Shortcuts(
             shortcuts: const {
               SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
@@ -129,9 +140,10 @@ class _MenuLayer extends StatelessWidget {
 }
 
 class _MenuPos extends SingleChildLayoutDelegate {
-  _MenuPos(this.at, this.size);
+  _MenuPos(this.at, this.size, {this.above = false});
   final Offset at;
   final Size size;
+  final bool above;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints c) =>
@@ -140,8 +152,9 @@ class _MenuPos extends SingleChildLayoutDelegate {
   @override
   Offset getPositionForChild(Size s, Size child) {
     var x = at.dx + 2;
-    var y = at.dy + 2;
+    var y = above ? at.dy - child.height - 2 : at.dy + 2;
     if (x + child.width > size.width - 8) x = at.dx - child.width - 2;
+    if (y < 8) y = 8;
     if (y + child.height > size.height - 8) {
       y = (size.height - 8 - child.height).clamp(8, double.infinity);
     }
@@ -149,7 +162,8 @@ class _MenuPos extends SingleChildLayoutDelegate {
   }
 
   @override
-  bool shouldRelayout(_MenuPos old) => old.at != at || old.size != size;
+  bool shouldRelayout(_MenuPos old) =>
+      old.at != at || old.size != size || old.above != above;
 }
 
 class _MenuPanel extends StatefulWidget {
@@ -340,6 +354,7 @@ class _MenuRow extends StatelessWidget {
         link: link,
         open: subOpen,
         items: item.sub ?? const [],
+        groups: item.subGroups,
         load: item.subLoad,
         split: item.subSplit,
         child: row,
@@ -355,11 +370,13 @@ class _SubMenuHost extends StatefulWidget {
     required this.items,
     required this.child,
     this.split = true,
+    this.groups,
     this.load,
   });
   final LayerLink link;
   final bool open, split;
   final List<MenuItem> items;
+  final List<List<MenuItem>>? groups;
   final Future<List<MenuItem>> Function()? load;
   final Widget child;
 
@@ -370,13 +387,30 @@ class _SubMenuHost extends StatefulWidget {
 class _SubMenuHostState extends State<_SubMenuHost> {
   final _ctrl = OverlayPortalController();
   Future<List<MenuItem>>? _loading;
+  bool _left = false, _up = false;
 
   @override
   void didUpdateWidget(covariant _SubMenuHost oldWidget) {
     super.didUpdateWidget(oldWidget);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      if (widget.open && !_ctrl.isShowing) _ctrl.show();
+      if (widget.open && !_ctrl.isShowing) {
+        // No room on the right (e.g. the menu is at the right edge): open to the left
+        final box = context.findRenderObject() as RenderBox?;
+        if (box != null && box.hasSize) {
+          final at = box.localToGlobal(Offset.zero);
+          final screen = MediaQuery.sizeOf(context);
+          _left = at.dx + box.size.width + 10 + 248 + 8 > screen.width;
+          // No room below (e.g. the menu is at the bottom): open upwards, bottom aligned with this row
+          final g = widget.groups;
+          final rows = g == null
+              ? widget.items.length
+              : g.fold(0, (n, x) => n + x.length);
+          final h = 12 + rows * 34 + (g == null ? 0 : (g.length - 1) * 9);
+          _up = at.dy - 6 + h > screen.height - 8;
+        }
+        _ctrl.show();
+      }
       if (!widget.open && _ctrl.isShowing) _ctrl.hide();
     });
   }
@@ -389,8 +423,9 @@ class _SubMenuHostState extends State<_SubMenuHost> {
         alignment: Alignment.topLeft,
         child: CompositedTransformFollower(
           link: widget.link,
-          targetAnchor: Alignment.topRight,
-          offset: const Offset(10, -6),
+          targetAnchor: Alignment(_left ? -1 : 1, _up ? 1 : -1),
+          followerAnchor: Alignment(_left ? 1 : -1, _up ? 1 : -1),
+          offset: Offset(_left ? -10 : 10, _up ? 6 : -6),
           child: widget.load == null
               ? _panel(widget.items)
               : FutureBuilder<List<MenuItem>>(
@@ -416,7 +451,9 @@ class _SubMenuHostState extends State<_SubMenuHost> {
 
   Widget _panel(List<MenuItem> items) => _MenuPanel(
     spec: MenuSpec(
-      groups: widget.split && items.length > 1
+      groups: widget.groups != null && widget.load == null
+          ? widget.groups!
+          : widget.split && items.length > 1
           ? [items.take(1).toList(), items.skip(1).toList()]
           : [items],
     ),

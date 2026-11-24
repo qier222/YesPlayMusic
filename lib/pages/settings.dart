@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:file_selector/file_selector.dart';
@@ -10,6 +11,8 @@ import '../cache/image_cache.dart';
 import '../l10n/l10n.dart';
 import '../log.dart';
 import '../mcp/config.dart';
+import '../music/eq.dart';
+import '../music/replay_gain.dart';
 import '../music/source.dart';
 import '../plugin/installer.dart';
 import '../plugin/manifest.dart';
@@ -183,6 +186,8 @@ class _GeneralTab extends StatelessWidget {
               _Section(title: l.settingsAppearance, child: const _Appearance()),
               const SizedBox(height: 28),
               _Section(title: l.settingsLyrics, child: const _LyricsCard()),
+              const SizedBox(height: 28),
+              _Section(title: l.settingsStorage, child: const _Storage()),
             ],
           ),
         ),
@@ -193,7 +198,7 @@ class _GeneralTab extends StatelessWidget {
             children: [
               _Section(title: l.settingsPlayback, child: const _Playback()),
               const SizedBox(height: 28),
-              _Section(title: l.settingsStorage, child: const _Storage()),
+              _Section(title: l.settingsEqualizer, child: const _Equalizer()),
             ],
           ),
         ),
@@ -330,28 +335,93 @@ class _Section extends StatelessWidget {
 
 Widget _rule() => Container(height: 1, color: P.line);
 
-Widget _row(double h, String label, Widget right, {String hint = ''}) =>
-    SizedBox(
-      height: h,
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                tx(label, 15, w: w700),
-                if (hint.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  tx(hint, 12, w: w500, c: P.faint),
+Widget _row(
+  double h,
+  String label,
+  Widget right, {
+  String hint = '',
+  VoidCallback? onInfo,
+}) => SizedBox(
+  height: h,
+  child: Row(
+    children: [
+      Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (onInfo == null)
+              tx(label, 15, w: w700)
+            else
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  tx(label, 15, w: w700),
+                  const SizedBox(width: 6),
+                  _InfoDot(onTap: onInfo),
                 ],
-              ],
+              ),
+            if (hint.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              tx(hint, 12, w: w500, c: P.faint),
+            ],
+          ],
+        ),
+      ),
+      right,
+    ],
+  ),
+);
+
+/// Small info icon next to a title; opens an explanation dialog.
+class _InfoDot extends StatelessWidget {
+  const _InfoDot({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Tap(
+    semanticLabel: context.l10n.settingsReplayGain,
+    onTap: onTap,
+    builder: (_, h, _) => Ico('info', size: 16, color: h ? P.ink : P.faint),
+  );
+}
+
+/// Explains the volume normalization modes.
+void _showGainInfo(BuildContext context) {
+  final l = context.l10n;
+  final rows = [
+    (GainMode.smart, l.gainModeSmartInfo),
+    (GainMode.track, l.gainModeTrackInfo),
+    (GainMode.album, l.gainModeAlbumInfo),
+    (GainMode.off, l.gainModeOffInfo),
+  ];
+  showDialogCard(
+    context,
+    title: l.settingsReplayGain,
+    body: (_) => SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          tx(l.settingsReplayGainHint, 14, w: w500, c: P.muted),
+          for (final (m, info) in rows) ...[
+            const SizedBox(height: 18),
+            tx(_gainModeName(l, m), 14, w: w700),
+            const SizedBox(height: 4),
+            Text(
+              info,
+              style: ts(14, w: w500, c: P.muted, h: 22 / 14),
             ),
+          ],
+          const SizedBox(height: 20),
+          Text(
+            l.gainModeNote,
+            style: ts(12, w: w500, c: P.faint, h: 18 / 12),
           ),
-          right,
         ],
       ),
-    );
+    ),
+  );
+}
 
 class _Appearance extends StatelessWidget {
   const _Appearance();
@@ -504,6 +574,7 @@ class _Playback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = context.app;
+    final l = context.l10n;
     return Column(
       children: [
         // Audio quality is decided by each plugin in its own settings, so it's no longer here
@@ -522,6 +593,303 @@ class _Playback extends StatelessWidget {
             Toggle(value: app.island, onChanged: app.setIsland),
             hint: context.l10n.settingsDynamicIslandHint,
           ),
+        _rule(),
+        _row(
+          66,
+          l.settingsReplayGain,
+          onInfo: () => _showGainInfo(context),
+          _Pick(
+            label: _gainModeName(l, app.gainMode),
+            items: [
+              for (final m in GainMode.values)
+                MenuItem(
+                  '',
+                  _gainModeName(l, m),
+                  checked: app.gainMode == m,
+                  onTap: () => app.setGainMode(m),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+String _gainModeName(AppLocalizations l, GainMode m) => switch (m) {
+  GainMode.off => l.gainModeOff,
+  GainMode.track => l.gainModeTrack,
+  GainMode.album => l.gainModeAlbum,
+  GainMode.smart => l.gainModeSmart,
+};
+
+String _eqPresetName(AppLocalizations l, EqPreset p) => switch (p) {
+  EqPreset.flat => l.eqPresetFlat,
+  EqPreset.pop => l.eqPresetPop,
+  EqPreset.rock => l.eqPresetRock,
+  EqPreset.vocal => l.eqPresetVocal,
+  EqPreset.bassBoost => l.eqPresetBassBoost,
+  EqPreset.trebleBoost => l.eqPresetTrebleBoost,
+  EqPreset.classical => l.eqPresetClassical,
+  EqPreset.jazz => l.eqPresetJazz,
+  EqPreset.electronic => l.eqPresetElectronic,
+  EqPreset.custom => l.eqPresetCustom,
+};
+
+/// Pill dropdown (styled like the language picker) that opens the [items] menu.
+/// Long names (German, Russian) are truncated.
+class _Pick extends StatelessWidget {
+  const _Pick({required this.label, required this.items});
+  final String label;
+  final List<MenuItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (ctx) => Tap(
+        onTap: () => menuBelow(ctx, MenuSpec(groups: [items])),
+        builder: (_, h, _) => AnimatedContainer(
+          duration: fast,
+          width: 172,
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: squircle(
+            20,
+            color: P.dark
+                ? (h ? wa(0.12) : wa(0.08))
+                : (h ? ba(0.10) : ba(0.06)),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: tx(label, 13, w: w700, f: F.semi),
+              ),
+              Ico('chevron-down', size: 16, color: P.muted),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Equalizer: preset and toggle, then 10 vertical sliders (dragging shows the 2px
+/// accent edge line, like the volume bar). Faded and locked when off.
+class _Equalizer extends StatelessWidget {
+  const _Equalizer();
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.app;
+    final l = context.l10n;
+    final eq = app.eq;
+    final canReset = eq.enabled && eq.gains.any((g) => g != 0);
+    return Column(
+      children: [
+        SizedBox(
+          height: 72,
+          child: Row(
+            children: [
+              _Pick(
+                label: _eqPresetName(l, eq.preset),
+                items: [
+                  for (final p in EqPreset.values)
+                    MenuItem(
+                      '',
+                      _eqPresetName(l, p),
+                      checked: eq.preset == p,
+                      onTap: () =>
+                          app.setEq(eq.copyWith(preset: p, enabled: true)),
+                    ),
+                ],
+              ),
+              const Spacer(),
+              if (canReset) ...[
+                Tap(
+                  onTap: () => app.setEq(
+                    eq.copyWith(
+                      preset: EqPreset.flat,
+                      custom: eqPresetGains[EqPreset.flat],
+                    ),
+                  ),
+                  builder: (_, h, _) => AnimatedContainer(
+                    duration: fast,
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    alignment: Alignment.center,
+                    decoration: squircle(
+                      16,
+                      color: h ? P.hover : const Color(0x00000000),
+                    ),
+                    child: tx(l.actionReset, 13, w: w700, c: P.muted),
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+              Toggle(
+                value: eq.enabled,
+                onChanged: (v) => app.setEq(eq.copyWith(enabled: v)),
+              ),
+            ],
+          ),
+        ),
+        _rule(),
+        Padding(
+          padding: const EdgeInsets.only(top: 18, bottom: 16),
+          child: AnimatedOpacity(
+            duration: fast,
+            opacity: eq.enabled ? 1 : 0.4,
+            child: IgnorePointer(
+              ignoring: !eq.enabled,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (var i = 0; i < eqBands.length; i++)
+                    _EqBand(
+                      freq: eqBands[i],
+                      db: eq.gains[i],
+                      onChanged: (v) {
+                        // A band changed: switch to custom, starting from the current preset
+                        final g = [...app.eq.gains];
+                        g[i] = v;
+                        app.setEq(
+                          app.eq.copyWith(preset: EqPreset.custom, custom: g),
+                        );
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// One equalizer band: the bar fills up or down from the 0 dB midline. Adjust by
+/// dragging, tapping or scrolling; double-tap resets to 0. Steps of 0.5 dB.
+class _EqBand extends StatefulWidget {
+  const _EqBand({
+    required this.freq,
+    required this.db,
+    required this.onChanged,
+  });
+  final int freq;
+  final double db;
+  final ValueChanged<double> onChanged;
+
+  @override
+  State<_EqBand> createState() => _EqBandState();
+}
+
+class _EqBandState extends State<_EqBand> {
+  bool _drag = false;
+  static const _h = 160.0, _w = 28.0;
+
+  void _setFrom(double dy) {
+    final v = (1 - dy / _h) * 2 * eqMaxDb - eqMaxDb;
+    final snapped = clampEqDb((v * 2).round() / 2);
+    if (snapped != widget.db) widget.onChanged(snapped);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final db = widget.db;
+    final f = widget.freq;
+    final label = db == 0
+        ? '0'
+        : '${db > 0 ? '+' : ''}${db == db.roundToDouble() ? db.toInt() : db}';
+    // 0 dB is in the middle; higher values raise the top of the fill
+    final mid = _h / 2;
+    final edge = mid - db / eqMaxDb * mid;
+    final top = db >= 0 ? edge : mid;
+    final height = (edge - mid).abs();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 40,
+          child: tx(
+            label,
+            12,
+            w: w700,
+            tnum: true,
+            align: TextAlign.center,
+            c: _drag ? P.ink : P.muted,
+          ),
+        ),
+        const SizedBox(height: 8),
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Listener(
+            onPointerSignal: (e) {
+              if (e is PointerScrollEvent) {
+                widget.onChanged(
+                  clampEqDb(db + (e.scrollDelta.dy < 0 ? 0.5 : -0.5)),
+                );
+              }
+            },
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (d) => _setFrom(d.localPosition.dy),
+              onDoubleTap: () => widget.onChanged(0),
+              onVerticalDragStart: (d) {
+                setState(() => _drag = true);
+                _setFrom(d.localPosition.dy);
+              },
+              onVerticalDragUpdate: (d) => _setFrom(d.localPosition.dy),
+              onVerticalDragEnd: (_) => setState(() => _drag = false),
+              onVerticalDragCancel: () => setState(() => _drag = false),
+              child: Container(
+                width: _w,
+                height: _h,
+                decoration: squircle(12, color: P.dark ? wa(0.06) : ba(0.05)),
+                clipBehavior: Clip.antiAlias,
+                child: Stack(
+                  children: [
+                    // 0 dB midline
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: mid - 0.5,
+                      height: 1,
+                      child: Container(color: P.line),
+                    ),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: top,
+                      height: height,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 90),
+                        color: P.dark ? wa(0.18) : ba(0.1),
+                      ),
+                    ),
+                    if (_drag)
+                      Positioned(
+                        left: 6,
+                        right: 6,
+                        top: edge - 1,
+                        height: 2,
+                        child: Container(
+                          decoration: squircle(1, color: accent),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        tx(
+          f >= 1000 ? '${f ~/ 1000}k' : '$f',
+          12,
+          w: w600,
+          tnum: true,
+          c: P.faint,
+        ),
       ],
     );
   }

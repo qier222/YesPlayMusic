@@ -280,3 +280,87 @@ MenuSpec playlistMenu(
     ],
   );
 }
+
+// ───── Sleep timer ─────
+
+/// Durations offered in the menu (minutes).
+const sleepPresets = [15, 30, 45, 60, 90];
+
+/// Time left: 1:05:09, 23:41.
+String formatSleepLeft(Duration d) {
+  final s = d.inSeconds;
+  String two(int n) => n.toString().padLeft(2, '0');
+  final h = s ~/ 3600, m = s % 3600 ~/ 60, sec = s % 60;
+  return h > 0 ? '$h:${two(m)}:${two(sec)}' : '${two(m)}:${two(sec)}';
+}
+
+/// The "more" menu at the bottom right of Now Playing. Other playback options go here too.
+MenuSpec npMoreMenu(BuildContext context) => MenuSpec(
+  groups: [
+    [sleepMenuItem(context)],
+  ],
+);
+
+/// Sleep timer (a submenu, no icons): common durations, custom, after this track;
+/// while it's on, the last group turns it off and shows the time left.
+MenuItem sleepMenuItem(BuildContext context) {
+  final app = context.appRead;
+  final l = context.l10n;
+  void start(int minutes) {
+    app.setSleepTimer(Duration(minutes: minutes));
+    showToast(l.toastSleepIn(minutes));
+  }
+
+  final left = app.sleepLeft;
+  return MenuItem(
+    '',
+    l.sleepTimer,
+    checked: app.sleepOn,
+    subGroups: [
+      [
+        for (final n in sleepPresets)
+          MenuItem('', l.sleepMinutes(n), onTap: () => start(n)),
+        MenuItem(
+          '',
+          l.sleepCustom,
+          onTap: () async {
+            final v = await askName(
+              context,
+              title: l.sleepCustomTitle,
+              placeholder: l.sleepCustomPlaceholder,
+              action: l.sleepCustomAction,
+              icon: 'clock',
+              maxLength: 3,
+            );
+            final n = int.tryParse(v?.trim() ?? '');
+            if (n != null && n > 0) start(n.clamp(1, 720));
+          },
+        ),
+      ],
+      [
+        MenuItem(
+          '',
+          l.sleepAfterTrack,
+          checked: app.sleepAfterTrack,
+          onTap: () {
+            app.setSleepAfterTrack();
+            showToast(l.toastSleepAfterTrack);
+          },
+        ),
+      ],
+      if (app.sleepOn)
+        [
+          MenuItem(
+            '',
+            left == null
+                ? l.sleepOff
+                : '${l.sleepOff} · ${l.sleepLeft(formatSleepLeft(left))}',
+            onTap: () {
+              app.setSleepTimer(null);
+              showToast(l.toastSleepOff);
+            },
+          ),
+        ],
+    ],
+  );
+}

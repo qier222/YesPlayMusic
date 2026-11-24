@@ -1799,4 +1799,116 @@ class AppLocalizationsKo extends AppLocalizations {
   String pluginAutoUpdatedToast(String name, String version) {
     return '「$name」을(를) $version(으)로 업데이트했습니다';
   }
+
+  @override
+  String get settingsReplayGain => '음량 평준화';
+
+  @override
+  String get settingsReplayGainHint => '곡마다 비슷한 크기로 들리게 합니다';
+
+  @override
+  String get gainModeOff => '끔';
+
+  @override
+  String get gainModeTrack => '곡별';
+
+  @override
+  String get gainModeAlbum => '앨범별';
+
+  @override
+  String get gainModeSmart => '스마트';
+
+  @override
+  String get gainModeOffInfo => '곡을 원래 음량 그대로 재생합니다.';
+
+  @override
+  String get gainModeTrackInfo =>
+      '곡마다 비슷한 크기로 맞춥니다. 셔플 재생이나 여러 앨범의 곡이 섞인 플레이리스트에 알맞습니다.';
+
+  @override
+  String get gainModeAlbumInfo =>
+      '앨범 전체를 함께 조정해 곡 사이의 음량 차이가 그대로 유지됩니다. 앨범을 처음부터 끝까지 들을 때 알맞습니다.';
+
+  @override
+  String get gainModeSmartInfo =>
+      '앨범을 순서대로 재생할 때는 \'앨범별\', 그 밖에는(셔플, 플레이리스트, 라디오) \'곡별\'을 사용합니다.';
+
+  @override
+  String get gainModeNote =>
+      '파일에 ReplayGain 태그가 있거나 플러그인이 음량 정보를 제공해야 합니다. 둘 다 없는 곡은 조정하지 않습니다.';
+
+  @override
+  String get settingsEqualizer => '이퀄라이저';
+
+  @override
+  String get eqPresetFlat => '플랫';
+
+  @override
+  String get eqPresetPop => '팝';
+
+  @override
+  String get eqPresetRock => '록';
+
+  @override
+  String get eqPresetVocal => '보컬';
+
+  @override
+  String get eqPresetBassBoost => '저음 강화';
+
+  @override
+  String get eqPresetTrebleBoost => '고음 강화';
+
+  @override
+  String get eqPresetClassical => '클래식';
+
+  @override
+  String get eqPresetJazz => '재즈';
+
+  @override
+  String get eqPresetElectronic => '일렉트로닉';
+
+  @override
+  String get eqPresetCustom => '사용자 지정';
+
+  @override
+  String get sleepTimer => '취침 타이머';
+
+  @override
+  String sleepMinutes(int n) {
+    return '$n분';
+  }
+
+  @override
+  String get sleepCustom => '사용자 지정…';
+
+  @override
+  String get sleepAfterTrack => '이 곡이 끝나면';
+
+  @override
+  String get sleepOff => '타이머 끄기';
+
+  @override
+  String sleepLeft(String time) {
+    return '$time 남음';
+  }
+
+  @override
+  String get sleepCustomTitle => '재생 중지까지';
+
+  @override
+  String get sleepCustomPlaceholder => '분';
+
+  @override
+  String get sleepCustomAction => '시작';
+
+  @override
+  String toastSleepIn(int n) {
+    return '$n분 후 재생을 멈춥니다';
+  }
+
+  @override
+  String get toastSleepAfterTrack => '이 곡이 끝나면 재생을 멈춥니다';
+
+  @override
+  String get toastSleepOff => '취침 타이머를 껐습니다';
 }

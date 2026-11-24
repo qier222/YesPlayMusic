@@ -1799,4 +1799,116 @@ class AppLocalizationsJa extends AppLocalizations {
   String pluginAutoUpdatedToast(String name, String version) {
     return '「$name」を $version にアップデートしました';
   }
+
+  @override
+  String get settingsReplayGain => '音量の均一化';
+
+  @override
+  String get settingsReplayGainHint => '曲ごとの音量差をなくします';
+
+  @override
+  String get gainModeOff => 'オフ';
+
+  @override
+  String get gainModeTrack => '曲ごと';
+
+  @override
+  String get gainModeAlbum => 'アルバムごと';
+
+  @override
+  String get gainModeSmart => 'スマート';
+
+  @override
+  String get gainModeOffInfo => '曲本来の音量のまま再生します。';
+
+  @override
+  String get gainModeTrackInfo =>
+      '曲ごとに同じくらいの音量にそろえます。シャッフル再生や、いろいろなアルバムの曲が入ったプレイリストに向いています。';
+
+  @override
+  String get gainModeAlbumInfo =>
+      'アルバム全体をまとめて調整するので、曲同士の音量の強弱はそのまま保たれます。アルバムを通して聴くときに向いています。';
+
+  @override
+  String get gainModeSmartInfo =>
+      'アルバムを順番に再生するときは「アルバムごと」、それ以外（シャッフル、プレイリスト、ラジオ）は「曲ごと」を使います。';
+
+  @override
+  String get gainModeNote =>
+      'ファイルに ReplayGain タグがあるか、プラグインが音量情報を提供している必要があります。どちらもない曲は調整されません。';
+
+  @override
+  String get settingsEqualizer => 'イコライザ';
+
+  @override
+  String get eqPresetFlat => 'フラット';
+
+  @override
+  String get eqPresetPop => 'ポップ';
+
+  @override
+  String get eqPresetRock => 'ロック';
+
+  @override
+  String get eqPresetVocal => 'ボーカル';
+
+  @override
+  String get eqPresetBassBoost => '低音ブースト';
+
+  @override
+  String get eqPresetTrebleBoost => '高音ブースト';
+
+  @override
+  String get eqPresetClassical => 'クラシック';
+
+  @override
+  String get eqPresetJazz => 'ジャズ';
+
+  @override
+  String get eqPresetElectronic => 'エレクトロニック';
+
+  @override
+  String get eqPresetCustom => 'カスタム';
+
+  @override
+  String get sleepTimer => 'スリープタイマー';
+
+  @override
+  String sleepMinutes(int n) {
+    return '$n 分';
+  }
+
+  @override
+  String get sleepCustom => 'カスタム…';
+
+  @override
+  String get sleepAfterTrack => 'この曲の終わりまで';
+
+  @override
+  String get sleepOff => 'タイマーをオフ';
+
+  @override
+  String sleepLeft(String time) {
+    return '残り $time';
+  }
+
+  @override
+  String get sleepCustomTitle => '再生を停止するまで';
+
+  @override
+  String get sleepCustomPlaceholder => '分';
+
+  @override
+  String get sleepCustomAction => '開始';
+
+  @override
+  String toastSleepIn(int n) {
+    return '$n 分後に再生を停止します';
+  }
+
+  @override
+  String get toastSleepAfterTrack => 'この曲の終わりで再生を停止します';
+
+  @override
+  String get toastSleepOff => 'スリープタイマーをオフにしました';
 }

@@ -1844,4 +1844,118 @@ class AppLocalizationsEs extends AppLocalizations {
   String pluginAutoUpdatedToast(String name, String version) {
     return '«$name» se actualizó a $version';
   }
+
+  @override
+  String get settingsReplayGain => 'Normalización de volumen';
+
+  @override
+  String get settingsReplayGainHint =>
+      'Reproduce todas las canciones al mismo volumen';
+
+  @override
+  String get gainModeOff => 'Desactivada';
+
+  @override
+  String get gainModeTrack => 'Por canción';
+
+  @override
+  String get gainModeAlbum => 'Por álbum';
+
+  @override
+  String get gainModeSmart => 'Inteligente';
+
+  @override
+  String get gainModeOffInfo => 'Las canciones suenan a su volumen original.';
+
+  @override
+  String get gainModeTrackInfo =>
+      'Cada canción se ajusta a un volumen similar. Ideal para el modo aleatorio o listas con canciones de distintos álbumes.';
+
+  @override
+  String get gainModeAlbumInfo =>
+      'Todo el álbum se ajusta a la vez, así se mantiene el contraste de volumen entre sus canciones. Ideal para escuchar álbumes completos.';
+
+  @override
+  String get gainModeSmartInfo =>
+      'Usa «Por álbum» al reproducir un álbum en orden y «Por canción» en los demás casos (aleatorio, listas, radio).';
+
+  @override
+  String get gainModeNote =>
+      'Requiere etiquetas ReplayGain en el archivo o datos de volumen del plugin. Las canciones sin ninguno no se ajustan.';
+
+  @override
+  String get settingsEqualizer => 'Ecualizador';
+
+  @override
+  String get eqPresetFlat => 'Plano';
+
+  @override
+  String get eqPresetPop => 'Pop';
+
+  @override
+  String get eqPresetRock => 'Rock';
+
+  @override
+  String get eqPresetVocal => 'Voz';
+
+  @override
+  String get eqPresetBassBoost => 'Más graves';
+
+  @override
+  String get eqPresetTrebleBoost => 'Más agudos';
+
+  @override
+  String get eqPresetClassical => 'Clásica';
+
+  @override
+  String get eqPresetJazz => 'Jazz';
+
+  @override
+  String get eqPresetElectronic => 'Electrónica';
+
+  @override
+  String get eqPresetCustom => 'Personal';
+
+  @override
+  String get sleepTimer => 'Temporizador';
+
+  @override
+  String sleepMinutes(int n) {
+    return '$n min';
+  }
+
+  @override
+  String get sleepCustom => 'Personalizado…';
+
+  @override
+  String get sleepAfterTrack => 'Al terminar esta canción';
+
+  @override
+  String get sleepOff => 'Desactivar temporizador';
+
+  @override
+  String sleepLeft(String time) {
+    return 'Quedan $time';
+  }
+
+  @override
+  String get sleepCustomTitle => 'Detener la reproducción en';
+
+  @override
+  String get sleepCustomPlaceholder => 'Minutos';
+
+  @override
+  String get sleepCustomAction => 'Iniciar';
+
+  @override
+  String toastSleepIn(int n) {
+    return 'La reproducción se detendrá en $n min';
+  }
+
+  @override
+  String get toastSleepAfterTrack =>
+      'La reproducción se detendrá tras esta canción';
+
+  @override
+  String get toastSleepOff => 'Temporizador desactivado';
 }

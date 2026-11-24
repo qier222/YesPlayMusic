@@ -1840,4 +1840,116 @@ class AppLocalizationsRu extends AppLocalizations {
   String pluginAutoUpdatedToast(String name, String version) {
     return '«$name» обновлён до $version';
   }
+
+  @override
+  String get settingsReplayGain => 'Выравнивание громкости';
+
+  @override
+  String get settingsReplayGainHint => 'Все треки звучат одинаково громко';
+
+  @override
+  String get gainModeOff => 'Выкл.';
+
+  @override
+  String get gainModeTrack => 'По треку';
+
+  @override
+  String get gainModeAlbum => 'По альбому';
+
+  @override
+  String get gainModeSmart => 'Умное';
+
+  @override
+  String get gainModeOffInfo => 'Треки звучат с исходной громкостью.';
+
+  @override
+  String get gainModeTrackInfo =>
+      'Каждый трек приводится к похожей громкости. Подходит для случайного порядка и плейлистов с песнями из разных альбомов.';
+
+  @override
+  String get gainModeAlbumInfo =>
+      'Весь альбом выравнивается целиком, разница громкости между его песнями сохраняется. Подходит для прослушивания альбомов целиком.';
+
+  @override
+  String get gainModeSmartInfo =>
+      'При воспроизведении альбома по порядку — «По альбому», в остальных случаях (случайный порядок, плейлисты, радио) — «По треку».';
+
+  @override
+  String get gainModeNote =>
+      'Нужны теги ReplayGain в файле или данные о громкости от плагина. Треки без них не выравниваются.';
+
+  @override
+  String get settingsEqualizer => 'Эквалайзер';
+
+  @override
+  String get eqPresetFlat => 'Ровный';
+
+  @override
+  String get eqPresetPop => 'Поп';
+
+  @override
+  String get eqPresetRock => 'Рок';
+
+  @override
+  String get eqPresetVocal => 'Вокал';
+
+  @override
+  String get eqPresetBassBoost => 'Басы+';
+
+  @override
+  String get eqPresetTrebleBoost => 'Высокие+';
+
+  @override
+  String get eqPresetClassical => 'Классика';
+
+  @override
+  String get eqPresetJazz => 'Джаз';
+
+  @override
+  String get eqPresetElectronic => 'Электроника';
+
+  @override
+  String get eqPresetCustom => 'Свой';
+
+  @override
+  String get sleepTimer => 'Таймер сна';
+
+  @override
+  String sleepMinutes(int n) {
+    return '$n мин';
+  }
+
+  @override
+  String get sleepCustom => 'Своё…';
+
+  @override
+  String get sleepAfterTrack => 'После этого трека';
+
+  @override
+  String get sleepOff => 'Выключить таймер';
+
+  @override
+  String sleepLeft(String time) {
+    return 'Осталось $time';
+  }
+
+  @override
+  String get sleepCustomTitle => 'Остановить через';
+
+  @override
+  String get sleepCustomPlaceholder => 'Минуты';
+
+  @override
+  String get sleepCustomAction => 'Запустить';
+
+  @override
+  String toastSleepIn(int n) {
+    return 'Остановка через $n мин';
+  }
+
+  @override
+  String get toastSleepAfterTrack => 'Остановка после этого трека';
+
+  @override
+  String get toastSleepOff => 'Таймер сна выключен';
 }

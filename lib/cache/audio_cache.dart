@@ -128,6 +128,8 @@ class AudioDiskCache {
         size: (j['size'] as num?)?.toInt() ?? len,
         peak: (j['peak'] as num?)?.toDouble() ?? 0,
         gain: (j['gain'] as num?)?.toDouble() ?? 0,
+        albumPeak: (j['albumPeak'] as num?)?.toDouble() ?? 0,
+        albumGain: (j['albumGain'] as num?)?.toDouble() ?? 0,
       );
     } catch (_) {
       return null;
@@ -312,6 +314,8 @@ class AudioDiskCache {
         'size': written,
         'peak': stream.peak,
         'gain': stream.gain,
+        'albumPeak': stream.albumPeak,
+        'albumGain': stream.albumGain,
       });
       tmpMeta = File('$metaPath.${task.id}.tmp');
       await tmpMeta.writeAsString(metaText, flush: true);

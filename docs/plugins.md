@@ -440,6 +440,11 @@ type AudioStream = {
   type?: string;              // mp3、flac、m4a…
   quality?: string; bitRate?: number; size?: number;
   headers?: Record<string, string>;  // 播放器请求音频时带的请求头
+  // ReplayGain，给「音量均衡」用。增益是 dB，峰值是线性值（1 = 0 dBFS）。
+  // 文件自己带 ReplayGain 标签时以标签为准；服务器转码会丢标签，这时用这几个。
+  // 没有就不填，应用不做调整。比如 OpenSubsonic 歌曲信息里的 replayGain。
+  gain?: number; peak?: number;           // 单曲
+  albumGain?: number; albumPeak?: number; // 专辑
 };
 
 type Lyrics = {
