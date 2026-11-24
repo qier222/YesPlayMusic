@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# 分别构建 Apple Silicon / Intel 应用，并保留各自的产物。
-# 用法：scripts/build-macos.sh arm64|x64 [flutter build 的其他参数]
+# Store Apple Silicon and Intel builds separately.
+# Usage: scripts/build-macos.sh arm64|x64 [flutter build arguments]
 set -euo pipefail
 
 case "${1:-}" in
@@ -11,8 +11,7 @@ esac
 shift
 cd "$(dirname "$0")/.."
 
-# Flutter 会把这些设置同时传给查询配置和实际构建的 xcodebuild。
-# 禁用仅 ARM 的全局选项，避免它覆盖此处指定的 Intel 架构。
+# Disable Flutter's ARM-only setting so it cannot override an Intel build.
 export FLUTTER_MACOS_ARM64_ONLY=false
 export FLUTTER_XCODE_ARCHS="$target_arch"
 export FLUTTER_XCODE_EXCLUDED_ARCHS="$excluded_arch"
@@ -25,6 +24,14 @@ if [ "$actual_arch" != "$target_arch" ]; then
   echo "架构不符：期望 $target_arch，实际为 $actual_arch" >&2
   exit 1
 fi
+
+find "$app/Contents/Frameworks" -type f -print0 | while IFS= read -r -d '' binary; do
+  if [[ "$(file -b "$binary")" == *Mach-O* ]] && ! lipo "$binary" -verify_arch "$target_arch"; then
+    echo "原生库缺少 $target_arch 架构：$binary" >&2
+    exit 1
+  fi
+done
+
 output="build/macos/packages/$package_arch/YesPlayMusic.app"
 mkdir -p "$(dirname "$output")"
 rm -rf "$output"

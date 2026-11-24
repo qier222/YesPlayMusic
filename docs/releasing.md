@@ -82,6 +82,6 @@ flutter build linux --release     # build/linux/x64/release/bundle/（arm64 机�
 
 Linux 构建需要：`clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`。
 
-macOS 两种架构分别构建，不生成通用包。脚本可以透传 Flutter 构建参数，例如 `scripts/build-macos.sh x64 --build-name 3.0.0 --build-number 30000`。它会检查主程序确实只有指定架构，再把应用复制到独立目录，连续构建时不会覆盖另一个架构的应用。直接运行 `flutter build macos --release` 时默认只构建当前 Mac 的架构。
+macOS 两种架构分别构建，不生成通用包。脚本可以透传 Flutter 构建参数，例如 `scripts/build-macos.sh x64 --build-name 3.0.1 --build-number 30001`。它会检查主程序仅包含指定架构，内置原生库也支持该架构，然后把应用复制到独立目录。直接运行 `flutter build macos --release` 时默认只构建当前 Mac 的架构。
 
-Release 工作流分别生成 `YesPlayMusic-<版本>-macos-arm64.dmg` / `.zip` 和 `YesPlayMusic-<版本>-macos-x64.dmg` / `.zip`。CI 也分别验证这两种构建。
+Release 工作流分别生成 Apple Silicon 的 `-macos.dmg` / `-macos.zip` 和 Intel 的 `-macos-x64.dmg` / `-macos-x64.zip`。两者分别读取 `appcast-macos.xml` 和 `appcast-macos-x64.xml`，不会互相下载对方的更新包。CI 在对应架构的运行器上验证构建。

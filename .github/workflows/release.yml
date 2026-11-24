@@ -48,14 +48,21 @@ jobs:
   macos:
     name: macOS (${{ matrix.arch }})
     needs: version
-    runs-on: macos-15
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
-        arch: [arm64, x64]
+        include:
+          - arch: arm64
+            runner: macos-15
+            suffix: ""
+          - arch: x64
+            runner: macos-15-intel
+            suffix: -x64
     env:
       MACOS_ARCH: ${{ matrix.arch }}
       MACOS_APP: build/macos/packages/${{ matrix.arch }}/YesPlayMusic.app
+      MACOS_SUFFIX: ${{ matrix.suffix }}
       VERSION: ${{ needs.version.outputs.version }}
       BUILD: ${{ needs.version.outputs.build }}
       MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
@@ -117,17 +124,17 @@ jobs:
         run: |
           mkdir -p dist "$RUNNER_TEMP/dmg"
           APP="$MACOS_APP"
-          # 给 Sparkle 用的 zip
-          ditto -c -k --sequesterRsrc --keepParent "$APP" "dist/YesPlayMusic-$VERSION-macos-$MACOS_ARCH.zip"
-          # 给人下载的 dmg：app 和「应用程序」快捷方式
+          # Sparkle update archive.
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "dist/YesPlayMusic-$VERSION-macos${MACOS_SUFFIX}.zip"
+          # Downloadable disk image with the app and Applications shortcut.
           cp -R "$APP" "$RUNNER_TEMP/dmg/"
           ln -s /Applications "$RUNNER_TEMP/dmg/Applications"
-          hdiutil create -volname YesPlayMusic -srcfolder "$RUNNER_TEMP/dmg" -ov -format UDZO "dist/YesPlayMusic-$VERSION-macos-$MACOS_ARCH.dmg"
+          hdiutil create -volname YesPlayMusic -srcfolder "$RUNNER_TEMP/dmg" -ov -format UDZO "dist/YesPlayMusic-$VERSION-macos${MACOS_SUFFIX}.dmg"
 
       - name: Sign and notarize the dmg
         if: env.MACOS_CERTIFICATE_P12 != '' && env.APPLE_API_KEY_P8 != ''
         run: |
-          DMG="dist/YesPlayMusic-$VERSION-macos-$MACOS_ARCH.dmg"
+          DMG="dist/YesPlayMusic-$VERSION-macos${MACOS_SUFFIX}.dmg"
           codesign --force --timestamp --sign "$MACOS_SIGNING_IDENTITY" "$DMG"
           xcrun notarytool submit "$DMG" --key "$RUNNER_TEMP/key.p8" \
             --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" --wait
@@ -136,16 +143,14 @@ jobs:
       - name: Appcast
         if: steps.sparkle.outcome == 'success'
         run: |
-          FEED_SUFFIX=""
-          [ "$MACOS_ARCH" != x64 ] || FEED_SUFFIX="-x64"
-          ZIP="dist/YesPlayMusic-$VERSION-macos-$MACOS_ARCH.zip"
+          ZIP="dist/YesPlayMusic-$VERSION-macos${MACOS_SUFFIX}.zip"
           printf '%s' "$SPARKLE_PRIVATE_KEY" > "$RUNNER_TEMP/sparkle.key"
           SIG=$(macos/Pods/Sparkle/bin/sign_update --ed-key-file "$RUNNER_TEMP/sparkle.key" "$ZIP" | sed -E 's/.*(sparkle:edSignature="[^"]+").*/\1/')
           rm "$RUNNER_TEMP/sparkle.key"
           python3 scripts/release/appcast.py --os macos --version "$VERSION" --build "$BUILD" \
             --url "https://github.com/${{ github.repository }}/releases/download/$TAG/$(basename "$ZIP")" \
             --length "$(stat -f%z "$ZIP")" --signature "$SIG" --min-os 12.0 \
-            --notes "https://github.com/${{ github.repository }}/releases/tag/$TAG" > "dist/appcast-macos${FEED_SUFFIX}.xml"
+            --notes "https://github.com/${{ github.repository }}/releases/tag/$TAG" > "dist/appcast-macos${MACOS_SUFFIX}.xml"
 
       - name: Clean up keychain
         if: always() && env.MACOS_CERTIFICATE_P12 != ''
@@ -288,7 +293,8 @@ jobs:
 
           ---
 
-          - macOS：Apple Silicon 下载 `-macos-arm64.dmg`，Intel 下载 `-macos-x64.dmg`；分别构建，不提供通用包。
+          - macOS：Apple Silicon 下载 `-macos.dmg`，Intel 下载 `-macos-x64.dmg`；分别构建，不提供通用包。
+            For macOS, download `-macos.dmg` for Apple Silicon or `-macos-x64.dmg` for Intel.
           - Windows：下载 `-setup.exe` 安装，或 `-portable.zip` 解压即用。
           - Linux：按架构下载 `-linux-x64.tar.gz` 或 `-linux-arm64.tar.gz`，需要系统装有 libmpv（Debian / Ubuntu：`sudo apt install libmpv2`，较旧的系统是 `libmpv1`）。
           EOF
