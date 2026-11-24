@@ -240,15 +240,18 @@ ul, ol { list-style: none; }
   .nav-right { gap: 20px; }
   .lang .label, .lang .faint, .github .label { display: none; }
   .btn-sm { height: 36px; padding: 0 16px; font-size: 14px; }
-  .hero { padding: 104px 0 80px; }
-  .hero-sub { margin-top: 20px; font-size: 15px; }
-  .hero-sub br { display: none; }
-  .hero-cta { padding: 0 24px; margin-top: 32px; }
+  .hero { padding: 128px 0 88px; }
+  .hero h1 { font-size: clamp(36px, 11.5vw, 48px); line-height: 1.25; }
+  /* "a better-looking" is ~10em wide; 8.6vw keeps it on one line (no break at the hyphen) down to ~290px */
+  :lang(en) .hero h1 { font-size: clamp(28px, 8.6vw, 40px); line-height: 1.15; padding: 0 20px; }
+  .hero-sub { margin-top: 24px; padding: 0 32px; font-size: 15px; line-height: 1.75; text-wrap: balance; }
+  .hero-cta { padding: 0 24px; margin-top: 40px; }
   .hero-cta .btn { flex: 1; height: 52px; }
   .hero-cta .btn-ghost { display: none; }
-  .sources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 8px; margin-top: 32px; text-align: left; font-size: 13px; }
+  /* Two columns so long names like "More plugins" stay on one line */
+  .sources { display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; gap: 18px 40px; margin-top: 44px; text-align: left; font-size: 14px; white-space: nowrap; }
   .sources img, .source-icon { width: 26px; height: 26px; }
-  .carousel { --slide-w: 78vw; --slide-gap: 16px; margin-top: 40px; }
+  .carousel { --slide-w: 78vw; --slide-gap: 16px; margin-top: 56px; }
 
   .section { width: calc(100% - 48px); padding: 56px 0 72px; }
   .section > h2 { margin-top: 12px; }
@@ -257,8 +260,9 @@ ul, ol { list-style: none; }
   .card h3 { font-size: 20px; line-height: 28px; }
   .card h3.wide { font-size: 20px; line-height: 26px; }
   .card > p, .card .ai-text p { font-size: 14px; line-height: 22px; }
-  .card-coverflow { height: 300px; padding-inline: 24px !important; }
-  .coverflow-band { width: 462px; max-width: none; left: -60px; }
+  /* Band flows under the text so longer copy (e.g. English) never sits beneath it */
+  .card-coverflow { height: auto; padding-inline: 24px !important; padding-bottom: 0 !important; }
+  .coverflow-band { position: static; width: 462px; max-width: none; margin: 20px 0 0 calc(50% - 231px); }
   .card-native { height: 284px; }
   .built-with span { font-size: 13px; line-height: 20px; }
   .built-with strong { font-size: 44px; line-height: 48px; }
@@ -274,7 +278,8 @@ ul, ol { list-style: none; }
   .ai-text h3 { margin-top: 0; }
   .chat { padding: 20px 16px 16px; gap: 14px; }
   .card-open { height: 260px; }
-  .platforms { font-size: 30px !important; line-height: 38px !important; }
+  /* Same selector as the desktop rule, otherwise its !important wins */
+  .card-open > p.platforms { font-size: 26px !important; line-height: 34px !important; }
 
   .plugins { width: 100%; padding-inline: 24px; }
   .official { gap: 12px; }
