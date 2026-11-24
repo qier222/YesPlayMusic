@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/gestures.dart';
@@ -53,6 +54,137 @@ class DragWindow extends StatelessWidget {
           _window.invokeMethod('startDrag').catchError((_) => null),
       onDoubleTap: () => _window.invokeMethod('zoom').catchError((_) => null),
       child: child ?? const SizedBox.expand(),
+    );
+  }
+}
+
+/// Window state the native side reports (Windows only).
+final _maximized = ValueNotifier(false);
+final _active = ValueNotifier(true);
+
+void _applyWindowState(Object? state) {
+  if (state is! Map) return;
+  _maximized.value = state['maximized'] == true;
+  _active.value = state['active'] != false;
+}
+
+/// Minimize, maximize and close for Windows, where the app draws its own title bar.
+/// Sized and styled like the Windows 11 caption buttons (46 × 32, Segoe glyphs).
+class WindowButtons extends StatefulWidget {
+  const WindowButtons({super.key});
+
+  static bool get shown => Platform.isWindows;
+
+  @override
+  State<WindowButtons> createState() => _WindowButtonsState();
+}
+
+class _WindowButtonsState extends State<WindowButtons> {
+  @override
+  void initState() {
+    super.initState();
+    _window.setMethodCallHandler((call) async {
+      if (call.method == 'state') _applyWindowState(call.arguments);
+    });
+    _window
+        .invokeMethod('state')
+        .then(_applyWindowState)
+        .catchError((_) => null);
+  }
+
+  @override
+  void dispose() {
+    _window.setMethodCallHandler(null);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return ListenableBuilder(
+      listenable: Listenable.merge([_maximized, _active]),
+      builder: (context, _) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _CaptionButton(
+            glyph: '\uE921',
+            label: l.windowMinimize,
+            onTap: () => _window.invokeMethod('minimize'),
+          ),
+          _CaptionButton(
+            glyph: _maximized.value ? '\uE923' : '\uE922',
+            label: _maximized.value ? l.windowRestore : l.windowMaximize,
+            onTap: () => _window.invokeMethod('zoom'),
+          ),
+          _CaptionButton(
+            glyph: '\uE8BB',
+            label: l.actionClose,
+            close: true,
+            onTap: () => _window.invokeMethod('close'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CaptionButton extends StatelessWidget {
+  const _CaptionButton({
+    required this.glyph,
+    required this.label,
+    required this.onTap,
+    this.close = false,
+  });
+
+  final String glyph, label;
+  final VoidCallback onTap;
+  final bool close;
+
+  /// Windows 11 close button red.
+  static const _red = Color(0xFFC42B1C);
+
+  @override
+  Widget build(BuildContext context) {
+    return Tap(
+      semanticLabel: label,
+      cursor: SystemMouseCursors.basic,
+      onTap: onTap,
+      builder: (_, hover, pressed) {
+        final Color bg;
+        if (close) {
+          bg = pressed
+              ? _red.withValues(alpha: 0.9)
+              : hover
+              ? _red
+              : const Color(0x00000000);
+        } else {
+          bg = P.ink.withValues(
+            alpha: pressed
+                ? 0.04
+                : hover
+                ? 0.08
+                : 0,
+          );
+        }
+        final fg = close && (hover || pressed)
+            ? const Color(0xFFFFFFFF)
+            : P.ink.withValues(alpha: _active.value ? 1 : 0.4);
+        return Container(
+          width: 46,
+          height: 32,
+          color: bg,
+          alignment: Alignment.center,
+          child: Text(
+            glyph,
+            style: TextStyle(
+              fontFamily: 'Segoe Fluent Icons',
+              fontFamilyFallback: const ['Segoe MDL2 Assets'],
+              fontSize: 10,
+              color: fg,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -119,6 +251,9 @@ class Shell extends StatelessWidget {
             bottom: app.npOpen ? 116 : (app.hasQueue ? 92 : 32),
             child: const ToastView(),
           ),
+          // Windows has no system title bar; the caption buttons sit above every page
+          if (WindowButtons.shown)
+            const Positioned(top: 0, right: 0, child: WindowButtons()),
         ],
       ),
     );

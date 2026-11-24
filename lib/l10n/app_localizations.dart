@@ -243,6 +243,24 @@ abstract class AppLocalizations {
   /// **'关闭'**
   String get actionClose;
 
+  /// Windows title bar button
+  ///
+  /// In zh, this message translates to:
+  /// **'最小化'**
+  String get windowMinimize;
+
+  /// Windows title bar button
+  ///
+  /// In zh, this message translates to:
+  /// **'最大化'**
+  String get windowMaximize;
+
+  /// Windows title bar button, shown instead of Maximize when the window is maximized
+  ///
+  /// In zh, this message translates to:
+  /// **'向下还原'**
+  String get windowRestore;
+
   /// No description provided for @actionCancel.
   ///
   /// In zh, this message translates to:

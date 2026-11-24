@@ -76,6 +76,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get actionClose => '닫기';
 
   @override
+  String get windowMinimize => '최소화';
+
+  @override
+  String get windowMaximize => '최대화';
+
+  @override
+  String get windowRestore => '이전 크기로 복원';
+
+  @override
   String get actionCancel => '취소';
 
   @override

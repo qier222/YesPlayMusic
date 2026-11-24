@@ -23,6 +23,18 @@
   "actionMore": "更多",
   "actionBack": "返回",
   "actionClose": "关闭",
+  "windowMinimize": "最小化",
+  "@windowMinimize": {
+    "description": "Windows title bar button"
+  },
+  "windowMaximize": "最大化",
+  "@windowMaximize": {
+    "description": "Windows title bar button"
+  },
+  "windowRestore": "向下还原",
+  "@windowRestore": {
+    "description": "Windows title bar button, shown instead of Maximize when the window is maximized"
+  },
   "actionCancel": "取消",
   "actionConfirm": "确定",
   "actionClear": "清除",

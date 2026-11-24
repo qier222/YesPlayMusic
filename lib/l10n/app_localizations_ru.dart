@@ -76,6 +76,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get actionClose => 'Закрыть';
 
   @override
+  String get windowMinimize => 'Свернуть';
+
+  @override
+  String get windowMaximize => 'Развернуть';
+
+  @override
+  String get windowRestore => 'Свернуть в окно';
+
+  @override
   String get actionCancel => 'Отмена';
 
   @override
