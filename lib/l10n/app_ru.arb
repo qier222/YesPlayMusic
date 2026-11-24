@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "Переключено на «{name}»",
   "sourceFolderAlreadyScanned": "Эта папка уже сканируется",
   "sourceNoMusicFound": "Музыка не найдена",
+  "sourceScanningCount": "Сканирование… {count, plural, =1{1 трек} few{{count} трека} many{{count} треков} other{{count} трека}}",
+  "sourceFoldersUnreadable": "{count, plural, =1{Не удалось прочитать 1 папку, она пропущена} few{Не удалось прочитать {count} папки, они пропущены} many{Не удалось прочитать {count} папок, они пропущены} other{Не удалось прочитать {count} папки, они пропущены}}",
+  "sourceFolderUnreadable": "Не читается, пропущена",
+  "sourceCancelScan": "Отменить сканирование",
   "sourceNotFound": "Источник музыки не найден",
 
   "pluginsLoadedToast": "Загружено плагинов: {count}",

@@ -320,6 +320,16 @@ class AppState extends ChangeNotifier {
   /// Local music is being scanned. While scanning, an empty library doesn't show the empty state, avoiding a flash at launch.
   bool scanning = false;
 
+  /// Files read so far by the running scan.
+  int scanProgress = 0;
+
+  /// Music folders the last scan skipped because they couldn't be read or stopped responding.
+  List<String> unreadableFolders = const [];
+
+  /// Bumped by every [loadLibrary]; a scan whose number is no longer current drops its result.
+  int _scanGen = 0;
+  LocalSource? _scanSrc;
+
   /// Folders to scan for local music, stored in prefs; [defaultMusicFolders] when never set.
   late List<String> musicFolders = [
     for (final x
@@ -348,28 +358,55 @@ class AppState extends ChangeNotifier {
 
   /// "Rescan" in the empty state: shows a message if it's still empty after scanning.
   Future<void> rescanLibrary() async {
-    await loadLibrary();
-    if (!hasLibrary) showToast(L.sourceNoMusicFound);
+    if (await loadLibrary() && !hasLibrary) showToast(L.sourceNoMusicFound);
   }
 
+  /// Stops the running scan; the library keeps what it had before.
+  void cancelScan() => _scanSrc?.cancelScan();
+
   /// Scans local music and builds the shelf; when there are songs, replaces the queue with the first album (without playing).
-  Future<void> loadLibrary({List<String>? folders}) async {
+  /// A new call supersedes a running one. Returns false when the scan was cancelled or superseded.
+  Future<bool> loadLibrary({List<String>? folders}) async {
+    final gen = ++_scanGen;
+    _scanSrc?.cancelScan();
     scanning = true;
+    scanProgress = 0;
     notifyListeners();
     try {
-      await _scanLocal(folders);
+      return await _scanLocal(folders, gen);
+    } on ScanCancelled {
+      return false;
     } finally {
-      scanning = false;
-      notifyListeners();
+      if (gen == _scanGen) {
+        _scanSrc = null;
+        scanning = false;
+        notifyListeners();
+      }
     }
   }
 
-  Future<void> _scanLocal(List<String>? folders) async {
+  Future<bool> _scanLocal(List<String>? folders, int gen) async {
     final src = LocalSource(
       folders: folders ?? musicFolders,
       cacheDir: _cacheDir(),
     );
-    await src.scan();
+    _scanSrc = src;
+    final sinceNotify = Stopwatch()..start();
+    await src.scan(
+      onProgress: (n) {
+        scanProgress = n;
+        // Rebuilding the app for every file is wasteful on big libraries
+        if (sinceNotify.elapsedMilliseconds >= 200) {
+          sinceNotify.reset();
+          notifyListeners();
+        }
+      },
+    );
+    if (gen != _scanGen) return false;
+    unreadableFolders = src.unreadable;
+    if (src.unreadable.isNotEmpty) {
+      showToast(L.sourceFoldersUnreadable(src.unreadable.length));
+    }
     if (local != null) await sources.remove(local!.id);
     local = src;
     sources.add(src);
@@ -400,6 +437,7 @@ class AppState extends ChangeNotifier {
       final c = a.artist.toLowerCase().compareTo(b.artist.toLowerCase());
       return c != 0 ? c : a.year.compareTo(b.year);
     });
+    if (gen != _scanGen) return false;
     libraryAlbums = out;
     _libraries.remove('local');
     await CoverColors.instance.preload(out.map((a) => a.cover));
@@ -408,6 +446,7 @@ class AppState extends ChangeNotifier {
       if (!out.any((a) => a.id == shelfId)) shelfId = out.first.id;
     }
     notifyListeners();
+    return true;
   }
 
   // ───── Plugins ─────

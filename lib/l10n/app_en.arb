@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "Switched to \"{name}\"",
   "sourceFolderAlreadyScanned": "This folder is already being scanned",
   "sourceNoMusicFound": "No music found",
+  "sourceScanningCount": "Scanning… {count, plural, =1{1 song} other{{count} songs}}",
+  "sourceFoldersUnreadable": "{count, plural, =1{1 folder couldn't be read and was skipped} other{{count} folders couldn't be read and were skipped}}",
+  "sourceFolderUnreadable": "Couldn't be read, skipped",
+  "sourceCancelScan": "Cancel Scan",
   "sourceNotFound": "Music source not found",
 
   "pluginsLoadedToast": "Loaded {count} plugins",

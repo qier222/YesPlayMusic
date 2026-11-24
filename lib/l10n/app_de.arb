@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "Gewechselt zu „{name}“",
   "sourceFolderAlreadyScanned": "Dieser Ordner wird bereits gescannt",
   "sourceNoMusicFound": "Keine Musik gefunden",
+  "sourceScanningCount": "Wird gescannt… {count, plural, =1{1 Titel} other{{count} Titel}}",
+  "sourceFoldersUnreadable": "{count, plural, =1{1 Ordner konnte nicht gelesen werden und wurde übersprungen} other{{count} Ordner konnten nicht gelesen werden und wurden übersprungen}}",
+  "sourceFolderUnreadable": "Nicht lesbar, übersprungen",
+  "sourceCancelScan": "Scan abbrechen",
   "sourceNotFound": "Musikquelle nicht gefunden",
 
   "pluginsLoadedToast": "{count} Plugins geladen",

@@ -125,13 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             const SizedBox(width: 10),
                             // Long labels (e.g. Russian) ellipsize instead of overflowing
                             Flexible(
-                              child: tx(
-                                it.$2,
-                                15,
-                                w: w500,
-                                f: F.semi,
-                                c: fg,
-                              ),
+                              child: tx(it.$2, 15, w: w500, f: F.semi, c: fg),
                             ),
                           ],
                         ),
@@ -1424,7 +1418,7 @@ class _LocalCard extends StatelessWidget {
       status: (
         icon: 'folder',
         text: app.scanning
-            ? l.sourceScanning
+            ? scanningLabel(app)
             : app.musicFolders.isEmpty
             ? l.sourceNoFolders
             : l.sourceFolderAlbums(app.musicFolders.length, albums),
@@ -1439,7 +1433,10 @@ class _LocalCard extends StatelessWidget {
               l.sourceAddFolderEllipsis,
               onTap: () => _addFolder(app),
             ),
-            MenuItem('repeat', l.sourceRescan, onTap: app.rescanLibrary),
+            if (app.scanning)
+              MenuItem('close', l.sourceCancelScan, onTap: app.cancelScan)
+            else
+              MenuItem('repeat', l.sourceRescan, onTap: app.rescanLibrary),
           ],
         ],
       ),
@@ -1494,6 +1491,18 @@ void _showLocalSettings(BuildContext context) {
                                     tx(f, 13, w: w500, c: h ? P.ink : P.muted),
                               ),
                             ),
+                            if (!app.scanning &&
+                                app.unreadableFolders.contains(f)) ...[
+                              const SizedBox(width: 12),
+                              Flexible(
+                                child: tx(
+                                  l.sourceFolderUnreadable,
+                                  12,
+                                  w: w500,
+                                  c: warnColor,
+                                ),
+                              ),
+                            ],
                             const SizedBox(width: 12),
                             IconBtn(
                               'close',
@@ -1525,6 +1534,14 @@ void _showLocalSettings(BuildContext context) {
                   enabled: !app.scanning,
                   onTap: app.rescanLibrary,
                 ),
+                if (app.scanning) ...[
+                  const SizedBox(width: 8),
+                  Btn(
+                    label: l.sourceCancelScan,
+                    size: BtnSize.s,
+                    onTap: app.cancelScan,
+                  ),
+                ],
               ],
             ),
           ],

@@ -538,10 +538,15 @@ List<({String id, String name})> musicSources(AppState app) => [
       (id: s.id, name: s.tr(s.info.name)),
 ];
 
+/// "Scanning…", with the number of files read once there is one.
+String scanningLabel(AppState app) => app.scanProgress > 0
+    ? L.sourceScanningCount(app.scanProgress)
+    : L.sourceScanning;
+
 /// The small line under the source name.
 ({String text, Color? color}) sourceLine(AppState app, String id) {
   if (id == 'local') {
-    if (app.scanning) return (text: L.sourceScanning, color: null);
+    if (app.scanning) return (text: scanningLabel(app), color: null);
     if (app.musicFolders.isEmpty) return (text: L.sourceNoFolders, color: null);
     return (text: L.countAlbums(app.libraryAlbums.length), color: null);
   }

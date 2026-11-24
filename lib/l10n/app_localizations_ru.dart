@@ -585,6 +585,46 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sourceNoMusicFound => 'Музыка не найдена';
 
   @override
+  String sourceScanningCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString трека',
+      many: '$countString треков',
+      few: '$countString трека',
+      one: '1 трек',
+    );
+    return 'Сканирование… $_temp0';
+  }
+
+  @override
+  String sourceFoldersUnreadable(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Не удалось прочитать $countString папки, они пропущены',
+      many: 'Не удалось прочитать $countString папок, они пропущены',
+      few: 'Не удалось прочитать $countString папки, они пропущены',
+      one: 'Не удалось прочитать 1 папку, она пропущена',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sourceFolderUnreadable => 'Не читается, пропущена';
+
+  @override
+  String get sourceCancelScan => 'Отменить сканирование';
+
+  @override
   String get sourceNotFound => 'Источник музыки не найден';
 
   @override

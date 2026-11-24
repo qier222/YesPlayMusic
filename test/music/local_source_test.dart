@@ -234,6 +234,60 @@ void main() {
     },
   );
 
+  // Progress counts every file read; a missing folder is just empty, not unreadable.
+  test('reports progress and treats missing folders as empty', () async {
+    final seen = <int>[];
+    final s = LocalSource(
+      folders: [music, p.join(tmp.path, 'nope')],
+      cacheDir: p.join(tmp.path, 'c3'),
+    );
+    await s.scan(onProgress: seen.add);
+    expect(seen, [1, 2, 3]);
+    expect(s.trackCount, 3);
+    expect(s.unreadable, isEmpty);
+  });
+
+  // A folder that can't be listed is skipped and reported; the other folders still load.
+  test('skips unreadable folders', () async {
+    final locked = Directory(p.join(tmp.path, 'locked'))..createSync();
+    wav(p.join(locked.path, 'x.wav'));
+    Process.runSync('chmod', ['000', locked.path]);
+    addTearDown(() => Process.runSync('chmod', ['755', locked.path]));
+    final s = LocalSource(
+      folders: [music, locked.path],
+      cacheDir: p.join(tmp.path, 'c4'),
+    );
+    await s.scan();
+    expect(s.trackCount, 3);
+    expect(s.unreadable, [locked.path]);
+  }, skip: Platform.isWindows ? 'needs POSIX permissions' : null);
+
+  // A read that never returns (here a FIFO, like a stuck network drive) trips the watchdog.
+  test(
+    'skips folders that stop making progress',
+    () async {
+      final stuck = Directory(p.join(tmp.path, 'stuck'))..createSync();
+      Process.runSync('mkfifo', [p.join(stuck.path, 'hang.wav')]);
+      final s = LocalSource(
+        folders: [music, stuck.path],
+        cacheDir: p.join(tmp.path, 'c5'),
+      );
+      await s.scan(stall: const Duration(seconds: 1));
+      expect(s.trackCount, 3);
+      expect(s.unreadable, [stuck.path]);
+    },
+    skip: Platform.isWindows ? 'needs mkfifo' : null,
+    timeout: const Timeout(Duration(seconds: 20)),
+  );
+
+  // Cancelling throws and leaves the previous index alone.
+  test('cancel stops the scan and keeps the old index', () async {
+    final f = src.scan();
+    src.cancelScan();
+    await expectLater(f, throwsA(isA<ScanCancelled>()));
+    expect(src.trackCount, 3);
+  });
+
   // Regression: when the hash's high bit was 1, cache file names used to contain a minus sign.
   test('fnv1a is unsigned fixed-width hex', () {
     for (final k in ['', 'a', 'Bohemian Rhapsody', '晚風']) {

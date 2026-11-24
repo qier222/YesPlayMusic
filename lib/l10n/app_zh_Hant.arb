@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "已切換至「{name}」",
   "sourceFolderAlreadyScanned": "此資料夾已在掃描範圍內",
   "sourceNoMusicFound": "找不到音樂",
+  "sourceScanningCount": "正在掃描… 已讀取 {count} 首",
+  "sourceFoldersUnreadable": "有 {count} 個資料夾無法讀取，已略過",
+  "sourceFolderUnreadable": "無法讀取，已略過",
+  "sourceCancelScan": "取消掃描",
   "sourceNotFound": "找不到此音樂來源",
 
   "pluginsLoadedToast": "已載入 {count} 個外掛",

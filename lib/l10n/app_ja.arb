@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "「{name}」に切り替えました",
   "sourceFolderAlreadyScanned": "このフォルダは既にスキャン対象です",
   "sourceNoMusicFound": "音楽が見つかりませんでした",
+  "sourceScanningCount": "スキャン中… {count} 曲",
+  "sourceFoldersUnreadable": "{count} 個のフォルダを読み取れなかったため、スキップしました",
+  "sourceFolderUnreadable": "読み取れないためスキップしました",
+  "sourceCancelScan": "スキャンをキャンセル",
   "sourceNotFound": "この音楽ソースが見つかりません",
 
   "pluginsLoadedToast": "{count} 個のプラグインを読み込みました",

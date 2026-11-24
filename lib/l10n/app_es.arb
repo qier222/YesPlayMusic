@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "Cambiado a «{name}»",
   "sourceFolderAlreadyScanned": "Esta carpeta ya está incluida en el escaneo",
   "sourceNoMusicFound": "No se encontró música",
+  "sourceScanningCount": "Escaneando… {count, plural, =1{1 canción} other{{count} canciones}}",
+  "sourceFoldersUnreadable": "{count, plural, =1{No se pudo leer 1 carpeta y se omitió} other{No se pudieron leer {count} carpetas y se omitieron}}",
+  "sourceFolderUnreadable": "No se pudo leer, omitida",
+  "sourceCancelScan": "Cancelar escaneo",
   "sourceNotFound": "Fuente de música no encontrada",
 
   "pluginsLoadedToast": "{count} plugins cargados",

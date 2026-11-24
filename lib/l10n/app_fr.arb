@@ -193,6 +193,10 @@
   "sourceSwitchedTo": "Basculé sur « {name} »",
   "sourceFolderAlreadyScanned": "Ce dossier est déjà inclus dans l'analyse",
   "sourceNoMusicFound": "Aucune musique trouvée",
+  "sourceScanningCount": "Analyse… {count, plural, =1{1 titre} other{{count} titres}}",
+  "sourceFoldersUnreadable": "{count, plural, =1{1 dossier illisible a été ignoré} other{{count} dossiers illisibles ont été ignorés}}",
+  "sourceFolderUnreadable": "Illisible, ignoré",
+  "sourceCancelScan": "Annuler l'analyse",
   "sourceNotFound": "Source musicale introuvable",
 
   "pluginsLoadedToast": "{count} plugins chargés",

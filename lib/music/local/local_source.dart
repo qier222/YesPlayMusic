@@ -5,6 +5,7 @@
 //   album  = 'al:' + album artist + '\x01' + album name (both case-folded)
 //   artist = 'ar:' + artist name (folded)
 
+import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -100,10 +101,51 @@ class LocalSource extends Source {
   List<LocalEntry> get entries => _entries;
   int get trackCount => _entries.length;
 
-  /// Rescans all folders. Reading tags is synchronous IO, so it runs in a background isolate.
-  Future<void> scan() async {
-    final folders = List.of(this.folders), cacheDir = this.cacheDir;
-    final list = await Isolate.run(() => scanFolders(folders, cacheDir));
+  /// How long a folder may go without progress before its scan is abandoned. Calls like listing a
+  /// directory or reading a file are synchronous, so on a stuck network drive they can block forever.
+  static const stallTimeout = Duration(seconds: 30);
+
+  final _cancel = Completer<void>();
+
+  /// Folders skipped by the last [scan] because they couldn't be read or stopped making progress.
+  List<String> unreadable = const [];
+
+  /// Stops a running [scan]: it throws [ScanCancelled] and the index stays as it was.
+  void cancelScan() {
+    if (!_cancel.isCompleted) _cancel.complete();
+  }
+
+  /// Rescans all folders. Reading tags is synchronous IO, so each folder runs in its own
+  /// background isolate. A folder that fails or stalls for [stall] is skipped and listed in
+  /// [unreadable]; the others still make it into the index. [onProgress] gets the number of files read so far.
+  Future<void> scan({
+    void Function(int files)? onProgress,
+    Duration stall = stallTimeout,
+  }) async {
+    final folders = {for (final f in this.folders) p.normalize(f)};
+    var done = 0;
+    final results = await Future.wait([
+      for (final folder in folders)
+        _scanFolder(folder, cacheDir, stall, _cancel.future, () {
+          onProgress?.call(++done);
+        }),
+    ]);
+    if (_cancel.isCompleted) throw ScanCancelled();
+    final failed = <String>[];
+    final seen = <String>{};
+    final list = <LocalEntry>[];
+    for (final (i, folder) in folders.indexed) {
+      final r = results[i];
+      if (r == null) {
+        failed.add(folder);
+        continue;
+      }
+      for (final e in r) {
+        if (seen.add(e.path)) list.add(e);
+      }
+    }
+    _fillAlbumArtists(list);
+    unreadable = failed;
     _index(list);
   }
 
@@ -328,36 +370,119 @@ class LocalSource extends Source {
   }
 }
 
-// ───────────── Scanning (runs in a background isolate) ─────────────
+// ───────────── Scanning (runs in background isolates) ─────────────
 
-/// Scans folders and returns every recognised audio file. Files whose tags can't be read are included too, falling back to the file name.
-List<LocalEntry> scanFolders(List<String> folders, String cacheDir) {
-  final out = <LocalEntry>[];
-  final seen = <String>{};
+/// Thrown by [LocalSource.scan] after [LocalSource.cancelScan].
+class ScanCancelled implements Exception {}
+
+/// Worker → main isolate: the finished folder.
+class _Done {
+  const _Done(this.entries);
+  final List<LocalEntry> entries;
+}
+
+/// Scans one folder in its own isolate. Returns null when it fails or makes no progress for [stall];
+/// the isolate is killed then, since a call blocked on IO can't be interrupted any other way.
+Future<List<LocalEntry>?> _scanFolder(
+  String folder,
+  String cacheDir,
+  Duration stall,
+  Future<void> cancel,
+  void Function() onFile,
+) async {
+  final port = ReceivePort();
+  final result = Completer<List<LocalEntry>?>();
+  Isolate? iso;
+  Timer? watchdog;
+  void finish(List<LocalEntry>? r) {
+    if (result.isCompleted) return;
+    watchdog?.cancel();
+    port.close();
+    iso?.kill(priority: Isolate.immediate);
+    result.complete(r);
+  }
+
+  void arm() {
+    watchdog?.cancel();
+    watchdog = Timer(stall, () => finish(null));
+  }
+
+  unawaited(cancel.then((_) => finish(null)));
+  arm();
+  port.listen((msg) {
+    switch (msg) {
+      case _Done(:final entries):
+        finish(entries);
+      case 1:
+        onFile();
+        arm();
+      case 0:
+        arm();
+      default:
+        finish(null); // uncaught error (a [message, stack] list) or exit without a result (null)
+    }
+  });
+  try {
+    iso = await Isolate.spawn(
+      _folderWorker,
+      (port.sendPort, folder, cacheDir),
+      onError: port.sendPort,
+      onExit: port.sendPort,
+    );
+    if (result.isCompleted) iso.kill(priority: Isolate.immediate);
+  } catch (_) {
+    finish(null);
+  }
+  return result.future;
+}
+
+/// Runs in the worker isolate. Sends 0 for each directory listed and 1 for each file read
+/// (both reset the watchdog), then [_Done] with every recognised audio file. Files whose tags
+/// can't be read are included too, falling back to the file name.
+void _folderWorker((SendPort, String, String) args) {
+  final (out, folder, cacheDir) = args;
+  final root = Directory(folder);
+  // A missing folder (e.g. an unplugged drive or a default that doesn't exist) is just empty.
+  if (!root.existsSync()) return out.send(const _Done([]));
+  final files = <File>[];
+  _walk(root, files, () => out.send(0), isRoot: true);
+  files.sort((a, b) => a.path.compareTo(b.path));
   final folderCovers = <String, String>{};
   final tagCovers = <String, String>{}; // album key → extracted cover
-  for (final folder in folders) {
-    final dir = Directory(folder);
-    if (!dir.existsSync()) continue;
-    final files =
-        dir
-            .listSync(recursive: true, followLinks: false)
-            .whereType<File>()
-            .where(
-              (f) => audioTypes.containsKey(p.extension(f.path).toLowerCase()),
-            )
-            // MacOS resource fork files
-            .where((f) => !p.basename(f.path).startsWith('._'))
-            .toList()
-          ..sort((a, b) => a.path.compareTo(b.path));
-    for (final f in files) {
-      final path = p.normalize(f.absolute.path);
-      if (!seen.add(path)) continue;
-      out.add(_entry(f, path, cacheDir, folderCovers, tagCovers));
+  final entries = <LocalEntry>[];
+  for (final f in files) {
+    final path = p.normalize(f.absolute.path);
+    entries.add(_entry(f, path, cacheDir, folderCovers, tagCovers));
+    out.send(1);
+  }
+  out.send(_Done(entries));
+}
+
+/// Collects audio files under [dir]. An unreadable subfolder is skipped; an unreadable root throws.
+void _walk(
+  Directory dir,
+  List<File> out,
+  void Function() onDir, {
+  bool isRoot = false,
+}) {
+  final List<FileSystemEntity> items;
+  try {
+    items = dir.listSync(followLinks: false);
+  } on FileSystemException {
+    if (isRoot) rethrow;
+    return;
+  }
+  onDir();
+  for (final e in items) {
+    if (e is Directory) {
+      _walk(e, out, onDir);
+    } else if (e is File &&
+        audioTypes.containsKey(p.extension(e.path).toLowerCase()) &&
+        // macOS resource fork files
+        !p.basename(e.path).startsWith('._')) {
+      out.add(e);
     }
   }
-  _fillAlbumArtists(out);
-  return out;
 }
 
 /// The folder an album lives in. Per-disc subfolders like CD1 or Disc 2 count as the parent,

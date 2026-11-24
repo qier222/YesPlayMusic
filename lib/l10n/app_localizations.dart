@@ -1203,6 +1203,30 @@ abstract class AppLocalizations {
   /// **'没有找到音乐'**
   String get sourceNoMusicFound;
 
+  /// Scan progress: number of audio files read so far
+  ///
+  /// In zh, this message translates to:
+  /// **'正在扫描… 已读取 {count} 首'**
+  String sourceScanningCount(int count);
+
+  /// Toast after a scan: music folders that failed or stopped responding were skipped
+  ///
+  /// In zh, this message translates to:
+  /// **'{count} 个文件夹无法读取，已跳过'**
+  String sourceFoldersUnreadable(int count);
+
+  /// Shown under a music folder the last scan skipped
+  ///
+  /// In zh, this message translates to:
+  /// **'无法读取，已跳过'**
+  String get sourceFolderUnreadable;
+
+  /// Button that stops a running local music scan
+  ///
+  /// In zh, this message translates to:
+  /// **'取消扫描'**
+  String get sourceCancelScan;
+
   /// No description provided for @sourceNotFound.
   ///
   /// In zh, this message translates to:

@@ -582,6 +582,30 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sourceNoMusicFound => '音楽が見つかりませんでした';
 
   @override
+  String sourceScanningCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return 'スキャン中… $countString 曲';
+  }
+
+  @override
+  String sourceFoldersUnreadable(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString 個のフォルダを読み取れなかったため、スキップしました';
+  }
+
+  @override
+  String get sourceFolderUnreadable => '読み取れないためスキップしました';
+
+  @override
+  String get sourceCancelScan => 'スキャンをキャンセル';
+
+  @override
   String get sourceNotFound => 'この音楽ソースが見つかりません';
 
   @override

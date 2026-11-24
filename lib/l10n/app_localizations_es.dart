@@ -588,6 +588,42 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sourceNoMusicFound => 'No se encontró música';
 
   @override
+  String sourceScanningCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString canciones',
+      one: '1 canción',
+    );
+    return 'Escaneando… $_temp0';
+  }
+
+  @override
+  String sourceFoldersUnreadable(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'No se pudieron leer $countString carpetas y se omitieron',
+      one: 'No se pudo leer 1 carpeta y se omitió',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sourceFolderUnreadable => 'No se pudo leer, omitida';
+
+  @override
+  String get sourceCancelScan => 'Cancelar escaneo';
+
+  @override
   String get sourceNotFound => 'Fuente de música no encontrada';
 
   @override

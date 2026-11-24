@@ -582,6 +582,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sourceNoMusicFound => '没有找到音乐';
 
   @override
+  String sourceScanningCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '正在扫描… 已读取 $countString 首';
+  }
+
+  @override
+  String sourceFoldersUnreadable(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString 个文件夹无法读取，已跳过';
+  }
+
+  @override
+  String get sourceFolderUnreadable => '无法读取，已跳过';
+
+  @override
+  String get sourceCancelScan => '取消扫描';
+
+  @override
   String get sourceNotFound => '没有找到这个音乐源';
 
   @override
@@ -2246,6 +2270,30 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get sourceNoMusicFound => '找不到音樂';
+
+  @override
+  String sourceScanningCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '正在掃描… 已讀取 $countString 首';
+  }
+
+  @override
+  String sourceFoldersUnreadable(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '有 $countString 個資料夾無法讀取，已略過';
+  }
+
+  @override
+  String get sourceFolderUnreadable => '無法讀取，已略過';
+
+  @override
+  String get sourceCancelScan => '取消掃描';
 
   @override
   String get sourceNotFound => '找不到此音樂來源';

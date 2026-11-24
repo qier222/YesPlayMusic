@@ -583,6 +583,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sourceNoMusicFound => '음악을 찾지 못했습니다';
 
   @override
+  String sourceScanningCount(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '스캔 중… $countString곡';
+  }
+
+  @override
+  String sourceFoldersUnreadable(int count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '폴더 $countString개를 읽을 수 없어 건너뛰었습니다';
+  }
+
+  @override
+  String get sourceFolderUnreadable => '읽을 수 없어 건너뜀';
+
+  @override
+  String get sourceCancelScan => '스캔 취소';
+
+  @override
   String get sourceNotFound => '음악 소스를 찾을 수 없습니다';
 
   @override
