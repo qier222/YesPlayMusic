@@ -212,11 +212,13 @@ class CoverTone extends StatelessWidget {
     required this.coverId,
     required this.builder,
     this.duration = const Duration(milliseconds: 500),
+    this.curve = Curves.easeOutCubic,
   });
 
   final String coverId;
   final Widget Function(BuildContext context, CoverPalette palette) builder;
   final Duration duration;
+  final Curve curve;
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +229,7 @@ class CoverTone extends StatelessWidget {
         return TweenAnimationBuilder<CoverPalette>(
           tween: _PaletteTween(end: p),
           duration: duration,
-          curve: Curves.easeOutCubic,
+          curve: curve,
           builder: (context, v, _) => builder(context, v),
         );
       },

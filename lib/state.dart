@@ -1938,6 +1938,11 @@ class AppState extends ChangeNotifier {
     if (ref == null) return;
     _preloadKey = t.key;
 
+    // 0. Preload the cover: downloads it into the image disk cache and
+    // extracts its colors, so the Now Playing background can start its
+    // transition the moment the song changes instead of waiting on the network
+    if (t.cover.isNotEmpty) CoverColors.instance.load(t.cover).ignore();
+
     // 1. Preload lyrics (through the data cache, so switching to it hits synchronously)
     final src = sources[ref.source];
     if (src != null && src.can(Op.lyrics)) {
@@ -2139,6 +2144,7 @@ class AppState extends ChangeNotifier {
       return;
     }
     // Pressing next while paused also starts playing right away
+    _cameBackTo = null;
     if (index + 1 < queue.length) {
       index++;
       playing = true;
@@ -2160,10 +2166,19 @@ class AppState extends ChangeNotifier {
     } else {
       index--;
       position = 0;
+      _cameBackTo = track.key;
     }
     notifyListeners();
     _sync();
   }
+
+  /// The song [prev] last stepped back to; anything else that lands on a
+  /// different song makes [skippedBack] false without needing a reset.
+  String? _cameBackTo;
+
+  /// Whether the current song was reached by going back ([prev]), so song
+  /// change animations can run in reverse.
+  bool get skippedBack => _cameBackTo == track.key;
 
   /// Plays a song: jumps to it if it's in the queue, otherwise inserts it after the current one.
   void playTrack(Track t) {

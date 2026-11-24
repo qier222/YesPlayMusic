@@ -105,6 +105,11 @@ class NowPlayingPage extends StatelessWidget {
     // The background always uses the current song cover's dominant color (CoverTone transitions smoothly on song change)
     return CoverTone(
       coverId: t.cover,
+      // Same as Rewind's Library Stack background: straight RGB from the
+      // color on screen, 1.2s, ease-in-ease-out (Curves.easeInOut is the
+      // same cubic as CAMediaTimingFunction.easeInEaseOut)
+      duration: const Duration(milliseconds: 1200),
+      curve: Curves.easeInOut,
       builder: (context, pal) => ColoredBox(
         color: pal.deep,
         child: ClipRect(
@@ -112,7 +117,12 @@ class NowPlayingPage extends StatelessWidget {
             builder: (context, box) => Stack(
               children: [
                 // Tilted cover / MV on the right (scales with the window, stays out of the lyrics area on the left, vertically centered)
-                _Art(track: t, playing: app.playing, stageSize: box.biggest),
+                _Art(
+                  track: t,
+                  playing: app.playing,
+                  back: app.skippedBack,
+                  stageSize: box.biggest,
+                ),
                 // The title bar area at the top can drag the window (beneath _TopBar so buttons stay clickable)
                 const Positioned(
                   left: 0,
@@ -149,10 +159,14 @@ class _Art extends StatelessWidget {
   const _Art({
     required this.track,
     required this.playing,
+    required this.back,
     required this.stageSize,
   });
   final Track track;
   final bool playing;
+
+  /// The song was reached with "previous", so the cover change runs reversed.
+  final bool back;
   final Size stageSize;
 
   // Right edge of the left content area (left: 40, width: 780) + safety margin, so the 6° rotation doesn't cover the lyrics.
@@ -286,30 +300,90 @@ class _Art extends StatelessWidget {
         scale: playing ? 1 : 0.94,
         duration: const Duration(milliseconds: 700),
         curve: const SpringCurve(bounce: 0.15),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 520),
-          switchInCurve: Curves.easeOutCubic,
-          transitionBuilder: (c, a) => FadeTransition(
-            opacity: a,
-            child: AnimatedBuilder(
-              animation: a,
-              builder: (_, cc) => Transform.translate(
-                offset: Offset(80 * (1 - a.value), 0),
-                child: Transform.rotate(
-                  angle: (6 + 6 * (1 - a.value)) * math.pi / 180,
-                  child: cc,
-                ),
-              ),
-              child: c,
-            ),
-          ),
-          layoutBuilder: (cur, prev) => Stack(
-            alignment: Alignment.centerRight,
-            children: [...prev, ?cur],
-          ),
-          child: art,
-        ),
+        child: _deckSwitcher(art, artW, back),
       ),
+    );
+  }
+
+  /// Card deck. "Next" pulls the old cover off the top of the pile towards
+  /// the bottom right, revealing the new one, which springs up from
+  /// underneath. "Previous" is the reverse: the earlier cover flies back from
+  /// the bottom right onto the pile, and the current one sinks away beneath
+  /// it. Either way the two only overlap briefly, never side by side.
+  static Widget _deckSwitcher(Widget art, double artW, bool back) {
+    // Where a pulled-off cover rests: down and to the right, tilted further.
+    final away = Offset(artW * 0.35, artW * 0.7);
+    const awayTurn = 14 * math.pi / 180;
+
+    Widget pulled(Widget? c, double p) => Opacity(
+      opacity: 1 - ((p - 0.3) / 0.6).clamp(0.0, 1.0),
+      child: Transform.translate(
+        offset: away * p,
+        child: Transform.rotate(angle: _tiltRad + awayTurn * p, child: c),
+      ),
+    );
+
+    Widget underneath(Widget? c, double t, double opacity) => Opacity(
+      opacity: opacity,
+      child: Transform.rotate(
+        angle: _tiltRad,
+        child: Transform.scale(scale: 0.88 + 0.12 * t, child: c),
+      ),
+    );
+
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: back ? 600 : 760),
+      reverseDuration: Duration(milliseconds: back ? 600 : 400),
+      // Curves are applied in the builder so each direction gets its own timing.
+      transitionBuilder: (c, a) => AnimatedBuilder(
+        animation: a,
+        child: c,
+        builder: (_, cc) {
+          // Outgoing children run their controller in reverse (1 → 0).
+          final out = a.status == AnimationStatus.reverse;
+          final v = out ? 1 - a.value : a.value;
+          if (!back) {
+            if (out) return pulled(cc, Curves.easeInOutCubic.transform(v));
+            // Waits ~300ms until the outgoing cover is nearly gone, so the
+            // two never visibly stack, then springs up from 0.88.
+            final w = ((v - 0.4) / 0.6).clamp(0.0, 1.0);
+            return underneath(
+              cc,
+              const SpringCurve(bounce: 0.12).transform(w),
+              Curves.easeOut.transform((w / 0.35).clamp(0.0, 1.0)),
+            );
+          }
+          if (out) {
+            // Starts sinking to 0.88 and fading soon after the returning
+            // cover sets off (~60ms) and is gone by ~360ms.
+            final w = Curves.easeIn.transform(
+              ((v - 0.1) / 0.5).clamp(0.0, 1.0),
+            );
+            return underneath(cc, 1 - w, 1 - w);
+          }
+          // Lands on the pile: fast, then easing to a stop. Given 520ms
+          // (vs. 400ms for "next") because an ease-out covers most of its
+          // distance early and would otherwise feel much quicker.
+          final f = (v / (520 / 600)).clamp(0.0, 1.0);
+          final t = Curves.easeOutCubic.transform(f);
+          return Opacity(
+            opacity: Curves.easeOut.transform((f / 0.25).clamp(0.0, 1.0)),
+            child: Transform.translate(
+              offset: away * (1 - t),
+              child: Transform.rotate(
+                angle: _tiltRad + awayTurn * (1 - t),
+                child: cc,
+              ),
+            ),
+          );
+        },
+      ),
+      // The cover being pulled off, or the one flying back, is on top.
+      layoutBuilder: (cur, prev) => Stack(
+        alignment: Alignment.centerRight,
+        children: back ? [...prev, ?cur] : [?cur, ...prev],
+      ),
+      child: art,
     );
   }
 }
