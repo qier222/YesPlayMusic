@@ -17,6 +17,9 @@ import 'settings.dart' show openPluginSettings;
 import 'remote.dart' show Notice, errorText;
 import 'links.dart';
 
+/// Height of the library header (tab row); page content starts below it.
+const _headerH = 122.0;
+
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key, required this.tab});
   final String tab;
@@ -50,7 +53,7 @@ class LibraryPage extends StatelessWidget {
     return Stack(
       children: [
         Positioned.fill(
-          top: 140,
+          top: _headerH,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 280),
             switchInCurve: Curves.easeOutCubic,
@@ -110,15 +113,17 @@ class _LibraryHeader extends StatelessWidget {
     ];
     final selected = math.max(0, tabs.indexWhere((t) => t.$3 == active));
     // The whole library is empty (no music source added, no local songs): show only the empty state, no tabs or Coverflow
-    if (lib == null) return const SizedBox(height: 140);
+    if (lib == null) return const SizedBox(height: _headerH);
     return SizedBox(
-      height: 140,
+      height: _headerH,
       child: Stack(
         children: [
-          // The library is a top-level sidebar page, so no back button
+          // The library is a top-level sidebar page, so no back button.
+          // Coverflow is another view of the current tab, so its entry sits at
+          // the right end of the tab row, centered on the tabs (y = 86).
           Positioned(
             right: 40,
-            top: 20,
+            top: 66,
             child: IconBtn(
               'coverflow',
               size: BtnSize.m,
@@ -128,7 +133,8 @@ class _LibraryHeader extends StatelessWidget {
           ),
           Positioned(
             left: 40,
-            top: 90,
+            // Right below the 72-high title bar drag area, level with the Settings title
+            top: 72,
             child: LineTabs(
               showLine: false,
               items: [for (final t in tabs) (t.$1, t.$2)],
@@ -136,7 +142,8 @@ class _LibraryHeader extends StatelessWidget {
               onChanged: (i) => app.replace('/library/${tabs[i].$3}'),
             ),
           ),
-          if (right != null) Positioned(right: 40, top: 95, child: right!),
+          // Sort control sits left of the Coverflow button (40 wide + 24 gap)
+          if (right != null) Positioned(right: 104, top: 77, child: right!),
         ],
       ),
     );
@@ -149,9 +156,12 @@ String _count(int n) =>
 /// Albums on the record shelf: the current source's library.
 List<Album> _shelf(AppState app) => app.library?.albums ?? const [];
 
-/// Position of the empty state in the content area: in the final design the title is at window y≈360, and content starts at 140.
-Widget _emptyAt(Widget child) =>
-    Align(alignment: const Alignment(0, -0.3), child: child);
+/// Position of the empty state in the content area: in the final design the title is at window y≈360, laid out as if content started at 140.
+/// The header has since moved up, so the extra top padding keeps the empty state where it was.
+Widget _emptyAt(Widget child) => Padding(
+  padding: const EdgeInsets.only(top: 140 - _headerH),
+  child: Align(alignment: const Alignment(0, -0.3), child: child),
+);
 
 /// The whole library is empty: while scanning say so, otherwise prompt to add a music folder or install a plugin.
 class _LibraryEmpty extends StatelessWidget {
