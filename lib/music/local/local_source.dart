@@ -540,6 +540,30 @@ void _fillAlbumArtists(List<LocalEntry> entries) {
   }
 }
 
+tags.AudioMetadata _readScanMetadata(File file) {
+  // The generic MP3 mapping treats TPE2 as the track artist. The public
+  // format-specific metadata keeps TPE1 and TPE2 separate.
+  final mp3 = p.extension(file.path).toLowerCase() == '.mp3'
+      ? tags.readAllMetadata(file, getImage: true)
+      : null;
+  if (mp3 is tags.Mp3Metadata) {
+    return tags.AudioMetadata(
+        file: file,
+        title: mp3.songName,
+        artist: _clean(mp3.leadPerformer) ?? mp3.originalArtist,
+        album: mp3.album,
+        albumArtist: mp3.bandOrOrchestra,
+        year: DateTime(mp3.originalReleaseYear ?? mp3.year ?? 0),
+        discNumber: mp3.discNumber,
+        trackNumber: mp3.trackNumber,
+        duration: mp3.duration,
+      )
+      ..pictures = mp3.pictures
+      ..performers.addAll(mp3.customMetadata['GUEST ARTIST']?.split('/') ?? []);
+  }
+  return tags.readMetadata(file, getImage: true);
+}
+
 LocalEntry _entry(
   File f,
   String path,
@@ -549,7 +573,7 @@ LocalEntry _entry(
 ) {
   tags.AudioMetadata? m;
   try {
-    m = tags.readMetadata(f, getImage: true);
+    m = _readScanMetadata(f);
   } catch (_) {
     m = null;
   }
