@@ -11,6 +11,7 @@ import '../cache/image_cache.dart';
 import '../l10n/l10n.dart';
 import '../log.dart';
 import '../mcp/config.dart';
+import '../media_session.dart';
 import '../music/eq.dart';
 import '../music/replay_gain.dart';
 import '../music/source.dart';
@@ -39,7 +40,13 @@ void openPluginSettings(AppState app) {
 }
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key}) : _supportsMediaKeys = null;
+
+  @visibleForTesting
+  const SettingsPage.withMediaKeysSupport({super.key, required bool supported})
+    : _supportsMediaKeys = supported;
+
+  final bool? _supportsMediaKeys;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -157,7 +164,12 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               child: switch (currentNav) {
                 0 => const _GeneralTab(key: ValueKey('general')),
-                1 => const _ShortcutsTab(key: ValueKey('shortcuts')),
+                1 => _ShortcutsTab(
+                  key: const ValueKey('shortcuts'),
+                  supportsMediaKeys:
+                      widget._supportsMediaKeys ??
+                      MediaSession.supportsMediaKeys,
+                ),
                 2 => const _PluginsTab(key: ValueKey('plugins')),
                 3 => const _McpTab(key: ValueKey('mcp')),
                 _ => const _AboutTab(key: ValueKey('about')),
@@ -209,7 +221,9 @@ class _GeneralTab extends StatelessWidget {
 
 /// Shortcut reference (final v30a / 设置 · 快捷键（列表）): playback on the left, UI and media keys on the right.
 class _ShortcutsTab extends StatelessWidget {
-  const _ShortcutsTab({super.key});
+  const _ShortcutsTab({super.key, required this.supportsMediaKeys});
+
+  final bool supportsMediaKeys;
 
   @override
   Widget build(BuildContext context) {
@@ -243,15 +257,17 @@ class _ShortcutsTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Section(title: l.shortcutGroupUi, child: list(ShortcutGroup.ui)),
-              const SizedBox(height: 28),
-              _Section(
-                title: l.shortcutGroupMediaKeys,
-                child: _row(
-                  72,
-                  l.shortcutMediaKeysLabel,
-                  const _Keys(['previous', 'play', 'next'], icons: true),
+              if (supportsMediaKeys) ...[
+                const SizedBox(height: 28),
+                _Section(
+                  title: l.shortcutGroupMediaKeys,
+                  child: _row(
+                    72,
+                    l.shortcutMediaKeysLabel,
+                    const _Keys(['previous', 'play', 'next'], icons: true),
+                  ),
                 ),
-              ),
+              ],
               const SizedBox(height: 16),
               tx(
                 Platform.isMacOS

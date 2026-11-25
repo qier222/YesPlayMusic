@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/l10n/l10n.dart';
+import 'package:yesplaymusic/pages/settings.dart';
 import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
 import 'package:yesplaymusic/theme.dart';
@@ -17,7 +18,7 @@ import 'package:yesplaymusic/ui/tap.dart';
 
 import '../music/local_source_test.dart' show wav;
 
-Widget appFor(AppState state) => WidgetsApp(
+Widget appFor(AppState state, {Widget child = const Shell()}) => WidgetsApp(
   color: const Color(0xFF0B0B0D),
   locale: const Locale('zh'),
   supportedLocales: AppLocalizations.supportedLocales,
@@ -36,7 +37,7 @@ Widget appFor(AppState state) => WidgetsApp(
           child: DefaultTextStyle(
             style: ts(14),
             child: Overlay(
-              initialEntries: [OverlayEntry(builder: (_) => const Shell())],
+              initialEntries: [OverlayEntry(builder: (_) => child)],
             ),
           ),
         );
@@ -91,11 +92,15 @@ void main() {
   tearDown(() => app.dispose());
 
   /// The default is the smallest window the app allows (1280×800 on both macOS and Windows).
-  Future<void> boot(WidgetTester t, {double width = 1280}) async {
+  Future<void> boot(
+    WidgetTester t, {
+    double width = 1280,
+    Widget child = const Shell(),
+  }) async {
     t.view.physicalSize = Size(width, 800);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
-    await t.pumpWidget(appFor(app));
+    await t.pumpWidget(appFor(app, child: child));
     await _frames(t);
   }
 
@@ -147,6 +152,12 @@ void main() {
       await t.tap(f.first);
       await _frames(t);
       expect(t.takeException(), isNull, reason: label);
+      if (label == '快捷键') {
+        expect(
+          find.text('媒体键'),
+          Platform.isMacOS ? findsOneWidget : findsNothing,
+        );
+      }
     }
     expect(tapped, greaterThanOrEqualTo(3));
   }
@@ -230,6 +241,23 @@ void main() {
     }
   });
 
+  for (final supported in [false, true]) {
+    testWidgets('快捷键页的媒体键说明（支持：$supported）', (t) async {
+      await boot(
+        t,
+        width: 1440,
+        child: SettingsPage.withMediaKeysSupport(supported: supported),
+      );
+      await t.tap(find.text('快捷键'));
+      await _frames(t);
+
+      expect(find.text('播放'), findsOneWidget);
+      expect(find.text('界面'), findsOneWidget);
+      final visibility = supported ? findsOneWidget : findsNothing;
+      expect(find.text('媒体键'), visibility);
+      expect(find.text('键盘媒体键和耳机按键'), visibility);
+    });
+  }
   testWidgets(
     '设置页各标签（最小窗口）',
     (t) => settingsTabs(t, 1280),

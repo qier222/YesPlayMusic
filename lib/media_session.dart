@@ -12,6 +12,8 @@ class MediaSession {
   MediaSession(this.app);
   final AppState app;
 
+  static bool get supportsMediaKeys => Platform.isMacOS;
+
   static const _channel = MethodChannel('yesplaymusic/media');
   Timer? _drift;
 
@@ -23,7 +25,7 @@ class MediaSession {
   DateTime _sentAt = DateTime(0);
 
   void attach() {
-    if (!Platform.isMacOS) return;
+    if (!supportsMediaKeys) return;
     _channel.setMethodCallHandler(_onCommand);
     app.addListener(_sync);
     // Seeking and skipping don't always notify, so check progress every second
@@ -32,7 +34,7 @@ class MediaSession {
   }
 
   void detach() {
-    if (!Platform.isMacOS) return;
+    if (!supportsMediaKeys) return;
     _drift?.cancel();
     app.removeListener(_sync);
     _channel.setMethodCallHandler(null);
