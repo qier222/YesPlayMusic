@@ -418,6 +418,14 @@ class AppState extends ChangeNotifier {
     if (local != null) await sources.remove(local!.id);
     local = src;
     sources.add(src);
+    final lyricsPrefix = '${src.id}/lyrics/';
+    _direct.removeWhere((key, _) => key.startsWith(lyricsPrefix));
+    _directInflight.removeWhere((key, _) => key.startsWith(lyricsPrefix));
+    if (track.ref?.source == src.id) {
+      _lyricsKey = null;
+      await _loadLyrics(track);
+      if (gen != _scanGen) return false;
+    }
 
     final home = await src.home();
     final found = home.sections.expand((s) => s.albums).toList();
@@ -1184,14 +1192,22 @@ class AppState extends ChangeNotifier {
     }
     if (s is! PluginSource) {
       final k = '${r.source}/${r.path}';
-      final v = await (_directInflight[k] ??= r
+      final pending = _directInflight[k];
+      if (pending != null) return (await pending) as T;
+      late final Future<T> request;
+      request = r
           .direct(s)
-          // Can't be `=> remove(k)`: the return value is this very future, which would wait for itself
+          .then((value) {
+            if (identical(_directInflight[k], request)) _direct[k] = value;
+            return value;
+          })
           .whenComplete(() {
-            _directInflight.remove(k);
-          }));
-      _direct[k] = v;
-      return v as T;
+            if (identical(_directInflight[k], request)) {
+              _directInflight.remove(k);
+            }
+          });
+      _directInflight[k] = request;
+      return request;
     }
     _watchCache();
     final raw = await cache.fetch(
@@ -3390,18 +3406,21 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    final src = sources[ref.source];
+    bool current() =>
+        track.key == t.key &&
+        (ref.source != 'local' || identical(sources[ref.source], src));
     try {
-      final src = sources[ref.source];
       final l = src == null || !src.can(Op.lyrics)
           ? const m.Lyrics()
           : await getData(DataReq.lyrics(ref.source, ref.id));
-      if (track.key != t.key) return;
+      if (!current()) return;
       _lyrics = _parseLyrics(l);
       _lyricsKey = t.key;
       notifyListeners();
     } catch (_) {
       // Lyrics are optional; treat a load failure as none
-      if (track.key == t.key) {
+      if (current()) {
         _lyrics = const [];
         _lyricsKey = t.key;
         notifyListeners();
