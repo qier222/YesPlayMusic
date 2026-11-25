@@ -350,7 +350,7 @@ class LocalSource extends Source {
 
   /// Looks for a .lrc with the same name (and a .trans.lrc translation) first, then lyrics embedded in the tags.
   @override
-  Future<Lyrics> lyrics(String id) async {
+  Future<Lyrics> lyrics(String id) => Isolate.run(() {
     final base = p.withoutExtension(id);
     final lrc = _readSidecar(base, '.lrc');
     if (lrc != null) {
@@ -359,17 +359,16 @@ class LocalSource extends Source {
         translation: _readSidecar(base, '.trans.lrc') ?? '',
       );
     }
-    final embedded = await Isolate.run(() {
-      try {
-        return tags.readMetadata(File(id)).lyrics ?? '';
-      } catch (_) {
-        return '';
-      }
-    });
+    final String embedded;
+    try {
+      embedded = tags.readMetadata(File(id)).lyrics ?? '';
+    } catch (_) {
+      return const Lyrics();
+    }
     // Embedded lyrics may be plain text (no timestamps); then treat it as having no line-by-line lyrics.
     if (parseLrc(embedded).isEmpty) return const Lyrics();
     return Lyrics(lrc: embedded);
-  }
+  });
 
   static String? _readSidecar(String base, String extension) {
     final exactPath = '$base$extension';
