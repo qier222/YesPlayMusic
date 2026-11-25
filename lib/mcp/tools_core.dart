@@ -8,11 +8,11 @@ import '../state.dart';
 import 'resources.dart';
 import 'tool_registry.dart';
 
-Map<String, Object?> serializeTrack(Track t) => {
+Map<String, Object?> serializeTrack(Track t, {int? duration}) => {
   'title': t.title,
   'artist': t.artist,
   if (t.album.isNotEmpty) 'album': t.album,
-  'duration': t.seconds,
+  'duration': duration ?? t.seconds,
   if (t.ref != null) 'source': t.ref!.source,
   if (t.ref != null) 'id': t.ref!.id,
   if (t.ref != null && t.ref!.album.id.isNotEmpty) 'albumId': t.ref!.album.id,
@@ -158,9 +158,7 @@ List<McpTool> buildCoreTools() => [
           if (sec == null) {
             throw ArgumentError('seek requires numeric "value" in seconds.');
           }
-          if (app.track.seconds > 0) {
-            app.seek((sec / app.track.seconds).clamp(0.0, 1.0));
-          }
+          app.seekTo(sec);
         case 'seek_by':
           final delta = _double(args, 'value');
           if (delta == null) {

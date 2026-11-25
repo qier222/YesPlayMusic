@@ -74,11 +74,12 @@ Map<String, Object?> readMcpResource(String uri, AppState app) {
 
 Map<String, Object?> nowPlayingSnapshot(AppState app) {
   final t = app.track;
+  final duration = app.playbackDuration.round();
   return {
     'playing': app.playing,
     'hasQueue': app.hasQueue,
     'position': double.parse(app.position.toStringAsFixed(2)),
-    'duration': t.seconds,
+    'duration': duration,
     'progress': double.parse(app.progress.toStringAsFixed(4)),
     'volume': double.parse(app.volume.toStringAsFixed(3)),
     'muted': app.muted,
@@ -90,6 +91,6 @@ Map<String, Object?> nowPlayingSnapshot(AppState app) {
     'queueLength': app.queue.length,
     'queueName': app.queueName,
     'activeSource': app.sourceId,
-    'track': serializeTrack(t),
+    'track': serializeTrack(t, duration: duration),
   };
 }

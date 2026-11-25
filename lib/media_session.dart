@@ -21,6 +21,7 @@ class MediaSession {
   String? _key;
   bool? _playing;
   bool? _island;
+  double? _duration;
   double _sentPos = 0;
   DateTime _sentAt = DateTime(0);
 
@@ -43,12 +44,14 @@ class MediaSession {
   void _sync() {
     final t = app.track;
     final pos = app.position;
+    final duration = app.playbackDuration;
     final expected = _playing == true
         ? _sentPos + DateTime.now().difference(_sentAt).inMilliseconds / 1000
         : _sentPos;
     if (t.key == _key &&
         app.playing == _playing &&
         app.island == _island &&
+        duration == _duration &&
         (pos - expected).abs() < 1.5) {
       return;
     }
@@ -56,6 +59,7 @@ class MediaSession {
     _key = t.key;
     _playing = app.playing;
     _island = app.island;
+    _duration = duration;
     _sentPos = pos;
     _sentAt = DateTime.now();
     _channel
@@ -63,7 +67,7 @@ class MediaSession {
           'title': t.title,
           'artist': t.artist,
           'album': t.album,
-          'duration': t.seconds.toDouble(),
+          'duration': duration,
           'position': pos,
           'playing': app.playing,
           // Dynamic Island toggle (native code in DynamicIsland.swift)
@@ -92,7 +96,7 @@ class MediaSession {
         app.prev();
       case 'seek':
         final s = (call.arguments as num?)?.toDouble() ?? 0;
-        if (app.track.seconds > 0) app.seek(s / app.track.seconds);
+        app.seekTo(s);
       case 'openNowPlaying':
         app.openNowPlaying();
     }
