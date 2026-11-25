@@ -11,6 +11,7 @@ import '../cache/image_cache.dart';
 import '../l10n/l10n.dart';
 import '../log.dart';
 import '../mcp/config.dart';
+import '../media_session.dart';
 import '../music/eq.dart';
 import '../music/replay_gain.dart';
 import '../music/source.dart';
@@ -39,7 +40,13 @@ void openPluginSettings(AppState app) {
 }
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key}) : _supportsMediaKeys = null;
+
+  @visibleForTesting
+  const SettingsPage.withMediaKeysSupport({super.key, required bool supported})
+    : _supportsMediaKeys = supported;
+
+  final bool? _supportsMediaKeys;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -157,7 +164,12 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               child: switch (currentNav) {
                 0 => const _GeneralTab(key: ValueKey('general')),
-                1 => const _ShortcutsTab(key: ValueKey('shortcuts')),
+                1 => _ShortcutsTab(
+                  key: const ValueKey('shortcuts'),
+                  supportsMediaKeys:
+                      widget._supportsMediaKeys ??
+                      MediaSession.supportsMediaKeys,
+                ),
                 2 => const _PluginsTab(key: ValueKey('plugins')),
                 3 => const _McpTab(key: ValueKey('mcp')),
                 _ => const _AboutTab(key: ValueKey('about')),
@@ -209,7 +221,9 @@ class _GeneralTab extends StatelessWidget {
 
 /// Shortcut reference (final v30a / 设置 · 快捷键（列表）): playback on the left, UI and media keys on the right.
 class _ShortcutsTab extends StatelessWidget {
-  const _ShortcutsTab({super.key});
+  const _ShortcutsTab({super.key, required this.supportsMediaKeys});
+
+  final bool supportsMediaKeys;
 
   @override
   Widget build(BuildContext context) {
@@ -243,15 +257,17 @@ class _ShortcutsTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Section(title: l.shortcutGroupUi, child: list(ShortcutGroup.ui)),
-              const SizedBox(height: 28),
-              _Section(
-                title: l.shortcutGroupMediaKeys,
-                child: _row(
-                  72,
-                  l.shortcutMediaKeysLabel,
-                  const _Keys(['previous', 'play', 'next'], icons: true),
+              if (supportsMediaKeys) ...[
+                const SizedBox(height: 28),
+                _Section(
+                  title: l.shortcutGroupMediaKeys,
+                  child: _row(
+                    72,
+                    l.shortcutMediaKeysLabel,
+                    const _Keys(['previous', 'play', 'next'], icons: true),
+                  ),
                 ),
-              ),
+              ],
               const SizedBox(height: 16),
               tx(
                 Platform.isMacOS
@@ -446,7 +462,7 @@ class _Appearance extends StatelessWidget {
                   if (i > 0) const SizedBox(width: 6),
                   Tap(
                     tip: swatchNames[i],
-                    onTap: () => app.update(() => app.swatch = i),
+                    onTap: () => app.setSwatch(i),
                     builder: (_, h, _) => AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
                       width: 32,
@@ -787,6 +803,55 @@ class _EqBandState extends State<_EqBand> {
   bool _drag = false;
   static const _h = 160.0, _w = 28.0;
 
+  /// Trackpad travel, in logical pixels, for one 0.5 dB step.
+  static const _trackpadStepPx = 20.0;
+
+  /// Unspent trackpad travel; positive means "up" (raise the gain).
+  double _trackpad = 0;
+
+  /// The last value sent to [_EqBand.onChanged], until the parent rebuilds
+  /// with it, so several steps within one frame add up.
+  double? _sent;
+
+  @override
+  void didUpdateWidget(_EqBand old) {
+    super.didUpdateWidget(old);
+    _sent = null;
+  }
+
+  void _step(int steps) {
+    final v = clampEqDb((_sent ?? widget.db) + steps * 0.5);
+    if (v == (_sent ?? widget.db)) return;
+    _sent = v;
+    widget.onChanged(v);
+  }
+
+  /// Adds trackpad travel ([up] > 0 raises the gain) and steps once per
+  /// [_trackpadStepPx]. Reversing direction drops the unspent travel.
+  void _addTrackpad(double up) {
+    if (up == 0) return;
+    if (_trackpad != 0 && up.sign != _trackpad.sign) _trackpad = 0;
+    _trackpad += up;
+    final steps = (_trackpad / _trackpadStepPx).truncate();
+    if (steps == 0) return;
+    _trackpad -= steps * _trackpadStepPx;
+    _step(steps);
+  }
+
+  void _onPointerSignal(PointerSignalEvent e) {
+    // Horizontal-only scrolling (Shift+wheel, sideways swipe) isn't ours:
+    // leave it to the page.
+    if (e is! PointerScrollEvent || e.scrollDelta.dy == 0) return;
+    GestureBinding.instance.pointerSignalResolver.register(e, (e) {
+      final dy = (e as PointerScrollEvent).scrollDelta.dy;
+      if (e.kind == PointerDeviceKind.trackpad) {
+        _addTrackpad(-dy);
+      } else {
+        _step(dy < 0 ? 1 : -1);
+      }
+    });
+  }
+
   void _setFrom(double dy) {
     final v = (1 - dy / _h) * 2 * eqMaxDb - eqMaxDb;
     final snapped = clampEqDb((v * 2).round() / 2);
@@ -823,60 +888,78 @@ class _EqBandState extends State<_EqBand> {
         MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Listener(
-            onPointerSignal: (e) {
-              if (e is PointerScrollEvent) {
-                widget.onChanged(
-                  clampEqDb(db + (e.scrollDelta.dy < 0 ? 0.5 : -0.5)),
-                );
-              }
-            },
-            child: GestureDetector(
+            onPointerSignal: _onPointerSignal,
+            // Two-finger trackpad swipes arrive as pan-zoom gestures on
+            // macOS and others; claim them so the page doesn't scroll too.
+            child: RawGestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTapUp: (d) => _setFrom(d.localPosition.dy),
-              onDoubleTap: () => widget.onChanged(0),
-              onVerticalDragStart: (d) {
-                setState(() => _drag = true);
-                _setFrom(d.localPosition.dy);
+              gestures: {
+                _TrackpadPanRecognizer:
+                    GestureRecognizerFactoryWithHandlers<
+                      _TrackpadPanRecognizer
+                    >(_TrackpadPanRecognizer.new, (r) {
+                      r.onStart = () => _trackpad = 0;
+                      // Content follows the fingers, so a downward pan is
+                      // what scrolls the page up: raise the gain.
+                      r.onUpdate = _addTrackpad;
+                    }),
               },
-              onVerticalDragUpdate: (d) => _setFrom(d.localPosition.dy),
-              onVerticalDragEnd: (_) => setState(() => _drag = false),
-              onVerticalDragCancel: () => setState(() => _drag = false),
-              child: Container(
-                width: _w,
-                height: _h,
-                decoration: squircle(12, color: P.dark ? wa(0.06) : ba(0.05)),
-                clipBehavior: Clip.antiAlias,
-                child: Stack(
-                  children: [
-                    // 0 dB midline
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: mid - 0.5,
-                      height: 1,
-                      child: Container(color: P.line),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: top,
-                      height: height,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 90),
-                        color: P.dark ? wa(0.18) : ba(0.1),
-                      ),
-                    ),
-                    if (_drag)
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                // Trackpad pans are handled above, by step, not by position.
+                supportedDevices: const {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.invertedStylus,
+                  PointerDeviceKind.unknown,
+                },
+                onTapUp: (d) => _setFrom(d.localPosition.dy),
+                onDoubleTap: () => widget.onChanged(0),
+                onVerticalDragStart: (d) {
+                  setState(() => _drag = true);
+                  _setFrom(d.localPosition.dy);
+                },
+                onVerticalDragUpdate: (d) => _setFrom(d.localPosition.dy),
+                onVerticalDragEnd: (_) => setState(() => _drag = false),
+                onVerticalDragCancel: () => setState(() => _drag = false),
+                child: Container(
+                  width: _w,
+                  height: _h,
+                  decoration: squircle(12, color: P.dark ? wa(0.06) : ba(0.05)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    children: [
+                      // 0 dB midline
                       Positioned(
-                        left: 6,
-                        right: 6,
-                        top: edge - 1,
-                        height: 2,
-                        child: Container(
-                          decoration: squircle(1, color: accent),
+                        left: 0,
+                        right: 0,
+                        top: mid - 0.5,
+                        height: 1,
+                        child: Container(color: P.line),
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: top,
+                        height: height,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 90),
+                          color: P.dark ? wa(0.18) : ba(0.1),
                         ),
                       ),
-                  ],
+                      if (_drag)
+                        Positioned(
+                          left: 6,
+                          right: 6,
+                          top: edge - 1,
+                          height: 2,
+                          child: Container(
+                            decoration: squircle(1, color: accent),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -893,6 +976,40 @@ class _EqBandState extends State<_EqBand> {
       ],
     );
   }
+}
+
+/// Claims two-finger trackpad pans (pan-zoom events) as soon as they start,
+/// so an enclosing scroll view doesn't also scroll. Reports the vertical
+/// pan movement since the last update.
+class _TrackpadPanRecognizer extends OneSequenceGestureRecognizer {
+  _TrackpadPanRecognizer()
+    : super(supportedDevices: const {PointerDeviceKind.trackpad});
+
+  VoidCallback? onStart;
+  ValueChanged<double>? onUpdate;
+
+  @override
+  void addAllowedPointerPanZoom(PointerPanZoomStartEvent event) {
+    startTrackingPointer(event.pointer, event.transform);
+    resolve(GestureDisposition.accepted);
+    invokeCallback('onStart', () => onStart?.call());
+  }
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerPanZoomUpdateEvent) {
+      final dy = event.localPanDelta.dy;
+      invokeCallback('onUpdate', () => onUpdate?.call(dy));
+    } else if (event is PointerPanZoomEndEvent) {
+      stopTrackingPointer(event.pointer);
+    }
+  }
+
+  @override
+  void didStopTrackingLastPointer(int pointer) {}
+
+  @override
+  String get debugDescription => 'trackpad pan';
 }
 
 class _AboutTab extends StatelessWidget {

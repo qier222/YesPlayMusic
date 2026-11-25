@@ -896,9 +896,6 @@ class SourceInfo {
   );
 }
 
-/// Audio quality levels, low to high. Sources may have other levels or none, and return what they have.
-const qualities = ['standard', 'high', 'lossless'];
-
 /// A trending search: the term plus an optional note.
 class HotSearch {
   const HotSearch(this.word, [this.hint = '']);

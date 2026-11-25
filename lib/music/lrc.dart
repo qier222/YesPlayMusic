@@ -3,6 +3,8 @@
 // Supports: several timestamps per line, [offset:±ms], enhanced LRC per-word timing <mm:ss.xx>,
 // a separate translation LRC, and the same timestamp appearing twice (second line is the translation).
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 
 import 'models.dart';
@@ -20,15 +22,19 @@ int _ms(Match m) {
 
 /// Parses an LRC text into a sorted list of (time, text, words).
 List<LyricLine> parseLrc(String lrc) {
+  final rows = lrc.split(RegExp(r'\r?\n'));
   var offset = 0;
-  final out = <LyricLine>[];
-  for (final raw in lrc.split(RegExp(r'\r?\n'))) {
-    final line = raw.trim();
-    final off = _offset.firstMatch(line);
+  for (final row in rows.reversed) {
+    final off = _offset.firstMatch(row.trimLeft());
     if (off != null) {
-      offset = int.parse(off.group(1)!);
-      continue;
+      // An offset too large for an int counts as no offset.
+      offset = int.tryParse(off.group(1)!) ?? 0;
+      break;
     }
+  }
+  final out = <LyricLine>[];
+  for (final raw in rows) {
+    final line = raw.trim();
     final stamps = <int>[];
     var rest = line;
     while (true) {
@@ -39,8 +45,8 @@ List<LyricLine> parseLrc(String lrc) {
     }
     // Metadata like [ti:] or [ar:], or lines without a time
     if (stamps.isEmpty) continue;
-    final (text, words) = _words(rest);
     for (final s in stamps) {
+      final (text, words) = _words(rest, s);
       // A positive offset makes lyrics appear earlier.
       final start = (s - offset).clamp(0, 1 << 31);
       out.add(
@@ -53,10 +59,20 @@ List<LyricLine> parseLrc(String lrc) {
   return out;
 }
 
-(String, List<LyricWord>) _words(String s) {
+(String, List<LyricWord>) _words(String s, int lineStart) {
   final ms = _word.allMatches(s).toList();
   if (ms.isEmpty) return (s.trim(), const []);
   final words = <LyricWord>[];
+  final prefix = s.substring(0, ms.first.start);
+  if (prefix.trim().isNotEmpty) {
+    words.add(
+      LyricWord(
+        start: lineStart,
+        end: math.max(lineStart, _ms(ms.first)),
+        text: prefix,
+      ),
+    );
+  }
   for (var i = 0; i < ms.length; i++) {
     final end = i + 1 < ms.length ? ms[i + 1].start : s.length;
     final text = s.substring(ms[i].end, end);
@@ -119,12 +135,21 @@ List<LyricLine> lyricLines(Lyrics l) {
   ];
 }
 
-/// Translation timestamps often differ from the original by tens of ms, so match the nearest.
+/// Finds the nearest translation within 100 ms, preferring the earlier cue on ties.
+/// [trans] is populated in timestamp order.
 String _near(Map<int, String> trans, int start) {
+  var bestDistance = 101;
+  var best = '';
   for (final e in trans.entries) {
-    if ((e.key - start).abs() <= 100) return e.value;
+    final delta = e.key - start;
+    if (delta >= bestDistance) break;
+    final distance = delta.abs();
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = e.value;
+    }
   }
-  return '';
+  return best;
 }
 
 /// The line being sung at a given moment, or -1 if none.

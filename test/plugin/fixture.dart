@@ -92,7 +92,13 @@ export function misc() {
     platform: typeof host.platform,
   };
 }
-export function lyrics() {
+export function lyrics({ id }) {
+  if (id === "enhanced") {
+    return {
+      lrc: "[00:02.00]Open <00:02.80>the door",
+      translation: "[00:02.00]把<00:02.80>门打开",
+    };
+  }
   const e = new Error("请先登录");
   e.code = "signIn";
   throw e;

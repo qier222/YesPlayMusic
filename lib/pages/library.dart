@@ -1176,22 +1176,21 @@ class _SongsBody extends StatefulWidget {
 
 class _SongsBodyState extends State<_SongsBody> {
   final _scroll = ScrollController();
-  double _frac = 0;
+  final _frac = ValueNotifier(0.0);
 
   @override
   void initState() {
     super.initState();
     _scroll.addListener(() {
       final max = _scroll.position.maxScrollExtent;
-      setState(
-        () => _frac = max <= 0 ? 0 : (_scroll.offset / max).clamp(0.0, 1.0),
-      );
+      _frac.value = max <= 0 ? 0 : (_scroll.offset / max).clamp(0.0, 1.0);
     });
   }
 
   @override
   void dispose() {
     _scroll.dispose();
+    _frac.dispose();
     super.dispose();
   }
 
@@ -1286,25 +1285,28 @@ class _SongsBodyState extends State<_SongsBody> {
               Positioned(
                 right: 24,
                 top: 24,
-                child: _YearScrubber(
-                  frac: _frac,
-                  years: years,
-                  labelAt: (f) {
-                    if (rows.isEmpty) return '';
-                    // Estimate the row at the scroll position from the row count and use its month
-                    final m = rows[(f * (rows.length - 1)).round()].$1;
-                    return m.year == null || m.monthNum == null
-                        ? m.month.label
-                        : '${m.year}.${'${m.monthNum}'.padLeft(2, '0')}';
-                  },
-                  onPick: (f) {
-                    if (!_scroll.hasClients) return;
-                    _scroll.animateTo(
-                      f * _scroll.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 420),
-                      curve: Curves.easeOutCubic,
-                    );
-                  },
+                child: ValueListenableBuilder(
+                  valueListenable: _frac,
+                  builder: (_, frac, _) => _YearScrubber(
+                    frac: frac,
+                    years: years,
+                    labelAt: (f) {
+                      if (rows.isEmpty) return '';
+                      // Estimate the row at the scroll position from the row count and use its month
+                      final m = rows[(f * (rows.length - 1)).round()].$1;
+                      return m.year == null || m.monthNum == null
+                          ? m.month.label
+                          : '${m.year}.${'${m.monthNum}'.padLeft(2, '0')}';
+                    },
+                    onPick: (f) {
+                      if (!_scroll.hasClients) return;
+                      _scroll.animateTo(
+                        f * _scroll.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 420),
+                        curve: Curves.easeOutCubic,
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

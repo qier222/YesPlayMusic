@@ -223,26 +223,29 @@ class _ArtistPageState extends State<ArtistPage> {
                       builder: (context, c) {
                         final w = (c.maxWidth - 20 * 5) / 6;
                         final discs = tabs[tab].$2;
-                        return SingleChildScrollView(
-                          controller: _disc(tab),
-                          scrollDirection: Axis.horizontal,
-                          physics: discs.length > 6
-                              ? null
-                              : const NeverScrollableScrollPhysics(),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (final (i, x) in discs.indexed) ...[
-                                if (i > 0) const SizedBox(width: 20),
-                                SizedBox(
-                                  width: w,
-                                  child: FadeIn(
-                                    delay: (i < 6 ? i : 6) * 30,
-                                    child: _DiscCard(d: x),
-                                  ),
-                                ),
-                              ],
-                            ],
+                        final scale = MediaQuery.textScalerOf(context);
+                        return SizedBox(
+                          height:
+                              w +
+                              28 +
+                              (scale.scale(14) + scale.scale(12)) * 1.5,
+                          child: ListView.separated(
+                            controller: _disc(tab),
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.zero,
+                            physics: discs.length > 6
+                                ? null
+                                : const NeverScrollableScrollPhysics(),
+                            itemCount: discs.length,
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(width: 20),
+                            itemBuilder: (_, i) => SizedBox(
+                              width: w,
+                              child: FadeIn(
+                                delay: (i < 6 ? i : 6) * 30,
+                                child: _DiscCard(d: discs[i]),
+                              ),
+                            ),
                           ),
                         );
                       },

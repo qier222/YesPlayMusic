@@ -1295,6 +1295,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchRemoveHistory => 'Eliminar del historial';
 
   @override
+  String get searchNoSongs => 'No se encontraron canciones';
+
+  @override
+  String get searchNoAlbums => 'No se encontraron álbumes';
+
+  @override
+  String get searchNoArtists => 'No se encontraron artistas';
+
+  @override
+  String get searchNoPlaylists => 'No se encontraron listas de reproducción';
+
+  @override
   String searchNoResults(String query) {
     return 'Sin resultados para «$query»';
   }

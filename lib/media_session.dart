@@ -12,6 +12,8 @@ class MediaSession {
   MediaSession(this.app);
   final AppState app;
 
+  static bool get supportsMediaKeys => Platform.isMacOS;
+
   static const _channel = MethodChannel('yesplaymusic/media');
   Timer? _drift;
 
@@ -19,11 +21,12 @@ class MediaSession {
   String? _key;
   bool? _playing;
   bool? _island;
+  double? _duration;
   double _sentPos = 0;
   DateTime _sentAt = DateTime(0);
 
   void attach() {
-    if (!Platform.isMacOS) return;
+    if (!supportsMediaKeys) return;
     _channel.setMethodCallHandler(_onCommand);
     app.addListener(_sync);
     // Seeking and skipping don't always notify, so check progress every second
@@ -32,7 +35,7 @@ class MediaSession {
   }
 
   void detach() {
-    if (!Platform.isMacOS) return;
+    if (!supportsMediaKeys) return;
     _drift?.cancel();
     app.removeListener(_sync);
     _channel.setMethodCallHandler(null);
@@ -41,12 +44,14 @@ class MediaSession {
   void _sync() {
     final t = app.track;
     final pos = app.position;
+    final duration = app.playbackDuration;
     final expected = _playing == true
         ? _sentPos + DateTime.now().difference(_sentAt).inMilliseconds / 1000
         : _sentPos;
     if (t.key == _key &&
         app.playing == _playing &&
         app.island == _island &&
+        duration == _duration &&
         (pos - expected).abs() < 1.5) {
       return;
     }
@@ -54,6 +59,7 @@ class MediaSession {
     _key = t.key;
     _playing = app.playing;
     _island = app.island;
+    _duration = duration;
     _sentPos = pos;
     _sentAt = DateTime.now();
     _channel
@@ -61,7 +67,7 @@ class MediaSession {
           'title': t.title,
           'artist': t.artist,
           'album': t.album,
-          'duration': t.seconds.toDouble(),
+          'duration': duration,
           'position': pos,
           'playing': app.playing,
           // Dynamic Island toggle (native code in DynamicIsland.swift)
@@ -90,7 +96,7 @@ class MediaSession {
         app.prev();
       case 'seek':
         final s = (call.arguments as num?)?.toDouble() ?? 0;
-        if (app.track.seconds > 0) app.seek(s / app.track.seconds);
+        app.seekTo(s);
       case 'openNowPlaying':
         app.openNowPlaying();
     }

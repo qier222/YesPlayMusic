@@ -3,7 +3,7 @@ import Icon from './Icon';
 
 type Item = { code: string; label: string; href: string };
 
-export default function LangMenu({ current, items, compact = false, up = false }: { current: string; items: Item[]; compact?: boolean; up?: boolean }) {
+export default function LangMenu({ current, items, up = false }: { current: string; items: Item[]; up?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const label = items.find((i) => i.code === current)?.label ?? current;
@@ -25,8 +25,8 @@ export default function LangMenu({ current, items, compact = false, up = false }
     <div className="lang" ref={ref}>
       <button className="nav-item" aria-haspopup="menu" aria-expanded={open} aria-label={label} onClick={() => setOpen(!open)}>
         <Icon name="globe" size={20} className="muted" />
-        {!compact && <span className="label">{label}</span>}
-        {!compact && <Icon name="chevron-down" size={16} className="faint" />}
+        <span className="label">{label}</span>
+        <Icon name="chevron-down" size={16} className="faint" />
       </button>
       {open && (
         <div className={up ? 'lang-menu up' : 'lang-menu'} role="menu">

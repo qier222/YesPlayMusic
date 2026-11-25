@@ -270,7 +270,7 @@ class AppState extends ChangeNotifier {
   List<Album> libraryAlbums = const [];
   final Map<String, List<Track>> _albumTracks = {};
 
-  bool get hasLibrary => libraryAlbums.isNotEmpty;
+  bool get hasLibrary => (local?.trackCount ?? 0) > 0;
   Album? albumOf(String id) =>
       _remoteAlbums[id] ?? libraryAlbums.where((a) => a.id == id).firstOrNull;
 
@@ -418,6 +418,17 @@ class AppState extends ChangeNotifier {
     if (local != null) await sources.remove(local!.id);
     local = src;
     sources.add(src);
+    final lyricsPrefix = '${src.id}/lyrics/';
+    _direct.removeWhere((key, _) => key.startsWith(lyricsPrefix));
+    _directInflight.removeWhere((key, _) => key.startsWith(lyricsPrefix));
+    final current = track;
+    final ref = current.ref;
+    if (ref != null &&
+        ref.source == src.id &&
+        !src.unreadable.any((folder) => p.isWithin(folder, ref.id))) {
+      _lyricsKey = null;
+      unawaited(_loadLyrics(current));
+    }
 
     final home = await src.home();
     final found = home.sections.expand((s) => s.albums).toList();
@@ -1184,14 +1195,22 @@ class AppState extends ChangeNotifier {
     }
     if (s is! PluginSource) {
       final k = '${r.source}/${r.path}';
-      final v = await (_directInflight[k] ??= r
+      final pending = _directInflight[k];
+      if (pending != null) return (await pending) as T;
+      late final Future<T> request;
+      request = r
           .direct(s)
-          // Can't be `=> remove(k)`: the return value is this very future, which would wait for itself
+          .then((value) {
+            if (identical(_directInflight[k], request)) _direct[k] = value;
+            return value;
+          })
           .whenComplete(() {
-            _directInflight.remove(k);
-          }));
-      _direct[k] = v;
-      return v as T;
+            if (identical(_directInflight[k], request)) {
+              _directInflight.remove(k);
+            }
+          });
+      _directInflight[k] = request;
+      return request;
     }
     _watchCache();
     final raw = await cache.fetch(
@@ -1883,7 +1902,7 @@ class AppState extends ChangeNotifier {
   bool playing = false;
 
   // ───── Remembering playback state ─────
-  // Queue, current index, position and origin are stored in player.json and restored paused on the next launch.
+  // The queue, its original order, current index, position and origin are stored in player.json and restored paused on the next launch.
   // Only real songs are stored; if no real song was ever played nothing is stored and the floating player isn't shown.
 
   static String _playerPath() => p.join(supportDir(), 'player.json');
@@ -1910,11 +1929,25 @@ class AppState extends ChangeNotifier {
       queueFrom = j['from'] as String? ?? '';
       _queueName = j['name'] as String? ?? '';
       shuffle = j['shuffle'] == true;
+      if (shuffle) _unshuffled = _restoreUnshuffled(j['unshuffled'], ts);
       repeat = j['repeat'] != false;
       playing = false;
     } catch (e) {
       debugPrint('player: $e');
     }
+  }
+
+  List<Track>? _restoreUnshuffled(Object? raw, List<Track> tracks) {
+    if (raw is! List) return null;
+    final seen = <int>{};
+    final original = <Track>[];
+    for (final i in raw) {
+      if (i is! int || i < 0 || i >= tracks.length || !seen.add(i)) {
+        return null;
+      }
+      original.add(tracks[i]);
+    }
+    return original;
   }
 
   /// State changed: written at most once every 2 seconds.
@@ -1929,8 +1962,11 @@ class AppState extends ChangeNotifier {
       for (final t in queue)
         if (t.ref != null) t,
     ];
+    final original = _unshuffled;
     final text = jsonEncode({
       'tracks': [for (final t in real) t.ref!.toJson()],
+      if (shuffle && original != null)
+        'unshuffled': _unshuffledIndices(real, original),
       'index': math.max(0, real.indexOf(track)),
       'position': position.floorToDouble(),
       'from': queueFrom,
@@ -1947,6 +1983,18 @@ class AppState extends ChangeNotifier {
     } catch (e) {
       debugPrint('player: $e');
     }
+  }
+
+  List<int> _unshuffledIndices(List<Track> tracks, List<Track> original) {
+    final indices = <Track, List<int>>{};
+    for (var i = tracks.length - 1; i >= 0; i--) {
+      (indices[tracks[i]] ??= []).add(i);
+    }
+    return [
+      for (final t in original)
+        if (indices[t] case final positions? when positions.isNotEmpty)
+          positions.removeLast(),
+    ];
   }
 
   /// Where the current queue was played from: `album:<album id>`, `playlist:<source>/<playlist id>`,
@@ -2004,8 +2052,15 @@ class AppState extends ChangeNotifier {
   final ValueNotifier<double> pos = ValueNotifier(0);
   double get position => pos.value;
   set position(double v) => pos.value = v;
-  double get progress =>
-      track.seconds == 0 ? 0 : (position / track.seconds).clamp(0.0, 1.0);
+
+  /// Current track's duration in seconds, if known.
+  double get playbackDuration => track.seconds > 0
+      ? track.seconds.toDouble()
+      : (_engineOnTrack ? _engineSeconds : 0);
+  double get progress {
+    final total = playbackDuration;
+    return total == 0 ? 0 : (position / total).clamp(0.0, 1.0);
+  }
 
   /// Slider position; actual loudness is converted with AudioEngine.mpvVolume's exponential curve.
   /// 0.72 is about −11 dB, as loud as the default 0.65 before the curve changed.
@@ -2106,11 +2161,15 @@ class AppState extends ChangeNotifier {
       // mpv reports the position many times a second; 10 per second is enough for the UI, with immediate updates on seek.
       final v = d.inMilliseconds / 1000;
       if (v < position || v - position >= 0.1) position = v;
+      if (_gaplessDurationPending && d > Duration.zero) {
+        _gaplessDurationPending = false;
+        if (_engineSeconds <= 0) unawaited(_readGaplessDuration(e, track.key));
+      }
       _scrobbler.position(track.ref!, v, playing: playing);
       _reconcileNext();
     };
     e.onDuration = (d) {
-      if (_engineOnTrack) _engineSeconds = d.inMilliseconds / 1000;
+      if (_engineOnTrack) _setEngineDuration(d);
     };
     e.onCompleted = () {
       if (!_engineOnTrack) return;
@@ -2133,6 +2192,7 @@ class AppState extends ChangeNotifier {
   void _stopEngine() {
     _cancelPreload();
     _armedSig = null;
+    _gaplessDurationPending = false;
     if (_loadedKey == null && _engineKey == null) return;
     _loadedKey = null;
     _engineKey = null;
@@ -2268,6 +2328,20 @@ class AppState extends ChangeNotifier {
 
   /// Duration of the current track reported by mpv (seconds), more exact than the metadata; 0 until known.
   double _engineSeconds = 0;
+  bool _gaplessDurationPending = false;
+
+  Future<void> _readGaplessDuration(PlaybackEngine engine, String key) async {
+    final duration = await engine.readDuration();
+    if (_engineOnTrack && track.key == key && _engineSeconds <= 0) {
+      _setEngineDuration(duration);
+    }
+  }
+
+  void _setEngineDuration(Duration duration) {
+    final previous = playbackDuration;
+    _engineSeconds = duration.isNegative ? 0 : duration.inMilliseconds / 1000;
+    if (playbackDuration != previous) notifyListeners();
+  }
 
   /// The stream playing in the engine, for ReplayGain setting changes.
   m.AudioStream? _engineStream;
@@ -2331,6 +2405,7 @@ class AppState extends ChangeNotifier {
   /// mpv moved on to the queued track.
   void _onAdvanced(String key) {
     _armedSig = null;
+    _engineSeconds = 0;
     final s = _armedStream;
     _armedStream = null;
     final n = _nextTrack;
@@ -2350,10 +2425,12 @@ class AppState extends ChangeNotifier {
     final t = track;
     position = 0;
     _scrubbing = false;
-    _engineSeconds = 0;
     _loadedKey = key;
     _engineKey = key;
     _engineStream = s;
+    // The duration stream drops equal values, and its state can still be stale
+    // until the next file starts producing positions.
+    _gaplessDurationPending = true;
     _preloadedStream = null;
     // A new listen for scrobbling, and tell plugins the track changed
     _scrobbler.reset();
@@ -2507,6 +2584,7 @@ class AppState extends ChangeNotifier {
     _loadedKey = t.key;
     _scrubbing = false;
     _armedSig = null;
+    _gaplessDurationPending = false;
     // If lyrics are already cached (e.g. preloaded), fill them in synchronously so the first frame after switching doesn't flash the no-lyrics view
     if (_applyCachedLyrics(t)) notifyListeners();
     // Stop the old song first: while fetching the new URL, the old song stays silent and stops reporting progress
@@ -2562,6 +2640,8 @@ class AppState extends ChangeNotifier {
       if (_loadedKey == t.key) {
         _engineKey = t.key;
         _engineStream = s;
+        // The duration event can arrive before open finishes.
+        _setEngineDuration(_eng.duration);
         _playbackSoon(force: true);
         // Record only which source, not which song; restoring the queue at launch (without playing) doesn't count
         if (playing) {
@@ -2621,14 +2701,20 @@ class AppState extends ChangeNotifier {
 
   /// While dragging: only update the displayed position.
   void scrub(double frac) {
+    final total = playbackDuration;
+    if (total <= 0) return;
     _scrubbing = true;
-    position = frac.clamp(0.0, 1.0) * track.seconds;
+    position = frac.clamp(0.0, 1.0) * total;
   }
 
   /// Seeks to [frac] (0–1). Called on release when dragging the progress bar.
-  void seek(double frac) {
+  void seek(double frac) => seekTo(frac.clamp(0.0, 1.0) * playbackDuration);
+
+  void seekTo(double seconds) {
     _scrubbing = false;
-    position = frac.clamp(0.0, 1.0) * track.seconds;
+    final total = playbackDuration;
+    if (total <= 0) return;
+    position = seconds.clamp(0.0, total);
     _playbackSoon(force: true);
     if (_engineOnTrack) {
       _seeking++;
@@ -2639,10 +2725,7 @@ class AppState extends ChangeNotifier {
   }
 
   /// Seeks forward / back [s] seconds.
-  void seekBy(double s) {
-    if (track.seconds <= 0) return;
-    seek((position + s) / track.seconds);
-  }
+  void seekBy(double s) => seekTo(position + s);
 
   /// Next track. With [play] false it only moves to it without playing (for the sleep timer).
   void next({bool play = true}) {
@@ -2768,15 +2851,27 @@ class AppState extends ChangeNotifier {
   }
 
   void addNext(Track t) {
-    queue.isEmpty ? queue.add(t) : queue.insert(index + 1, t);
+    final entry = _newQueueEntry(t);
+    queue.isEmpty ? queue.add(entry) : queue.insert(index + 1, entry);
     notifyListeners();
     if (playing) _schedulePreloadNext();
   }
 
   void addToQueue(Track t) {
-    queue.add(t);
+    queue.add(_newQueueEntry(t));
     notifyListeners();
     if (playing) _schedulePreloadNext();
+  }
+
+  Track _newQueueEntry(Track t) {
+    if (!queue.contains(t)) return t;
+    return t.copy();
+  }
+
+  void _removeQueueEntryAt(int i) {
+    final removed = queue.removeAt(i);
+    // Songs removed while shuffled must also be removed from the original order, or they'd come back when shuffle is turned off
+    _unshuffled?.remove(removed);
   }
 
   void removeQueueAt(int i) {
@@ -2786,9 +2881,7 @@ class AppState extends ChangeNotifier {
       return;
     }
     final removingCurrent = i == index;
-    final removed = queue.removeAt(i);
-    // Songs removed while shuffled must also be removed from the original order, or they'd come back when shuffle is turned off
-    _unshuffled?.remove(removed);
+    _removeQueueEntryAt(i);
     if (i < index) {
       index--;
     } else if (index >= queue.length) {
@@ -3128,11 +3221,11 @@ class AppState extends ChangeNotifier {
     if (i >= 0 && i == index) {
       next();
       if (index == i + 1) {
-        queue.removeAt(i);
+        _removeQueueEntryAt(i);
         index--;
       }
     } else if (i >= 0) {
-      queue.removeAt(i);
+      _removeQueueEntryAt(i);
       if (i < index) index--;
     }
     notifyListeners();
@@ -3415,7 +3508,7 @@ class AppState extends ChangeNotifier {
   void seekLyric(int i) {
     final ls = lyricLines;
     if (i < 0 || i >= ls.length) return;
-    seek(track.seconds == 0 ? 0 : ls[i].start / 1000 / track.seconds);
+    seekTo(ls[i].start / 1000);
   }
 
   Future<void> _loadLyrics(Track t) async {
@@ -3425,18 +3518,21 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    final src = sources[ref.source];
+    bool current() =>
+        track.key == t.key &&
+        (ref.source != 'local' || identical(sources[ref.source], src));
     try {
-      final src = sources[ref.source];
       final l = src == null || !src.can(Op.lyrics)
           ? const m.Lyrics()
           : await getData(DataReq.lyrics(ref.source, ref.id));
-      if (track.key != t.key) return;
+      if (!current()) return;
       _lyrics = _parseLyrics(l);
       _lyricsKey = t.key;
       notifyListeners();
     } catch (_) {
       // Lyrics are optional; treat a load failure as none
-      if (track.key == t.key) {
+      if (current()) {
         _lyrics = const [];
         _lyricsKey = t.key;
         notifyListeners();
@@ -3447,7 +3543,7 @@ class AppState extends ChangeNotifier {
   double get effectiveVolume => muted ? 0 : volume;
 
   // ───── Settings ─────
-  int swatch = 0;
+  int _swatch = _swatchIndexOf(_prefs()['swatch']);
   String lang = _prefs()['lang'] as String? ?? 'system';
 
   /// On: the mini player always shows the current lyric. Off: only while hovering its progress bar.
@@ -3477,7 +3573,24 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  int get swatch => _swatch;
   Locale? get locale => AppLanguage.byCode(lang).locale;
+
+  static bool _validSwatch(int index) =>
+      index >= 0 && index < swatchKeys.length;
+
+  /// Prefs store the swatch by key (e.g. 'mint'); anything unknown falls back to 0.
+  static int _swatchIndexOf(Object? key) {
+    final i = key is String ? swatchKeys.indexOf(key) : -1;
+    return i < 0 ? 0 : i;
+  }
+
+  void setSwatch(int index) {
+    if (!_validSwatch(index) || _swatch == index) return;
+    _swatch = index;
+    _savePrefs({'swatch': swatchKeys[index]});
+    notifyListeners();
+  }
 
   void setLang(String code) {
     final normalized = AppLanguage.byCode(code).code;
@@ -3595,6 +3708,7 @@ class AppState extends ChangeNotifier {
     }
     _playerSave?.cancel();
     _savePlayer();
+    _engineKey = null;
     _engine?.dispose();
     audioCache.dispose();
     cache.dispose();

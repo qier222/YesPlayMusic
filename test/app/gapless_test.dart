@@ -1,11 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
+import 'package:yesplaymusic/cache/requests.dart';
 import 'package:yesplaymusic/data.dart';
+import 'package:yesplaymusic/mcp/config.dart';
+import 'package:yesplaymusic/mcp/resources.dart';
+import 'package:yesplaymusic/mcp/tool_registry.dart';
+import 'package:yesplaymusic/mcp/tools_core.dart';
 import 'package:yesplaymusic/music/eq.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/music/player.dart';
 import 'package:yesplaymusic/music/replay_gain.dart';
 import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/state.dart';
+
+import '../music/local_source_test.dart' show wav;
 
 /// Fake local source: every track is a file:// URL.
 class _Local extends Source {
@@ -30,6 +40,15 @@ class _Engine implements PlaybackEngine {
   String queuedRg = '';
   double fade = 1;
   EqSettings eq = const EqSettings();
+  Duration durationOnOpen = Duration.zero;
+  Duration? loadedDuration;
+  Duration? sought;
+
+  @override
+  Duration duration = Duration.zero;
+
+  @override
+  Future<Duration> readDuration() async => loadedDuration ?? duration;
 
   @override
   void Function(Duration)? onPosition, onDuration;
@@ -53,7 +72,8 @@ class _Engine implements PlaybackEngine {
 
   /// Reports duration and position (seconds).
   void at(double pos, {double total = 180}) {
-    onDuration!(Duration(milliseconds: (total * 1000).round()));
+    duration = Duration(milliseconds: (total * 1000).round());
+    onDuration!(duration);
     onPosition!(Duration(milliseconds: (pos * 1000).round()));
   }
 
@@ -70,6 +90,8 @@ class _Engine implements PlaybackEngine {
     openedRg.add(rg);
     current = key;
     queuedKey = null;
+    duration = durationOnOpen;
+    onDuration?.call(duration);
   }
 
   @override
@@ -94,7 +116,7 @@ class _Engine implements PlaybackEngine {
   @override
   Future<void> pause() async {}
   @override
-  Future<void> seek(Duration d) async {}
+  Future<void> seek(Duration d) async => sought = d;
   @override
   Future<void> setVolume(double v) async {}
   @override
@@ -109,8 +131,8 @@ class _Engine implements PlaybackEngine {
   Future<void> dispose() async {}
 }
 
-Track _t(String id) => Track.of(
-  m.Track(id: id, name: 'Song $id', source: 'local', duration: 180000),
+Track _t(String id, {int duration = 180000}) => Track.of(
+  m.Track(id: id, name: 'Song $id', source: 'local', duration: duration),
 );
 
 String _key(String id) => _t(id).key;
@@ -145,6 +167,111 @@ void main() {
     expect(engine.current, _key(ids.first));
   }
 
+  test('rescan refreshes cached and currently playing local lyrics', () async {
+    final music = await Directory.systemTemp.createTemp('ypm_rescan_');
+    addTearDown(() => music.delete(recursive: true));
+    final first = wav(p.join(music.path, 'First.wav'), ms: 180000);
+    final second = wav(p.join(music.path, 'Second.wav'), ms: 180000);
+    final firstLyrics = File(p.join(music.path, 'First.lrc'))
+      ..writeAsStringSync('[00:00.00]First before');
+    final secondLyrics = File(p.join(music.path, 'Second.lrc'))
+      ..writeAsStringSync('[00:00.00]Second before');
+
+    await app.sources.remove('local');
+    app.musicFolders = [music.path];
+    expect(await app.loadLibrary(), isTrue);
+    app.playList([_t(first.path), _t(second.path)]);
+    await _tick();
+    engine.at(30);
+    expect(app.lyricLines.single.text, 'First before');
+    final secondRequest = DataReq.lyrics('local', second.path);
+    expect((await app.getData(secondRequest)).lrc, '[00:00.00]Second before');
+
+    firstLyrics.writeAsStringSync('[00:00.00]First after');
+    secondLyrics.writeAsStringSync('[00:00.00]Second after');
+    await app.rescanLibrary();
+
+    expect(app.lyricLines.single.text, 'First after');
+    expect(app.track.key, _key(first.path));
+    expect(app.playing, isTrue);
+    expect(app.position, 30);
+    expect(engine.opened, [_key(first.path)]);
+    expect((await app.getData(secondRequest)).lrc, '[00:00.00]Second after');
+  });
+
+  test(
+    'rescan keeps current lyrics if their folder could not be scanned',
+    () async {
+      final music = await Directory.systemTemp.createTemp('ypm_rescan_');
+      addTearDown(() async {
+        await Process.run('chmod', ['700', music.path]);
+        await music.delete(recursive: true);
+      });
+      final song = wav(p.join(music.path, 'Song.wav'));
+      final lyrics = File(p.join(music.path, 'Song.lrc'))
+        ..writeAsStringSync('[00:00.00]Before');
+
+      await app.sources.remove('local');
+      app.musicFolders = [music.path];
+      expect(await app.loadLibrary(), isTrue);
+      app.playTrack(_t(song.path));
+      await _tick();
+      expect(app.lyricLines.single.text, 'Before');
+
+      lyrics.writeAsStringSync('[00:00.00]After');
+      // Allow reading a known file path, but not listing the folder.
+      expect((await Process.run('chmod', ['111', music.path])).exitCode, 0);
+      await app.rescanLibrary();
+      expect(app.unreadableFolders, [music.path]);
+      expect(app.lyricLines.single.text, 'Before');
+    },
+    skip: Platform.isWindows ? 'needs POSIX permissions' : null,
+  );
+
+  test(
+    'duration reported during open enables seeking without track metadata',
+    () async {
+      final track = _t('raw-aac', duration: 0);
+      engine.durationOnOpen = const Duration(seconds: 30);
+      app.playList([track]);
+      await _tick();
+
+      expect(nowPlayingSnapshot(app)['duration'], 30);
+      expect(app.track.ref!.duration, 0);
+      engine.onPosition!(const Duration(seconds: 6));
+      expect(app.progress, closeTo(0.2, 1e-9));
+      app.scrub(0.5);
+      expect(app.position, 15);
+      app.seek(0.5);
+      expect(engine.sought, const Duration(seconds: 15));
+
+      final tools = buildCoreTools();
+      await tools
+          .singleWhere((tool) => tool.name == 'control_playback')
+          .handler(
+            {'action': 'seek', 'value': 12},
+            McpCallContext(
+              app: app,
+              config: const McpConfig(),
+              session: McpSession('test'),
+              registry: McpToolRegistry(tools),
+            ),
+          );
+      expect(engine.sought, const Duration(seconds: 12));
+
+      engine.durationOnOpen = Duration.zero;
+      app.playList([_t('unknown', duration: 0)]);
+      expect(nowPlayingSnapshot(app)['duration'], 0);
+      await _tick();
+      expect(nowPlayingSnapshot(app)['duration'], 0);
+
+      engine.durationOnOpen = const Duration(seconds: 31);
+      app.playList([_t('wav', duration: 30000)]);
+      await _tick();
+      expect(nowPlayingSnapshot(app)['duration'], 30);
+    },
+  );
+
   test('快放完时才排下一首，接上后不重新打开', () async {
     await start(['a', 'b', 'c']);
     engine.at(100);
@@ -162,6 +289,33 @@ void main() {
     expect(app.position, 0);
     expect(app.playing, isTrue);
     expect(engine.opened, [_key('a')]); // not opened again
+  });
+
+  test('gapless refreshes duration when the stream emits no update', () async {
+    app.playList([_t('a'), _t('b', duration: 0), _t('c', duration: 0)]);
+    await _tick();
+    engine.at(160);
+    await _tick();
+    expect(engine.queuedKey, _key('b'));
+
+    engine.finish();
+    engine.loadedDuration = const Duration(seconds: 180);
+    engine.onPosition!(const Duration(seconds: 1));
+    await _tick();
+    expect(app.playbackDuration, 180);
+    app.seekTo(12);
+    expect(engine.sought, const Duration(seconds: 12));
+
+    await _tick();
+    engine.onPosition!(const Duration(seconds: 160));
+    await _tick();
+    expect(engine.queuedKey, _key('c'));
+    engine.finish();
+    engine.loadedDuration = Duration.zero;
+    engine.onPosition!(const Duration(seconds: 1));
+    await _tick();
+    expect(app.playbackDuration, 0);
+    expect(engine.opened, [_key('a')]);
   });
 
   test('排好以后插队：撤掉重排成新的下一首', () async {

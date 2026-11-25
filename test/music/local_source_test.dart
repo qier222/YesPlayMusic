@@ -4,13 +4,19 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/music/local/local_source.dart';
+import 'package:yesplaymusic/music/lrc.dart';
 import 'package:yesplaymusic/music/models.dart';
 import 'package:yesplaymusic/music/source.dart';
 
 /// Writes a silent WAV [ms] milliseconds long (8kHz mono 16-bit), with [info] as RIFF LIST/INFO
 /// tags (INAM title, IART artist, IPRD album, ITRK track number, ICRD date).
 /// The tag library can only rewrite existing INFO chunks, not create them, so bytes are written directly here.
-File wav(String path, {int ms = 1000, Map<String, String> info = const {}}) {
+File wav(
+  String path, {
+  int ms = 1000,
+  Map<String, String> info = const {},
+  List<int> cover = const [],
+}) {
   const rate = 8000;
   final b = BytesBuilder();
   void u32(int v) =>
@@ -29,10 +35,41 @@ File wav(String path, {int ms = 1000, Map<String, String> info = const {}}) {
     if (v.length.isOdd) list.addByte(0);
   }
   final listBytes = list.takeBytes();
+  final id3 = BytesBuilder();
+  if (cover.isNotEmpty) {
+    final picture = [0, ...'image/jpeg'.codeUnits, 0, 3, 0, ...cover];
+    id3.add([
+      ...'ID3'.codeUnits,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      10 + picture.length,
+      ...'APIC'.codeUnits,
+      0,
+      0,
+      0,
+      picture.length,
+      0,
+      0,
+      ...picture,
+    ]);
+  }
+  final id3Bytes = id3.takeBytes();
+  final id3Padding = id3Bytes.length.isOdd ? 1 : 0;
   final data = rate * ms ~/ 1000 * 2;
 
   b.add('RIFF'.codeUnits);
-  u32(4 + (8 + 16) + (info.isEmpty ? 0 : 8 + listBytes.length) + 8 + data);
+  u32(
+    4 +
+        (8 + 16) +
+        (info.isEmpty ? 0 : 8 + listBytes.length) +
+        (cover.isEmpty ? 0 : 8 + id3Bytes.length + id3Padding) +
+        8 +
+        data,
+  );
   b.add('WAVE'.codeUnits);
   b.add('fmt '.codeUnits);
   u32(16);
@@ -46,6 +83,12 @@ File wav(String path, {int ms = 1000, Map<String, String> info = const {}}) {
     b.add('LIST'.codeUnits);
     u32(listBytes.length);
     b.add(listBytes);
+  }
+  if (cover.isNotEmpty) {
+    b.add('ID3 '.codeUnits);
+    u32(id3Bytes.length);
+    b.add(id3Bytes);
+    if (id3Padding != 0) b.addByte(0);
   }
   b.add('data'.codeUnits);
   u32(data);
@@ -125,6 +168,77 @@ void main() {
     expect(page.tracks.every((t) => t.source == 'local'), isTrue);
   });
 
+  test('disc tracks use their own cover or the album folder cover', () async {
+    final albumFolder = p.join(music, 'Multi-disc');
+    for (final folder in ['CD1', 'CD2', 'Disc 3', 'dIsK 4']) {
+      wav(
+        p.join(albumFolder, folder, 'track.wav'),
+        info: {'INAM': folder, 'IPRD': 'Multi-disc'},
+      );
+    }
+    final albumCover = File(p.join(albumFolder, 'cover.png'))
+      ..writeAsBytesSync([0]);
+    final discCover = File(p.join(albumFolder, 'CD1', 'folder.jpg'))
+      ..writeAsBytesSync([0]);
+    await src.scan();
+
+    final album = (await src.search(
+      'Multi-disc',
+      SearchKind.albums,
+    )).albums.single;
+    final tracks = (await src.album(album.id)).tracks;
+    expect(
+      {for (final t in tracks) t.name: t.album.imageUrl},
+      {
+        'CD1': discCover.uri.toString(),
+        'CD2': albumCover.uri.toString(),
+        'Disc 3': albumCover.uri.toString(),
+        'dIsK 4': albumCover.uri.toString(),
+      },
+    );
+  });
+
+  test(
+    'covers do not fall back from non-disc folders or past the parent',
+    () async {
+      final artist = p.join(music, 'Artist');
+      wav(p.join(artist, 'Bonus', 'track.wav'));
+      wav(p.join(artist, 'Album', 'CD1', 'track.wav'));
+      File(p.join(artist, 'cover.png')).writeAsBytesSync([0]);
+      await src.scan();
+
+      final covers = {
+        for (final e in src.entries)
+          if (p.isWithin(artist, e.path))
+            p.basename(p.dirname(e.path)): e.cover,
+      };
+      expect(covers, {'Bonus': '', 'CD1': ''});
+    },
+  );
+
+  test('folder covers take precedence over embedded art', () async {
+    final albumFolder = p.join(music, 'Embedded');
+    const embedded = [0xFF, 0xD8, 0xFF, 0xD9];
+    final track = wav(
+      p.join(albumFolder, 'CD1', 'track.wav'),
+      info: {'INAM': 'Embedded Track', 'IPRD': 'Embedded'},
+      cover: embedded,
+    );
+
+    Future<String> cover() async {
+      await src.scan();
+      return src.entries.singleWhere((e) => e.path == track.path).cover;
+    }
+
+    expect(File(await cover()).readAsBytesSync(), embedded);
+    final albumCover = File(p.join(albumFolder, 'cover.png'))
+      ..writeAsBytesSync([0]);
+    expect(await cover(), albumCover.path);
+    final discCover = File(p.join(albumFolder, 'CD1', 'cover.png'))
+      ..writeAsBytesSync([0]);
+    expect(await cover(), discCover.path);
+  });
+
   // Files without tags: strip the track number prefix, split "Artist - Title", and don't assign to any album.
   test('untagged file falls back to filename', () async {
     final r = await src.search('晚風', SearchKind.tracks);
@@ -155,6 +269,36 @@ void main() {
       )).isEmpty,
       isTrue,
     );
+  });
+
+  test('enhanced sidecar lyrics and translation keep their prefixes', () async {
+    final t = (await src.search('晚風', SearchKind.tracks)).tracks.single;
+    final base = p.withoutExtension(t.id);
+    File('$base.lrc').writeAsStringSync('[00:00.10]晚风<00:00.50>吹过');
+    File('$base.trans.lrc')
+        .writeAsStringSync('[00:00.10]The <00:00.50>evening wind');
+    final line = lyricLines(await src.lyrics(t.id)).single;
+    expect((line.text, line.translation), ('晚风吹过', 'The evening wind'));
+    expect(line.words.first.start, 100);
+  });
+
+  test('embedded enhanced LRC keeps the prefix', () async {
+    final comment = 'LYRICS=[00:02.00]Open <00:02.80>the door'.codeUnits;
+    final block = ByteData(12)
+      ..setUint32(4, 1, Endian.little)
+      ..setUint32(8, comment.length, Endian.little);
+    final file = File(p.join(music, 'embedded.flac'))
+      ..writeAsBytesSync([
+        ...'fLaC'.codeUnits,
+        0x84,
+        0,
+        0,
+        block.lengthInBytes + comment.length,
+        ...block.buffer.asUint8List(),
+        ...comment,
+      ]);
+    final line = lyricLines(await src.lyrics(file.path)).single;
+    expect((line.text, line.words.first.start), ('Open the door', 2000));
   });
 
   // Sources routes by the song's source to the local source and gets a file:// URL; after the file is deleted it reports unavailable.
@@ -286,6 +430,31 @@ void main() {
     src.cancelScan();
     await expectLater(f, throwsA(isA<ScanCancelled>()));
     expect(src.trackCount, 3);
+  });
+
+  // Regression: search used to report the first page size (50) as the total.
+  test('search reports the full match count across pages', () async {
+    final root = p.join(tmp.path, 'Many');
+    const n = LocalSource.pageSize + 10;
+    for (var i = 0; i < n; i++) {
+      wav(
+        p.join(root, '$i.wav'),
+        ms: 10,
+        info: {'INAM': 'Song $i', 'IART': 'Band', 'IPRD': 'Album $i'},
+      );
+    }
+    final many = LocalSource(folders: [root], cacheDir: p.join(tmp.path, 'c6'));
+    await many.scan();
+
+    final first = await many.search('song', SearchKind.tracks);
+    expect((first.tracks.length, first.more, first.total), (50, true, n));
+    final rest = await many.search('song', SearchKind.tracks, offset: 50);
+    expect((rest.tracks.length, rest.more, rest.total), (10, false, n));
+
+    final albums = await many.search('album', SearchKind.albums);
+    expect((albums.albums.length, albums.total), (50, n));
+    final artists = await many.search('band', SearchKind.artists);
+    expect((artists.artists.length, artists.total), (1, 1));
   });
 
   // Regression: when the hash's high bit was 1, cache file names used to contain a minus sign.

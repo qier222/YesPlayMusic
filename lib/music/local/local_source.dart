@@ -275,15 +275,24 @@ class LocalSource extends Source {
         return SearchResult(
           tracks: page(all).map(track).toList(),
           more: more(all.length),
+          total: all.length,
         );
       case SearchKind.albums:
         final all = _albums(
           _entries.where((e) => hit(e.album) || hit(e.albumArtist)),
         );
-        return SearchResult(albums: page(all), more: more(all.length));
+        return SearchResult(
+          albums: page(all),
+          more: more(all.length),
+          total: all.length,
+        );
       case SearchKind.artists:
         final all = _artists().where((a) => hit(a.name)).toList();
-        return SearchResult(artists: page(all), more: more(all.length));
+        return SearchResult(
+          artists: page(all),
+          more: more(all.length),
+          total: all.length,
+        );
       case SearchKind.playlists:
       case SearchKind.shows:
         return const SearchResult();
@@ -548,10 +557,14 @@ LocalEntry _entry(
   final albumArtist = _clean(m?.albumArtist) ?? '';
 
   final dir = p.dirname(path);
-  var cover = folderCovers.putIfAbsent(dir, () => _folderCover(dir));
+  final albumFolder = albumDir(path);
+  String coverIn(String folder) =>
+      folderCovers.putIfAbsent(folder, () => _folderCover(folder));
+  var cover = coverIn(dir);
+  if (cover.isEmpty && albumFolder != dir) cover = coverIn(albumFolder);
   if (cover.isEmpty && m != null && m.pictures.isNotEmpty) {
     // The album artist may not be settled yet, so deduplicate by folder + album name.
-    final key = album.isEmpty ? path : '${albumDir(path)}\x01${fold(album)}';
+    final key = album.isEmpty ? path : '$albumFolder\x01${fold(album)}';
     cover = tagCovers[key] ??= _saveCover(m.pictures, key, cacheDir);
   }
 
