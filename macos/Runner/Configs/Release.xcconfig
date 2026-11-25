@@ -2,5 +2,12 @@
 #include "Warnings.xcconfig"
 
 // Build for the host architecture by default, not a universal binary.
-// scripts/build-macos.sh also sets the architecture for CocoaPods.
-ARCHS = $(NATIVE_ARCH_ACTUAL)
+// Exclude the opposite architecture instead of setting ARCHS=$(NATIVE_ARCH_ACTUAL),
+// because Flutter invokes xcodebuild via `arch -arm64e`, which resolves
+// NATIVE_ARCH_ACTUAL to arm64e (missing from FlutterMacOS.framework).
+// scripts/build-macos.sh overrides ARCHS / EXCLUDED_ARCHS for explicit arm64 or x64 builds.
+YPM_EXCLUDED_ARCH_arm64 = x86_64
+YPM_EXCLUDED_ARCH_arm64e = x86_64
+YPM_EXCLUDED_ARCH_x86_64 = arm64
+YPM_EXCLUDED_ARCH_x86_64h = arm64
+EXCLUDED_ARCHS = $(YPM_EXCLUDED_ARCH_$(NATIVE_ARCH_ACTUAL))
