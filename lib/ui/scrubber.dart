@@ -17,7 +17,6 @@ class Scrubber extends StatefulWidget {
     required this.onChanged,
     this.onCommit,
     this.vertical = false,
-    this.onDragState,
     this.onScroll,
   });
   final Widget Function(BuildContext context, double? hoverAt, bool dragging)
@@ -25,7 +24,6 @@ class Scrubber extends StatefulWidget {
   final ValueChanged<double> onChanged;
   final ValueChanged<double>? onCommit;
   final bool vertical;
-  final ValueChanged<bool>? onDragState;
   final ValueChanged<double>? onScroll;
 
   @override
@@ -51,7 +49,6 @@ class _ScrubberState extends State<Scrubber> {
 
   void _setDrag(bool v) {
     setState(() => _drag = v);
-    widget.onDragState?.call(v);
   }
 
   void _end() {
