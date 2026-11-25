@@ -61,6 +61,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get actionUnsave => 'Удалить из медиатеки';
 
   @override
+  String get actionSavePlaylist => 'Сохранить плейлист';
+
+  @override
+  String get actionUnsavePlaylist => 'Удалить из медиатеки';
+
+  @override
   String get actionFollow => 'Подписаться';
 
   @override
@@ -1630,6 +1636,21 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get toastAlbumUnsaved => 'Удалено из медиатеки';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return '«$title» сохранён';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => 'Удалено из медиатеки';
+
+  @override
+  String get toastSavePlaylistFailed => 'Не удалось сохранить плейлист';
+
+  @override
+  String get toastUnsavePlaylistFailed =>
+      'Не удалось удалить плейлист из медиатеки';
 
   @override
   String pluginErrIdTaken(String id) {

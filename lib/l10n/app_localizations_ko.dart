@@ -61,6 +61,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get actionUnsave => '저장 취소';
 
   @override
+  String get actionSavePlaylist => '플레이리스트 저장';
+
+  @override
+  String get actionUnsavePlaylist => '저장 취소';
+
+  @override
   String get actionFollow => '팔로우';
 
   @override
@@ -1592,6 +1598,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get toastAlbumUnsaved => '저장 취소됨';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return '\"$title\" 저장됨';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => '저장 취소됨';
+
+  @override
+  String get toastSavePlaylistFailed => '이 플레이리스트를 저장할 수 없습니다';
+
+  @override
+  String get toastUnsavePlaylistFailed => '이 플레이리스트의 저장을 취소할 수 없습니다';
 
   @override
   String pluginErrIdTaken(String id) {

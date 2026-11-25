@@ -25,10 +25,18 @@ class PlaylistData {
     this.from = '',
     this.tags = const [],
     this.editable = '',
+    this.saved = false,
+    this.onToggleSave,
   });
 
   /// The id in the source of the user's own playlist: enables "Remove from playlist" in the context menu. Empty for other people's playlists.
   final String editable;
+
+  /// Whether this playlist is in the user's library; drives the save / un-save item in the more menu.
+  final bool saved;
+
+  /// Saves or unsaves this playlist; null when the source can't save playlists.
+  final Future<bool> Function(bool save)? onToggleSave;
 
   final String name, owner, description, cover;
 
@@ -58,11 +66,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
   final _filter = TextEditingController();
   final _focus = FocusNode();
   int _sort = 0;
+  late bool _saved;
 
   @override
   void initState() {
     super.initState();
+    _saved = widget.data.saved;
     _focus.addListener(() => setState(() {}));
+  }
+
+  Future<void> _toggleSave(bool save) async {
+    final callback = _data.onToggleSave;
+    if (callback == null) return;
+    if (await callback(save) && mounted) setState(() => _saved = save);
   }
 
   @override
@@ -124,6 +140,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
             dy: 20,
             child: _Panel(
               data: _data,
+              saved: _saved,
+              onToggleSave: _data.onToggleSave == null ? null : _toggleSave,
               onPlay: () => _play(null, shuffled: false),
               onShuffle: () => _play(null, shuffled: true),
             ),
@@ -267,10 +285,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
 class _Panel extends StatelessWidget {
   const _Panel({
     required this.data,
+    required this.saved,
+    required this.onToggleSave,
     required this.onPlay,
     required this.onShuffle,
   });
   final PlaylistData data;
+  final bool saved;
+  final Future<void> Function(bool save)? onToggleSave;
   final VoidCallback onPlay;
   final VoidCallback onShuffle;
 
@@ -423,6 +445,8 @@ class _Panel extends StatelessWidget {
                                 meta: meta,
                                 cover: d.cover,
                                 onPlay: () async => onPlay(),
+                                saved: saved,
+                                onSave: onToggleSave,
                               ),
                             ),
                           ),

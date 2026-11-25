@@ -61,6 +61,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get actionUnsave => 'Aus Mediathek entfernen';
 
   @override
+  String get actionSavePlaylist => 'Playlist speichern';
+
+  @override
+  String get actionUnsavePlaylist => 'Aus Mediathek entfernen';
+
+  @override
   String get actionFollow => 'Folgen';
 
   @override
@@ -1638,6 +1644,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get toastAlbumUnsaved => 'Aus Mediathek entfernt';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return '„$title“ gespeichert';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => 'Aus Mediathek entfernt';
+
+  @override
+  String get toastSavePlaylistFailed =>
+      'Diese Playlist konnte nicht gespeichert werden';
+
+  @override
+  String get toastUnsavePlaylistFailed =>
+      'Diese Playlist konnte nicht aus der Mediathek entfernt werden';
 
   @override
   String pluginErrIdTaken(String id) {

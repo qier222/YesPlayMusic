@@ -61,6 +61,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get actionUnsave => 'Retirer de la bibliothèque';
 
   @override
+  String get actionSavePlaylist => 'Enregistrer la playlist';
+
+  @override
+  String get actionUnsavePlaylist => 'Retirer de la bibliothèque';
+
+  @override
   String get actionFollow => 'Suivre';
 
   @override
@@ -1642,6 +1648,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get toastAlbumUnsaved => 'Retiré de la bibliothèque';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return '« $title » enregistrée';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => 'Retirée de la bibliothèque';
+
+  @override
+  String get toastSavePlaylistFailed =>
+      'Impossible d\'enregistrer cette playlist';
+
+  @override
+  String get toastUnsavePlaylistFailed =>
+      'Impossible de retirer cette playlist';
 
   @override
   String pluginErrIdTaken(String id) {

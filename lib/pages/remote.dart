@@ -1273,6 +1273,10 @@ class RemotePlaylistPage extends StatelessWidget {
           count: p.trackCount,
           from: 'playlist:$source/$id',
           editable: p.mine && !p.fixed ? id : '',
+          saved: p.saved,
+          onToggleSave: s.can(Op.savePlaylist) && !p.mine && !p.fixed
+              ? (save) => app.toggleSavePlaylist(s, p, save)
+              : null,
           rows: [
             for (final t in _tracks(p.tracks, source))
               (track: t, added: addedText(t.added)),

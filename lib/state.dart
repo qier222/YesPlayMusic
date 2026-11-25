@@ -3519,6 +3519,27 @@ class AppState extends ChangeNotifier {
     showToast(on ? L.toastAlbumSaved(al.title) : L.toastAlbumUnsaved);
   }
 
+  /// Saves or unsaves a playlist the user doesn't own; plugin playlists sync to the source.
+  Future<bool> toggleSavePlaylist(Source s, m.Playlist p, bool on) async {
+    if (!s.can(Op.savePlaylist)) return false;
+    try {
+      await s.savePlaylist(p.id, on);
+      // The library lists saved playlists and the playlist page caches `saved`;
+      // drop both so they refetch with the new state.
+      _libraries.remove(s.id);
+      dropData(DataReq.playlist(s.id, p.id));
+      showToast(on ? L.toastPlaylistSaved(p.name) : L.toastPlaylistUnsaved);
+      return true;
+    } catch (e) {
+      showToast(
+        e is SourceError && e.reason.isNotEmpty
+            ? e.reason
+            : (on ? L.toastSavePlaylistFailed : L.toastUnsavePlaylistFailed),
+      );
+      return false;
+    }
+  }
+
   // ───── MCP Server ─────
   McpConfig mcpConfig = McpConfig.fromJson(_prefs()['mcp']);
   late final McpServer mcp = McpServer(this, onStatusChanged: notifyListeners);

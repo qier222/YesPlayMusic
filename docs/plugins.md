@@ -305,6 +305,8 @@ export async function stream({ id }) {
 | `removeFromPlaylist` | `{ id, trackIds }` | |
 | `movePlaylistTrack` | `{ id, from, to }` | |
 
+导出 `savePlaylist` 的插件，宿主会在其他用户歌单页的「更多」菜单里显示「收藏歌单 / 取消收藏歌单」；`Playlist.saved` 决定显示哪一个，收藏后 `saved` 应为 `true`。
+
 ### 播放
 
 | 函数 | 参数 | 返回 | 说明 |

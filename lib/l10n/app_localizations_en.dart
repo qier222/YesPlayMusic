@@ -61,6 +61,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionUnsave => 'Remove from Library';
 
   @override
+  String get actionSavePlaylist => 'Save Playlist';
+
+  @override
+  String get actionUnsavePlaylist => 'Remove from Library';
+
+  @override
   String get actionFollow => 'Follow';
 
   @override
@@ -1624,6 +1630,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get toastAlbumUnsaved => 'Removed from library';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return 'Saved \"$title\"';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => 'Removed from library';
+
+  @override
+  String get toastSavePlaylistFailed => 'Could not save this playlist';
+
+  @override
+  String get toastUnsavePlaylistFailed => 'Could not remove this playlist';
 
   @override
   String pluginErrIdTaken(String id) {
