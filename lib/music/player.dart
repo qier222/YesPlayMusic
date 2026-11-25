@@ -30,6 +30,7 @@ abstract interface class PlaybackEngine {
   abstract void Function(String key)? onAdvanced;
   String? get queuedKey;
   Duration get duration;
+  Future<Duration> readDuration();
   Future<void> open(
     AudioStream s, {
     required String key,
@@ -149,6 +150,18 @@ class AudioEngine implements PlaybackEngine {
   String? get queuedKey => _queuedKey;
   @override
   Duration get duration => _p.state.duration;
+
+  @override
+  Future<Duration> readDuration() async {
+    final n = _native;
+    if (n == null) return Duration.zero;
+    final value = await n.getProperty('duration', waitForInitialization: false);
+    final seconds = double.tryParse(value);
+    if (seconds == null || !seconds.isFinite || seconds <= 0) {
+      return Duration.zero;
+    }
+    return Duration(microseconds: (seconds * 1000000).round());
+  }
 
   /// Opens and (by default) starts playing, replacing mpv's whole list. [start]
   /// restores the previous position. [rg] and [gainDb] are this track's ReplayGain,

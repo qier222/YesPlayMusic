@@ -41,10 +41,14 @@ class _Engine implements PlaybackEngine {
   double fade = 1;
   EqSettings eq = const EqSettings();
   Duration durationOnOpen = Duration.zero;
+  Duration? loadedDuration;
   Duration? sought;
 
   @override
   Duration duration = Duration.zero;
+
+  @override
+  Future<Duration> readDuration() async => loadedDuration ?? duration;
 
   @override
   void Function(Duration)? onPosition, onDuration;
@@ -285,6 +289,33 @@ void main() {
     expect(app.position, 0);
     expect(app.playing, isTrue);
     expect(engine.opened, [_key('a')]); // not opened again
+  });
+
+  test('gapless refreshes duration when the stream emits no update', () async {
+    app.playList([_t('a'), _t('b', duration: 0), _t('c', duration: 0)]);
+    await _tick();
+    engine.at(160);
+    await _tick();
+    expect(engine.queuedKey, _key('b'));
+
+    engine.finish();
+    engine.loadedDuration = const Duration(seconds: 180);
+    engine.onPosition!(const Duration(seconds: 1));
+    await _tick();
+    expect(app.playbackDuration, 180);
+    app.seekTo(12);
+    expect(engine.sought, const Duration(seconds: 12));
+
+    await _tick();
+    engine.onPosition!(const Duration(seconds: 160));
+    await _tick();
+    expect(engine.queuedKey, _key('c'));
+    engine.finish();
+    engine.loadedDuration = Duration.zero;
+    engine.onPosition!(const Duration(seconds: 1));
+    await _tick();
+    expect(app.playbackDuration, 0);
+    expect(engine.opened, [_key('a')]);
   });
 
   test('排好以后插队：撤掉重排成新的下一首', () async {

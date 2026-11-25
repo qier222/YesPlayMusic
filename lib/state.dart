@@ -2132,6 +2132,10 @@ class AppState extends ChangeNotifier {
       // mpv reports the position many times a second; 10 per second is enough for the UI, with immediate updates on seek.
       final v = d.inMilliseconds / 1000;
       if (v < position || v - position >= 0.1) position = v;
+      if (_gaplessDurationPending && d > Duration.zero) {
+        _gaplessDurationPending = false;
+        if (_engineSeconds <= 0) unawaited(_readGaplessDuration(e, track.key));
+      }
       _scrobbler.position(track.ref!, v, playing: playing);
       _reconcileNext();
     };
@@ -2159,6 +2163,7 @@ class AppState extends ChangeNotifier {
   void _stopEngine() {
     _cancelPreload();
     _armedSig = null;
+    _gaplessDurationPending = false;
     if (_loadedKey == null && _engineKey == null) return;
     _loadedKey = null;
     _engineKey = null;
@@ -2294,6 +2299,14 @@ class AppState extends ChangeNotifier {
 
   /// Duration of the current track reported by mpv (seconds), more exact than the metadata; 0 until known.
   double _engineSeconds = 0;
+  bool _gaplessDurationPending = false;
+
+  Future<void> _readGaplessDuration(PlaybackEngine engine, String key) async {
+    final duration = await engine.readDuration();
+    if (_engineOnTrack && track.key == key && _engineSeconds <= 0) {
+      _setEngineDuration(duration);
+    }
+  }
 
   void _setEngineDuration(Duration duration) {
     final previous = playbackDuration;
@@ -2386,6 +2399,9 @@ class AppState extends ChangeNotifier {
     _loadedKey = key;
     _engineKey = key;
     _engineStream = s;
+    // The duration stream drops equal values, and its state can still be stale
+    // until the next file starts producing positions.
+    _gaplessDurationPending = true;
     _preloadedStream = null;
     // A new listen for scrobbling, and tell plugins the track changed
     _scrobbler.reset();
@@ -2539,6 +2555,7 @@ class AppState extends ChangeNotifier {
     _loadedKey = t.key;
     _scrubbing = false;
     _armedSig = null;
+    _gaplessDurationPending = false;
     // If lyrics are already cached (e.g. preloaded), fill them in synchronously so the first frame after switching doesn't flash the no-lyrics view
     if (_applyCachedLyrics(t)) notifyListeners();
     // Stop the old song first: while fetching the new URL, the old song stays silent and stops reporting progress
@@ -3617,6 +3634,7 @@ class AppState extends ChangeNotifier {
     }
     _playerSave?.cancel();
     _savePlayer();
+    _engineKey = null;
     _engine?.dispose();
     audioCache.dispose();
     cache.dispose();
