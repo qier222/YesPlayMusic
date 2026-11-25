@@ -2811,16 +2811,7 @@ class AppState extends ChangeNotifier {
 
   Track _newQueueEntry(Track t) {
     if (!queue.contains(t)) return t;
-    return Track(
-      title: t.title,
-      artist: t.artist,
-      cover: t.cover,
-      seconds: t.seconds,
-      album: t.album,
-      mv: t.mv,
-      ref: t.ref,
-      added: t.added,
-    );
+    return t.copy();
   }
 
   void _removeQueueEntryAt(int i) {

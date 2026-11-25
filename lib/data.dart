@@ -57,6 +57,20 @@ class Track {
   /// When it was added to the library; null if unknown.
   final DateTime? added;
 
+  /// A separate queue entry with the same data. Queue entries are told apart
+  /// by identity, so this must never return [this] or a const instance.
+  // When adding a field to Track, include it here too.
+  Track copy() => Track(
+    title: title,
+    artist: artist,
+    cover: cover,
+    seconds: seconds,
+    album: album,
+    mv: mv,
+    ref: ref,
+    added: added,
+  );
+
   String get dur => fmtTime(seconds.toDouble());
   String get key => ref?.key ?? '$title|$artist|$mv';
 }
