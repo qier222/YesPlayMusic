@@ -245,6 +245,19 @@ void main() {
 
   for (final enabled in [false, true]) {
     testWidgets('equalizer wheel scrolling (enabled: $enabled)', (t) async {
+      // All tests in this file share one prefs.json, and the wheel saves the
+      // EQ there. The tearDown that runs app.dispose() is declared on the
+      // group, so it runs after this test's own tear-downs; the save is
+      // debounced and lands while _frames() pumps, which the expectation at
+      // the end checks, so dispose() has nothing left to flush afterwards.
+      final prefsFile = File(p.join(AppState.supportDir(), 'prefs.json'));
+      addTearDown(() {
+        if (!prefsFile.existsSync()) return;
+        final prefs = jsonDecode(prefsFile.readAsStringSync()) as Map;
+        prefs.remove('eq');
+        prefsFile.writeAsStringSync(jsonEncode(prefs));
+      });
+
       app.eq = EqSettings(enabled: enabled);
       await boot(t, width: 1440);
       app.open('/settings');
@@ -268,25 +281,100 @@ void main() {
       final start = scroll.pixels;
       const delta = -20.0;
 
-      Future<void> wheelAt(Finder target) async {
+      Future<void> wheelAt(
+        Finder target,
+        Offset scrollDelta, {
+        PointerDeviceKind kind = PointerDeviceKind.mouse,
+      }) async {
         await t.sendEventToBinding(
           PointerScrollEvent(
             position: t.getCenter(target),
-            scrollDelta: Offset(0, delta),
+            scrollDelta: scrollDelta,
+            kind: kind,
           ),
         );
         await _frames(t);
       }
 
-      await wheelAt(slider);
+      // Horizontal-only wheel: no gain change, nothing scrolls.
+      await wheelAt(slider, const Offset(20, 0));
+      expect(app.eq.gains.first, 0);
+      expect(scroll.pixels, start);
+
+      await wheelAt(slider, const Offset(0, delta));
       expect(app.eq.gains.first, enabled ? 0.5 : 0);
       expect(scroll.pixels, enabled ? start : start + delta);
-
-      if (enabled) {
-        await wheelAt(find.text('${eqBands.first}'));
-        expect(scroll.pixels, start + delta);
-        expect(app.eq.gains.first, 0.5);
+      if (!enabled) {
+        // Trackpad pans over a disabled band still scroll the page.
+        final before = scroll.pixels;
+        final pointer = TestPointer(1, PointerDeviceKind.trackpad);
+        final at = t.getCenter(slider);
+        await t.sendEventToBinding(pointer.panZoomStart(at));
+        for (var y = 10.0; y <= 60; y += 10) {
+          await t.sendEventToBinding(
+            pointer.panZoomUpdate(at, pan: Offset(0, y)),
+          );
+          await t.pump();
+        }
+        await t.sendEventToBinding(pointer.panZoomEnd());
+        await _frames(t);
+        expect(scroll.pixels, isNot(before));
+        expect(app.eq.gains.first, 0);
+        return;
       }
+
+      // Over the frequency label the wheel scrolls the page.
+      await wheelAt(find.text('${eqBands.first}'), const Offset(0, delta));
+      expect(scroll.pixels, start + delta);
+      expect(app.eq.gains.first, 0.5);
+      await t.ensureVisible(slider);
+      await t.pump();
+      final top = scroll.pixels;
+
+      // Trackpad scroll events add up: one 0.5 dB step per 20 px.
+      for (var i = 0; i < 3; i++) {
+        await wheelAt(
+          slider,
+          const Offset(0, -5),
+          kind: PointerDeviceKind.trackpad,
+        );
+      }
+      expect(app.eq.gains.first, 0.5);
+      await wheelAt(
+        slider,
+        const Offset(0, -5),
+        kind: PointerDeviceKind.trackpad,
+      );
+      expect(app.eq.gains.first, 1);
+      expect(scroll.pixels, top);
+
+      // Two-finger pan (pan-zoom events): fingers down raise the gain like
+      // wheel-up, in 0.5 dB steps per 20 px, and the page stays put.
+      final pointer = TestPointer(1, PointerDeviceKind.trackpad);
+      final at = t.getCenter(slider);
+      await t.sendEventToBinding(pointer.panZoomStart(at));
+      final seen = <double>[];
+      for (var y = 5.0; y <= 50; y += 5) {
+        await t.sendEventToBinding(
+          pointer.panZoomUpdate(at, pan: Offset(0, y)),
+        );
+        await t.pump();
+        seen.add(app.eq.gains.first);
+      }
+      expect(seen, [1, 1, 1, 1.5, 1.5, 1.5, 1.5, 2, 2, 2]);
+      // Reversing drops the unspent 10 px: back 50 px is two steps down.
+      await t.sendEventToBinding(pointer.panZoomUpdate(at, pan: Offset.zero));
+      await t.pump();
+      await t.sendEventToBinding(pointer.panZoomEnd());
+      await _frames(t);
+      expect(app.eq.gains.first, 1);
+      expect(scroll.pixels, top);
+
+      // The EQ save has reached prefs.json before tear-down (see above).
+      expect(
+        (jsonDecode(prefsFile.readAsStringSync()) as Map)['eq'],
+        isNotNull,
+      );
     });
   }
 

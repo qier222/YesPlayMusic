@@ -803,6 +803,55 @@ class _EqBandState extends State<_EqBand> {
   bool _drag = false;
   static const _h = 160.0, _w = 28.0;
 
+  /// Trackpad travel, in logical pixels, for one 0.5 dB step.
+  static const _trackpadStepPx = 20.0;
+
+  /// Unspent trackpad travel; positive means "up" (raise the gain).
+  double _trackpad = 0;
+
+  /// The last value sent to [_EqBand.onChanged], until the parent rebuilds
+  /// with it, so several steps within one frame add up.
+  double? _sent;
+
+  @override
+  void didUpdateWidget(_EqBand old) {
+    super.didUpdateWidget(old);
+    _sent = null;
+  }
+
+  void _step(int steps) {
+    final v = clampEqDb((_sent ?? widget.db) + steps * 0.5);
+    if (v == (_sent ?? widget.db)) return;
+    _sent = v;
+    widget.onChanged(v);
+  }
+
+  /// Adds trackpad travel ([up] > 0 raises the gain) and steps once per
+  /// [_trackpadStepPx]. Reversing direction drops the unspent travel.
+  void _addTrackpad(double up) {
+    if (up == 0) return;
+    if (_trackpad != 0 && up.sign != _trackpad.sign) _trackpad = 0;
+    _trackpad += up;
+    final steps = (_trackpad / _trackpadStepPx).truncate();
+    if (steps == 0) return;
+    _trackpad -= steps * _trackpadStepPx;
+    _step(steps);
+  }
+
+  void _onPointerSignal(PointerSignalEvent e) {
+    // Horizontal-only scrolling (Shift+wheel, sideways swipe) isn't ours:
+    // leave it to the page.
+    if (e is! PointerScrollEvent || e.scrollDelta.dy == 0) return;
+    GestureBinding.instance.pointerSignalResolver.register(e, (e) {
+      final dy = (e as PointerScrollEvent).scrollDelta.dy;
+      if (e.kind == PointerDeviceKind.trackpad) {
+        _addTrackpad(-dy);
+      } else {
+        _step(dy < 0 ? 1 : -1);
+      }
+    });
+  }
+
   void _setFrom(double dy) {
     final v = (1 - dy / _h) * 2 * eqMaxDb - eqMaxDb;
     final snapped = clampEqDb((v * 2).round() / 2);
@@ -839,62 +888,78 @@ class _EqBandState extends State<_EqBand> {
         MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Listener(
-            onPointerSignal: (e) {
-              if (e is PointerScrollEvent) {
-                GestureBinding.instance.pointerSignalResolver.register(e, (_) {
-                  widget.onChanged(
-                    clampEqDb(db + (e.scrollDelta.dy < 0 ? 0.5 : -0.5)),
-                  );
-                });
-              }
-            },
-            child: GestureDetector(
+            onPointerSignal: _onPointerSignal,
+            // Two-finger trackpad swipes arrive as pan-zoom gestures on
+            // macOS and others; claim them so the page doesn't scroll too.
+            child: RawGestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTapUp: (d) => _setFrom(d.localPosition.dy),
-              onDoubleTap: () => widget.onChanged(0),
-              onVerticalDragStart: (d) {
-                setState(() => _drag = true);
-                _setFrom(d.localPosition.dy);
+              gestures: {
+                _TrackpadPanRecognizer:
+                    GestureRecognizerFactoryWithHandlers<
+                      _TrackpadPanRecognizer
+                    >(_TrackpadPanRecognizer.new, (r) {
+                      r.onStart = () => _trackpad = 0;
+                      // Content follows the fingers, so a downward pan is
+                      // what scrolls the page up: raise the gain.
+                      r.onUpdate = _addTrackpad;
+                    }),
               },
-              onVerticalDragUpdate: (d) => _setFrom(d.localPosition.dy),
-              onVerticalDragEnd: (_) => setState(() => _drag = false),
-              onVerticalDragCancel: () => setState(() => _drag = false),
-              child: Container(
-                width: _w,
-                height: _h,
-                decoration: squircle(12, color: P.dark ? wa(0.06) : ba(0.05)),
-                clipBehavior: Clip.antiAlias,
-                child: Stack(
-                  children: [
-                    // 0 dB midline
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: mid - 0.5,
-                      height: 1,
-                      child: Container(color: P.line),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: top,
-                      height: height,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 90),
-                        color: P.dark ? wa(0.18) : ba(0.1),
-                      ),
-                    ),
-                    if (_drag)
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                // Trackpad pans are handled above, by step, not by position.
+                supportedDevices: const {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.invertedStylus,
+                  PointerDeviceKind.unknown,
+                },
+                onTapUp: (d) => _setFrom(d.localPosition.dy),
+                onDoubleTap: () => widget.onChanged(0),
+                onVerticalDragStart: (d) {
+                  setState(() => _drag = true);
+                  _setFrom(d.localPosition.dy);
+                },
+                onVerticalDragUpdate: (d) => _setFrom(d.localPosition.dy),
+                onVerticalDragEnd: (_) => setState(() => _drag = false),
+                onVerticalDragCancel: () => setState(() => _drag = false),
+                child: Container(
+                  width: _w,
+                  height: _h,
+                  decoration: squircle(12, color: P.dark ? wa(0.06) : ba(0.05)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    children: [
+                      // 0 dB midline
                       Positioned(
-                        left: 6,
-                        right: 6,
-                        top: edge - 1,
-                        height: 2,
-                        child: Container(
-                          decoration: squircle(1, color: accent),
+                        left: 0,
+                        right: 0,
+                        top: mid - 0.5,
+                        height: 1,
+                        child: Container(color: P.line),
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: top,
+                        height: height,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 90),
+                          color: P.dark ? wa(0.18) : ba(0.1),
                         ),
                       ),
-                  ],
+                      if (_drag)
+                        Positioned(
+                          left: 6,
+                          right: 6,
+                          top: edge - 1,
+                          height: 2,
+                          child: Container(
+                            decoration: squircle(1, color: accent),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -911,6 +976,40 @@ class _EqBandState extends State<_EqBand> {
       ],
     );
   }
+}
+
+/// Claims two-finger trackpad pans (pan-zoom events) as soon as they start,
+/// so an enclosing scroll view doesn't also scroll. Reports the vertical
+/// pan movement since the last update.
+class _TrackpadPanRecognizer extends OneSequenceGestureRecognizer {
+  _TrackpadPanRecognizer()
+    : super(supportedDevices: const {PointerDeviceKind.trackpad});
+
+  VoidCallback? onStart;
+  ValueChanged<double>? onUpdate;
+
+  @override
+  void addAllowedPointerPanZoom(PointerPanZoomStartEvent event) {
+    startTrackingPointer(event.pointer, event.transform);
+    resolve(GestureDisposition.accepted);
+    invokeCallback('onStart', () => onStart?.call());
+  }
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerPanZoomUpdateEvent) {
+      final dy = event.localPanDelta.dy;
+      invokeCallback('onUpdate', () => onUpdate?.call(dy));
+    } else if (event is PointerPanZoomEndEvent) {
+      stopTrackingPointer(event.pointer);
+    }
+  }
+
+  @override
+  void didStopTrackingLastPointer(int pointer) {}
+
+  @override
+  String get debugDescription => 'trackpad pan';
 }
 
 class _AboutTab extends StatelessWidget {
