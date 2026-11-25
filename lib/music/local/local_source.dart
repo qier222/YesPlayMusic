@@ -592,9 +592,9 @@ String? _clean(String? s) {
   return (n.substring(0, i).trim(), n.substring(i + 3).trim());
 }
 
-/// Splits multiple artists. Only splits on unambiguous separators, not "&" or "and" (too many band names contain them).
+/// Splits multiple artists. A slash only separates names when surrounded by whitespace.
 List<String> splitArtists(String s) => [
-  for (final part in s.split(RegExp(r'\s*(?:;|/|、|\x00)\s*')))
+  for (final part in s.split(RegExp(r'[;、\x00]|(?<=\s)/(?=\s)')))
     if (part.trim().isNotEmpty) part.trim(),
 ];
 

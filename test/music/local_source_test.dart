@@ -198,6 +198,41 @@ void main() {
     expect(splitArtists('Simon & Garfunkel'), ['Simon & Garfunkel']);
   });
 
+  test('indexes and finds slash artist names without splitting them', () async {
+    final root = p.join(tmp.path, 'slash-artists');
+    wav(
+      p.join(root, 'single.wav'),
+      info: {'INAM': 'Thunderstruck', 'IART': 'AC/DC'},
+    );
+    wav(
+      p.join(root, 'multiple.wav'),
+      info: {'INAM': 'Collaboration', 'IART': 'A / B'},
+    );
+    final local = LocalSource(
+      folders: [root],
+      cacheDir: p.join(tmp.path, 'slash-cache'),
+    );
+    await local.scan();
+
+    final library = await local.library(SearchKind.artists);
+    expect(
+      library.artists.map((a) => a.name),
+      unorderedEquals(['AC/DC', 'A', 'B']),
+    );
+    final artists = await local.search('AC/DC', SearchKind.artists);
+    expect(artists.artists.single.name, 'AC/DC');
+    final tracks = await local.search('AC/DC', SearchKind.tracks);
+    expect(
+      (tracks.tracks.single.name, tracks.tracks.single.artistNames),
+      ('Thunderstruck', 'AC/DC'),
+    );
+    final collaboration = await local.search(
+      'Collaboration',
+      SearchKind.tracks,
+    );
+    expect(collaboration.tracks.single.artists.map((a) => a.name), ['A', 'B']);
+  });
+
   // Regression: a soundtrack with one song by another artist and no album artist tag used to split into two albums with the same name.
   // Songs in per-disc subfolders (CD1/CD2) count as the same album too.
   test(
