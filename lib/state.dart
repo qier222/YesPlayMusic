@@ -2851,6 +2851,7 @@ class AppState extends ChangeNotifier {
     playing = true;
     if (index != previous && _engineOnTrack) {
       _scrubbing = false;
+      _scrobbler.reset();
       _seekEngine(Duration.zero);
       _playbackSoon(force: true);
     }

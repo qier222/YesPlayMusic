@@ -25,6 +25,11 @@ class _Local extends Source {
   @override
   final Set<String> ops = {Op.stream};
 
+  final listens = <String>[];
+
+  @override
+  Future<void> played(m.Track track) async => listens.add(track.id);
+
   @override
   Future<m.AudioStream> stream(String id, {String quality = 'high'}) async =>
       m.AudioStream(url: 'file:///music/$id.flac', type: 'flac', gain: -5);
@@ -285,6 +290,24 @@ void main() {
     expect(app.position, 0);
     expect(engine.sought, Duration.zero);
     expect(engine.opened, [_key('a')]);
+  });
+
+  test('selecting a queued copy counts as a new listen', () async {
+    final local = app.sources['local'] as _Local;
+    await start(['a', 'b', 'a']);
+    for (var second = 0; second <= 90; second++) {
+      engine.at(second.toDouble());
+    }
+    expect(local.listens, ['a']);
+
+    app.playQueueAt(2);
+    await _tick();
+    for (var second = 0; second < 90; second++) {
+      engine.at(second.toDouble());
+    }
+    expect(local.listens, ['a']);
+    engine.at(90);
+    expect(local.listens, ['a', 'a']);
   });
 
   test('快放完时才排下一首，接上后不重新打开', () async {
