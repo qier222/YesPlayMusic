@@ -3019,10 +3019,45 @@ class AppState extends ChangeNotifier {
         });
   }
 
-  /// Playlist content changed: refetch next time the playlist page opens, and refetch the playlist list in the library.
+  /// Playlist content changed: refetch next time the playlist page opens, and refetch only the playlists of
+  /// the loaded library so the cards show the new track count and cover. Tracks, albums and artists stay cached.
   void _playlistChanged(String source, String id) {
     dropData(DataReq.playlist(source, id));
     _editable.remove(source);
+    _refreshLibraryPlaylists(source);
+  }
+
+  /// Refetches the playlists of [source]'s loaded library and swaps them in. A library that isn't loaded yet
+  /// fetches them anyway when it opens. On failure what is shown stays as it is.
+  Future<void> _refreshLibraryPlaylists(String source) async {
+    final s = sources[source];
+    final lib = _libraries[source];
+    if (s == null || lib == null || !s.can(Op.playlists)) return;
+    try {
+      final List<m.Playlist> list;
+      if (s is PluginSource) {
+        // Same op and stored copy as [_loadPluginLibrary], so the next launch shows the new cards too.
+        final raw = await s.raw(Op.playlists);
+        final items = raw is List ? raw : const <Object?>[];
+        list = List.unmodifiable([
+          for (final x in items)
+            if (x is Map) m.Playlist.fromJson(x.cast<String, Object?>()),
+        ]);
+        cache.put(
+          '${cacheSpace(s.id)}/library/playlists',
+          Policies.mine,
+          items,
+        );
+      } else {
+        list = await s.playlists();
+      }
+      if (_libraries[source] != lib) return;
+      lib.playlists = list;
+      lib.errors.remove('playlists');
+      notifyListeners();
+    } catch (_) {
+      // Keep the cards already shown.
+    }
   }
 
   String _why(Object e, String fallback) =>
