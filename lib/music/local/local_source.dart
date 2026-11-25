@@ -95,6 +95,7 @@ class LocalSource extends Source {
   Map<String, LocalEntry> _byPath = const {};
   Map<String, List<LocalEntry>> _byAlbum = const {};
   Map<String, List<LocalEntry>> _byArtist = const {};
+  Map<String, List<LocalEntry>> _byAlbumArtist = const {};
 
   /// When the album was added: the modification time of its newest file.
   Map<String, String> _albumAdded = const {};
@@ -155,8 +156,14 @@ class LocalSource extends Source {
     _byPath = {for (final e in list) e.path: e};
     final byAlbum = <String, List<LocalEntry>>{};
     final byArtist = <String, List<LocalEntry>>{};
+    final byAlbumArtist = <String, List<LocalEntry>>{};
     for (final e in list) {
-      if (e.album.isNotEmpty) (byAlbum[albumId(e)] ??= []).add(e);
+      if (e.album.isNotEmpty) {
+        (byAlbum[albumId(e)] ??= []).add(e);
+        if (e.albumArtist.isNotEmpty) {
+          (byAlbumArtist[artistId(e.albumArtist)] ??= []).add(e);
+        }
+      }
       for (final a in e.artists) {
         (byArtist[artistId(a)] ??= []).add(e);
       }
@@ -171,6 +178,7 @@ class LocalSource extends Source {
     }
     _byAlbum = byAlbum;
     _byArtist = byArtist;
+    _byAlbumArtist = byAlbumArtist;
     _albumAdded = {
       for (final MapEntry(:key, :value) in byAlbum.entries)
         key: value
@@ -321,12 +329,15 @@ class LocalSource extends Source {
 
   @override
   Future<ArtistPage> artist(String id) async {
-    final es = _byArtist[id];
-    if (es == null) {
+    final es = _byArtist[id] ?? const [];
+    final albumEs = _byAlbumArtist[id] ?? const [];
+    if (es.isEmpty && albumEs.isEmpty) {
       throw SourceError(SourceErrorKind.failed, L.localArtistNotFound);
     }
-    final name = es.first.artists.firstWhere((a) => artistId(a) == id);
-    final albums = _albums(es)
+    final name = es.isNotEmpty
+        ? es.first.artists.firstWhere((a) => artistId(a) == id)
+        : albumEs.first.albumArtist;
+    final albums = _albums([...es, ...albumEs])
       ..sort((a, b) => b.released.compareTo(a.released));
     return ArtistPage(
       artist: Artist(id: id, name: name),
