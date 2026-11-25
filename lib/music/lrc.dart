@@ -43,8 +43,8 @@ List<LyricLine> parseLrc(String lrc) {
     }
     // Metadata like [ti:] or [ar:], or lines without a time
     if (stamps.isEmpty) continue;
-    final (text, words) = _words(rest);
     for (final s in stamps) {
+      final (text, words) = _words(rest, s);
       // A positive offset makes lyrics appear earlier.
       final start = (s - offset).clamp(0, 1 << 31);
       out.add(
@@ -57,10 +57,14 @@ List<LyricLine> parseLrc(String lrc) {
   return out;
 }
 
-(String, List<LyricWord>) _words(String s) {
+(String, List<LyricWord>) _words(String s, int lineStart) {
   final ms = _word.allMatches(s).toList();
   if (ms.isEmpty) return (s.trim(), const []);
   final words = <LyricWord>[];
+  final prefix = s.substring(0, ms.first.start);
+  if (prefix.trim().isNotEmpty) {
+    words.add(LyricWord(start: lineStart, end: _ms(ms.first), text: prefix));
+  }
   for (var i = 0; i < ms.length; i++) {
     final end = i + 1 < ms.length ? ms[i + 1].start : s.length;
     final text = s.substring(ms[i].end, end);

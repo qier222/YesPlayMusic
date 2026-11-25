@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/comments.dart';
+import 'package:yesplaymusic/music/lrc.dart';
 import 'package:yesplaymusic/music/models.dart';
 import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/plugin/plugin_source.dart';
@@ -62,6 +63,14 @@ void main() {
       again.close().then((_) => again.home()),
       sourceError(SourceErrorKind.failed),
     );
+  });
+
+  test('enhanced plugin lyrics and translation keep their prefixes', () async {
+    final s = await PluginSource.start(writeFixture(plugins), dataRoot: data);
+    addTearDown(s.close);
+    final line = lyricLines(await s.lyrics('enhanced')).single;
+    expect((line.text, line.translation), ('Open the door', '把门打开'));
+    expect(line.words.first.start, 2000);
   });
 
   // Scrobbling: the track (with its source), start time (UTC ISO 8601) and listened time reach the plugin.
