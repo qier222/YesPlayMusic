@@ -175,6 +175,40 @@ void main() {
     expect(app.track.ref!.id, '0');
   });
 
+  test(
+    'Play Next keeps a queued copy in added order across relaunch',
+    () async {
+      app.playList([_t('a'), _t('b'), _t('c')]);
+      app.toggleShuffle();
+      final upcoming = app.queue.last;
+      app.addNext(_t('x'));
+      app.addNext(upcoming);
+      await _settle();
+      app.dispose();
+      app = AppState();
+
+      app.toggleShuffle();
+      expect(_ids(app), ['a', 'b', 'c', upcoming.ref!.id, 'x']);
+    },
+  );
+
+  test(
+    'adding an existing queued track after relaunch keeps both copies',
+    () async {
+      app.playList([_t('a'), _t('b'), _t('c')]);
+      app.toggleShuffle();
+      await _settle();
+      app.dispose();
+      app = AppState();
+      final upcoming = app.queue.last;
+
+      app.addNext(upcoming);
+      app.addToQueue(upcoming);
+      app.toggleShuffle();
+      expect(_ids(app), ['a', 'b', 'c', upcoming.ref!.id, upcoming.ref!.id]);
+    },
+  );
+
   test('a saved shuffled queue without original order keeps its order', () {
     app.dispose();
     final saved = File('${AppState.supportDir()}/player.json');

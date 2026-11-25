@@ -2797,15 +2797,30 @@ class AppState extends ChangeNotifier {
   }
 
   void addNext(Track t) {
-    queue.isEmpty ? queue.add(t) : queue.insert(index + 1, t);
+    final entry = _newQueueEntry(t);
+    queue.isEmpty ? queue.add(entry) : queue.insert(index + 1, entry);
     notifyListeners();
     if (playing) _schedulePreloadNext();
   }
 
   void addToQueue(Track t) {
-    queue.add(t);
+    queue.add(_newQueueEntry(t));
     notifyListeners();
     if (playing) _schedulePreloadNext();
+  }
+
+  Track _newQueueEntry(Track t) {
+    if (!queue.contains(t)) return t;
+    return Track(
+      title: t.title,
+      artist: t.artist,
+      cover: t.cover,
+      seconds: t.seconds,
+      album: t.album,
+      mv: t.mv,
+      ref: t.ref,
+      added: t.added,
+    );
   }
 
   void removeQueueAt(int i) {
