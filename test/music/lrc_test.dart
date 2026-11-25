@@ -54,6 +54,64 @@ void main() {
     ]);
   });
 
+  test('enhanced LRC keeps text before the first inline timestamp', () {
+    final l = parseLrc('[00:02.000]Open <00:02.800>the <00:03.100>door').single;
+    expect(l.text, 'Open the door');
+    expect(l.words.map((w) => (w.start, w.end, w.text)), [
+      (2000, 2800, 'Open '),
+      (2800, 3100, 'the '),
+      (3100, 0, 'door'),
+    ]);
+  });
+
+  test(
+    'enhanced LRC times the prefix from each offset-adjusted line stamp',
+    () {
+      final lines = parseLrc(
+        '[00:01.00][00:02.00]Open <00:02.80>the door<00:04.00>\n'
+        '[offset:+500]',
+      );
+      expect(
+        lines.map((l) => (l.start, l.words.first.start, l.words.first.end)),
+        [(500, 500, 2300), (1500, 1500, 2300)],
+      );
+    },
+  );
+
+  test('enhanced LRC prefix cannot end before a repeated line stamp', () {
+    final lines = parseLrc('[00:01.00][00:10.00]Open <00:02.00>the door');
+    expect(lines.map((l) => (l.words.first.start, l.words.first.end)), [
+      (1000, 2000),
+      (10000, 10000),
+    ]);
+  });
+
+  test('malformed-only inline tags fall back to plain text', () {
+    for (final tag in ['<00:xx>', '<999999999999999999999:01.00>']) {
+      final l = parseLrc('[00:02.00]Open ${tag}the door').single;
+      expect(l.text, 'Open ${tag}the door');
+      expect(l.words, isEmpty);
+    }
+  });
+
+  test('malformed inline tags stay literal next to valid inline timing', () {
+    for (final tag in ['<00:xx>', '<999999999999999999999:01.00>']) {
+      final l = parseLrc('[00:02.00]Open ${tag}the <00:03.10>door').single;
+      expect(l.text, 'Open ${tag}the door');
+      expect(l.words.map((w) => (w.start, w.end, w.text)), [
+        (2000, 3100, 'Open ${tag}the '),
+        (3100, 0, 'door'),
+      ]);
+    }
+  });
+
+  test('enhanced LRC keeps the prefix on same-stamp translations', () {
+    final l = lyricLines(
+      const Lyrics(lrc: '[00:02.00]Open the door\n[00:02.00]把<00:02.80>门打开'),
+    ).single;
+    expect(l.translation, '把门打开');
+  });
+
   // When the translation is on the next line with the same timestamp, the second line merges into the previous line's translation.
   test('same-stamp second line becomes translation', () {
     final ls = lyricLines(

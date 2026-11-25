@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/music/local/local_source.dart';
+import 'package:yesplaymusic/music/lrc.dart';
 import 'package:yesplaymusic/music/models.dart';
 import 'package:yesplaymusic/music/source.dart';
 
@@ -268,6 +269,36 @@ void main() {
       )).isEmpty,
       isTrue,
     );
+  });
+
+  test('enhanced sidecar lyrics and translation keep their prefixes', () async {
+    final t = (await src.search('晚風', SearchKind.tracks)).tracks.single;
+    final base = p.withoutExtension(t.id);
+    File('$base.lrc').writeAsStringSync('[00:00.10]晚风<00:00.50>吹过');
+    File('$base.trans.lrc')
+        .writeAsStringSync('[00:00.10]The <00:00.50>evening wind');
+    final line = lyricLines(await src.lyrics(t.id)).single;
+    expect((line.text, line.translation), ('晚风吹过', 'The evening wind'));
+    expect(line.words.first.start, 100);
+  });
+
+  test('embedded enhanced LRC keeps the prefix', () async {
+    final comment = 'LYRICS=[00:02.00]Open <00:02.80>the door'.codeUnits;
+    final block = ByteData(12)
+      ..setUint32(4, 1, Endian.little)
+      ..setUint32(8, comment.length, Endian.little);
+    final file = File(p.join(music, 'embedded.flac'))
+      ..writeAsBytesSync([
+        ...'fLaC'.codeUnits,
+        0x84,
+        0,
+        0,
+        block.lengthInBytes + comment.length,
+        ...block.buffer.asUint8List(),
+        ...comment,
+      ]);
+    final line = lyricLines(await src.lyrics(file.path)).single;
+    expect((line.text, line.words.first.start), ('Open the door', 2000));
   });
 
   // Sources routes by the song's source to the local source and gets a file:// URL; after the file is deleted it reports unavailable.
