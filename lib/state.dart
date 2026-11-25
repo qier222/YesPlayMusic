@@ -2823,6 +2823,12 @@ class AppState extends ChangeNotifier {
     );
   }
 
+  void _removeQueueEntryAt(int i) {
+    final removed = queue.removeAt(i);
+    // Songs removed while shuffled must also be removed from the original order, or they'd come back when shuffle is turned off
+    _unshuffled?.remove(removed);
+  }
+
   void removeQueueAt(int i) {
     if (i < 0 || i >= queue.length) return;
     if (queue.length == 1) {
@@ -2830,9 +2836,7 @@ class AppState extends ChangeNotifier {
       return;
     }
     final removingCurrent = i == index;
-    final removed = queue.removeAt(i);
-    // Songs removed while shuffled must also be removed from the original order, or they'd come back when shuffle is turned off
-    _unshuffled?.remove(removed);
+    _removeQueueEntryAt(i);
     if (i < index) {
       index--;
     } else if (index >= queue.length) {
@@ -3137,11 +3141,11 @@ class AppState extends ChangeNotifier {
     if (i >= 0 && i == index) {
       next();
       if (index == i + 1) {
-        queue.removeAt(i);
+        _removeQueueEntryAt(i);
         index--;
       }
     } else if (i >= 0) {
-      queue.removeAt(i);
+      _removeQueueEntryAt(i);
       if (i < index) index--;
     }
     notifyListeners();

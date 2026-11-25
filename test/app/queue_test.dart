@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
+import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/state.dart';
 
 /// Songs with no matching source: _sync fails right away when fetching the URL, without creating a playback engine.
@@ -17,6 +18,21 @@ List<String> _ids(AppState a) => [for (final t in a.queue) t.ref!.id];
 /// Waits for _sync to fail fetching the URL and drop the song (otherwise selecting the same song again would touch the real playback engine).
 Future<void> _settle() =>
     Future<void>.delayed(const Duration(milliseconds: 350));
+
+class _DislikeSource extends Source {
+  @override
+  final info = const m.SourceInfo(id: 'nosrc', name: 'Station source');
+
+  @override
+  final ops = {Op.dislike};
+
+  final disliked = <(String, String)>[];
+
+  @override
+  Future<void> dislike(String id, {String station = ''}) async {
+    disliked.add((id, station));
+  }
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -230,6 +246,44 @@ void main() {
     expect(_ids(app), ['2', '0', '1']);
     expect(app.index, 1);
   });
+
+  for (final relaunch in [false, true]) {
+    test(
+      'Shuffle off does not bring back disliked songs (relaunch: $relaunch)',
+      () async {
+        const original = ['a', 'b', 'c', 'd'];
+        app.playList([
+          for (final i in original) _t(i),
+        ], from: 'station:nosrc/radio');
+        app.toggleShuffle();
+        await _settle();
+        if (relaunch) {
+          app.dispose();
+          app = AppState();
+        }
+        final source = _DislikeSource();
+        app.sources.add(source);
+
+        final upcoming = app.queue.last;
+        final current = app.track;
+        await app.dislike(upcoming);
+        await app.dislike(current);
+        final dislikedIds = {upcoming.ref!.id, current.ref!.id};
+        expect(source.disliked, [
+          (upcoming.ref!.id, 'radio'),
+          (current.ref!.id, 'radio'),
+        ]);
+        expect(_ids(app), isNot(anyElement(dislikedIds.contains)));
+        final next = app.track;
+        app.toggleShuffle();
+        expect(_ids(app), [
+          for (final id in original)
+            if (!dislikedIds.contains(id)) id,
+        ]);
+        expect(app.track, same(next));
+      },
+    );
+  }
 
   test('playTrack：队列里有就跳过去，没有就插在当前之后', () async {
     app.playList([for (final i in ids.take(3)) _t(i)]);
