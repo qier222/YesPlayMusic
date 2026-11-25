@@ -841,9 +841,11 @@ class _EqBandState extends State<_EqBand> {
           child: Listener(
             onPointerSignal: (e) {
               if (e is PointerScrollEvent) {
-                widget.onChanged(
-                  clampEqDb(db + (e.scrollDelta.dy < 0 ? 0.5 : -0.5)),
-                );
+                GestureBinding.instance.pointerSignalResolver.register(e, (_) {
+                  widget.onChanged(
+                    clampEqDb(db + (e.scrollDelta.dy < 0 ? 0.5 : -0.5)),
+                  );
+                });
               }
             },
             child: GestureDetector(

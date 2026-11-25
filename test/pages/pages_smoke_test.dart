@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/l10n/l10n.dart';
+import 'package:yesplaymusic/music/eq.dart';
 import 'package:yesplaymusic/pages/settings.dart';
 import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
@@ -241,6 +243,53 @@ void main() {
     }
   });
 
+  for (final enabled in [false, true]) {
+    testWidgets('equalizer wheel scrolling (enabled: $enabled)', (t) async {
+      app.eq = EqSettings(enabled: enabled);
+      await boot(t, width: 1440);
+      app.open('/settings');
+      await _frames(t);
+
+      final band = find
+          .ancestor(
+            of: find.text('${eqBands.first}'),
+            matching: find.byType(Column),
+          )
+          .first;
+      final slider = find.descendant(
+        of: band,
+        matching: find.byWidgetPredicate(
+          (widget) => widget is Listener && widget.onPointerSignal != null,
+        ),
+      );
+      await t.ensureVisible(slider);
+      await t.pump();
+      final scroll = Scrollable.of(t.element(slider)).position;
+      final start = scroll.pixels;
+      const delta = -20.0;
+
+      Future<void> wheelAt(Finder target) async {
+        await t.sendEventToBinding(
+          PointerScrollEvent(
+            position: t.getCenter(target),
+            scrollDelta: Offset(0, delta),
+          ),
+        );
+        await _frames(t);
+      }
+
+      await wheelAt(slider);
+      expect(app.eq.gains.first, enabled ? 0.5 : 0);
+      expect(scroll.pixels, enabled ? start : start + delta);
+
+      if (enabled) {
+        await wheelAt(find.text('${eqBands.first}'));
+        expect(scroll.pixels, start + delta);
+        expect(app.eq.gains.first, 0.5);
+      }
+    });
+  }
+
   for (final supported in [false, true]) {
     testWidgets('快捷键页的媒体键说明（支持：$supported）', (t) async {
       await boot(
@@ -258,6 +307,7 @@ void main() {
       expect(find.text('键盘媒体键和耳机按键'), visibility);
     });
   }
+
   testWidgets(
     '设置页各标签（最小窗口）',
     (t) => settingsTabs(t, 1280),
