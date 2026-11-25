@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
@@ -130,6 +134,36 @@ void main() {
     expect(app.track.ref!.id, cur);
   });
 
+  test(
+    'turning shuffle off after relaunch restores the original queue',
+    () async {
+      app.playList([for (final i in ids) _t(i), _t('2')], start: 2);
+      final original = _ids(app);
+      for (var attempt = 0; attempt < 10; attempt++) {
+        app.toggleShuffle();
+        if (!listEquals(_ids(app), original)) break;
+        app.toggleShuffle();
+      }
+      expect(app.shuffle, isTrue);
+      expect(_ids(app), isNot(original));
+      final remaining = [...original]..remove('1');
+      app.removeQueueAt(1);
+      app.addNext(_t('x'));
+      final shuffled = _ids(app);
+      await _settle();
+      app.dispose();
+      app = AppState();
+
+      expect(app.shuffle, isTrue);
+      expect(_ids(app), shuffled);
+      final current = app.track;
+      app.toggleShuffle();
+      expect(_ids(app), [...remaining, 'x']);
+      expect(app.index, 1);
+      expect(app.track, same(current));
+    },
+  );
+
   test('随机期间删掉的歌，关掉随机后不会回来', () {
     app.playList([for (final i in ids) _t(i)], start: 0);
     app.toggleShuffle();
@@ -139,6 +173,28 @@ void main() {
     expect(_ids(app), isNot(contains(victim)));
     expect(_ids(app), hasLength(7));
     expect(app.track.ref!.id, '0');
+  });
+
+  test('a saved shuffled queue without original order keeps its order', () {
+    app.dispose();
+    final saved = File('${AppState.supportDir()}/player.json');
+    saved.parent.createSync(recursive: true);
+    saved.writeAsStringSync(
+      jsonEncode({
+        'tracks': [
+          for (final id in ['2', '0', '1']) _t(id).ref!.toJson(),
+        ],
+        'index': 1,
+        'shuffle': true,
+      }),
+    );
+    app = AppState();
+
+    expect(app.shuffle, isTrue);
+    app.toggleShuffle();
+    expect(app.shuffle, isFalse);
+    expect(_ids(app), ['2', '0', '1']);
+    expect(app.index, 1);
   });
 
   test('playTrack：队列里有就跳过去，没有就插在当前之后', () async {
