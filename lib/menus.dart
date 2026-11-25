@@ -119,8 +119,16 @@ MenuSpec trackMenu(
                     if (name != null) app.createPlaylistWith(t, name);
                   },
                 ),
-              for (final p in await app.editablePlaylists(r.source))
-                MenuItem('music', p.name, onTap: () => app.addToPlaylist(t, p)),
+              for (final p in await app.editablePlaylists(
+                r.source,
+                trackId: r.id,
+              ))
+                if (p.id != playlist)
+                  MenuItem(
+                    'music',
+                    p.name,
+                    onTap: () => app.addToPlaylist(t, p),
+                  ),
             ],
           ),
       ],

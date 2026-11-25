@@ -54,6 +54,9 @@ abstract final class Op {
   static const saveAlbum = 'saveAlbum', followArtist = 'followArtist';
   static const savedAlbums = 'savedAlbums';
   static const playlists = 'playlists', playlist = 'playlist';
+
+  /// Playlist ids that already contain a track, so the "Add to playlist" menu can hide them.
+  static const trackPlaylists = 'trackPlaylists';
   static const savePlaylist = 'savePlaylist';
   static const createPlaylist = 'createPlaylist';
   static const renamePlaylist = 'renamePlaylist';
@@ -148,6 +151,11 @@ abstract class Source {
   // ── Playlists ──
   Future<List<Playlist>> playlists() async => _no(Op.playlists);
   Future<Playlist> playlist(String id) async => _no(Op.playlist);
+
+  /// Playlist ids that already contain [trackId]; empty when the source can't tell,
+  /// in which case the "Add to playlist" menu shows every editable playlist.
+  Future<Set<String>> trackPlaylists(String trackId) async =>
+      _no(Op.trackPlaylists);
   Future<void> savePlaylist(String id, bool on) async => _no(Op.savePlaylist);
   Future<Playlist> createPlaylist(String name) async => _no(Op.createPlaylist);
   Future<void> renamePlaylist(String id, String name) async =>
