@@ -68,6 +68,21 @@ void main() {
     expect(ls.first.end, 4000);
   });
 
+  test('same-stamp lines keep file order in longer lyrics', () {
+    final rows = [
+      for (var i = 1; i <= 20; i++) ...[
+        '[00:${i.toString().padLeft(2, '0')}.00]Original line $i',
+        '[00:${i.toString().padLeft(2, '0')}.00]Translation $i',
+      ],
+    ];
+    final lines = lyricLines(Lyrics(lrc: rows.join('\n')));
+
+    expect(lines.map((l) => (l.start, l.text, l.translation)), [
+      for (var i = 1; i <= 20; i++)
+        (i * 1000, 'Original line $i', 'Translation $i'),
+    ]);
+  });
+
   // A separate translation LRC is matched to the original by time, allowing tens of ms of error.
   test('separate translation matches nearby stamps', () {
     final ls = lyricLines(

@@ -18,7 +18,7 @@ int _ms(Match m) {
   return (int.parse(m.group(1)!) * 60 + int.parse(m.group(2)!)) * 1000 + fracMs;
 }
 
-/// Parses an LRC text into a sorted list of (time, text, words).
+/// Parses an LRC text into timestamp order, keeping file order for equal times.
 List<LyricLine> parseLrc(String lrc) {
   final rows = lrc.split(RegExp(r'\r?\n'));
   var offset = 0;
@@ -52,8 +52,7 @@ List<LyricLine> parseLrc(String lrc) {
       );
     }
   }
-  // Stable sort, equal times keep their order
-  out.sort((a, b) => a.start.compareTo(b.start));
+  mergeSort(out, compare: (a, b) => a.start.compareTo(b.start));
   return out;
 }
 
