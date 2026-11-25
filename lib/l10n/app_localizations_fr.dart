@@ -1303,6 +1303,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get searchRemoveHistory => 'Supprimer de l\'historique';
 
   @override
+  String get searchNoSongs => 'Aucun titre trouvé';
+
+  @override
+  String get searchNoAlbums => 'Aucun album trouvé';
+
+  @override
+  String get searchNoArtists => 'Aucun artiste trouvé';
+
+  @override
+  String get searchNoPlaylists => 'Aucune playlist trouvée';
+
+  @override
   String searchNoResults(String query) {
     return 'Aucun résultat pour « $query »';
   }

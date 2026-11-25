@@ -1261,6 +1261,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get searchRemoveHistory => '기록에서 삭제';
 
   @override
+  String get searchNoSongs => '곡을 찾을 수 없습니다';
+
+  @override
+  String get searchNoAlbums => '앨범을 찾을 수 없습니다';
+
+  @override
+  String get searchNoArtists => '아티스트를 찾을 수 없습니다';
+
+  @override
+  String get searchNoPlaylists => '플레이리스트를 찾을 수 없습니다';
+
+  @override
   String searchNoResults(String query) {
     return '\"$query\"에 대한 검색 결과가 없습니다';
   }

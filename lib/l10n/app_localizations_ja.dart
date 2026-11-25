@@ -1261,6 +1261,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchRemoveHistory => '履歴から削除';
 
   @override
+  String get searchNoSongs => '曲が見つかりませんでした';
+
+  @override
+  String get searchNoAlbums => 'アルバムが見つかりませんでした';
+
+  @override
+  String get searchNoArtists => 'アーティストが見つかりませんでした';
+
+  @override
+  String get searchNoPlaylists => 'プレイリストが見つかりませんでした';
+
+  @override
   String searchNoResults(String query) {
     return '「$query」の結果が見つかりませんでした';
   }
