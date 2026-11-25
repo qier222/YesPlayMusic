@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
+import 'package:yesplaymusic/cache/requests.dart';
 import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/music/eq.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
@@ -6,6 +10,8 @@ import 'package:yesplaymusic/music/player.dart';
 import 'package:yesplaymusic/music/replay_gain.dart';
 import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/state.dart';
+
+import '../music/local_source_test.dart' show wav;
 
 /// Fake local source: every track is a file:// URL.
 class _Local extends Source {
@@ -144,6 +150,67 @@ void main() {
     await _tick();
     expect(engine.current, _key(ids.first));
   }
+
+  test('rescan refreshes cached and currently playing local lyrics', () async {
+    final music = await Directory.systemTemp.createTemp('ypm_rescan_');
+    addTearDown(() => music.delete(recursive: true));
+    final first = wav(p.join(music.path, 'First.wav'), ms: 180000);
+    final second = wav(p.join(music.path, 'Second.wav'), ms: 180000);
+    final firstLyrics = File(p.join(music.path, 'First.lrc'))
+      ..writeAsStringSync('[00:00.00]First before');
+    final secondLyrics = File(p.join(music.path, 'Second.lrc'))
+      ..writeAsStringSync('[00:00.00]Second before');
+
+    await app.sources.remove('local');
+    app.musicFolders = [music.path];
+    expect(await app.loadLibrary(), isTrue);
+    app.playList([_t(first.path), _t(second.path)]);
+    await _tick();
+    engine.at(30);
+    expect(app.lyricLines.single.text, 'First before');
+    final secondRequest = DataReq.lyrics('local', second.path);
+    expect((await app.getData(secondRequest)).lrc, '[00:00.00]Second before');
+
+    firstLyrics.writeAsStringSync('[00:00.00]First after');
+    secondLyrics.writeAsStringSync('[00:00.00]Second after');
+    await app.rescanLibrary();
+
+    expect(app.lyricLines.single.text, 'First after');
+    expect(app.track.key, _key(first.path));
+    expect(app.playing, isTrue);
+    expect(app.position, 30);
+    expect(engine.opened, [_key(first.path)]);
+    expect((await app.getData(secondRequest)).lrc, '[00:00.00]Second after');
+  });
+
+  test(
+    'rescan keeps current lyrics if their folder could not be scanned',
+    () async {
+      final music = await Directory.systemTemp.createTemp('ypm_rescan_');
+      addTearDown(() async {
+        await Process.run('chmod', ['700', music.path]);
+        await music.delete(recursive: true);
+      });
+      final song = wav(p.join(music.path, 'Song.wav'));
+      final lyrics = File(p.join(music.path, 'Song.lrc'))
+        ..writeAsStringSync('[00:00.00]Before');
+
+      await app.sources.remove('local');
+      app.musicFolders = [music.path];
+      expect(await app.loadLibrary(), isTrue);
+      app.playTrack(_t(song.path));
+      await _tick();
+      expect(app.lyricLines.single.text, 'Before');
+
+      lyrics.writeAsStringSync('[00:00.00]After');
+      // Allow reading a known file path, but not listing the folder.
+      expect((await Process.run('chmod', ['111', music.path])).exitCode, 0);
+      await app.rescanLibrary();
+      expect(app.unreadableFolders, [music.path]);
+      expect(app.lyricLines.single.text, 'Before');
+    },
+    skip: Platform.isWindows ? 'needs POSIX permissions' : null,
+  );
 
   test('快放完时才排下一首，接上后不重新打开', () async {
     await start(['a', 'b', 'c']);
