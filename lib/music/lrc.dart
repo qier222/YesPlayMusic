@@ -25,7 +25,8 @@ List<LyricLine> parseLrc(String lrc) {
   for (final row in rows.reversed) {
     final off = _offset.firstMatch(row.trimLeft());
     if (off != null) {
-      offset = int.parse(off.group(1)!);
+      // An offset too large for an int counts as no offset.
+      offset = int.tryParse(off.group(1)!) ?? 0;
       break;
     }
   }
