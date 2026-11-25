@@ -21,6 +21,28 @@ void main() {
     expect(ls.map((l) => l.start), [0, 1500]);
   });
 
+  test('trailing offset shifts all line and word timestamps', () {
+    final ls = parseLrc(
+      '[00:00.20]Intro\n'
+      '[00:02.00]<00:02.00>Moon <00:02.50>river<00:03.00>\n'
+      '[offset:+500]',
+    );
+    expect(
+      [ls.map((l) => l.start), ls.last.words.map((w) => (w.start, w.end))],
+      [
+        [0, 1500],
+        [(1500, 2000), (2000, 2500)],
+      ],
+    );
+  });
+
+  test('oversized offset is ignored and lines stay unshifted', () {
+    final ls = parseLrc(
+      '[offset:+500]\n[offset:99999999999999999999]\n[00:01.00]a\n[00:02.00]b',
+    );
+    expect(ls.map((l) => l.start), [1000, 2000]);
+  });
+
   // Enhanced LRC per-word timing: each word ends at the next time tag, and the text is the words joined.
   test('word timing from enhanced LRC', () {
     final l = parseLrc('[00:01.00]<00:01.00>Moon <00:01.50>river<00:02.00>')
