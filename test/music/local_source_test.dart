@@ -301,6 +301,30 @@ void main() {
     expect((line.text, line.words.first.start), ('Open the door', 2000));
   });
 
+  test('reads sidecar lyrics with an uppercase extension', () async {
+    final t = (await src.search('Snooze', SearchKind.tracks)).tracks.single;
+    final base = p.withoutExtension(t.id);
+    const lrc = '[00:00.50]Uppercase sidecar';
+    File('$base.LRC').writeAsStringSync(lrc);
+
+    expect((await src.lyrics(t.id)).lrc, lrc);
+
+    const lowercase = '[00:00.50]Lowercase sidecar';
+    File('$base.lrc').writeAsStringSync(lowercase);
+
+    expect((await src.lyrics(t.id)).lrc, lowercase);
+  });
+
+  test('reads sidecar translation with a mixed-case extension', () async {
+    final t = (await src.search('Snooze', SearchKind.tracks)).tracks.single;
+    final base = p.withoutExtension(t.id);
+    const translation = '[00:00.50]Mixed-case translation';
+    File('$base.lrc').writeAsStringSync('[00:00.50]Original');
+    File('$base.TrAnS.LRC').writeAsStringSync(translation);
+
+    expect((await src.lyrics(t.id)).translation, translation);
+  });
+
   // Sources routes by the song's source to the local source and gets a file:// URL; after the file is deleted it reports unavailable.
   test('stream routes through Sources and reports missing files', () async {
     final sources = Sources()..add(src);

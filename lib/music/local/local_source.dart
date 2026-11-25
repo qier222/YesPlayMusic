@@ -352,9 +352,12 @@ class LocalSource extends Source {
   @override
   Future<Lyrics> lyrics(String id) async {
     final base = p.withoutExtension(id);
-    final lrc = _readText('$base.lrc');
+    final lrc = _readSidecar(base, '.lrc');
     if (lrc != null) {
-      return Lyrics(lrc: lrc, translation: _readText('$base.trans.lrc') ?? '');
+      return Lyrics(
+        lrc: lrc,
+        translation: _readSidecar(base, '.trans.lrc') ?? '',
+      );
     }
     final embedded = await Isolate.run(() {
       try {
@@ -368,11 +371,34 @@ class LocalSource extends Source {
     return Lyrics(lrc: embedded);
   }
 
+  static String? _readSidecar(String base, String extension) {
+    final exactPath = '$base$extension';
+    final exact = _readText(exactPath);
+    if (exact != null) return exact;
+
+    final stem = p.basename(base);
+    try {
+      for (final entry in Directory(
+        p.dirname(base),
+      ).listSync(followLinks: false)) {
+        final name = p.basename(entry.path);
+        if (name == '$stem$extension' || !name.startsWith(stem)) continue;
+        if (name.substring(stem.length).toLowerCase() != extension) continue;
+        final text = _readText(entry.path);
+        if (text != null) return text;
+      }
+    } on FileSystemException {
+      return null;
+    }
+    return null;
+  }
+
   static String? _readText(String path) {
     final f = File(path);
-    if (!f.existsSync()) return null;
     try {
-      return f.readAsStringSync();
+      return f.existsSync() ? f.readAsStringSync() : null;
+    } on FileSystemException {
+      return null;
     } on FormatException {
       return null; // non-UTF-8 LRC (e.g. GBK) isn't supported yet
     }
