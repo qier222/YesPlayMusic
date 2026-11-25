@@ -557,10 +557,14 @@ LocalEntry _entry(
   final albumArtist = _clean(m?.albumArtist) ?? '';
 
   final dir = p.dirname(path);
-  var cover = folderCovers.putIfAbsent(dir, () => _folderCover(dir));
+  final albumFolder = albumDir(path);
+  String coverIn(String folder) =>
+      folderCovers.putIfAbsent(folder, () => _folderCover(folder));
+  var cover = coverIn(dir);
+  if (cover.isEmpty && albumFolder != dir) cover = coverIn(albumFolder);
   if (cover.isEmpty && m != null && m.pictures.isNotEmpty) {
     // The album artist may not be settled yet, so deduplicate by folder + album name.
-    final key = album.isEmpty ? path : '${albumDir(path)}\x01${fold(album)}';
+    final key = album.isEmpty ? path : '$albumFolder\x01${fold(album)}';
     cover = tagCovers[key] ??= _saveCover(m.pictures, key, cacheDir);
   }
 
