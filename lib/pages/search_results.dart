@@ -187,7 +187,7 @@ class _SearchResultsState extends State<SearchResults> {
           m.SearchKind.albums => l.searchNoAlbums,
           m.SearchKind.artists => l.searchNoArtists,
           m.SearchKind.playlists => l.searchNoPlaylists,
-          m.SearchKind.shows => throw StateError('搜索页没有节目分类'),
+          m.SearchKind.shows => l.searchNoResults(widget.query),
         };
         return Align(
           key: ValueKey(_tab),
