@@ -2,6 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { fetchLatestRelease, links, repo } from '../src/lib/site.ts';
 
+test('plugin guide links match the landing page language', () => {
+  assert.equal(links.plugins.en, `${repo}/blob/main/docs/plugins.md`);
+  assert.equal(links.plugins.zh, `${repo}/blob/main/docs/plugins.zh-CN.md`);
+});
+
 function asset(version, suffix) {
   const name = `YesPlayMusic-${version}-${suffix}`;
   return { name, browser_download_url: `${repo}/releases/download/v${version}/${name}` };

@@ -10,7 +10,7 @@ macOS · Windows · Linux
 [![CI](https://img.shields.io/github/actions/workflow/status/qier222/YesPlayMusic/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/qier222/YesPlayMusic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0-8FE3C0?style=flat-square)](./LICENSE)
 
-简体中文 · [English](README.md)
+[English](README.md) | 简体中文
 
 [下载](#下载) · [功能](#功能) · [截图](#截图) · [安装插件](#安装插件) · [开发插件](#开发插件) · [AI 助手（MCP）](#ai-助手mcp) · [从源码构建](#从源码构建)
 
@@ -98,7 +98,7 @@ macOS 和 Windows 正式版分别用 Sparkle 和 WinSparkle 更新；Linux 和�
 
 **安装方法**：设置 → 插件 → 安装插件。官方插件点一下就能装；第三方插件粘贴 GitHub 仓库、Release 或 .zip 链接，也可以从本地文件夹安装。如果插件提供音乐源，装好后点击或右键左下角头像即可切换。
 
-**安全**：安装插件等于在本机运行别人写的代码，请只安装信任的插件。应用对插件做的限制见 [SECURITY.md](SECURITY.md)，主要有：
+**安全**：安装插件等于在本机运行别人写的代码，请只安装信任的插件。应用对插件做的限制见 [SECURITY.zh-CN.md](SECURITY.zh-CN.md)，主要有：
 
 - 每个插件跑在独立的 QuickJS 沙箱里，不能直接读写文件或启动进程，有内存和超时限制；
 - 只能访问 `permissions.network` 里声明的网站；
@@ -111,7 +111,7 @@ macOS 和 Windows 正式版分别用 Sparkle 和 WinSparkle 更新；Linux 和�
 
 首页和发现页由插件自己组织：应用内置了多种组件（特殊模式卡片、横向卡片架、歌曲翻页网格、排行榜、卡片网格），插件可以自由组合。需要其他形态的组件，请[提 Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
 
-完整接口见 [插件开发指南](docs/plugins.md)。
+完整接口见 [插件开发指南](docs/plugins.zh-CN.md)。
 
 ## AI 助手（MCP）
 
@@ -141,7 +141,7 @@ flutter test
 
 各平台额外需要：
 
-- **macOS**：Xcode 和 CocoaPods。按架构出包请参照[发布流程](docs/releasing.md#本地出包)。
+- **macOS**：Xcode 和 CocoaPods。按架构出包请参照[发布流程](docs/releasing.zh-CN.md#本地出包)。
 - **Windows**：Visual Studio 2022，勾选「使用 C++ 的桌面开发」
 - **Linux**：`sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`
 
@@ -150,8 +150,8 @@ Linux arm64 上请参照 [CI](.github/workflows/ci.yml) 从 Git 标签安装 Flu
 ## 反馈
 
 - 问题和建议请提 [Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
-- 安全问题请私下报告，见 [SECURITY.md](SECURITY.md)。
+- 安全问题请私下报告，见 [SECURITY.zh-CN.md](SECURITY.zh-CN.md)。
 
 ## 协议
 
-[GPL-3.0](LICENSE)。使用的第三方组件及其协议见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)，版本变化见 [CHANGELOG.md](CHANGELOG.md)。
+[GPL-3.0](LICENSE)。使用的第三方组件及其协议见 [THIRD_PARTY_NOTICES.zh-CN.md](THIRD_PARTY_NOTICES.zh-CN.md)，版本变化见 [CHANGELOG.md](CHANGELOG.md)。

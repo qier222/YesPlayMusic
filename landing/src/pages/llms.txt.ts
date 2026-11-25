@@ -30,8 +30,8 @@ YesPlayMusic 3.0 is a free, open-source (GPL-3.0) desktop music player rewritten
 
 - [README (English)](${raw('README.md')}): features, install, plugins, MCP setup, building from source
 - [README (简体中文)](${raw('README.zh-CN.md')})
-- [Plugin guide (English)](${raw('docs/plugins.en.md')}): plugin.json manifest, JavaScript module API, permissions and sandbox
-- [插件开发指南（简体中文）](${raw('docs/plugins.md')})
+- [Plugin guide (English)](${raw('docs/plugins.md')}): plugin.json manifest, JavaScript module API, permissions and sandbox
+- [插件开发指南（简体中文）](${raw('docs/plugins.zh-CN.md')})
 - [Changelog](${raw('CHANGELOG.md')})
 
 ## Links

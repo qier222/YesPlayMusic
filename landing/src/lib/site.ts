@@ -43,8 +43,8 @@ export const links = {
   repo,
   latestRelease: `${repo}/releases/latest`,
   plugins: {
-    zh: `${repo}/blob/main/docs/plugins.md`,
-    en: `${repo}/blob/main/docs/plugins.en.md`,
+    zh: `${repo}/blob/main/docs/plugins.zh-CN.md`,
+    en: `${repo}/blob/main/docs/plugins.md`,
   },
   pluginTopic: 'https://github.com/topics/yesplaymusic-plugin',
   changelog: `${repo}/blob/main/CHANGELOG.md`,

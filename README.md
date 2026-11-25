@@ -10,7 +10,7 @@ macOS · Windows · Linux
 [![CI](https://img.shields.io/github/actions/workflow/status/qier222/YesPlayMusic/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/qier222/YesPlayMusic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0-8FE3C0?style=flat-square)](./LICENSE)
 
-[简体中文](README.zh-CN.md) · English
+English | [简体中文](README.zh-CN.md)
 
 [Download](#download) · [Features](#features) · [Screenshots](#screenshots) · [Installing plugins](#installing-plugins) · [Writing plugins](#writing-plugins) · [AI assistants (MCP)](#ai-assistants-mcp) · [Building from source](#building-from-source)
 
@@ -98,7 +98,7 @@ On `main` (not yet released): gapless playback, ReplayGain volume normalization,
 
 **How to install**: Settings → Plugins → Install Plugin. Official plugins install with one click; for third-party plugins, paste a GitHub repository, Release or .zip link, or install from a local folder. If the plugin provides a music source, click or right-click the avatar in the bottom-left corner to switch to it.
 
-**Security**: installing a plugin means running someone else's code on your computer, so only install plugins you trust. The restrictions the app places on plugins are described in [SECURITY.en.md](SECURITY.en.md); the main ones are:
+**Security**: installing a plugin means running someone else's code on your computer, so only install plugins you trust. The restrictions the app places on plugins are described in [SECURITY.md](SECURITY.md); the main ones are:
 
 - each plugin runs in its own QuickJS sandbox, cannot read or write files or start processes directly, and has memory and time limits;
 - it can only access the websites declared in `permissions.network`;
@@ -111,7 +111,7 @@ A plugin is a `plugin.json` plus a JavaScript module; the app shows whatever fea
 
 Plugins lay out their own Home and Explore pages: the app has several built-in components (special-mode cards, horizontal card shelves, paged song grids, charts, card grids) that plugins can combine freely. If you need a different kind of component, please [open an issue](https://github.com/qier222/YesPlayMusic/issues/new/choose).
 
-See the [plugin development guide](docs/plugins.en.md) for the full API.
+See the [plugin development guide](docs/plugins.md) for the full API.
 
 ## AI assistants (MCP)
 
@@ -141,7 +141,7 @@ flutter test
 
 Additional requirements per platform:
 
-- **macOS**: Xcode and CocoaPods. See [Releasing](docs/releasing.en.md#build-packages-locally) to build a package for a specific architecture.
+- **macOS**: Xcode and CocoaPods. See [Releasing](docs/releasing.md#build-packages-locally) to build a package for a specific architecture.
 - **Windows**: Visual Studio 2022 with the "Desktop development with C++" workload
 - **Linux**: `sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`
 
@@ -150,8 +150,8 @@ On Linux arm64, install Flutter from its Git tag as [CI does](.github/workflows/
 ## Feedback
 
 - Report problems and suggestions in [Issues](https://github.com/qier222/YesPlayMusic/issues/new/choose).
-- Report security issues privately; see [SECURITY.en.md](SECURITY.en.md).
+- Report security issues privately; see [SECURITY.md](SECURITY.md).
 
 ## License
 
-[GPL-3.0](LICENSE). Third-party components and their licenses are listed in [THIRD_PARTY_NOTICES.en.md](THIRD_PARTY_NOTICES.en.md); see [CHANGELOG.md](CHANGELOG.md) for version history (in Chinese).
+[GPL-3.0](LICENSE). Third-party components and their licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); see [CHANGELOG.md](CHANGELOG.md) for version history (in Chinese).

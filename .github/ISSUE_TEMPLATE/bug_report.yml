@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         提交前请先搜索一下有没有相同的 Issue。插件（音乐源）本身的问题请找插件作者。
-        安全问题请不要公开提交，见 [SECURITY.md](https://github.com/qier222/YesPlayMusic/blob/main/SECURITY.md)。
+        安全问题请不要公开提交，见 [SECURITY.zh-CN.md](https://github.com/qier222/YesPlayMusic/blob/main/SECURITY.zh-CN.md)。
   - type: input
     id: version
     attributes:
@@ -60,7 +60,7 @@ body:
     id: logs
     attributes:
       label: 日志 / Logs
-      description: 从终端启动应用时输出的内容（见 docs/plugins.md 的「调试」），请先删掉 Cookie、Token 等敏感信息
+      description: 从终端启动应用时输出的内容（见 docs/plugins.zh-CN.md 的「调试」），请先删掉 Cookie、Token 等敏感信息
       render: text
   - type: textarea
     id: screenshots
