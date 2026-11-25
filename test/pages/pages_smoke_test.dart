@@ -15,6 +15,8 @@ import 'package:yesplaymusic/state.dart';
 import 'package:yesplaymusic/theme.dart';
 import 'package:yesplaymusic/ui/tap.dart';
 
+import '../music/local_source_test.dart' show wav;
+
 Widget appFor(AppState state) => WidgetsApp(
   color: const Color(0xFF0B0B0D),
   locale: const Locale('zh'),
@@ -166,6 +168,24 @@ void main() {
     app.update(() => app.scanning = false);
     await _frames(t);
     expect(find.text('音乐库还是空的'), findsOneWidget);
+  });
+
+  testWidgets('只有无专辑标签的歌曲时，音乐库仍可浏览歌曲', (t) async {
+    final folder = Directory.systemTemp.createTempSync('ypm_albumless_');
+    addTearDown(() => folder.deleteSync(recursive: true));
+    wav(
+      folder.uri.resolve('loose.wav').toFilePath(),
+      info: {'INAM': 'Loose Track', 'IART': 'Local Artist'},
+    );
+    await t.runAsync(() => app.loadLibrary(folders: [folder.path]));
+    app.open('/library/albums');
+    await boot(t);
+
+    expect(find.text('音乐库还是空的'), findsNothing);
+    expect(find.text('还没有专辑'), findsOneWidget);
+    await t.tap(find.text('歌曲'));
+    await _frames(t);
+    expect(find.text('Loose Track'), findsOneWidget);
   });
 
   testWidgets('设置页各标签', (t) => settingsTabs(t, 1440));
