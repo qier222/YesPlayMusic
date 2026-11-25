@@ -29,6 +29,7 @@ abstract interface class PlaybackEngine {
   abstract void Function(String)? onError;
   abstract void Function(String key)? onAdvanced;
   String? get queuedKey;
+  Duration get duration;
   Future<void> open(
     AudioStream s, {
     required String key,
@@ -146,6 +147,8 @@ class AudioEngine implements PlaybackEngine {
   String? _currentKey, _queuedKey;
   @override
   String? get queuedKey => _queuedKey;
+  @override
+  Duration get duration => _p.state.duration;
 
   /// Opens and (by default) starts playing, replacing mpv's whole list. [start]
   /// restores the previous position. [rg] and [gainDb] are this track's ReplayGain,

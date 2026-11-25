@@ -2023,8 +2023,15 @@ class AppState extends ChangeNotifier {
   final ValueNotifier<double> pos = ValueNotifier(0);
   double get position => pos.value;
   set position(double v) => pos.value = v;
-  double get progress =>
-      track.seconds == 0 ? 0 : (position / track.seconds).clamp(0.0, 1.0);
+
+  /// Current track's duration in seconds, if known.
+  double get playbackDuration => track.seconds > 0
+      ? track.seconds.toDouble()
+      : (_engineOnTrack ? _engineSeconds : 0);
+  double get progress {
+    final total = playbackDuration;
+    return total == 0 ? 0 : (position / total).clamp(0.0, 1.0);
+  }
 
   /// Slider position; actual loudness is converted with AudioEngine.mpvVolume's exponential curve.
   /// 0.72 is about −11 dB, as loud as the default 0.65 before the curve changed.
@@ -2129,7 +2136,7 @@ class AppState extends ChangeNotifier {
       _reconcileNext();
     };
     e.onDuration = (d) {
-      if (_engineOnTrack) _engineSeconds = d.inMilliseconds / 1000;
+      if (_engineOnTrack) _setEngineDuration(d);
     };
     e.onCompleted = () {
       if (!_engineOnTrack) return;
@@ -2288,6 +2295,12 @@ class AppState extends ChangeNotifier {
   /// Duration of the current track reported by mpv (seconds), more exact than the metadata; 0 until known.
   double _engineSeconds = 0;
 
+  void _setEngineDuration(Duration duration) {
+    final previous = playbackDuration;
+    _engineSeconds = duration.isNegative ? 0 : duration.inMilliseconds / 1000;
+    if (playbackDuration != previous) notifyListeners();
+  }
+
   /// The stream playing in the engine, for ReplayGain setting changes.
   m.AudioStream? _engineStream;
 
@@ -2350,6 +2363,7 @@ class AppState extends ChangeNotifier {
   /// mpv moved on to the queued track.
   void _onAdvanced(String key) {
     _armedSig = null;
+    _engineSeconds = 0;
     final s = _armedStream;
     _armedStream = null;
     final n = _nextTrack;
@@ -2369,7 +2383,6 @@ class AppState extends ChangeNotifier {
     final t = track;
     position = 0;
     _scrubbing = false;
-    _engineSeconds = 0;
     _loadedKey = key;
     _engineKey = key;
     _engineStream = s;
@@ -2581,6 +2594,8 @@ class AppState extends ChangeNotifier {
       if (_loadedKey == t.key) {
         _engineKey = t.key;
         _engineStream = s;
+        // The duration event can arrive before open finishes.
+        _setEngineDuration(_eng.duration);
         _playbackSoon(force: true);
         // Record only which source, not which song; restoring the queue at launch (without playing) doesn't count
         if (playing) {
@@ -2640,14 +2655,20 @@ class AppState extends ChangeNotifier {
 
   /// While dragging: only update the displayed position.
   void scrub(double frac) {
+    final total = playbackDuration;
+    if (total <= 0) return;
     _scrubbing = true;
-    position = frac.clamp(0.0, 1.0) * track.seconds;
+    position = frac.clamp(0.0, 1.0) * total;
   }
 
   /// Seeks to [frac] (0–1). Called on release when dragging the progress bar.
-  void seek(double frac) {
+  void seek(double frac) => seekTo(frac.clamp(0.0, 1.0) * playbackDuration);
+
+  void seekTo(double seconds) {
     _scrubbing = false;
-    position = frac.clamp(0.0, 1.0) * track.seconds;
+    final total = playbackDuration;
+    if (total <= 0) return;
+    position = seconds.clamp(0.0, total);
     _playbackSoon(force: true);
     if (_engineOnTrack) {
       _seeking++;
@@ -2658,10 +2679,7 @@ class AppState extends ChangeNotifier {
   }
 
   /// Seeks forward / back [s] seconds.
-  void seekBy(double s) {
-    if (track.seconds <= 0) return;
-    seek((position + s) / track.seconds);
-  }
+  void seekBy(double s) => seekTo(position + s);
 
   /// Next track. With [play] false it only moves to it without playing (for the sleep timer).
   void next({bool play = true}) {
@@ -3399,7 +3417,7 @@ class AppState extends ChangeNotifier {
   void seekLyric(int i) {
     final ls = lyricLines;
     if (i < 0 || i >= ls.length) return;
-    seek(track.seconds == 0 ? 0 : ls[i].start / 1000 / track.seconds);
+    seekTo(ls[i].start / 1000);
   }
 
   Future<void> _loadLyrics(Track t) async {

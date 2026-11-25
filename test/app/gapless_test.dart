@@ -4,6 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/cache/requests.dart';
 import 'package:yesplaymusic/data.dart';
+import 'package:yesplaymusic/mcp/config.dart';
+import 'package:yesplaymusic/mcp/resources.dart';
+import 'package:yesplaymusic/mcp/tool_registry.dart';
+import 'package:yesplaymusic/mcp/tools_core.dart';
 import 'package:yesplaymusic/music/eq.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/music/player.dart';
@@ -36,6 +40,11 @@ class _Engine implements PlaybackEngine {
   String queuedRg = '';
   double fade = 1;
   EqSettings eq = const EqSettings();
+  Duration durationOnOpen = Duration.zero;
+  Duration? sought;
+
+  @override
+  Duration duration = Duration.zero;
 
   @override
   void Function(Duration)? onPosition, onDuration;
@@ -59,7 +68,8 @@ class _Engine implements PlaybackEngine {
 
   /// Reports duration and position (seconds).
   void at(double pos, {double total = 180}) {
-    onDuration!(Duration(milliseconds: (total * 1000).round()));
+    duration = Duration(milliseconds: (total * 1000).round());
+    onDuration!(duration);
     onPosition!(Duration(milliseconds: (pos * 1000).round()));
   }
 
@@ -76,6 +86,8 @@ class _Engine implements PlaybackEngine {
     openedRg.add(rg);
     current = key;
     queuedKey = null;
+    duration = durationOnOpen;
+    onDuration?.call(duration);
   }
 
   @override
@@ -100,7 +112,7 @@ class _Engine implements PlaybackEngine {
   @override
   Future<void> pause() async {}
   @override
-  Future<void> seek(Duration d) async {}
+  Future<void> seek(Duration d) async => sought = d;
   @override
   Future<void> setVolume(double v) async {}
   @override
@@ -115,8 +127,8 @@ class _Engine implements PlaybackEngine {
   Future<void> dispose() async {}
 }
 
-Track _t(String id) => Track.of(
-  m.Track(id: id, name: 'Song $id', source: 'local', duration: 180000),
+Track _t(String id, {int duration = 180000}) => Track.of(
+  m.Track(id: id, name: 'Song $id', source: 'local', duration: duration),
 );
 
 String _key(String id) => _t(id).key;
@@ -210,6 +222,50 @@ void main() {
       expect(app.lyricLines.single.text, 'Before');
     },
     skip: Platform.isWindows ? 'needs POSIX permissions' : null,
+  );
+
+  test(
+    'duration reported during open enables seeking without track metadata',
+    () async {
+      final track = _t('raw-aac', duration: 0);
+      engine.durationOnOpen = const Duration(seconds: 30);
+      app.playList([track]);
+      await _tick();
+
+      expect(nowPlayingSnapshot(app)['duration'], 30);
+      expect(app.track.ref!.duration, 0);
+      engine.onPosition!(const Duration(seconds: 6));
+      expect(app.progress, closeTo(0.2, 1e-9));
+      app.scrub(0.5);
+      expect(app.position, 15);
+      app.seek(0.5);
+      expect(engine.sought, const Duration(seconds: 15));
+
+      final tools = buildCoreTools();
+      await tools
+          .singleWhere((tool) => tool.name == 'control_playback')
+          .handler(
+            {'action': 'seek', 'value': 12},
+            McpCallContext(
+              app: app,
+              config: const McpConfig(),
+              session: McpSession('test'),
+              registry: McpToolRegistry(tools),
+            ),
+          );
+      expect(engine.sought, const Duration(seconds: 12));
+
+      engine.durationOnOpen = Duration.zero;
+      app.playList([_t('unknown', duration: 0)]);
+      expect(nowPlayingSnapshot(app)['duration'], 0);
+      await _tick();
+      expect(nowPlayingSnapshot(app)['duration'], 0);
+
+      engine.durationOnOpen = const Duration(seconds: 31);
+      app.playList([_t('wav', duration: 30000)]);
+      await _tick();
+      expect(nowPlayingSnapshot(app)['duration'], 30);
+    },
   );
 
   test('快放完时才排下一首，接上后不重新打开', () async {
