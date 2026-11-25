@@ -1,5 +1,6 @@
 // Page smoke tests: the whole Shell + the local music source, no plugins loaded; open every page in turn,
 // and each must render in its empty state without throwing.
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/l10n/l10n.dart';
 import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
@@ -174,6 +176,15 @@ void main() {
       await _frames(t);
     }
 
+    // All tests in this file share one prefs.json; drop the swatch entry when done.
+    final prefsFile = File(p.join(AppState.supportDir(), 'prefs.json'));
+    addTearDown(() {
+      if (!prefsFile.existsSync()) return;
+      final prefs = jsonDecode(prefsFile.readAsStringSync()) as Map;
+      prefs.remove('swatch');
+      prefsFile.writeAsStringSync(jsonEncode(prefs));
+    });
+
     await boot(t, width: 1440);
     await openSettings(app);
     expect(app.swatch, 0);
@@ -184,6 +195,7 @@ void main() {
     await t.tap(mint);
     await _frames(t);
     expect(app.swatch, 2);
+    expect(jsonDecode(prefsFile.readAsStringSync())['swatch'], 'mint');
 
     await t.pumpWidget(const SizedBox.shrink());
     final restarted = AppState();

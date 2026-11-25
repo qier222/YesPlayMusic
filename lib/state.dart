@@ -3412,7 +3412,7 @@ class AppState extends ChangeNotifier {
   double get effectiveVolume => muted ? 0 : volume;
 
   // ───── Settings ─────
-  int _swatch = _validSwatch(_prefs()['swatch']) ?? 0;
+  int _swatch = _swatchIndexOf(_prefs()['swatch']);
   String lang = _prefs()['lang'] as String? ?? 'system';
 
   /// On: the mini player always shows the current lyric. Off: only while hovering its progress bar.
@@ -3445,13 +3445,19 @@ class AppState extends ChangeNotifier {
   int get swatch => _swatch;
   Locale? get locale => AppLanguage.byCode(lang).locale;
 
-  static int? _validSwatch(Object? value) =>
-      value is int && value >= 0 && value < swatchesDark.length ? value : null;
+  static bool _validSwatch(int index) =>
+      index >= 0 && index < swatchKeys.length;
+
+  /// Prefs store the swatch by key (e.g. 'mint'); anything unknown falls back to 0.
+  static int _swatchIndexOf(Object? key) {
+    final i = key is String ? swatchKeys.indexOf(key) : -1;
+    return i < 0 ? 0 : i;
+  }
 
   void setSwatch(int index) {
-    if (_validSwatch(index) == null || _swatch == index) return;
+    if (!_validSwatch(index) || _swatch == index) return;
     _swatch = index;
-    _savePrefs({'swatch': _swatch});
+    _savePrefs({'swatch': swatchKeys[index]});
     notifyListeners();
   }
 
