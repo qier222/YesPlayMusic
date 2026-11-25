@@ -183,6 +183,35 @@ void main() {
     expect((await app.getData(secondRequest)).lrc, '[00:00.00]Second after');
   });
 
+  test(
+    'rescan keeps current lyrics if their folder could not be scanned',
+    () async {
+      final music = await Directory.systemTemp.createTemp('ypm_rescan_');
+      addTearDown(() async {
+        await Process.run('chmod', ['700', music.path]);
+        await music.delete(recursive: true);
+      });
+      final song = wav(p.join(music.path, 'Song.wav'));
+      final lyrics = File(p.join(music.path, 'Song.lrc'))
+        ..writeAsStringSync('[00:00.00]Before');
+
+      await app.sources.remove('local');
+      app.musicFolders = [music.path];
+      expect(await app.loadLibrary(), isTrue);
+      app.playTrack(_t(song.path));
+      await _tick();
+      expect(app.lyricLines.single.text, 'Before');
+
+      lyrics.writeAsStringSync('[00:00.00]After');
+      // Allow reading a known file path, but not listing the folder.
+      expect((await Process.run('chmod', ['111', music.path])).exitCode, 0);
+      await app.rescanLibrary();
+      expect(app.unreadableFolders, [music.path]);
+      expect(app.lyricLines.single.text, 'Before');
+    },
+    skip: Platform.isWindows ? 'needs POSIX permissions' : null,
+  );
+
   test('快放完时才排下一首，接上后不重新打开', () async {
     await start(['a', 'b', 'c']);
     engine.at(100);

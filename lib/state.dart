@@ -421,10 +421,13 @@ class AppState extends ChangeNotifier {
     final lyricsPrefix = '${src.id}/lyrics/';
     _direct.removeWhere((key, _) => key.startsWith(lyricsPrefix));
     _directInflight.removeWhere((key, _) => key.startsWith(lyricsPrefix));
-    if (track.ref?.source == src.id) {
+    final current = track;
+    final ref = current.ref;
+    if (ref != null &&
+        ref.source == src.id &&
+        !src.unreadable.any((folder) => p.isWithin(folder, ref.id))) {
       _lyricsKey = null;
-      await _loadLyrics(track);
-      if (gen != _scanGen) return false;
+      unawaited(_loadLyrics(current));
     }
 
     final home = await src.home();
