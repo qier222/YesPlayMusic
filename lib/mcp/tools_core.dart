@@ -4,6 +4,7 @@ import '../data.dart';
 import '../l10n/l10n.dart';
 import '../music/models.dart' as m;
 import '../music/source.dart';
+import '../playback_artwork.dart';
 import '../state.dart';
 import 'resources.dart';
 import 'tool_registry.dart';
@@ -97,13 +98,22 @@ List<McpTool> buildCoreTools() => [
     core: true,
     readOnly: true,
     idempotent: true,
-    description: 'Get the currently playing track, playback status, progress, volume, shuffle/repeat mode, and queue summary.',
+    description: 'Get the currently playing track, playback status, progress, volume, shuffle/repeat mode, queue summary, and cover image when available.',
     inputSchema: const {
       'type': 'object',
       'properties': {},
       'additionalProperties': false,
     },
-    handler: (args, ctx) async => nowPlayingSnapshot(ctx.app),
+    handler: (args, ctx) async {
+      final snapshot = nowPlayingSnapshot(ctx.app);
+      final cover = ctx.app.track.cover;
+      if (cover.isEmpty) return snapshot;
+      try {
+        return (data: snapshot, png: await loadPlaybackArtwork(cover));
+      } catch (error) {
+        return {...snapshot, 'artworkError': '${error.runtimeType}'};
+      }
+    },
   ),
   McpTool(
     name: 'control_playback',

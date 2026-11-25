@@ -157,7 +157,9 @@ void main() {
       if (label == '快捷键') {
         expect(
           find.text('媒体键'),
-          Platform.isMacOS ? findsOneWidget : findsNothing,
+          Platform.isMacOS || Platform.isWindows
+              ? findsOneWidget
+              : findsNothing,
         );
       }
     }
