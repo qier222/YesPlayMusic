@@ -79,6 +79,51 @@ void main() {
     expect(ls.map((l) => l.translation), ['月亮河', '']);
   });
 
+  test('separate translation picks the closest stamp within 100 ms', () {
+    final ls = lyricLines(
+      const Lyrics(
+        lrc:
+            '[00:01.10]Closest\n'
+            '[00:02.10]Tie\n'
+            '[00:03.10]Exact\n'
+            '[00:04.10]At the limit\n'
+            '[00:05.10]Outside the limit',
+        translation:
+            '[00:01.12]Closest translation\n'
+            '[00:01.02]Earlier but farther translation\n'
+            '[00:02.15]Later tied translation\n'
+            '[00:02.05]Earlier tied translation\n'
+            '[00:03.05]Nearby translation\n'
+            '[00:03.10]Exact translation\n'
+            '[00:04.00]Boundary translation\n'
+            '[00:05.201]Too far',
+      ),
+    );
+    expect(ls.map((l) => l.translation), [
+      'Closest translation',
+      'Earlier tied translation',
+      'Exact translation',
+      'Boundary translation',
+      '',
+    ]);
+  });
+
+  test('same-stamp translations also supply the closest nearby cue', () {
+    final ls = lyricLines(
+      const Lyrics(
+        lrc:
+            '[00:01.02]Earlier line\n[00:01.02]Earlier translation\n'
+            '[00:01.10]Line without exact translation\n'
+            '[00:01.12]Later line\n[00:01.12]Later translation',
+      ),
+    );
+    expect(ls.map((l) => l.translation), [
+      'Earlier translation',
+      'Later translation',
+      'Later translation',
+    ]);
+  });
+
   // When a plugin gives line-by-line lyrics directly, they're used as-is without parsing lrc.
   test('timed lines win over lrc', () {
     final ls = lyricLines(
