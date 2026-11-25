@@ -16,6 +16,7 @@ import '../../l10n/l10n.dart';
 import '../lrc.dart';
 import '../models.dart';
 import '../source.dart';
+import 'mp3_info.dart';
 
 /// Extensions the local source can play → Stream.type.
 const audioTypes = {
@@ -556,6 +557,9 @@ LocalEntry _entry(
   final album = _clean(m?.album) ?? '';
   final albumArtist = _clean(m?.albumArtist) ?? '';
 
+  final isMp3 = p.extension(path).toLowerCase() == '.mp3';
+  final duration = (isMp3 ? infoHeaderDuration(f) : null) ?? m?.duration;
+
   final dir = p.dirname(path);
   var cover = folderCovers.putIfAbsent(dir, () => _folderCover(dir));
   if (cover.isEmpty && m != null && m.pictures.isNotEmpty) {
@@ -573,7 +577,7 @@ LocalEntry _entry(
     year: m?.year?.year ?? 0,
     disc: m?.discNumber ?? 0,
     number: m?.trackNumber ?? 0,
-    durationMs: m?.duration?.inMilliseconds ?? 0,
+    durationMs: duration?.inMilliseconds ?? 0,
     cover: cover,
     modified: f.statSync().modified,
   );
