@@ -272,6 +272,21 @@ void main() {
     },
   );
 
+  test('selecting a queued copy restarts the loaded song', () async {
+    await start(['a', 'b', 'a']);
+    engine.at(20);
+    expect(app.index, 0);
+    expect(app.position, 20);
+
+    app.playQueueAt(2);
+
+    expect(app.index, 2);
+    expect(app.playing, isTrue);
+    expect(app.position, 0);
+    expect(engine.sought, Duration.zero);
+    expect(engine.opened, [_key('a')]);
+  });
+
   test('快放完时才排下一首，接上后不重新打开', () async {
     await start(['a', 'b', 'c']);
     engine.at(100);
