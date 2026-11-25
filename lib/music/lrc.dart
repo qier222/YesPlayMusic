@@ -123,12 +123,21 @@ List<LyricLine> lyricLines(Lyrics l) {
   ];
 }
 
-/// Translation timestamps often differ from the original by tens of ms, so match the nearest.
+/// Finds the nearest translation within 100 ms, preferring the earlier cue on ties.
+/// [trans] is populated in timestamp order.
 String _near(Map<int, String> trans, int start) {
+  var bestDistance = 101;
+  var best = '';
   for (final e in trans.entries) {
-    if ((e.key - start).abs() <= 100) return e.value;
+    final delta = e.key - start;
+    if (delta >= bestDistance) break;
+    final distance = delta.abs();
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = e.value;
+    }
   }
-  return '';
+  return best;
 }
 
 /// The line being sung at a given moment, or -1 if none.
