@@ -238,6 +238,43 @@ void main() {
     expect(await cover(), discCover.path);
   });
 
+  for (final restart in [true, false]) {
+    test(
+      'refreshes same-size embedded art on ${restart ? 'restart' : 'rescan'}',
+      () async {
+        final path = p.join(music, 'Embedded', 'track.wav');
+        const before = [0xFF, 0xD8, 1, 0xFF, 0xD9];
+        const after = [0xFF, 0xD8, 2, 0xFF, 0xD9];
+        File writeTrack(List<int> cover) =>
+            wav(path, info: {'IPRD': 'Embedded'}, cover: cover);
+
+        Future<String> scanCover(LocalSource source) async {
+          await source.scan();
+          return (await source.search(
+            'Embedded',
+            SearchKind.albums,
+          )).albums.single.imageUrl;
+        }
+
+        final track = writeTrack(before);
+        final size = track.lengthSync();
+        final modified = track.lastModifiedSync();
+        final oldCover = await scanCover(src);
+        expect(File.fromUri(Uri.parse(oldCover)).readAsBytesSync(), before);
+
+        writeTrack(after).setLastModifiedSync(modified);
+        expect(track.lengthSync(), size);
+        final source = restart
+            ? LocalSource(folders: src.folders, cacheDir: src.cacheDir)
+            : src;
+        final newCover = await scanCover(source);
+        expect(File.fromUri(Uri.parse(newCover)).readAsBytesSync(), after);
+        expect(newCover, isNot(oldCover));
+        expect(await scanCover(source), newCover);
+      },
+    );
+  }
+
   // Files without tags: strip the track number prefix, split "Artist - Title", and don't assign to any album.
   test('untagged file falls back to filename', () async {
     final r = await src.search('晚風', SearchKind.tracks);

@@ -10,6 +10,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart' as tags;
+import 'package:crypto/crypto.dart';
 import 'package:path/path.dart' as p;
 
 import '../../l10n/l10n.dart';
@@ -626,7 +627,8 @@ String _saveCover(List<tags.Picture> pics, String key, String cacheDir) {
     'image/webp' => '.webp',
     _ => '.jpg',
   };
-  final file = File(p.join(cacheDir, 'covers', '${fnv1a(key)}$ext'));
+  final digest = sha256.convert(pic.bytes);
+  final file = File(p.join(cacheDir, 'covers', '${fnv1a(key)}-$digest$ext'));
   try {
     if (!file.existsSync() || file.lengthSync() != pic.bytes.length) {
       file.parent.createSync(recursive: true);
