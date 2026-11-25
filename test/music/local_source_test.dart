@@ -97,6 +97,29 @@ File wav(
   return f;
 }
 
+/// Writes just the FLAC metadata blocks needed to scan Vorbis comments.
+void flacWithTags(String path, Map<String, String> tags) {
+  final comments = BytesBuilder();
+  void u32(int value) => comments.add(
+    (ByteData(4)..setUint32(0, value, Endian.little)).buffer.asUint8List(),
+  );
+  u32(0); // Empty vendor string.
+  u32(tags.length);
+  for (final MapEntry(:key, :value) in tags.entries) {
+    final comment = '$key=$value'.codeUnits;
+    u32(comment.length);
+    comments.add(comment);
+  }
+  final header = ByteData(4)..setUint32(0, 0x84000000 | comments.length);
+  File(path)
+    ..parent.createSync(recursive: true)
+    ..writeAsBytesSync([
+      ...'fLaC'.codeUnits,
+      ...header.buffer.asUint8List(),
+      ...comments.takeBytes(),
+    ]);
+}
+
 void main() {
   late Directory tmp;
   late LocalSource src;
@@ -166,6 +189,78 @@ void main() {
     expect(page.tracks.last.duration, inInclusiveRange(1450, 1550));
     expect(page.tracks.every((t) => t.source == 'local'), isTrue);
   });
+
+  test(
+    'album artist tags also group untagged tracks in the same album',
+    () async {
+      final root = p.join(tmp.path, 'Compilation');
+      flacWithTags(p.join(root, '01.flac'), {
+        'ALBUM': 'Compilation',
+        'ARTIST': 'Queen',
+        'TITLE': 'Opening',
+      });
+      flacWithTags(p.join(root, '02.flac'), {
+        'ALBUM': 'Compilation',
+        'ALBUMARTIST': 'Various Artists',
+        'ARTIST': 'Queen',
+        'TITLE': 'Finale',
+      });
+      final source = LocalSource(
+        folders: [root],
+        cacheDir: p.join(tmp.path, 'c2'),
+      );
+      await source.scan();
+
+      final albums = (await source.home()).sections
+          .firstWhere((s) => s.title == '专辑')
+          .albums;
+      expect(albums.map((a) => a.artists.single.name), ['Various Artists']);
+      final page = await source.album(albums.single.id);
+      expect(page.tracks.map((t) => t.name), ['Opening', 'Finale']);
+      expect(page.tracks.map((t) => t.artistNames), ['Queen', 'Queen']);
+    },
+  );
+
+  test(
+    'same-title albums with different album artists stay separate',
+    () async {
+      final root = p.join(tmp.path, 'Shared folder');
+      for (final artist in ['Queen', 'Smile']) {
+        flacWithTags(p.join(root, '$artist.flac'), {
+          'ALBUM': 'Greatest Hits',
+          'ALBUMARTIST': artist,
+          'ARTIST': artist,
+          'TITLE': artist,
+        });
+      }
+      flacWithTags(p.join(root, 'Encore.flac'), {
+        'ALBUM': 'Greatest Hits',
+        'ARTIST': 'Queen',
+        'TITLE': 'Encore',
+      });
+      final source = LocalSource(
+        folders: [root],
+        cacheDir: p.join(tmp.path, 'c2'),
+      );
+      await source.scan();
+
+      final albums = (await source.home()).sections
+          .firstWhere((s) => s.title == '专辑')
+          .albums;
+      expect(
+        albums.map((a) => a.artists.single.name),
+        unorderedEquals(['Queen', 'Smile']),
+      );
+      for (final album in albums) {
+        final artist = album.artists.single.name;
+        final page = await source.album(album.id);
+        expect(
+          page.tracks.map((t) => t.name),
+          unorderedEquals([artist, if (artist == 'Queen') 'Encore']),
+        );
+      }
+    },
+  );
 
   test('disc tracks use their own cover or the album folder cover', () async {
     final albumFolder = p.join(music, 'Multi-disc');
