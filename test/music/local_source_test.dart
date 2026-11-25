@@ -288,6 +288,31 @@ void main() {
     expect(src.trackCount, 3);
   });
 
+  // Regression: search used to report the first page size (50) as the total.
+  test('search reports the full match count across pages', () async {
+    final root = p.join(tmp.path, 'Many');
+    const n = LocalSource.pageSize + 10;
+    for (var i = 0; i < n; i++) {
+      wav(
+        p.join(root, '$i.wav'),
+        ms: 10,
+        info: {'INAM': 'Song $i', 'IART': 'Band', 'IPRD': 'Album $i'},
+      );
+    }
+    final many = LocalSource(folders: [root], cacheDir: p.join(tmp.path, 'c6'));
+    await many.scan();
+
+    final first = await many.search('song', SearchKind.tracks);
+    expect((first.tracks.length, first.more, first.total), (50, true, n));
+    final rest = await many.search('song', SearchKind.tracks, offset: 50);
+    expect((rest.tracks.length, rest.more, rest.total), (10, false, n));
+
+    final albums = await many.search('album', SearchKind.albums);
+    expect((albums.albums.length, albums.total), (50, n));
+    final artists = await many.search('band', SearchKind.artists);
+    expect((artists.artists.length, artists.total), (1, 1));
+  });
+
   // Regression: when the hash's high bit was 1, cache file names used to contain a minus sign.
   test('fnv1a is unsigned fixed-width hex', () {
     for (final k in ['', 'a', 'Bohemian Rhapsody', '晚風']) {
