@@ -78,6 +78,14 @@ void main() {
     },
   );
 
+  test('enhanced LRC prefix cannot end before a repeated line stamp', () {
+    final lines = parseLrc('[00:01.00][00:10.00]Open <00:02.00>the door');
+    expect(lines.map((l) => (l.words.first.start, l.words.first.end)), [
+      (1000, 2000),
+      (10000, 10000),
+    ]);
+  });
+
   test('malformed-only inline tags fall back to plain text', () {
     for (final tag in ['<00:xx>', '<999999999999999999999:01.00>']) {
       final l = parseLrc('[00:02.00]Open ${tag}the door').single;

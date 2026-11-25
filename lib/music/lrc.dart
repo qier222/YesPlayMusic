@@ -3,6 +3,8 @@
 // Supports: several timestamps per line, [offset:±ms], enhanced LRC per-word timing <mm:ss.xx>,
 // a separate translation LRC, and the same timestamp appearing twice (second line is the translation).
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 
 import 'models.dart';
@@ -63,7 +65,13 @@ List<LyricLine> parseLrc(String lrc) {
   final words = <LyricWord>[];
   final prefix = s.substring(0, ms.first.start);
   if (prefix.trim().isNotEmpty) {
-    words.add(LyricWord(start: lineStart, end: _ms(ms.first), text: prefix));
+    words.add(
+      LyricWord(
+        start: lineStart,
+        end: math.max(lineStart, _ms(ms.first)),
+        text: prefix,
+      ),
+    );
   }
   for (var i = 0; i < ms.length; i++) {
     final end = i + 1 < ms.length ? ms[i + 1].start : s.length;
