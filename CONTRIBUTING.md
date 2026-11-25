@@ -13,7 +13,7 @@
 
 ## 配置开发环境
 
-需要 Flutter 3.50 或更新版本。各平台的要求见[从源码构建](README.md#从源码构建)。
+需要 Flutter 3.50 或更新版本。各平台的要求见[从源码构建](README.zh-CN.md#从源码构建)。
 
 ```sh
 git clone https://github.com/qier222/YesPlayMusic.git

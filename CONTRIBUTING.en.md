@@ -13,7 +13,7 @@ Thanks for helping out. Pull requests are welcome, from small fixes and translat
 
 ## Setting up
 
-You need Flutter 3.50 or later. Platform requirements are listed under [Building from source](README.en.md#building-from-source).
+You need Flutter 3.50 or later. Platform requirements are listed under [Building from source](README.md#building-from-source).
 
 ```sh
 git clone https://github.com/qier222/YesPlayMusic.git
