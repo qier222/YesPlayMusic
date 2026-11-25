@@ -198,8 +198,7 @@ class PluginSource extends Source {
     Op.hotSearches,
     Op.suggest, Op.library, Op.recent, Op.played, Op.liked, Op.isLiked, Op.like,
     Op.album, Op.artist, Op.saveAlbum, Op.followArtist, Op.savedAlbums,
-    Op.playlists, Op.playlist, Op.trackPlaylists, Op.savePlaylist,
-    Op.createPlaylist,
+    Op.playlists, Op.playlist, Op.savePlaylist, Op.createPlaylist,
     Op.renamePlaylist, Op.deletePlaylist, Op.addToPlaylist,
     Op.removeFromPlaylist, Op.movePlaylistTrack, Op.lyrics, Op.stream,
     Op.similar, Op.station, Op.dislike, Op.trackMenu, Op.menuAction,
@@ -683,18 +682,6 @@ class PluginSource extends Source {
   @override
   Future<Playlist> playlist(String id) async =>
       Playlist.fromJson(await _obj(Op.playlist, {'id': id}));
-  @override
-  Future<Set<String>> trackPlaylists(String trackId) async {
-    final value = await invoke(Op.trackPlaylists, {'trackId': trackId});
-    if (value is List) {
-      return {
-        for (final id in value)
-          if (id is String) id,
-      };
-    }
-    return const {};
-  }
-
   @override
   Future<void> savePlaylist(String id, bool on) =>
       invoke(Op.savePlaylist, {'id': id, 'on': on});

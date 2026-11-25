@@ -297,7 +297,6 @@ export async function stream({ id }) {
 | `artist` | `{ id }` | `{ artist: Artist, tracks: Track[], albums: Album[], related: Artist[] }` |
 | `playlists` | | `Playlist[]`（自己创建的和收藏的） |
 | `playlist` | `{ id }` | `Playlist`（带 `tracks`） |
-| `trackPlaylists` | `{ trackId }` | `string[]` | 可选：歌曲已经在哪些歌单里。导出后，「添加到歌单」菜单会隐藏这些歌单；不导出就照常全部显示。 |
 | `savePlaylist` | `{ id, on }` | |
 | `createPlaylist` | `{ name }` | `Playlist` |
 | `renamePlaylist` | `{ id, name }` | |

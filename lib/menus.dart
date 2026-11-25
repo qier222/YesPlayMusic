@@ -119,10 +119,7 @@ MenuSpec trackMenu(
                     if (name != null) app.createPlaylistWith(t, name);
                   },
                 ),
-              for (final p in await app.editablePlaylists(
-                r.source,
-                trackId: r.id,
-              ))
+              for (final p in await app.editablePlaylists(r.source))
                 if (p.id != playlist)
                   MenuItem(
                     'music',

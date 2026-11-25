@@ -2914,44 +2914,57 @@ class AppState extends ChangeNotifier {
   final Map<String, Future<List<m.Playlist>>> _editable = {};
 
   /// Playlists the user created in this source that songs can be added to (excluding fixed playlists like "Liked Songs").
-  ///
-  /// When [trackId] is given and the source supports [Op.trackPlaylists], playlists that
-  /// already contain the track are left out. The cached list stays unfiltered, so a later
-  /// call for another track still sees every editable playlist.
-  Future<List<m.Playlist>> editablePlaylists(
-    String source, {
-    String trackId = '',
-  }) async {
+  Future<List<m.Playlist>> editablePlaylists(String source) {
     final s = sources[source];
-    if (s == null || !s.can(Op.playlists)) return const [];
-    final list = await (_editable[source] ??= s
+    if (s == null || !s.can(Op.playlists)) return Future.value(const []);
+    return _editable[source] ??= s
         .playlists()
         .then((ps) => ps.where((p) => p.mine && !p.fixed).toList())
         .catchError((Object e) {
           _editable.remove(source);
           throw e;
-        }));
-    if (trackId.isEmpty || !s.can(Op.trackPlaylists)) return list;
-    try {
-      final occupied = await s.trackPlaylists(trackId);
-      if (occupied.isEmpty) return list;
-      return [
-        for (final p in list)
-          if (!occupied.contains(p.id)) p,
-      ];
-    } catch (_) {
-      // The menu still works when the membership lookup fails: show every playlist.
-      return list;
-    }
+        });
   }
 
-  /// Playlist content changed: refetch the playlist page and the playlist cards in the library.
+  /// Playlist content changed: refetch next time the playlist page opens, and refetch only the playlists of
+  /// the loaded library so the cards show the new track count and cover. Tracks, albums and artists stay cached.
   void _playlistChanged(String source, String id) {
     dropData(DataReq.playlist(source, id));
     _editable.remove(source);
-    // Playlist cards show the track count, cover and ordering, so the library needs a refetch too.
-    _libraries.remove(source);
-    notifyListeners();
+    _refreshLibraryPlaylists(source);
+  }
+
+  /// Refetches the playlists of [source]'s loaded library and swaps them in. A library that isn't loaded yet
+  /// fetches them anyway when it opens. On failure what is shown stays as it is.
+  Future<void> _refreshLibraryPlaylists(String source) async {
+    final s = sources[source];
+    final lib = _libraries[source];
+    if (s == null || lib == null || !s.can(Op.playlists)) return;
+    try {
+      final List<m.Playlist> list;
+      if (s is PluginSource) {
+        // Same op and stored copy as [_loadPluginLibrary], so the next launch shows the new cards too.
+        final raw = await s.raw(Op.playlists);
+        final items = raw is List ? raw : const <Object?>[];
+        list = List.unmodifiable([
+          for (final x in items)
+            if (x is Map) m.Playlist.fromJson(x.cast<String, Object?>()),
+        ]);
+        cache.put(
+          '${cacheSpace(s.id)}/library/playlists',
+          Policies.mine,
+          items,
+        );
+      } else {
+        list = await s.playlists();
+      }
+      if (_libraries[source] != lib) return;
+      lib.playlists = list;
+      lib.errors.remove('playlists');
+      notifyListeners();
+    } catch (_) {
+      // Keep the cards already shown.
+    }
   }
 
   String _why(Object e, String fallback) =>
