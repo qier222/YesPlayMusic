@@ -30,14 +30,15 @@ class _FakeSource extends Source {
     int offset = 0,
   }) async => m.SearchResult(
     tracks: [
-      m.Track(
-        id: 't1',
-        name: 'Song for $query',
-        source: id,
-        artists: const [m.Artist(id: 'a1', name: 'Tester')],
-        album: const m.Album(id: 'al1', name: 'Test Album'),
-        duration: 210000,
-      ),
+      for (var i = offset + 1; i <= 4; i++)
+        m.Track(
+          id: 't$i',
+          name: 'Song for $query',
+          source: id,
+          artists: const [m.Artist(id: 'a1', name: 'Tester')],
+          album: const m.Album(id: 'al1', name: 'Test Album'),
+          duration: 210000,
+        ),
     ],
   );
 
@@ -176,6 +177,39 @@ void main() {
       // Lazy tools must not appear in tools/list initially
       expect(names, isNot(contains('get_lyrics')));
       expect(names, isNot(contains('list_playlists')));
+    },
+  );
+
+  test(
+    'search_music reports more when the requested limit truncates results',
+    () async {
+      final init = await _rpc(client, port, {
+        'jsonrpc': '2.0',
+        'id': 1,
+        'method': 'initialize',
+      });
+
+      Future<Map> search(int offset) async {
+        final call = await _rpc(client, port, {
+          'jsonrpc': '2.0',
+          'id': offset + 2,
+          'method': 'tools/call',
+          'params': {
+            'name': 'search_music',
+            'arguments': {'query': 'Song', 'offset': offset, 'limit': 2},
+          },
+        }, sessionId: init.sessionId);
+        final content = (call.body!['result'] as Map)['content'] as List;
+        return jsonDecode((content.single as Map)['text'] as String) as Map;
+      }
+
+      final first = await search(0);
+      expect((first['tracks'] as List).map((t) => t['id']), ['t1', 't2']);
+      expect(first['more'], isTrue);
+
+      final last = await search(2);
+      expect((last['tracks'] as List).map((t) => t['id']), ['t3', 't4']);
+      expect(last['more'], isFalse);
     },
   );
 

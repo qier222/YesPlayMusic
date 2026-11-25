@@ -258,7 +258,13 @@ List<McpTool> buildCoreTools() => [
           () async {
             try {
               final r = await s.search(query, kind, offset: offset);
-              more = more || r.more;
+              more =
+                  more ||
+                  r.more ||
+                  r.tracks.length > limit ||
+                  r.albums.length > limit ||
+                  r.artists.length > limit ||
+                  r.playlists.length > limit;
               for (final t in r.tracks.take(limit)) {
                 tracks.add(serializeModelTrack(t, s.id));
               }
