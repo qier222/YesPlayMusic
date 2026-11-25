@@ -20,15 +20,18 @@ int _ms(Match m) {
 
 /// Parses an LRC text into a sorted list of (time, text, words).
 List<LyricLine> parseLrc(String lrc) {
+  final rows = lrc.split(RegExp(r'\r?\n'));
   var offset = 0;
-  final out = <LyricLine>[];
-  for (final raw in lrc.split(RegExp(r'\r?\n'))) {
-    final line = raw.trim();
-    final off = _offset.firstMatch(line);
+  for (final row in rows.reversed) {
+    final off = _offset.firstMatch(row.trimLeft());
     if (off != null) {
       offset = int.parse(off.group(1)!);
-      continue;
+      break;
     }
+  }
+  final out = <LyricLine>[];
+  for (final raw in rows) {
+    final line = raw.trim();
     final stamps = <int>[];
     var rest = line;
     while (true) {
