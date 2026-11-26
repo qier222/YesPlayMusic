@@ -619,4 +619,75 @@ void main() {
       expect(fnv1a(k), matches(RegExp(r'^[0-9a-f]{16}$')));
     }
   });
+
+  // Regression: clicking a local album's credited artist who has no tracks of their own used to throw Artist not found.
+  test(
+    'album-credit-only artist resolves with credited albums and no tracks',
+    () async {
+      final root = p.join(tmp.path, 'AlbumCredit');
+      flacWithTags(p.join(root, '04-tribute.flac'), {
+        'TITLE': 'Scout Guest Feature',
+        'ARTIST': 'Scout Guest',
+        'ALBUM': 'Scout Tribute',
+        'ALBUMARTIST': 'Scout Director',
+        'DATE': '2024',
+        'TRACKNUMBER': '1',
+      });
+      final s = LocalSource(folders: [root], cacheDir: p.join(tmp.path, 'c7'));
+      await s.scan();
+
+      final album = (await s.library(SearchKind.albums)).albums.single;
+      expect(album.artists.single.name, 'Scout Director');
+
+      final director = await s.artist(album.artists.single.id);
+      expect(director.artist.name, 'Scout Director');
+      expect(director.tracks, isEmpty);
+      expect(director.albums.map((a) => a.name), ['Scout Tribute']);
+
+      final guest = await s.artist(LocalSource.artistId('Scout Guest'));
+      expect(guest.artist.name, 'Scout Guest');
+      expect(guest.tracks.map((t) => t.name), ['Scout Guest Feature']);
+      expect(guest.albums.map((a) => a.name), ['Scout Tribute']);
+
+      await expectLater(
+        s.artist(LocalSource.artistId('Nobody')),
+        throwsA(
+          isA<SourceError>().having(
+            (e) => e.kind,
+            'kind',
+            SourceErrorKind.failed,
+          ),
+        ),
+      );
+    },
+  );
+
+  // An artist with both performed tracks and album-only credits keeps only their own tracks and lists all albums once, newest first.
+  test('artist with performed tracks and album-only credits merges albums without attributing guest tracks', () async {
+    final root = p.join(tmp.path, 'MixedCredit');
+    flacWithTags(p.join(root, 'solo.flac'), {
+      'TITLE': 'Solo Track',
+      'ARTIST': 'Curator',
+      'ALBUM': 'Solo LP',
+      'ALBUMARTIST': 'Curator',
+      'DATE': '2021',
+    });
+    flacWithTags(p.join(root, 'tribute.flac'), {
+      'TITLE': 'Guest Song',
+      'ARTIST': 'Guest Singer',
+      'ALBUM': 'Tribute Compilation',
+      'ALBUMARTIST': 'Curator',
+      'DATE': '2024',
+    });
+    final s = LocalSource(folders: [root], cacheDir: p.join(tmp.path, 'c8'));
+    await s.scan();
+
+    final curator = await s.artist(LocalSource.artistId('Curator'));
+    expect(curator.artist.name, 'Curator');
+    expect(curator.tracks.map((t) => t.name), ['Solo Track']);
+    expect(curator.albums.map((a) => a.name), [
+      'Tribute Compilation',
+      'Solo LP',
+    ]);
+  });
 }
