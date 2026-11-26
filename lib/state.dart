@@ -2842,6 +2842,7 @@ class AppState extends ChangeNotifier {
     }
     position = 0;
     playing = true;
+    _restartLoadedTrack();
     notifyListeners();
     _sync();
   }
@@ -2852,14 +2853,17 @@ class AppState extends ChangeNotifier {
     index = i.clamp(0, queue.length - 1);
     position = 0;
     playing = true;
-    if (index != previous && _engineOnTrack) {
-      _scrubbing = false;
-      _scrobbler.reset();
-      _seekEngine(Duration.zero);
-      _playbackSoon(force: true);
-    }
+    if (index != previous) _restartLoadedTrack();
     notifyListeners();
     _sync();
+  }
+
+  void _restartLoadedTrack() {
+    if (!_engineOnTrack) return;
+    _scrubbing = false;
+    _scrobbler.reset();
+    _seekEngine(Duration.zero);
+    _playbackSoon(force: true);
   }
 
   void addNext(Track t) {
