@@ -2180,10 +2180,10 @@ class AppState extends ChangeNotifier {
       // Sleep timer "after this track": stop at the start of the next one
       if (sleepAfterTrack) {
         _clearSleep();
-        next(play: false);
+        _next(play: false, completed: true);
         return;
       }
-      next();
+      _next(play: true, completed: true);
     };
     e.onAdvanced = _onAdvanced;
     e.onError = (msg) => showToast(L.toastPlaybackError(msg));
@@ -2733,7 +2733,9 @@ class AppState extends ChangeNotifier {
   void seekBy(double s) => seekTo(position + s);
 
   /// Next track. With [play] false it only moves to it without playing (for the sleep timer).
-  void next({bool play = true}) {
+  void next({bool play = true}) => _next(play: play);
+
+  void _next({required bool play, bool completed = false}) {
     if (queue.isEmpty) return;
     // A station reached its last song: wait for the next batch, then continue
     if (index + 1 >= queue.length && station != null && !repeat) {
@@ -2751,6 +2753,12 @@ class AppState extends ChangeNotifier {
       playing = play;
     } else {
       playing = false;
+      // After EOF the engine already restarts at zero on play.
+      if (!completed && _engineOnTrack) {
+        _scrubbing = false;
+        _seekEngine(Duration.zero);
+        _playbackSoon(force: true);
+      }
     }
     position = 0;
     notifyListeners();
