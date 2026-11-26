@@ -532,17 +532,18 @@ void _walk(
   }
 }
 
+final _discFolder = RegExp(r'^(?:cd|disc|disk)\s*(\d+)$', caseSensitive: false);
+
+({String folder, int? disc}) _albumLocation(String dir) {
+  final number = _discFolder.firstMatch(p.basename(dir))?.group(1);
+  return number == null
+      ? (folder: dir, disc: null)
+      : (folder: p.dirname(dir), disc: int.tryParse(number));
+}
+
 /// The folder an album lives in. Per-disc subfolders like CD1 or Disc 2 count as the parent,
 /// so multi-disc albums aren't split.
-String albumDir(String path) {
-  final dir = p.dirname(path);
-  return RegExp(
-        r'^(cd|disc|disk)\s*\d+$',
-        caseSensitive: false,
-      ).hasMatch(p.basename(dir))
-      ? p.dirname(dir)
-      : dir;
-}
+String albumDir(String path) => _albumLocation(p.dirname(path)).folder;
 
 /// Fill missing album artists from an unambiguous tag in the same folder and album.
 /// Otherwise, use the most frequent track artist among the untagged tracks so compilations stay together.
@@ -631,7 +632,7 @@ LocalEntry _entry(
   final duration = (isMp3 ? infoHeaderDuration(f) : null) ?? m?.duration;
 
   final dir = p.dirname(path);
-  final albumFolder = albumDir(path);
+  final (folder: albumFolder, disc: folderDisc) = _albumLocation(dir);
   String coverIn(String folder) =>
       folderCovers.putIfAbsent(folder, () => _folderCover(folder));
   var cover = coverIn(dir);
@@ -649,7 +650,7 @@ LocalEntry _entry(
     album: album,
     albumArtist: album.isEmpty ? '' : albumArtist,
     year: m?.year?.year ?? 0,
-    disc: m?.discNumber ?? 0,
+    disc: m?.discNumber ?? folderDisc ?? 0,
     number: m?.trackNumber ?? 0,
     durationMs: duration?.inMilliseconds ?? 0,
     cover: cover,
