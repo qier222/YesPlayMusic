@@ -101,6 +101,7 @@ class Album {
     required this.spine,
     this.kind = '',
     this.artistRoute = '',
+    this.artistImage = '',
     this.added,
     this.released,
     this.copyright = '',
@@ -113,6 +114,9 @@ class Album {
 
   /// Page opened by tapping the artist name; not tappable when empty.
   final String artistRoute;
+
+  /// Avatar of the first credited artist, separate from the album artwork.
+  final String artistImage;
   final int year;
   final double spine; // spine width
 
@@ -132,6 +136,7 @@ class Album {
     spine: spine,
     kind: kind,
     artistRoute: artistRoute,
+    artistImage: artistImage,
     added: added,
     released: d,
     copyright: copyright,

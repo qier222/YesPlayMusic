@@ -1,8 +1,11 @@
 import 'package:flutter/widgets.dart';
 
 import '../data.dart';
+import '../cache/requests.dart';
 import '../l10n/l10n.dart';
 import '../menus.dart';
+import '../music/models.dart' as m;
+import '../music/source.dart';
 import '../state.dart';
 import '../theme.dart';
 import '../ui.dart';
@@ -119,7 +122,10 @@ class AlbumPage extends StatelessWidget {
                         builder: (_, h, _) => Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Cover(al.cover, w: 28, h: 28, r: 14),
+                            _AlbumArtistAvatar(
+                              image: al.artistImage,
+                              route: al.artistRoute,
+                            ),
                             const SizedBox(width: 10),
                             AnimatedDefaultTextStyle(
                               duration: fast,
@@ -239,6 +245,62 @@ String _footer(Album al, AppLocalizations l) {
       ? l.albumReleasedIn(al.year)
       : '';
   return [date, al.copyright].where((s) => s.isNotEmpty).join('\n');
+}
+
+class _AlbumArtistAvatar extends StatefulWidget {
+  const _AlbumArtistAvatar({required this.image, required this.route});
+  final String image, route;
+
+  @override
+  State<_AlbumArtistAvatar> createState() => _AlbumArtistAvatarState();
+}
+
+class _AlbumArtistAvatarState extends State<_AlbumArtistAvatar> {
+  String? _target;
+  Future<m.ArtistPage>? _request;
+
+  Widget _avatar(String image) => image.isNotEmpty
+      ? Cover(image, w: 28, h: 28, r: 14)
+      : Container(
+          width: 28,
+          height: 28,
+          alignment: Alignment.center,
+          decoration: squircle(14, color: P.raised),
+          child: Ico('user', size: 16, color: _faint),
+        );
+
+  @override
+  Widget build(BuildContext context) {
+    final app = context.app;
+    // Use the same artist identity as the adjacent navigation link. Album responses
+    // often omit the avatar or supply the service's generic artist image.
+    final parts = Uri.tryParse(widget.route)?.pathSegments ?? const <String>[];
+    if (parts.length != 3 ||
+        parts[0] != 'artist' ||
+        !parts[1].startsWith('@')) {
+      return _avatar(widget.image);
+    }
+    final source = parts[1].substring(1), artist = parts[2];
+    if (artist.isEmpty || !(app.sources[source]?.can(Op.artist) ?? false)) {
+      return _avatar(widget.image);
+    }
+    final target = '${app.cacheSpace(source)}/$artist';
+    if (_target != target) {
+      _target = target;
+      _request = null;
+    }
+    final req = DataReq.artist(source, artist);
+    _request ??= app.getData(req);
+    return FutureBuilder<m.ArtistPage>(
+      key: ValueKey(target),
+      future: _request,
+      builder: (context, snapshot) {
+        final image =
+            (app.peekData(req) ?? snapshot.data)?.artist.imageUrl ?? '';
+        return _avatar(image.isNotEmpty ? image : widget.image);
+      },
+    );
+  }
 }
 
 class _AlbumTrackRow extends StatelessWidget {
