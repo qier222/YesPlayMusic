@@ -2720,11 +2720,13 @@ class AppState extends ChangeNotifier {
     position = seconds.clamp(0.0, total);
     _playbackSoon(force: true);
     if (_engineOnTrack) {
-      _seeking++;
-      _eng
-          .seek(Duration(milliseconds: (position * 1000).round()))
-          .whenComplete(() => _seeking--);
+      _seekEngine(Duration(milliseconds: (position * 1000).round()));
     }
+  }
+
+  void _seekEngine(Duration to) {
+    _seeking++;
+    _eng.seek(to).whenComplete(() => _seeking--);
   }
 
   /// Seeks forward / back [s] seconds.
@@ -2846,9 +2848,16 @@ class AppState extends ChangeNotifier {
 
   void playQueueAt(int i) {
     if (queue.isEmpty) return;
+    final previous = index;
     index = i.clamp(0, queue.length - 1);
     position = 0;
     playing = true;
+    if (index != previous && _engineOnTrack) {
+      _scrubbing = false;
+      _scrobbler.reset();
+      _seekEngine(Duration.zero);
+      _playbackSoon(force: true);
+    }
     notifyListeners();
     _sync();
   }
