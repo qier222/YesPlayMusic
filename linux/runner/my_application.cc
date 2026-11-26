@@ -48,7 +48,6 @@ static gboolean delete_event_cb(GtkWidget* window, GdkEvent* event,
 }
 
 static void set_window_size(GtkWindow* window) {
-  int width = 1440;
   int height = 900;
   GdkDisplay* display = gtk_widget_get_display(GTK_WIDGET(window));
   GdkMonitor* monitor = gdk_display_get_primary_monitor(display);
@@ -60,12 +59,11 @@ static void set_window_size(GtkWindow* window) {
     gdk_monitor_get_workarea(monitor, &workarea);
     // The hints constrain the client, so leave room for window manager
     // decorations, whose exact size is not known before the window is mapped.
-    width = std::min(width, std::max(1, workarea.width - 16));
     height = std::min(height, std::max(1, workarea.height - 64));
   }
-  gtk_window_set_default_size(window, width, height);
+  gtk_window_set_default_size(window, 1440, height);
   GdkGeometry hints = {};
-  hints.min_width = std::min(1280, width);
+  hints.min_width = 1280;
   hints.min_height = std::min(800, height);
   gtk_window_set_geometry_hints(window, nullptr, &hints, GDK_HINT_MIN_SIZE);
 }
