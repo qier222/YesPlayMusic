@@ -66,7 +66,10 @@ class AudioEngine implements PlaybackEngine {
       // mpv reports eof-reached at the end of every file, even with another queued;
       // when the next one is queued mpv continues by itself, so it isn't the end
       _p.stream.completed.listen((done) {
-        if (done && _queuedKey == null) onCompleted?.call();
+        if (!done || _queuedKey != null) return;
+        // media_kit restarts at playlist index 0 after EOF.
+        _prunePlayedTracks().ignore();
+        onCompleted?.call();
       }),
       _p.stream.error.listen((e) => onError?.call(e)),
       _p.stream.playlist.listen(_onPlaylist),
@@ -192,12 +195,15 @@ class AudioEngine implements PlaybackEngine {
     double gainDb = 0,
   }) async {
     await dropQueued();
-    // Also drop the finished track left at the head of the list by the last advance
+    await _prunePlayedTracks();
+    _queuedKey = key;
+    await _p.add(_media(s, key: key, rg: rg, gainDb: gainDb));
+  }
+
+  Future<void> _prunePlayedTracks() async {
     for (var i = _p.state.playlist.index - 1; i >= 0; i--) {
       await _p.remove(i);
     }
-    _queuedKey = key;
-    await _p.add(_media(s, key: key, rg: rg, gainDb: gainDb));
   }
 
   /// Removes the queued track (the queue changed, the sleep timer stops after this one…).

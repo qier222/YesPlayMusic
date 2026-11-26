@@ -148,4 +148,42 @@ void main() {
     // The end of the first track doesn't count as completed; only the end of the second does, once
     expect(completed, 1);
   });
+
+  test('replays the last track after a gapless advance', () async {
+    final tmp = Directory.systemTemp.createTempSync('ypm_replay_');
+    addTearDown(() => tmp.deleteSync(recursive: true));
+    final a = p.join(tmp.path, 'a.wav'), b = p.join(tmp.path, 'b.wav');
+    sineWav(a, 1500);
+    sineWav(b, 1500);
+    AudioStream wav(String path) =>
+        AudioStream(url: Uri.file(path).toString(), type: 'wav');
+
+    final engine = AudioEngine();
+    addTearDown(engine.dispose);
+    final advanced = <String>[];
+    final done = Completer<void>();
+    engine.onAdvanced = advanced.add;
+    engine.onCompleted = () {
+      if (!done.isCompleted) done.complete();
+    };
+
+    await engine.open(wav(a), key: 'a');
+    await engine.queueNext(wav(b), key: 'b');
+    await done.future.timeout(const Duration(seconds: 10));
+    expect(advanced, ['b']);
+    expect(await engine.mpvProperty('path'), b);
+
+    final replayed = Completer<void>();
+    engine.onPosition = (position) {
+      if (position > const Duration(milliseconds: 100) &&
+          position < const Duration(milliseconds: 1000) &&
+          !replayed.isCompleted) {
+        replayed.complete();
+      }
+    };
+    await engine.play();
+    await replayed.future.timeout(const Duration(seconds: 10));
+    expect(await engine.mpvProperty('path'), b);
+    expect(advanced, ['b']);
+  });
 }
