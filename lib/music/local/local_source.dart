@@ -6,8 +6,10 @@
 //   artist = 'ar:' + artist name (folded)
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:typed_data';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart' as tags;
 import 'package:crypto/crypto.dart';
@@ -408,11 +410,29 @@ class LocalSource extends Source {
   static String? _readText(String path) {
     final f = File(path);
     try {
-      return f.existsSync() ? f.readAsStringSync() : null;
+      if (!f.existsSync()) return null;
+      final bytes = f.readAsBytesSync();
+      if (bytes.length >= 2) {
+        final data = ByteData.sublistView(bytes);
+        final endian = switch (data.getUint16(0)) {
+          0xfffe => Endian.little,
+          0xfeff => Endian.big,
+          _ => null,
+        };
+        if (endian != null) {
+          final text = String.fromCharCodes([
+            for (var i = 2; i + 1 < bytes.length; i += 2)
+              data.getUint16(i, endian),
+            if (bytes.length.isOdd) 0xfffd,
+          ]);
+          return String.fromCharCodes(
+            text.runes.map((r) => r >= 0xd800 && r <= 0xdfff ? 0xfffd : r),
+          );
+        }
+      }
+      return utf8.decode(bytes, allowMalformed: true);
     } on FileSystemException {
       return null;
-    } on FormatException {
-      return null; // non-UTF-8 LRC (e.g. GBK) isn't supported yet
     }
   }
 }
