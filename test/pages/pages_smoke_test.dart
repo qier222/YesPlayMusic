@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,9 +22,13 @@ import 'package:yesplaymusic/ui/toggle.dart';
 
 import '../music/local_source_test.dart' show wav;
 
-Widget appFor(AppState state, {Widget child = const Shell()}) => WidgetsApp(
+Widget appFor(
+  AppState state, {
+  Widget child = const Shell(),
+  Locale locale = const Locale('zh'),
+}) => WidgetsApp(
   color: const Color(0xFF0B0B0D),
-  locale: const Locale('zh'),
+  locale: locale,
   supportedLocales: AppLocalizations.supportedLocales,
   localizationsDelegates: const [
     AppLocalizations.delegate,
@@ -99,11 +104,12 @@ void main() {
     WidgetTester t, {
     double width = 1280,
     Widget child = const Shell(),
+    Locale locale = const Locale('zh'),
   }) async {
     t.view.physicalSize = Size(width, 800);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
-    await t.pumpWidget(appFor(app, child: child));
+    await t.pumpWidget(appFor(app, child: child, locale: locale));
     await _frames(t);
   }
 
@@ -237,6 +243,31 @@ void main() {
       expect(bounds.intersect(viewport), bounds);
       expect(toggle.hitTestable(), findsOneWidget);
     }
+  });
+
+  testWidgets('Russian volume normalization info is tappable at 1280', (
+    t,
+  ) async {
+    await boot(t, locale: const Locale('ru'));
+    app.open('/settings');
+    await _frames(t);
+    await t.tap(find.text(L.settingsGeneral));
+    await _frames(t);
+
+    final title = t.renderObject<RenderParagraph>(
+      find.text(L.settingsReplayGain),
+    );
+    final info = find.byWidgetPredicate(
+      (w) => w is Tap && w.semanticLabel == L.settingsReplayGain,
+    );
+    expect(L.localeName, 'ru');
+    expect(info.hitTestable(), findsOneWidget);
+    expect(title.didExceedMaxLines, isTrue);
+    expect(title.overflow, TextOverflow.ellipsis);
+    expect(t.takeException(), isNull);
+    await t.tap(info);
+    await _frames(t);
+    expect(find.text(L.settingsReplayGainHint), findsOneWidget);
   });
 
   testWidgets('restores the selected accent color after restart', (t) async {

@@ -376,7 +376,7 @@ Widget _row(
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  tx(label, 15, w: w700),
+                  Flexible(child: tx(label, 15, w: w700)),
                   const SizedBox(width: 6),
                   _InfoDot(onTap: onInfo),
                 ],
