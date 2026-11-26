@@ -195,14 +195,21 @@ void main() {
       final c = makeCache(maxBytes: 10000);
       addTearDown(c.dispose);
 
+      final backdatedPaths = <String>{};
       for (var i = 0; i < 4; i++) {
         await c.cache(
           'src@a/$i',
           AudioStream(url: '$baseUrl/$i.mp3', type: 'mp3'),
         );
-        final got = await c.get('src@a/$i');
-        File(Uri.parse(got!.url).toFilePath())
-            .setLastModifiedSync(DateTime(2026, 1, 1, 0, i));
+        final audio = tmp
+            .listSync(recursive: true)
+            .whereType<File>()
+            .singleWhere(
+              (f) =>
+                  f.path.endsWith('.mp3') && !backdatedPaths.contains(f.path),
+            );
+        audio.setLastModifiedSync(DateTime.utc(2000, 1, 1, 0, i));
+        backdatedPaths.add(audio.path);
       }
 
       await c.trim();
