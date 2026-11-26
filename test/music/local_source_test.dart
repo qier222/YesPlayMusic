@@ -328,6 +328,35 @@ void main() {
     },
   );
 
+  test('albums use embedded art from a later track', () async {
+    final albumFolder = p.join(music, 'Embedded');
+    const embedded = [0xFF, 0xD8, 0xFF, 0xD9];
+    wav(
+      p.join(albumFolder, '01.wav'),
+      info: {'INAM': 'Opening', 'IPRD': 'Embedded', 'ITRK': '1'},
+    );
+    wav(
+      p.join(albumFolder, '02.wav'),
+      info: {'INAM': 'Finale', 'IPRD': 'Embedded', 'ITRK': '2'},
+      cover: embedded,
+    );
+    await src.scan();
+
+    final albums = await src.search('Embedded', SearchKind.albums);
+    final album = albums.albums.single;
+    final page = await src.album(album.id);
+    expect(page.tracks.map((t) => t.name), ['Opening', 'Finale']);
+    expect(page.tracks.first.album.imageUrl, isEmpty);
+    final image = page.tracks.last.album.imageUrl;
+    expect(image, isNotEmpty);
+    expect(File.fromUri(Uri.parse(image)).readAsBytesSync(), embedded);
+    expect(
+      [album.imageUrl, page.album.imageUrl],
+      [image, image],
+      reason: 'The album summary and detail should use the later track’s art',
+    );
+  });
+
   test('folder covers take precedence over embedded art', () async {
     final albumFolder = p.join(music, 'Embedded');
     const embedded = [0xFF, 0xD8, 0xFF, 0xD9];
