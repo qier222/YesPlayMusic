@@ -777,6 +777,7 @@ class _ShelfItem extends StatelessWidget {
                                       textBaseline: TextBaseline.alphabetic,
                                       children: [
                                         Flexible(
+                                          flex: 2,
                                           child: tx(
                                             al.title,
                                             15,
@@ -786,11 +787,13 @@ class _ShelfItem extends StatelessWidget {
                                           ),
                                         ),
                                         const SizedBox(width: 10),
-                                        tx(
-                                          al.artist,
-                                          11,
-                                          w: w600,
-                                          c: fg.withValues(alpha: 0.7),
+                                        Flexible(
+                                          child: tx(
+                                            al.artist,
+                                            11,
+                                            w: w600,
+                                            c: fg.withValues(alpha: 0.7),
+                                          ),
                                         ),
                                       ],
                                     ),
