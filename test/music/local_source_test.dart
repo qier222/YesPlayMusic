@@ -510,6 +510,39 @@ void main() {
     },
   );
 
+  test('sorts album tracks by disc folder unless a disc is tagged', () async {
+    const albumName = 'Two Disc Set';
+    for (final (folder, title, track, disc) in [
+      ('CD1', 'D1T1', 1, null),
+      ('CD1', 'D1T2', 2, null),
+      ('CD2', 'D2T1', 1, null),
+      ('CD2', 'D2T2', 2, null),
+      ('CD1', 'Tagged disc 3', 1, 3),
+      ('dIsK 10', 'D10T1', 1, null),
+    ]) {
+      flacWithTags(p.join(music, albumName, folder, '$title.flac'), {
+        'TITLE': title,
+        'ARTIST': 'Artist',
+        'ALBUM': albumName,
+        'TRACKNUMBER': '$track',
+        if (disc != null) 'DISCNUMBER': '$disc',
+      });
+    }
+    await src.scan();
+    final album = (await src.home()).sections
+        .firstWhere((s) => s.title == '专辑')
+        .albums
+        .singleWhere((a) => a.name == albumName);
+    expect((await src.album(album.id)).tracks.map((t) => t.name), [
+      'D1T1',
+      'D1T2',
+      'D2T1',
+      'D2T2',
+      'Tagged disc 3',
+      'D10T1',
+    ]);
+  });
+
   // Progress counts every file read; a missing folder is just empty, not unreadable.
   test('reports progress and treats missing folders as empty', () async {
     final seen = <int>[];
