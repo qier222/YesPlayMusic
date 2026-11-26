@@ -15,6 +15,7 @@ import '../../l10n/l10n.dart';
 import '../lrc.dart';
 import '../models.dart';
 import '../source.dart';
+import 'kgm.dart';
 
 /// 本地源能播放的扩展名 → Stream.type。
 const audioTypes = {
@@ -286,14 +287,24 @@ class LocalSource extends Source {
   @override
   Future<AudioStream> stream(String id, {String quality = 'high'}) async {
     final e = _byPath[id];
-    if (e == null || !File(id).existsSync()) {
+    final original = File(id);
+    if (e == null || !await original.exists()) {
       throw SourceError(SourceErrorKind.unavailable, L.localFileMovedOrDeleted);
     }
+    final type = audioTypes[p.extension(id).toLowerCase()] ?? '';
+    var audio = original;
+    if (type == 'flac') {
+      try {
+        audio = await KgmDecoder.materializeFlac(original, cacheDir);
+      } on FormatException catch (e) {
+        throw SourceError(SourceErrorKind.unavailable, e.message);
+      }
+    }
     return AudioStream(
-      url: Uri.file(id).toString(),
-      type: audioTypes[p.extension(id).toLowerCase()] ?? '',
+      url: Uri.file(audio.path).toString(),
+      type: type,
       quality: 'lossless',
-      size: File(id).lengthSync(),
+      size: await audio.length(),
     );
   }
 

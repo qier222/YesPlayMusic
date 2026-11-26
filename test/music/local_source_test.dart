@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -56,6 +57,8 @@ File wav(String path, {int ms = 1000, Map<String, String> info = const {}}) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late Directory tmp;
   late LocalSource src;
   late String music;
@@ -174,6 +177,48 @@ void main() {
           SourceErrorKind.unavailable,
         ),
       ),
+    );
+  });
+
+  test('解密 KGM v3 封装的 FLAC，并复用播放缓存', () async {
+    // 8kHz 单声道静音 FLAC 及对应的 KGM v3 密文，测试不需要真实歌曲。
+    final flac = base64Decode(
+      'ZkxhQwAAACIQABAAAAAMAAAMAfQA8AAAAEDwnzWlY3g5RY5GLmNQ7LzkhAAAKCAAA'
+      'AByZWZlcmVuY2UgbGliRkxBQyAxLjUuMCAyMDI1MDIxMQAAAAD/+GQIAD9eAAAAxjw=',
+    );
+    final encrypted = base64Decode(
+      'vlhOwu2qfombOmtaeq0POC/yJTuqSp2x4MTbqzSYgZ7PnJCCeo79XoZrcbTvzhJX'
+      'OOA7e7nWuFeXpusqEwFbscWPE5kURtGLWVaWMXOt186o7j7QomKwAwruZ/S0drdCJNM=',
+    );
+    final header = Uint8List(1024);
+    header.setRange(0, 16, base64Decode('fNUy64YCf0uor6aOD/+ZFA=='));
+    ByteData.sublistView(header)
+      ..setUint32(0x10, header.length, Endian.little)
+      ..setUint32(0x14, 3, Endian.little);
+    for (var i = 0; i < 16; i++) {
+      header[0x1c + i] = i;
+    }
+    final original = [...header, ...encrypted];
+    final kgm = File(p.join(music, '柳爽 - 测试.kgm.flac'))
+      ..writeAsBytesSync(original);
+    final ordinary = File(p.join(music, '普通 FLAC.kgm.flac'))
+      ..writeAsBytesSync(flac);
+    await src.scan();
+
+    final streams = await Future.wait([
+      src.stream(kgm.path),
+      src.stream(kgm.path),
+    ]);
+    final decodedPath = Uri.parse(streams.first.url).toFilePath();
+    expect(streams.last.url, streams.first.url);
+    expect(streams.first.type, 'flac');
+    expect(streams.first.size, flac.length);
+    expect(decodedPath, isNot(kgm.path));
+    expect(await File(decodedPath).readAsBytes(), flac);
+    expect(await kgm.readAsBytes(), original);
+    expect(
+      Uri.parse((await src.stream(ordinary.path)).url).toFilePath(),
+      ordinary.path,
     );
   });
 

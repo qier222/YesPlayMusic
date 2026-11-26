@@ -32,6 +32,8 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/assets/kugou_key.xz
+/assets/.kgm-key-*/
 
 # Symbolication related
 app.*.symbols

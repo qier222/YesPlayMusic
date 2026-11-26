@@ -11,6 +11,12 @@ listed below, which remain under their own licenses.
 | [QuickJS-ng](https://github.com/quickjs-ng/quickjs) v0.18.0 | `native/quickjs/` | MIT — see [native/quickjs/LICENSE](native/quickjs/LICENSE) |
 | [Archivo](https://github.com/Omnibus-Type/Archivo) font family | `assets/fonts/` | SIL Open Font License 1.1 — see [assets/fonts/OFL.txt](assets/fonts/OFL.txt) |
 
+## Downloaded before building
+
+The KGM v3 lookup table `assets/kugou_key.xz` is downloaded from
+[`ghtz08/kugou-kgm-decoder` at `20ee463`](https://github.com/ghtz08/kugou-kgm-decoder/blob/20ee463537e241de443166aec326b99f3bd8f534/assets/kugou_key.xz).
+The source repository uses the [Anti 996 License Version 1.0 (Draft)](https://github.com/ghtz08/kugou-kgm-decoder/blob/20ee463537e241de443166aec326b99f3bd8f534/LICENSE).
+
 ## Linked at build time
 
 | Component | Used for | License |

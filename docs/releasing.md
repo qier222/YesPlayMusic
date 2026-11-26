@@ -64,10 +64,16 @@ openssl dsa -in dsa_priv.pem -pubout -out dsa_pub.pem  # 文件内容 → WINDOW
 
 ## 本地出包
 
+先准备 KGM v3 解密表，再执行目标平台对应的构建命令。
+
 ```sh
+flutter pub get
+dart --packages=.dart_tool/package_config.json tool/prepare_kgm_key.dart
 flutter build macos --release     # build/macos/Build/Products/Release/YesPlayMusic.app
 flutter build windows --release   # build\windows\x64\runner\Release\
 flutter build linux --release     # build/linux/x64/release/bundle/
 ```
 
 Linux 构建需要：`clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`。
+
+构建产物会包含解密表，公开分发前请核对其上游许可与通知要求。见 [第三方资源说明](../THIRD_PARTY_NOTICES.md)。

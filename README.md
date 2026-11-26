@@ -124,9 +124,12 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 git clone https://github.com/qier222/YesPlayMusic.git
 cd YesPlayMusic
 flutter pub get
+dart --packages=.dart_tool/package_config.json tool/prepare_kgm_key.dart
 flutter run -d macos      # 或 windows / linux
 flutter test
 ```
+
+`prepare_kgm_key.dart` 从固定的上游提交下载 KGM v3 解密表并校验 SHA-256。校验通过的本地文件可在离线构建时复用。
 
 各平台额外需要：
 

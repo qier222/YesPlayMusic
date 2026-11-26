@@ -47,6 +47,7 @@ flutter:
     - assets/icons/png/16/
     - assets/plugins/
     - assets/app_icon.png
+    - assets/kugou_key.xz
   fonts:
     - family: Archivo
       fonts:

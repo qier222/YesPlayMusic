@@ -77,7 +77,10 @@ jobs:
           echo "define=--dart-define=YPM_SPARKLE=true" >> "$GITHUB_OUTPUT"
 
       - name: Build
-        run: flutter build macos --release --build-name "$VERSION" --build-number "$BUILD" ${{ steps.sparkle.outputs.define }}
+        run: |
+          flutter pub get
+          dart --packages=.dart_tool/package_config.json tool/prepare_kgm_key.dart
+          flutter build macos --release --build-name "$VERSION" --build-number "$BUILD" ${{ steps.sparkle.outputs.define }}
 
       - name: Import signing certificate
         if: env.MACOS_CERTIFICATE_P12 != ''
@@ -177,7 +180,10 @@ jobs:
           echo "define=--dart-define=YPM_SPARKLE=true" >> "$GITHUB_OUTPUT"
 
       - name: Build
-        run: flutter build windows --release --build-name "$VERSION" --build-number "$BUILD" ${{ steps.sparkle.outputs.define }}
+        run: |
+          flutter pub get
+          dart --packages=.dart_tool/package_config.json tool/prepare_kgm_key.dart
+          flutter build windows --release --build-name "$VERSION" --build-number "$BUILD" ${{ steps.sparkle.outputs.define }}
 
       - name: Package
         run: |
@@ -225,7 +231,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev
-      - run: flutter build linux --release --build-name "$VERSION" --build-number "$BUILD"
+      - name: Build
+        run: |
+          flutter pub get
+          dart --packages=.dart_tool/package_config.json tool/prepare_kgm_key.dart
+          flutter build linux --release --build-name "$VERSION" --build-number "$BUILD"
       - name: Package
         run: |
           mkdir -p dist
