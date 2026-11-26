@@ -5,6 +5,7 @@ import '../l10n/l10n.dart';
 import '../music/models.dart' as m;
 import '../music/source.dart';
 import '../state.dart';
+import 'playback_artwork.dart';
 import 'resources.dart';
 import 'tool_registry.dart';
 
@@ -97,13 +98,36 @@ List<McpTool> buildCoreTools() => [
     core: true,
     readOnly: true,
     idempotent: true,
-    description: 'Get the currently playing track, playback status, progress, volume, shuffle/repeat mode, and queue summary.',
+    description: 'Get the currently playing track, playback status, progress, volume, shuffle/repeat mode, and queue summary. Set includeArtwork to also request the cover image.',
     inputSchema: const {
       'type': 'object',
-      'properties': {},
+      'properties': {
+        'includeArtwork': {
+          'type': 'boolean',
+          'description': 'Include the cover image for the currently playing track, when available.',
+          'default': false,
+        },
+      },
       'additionalProperties': false,
     },
-    handler: (args, ctx) async => nowPlayingSnapshot(ctx.app),
+    handler: (args, ctx) async {
+      final snapshot = nowPlayingSnapshot(ctx.app);
+      if (args['includeArtwork'] != true) return snapshot;
+      final cover = ctx.app.track.cover;
+      if (cover.isEmpty) return snapshot;
+      try {
+        final artwork = await loadMcpArtwork(cover)
+            .timeout(const Duration(seconds: 3));
+        if (artwork == null) return snapshot;
+        return (
+          data: snapshot,
+          imageBytes: artwork.bytes,
+          imageMimeType: artwork.mimeType,
+        );
+      } catch (_) {
+        return snapshot;
+      }
+    },
   ),
   McpTool(
     name: 'control_playback',

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/mcp/config.dart';
 import 'package:yesplaymusic/mcp/mcp_server.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
@@ -139,6 +140,65 @@ void main() {
     await server.stop();
     app.dispose();
   });
+
+  test(
+    'get_now_playing includes the local cover only when requested',
+    () async {
+      final temp = Directory.systemTemp.createTempSync('ypm_mcp_cover_');
+      addTearDown(() => temp.deleteSync(recursive: true));
+      final file = File.fromUri(temp.uri.resolve('cover.png'));
+      final png = File('assets/app_icon.png').readAsBytesSync();
+      file.writeAsBytesSync(png);
+      app.queue = [
+        Track(
+          title: 'Cover test',
+          artist: 'Tester',
+          cover: file.uri.toString(),
+          seconds: 30,
+        ),
+      ];
+      app.index = 0;
+      final init = await _rpc(client, port, {
+        'jsonrpc': '2.0',
+        'id': 1,
+        'method': 'initialize',
+        'params': {'protocolVersion': '2025-03-26'},
+      });
+      Future<List> callNowPlaying(int id, [bool? includeArtwork]) async {
+        final response = await _rpc(client, port, {
+          'jsonrpc': '2.0',
+          'id': id,
+          'method': 'tools/call',
+          'params': {
+            'name': 'get_now_playing',
+            if (includeArtwork != null)
+              'arguments': {'includeArtwork': includeArtwork},
+          },
+        }, sessionId: init.sessionId);
+        return (response.body!['result'] as Map)['content'] as List;
+      }
+
+      final defaultContent = await callNowPlaying(2);
+      expect(defaultContent, hasLength(1));
+      expect(
+        jsonDecode(
+          (defaultContent.single as Map)['text'] as String,
+        )['track']['title'],
+        'Cover test',
+      );
+      expect(await callNowPlaying(3, false), defaultContent);
+      final content = await callNowPlaying(4, true);
+      expect(content, hasLength(2));
+      expect(content.first, defaultContent.single);
+      expect(content.last, {
+        'type': 'image',
+        'mimeType': 'image/png',
+        'data': base64Encode(png),
+      });
+      await file.delete();
+      expect(await callNowPlaying(5, true), defaultContent);
+    },
+  );
 
   test(
     'initialize + lazy tools/list exposes only core and meta tools',
