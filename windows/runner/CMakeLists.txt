@@ -37,8 +37,6 @@ target_compile_definitions(${BINARY_NAME} PRIVATE "NOMINMAX")
 target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app)
 target_link_libraries(${BINARY_NAME} PRIVATE
   "dwmapi.lib" "comctl32.lib" "windowsapp.lib" "shcore.lib" "shlwapi.lib")
-# C++/WinRT requires exception-enabled STL headers.
-set_source_files_properties("media_session.cpp" PROPERTIES COMPILE_OPTIONS "/U_HAS_EXCEPTIONS")
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 
 # Run the Flutter tool portions of the build. This must not be removed.

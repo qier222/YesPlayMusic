@@ -1,10 +1,15 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'cache/image_cache.dart';
 
-/// Reads the current cover through the same disk cache as the player UI.
+const _maxOriginalBytes = 1024 * 1024;
+const _maxArtworkEdge = 512;
+const _pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
+
+/// Loads a cover for Windows SMTC, reusing the player UI's disk cache.
 Future<Uint8List> loadPlaybackArtwork(String cover) async {
   final uri = Uri.tryParse(cover);
   final Uint8List bytes;
@@ -14,13 +19,43 @@ Future<Uint8List> loadPlaybackArtwork(String cover) async {
     final file = uri?.scheme == 'file' ? File.fromUri(uri!) : File(cover);
     bytes = await file.readAsBytes();
   }
-  const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
-  if (bytes.length >= pngSignature.length &&
-      Iterable<int>.generate(pngSignature.length)
-          .every((i) => bytes[i] == pngSignature[i])) {
-    return bytes;
+  final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+  try {
+    final image = await ui.ImageDescriptor.encoded(buffer);
+    try {
+      if (bytes.length <= _maxOriginalBytes &&
+          image.width <= _maxArtworkEdge &&
+          image.height <= _maxArtworkEdge &&
+          _isJpegOrPng(bytes)) {
+        return bytes;
+      }
+      return await _encodePng(image);
+    } finally {
+      image.dispose();
+    }
+  } finally {
+    buffer.dispose();
   }
-  final codec = await ui.instantiateImageCodec(bytes);
+}
+
+bool _isJpegOrPng(Uint8List bytes) =>
+    (bytes.length >= 3 &&
+        bytes[0] == 0xff &&
+        bytes[1] == 0xd8 &&
+        bytes[2] == 0xff) ||
+    (bytes.length >= _pngSignature.length &&
+        Iterable<int>.generate(_pngSignature.length)
+            .every((i) => bytes[i] == _pngSignature[i]));
+
+Future<Uint8List> _encodePng(ui.ImageDescriptor image) async {
+  final scale = math.min(
+    1.0,
+    _maxArtworkEdge / math.max(image.width, image.height),
+  );
+  final codec = await image.instantiateCodec(
+    targetWidth: math.max(1, (image.width * scale).round()),
+    targetHeight: math.max(1, (image.height * scale).round()),
+  );
   try {
     final frame = await codec.getNextFrame();
     try {

@@ -46,20 +46,12 @@ Map<String, Object?> jsonRpcNotification(
   Map<String, Object?>? params,
 ]) => {'jsonrpc': '2.0', 'method': method, 'params': ?params};
 
-/// Wraps a tool result as MCP content with an optional PNG attachment.
+/// Wraps any structured result as an MCP CallToolResult.
 Map<String, Object?> toolResult(Object? data, {bool isError = false}) {
-  final attachment = data is ({Object data, List<int> png}) ? data : null;
-  final value = attachment?.data ?? data;
-  final text = value is String ? value : jsonEncode(value);
+  final text = data is String ? data : jsonEncode(data);
   return {
     'content': [
       {'type': 'text', 'text': text},
-      if (attachment != null)
-        {
-          'type': 'image',
-          'mimeType': 'image/png',
-          'data': base64Encode(attachment.png),
-        },
     ],
     if (isError) 'isError': true,
   };

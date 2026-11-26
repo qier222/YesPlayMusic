@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/mcp/config.dart';
 import 'package:yesplaymusic/mcp/mcp_server.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
@@ -139,46 +138,6 @@ void main() {
     client.close(force: true);
     await server.stop();
     app.dispose();
-  });
-
-  test('get_now_playing returns a local cover as MCP image content', () async {
-    final temp = Directory.systemTemp.createTempSync('ypm_mcp_cover_');
-    addTearDown(() => temp.deleteSync(recursive: true));
-    final file = File.fromUri(temp.uri.resolve('cover.png'));
-    final png = File('assets/app_icon.png').readAsBytesSync();
-    file.writeAsBytesSync(png);
-    app.queue = [
-      Track(
-        title: 'Cover test',
-        artist: 'Tester',
-        cover: file.uri.toString(),
-        seconds: 30,
-      ),
-    ];
-    app.index = 0;
-    final init = await _rpc(client, port, {
-      'jsonrpc': '2.0',
-      'id': 1,
-      'method': 'initialize',
-      'params': {'protocolVersion': '2025-03-26'},
-    });
-    final response = await _rpc(client, port, {
-      'jsonrpc': '2.0',
-      'id': 2,
-      'method': 'tools/call',
-      'params': {'name': 'get_now_playing'},
-    }, sessionId: init.sessionId);
-    final content = (response.body!['result'] as Map)['content'] as List;
-    expect(
-      jsonDecode((content.first as Map)['text'] as String)['track']['title'],
-      'Cover test',
-    );
-    expect(content, hasLength(2));
-    expect(content.last, {
-      'type': 'image',
-      'mimeType': 'image/png',
-      'data': base64Encode(png),
-    });
   });
 
   test(

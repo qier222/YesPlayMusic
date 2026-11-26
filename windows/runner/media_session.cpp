@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <exception>
 
 namespace {
 
@@ -87,6 +88,8 @@ class WindowsMediaSession::Impl {
       } catch (const winrt::hresult_error& error) {
         result->Error("smtc", winrt::to_string(error.message()),
                       Value(static_cast<int32_t>(error.code())));
+      } catch (const std::exception& error) {
+        result->Error("smtc", error.what());
       }
     });
   }
