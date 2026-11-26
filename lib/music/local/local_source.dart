@@ -186,12 +186,20 @@ class LocalSource extends Source {
 
   String _uri(String path) => path.isEmpty ? '' : Uri.file(path).toString();
 
-  Album _album(LocalEntry e) => e.album.isEmpty
+  String _albumCover(LocalEntry e) {
+    if (e.cover.isNotEmpty) return e.cover;
+    for (final track in _byAlbum[albumId(e)] ?? const <LocalEntry>[]) {
+      if (track.cover.isNotEmpty) return track.cover;
+    }
+    return '';
+  }
+
+  Album _album(LocalEntry e, {bool withAlbumCover = false}) => e.album.isEmpty
       ? const Album(id: '', name: '')
       : Album(
           id: albumId(e),
           name: e.album,
-          imageUrl: _uri(e.cover),
+          imageUrl: _uri(withAlbumCover ? _albumCover(e) : e.cover),
           artists: e.albumArtist.isEmpty
               ? const []
               : [Artist(id: artistId(e.albumArtist), name: e.albumArtist)],
@@ -213,7 +221,8 @@ class LocalSource extends Source {
     final seen = <String>{};
     return [
       for (final e in es)
-        if (e.album.isNotEmpty && seen.add(albumId(e))) _album(e),
+        if (e.album.isNotEmpty && seen.add(albumId(e)))
+          _album(e, withAlbumCover: true),
     ];
   }
 
@@ -316,7 +325,10 @@ class LocalSource extends Source {
   Future<AlbumPage> album(String id) async {
     final es = _byAlbum[id];
     if (es == null) throw SourceError(SourceErrorKind.failed, L.albumNotFound);
-    return AlbumPage(album: _album(es.first), tracks: es.map(track).toList());
+    return AlbumPage(
+      album: _album(es.first, withAlbumCover: true),
+      tracks: es.map(track).toList(),
+    );
   }
 
   @override
