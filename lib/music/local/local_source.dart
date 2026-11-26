@@ -507,26 +507,35 @@ String albumDir(String path) {
       : dir;
 }
 
-/// When the tags have no album artist, each song's own artist can't be used as the album artist, or a soundtrack
-/// or compilation with one song by another artist would split into two albums with the same name.
-/// So group by "same folder + same album name" and take the most frequent artist in the group as the album artist.
+/// Fill missing album artists from an unambiguous tag in the same folder and album.
+/// Otherwise, use the most frequent track artist among the untagged tracks so compilations stay together.
 void _fillAlbumArtists(List<LocalEntry> entries) {
-  final groups = <String, List<LocalEntry>>{};
+  final groups = <(String, String), List<LocalEntry>>{};
   for (final e in entries) {
-    if (e.album.isEmpty || e.albumArtist.isNotEmpty) continue;
-    (groups['${albumDir(e.path)}\x01${fold(e.album)}'] ??= []).add(e);
+    if (e.album.isEmpty) continue;
+    (groups[(albumDir(e.path), fold(e.album))] ??= []).add(e);
   }
   for (final g in groups.values) {
+    final tagged = <String, String>{};
+    final untagged = <LocalEntry>[];
     final counts = <String, int>{};
     for (final e in g) {
-      if (e.artists.isNotEmpty) {
-        counts[e.artists.first] = (counts[e.artists.first] ?? 0) + 1;
+      if (e.albumArtist.isNotEmpty) {
+        tagged.putIfAbsent(fold(e.albumArtist), () => e.albumArtist);
+      } else {
+        untagged.add(e);
+        if (e.artists.isNotEmpty) {
+          counts[e.artists.first] = (counts[e.artists.first] ?? 0) + 1;
+        }
       }
     }
-    if (counts.isEmpty) continue;
-    final top = counts.entries.reduce((a, b) => b.value > a.value ? b : a).key;
-    for (final e in g) {
-      e.albumArtist = top;
+    final artist = tagged.length == 1
+        ? tagged.values.single
+        : counts.isEmpty
+        ? ''
+        : counts.entries.reduce((a, b) => b.value > a.value ? b : a).key;
+    for (final e in untagged) {
+      e.albumArtist = artist;
     }
   }
 }
