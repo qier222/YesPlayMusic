@@ -607,6 +607,10 @@ class _Seg extends StatelessWidget {
 
 class MiniPlayer extends StatefulWidget {
   const MiniPlayer({super.key, this.onDark = false, this.collapse = false});
+
+  /// Clear space below page controls, including the fade above the bar.
+  static const bottomInset = 110.0;
+
   final bool onDark;
 
   /// In Coverflow, "Collapse" is added at the far left (final v33); with an empty queue only this part remains
@@ -641,7 +645,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
             left: 0,
             right: 0,
             bottom: 0,
-            height: 110,
+            height: MiniPlayer.bottomInset,
             child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
