@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -172,6 +173,21 @@ void main() {
     expect(engine.current, _key(ids.first));
   }
 
+  Future<void> waitForLyrics() async {
+    if (!app.lyricsLoading) return;
+    final ready = Completer<void>();
+    void onUpdate() {
+      if (!app.lyricsLoading && !ready.isCompleted) ready.complete();
+    }
+
+    app.addListener(onUpdate);
+    try {
+      await ready.future.timeout(const Duration(seconds: 5));
+    } finally {
+      app.removeListener(onUpdate);
+    }
+  }
+
   test('rescan refreshes cached and currently playing local lyrics', () async {
     final music = await Directory.systemTemp.createTemp('ypm_rescan_');
     addTearDown(() => music.delete(recursive: true));
@@ -187,6 +203,7 @@ void main() {
     expect(await app.loadLibrary(), isTrue);
     app.playList([_t(first.path), _t(second.path)]);
     await _tick();
+    await waitForLyrics();
     engine.at(30);
     expect(app.lyricLines.single.text, 'First before');
     final secondRequest = DataReq.lyrics('local', second.path);
@@ -196,6 +213,7 @@ void main() {
     secondLyrics.writeAsStringSync('[00:00.00]Second after');
     await app.rescanLibrary();
 
+    await waitForLyrics();
     expect(app.lyricLines.single.text, 'First after');
     expect(app.track.key, _key(first.path));
     expect(app.playing, isTrue);
@@ -221,6 +239,7 @@ void main() {
       expect(await app.loadLibrary(), isTrue);
       app.playTrack(_t(song.path));
       await _tick();
+      await waitForLyrics();
       expect(app.lyricLines.single.text, 'Before');
 
       lyrics.writeAsStringSync('[00:00.00]After');
