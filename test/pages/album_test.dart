@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/data.dart';
@@ -76,26 +75,9 @@ void main() {
     expect(back.hitTestable(), findsOneWidget);
     final compactCover = t.getRect(cover);
     expect(compactCover.topLeft, initialCover.topLeft);
-    expect(compactCover.width, lessThan(400));
+    expect(compactCover.width, inExclusiveRange(160, 400));
     expect(compactCover.height, compactCover.width);
     expect(compactCover.bottom, lessThan(t.getTopLeft(actions.first).dy));
-
-    t.view.physicalSize = const Size(1280, 600);
-    await t.pumpAndSettle();
-    expect(t.getSize(cover), const Size.square(160));
-    await t.sendEventToBinding(
-      const PointerScrollEvent(
-        position: Offset(300, 340),
-        scrollDelta: Offset(0, 150),
-      ),
-    );
-    await t.pumpAndSettle();
-    final extremePlayerTop =
-        t.getBottomLeft(volume).dy - t.widget<VolumeSeg>(volume).base;
-    for (final action in actions) {
-      expect(t.getBottomLeft(action).dy, lessThanOrEqualTo(extremePlayerTop));
-      expect(action.hitTestable(), findsOneWidget);
-    }
 
     t.view.physicalSize = const Size(1280, 1000);
     await t.pumpAndSettle();

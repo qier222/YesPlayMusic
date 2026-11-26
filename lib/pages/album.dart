@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import '../data.dart';
@@ -73,95 +72,93 @@ class AlbumPage extends StatelessWidget {
                     padding: EdgeInsets.only(
                       bottom: app.hasQueue ? MiniPlayer.bottomInset : 0,
                     ),
-                    child: _AlbumInfoViewport(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 20),
-                          BackBtn(onTap: app.back),
-                          const SizedBox(height: 36),
-                          Flexible(child: _AlbumCover(id: al.cover)),
-                          const SizedBox(height: 16),
-                          tx(
-                            al.year > 0 ? '$kind · ${al.year}' : kind,
-                            13,
-                            w: w700,
-                            f: F.semi,
-                            c: _muted,
-                          ),
-                          const SizedBox(height: 8),
-                          Transform.translate(
-                            offset: const Offset(-3, 0),
-                            child: SizedBox(
-                              width: 440,
-                              child: tx(
-                                al.title,
-                                al.title.length > 9 ? 44 : 72,
-                                w: w900,
-                                f: F.wide,
-                                lines: 2,
-                                h: 1.05,
-                              ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        BackBtn(onTap: app.back),
+                        const SizedBox(height: 36),
+                        Flexible(child: _AlbumCover(id: al.cover)),
+                        const SizedBox(height: 16),
+                        tx(
+                          al.year > 0 ? '$kind · ${al.year}' : kind,
+                          13,
+                          w: w700,
+                          f: F.semi,
+                          c: _muted,
+                        ),
+                        const SizedBox(height: 8),
+                        Transform.translate(
+                          offset: const Offset(-3, 0),
+                          child: SizedBox(
+                            width: 440,
+                            child: tx(
+                              al.title,
+                              al.title.length > 9 ? 44 : 72,
+                              w: w900,
+                              f: F.wide,
+                              lines: 2,
+                              h: 1.05,
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          Tap(
-                            onTap: al.artistRoute.isEmpty
-                                ? null
-                                : () => app.go(al.artistRoute),
-                            builder: (_, h, _) => Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _AlbumArtistAvatar(
-                                  image: al.artistImage,
-                                  route: al.artistRoute,
-                                ),
-                                const SizedBox(width: 10),
-                                AnimatedDefaultTextStyle(
-                                  duration: fast,
-                                  style: ts(
-                                    15,
-                                    w: w700,
-                                    f: F.semi,
-                                    c: h ? accent : P.ink,
-                                  ),
-                                  child: CjkText(al.artist),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
+                        ),
+                        const SizedBox(height: 12),
+                        Tap(
+                          onTap: al.artistRoute.isEmpty
+                              ? null
+                              : () => app.go(al.artistRoute),
+                          builder: (_, h, _) => Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              PlayPill(
-                                onTap: () =>
-                                    app.playAlbum(al.id, shuffled: false),
+                              _AlbumArtistAvatar(
+                                image: al.artistImage,
+                                route: al.artistRoute,
                               ),
                               const SizedBox(width: 10),
-                              RoundBtn(
-                                icon: 'shuffle',
-                                tip: l.actionShuffle,
-                                onTap: (_) =>
-                                    app.playAlbum(al.id, shuffled: true),
-                              ),
-                              const SizedBox(width: 10),
-                              RoundBtn(
-                                icon: saved ? 'heart-filled' : 'heart',
-                                tip: saved ? l.actionUnsave : l.actionSaveAlbum,
-                                on: saved,
-                                onTap: (_) => app.toggleSaveAlbum(al),
-                              ),
-                              const SizedBox(width: 10),
-                              RoundBtn(
-                                icon: 'more',
-                                tip: l.actionMore,
-                                onTap: (ctx) =>
-                                    menuBelow(ctx, albumMenu(ctx, al)),
+                              AnimatedDefaultTextStyle(
+                                duration: fast,
+                                style: ts(
+                                  15,
+                                  w: w700,
+                                  f: F.semi,
+                                  c: h ? accent : P.ink,
+                                ),
+                                child: CjkText(al.artist),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            PlayPill(
+                              onTap: () =>
+                                  app.playAlbum(al.id, shuffled: false),
+                            ),
+                            const SizedBox(width: 10),
+                            RoundBtn(
+                              icon: 'shuffle',
+                              tip: l.actionShuffle,
+                              onTap: (_) =>
+                                  app.playAlbum(al.id, shuffled: true),
+                            ),
+                            const SizedBox(width: 10),
+                            RoundBtn(
+                              icon: saved ? 'heart-filled' : 'heart',
+                              tip: saved ? l.actionUnsave : l.actionSaveAlbum,
+                              on: saved,
+                              onTap: (_) => app.toggleSaveAlbum(al),
+                            ),
+                            const SizedBox(width: 10),
+                            RoundBtn(
+                              icon: 'more',
+                              tip: l.actionMore,
+                              onTap: (ctx) =>
+                                  menuBelow(ctx, albumMenu(ctx, al)),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -231,67 +228,39 @@ class AlbumPage extends StatelessWidget {
   }
 }
 
-class _AlbumInfoViewport extends StatelessWidget {
-  const _AlbumInfoViewport({required this.child});
+class _AlbumCover extends StatelessWidget {
+  const _AlbumCover({required this.id});
 
-  final Widget child;
+  final String id;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (_, constraints) => SingleChildScrollView(
-      primary: false,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: constraints.maxHeight),
-        child: IntrinsicHeight(child: child),
-      ),
+  Widget build(BuildContext context) => AspectRatio(
+    aspectRatio: 1,
+    child: LayoutBuilder(
+      builder: (_, constraints) {
+        final size = constraints.maxWidth;
+        final scale = size / 400;
+        final radius = 20 * scale;
+        return FadeIn(
+          dy: 20,
+          child: Container(
+            decoration: squircle(
+              radius,
+              shadows: [
+                BoxShadow(
+                  color: ba(0.67),
+                  blurRadius: 60 * scale,
+                  offset: Offset(0, 24 * scale),
+                  spreadRadius: -10 * scale,
+                ),
+              ],
+            ),
+            child: Cover(id, w: size, h: size, r: radius),
+          ),
+        );
+      },
     ),
   );
-}
-
-class _AlbumCover extends SingleChildRenderObjectWidget {
-  _AlbumCover({required String id})
-    : super(
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: LayoutBuilder(
-            builder: (_, constraints) {
-              final size = constraints.maxWidth;
-              final scale = size / 400;
-              final radius = 20 * scale;
-              return FadeIn(
-                dy: 20,
-                child: Container(
-                  decoration: squircle(
-                    radius,
-                    shadows: [
-                      BoxShadow(
-                        color: ba(0.67),
-                        blurRadius: 60 * scale,
-                        offset: Offset(0, 24 * scale),
-                        spreadRadius: -10 * scale,
-                      ),
-                    ],
-                  ),
-                  child: Cover(id, w: size, h: size, r: radius),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-
-  @override
-  RenderProxyBox createRenderObject(BuildContext context) => _AlbumCoverBox();
-}
-
-class _AlbumCoverBox extends RenderProxyBox {
-  // The viewport scrolls only when the metadata and the minimum cover cannot
-  // fit. Once laid out, the loose flex lets the square grow with spare height.
-  @override
-  double computeMaxIntrinsicHeight(double width) => 160;
-
-  @override
-  double computeMinIntrinsicHeight(double width) => 160;
 }
 
 /// Bottom of the list: release date (just the year when only the year is known), copyright on the next line.
