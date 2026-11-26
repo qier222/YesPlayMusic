@@ -3499,12 +3499,13 @@ class AppState extends ChangeNotifier {
     return true;
   }
 
-  /// The line being sung. Reads [position], so use it inside a [pos] listener.
+  /// The line being sung, or -1 before the first line starts (or when there are no lyrics).
+  /// Reads [position], so use it inside a [pos] listener.
   int get lyricIndex {
     final ls = lyricLines;
-    if (ls.isEmpty) return 0;
+    if (ls.isEmpty) return -1;
     final ms = (position * 1000).round();
-    var lo = 0, hi = ls.length - 1, ans = 0;
+    var lo = 0, hi = ls.length - 1, ans = -1;
     while (lo <= hi) {
       final mid = (lo + hi) >> 1;
       if (ls[mid].start <= ms) {
