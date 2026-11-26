@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
+
+import 'package:flutter/foundation.dart';
 
 import 'cache/image_cache.dart';
 
@@ -10,7 +11,10 @@ const _maxArtworkEdge = 512;
 const _pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
 
 /// Loads a cover for Windows SMTC, reusing the player UI's disk cache.
-Future<Uint8List> loadPlaybackArtwork(String cover) async {
+Future<Uint8List> loadPlaybackArtwork(
+  String cover, {
+  @visibleForTesting int maxOriginalBytes = _maxOriginalBytes,
+}) async {
   final uri = Uri.tryParse(cover);
   final Uint8List bytes;
   if (uri?.scheme == 'http' || uri?.scheme == 'https') {
@@ -19,16 +23,13 @@ Future<Uint8List> loadPlaybackArtwork(String cover) async {
     final file = uri?.scheme == 'file' ? File.fromUri(uri!) : File(cover);
     bytes = await file.readAsBytes();
   }
+  if (_isJpegOrPng(bytes) && bytes.length <= maxOriginalBytes) {
+    return bytes;
+  }
   final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
   try {
     final image = await ui.ImageDescriptor.encoded(buffer);
     try {
-      if (bytes.length <= _maxOriginalBytes &&
-          image.width <= _maxArtworkEdge &&
-          image.height <= _maxArtworkEdge &&
-          _isJpegOrPng(bytes)) {
-        return bytes;
-      }
       return await _encodePng(image);
     } finally {
       image.dispose();

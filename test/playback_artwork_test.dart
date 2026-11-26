@@ -16,24 +16,7 @@ void main() {
     await temp.delete(recursive: true);
   });
 
-  test('SMTC passes small JPEG and PNG covers through unchanged', () async {
-    final jpeg = base64Decode(
-      '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcg'
-      'LikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYV'
-      'FSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09P'
-      'T09PT0//wAARCAACAAMDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAU'
-      'EAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAABAf/xAAUEQEAAAA'
-      'AAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCCAUkN/9k=',
-    );
-    final png = await File('assets/app_icon.png').readAsBytes();
-    for (final bytes in [jpeg, png]) {
-      final file = File.fromUri(temp.uri.resolve('cover'));
-      await file.writeAsBytes(bytes);
-      expect(await loadPlaybackArtwork(file.uri.toString()), bytes);
-    }
-  });
-
-  test('SMTC converts oversized portraits and WebP to bounded PNGs', () async {
+  Future<File> writePortraitPng(String name) async {
     final recorder = ui.PictureRecorder();
     ui.Canvas(recorder).drawColor(const ui.Color(0xff123456), ui.BlendMode.src);
     final picture = recorder.endRecording();
@@ -41,35 +24,67 @@ void main() {
     picture.dispose();
     final portrait = (await image.toByteData(format: ui.ImageByteFormat.png))!;
     image.dispose();
-    final file = File.fromUri(temp.uri.resolve('portrait.png'));
+    final file = File.fromUri(temp.uri.resolve(name));
     await file.writeAsBytes(
       portrait.buffer.asUint8List(
         portrait.offsetInBytes,
         portrait.lengthInBytes,
       ),
     );
+    return file;
+  }
 
-    final webp = File.fromUri(temp.uri.resolve('cover.webp'));
-    await webp.writeAsBytes(
-      base64Decode(
-        'UklGRjgAAABXRUJQVlA4ICwAAACQAQCdASoEAAMAAgA0JaACdLoAA5gA/vmTb/+QH'
-        '/+QH/+QH/8gP+IXeyAwAA==',
-      ),
-    );
-    for (final (path, width, height) in [
-      (file.path, 64, 512),
-      (webp.path, 4, 3),
-    ]) {
-      final bytes = await loadPlaybackArtwork(path);
-      expect(bytes.take(8), [137, 80, 78, 71, 13, 10, 26, 10]);
-      final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
-      final output = await ui.ImageDescriptor.encoded(buffer);
-      try {
-        expect((output.width, output.height), (width, height));
-      } finally {
-        output.dispose();
-        buffer.dispose();
+  test(
+    'SMTC passes JPEG and PNG covers up to 1 MiB through unchanged',
+    () async {
+      final jpeg = base64Decode(
+        '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcg'
+        'LikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYV'
+        'FSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09P'
+        'T09PT0//wAARCAACAAMDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAU'
+        'EAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAABAf/xAAUEQEAAAA'
+        'AAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCCAUkN/9k=',
+      );
+      final png = await File('assets/app_icon.png').readAsBytes();
+      final tallPng = await (await writePortraitPng('tall.png')).readAsBytes();
+      for (final bytes in [jpeg, png, tallPng]) {
+        final file = File.fromUri(temp.uri.resolve('cover'));
+        await file.writeAsBytes(bytes);
+        expect(await loadPlaybackArtwork(file.uri.toString()), bytes);
       }
-    }
-  });
+    },
+  );
+
+  test(
+    'SMTC scales oversized covers and converts WebP to bounded PNGs',
+    () async {
+      final portrait = await writePortraitPng('portrait.png');
+      final portraitBytes = await portrait.readAsBytes();
+
+      final webp = File.fromUri(temp.uri.resolve('cover.webp'));
+      await webp.writeAsBytes(
+        base64Decode(
+          'UklGRjgAAABXRUJQVlA4ICwAAACQAQCdASoEAAMAAgA0JaACdLoAA5gA/vmTb/+QH'
+          '/+QH/+QH/8gP+IXeyAwAA==',
+        ),
+      );
+      for (final (path, maxBytes, width, height) in [
+        (portrait.path, portraitBytes.length - 1, 64, 512),
+        (webp.path, null, 4, 3),
+      ]) {
+        final bytes = maxBytes == null
+            ? await loadPlaybackArtwork(path)
+            : await loadPlaybackArtwork(path, maxOriginalBytes: maxBytes);
+        expect(bytes.take(8), [137, 80, 78, 71, 13, 10, 26, 10]);
+        final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+        final output = await ui.ImageDescriptor.encoded(buffer);
+        try {
+          expect((output.width, output.height), (width, height));
+        } finally {
+          output.dispose();
+          buffer.dispose();
+        }
+      }
+    },
+  );
 }
