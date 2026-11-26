@@ -87,6 +87,8 @@ bool FlutterWindow::OnCreate() {
   HWND view = flutter_controller_->view()->GetNativeWindow();
   SetChildContent(view);
   SetWindowSubclass(view, ViewProc, 1, 0);
+  media_session_ = std::make_unique<WindowsMediaSession>(
+      GetHandle(), flutter_controller_->engine()->messenger());
 
   window_channel_ =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
@@ -247,6 +249,7 @@ void FlutterWindow::ShowTrayMenu(POINT at) {
 }
 
 void FlutterWindow::OnDestroy() {
+  media_session_.reset();
   window_channel_ = nullptr;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
@@ -259,6 +262,18 @@ LRESULT
 FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
+  if (message == WindowsMediaSession::kCommandMessage) {
+    if (media_session_) media_session_->DispatchCommand(wparam, lparam);
+    return 0;
+  }
+
+  // Flutter may request an application exit when its last window receives
+  // WM_CLOSE. Intercept it first when the tray owns the window lifetime.
+  if (message == WM_CLOSE && keep_running_ && tray_added_) {
+    ShowWindow(hwnd, SW_HIDE);
+    return 0;
+  }
+
   // Give Flutter, including plugins, an opportunity to handle window messages.
   if (flutter_controller_) {
     std::optional<LRESULT> result =
@@ -276,13 +291,6 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
   }
 
   switch (message) {
-    case WM_CLOSE:
-      if (keep_running_ && tray_added_) {
-        // Hide instead of closing; the tray icon brings the window back.
-        ShowWindow(hwnd, SW_HIDE);
-        return 0;
-      }
-      break;
     case kTrayMessage:
       switch (LOWORD(lparam)) {
         case NIN_SELECT:

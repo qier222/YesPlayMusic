@@ -9,6 +9,7 @@
 #include <memory>
 #include <string>
 
+#include "media_session.h"
 #include "win32_window.h"
 
 // A window that does nothing but host a Flutter view.
@@ -31,6 +32,7 @@ class FlutterWindow : public Win32Window {
 
   // The Flutter instance hosted by this window.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;
+  std::unique_ptr<WindowsMediaSession> media_session_;
 
   // "yesplaymusic/window": drag, caption buttons and their state. The title
   // bar is drawn by Flutter; see WindowButtons in lib/shell.dart.
