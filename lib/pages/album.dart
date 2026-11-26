@@ -6,6 +6,7 @@ import '../l10n/l10n.dart';
 import '../menus.dart';
 import '../music/models.dart' as m;
 import '../music/source.dart';
+import '../shell.dart' show MiniPlayer;
 import '../state.dart';
 import '../theme.dart';
 import '../ui.dart';
@@ -59,7 +60,6 @@ class AlbumPage extends StatelessWidget {
           bottom: 0,
           child: CoverWash(coverId: al.cover),
         ),
-        // The cover info on the left stays fixed; only the track list on the right scrolls
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -68,106 +68,117 @@ class AlbumPage extends StatelessWidget {
               children: [
                 SizedBox(
                   width: 400,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      BackBtn(onTap: app.back),
-                      const SizedBox(height: 36),
-                      FadeIn(
-                        dy: 20,
-                        child: Container(
-                          decoration: squircle(
-                            20,
-                            shadows: [
-                              BoxShadow(
-                                color: ba(0.67),
-                                blurRadius: 60,
-                                offset: const Offset(0, 24),
-                                spreadRadius: -10,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: app.hasQueue ? MiniPlayer.bottomInset : 0,
+                    ),
+                    child: SingleChildScrollView(
+                      primary: false,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          BackBtn(onTap: app.back),
+                          const SizedBox(height: 36),
+                          FadeIn(
+                            dy: 20,
+                            child: Container(
+                              decoration: squircle(
+                                20,
+                                shadows: [
+                                  BoxShadow(
+                                    color: ba(0.67),
+                                    blurRadius: 60,
+                                    offset: const Offset(0, 24),
+                                    spreadRadius: -10,
+                                  ),
+                                ],
+                              ),
+                              child: Cover(al.cover, w: 400, h: 400, r: 20),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          tx(
+                            al.year > 0 ? '$kind · ${al.year}' : kind,
+                            13,
+                            w: w700,
+                            f: F.semi,
+                            c: _muted,
+                          ),
+                          const SizedBox(height: 8),
+                          Transform.translate(
+                            offset: const Offset(-3, 0),
+                            child: SizedBox(
+                              width: 440,
+                              child: tx(
+                                al.title,
+                                al.title.length > 9 ? 44 : 72,
+                                w: w900,
+                                f: F.wide,
+                                lines: 2,
+                                h: 1.05,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Tap(
+                            onTap: al.artistRoute.isEmpty
+                                ? null
+                                : () => app.go(al.artistRoute),
+                            builder: (_, h, _) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _AlbumArtistAvatar(
+                                  image: al.artistImage,
+                                  route: al.artistRoute,
+                                ),
+                                const SizedBox(width: 10),
+                                AnimatedDefaultTextStyle(
+                                  duration: fast,
+                                  style: ts(
+                                    15,
+                                    w: w700,
+                                    f: F.semi,
+                                    c: h ? accent : P.ink,
+                                  ),
+                                  child: CjkText(al.artist),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              PlayPill(
+                                onTap: () =>
+                                    app.playAlbum(al.id, shuffled: false),
+                              ),
+                              const SizedBox(width: 10),
+                              RoundBtn(
+                                icon: 'shuffle',
+                                tip: l.actionShuffle,
+                                onTap: (_) =>
+                                    app.playAlbum(al.id, shuffled: true),
+                              ),
+                              const SizedBox(width: 10),
+                              RoundBtn(
+                                icon: saved ? 'heart-filled' : 'heart',
+                                tip: saved ? l.actionUnsave : l.actionSaveAlbum,
+                                on: saved,
+                                onTap: (_) => app.toggleSaveAlbum(al),
+                              ),
+                              const SizedBox(width: 10),
+                              RoundBtn(
+                                icon: 'more',
+                                tip: l.actionMore,
+                                onTap: (ctx) =>
+                                    menuBelow(ctx, albumMenu(ctx, al)),
                               ),
                             ],
                           ),
-                          child: Cover(al.cover, w: 400, h: 400, r: 20),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      tx(
-                        al.year > 0 ? '$kind · ${al.year}' : kind,
-                        13,
-                        w: w700,
-                        f: F.semi,
-                        c: _muted,
-                      ),
-                      const SizedBox(height: 8),
-                      Transform.translate(
-                        offset: const Offset(-3, 0),
-                        child: SizedBox(
-                          width: 440,
-                          child: tx(
-                            al.title,
-                            al.title.length > 9 ? 44 : 72,
-                            w: w900,
-                            f: F.wide,
-                            lines: 2,
-                            h: 1.05,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Tap(
-                        onTap: al.artistRoute.isEmpty
-                            ? null
-                            : () => app.go(al.artistRoute),
-                        builder: (_, h, _) => Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _AlbumArtistAvatar(
-                              image: al.artistImage,
-                              route: al.artistRoute,
-                            ),
-                            const SizedBox(width: 10),
-                            AnimatedDefaultTextStyle(
-                              duration: fast,
-                              style: ts(
-                                15,
-                                w: w700,
-                                f: F.semi,
-                                c: h ? accent : P.ink,
-                              ),
-                              child: CjkText(al.artist),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          PlayPill(
-                            onTap: () => app.playAlbum(al.id, shuffled: false),
-                          ),
-                          const SizedBox(width: 10),
-                          RoundBtn(
-                            icon: 'shuffle',
-                            tip: l.actionShuffle,
-                            onTap: (_) => app.playAlbum(al.id, shuffled: true),
-                          ),
-                          const SizedBox(width: 10),
-                          RoundBtn(
-                            icon: saved ? 'heart-filled' : 'heart',
-                            tip: saved ? l.actionUnsave : l.actionSaveAlbum,
-                            on: saved,
-                            onTap: (_) => app.toggleSaveAlbum(al),
-                          ),
-                          const SizedBox(width: 10),
-                          RoundBtn(
-                            icon: 'more',
-                            tip: l.actionMore,
-                            onTap: (ctx) => menuBelow(ctx, albumMenu(ctx, al)),
-                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(width: 64),
