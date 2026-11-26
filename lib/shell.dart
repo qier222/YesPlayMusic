@@ -1031,10 +1031,15 @@ class _LyricSegState extends State<_LyricSeg> {
             onChanged: app.scrub,
             onCommit: app.seek,
             builder: (_, at, dragging) {
+              final lyricIdx = app.lyricIndex;
+              final activeLyric = lyricIdx >= 0
+                  ? app.lyricLines[lyricIdx].text
+                  : null;
               // With the mini lyric setting on, the lyric is always shown; off, only while the mouse is over the
               // progress bar (or dragging). Hovering other player bar buttons doesn't count.
               final showLyric =
-                  app.hasLyrics && (app.miniLyric || at != null || dragging);
+                  activeLyric != null &&
+                  (app.miniLyric || at != null || dragging);
               // While dragging, the time on the left follows the hand.
               final elapsed = dragging && at != null
                   ? at * duration
@@ -1107,9 +1112,7 @@ class _LyricSegState extends State<_LyricSeg> {
                                 duration: _lyricAnim,
                                 curve: Curves.easeOutCubic,
                                 child: tx(
-                                  app.hasLyrics
-                                      ? app.lyricLines[app.lyricIndex].text
-                                      : '',
+                                  activeLyric ?? '',
                                   14,
                                   w: w600,
                                   c: pal.ink,

@@ -786,16 +786,17 @@ class _LyricsState extends State<_Lyrics> with SingleTickerProviderStateMixin {
             final followTops = topsFor(playing);
             final browseTops = topsFor(-1);
             final tops = _scrolling ? browseTops : followTops;
+            final anchorRow = playing >= 0 ? playing : 0;
             // The current line sits at about 30% of the area's height
             final anchor = box.maxHeight * 0.30;
-            final follow = followTops[playing] - anchor;
+            final follow = followTops[anchorRow] - anchor;
             // Scroll up at most until the first line shows below the top gradient, down at most until the last line rests at the anchor
             final minOff = -(box.maxHeight * 0.08 + 24);
             final maxOff = math.max(minOff, browseTops.last - anchor);
             final offset = _scrolling ? _abs : follow;
             // When scrolling starts the current line shrinks but stays in place, and the lines below move up
             void scroll(double dy) =>
-                _scrollBy(dy, browseTops[playing] - anchor, minOff, maxOff);
+                _scrollBy(dy, browseTops[anchorRow] - anchor, minOff, maxOff);
 
             return Listener(
               onPointerSignal: (e) {
