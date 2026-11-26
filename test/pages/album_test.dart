@@ -14,7 +14,7 @@ import 'pages_smoke_test.dart' show appFor, prepareEnv;
 void main() {
   setUpAll(prepareEnv);
 
-  testWidgets('album actions are reachable above the mini player', (t) async {
+  testWidgets('album info fits above the mini player at 1280×800', (t) async {
     t.view.physicalSize = const Size(1280, 1000);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
@@ -36,6 +36,8 @@ void main() {
     await t.pumpAndSettle();
 
     final album = find.byType(AlbumPage);
+    final cover = find.descendant(of: album, matching: find.byType(Cover));
+    final back = find.descendant(of: album, matching: find.byType(BackBtn));
     final actions = [
       find.descendant(of: album, matching: find.byType(PlayPill)),
       for (final icon in ['heart', 'more'])
@@ -47,6 +49,9 @@ void main() {
         ),
     ];
     final initialRects = actions.map(t.getRect).toList();
+    final initialCover = t.getRect(cover);
+    final initialBack = t.getRect(back);
+    expect(initialCover.size, const Size.square(400));
 
     t.view.physicalSize = const Size(1280, 800);
     await t.pumpAndSettle();
@@ -63,6 +68,21 @@ void main() {
     );
     final playerTop =
         t.getBottomLeft(volume).dy - t.widget<VolumeSeg>(volume).base;
+    for (final action in actions) {
+      expect(t.getBottomLeft(action).dy, lessThanOrEqualTo(playerTop));
+      expect(action.hitTestable(), findsOneWidget);
+    }
+    expect(t.getRect(back), initialBack);
+    expect(back.hitTestable(), findsOneWidget);
+    final compactCover = t.getRect(cover);
+    expect(compactCover.topLeft, initialCover.topLeft);
+    expect(compactCover.width, lessThan(400));
+    expect(compactCover.height, compactCover.width);
+    expect(compactCover.bottom, lessThan(t.getTopLeft(actions.first).dy));
+
+    t.view.physicalSize = const Size(1280, 600);
+    await t.pumpAndSettle();
+    expect(t.getSize(cover), const Size.square(160));
     await t.sendEventToBinding(
       const PointerScrollEvent(
         position: Offset(300, 340),
@@ -70,13 +90,17 @@ void main() {
       ),
     );
     await t.pumpAndSettle();
+    final extremePlayerTop =
+        t.getBottomLeft(volume).dy - t.widget<VolumeSeg>(volume).base;
     for (final action in actions) {
-      expect(t.getBottomLeft(action).dy, lessThanOrEqualTo(playerTop));
+      expect(t.getBottomLeft(action).dy, lessThanOrEqualTo(extremePlayerTop));
       expect(action.hitTestable(), findsOneWidget);
     }
 
     t.view.physicalSize = const Size(1280, 1000);
     await t.pumpAndSettle();
+    expect(t.getRect(cover), initialCover);
+    expect(t.getRect(back), initialBack);
     for (final (i, action) in actions.indexed) {
       expect(t.getRect(action), initialRects[i]);
       expect(action.hitTestable(), findsOneWidget);

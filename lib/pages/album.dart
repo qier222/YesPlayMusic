@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import '../data.dart';
@@ -72,31 +73,14 @@ class AlbumPage extends StatelessWidget {
                     padding: EdgeInsets.only(
                       bottom: app.hasQueue ? MiniPlayer.bottomInset : 0,
                     ),
-                    child: SingleChildScrollView(
-                      primary: false,
+                    child: _AlbumInfoViewport(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 20),
                           BackBtn(onTap: app.back),
                           const SizedBox(height: 36),
-                          FadeIn(
-                            dy: 20,
-                            child: Container(
-                              decoration: squircle(
-                                20,
-                                shadows: [
-                                  BoxShadow(
-                                    color: ba(0.67),
-                                    blurRadius: 60,
-                                    offset: const Offset(0, 24),
-                                    spreadRadius: -10,
-                                  ),
-                                ],
-                              ),
-                              child: Cover(al.cover, w: 400, h: 400, r: 20),
-                            ),
-                          ),
+                          Flexible(child: _AlbumCover(id: al.cover)),
                           const SizedBox(height: 16),
                           tx(
                             al.year > 0 ? '$kind · ${al.year}' : kind,
@@ -245,6 +229,69 @@ class AlbumPage extends StatelessWidget {
       ],
     );
   }
+}
+
+class _AlbumInfoViewport extends StatelessWidget {
+  const _AlbumInfoViewport({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (_, constraints) => SingleChildScrollView(
+      primary: false,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+        child: IntrinsicHeight(child: child),
+      ),
+    ),
+  );
+}
+
+class _AlbumCover extends SingleChildRenderObjectWidget {
+  _AlbumCover({required String id})
+    : super(
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: LayoutBuilder(
+            builder: (_, constraints) {
+              final size = constraints.maxWidth;
+              final scale = size / 400;
+              final radius = 20 * scale;
+              return FadeIn(
+                dy: 20,
+                child: Container(
+                  decoration: squircle(
+                    radius,
+                    shadows: [
+                      BoxShadow(
+                        color: ba(0.67),
+                        blurRadius: 60 * scale,
+                        offset: Offset(0, 24 * scale),
+                        spreadRadius: -10 * scale,
+                      ),
+                    ],
+                  ),
+                  child: Cover(id, w: size, h: size, r: radius),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+  @override
+  RenderProxyBox createRenderObject(BuildContext context) => _AlbumCoverBox();
+}
+
+class _AlbumCoverBox extends RenderProxyBox {
+  // The viewport scrolls only when the metadata and the minimum cover cannot
+  // fit. Once laid out, the loose flex lets the square grow with spare height.
+  @override
+  double computeMaxIntrinsicHeight(double width) => 160;
+
+  @override
+  double computeMinIntrinsicHeight(double width) => 160;
 }
 
 /// Bottom of the list: release date (just the year when only the year is known), copyright on the next line.
