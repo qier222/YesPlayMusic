@@ -263,6 +263,8 @@ MenuSpec playlistMenu(
   required String meta,
   required String cover,
   required Future<void> Function() onPlay,
+  bool saved = false,
+  Future<void> Function(bool save)? onSave,
 }) {
   final app = context.appRead;
   final l = context.l10n;
@@ -282,6 +284,16 @@ MenuSpec playlistMenu(
           },
         ),
       ],
+      if (onSave != null)
+        [
+          MenuItem(
+            saved ? 'heart-filled' : 'heart',
+            saved ? l.actionUnsavePlaylist : l.actionSavePlaylist,
+            onTap: () async {
+              await onSave(!saved);
+            },
+          ),
+        ],
     ],
   );
 }

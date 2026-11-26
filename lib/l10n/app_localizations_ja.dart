@@ -61,6 +61,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get actionUnsave => '保存を解除';
 
   @override
+  String get actionSavePlaylist => 'プレイリストを保存';
+
+  @override
+  String get actionUnsavePlaylist => '保存を解除';
+
+  @override
   String get actionFollow => 'フォロー';
 
   @override
@@ -1604,6 +1610,20 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get toastAlbumUnsaved => '保存を解除しました';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return '「$title」を保存しました';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => '保存を解除しました';
+
+  @override
+  String get toastSavePlaylistFailed => 'このプレイリストを保存できませんでした';
+
+  @override
+  String get toastUnsavePlaylistFailed => 'このプレイリストの保存を解除できませんでした';
 
   @override
   String pluginErrIdTaken(String id) {

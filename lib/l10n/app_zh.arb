@@ -18,6 +18,14 @@
   "actionUnlike": "取消喜欢",
   "actionSaveAlbum": "收藏专辑",
   "actionUnsave": "取消收藏",
+  "actionSavePlaylist": "收藏歌单",
+  "@actionSavePlaylist": {
+    "description": "Playlist more-menu item that saves the playlist to the library"
+  },
+  "actionUnsavePlaylist": "取消收藏歌单",
+  "@actionUnsavePlaylist": {
+    "description": "Playlist more-menu item that removes a saved playlist from the library"
+  },
   "actionFollow": "关注",
   "actionFollowing": "已关注",
   "actionMore": "更多",
@@ -986,6 +994,25 @@
     }
   },
   "toastAlbumUnsaved": "已取消收藏",
+  "toastPlaylistSaved": "已收藏「{title}」",
+  "@toastPlaylistSaved": {
+    "description": "Toast after saving a playlist",
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "toastPlaylistUnsaved": "已取消收藏",
+  "@toastPlaylistUnsaved": {
+    "description": "Toast after removing a saved playlist from the library"
+  },
+  "toastSavePlaylistFailed": "没能收藏这个歌单",
+  "@toastSavePlaylistFailed": {
+    "description": "Toast when saving a playlist fails"
+  },
+  "toastUnsavePlaylistFailed": "没能取消收藏",
+  "@toastUnsavePlaylistFailed": {
+    "description": "Toast when removing a saved playlist fails"
+  },
 
   "pluginErrIdTaken": "id {id} 已被占用",
   "@pluginErrIdTaken": {

@@ -61,6 +61,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get actionUnsave => '取消收藏';
 
   @override
+  String get actionSavePlaylist => '收藏歌单';
+
+  @override
+  String get actionUnsavePlaylist => '取消收藏歌单';
+
+  @override
   String get actionFollow => '关注';
 
   @override
@@ -1601,6 +1607,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toastAlbumUnsaved => '已取消收藏';
 
   @override
+  String toastPlaylistSaved(String title) {
+    return '已收藏「$title」';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => '已取消收藏';
+
+  @override
+  String get toastSavePlaylistFailed => '没能收藏这个歌单';
+
+  @override
+  String get toastUnsavePlaylistFailed => '没能取消收藏';
+
+  @override
   String pluginErrIdTaken(String id) {
     return 'id $id 已被占用';
   }
@@ -1968,6 +1988,12 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get actionUnsave => '取消收藏';
+
+  @override
+  String get actionSavePlaylist => '收藏歌單';
+
+  @override
+  String get actionUnsavePlaylist => '取消收藏歌單';
 
   @override
   String get actionFollow => '追蹤';
@@ -3508,6 +3534,20 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get toastAlbumUnsaved => '已取消收藏';
+
+  @override
+  String toastPlaylistSaved(String title) {
+    return '已收藏「$title」';
+  }
+
+  @override
+  String get toastPlaylistUnsaved => '已取消收藏';
+
+  @override
+  String get toastSavePlaylistFailed => '沒能收藏這個歌單';
+
+  @override
+  String get toastUnsavePlaylistFailed => '沒能取消收藏';
 
   @override
   String pluginErrIdTaken(String id) {

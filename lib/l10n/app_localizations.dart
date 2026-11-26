@@ -213,6 +213,18 @@ abstract class AppLocalizations {
   /// **'取消收藏'**
   String get actionUnsave;
 
+  /// Playlist more-menu item that saves the playlist to the library
+  ///
+  /// In zh, this message translates to:
+  /// **'收藏歌单'**
+  String get actionSavePlaylist;
+
+  /// Playlist more-menu item that removes a saved playlist from the library
+  ///
+  /// In zh, this message translates to:
+  /// **'取消收藏歌单'**
+  String get actionUnsavePlaylist;
+
   /// No description provided for @actionFollow.
   ///
   /// In zh, this message translates to:
@@ -2918,6 +2930,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'已取消收藏'**
   String get toastAlbumUnsaved;
+
+  /// Toast after saving a playlist
+  ///
+  /// In zh, this message translates to:
+  /// **'已收藏「{title}」'**
+  String toastPlaylistSaved(String title);
+
+  /// Toast after removing a saved playlist from the library
+  ///
+  /// In zh, this message translates to:
+  /// **'已取消收藏'**
+  String get toastPlaylistUnsaved;
+
+  /// Toast when saving a playlist fails
+  ///
+  /// In zh, this message translates to:
+  /// **'没能收藏这个歌单'**
+  String get toastSavePlaylistFailed;
+
+  /// Toast when removing a saved playlist fails
+  ///
+  /// In zh, this message translates to:
+  /// **'没能取消收藏'**
+  String get toastUnsavePlaylistFailed;
 
   /// No description provided for @pluginErrIdTaken.
   ///
