@@ -489,7 +489,7 @@ void main() {
   }
 
   test(
-    'replaces malformed sidecar bytes without dropping valid text',
+    'replaces malformed BOM-marked sidecar bytes without dropping valid text',
     () async {
       final track = (await src.search(
         'Snooze',
@@ -497,7 +497,7 @@ void main() {
       )).tracks.single;
       final base = p.withoutExtension(track.id);
       File('$base.lrc')
-          .writeAsBytesSync([...utf8.encode('[00:00.50]Hi'), 0xff]);
+          .writeAsBytesSync([...utf8.encode('\uFEFF[00:00.50]Hi'), 0xff]);
       File('$base.trans.lrc').writeAsBytesSync([
         0xff, 0xfe, // UTF-16 LE BOM
         0x00, 0xd8, // Unpaired high surrogate
@@ -511,6 +511,17 @@ void main() {
       expect(lyrics.translation, '\uFFFDA\uFFFD\uFFFD');
     },
   );
+
+  test('ignores an unmarked non-UTF-8 sidecar', () async {
+    final t = (await src.search('Snooze', SearchKind.tracks)).tracks.single;
+    final base = p.withoutExtension(t.id);
+    File('$base.lrc').writeAsBytesSync([
+      ...utf8.encode('[00:00.50]'),
+      0xcd, 0xed, 0xb7, 0xe7, // 晚风 in GBK
+    ]);
+
+    expect((await src.lyrics(t.id)).isEmpty, isTrue);
+  });
 
   test('enhanced sidecar lyrics and translation keep their prefixes', () async {
     final t = (await src.search('晚風', SearchKind.tracks)).tracks.single;

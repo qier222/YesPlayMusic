@@ -430,9 +430,16 @@ class LocalSource extends Source {
           );
         }
       }
-      return utf8.decode(bytes, allowMalformed: true);
+      final hasUtf8Bom =
+          bytes.length >= 3 &&
+          bytes[0] == 0xef &&
+          bytes[1] == 0xbb &&
+          bytes[2] == 0xbf;
+      return utf8.decode(bytes, allowMalformed: hasUtf8Bom);
     } on FileSystemException {
       return null;
+    } on FormatException {
+      return null; // non-UTF-8 LRC (e.g. GBK) isn't supported yet
     }
   }
 }
