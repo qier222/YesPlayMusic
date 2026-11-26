@@ -1,29 +1,34 @@
-# 插件开发指南
+# Plugin development guide
 
-YesPlayMusic 本身不带任何在线音乐服务。除了本地音乐，所有音乐源都由插件提供：一个插件就是一个文件夹，里面有一份 `plugin.json` 和一个 JavaScript 模块。应用在内置的 QuickJS 引擎里运行插件，插件导出哪些函数，应用就显示哪些功能。
+English | [简体中文](plugins.zh-CN.md)
 
-插件协议沿用 MyGo Music 的字段名，已有的 MyGo 插件改动很少就能移植。
+YesPlayMusic ships with no online music service. Apart from local music, all music sources come from plugins. A plugin is a folder with a `plugin.json` manifest and a JavaScript module. The app runs plugins in its built-in QuickJS engine and shows the features provided by their exported functions.
 
-> 安全提示：插件可以访问它声明的网站、读写自己的数据目录，经用户允许后还能启动本机程序。只安装你信任的插件。详见 [SECURITY.md](../SECURITY.md)。
+The plugin protocol uses MyGo Music's field names, so existing MyGo plugins need few changes to port.
 
-## 目录
+> Security: plugins can access declared websites and local app channels, read and write their own data directory, and start local programs if the user allows it. Only install plugins you trust. See [SECURITY.md](../SECURITY.md).
 
-- [快速开始](#快速开始)
-- [插件放在哪里](#插件放在哪里)
-- [安装插件](#安装插件)
-  - [更新插件](#更新插件)
+This guide follows `main`. Unreleased interfaces include `host.pid`, `host.ipc`, `host.files`, `testConnection`, scrobbling and playback-state callbacks, and the ReplayGain fields on `AudioStream`. When targeting 3.0.0, see the [3.0.0 plugin guide](https://github.com/qier222/YesPlayMusic/blob/v3.0.0/docs/plugins.md) (in Chinese).
+
+## Contents
+
+- [Quick start](#quick-start)
+- [Plugin locations](#plugin-locations)
+- [Installing plugins](#installing-plugins)
+  - [Updating plugins](#updating-plugins)
 - [plugin.json](#pluginjson)
-- [运行环境](#运行环境)
-- [host API](#host-api)
-- [导出的函数](#导出的函数)
-- [数据结构](#数据结构)
-- [错误](#错误)
-- [限制](#限制)
-- [调试](#调试)
+- [Runtime](#runtime)
+- [Host API](#host-api)
+- [Exported functions](#exported-functions)
+- [Data structures](#data-structures)
+- [Errors](#errors)
+- [Caching](#caching)
+- [Limits](#limits)
+- [Debugging](#debugging)
 
-## 快速开始
+## Quick start
 
-新建一个文件夹 `hello`，放两个文件：
+Create a folder named `hello` with these two files:
 
 `plugin.json`
 
@@ -60,52 +65,52 @@ export async function stream({ id }) {
 }
 ```
 
-把文件夹放进插件目录（见下一节；设置 → 插件 →「打开插件目录」可以直接打开它），点「重新加载」，再在设置 → 插件 →「音乐来源」里选中它（或者点侧边栏左下角的头像切换），就能在搜索页搜到这首歌并播放。
+Put the folder in the plugin directory (see the next section; Settings → Plugins → Open Plugin Folder opens it for you). Click Reload, then select the plugin under Settings → Plugins → Music Source or use the avatar at the bottom of the sidebar. You can now find the sample song in Search and play it.
 
-## 插件放在哪里
+## Plugin locations
 
-| 系统 | 插件目录 | 插件数据 |
+| System | Plugin directory | Plugin data |
 | --- | --- | --- |
 | macOS | `~/Library/Application Support/YesPlayMusic/plugins/<id>/` | `~/Library/Application Support/YesPlayMusic/plugin-data/<id>/` |
 | Windows | `%APPDATA%\YesPlayMusic\plugins\<id>\` | `%APPDATA%\YesPlayMusic\plugin-data\<id>\` |
-| Linux | `$XDG_DATA_HOME/YesPlayMusic/plugins/<id>/`（默认 `~/.local/share/...`） | `$XDG_DATA_HOME/YesPlayMusic/plugin-data/<id>/` |
+| Linux | `$XDG_DATA_HOME/YesPlayMusic/plugins/<id>/` (defaults to `~/.local/share/...`) | `$XDG_DATA_HOME/YesPlayMusic/plugin-data/<id>/` |
 
-开发时可以把插件目录软链接过去。插件目录里以 `.` 开头的文件夹会被忽略。
+You can symlink the plugin folder into place during development. Folders whose names start with `.` are ignored.
 
-## 安装插件
+## Installing plugins
 
-设置 → 插件 →「安装插件」，粘贴下面任意一种链接：
+Under Settings → Plugins → Install Plugin, paste any of these links:
 
-| 链接 | 装什么 |
+| Link | What gets installed |
 | --- | --- |
-| `github.com/作者/仓库`，或 `作者/仓库` | 最新 Release 里的 `.zip` 附件；没有附件就用 Release 的源码包；没有 Release 就用默认分支的代码 |
-| `github.com/作者/仓库/releases/tag/v1.2.0` | 这个 Release |
-| `github.com/作者/仓库/tree/分支/子目录` | 这个分支（或 tag、commit）下的这个目录 |
-| `github.com/作者/仓库/blob/分支/.../plugin.json` | 这份 `plugin.json` 所在的目录 |
-| 以 `.zip` 结尾的链接 | 下载解压，用里面最浅的那份 `plugin.json` |
-| 以 `plugin.json` 结尾的链接 | 下载它和 `main` 指向的模块，以及模块里用相对路径 `import` 的文件 |
+| `github.com/owner/repo` or `owner/repo` | The latest release's `.zip` asset; if there isn't one, the release source archive; if there is no release, the default branch |
+| `github.com/owner/repo/releases/tag/v1.2.0` | That release |
+| `github.com/owner/repo/tree/branch/subdir` | That folder at the given branch, tag or commit |
+| `github.com/owner/repo/blob/branch/.../plugin.json` | The folder containing that manifest |
+| Link ending in `.zip` | The archive is downloaded and unpacked; the shallowest `plugin.json` is used |
+| Link ending in `plugin.json` | The manifest, the module named by `main`, and the files it imports using relative paths |
 
-也可以点「从本地文件夹安装…」，选一个有 `plugin.json` 的文件夹，应用会把它复制进插件目录。
+You can also choose Install from Local Folder and select a folder containing `plugin.json`. The app copies it into the plugin directory without following symlinks inside it.
 
-安装前应用会列出插件要的权限（`permissions`）和提供的能力。能力是从源码里的 `export` 语句读出来的，确认安装之前不会运行插件的任何代码。`minAppVersion` 比当前应用新时不能安装。已经装了同一个 id、来自同一个地方（同一个 GitHub 仓库，或者同一个链接）的插件时，按钮变成「更新」，旧版本会被替换，设置和登录状态保留。id 相同但来源不同（或者已装的那个来源不明，比如手动放进目录的）时，安装弹窗会给出警告，按钮变成「替换」：替换会清除旧插件的设置、登录状态和已授予的权限，当成全新安装。
+Before installation, the app lists the plugin's requested permissions and capabilities. It reads capabilities from `export` statements without running any plugin code before confirmation. If `minAppVersion` is higher than the current app version, installation is blocked. If an installed plugin has the same ID and origin (the same GitHub repository or link), the button changes to Update. The new version replaces the old one but keeps settings and login state. If the ID matches but the origin differs or is unknown (for example, a manually copied plugin), the dialog warns you and offers Replace. Replacing clears settings, login state and granted permissions, treating it as a fresh install.
 
-### 更新插件
+### Updating plugins
 
-从 GitHub 仓库或 Release 链接装的插件，以及在 `plugin.json` 里写了 GitHub 仓库地址（`repository`）的插件，都可以检查更新：应用会拿仓库最新 Release 的 tag（去掉开头的 `v`）和已装插件 `plugin.json` 里的 `version` 比较，新的就算有更新。如果插件是通过链接安装的，优先使用安装时记下来的来源；没有记录来源（如本地文件夹安装或手动放进插件目录）时，才使用 `repository`。指定了分支（`/tree/...`、`/blob/...`）、`.zip`、`plugin.json` 链接或未声明 `repository` 的本地插件不支持检查更新，要更新就重新安装一次。
+Plugins installed from a GitHub repository or release link, or with a GitHub repository in their manifest's `repository` field, can check for updates. The app compares the latest release tag (without its leading `v`) with the installed manifest's `version`. For link installs, the recorded origin takes precedence. Without a recorded origin, as with local or manually copied plugins, the app uses `repository`. Installs from a specific branch (`/tree/...` or `/blob/...`), direct `.zip` or `plugin.json` links, and local plugins without a `repository` don't support update checks. Reinstall these to update them.
 
-- 每次启动后第一次打开设置里的插件页时，会把所有能检查的插件查一遍。有更新的插件卡片上显示「更新」，点了会打开安装弹窗，确认后替换，设置和登录状态保留。
-- 插件卡片的 ⋯ 菜单里有「检查更新」，立即查这一个插件。
-- 插件设置弹窗的「更新」一栏可以打开「自动更新」（默认关闭）。打开后应用启动约 10 秒后查一次，之后每 6 小时查一次，有新版本就在后台下载安装。这几种情况不会自动装，仍然只在卡片上显示「更新」，等你手动确认：新版本要了旧版本没有的网络、程序或本机应用权限、要求更新的应用版本（`minAppVersion`）、插件 id 变了，或者正在播放这个插件的歌。
+- The first time you open the Plugins page after launch, the app checks all eligible plugins if it hasn't already checked in the background. Plugins with an update show Update on their card. Clicking it opens the install dialog; confirming keeps settings and login state.
+- Choose Check for Updates from a plugin card's ⋯ menu to check that plugin immediately.
+- You can turn on Update Automatically under Updates in the plugin settings dialog (off by default). About 10 seconds after launch and every six hours thereafter, the app checks and installs eligible updates in the background. Manual confirmation is still required if a new version adds network, program or local app permissions, requires a newer app (`minAppVersion`), changes its ID, or if a song from that plugin is playing.
 
-发布新版本时，先改 `plugin.json` 的 `version`，再发一个 tag 和它一致的 GitHub Release（`v1.2.0` 或 `1.2.0` 都行）。
+To publish a new version, update `version` in `plugin.json` and create a GitHub release with a matching tag (`v1.2.0` or `1.2.0`).
 
-插件卡片的 ⋯ 菜单里可以停用插件：停用的插件不运行，设置和数据都还在，卡片上点「启用」就能恢复。提供音乐库或搜索的插件才会出现在「音乐来源」里。卸载会删除插件目录和它的插件数据。
+Disable a plugin from the card's ⋯ menu. Disabled plugins don't run, but retain their settings and data. Click Enable on the card to bring one back. Only plugins that provide a library or search show up in Music Source. Uninstalling deletes the plugin directory and its data.
 
-插件数据目录里有：
+The plugin data directory contains:
 
-- `storage.json`：`host.storage` 存的东西。
-- `settings.json`：用户在插件设置弹窗里填的设置。
-- `files/`：`host.files` 写的文件。
+- `storage.json`: data saved through `host.storage`.
+- `settings.json`: values the user entered in the plugin settings dialog.
+- `files/`: files written through `host.files`.
 
 ## plugin.json
 
@@ -114,7 +119,7 @@ export async function stream({ id }) {
   "id": "example.example",
   "name": "Example",
   "version": "1.0.0",
-  "description": "一个示例插件。",
+  "description": "An example plugin.",
   "author": "Example",
   "icon": "icon.png",
   "minAppVersion": "3.0.0",
@@ -125,178 +130,178 @@ export async function stream({ id }) {
     "process": ["yt-dlp"]
   },
   "settings": [
-    { "key": "server", "label": "服务器地址", "help": "例如 http://127.0.0.1:4533" },
+    { "key": "server", "label": "Server address", "help": "e.g. http://127.0.0.1:4533" },
     { "key": "token", "label": "Token", "type": "password", "link": "https://example.com/token" },
-    { "key": "hq", "label": "高音质", "type": "boolean" },
+    { "key": "hq", "label": "High quality", "type": "boolean" },
     {
       "key": "quality",
-      "label": "音质",
+      "label": "Quality",
       "type": "select",
       "options": [
-        { "value": "", "label": "跟随播放器" },
-        { "value": "lossless", "label": "无损" }
+        { "value": "", "label": "Follow player" },
+        { "value": "lossless", "label": "Lossless" }
       ]
     }
   ],
-  "navigation": [{ "builtin": "home" }, { "builtin": "liked" }, { "title": "排行榜", "page": "charts" }]
+  "navigation": [{ "builtin": "home" }, { "builtin": "liked" }, { "title": "Charts", "page": "charts" }]
 }
 ```
 
-| 字段 | 必填 | 说明 |
+| Field | Required | Description |
 | --- | --- | --- |
-| `id` | 是 | 小写字母、数字和 `. _ -`，最长 64 个字符。`local` 是保留的。用 `<作者>.<名字>` 的形式，比如 `alice.radio`，避免和别人的插件重复。发布以后不要改：设置、登录状态和已授予的权限都按 id 保存。 |
-| `name` | 是 | 显示给用户的名字。 |
-| `version` | | 插件自己的版本。检查更新时拿它和最新 Release 的 tag 比较，见[更新插件](#更新插件)。 |
-| `description` | | 一两句介绍，显示在插件卡片和安装弹窗里。 |
-| `author` | | 作者，字符串或 `{ "name": "..." }`。 |
-| `repository` | | 可选的 GitHub 仓库地址（字符串或 `{ "url": "..." }`），如 `https://github.com/owner/repo`。未记录安装来源（本地安装或手动放入目录）时，用于检查更新和自动更新。 |
-| `icon` | | 插件目录里的图标，`.png`、`.jpg` 或 `.webp`（不支持 SVG），建议 256×256 的正方形。显示在插件卡片和侧边栏头像上；不写就用名字首字母。 |
-| `minAppVersion` | | 需要的最低应用版本，例如 `3.0.0`。应用版本更旧时插件不会加载，设置页会显示原因。 |
-| `main` | | 入口模块，插件目录里的 `.js` 或 `.mjs` 文件，默认 `index.js`。 |
-| `playback` | | `stream`（默认）：应用自己播放 `stream` 给的地址。`remote`：在别处播放，应用只做遥控（预留）。 |
-| `permissions.network` | | `fetch` 能访问的主机，见下表。不写就不能联网。 |
-| `permissions.process` | | `host.spawn` 能启动的程序，见 [host.spawn](#hostspawncommand-args)。`true` 等于 `["*"]`。 |
-| `permissions.ipc` | | `host.ipc` 能连的本机通道名字，见 [host.ipc](#hostipcconnectname)。 |
-| `settings` | | 插件卡片上点「设置」打开的弹窗里显示的设置项。值始终是字符串（`boolean` 是 `"true"` / `""`）。`type` 可以是 `text`（默认）、`password`、`boolean`、`select`。`help` 是说明，`link` 是一个「去获取」链接。 |
-| `navigation` | | 侧边栏条目：`{ "builtin": "home" \| "liked" \| "savedAlbums" \| "stations" \| "shows" }`，或 `{ "title", "page", "icon" }` 打开插件的 `browse(page)`。 |
+| `id` | Yes | Lowercase letters, digits, and `. _ -`, up to 64 characters. `local` is reserved. Use `<author>.<name>` (e.g. `alice.radio`) to avoid collisions. Don't change it after release: settings, login state and granted permissions are stored by ID. |
+| `name` | Yes | Name shown to users. |
+| `version` | | Plugin version. Update checks compare it with the latest release tag; see [Updating plugins](#updating-plugins). |
+| `description` | | A short description shown on the card and in the install dialog. |
+| `author` | | Author, as a string or `{ "name": "..." }`. |
+| `repository` | | Optional GitHub repository as a string or `{ "url": "..." }`, e.g. `https://github.com/owner/repo`. Used for update checks and auto-updates when the app has no recorded install origin (local or manual installs). |
+| `icon` | | Icon from the plugin folder: `.png`, `.jpg` or `.webp` (not SVG), preferably 256 × 256. Shown on the plugin card and sidebar avatar; falls back to the first letter of the name. |
+| `minAppVersion` | | Minimum app version, e.g. `3.0.0`. On an older app the plugin won't load, and Settings shows why. |
+| `main` | | Entry module: a `.js` or `.mjs` file in the plugin folder. Defaults to `index.js`. |
+| `playback` | | `stream` (default): the app plays the URL returned by `stream`. `remote`: playback elsewhere, with the app acting as a remote (reserved). |
+| `permissions.network` | | Hosts `fetch` can access; see below. Without it, no network access is allowed. |
+| `permissions.process` | | Programs `host.spawn` can start; see [host.spawn](#hostspawncommand-args). `true` is equivalent to `["*"]`. |
+| `permissions.ipc` | | Local channels `host.ipc` can connect to; see [host.ipc](#hostipcconnectname). |
+| `settings` | | Fields shown when Settings is opened from the plugin card. Values are always strings (`"true"` / `""` for `boolean`). Types are `text` (default), `password`, `boolean`, and `select`. `help` is explanatory text and `link` is a link for getting the value. |
+| `navigation` | | Sidebar entries: `{ "builtin": "home" \| "liked" \| "savedAlbums" \| "stations" \| "shows" }`, or `{ "title", "page", "icon" }` to open the plugin's `browse(page)`. |
 
-`permissions.network` 的写法：
+Patterns for `permissions.network`:
 
-| 写法 | 匹配 |
+| Pattern | Matches |
 | --- | --- |
-| `api.example.com` | 只匹配这个主机 |
-| `*.example.com` | 只匹配子域名（不含 `example.com` 本身） |
-| `{setting:server}` | 设置项 `server` 里填的地址的主机，适合自建服务器 |
-| `*` | 任意主机（请尽量不要用） |
+| `api.example.com` | Only that host |
+| `*.example.com` | Subdomains only (not `example.com` itself) |
+| `{setting:server}` | The host of the address entered in the `server` setting, useful for self-hosted servers |
+| `*` | Any host (avoid when possible) |
 
-重定向到列表外的主机会失败。
+Redirects to hosts outside the list fail.
 
-## 运行环境
+## Runtime
 
-- 插件跑在 [QuickJS-ng](https://github.com/quickjs-ng/quickjs) 里，支持 ES2023 和 ES 模块。入口模块可以 `import` 插件目录里的其他文件，不能读插件目录以外的文件。
-- 没有 Node.js、DOM，也没有 `std` / `os` 模块，插件不能直接读写文件或启动进程。
-- 每个插件跑在自己的线程里，互不影响；一个插件卡死或崩溃不会拖垮应用。
+- The [QuickJS-ng](https://github.com/quickjs-ng/quickjs) runtime supports ES2023 and ES modules. The entry module can import files in the plugin directory, not files outside it.
+- There is no Node.js, DOM, or `std` / `os` module. Plugins cannot read or write files or start processes directly.
+- Each plugin runs on its own thread so a stalled or crashed plugin doesn't take down the app.
 
-可用的全局对象：
+Available globals:
 
-| 名字 | 说明 |
+| Name | Description |
 | --- | --- |
-| `fetch`、`Headers`、`Response` | 和浏览器的基本一致。`Response` 支持 `text()`、`json()`、`bytes()`、`arrayBuffer()`，不支持 `clone()` 和流式读取。`headers.getSetCookie()` 可以拿到所有 `Set-Cookie`。请求会走系统代理。跳转到别的域名（协议、主机或端口不同）时，`Authorization`、`Cookie` 和 `Proxy-Authorization` 请求头不会带过去。 |
-| `URL`、`URLSearchParams` | |
-| `TextEncoder`、`TextDecoder` | 只支持 UTF-8。 |
-| `AbortController`、`AbortSignal` | 包括 `AbortSignal.timeout(ms)`，可以传给 `fetch`。 |
-| `setTimeout`、`setInterval`、`clearTimeout`、`clearInterval` | |
-| `console.log/info/warn/error/debug` | 见 [调试](#调试)。 |
-| `atob`、`btoa` | |
-| `host` | 应用提供的能力，见下一节。 |
+| `fetch`, `Headers`, `Response` | Mostly browser-compatible. `Response` supports `text()`, `json()`, `bytes()` and `arrayBuffer()`, but not `clone()` or streaming reads. `headers.getSetCookie()` returns every `Set-Cookie`. Requests use the system proxy. On a redirect to a different origin (scheme, host or port), `Authorization`, `Cookie` and `Proxy-Authorization` are not forwarded. |
+| `URL`, `URLSearchParams` | |
+| `TextEncoder`, `TextDecoder` | UTF-8 only. |
+| `AbortController`, `AbortSignal` | Includes `AbortSignal.timeout(ms)`. Can be passed to `fetch`. |
+| `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` | |
+| `console.log/info/warn/error/debug` | See [Debugging](#debugging). |
+| `atob`, `btoa` | |
+| `host` | App-provided capabilities; see below. |
 
-## host API
+## Host API
 
-| 名字 | 说明 |
+| Name | Description |
 | --- | --- |
-| `host.platform` | `darwin`、`windows`、`linux`。 |
-| `host.arch` | `arm64`、`amd64` 等。 |
-| `host.dir` | 插件目录的绝对路径。 |
-| `host.dataDir` | 插件数据目录的绝对路径。 |
-| `host.pid` | 应用的进程 id。 |
-| `host.storage.get(key)` / `.set(key, value)` / `.remove(key)` | 同步的键值存储，值是任意 JSON。存在 `storage.json`（整个最多 8 MB），适合放登录状态、缓存。 |
-| `host.files.write(name, data)` | 把 `data`（字符串按 UTF-8 存，或 `Uint8Array` / `ArrayBuffer`）写进插件数据目录下的 `files/<name>`，返回它的 `file://` 地址，可以直接当 `imageUrl` 或 `AudioStream.url` 用。`name` 是相对路径，可以带子目录（`covers/1.jpg`），不能有 `..`、`:`、空段或开头的 `/`。单个文件最大 32 MB。适合存封面和放不进 `storage` 的大块数据。3.1.0 起可用。 |
-| `host.files.read(name)` / `.readText(name)` | 读 `files/<name>`，返回 `Uint8Array` / 字符串，没有这个文件返回 `null`。 |
-| `host.files.url(name)` | 文件存在时返回它的 `file://` 地址，否则 `null`。 |
-| `host.files.remove(name)` | 删掉这个文件，不存在也不报错。 |
-| `host.setting(key)` | 读用户在设置页填的值（字符串，没填是 `""`）。用户改设置后马上生效，不用重新加载。 |
-| `host.language()` | 应用的界面语言，例如 `zh-CN`、`zh-TW`、`en`、`ja`。 |
-| `host.t(text)` | 用插件目录里 `locales/<语言>.json` 翻译一句话（支持按前缀回退，例如 `zh-CN` → `zh`、`zh-TW` → `zh-Hant`、`en` → `en-US`），没有翻译时原样返回。同一份翻译表也会用于翻译 `plugin.json` 里的 `name`、`description`、`settings`（`label`、`help`、`options[].label`）和 `navigation[].title`。 |
-| `host.openURL(url)` | 用系统浏览器打开一个 http(s) 地址。 |
-| `host.crypto.md5(text)` | 返回十六进制字符串。 |
-| `host.crypto.aesEcbEncrypt(key, text)` | AES-128-ECB + PKCS7，返回十六进制字符串。 |
-| `host.signInPrompt({ qr, text })` | 在应用的登录弹窗里显示二维码（`qr` 是要编码的内容）和一句说明。在 `signIn` 里反复调用来更新状态（比如「已扫码，请在手机上确认」）。 |
-| `host.webSignIn({ url, cookiesOf, until, userAgent })` | 在一个独立的小浏览器窗口里打开服务自己的登录页。等 `until` 里列的 Cookie 都出现后关窗，返回 `{ cookie }`（访问 `cookiesOf` 时会带的 `Cookie` 请求头）。`cookiesOf` 必须在 `permissions.network` 里。窗口用不落盘的独立存储。用户关掉窗口时抛错。目前只有 macOS 支持，其他系统会抛错，请准备二维码或手动填 Cookie 的方案。 |
-| `host.spawn(command, args)` | 见下文。 |
-| `host.ipc.connect(name)` | 见下文。 |
+| `host.platform` | `darwin`, `windows` or `linux`. |
+| `host.arch` | `arm64`, `amd64`, etc. |
+| `host.dir` | Absolute plugin directory path. |
+| `host.dataDir` | Absolute plugin data directory path. |
+| `host.pid` | The app's process ID. |
+| `host.storage.get(key)` / `.set(key, value)` / `.remove(key)` | Synchronous key-value store for JSON values, saved in `storage.json` (8 MB total). Useful for login state and cached data. |
+| `host.files.write(name, data)` | Writes `data` (a UTF-8 string, `Uint8Array` or `ArrayBuffer`) to `files/<name>` under the plugin data directory, returning a `file://` URL for use as an `imageUrl` or `AudioStream.url`. Use a relative `name`; subdirectories are allowed (e.g. `covers/1.jpg`), but not `..`, `:`, empty segments or a leading `/`. Maximum 32 MB per file. Useful for cover art and data too large for `storage`. |
+| `host.files.read(name)` / `.readText(name)` | Reads `files/<name>` as a `Uint8Array` or string, or returns `null` if missing. |
+| `host.files.url(name)` | Returns the file's `file://` URL if it exists, otherwise `null`. |
+| `host.files.remove(name)` | Deletes the file. Doesn't error if it is missing. |
+| `host.setting(key)` | Reads the user's setting (a string, or `""` if unset). Changes take effect without reloading the plugin. |
+| `host.language()` | UI language, e.g. `zh-CN`, `zh-TW`, `en` or `ja`. |
+| `host.t(text)` | Translates using `locales/<language>.json` with locale fallbacks (e.g. `zh-CN` → `zh`, `zh-TW` → `zh-Hant`, `en` → `en-US`). Returns the original if untranslated. The same table translates `name`, `description`, `settings` (`label`, `help`, `options[].label`) and `navigation[].title` in `plugin.json`. |
+| `host.openURL(url)` | Opens an HTTP(S) URL in the system browser. |
+| `host.crypto.md5(text)` | Returns a hexadecimal string. |
+| `host.crypto.aesEcbEncrypt(key, text)` | AES-128-ECB + PKCS7, returning a hexadecimal string. |
+| `host.signInPrompt({ qr, text })` | Shows a QR code (encoding `qr`) and a message in the app's sign-in dialog. Call repeatedly from `signIn` to update the status (e.g. “Code scanned. Confirm on your phone”). |
+| `host.webSignIn({ url, cookiesOf, until, userAgent })` | Opens the service's sign-in page in a separate browser window. Once all cookies in `until` are present, it closes the window and returns `{ cookie }` (the `Cookie` header for requests to `cookiesOf`). `cookiesOf` must be allowed by `permissions.network`. The window uses separate, non-persistent storage. Throws if the user closes the window. Only macOS supports it; provide a QR-code or manual cookie option on other systems, where it throws. |
+| `host.spawn(command, args)` | See below. |
+| `host.ipc.connect(name)` | See below. |
 
 ### host.spawn(command, args)
 
-启动本机程序，比如用 `yt-dlp` 取播放地址。需要同时满足：
+Starts a local program, for example `yt-dlp` to get a playback URL. Both conditions must be met:
 
-1. `command` 在 `permissions.process` 里。列表项可以是程序名（在 PATH 和 Homebrew 等常见目录里找）、路径（含 `/`，相对插件目录或绝对路径），可以用 `*` 在一层目录内通配。
-2. 用户在 设置 → 插件 里这个插件的菜单中勾选了「允许运行本机程序」（默认不允许）。
+1. `command` is in `permissions.process`. Entries may be program names (looked up in PATH and common directories such as Homebrew's) or paths (containing `/`, absolute or relative to the plugin directory). `*` can match within one directory level.
+2. The user has selected Allow Running Local Programs in that plugin's menu under Settings → Plugins (off by default).
 
-返回一个进程对象：
+Returns a process object:
 
-| 成员 | 说明 |
+| Member | Description |
 | --- | --- |
-| `pid` | 进程 id。 |
-| `write(text)` / `closeStdin()` | 写标准输入。 |
-| `readLine()` | 读一行标准输出，返回 Promise；读完返回 `null`。 |
-| `wait()` | 等进程结束，返回 Promise，值是退出码。 |
-| `errorOutput()` | 到目前为止的标准错误输出。 |
-| `kill()` | 结束进程。 |
+| `pid` | Process ID. |
+| `write(text)` / `closeStdin()` | Write to standard input. |
+| `readLine()` | Read a line of stdout as a Promise; returns `null` at EOF. |
+| `wait()` | Wait for exit and return the exit code as a Promise. |
+| `errorOutput()` | Standard error output collected so far. |
+| `kill()` | Stop the process. |
 
-子进程继承系统代理（`HTTPS_PROXY` 等）。插件停止时，它启动的程序会一起结束。同时最多 16 个。
+Child processes inherit the system proxy (`HTTPS_PROXY`, etc.). When the plugin stops, so do its child processes. At most 16 can run at once.
 
 ### host.ipc.connect(name)
 
-连本机其他应用开的本地通道，比如 Discord 的 `discord-ipc-0`。macOS 和 Linux 上是 Unix 套接字，依次在 `$XDG_RUNTIME_DIR`、`$TMPDIR`、`$TMP`、`$TEMP`、`/tmp` 里找 `name`；Windows 上是命名管道 `\\.\pipe\name`。
+Connect to a local channel opened by another app, such as Discord's `discord-ipc-0`. On macOS and Linux, this is a Unix socket. The app looks for `name` in `$XDG_RUNTIME_DIR`, `$TMPDIR`, `$TMP`, `$TEMP` and `/tmp`, in that order. On Windows it is a named pipe at `\\.\pipe\name`.
 
-`name` 必须在 `permissions.ipc` 里，列表项可以用 `*` 在一层目录内通配，例如 `"discord-ipc-*"`、`"snap.discord/discord-ipc-*"`（Windows 上没有子目录）。安装时会把列表显示给用户。
+`name` must be allowed by `permissions.ipc`. Entries can use `*` within one directory level, e.g. `"discord-ipc-*"` or `"snap.discord/discord-ipc-*"` (Windows doesn't have subdirectories). The list is shown during installation.
 
-返回 Promise，值是一个连接对象：
+Returns a Promise for a connection:
 
-| 成员 | 说明 |
+| Member | Description |
 | --- | --- |
-| `write(bytes)` | 写入 `Uint8Array` / `ArrayBuffer`，返回 Promise。 |
-| `read()` | 读下一段数据，返回 Promise，值是 `Uint8Array`；对方关闭时是 `null`。数据怎么分段由系统决定，请自己拼帧。 |
-| `close()` | 关闭连接。 |
+| `write(bytes)` | Writes a `Uint8Array` or `ArrayBuffer`, returning a Promise. |
+| `read()` | Reads the next chunk as a Promise for a `Uint8Array`, or `null` when the other end closes. Chunk boundaries are up to the OS; reassemble frames yourself. |
+| `close()` | Closes the connection. |
 
-读写按调用顺序一个个完成（Windows 的管道上，读着的时候写不进去），所以请在需要回复时才 `read()`。每个插件同时最多 4 个连接，插件停止时会一起关闭。
+Reads and writes complete in order, one at a time. Windows pipes can't write during a pending read, so only `read()` when you expect a reply. Each plugin can have at most four open connections; they all close when it stops.
 
-## 导出的函数
+## Exported functions
 
-插件用 ES 模块的 `export` 导出函数，函数名就是操作名。应用只调用插件导出了的函数，没导出的功能界面上不显示。每个函数收到一个参数对象（没有参数时是 `{}`），可以是 `async` 的，返回值必须能转成 JSON。
+Use ES module `export` to expose functions by operation name. The app only calls exported functions and doesn't show features that aren't provided. Each function takes an argument object (`{}` if there are no parameters), can be `async`, and returns a JSON-serializable value.
 
-### 账号
+### Account
 
-| 函数 | 参数 | 返回 | 说明 |
+| Function | Parameters | Returns | Description |
 | --- | --- | --- | --- |
-| `account` | | `Account \| null` | 当前登录的账号，没登录返回 `null`。应用启动和加载插件时调用。 |
-| `signIn` | | `Account \| null` | 登录。最长可以等 10 分钟（等用户扫码或在网页里操作）。 |
-| `signOut` | | | 退出登录，清掉保存的登录状态。 |
-| `testConnection` | `{ settings }` | `string` 或 `{ message }` | 插件设置弹窗里的「测试连接」。`settings` 是弹窗里还没保存的设置（键值都是字符串），请用它们而不是 `host.setting()`。成功返回一句显示给用户的话（可以为空，显示「连接成功」），失败抛错。调用期间 `{setting:key}` 权限也放行 `settings` 里的地址。3.1.0 起可用。 |
-| `profile` | | `Profile` | 登录账号的个人主页（点侧边栏左下角头像打开）。 |
+| `account` | | `Account \| null` | Current account, or `null` if not signed in. Called at app startup and when the plugin loads. |
+| `signIn` | | `Account \| null` | Sign in. Can take up to 10 minutes for the user to scan a QR code or use the web sign-in window. |
+| `signOut` | | | Sign out and clear saved login state. |
+| `testConnection` | `{ settings }` | `string` or `{ message }` | The Test Connection button in the plugin settings dialog. Use the unsaved `settings` from the dialog (string keys and values), not `host.setting()`. On success return a message, or leave it empty for “Connection successful”; throw on failure. The `{setting:key}` permissions also allow the addresses in `settings` during this call. |
+| `profile` | | `Profile` | Profile for the signed-in account, opened through the avatar at the bottom of the sidebar. |
 
-### 发现
+### Discovery
 
-| 函数 | 参数 | 返回 | 说明 |
+| Function | Parameters | Returns | Description |
 | --- | --- | --- | --- |
-| `home` | | `Browse` | 首页。不提供时侧边栏不显示「首页」。 |
-| `browse` | `{ page }` | `Browse` | 发现页（`page` 为空）和插件自己的其他页面（`page` 是你在 `Link`、`Choice`、`navigation` 里给的字符串）。不提供时侧边栏不显示「发现」。 |
-| `search` | `{ query, kind, offset }` | `SearchResult` | `kind` 是 `tracks`、`albums`、`artists`、`playlists`、`shows`。`offset` 是已经拿到的条数，用于翻页；还有下一页时返回 `more: true`。 |
-| `suggest` | `{ query }` | `string[]` | 搜索联想。 |
-| `hotSearches` | | `(string \| { word, hint })[]` | 搜索框空着时显示的热门搜索。 |
+| `home` | | `Browse` | Home. If omitted, the sidebar has no Home entry. |
+| `browse` | `{ page }` | `Browse` | Explore (empty `page`) and other plugin pages (`page` is the string supplied in a `Link`, `Choice` or `navigation`). If omitted, the sidebar has no Explore entry. |
+| `search` | `{ query, kind, offset }` | `SearchResult` | `kind`: `tracks`, `albums`, `artists`, `playlists` or `shows`. `offset` is the number already fetched. Return `more: true` if another page is available. |
+| `suggest` | `{ query }` | `string[]` | Search suggestions. |
+| `hotSearches` | | `(string \| { word, hint })[]` | Popular searches shown when the search box is empty. |
 
-### 音乐库
+### Library
 
-| 函数 | 参数 | 返回 | 说明 |
+| Function | Parameters | Returns | Description |
 | --- | --- | --- | --- |
-| `library` | `{ kind, offset }` | `SearchResult` | 整个曲库（自建服务器这类「曲库就是用户的」源）。`kind` 是 `tracks`、`albums`、`artists`、`playlists`，分页同 `search`。有它时音乐库页用它，否则用 `liked`、`savedAlbums`、`playlists`。 |
-| `liked` | `{ offset }` | `TrackPage` | 喜欢的歌。 |
-| `isLiked` | `{ ids }` | `{ [id]: boolean }` 或与 `ids` 一一对应的 `boolean[]` | |
-| `like` | `{ id, on }` | | 喜欢 / 取消喜欢。 |
-| `savedAlbums` | `{ offset }` | `Album[]` 或 `{ albums, more }` | 收藏的专辑。 |
+| `library` | `{ kind, offset }` | `SearchResult` | Full library for sources where the catalog is the user's library, such as a self-hosted server. `kind`: `tracks`, `albums`, `artists` or `playlists`; pagination matches `search`. The Library page uses this if provided; otherwise it uses `liked`, `savedAlbums` and `playlists`. |
+| `liked` | `{ offset }` | `TrackPage` | Liked songs. |
+| `isLiked` | `{ ids }` | `{ [id]: boolean }` or a `boolean[]` in the same order as `ids` | |
+| `like` | `{ id, on }` | | Like or unlike a track. |
+| `savedAlbums` | `{ offset }` | `Album[]` or `{ albums, more }` | Saved albums. |
 | `saveAlbum` | `{ id, on }` | | |
 | `followArtist` | `{ id, on }` | | |
-| `recent` | | `Track[]` | 最近播放。 |
-| `played` | `{ id }` | | 自己的一首歌听够了（规则同 [听歌上报](#听歌上报)），可以用来记服务自己的播放记录。只有歌曲所属的源会收到。出错会被忽略。 |
+| `recent` | | `Track[]` | Recently played tracks. |
+| `played` | `{ id }` | | A track from this source has been listened to long enough (see [Scrobbling](#scrobbling)). Use it to record plays on the source's service. Only the source that owns the track receives it. Errors are ignored. |
 
-### 专辑、歌手、歌单
+### Albums, artists and playlists
 
-| 函数 | 参数 | 返回 |
+| Function | Parameters | Returns |
 | --- | --- | --- |
 | `album` | `{ id }` | `{ album: Album, tracks: Track[] }` |
 | `artist` | `{ id }` | `{ artist: Artist, tracks: Track[], albums: Album[], related: Artist[] }` |
-| `playlists` | | `Playlist[]`（自己创建的和收藏的） |
-| `playlist` | `{ id }` | `Playlist`（带 `tracks`） |
+| `playlists` | | `Playlist[]` (created and saved playlists) |
+| `playlist` | `{ id }` | `Playlist` (with `tracks`) |
 | `savePlaylist` | `{ id, on }` | |
 | `createPlaylist` | `{ name }` | `Playlist` |
 | `renamePlaylist` | `{ id, name }` | |
@@ -305,52 +310,54 @@ export async function stream({ id }) {
 | `removeFromPlaylist` | `{ id, trackIds }` | |
 | `movePlaylistTrack` | `{ id, from, to }` | |
 
-### 播放
+### Playback
 
-| 函数 | 参数 | 返回 | 说明 |
+| Function | Parameters | Returns | Description |
 | --- | --- | --- | --- |
-| `stream` | `{ id, quality }` | `AudioStream` | 播放地址。`quality` 是 `standard`、`high`、`lossless` 之一，按你有的返回最接近的。最长等 60 秒。 |
+| `stream` | `{ id, quality }` | `AudioStream` | Playback URL. `quality` is one of `standard`, `high` or `lossless`; return the closest match you have. Times out after 60 seconds. |
 | `lyrics` | `{ id }` | `Lyrics` | |
-| `similar` | `{ id }` | `Track[]` | 正在播放页的「相似歌曲」。 |
-| `station` | `{ id, seed }` | `TrackPage` | 电台的下一批歌。`id` 来自 `Mode.station` 或 `menuAction`；`seed` 是接着哪首歌放，可以为空。 |
-| `dislike` | `{ id, station }` | | 不喜欢这首歌（以后少推荐）。 |
+| `similar` | `{ id }` | `Track[]` | Similar Songs on the Now Playing page. |
+| `station` | `{ id, seed }` | `TrackPage` | The next batch of station tracks. `id` comes from `Mode.station` or `menuAction`; `seed` is the track to continue from and can be empty. |
+| `dislike` | `{ id, station }` | | Dislike a track to see it less often in recommendations. |
 
-### 评论
+### Comments
 
-| 函数 | 参数 | 返回 |
+| Function | Parameters | Returns |
 | --- | --- | --- |
-| `comments` | `{ id, sort, offset }` | `CommentPage`。`sort` 是 `hot` 或 `new`。 |
-| `postComment` | `{ id, text, replyTo }` | 发出去的 `Comment`，拿不到就返回 `null`。 |
+| `comments` | `{ id, sort, offset }` | `CommentPage`. `sort` is `hot` or `new`. |
+| `postComment` | `{ id, text, replyTo }` | The posted `Comment`, or `null` if not available. |
 | `likeComment` | `{ id, commentId, on }` | |
 
-### 歌曲右键菜单
+### Track context menu
 
-| 函数 | 参数 | 返回 | 说明 |
+| Function | Parameters | Returns | Description |
 | --- | --- | --- | --- |
-| `trackMenu` | `{ track, playlist }` | `MenuEntry[]` 或 `{ items: MenuEntry[], hide: string[] }` | 给这首歌的右键菜单加条目、藏起自带条目。菜单打开时会等它（最多 2 秒），请只看歌曲数据决定，不要联网。`hide` 可以是 `play`、`next`、`queue`、`like`、`addToPlaylist`、`album`、`artist`、`similar`、`dislike`、`remove`。 |
-| `menuAction` | `{ id, track, playlist }` | `MenuResult` | 用户点了你加的条目。 |
+| `trackMenu` | `{ track, playlist }` | `MenuEntry[]` or `{ items: MenuEntry[], hide: string[] }` | Add context menu entries for a track or hide built-in ones. The menu waits up to 2 seconds, so use the track data and don't make network requests. `hide` can contain `play`, `next`, `queue`, `like`, `addToPlaylist`, `album`, `artist`, `similar`, `dislike` or `remove`. |
+| `menuAction` | `{ id, track, playlist }` | `MenuResult` | The user selected an entry you added. |
 
-### 听歌上报
+<a name="听歌上报"></a>
 
-| 函数 | 参数 | 返回 | 说明 |
+### Scrobbling
+
+| Function | Parameters | Returns | Description |
 | --- | --- | --- | --- |
-| `nowPlaying` | `{ track }` | | 一首歌开始播放。 |
-| `scrobble` | `{ track, startedAt, played }` | | 一首歌听够了，应该记进听歌记录。`startedAt` 是开始播放的时刻（UTC 的 ISO 8601），`played` 是实际听了多久（毫秒）。 |
-| `playback` | `{ track, playing, position }` | | 播放状态变了：换歌、播放 / 暂停、拖进度、停止。`track` 为 `null` 表示什么都没在放，`position` 是此刻的进度（毫秒）。连续的变化只发最后一次。适合用来显示 Discord 这类「正在听」状态。 |
+| `nowPlaying` | `{ track }` | | A track started playing. |
+| `scrobble` | `{ track, startedAt, played }` | | A track has been heard long enough to record a listen. `startedAt` is the playback start time (ISO 8601 in UTC); `played` is the actual listening time in milliseconds. |
+| `playback` | `{ track, playing, position }` | | Playback state changed: new track, play/pause, seek or stop. `track` is `null` if nothing is playing, and `position` is the current position in milliseconds. Only the last of a burst of changes is sent. Useful for displaying what is playing in an app like Discord. |
 
-和其他函数不同，这三个函数**不管歌来自哪个源都会调用**：本地音乐、其他插件的歌都算，只要插件启用着、导出了它们就会收到。所以只做听歌上报、不提供任何音乐的插件也可以，它不会出现在「音乐来源」里。`track.source` 是歌曲所属的源（`local` 是本地音乐）。
+Unlike other functions, these three are called **regardless of the track's source**, including local tracks and tracks from other plugins. Any enabled plugin that exports them receives them. Scrobbling-only plugins don't need to provide music and won't appear in Music Source. `track.source` is the source that owns the track (`local` for local music).
 
-什么时候算「听够了」沿用 Last.fm 的规则：短于 30 秒的歌不上报；实际听了一半或 4 分钟（先到哪个算哪个）就上报，拖进度条跳过的部分不算。一首歌每放一遍最多上报一次。
+The app follows Last.fm's listening rules: tracks under 30 seconds don't count. A listen is recorded once half the track or four minutes have actually played, whichever comes first. Time skipped by seeking doesn't count. At most one scrobble is made per play.
 
-调用失败会被忽略，用户看不到。网络不好时要不要缓存起来稍后补报，由插件自己用 `host.storage` 实现。
+Errors are ignored and aren't shown to the user. If you want to queue listens during network failures and retry later, use `host.storage`.
 
-下面是一个对接 [ListenBrainz](https://listenbrainz.org) 的最小插件（官方的 [ListenBrainz 插件](https://github.com/qier222/ypm-plugin-listenbrainz) 在此基础上加了自建服务和断网补报），用户在设置里填上 [User token](https://listenbrainz.org/settings/) 就能用：
+Here is a minimal plugin for [ListenBrainz](https://listenbrainz.org). The official [ListenBrainz plugin](https://github.com/qier222/ypm-plugin-listenbrainz) also supports self-hosted servers and retries after network failures. Enter your [User token](https://listenbrainz.org/settings/) in the plugin settings.
 
 `plugin.json`
 
 ```json
 {
-  "id": "listenbrainz",
+  "id": "yourname.listenbrainz",
   "name": "ListenBrainz",
   "version": "1.0.0",
   "permissions": { "network": ["api.listenbrainz.org"] },
@@ -391,38 +398,38 @@ export const scrobble = ({ track, startedAt }) =>
   submit("single", track, Math.floor(Date.parse(startedAt) / 1000));
 ```
 
-对接 Last.fm 时：从 2026 年 12 月 1 日起，Last.fm 的 API key 要求持有者订阅 Last.fm Pro，费用由**插件作者**（key 的持有者）承担，用户不需要 Pro。签名用的 `api_sig` 可以用 `host.crypto.md5` 算。官方的 [Last.fm 插件](https://github.com/qier222/ypm-plugin-lastfm) 让用户填自己的 API key，可以参考。
+For Last.fm: starting December 1, 2026, the API key holder needs Last.fm Pro. The **plugin author** pays if they own the key; users don't need their own Pro subscription in that case. Use `host.crypto.md5` to calculate the `api_sig` signature. The official [Last.fm plugin](https://github.com/qier222/ypm-plugin-lastfm) is an example that asks users to supply their own API key.
 
-## 数据结构
+## Data structures
 
-所有字段都可以不填，应用会用空值。时间长度一律是毫秒，日期用 ISO 8601 字符串。id 只需要在你的插件里唯一。
+All fields can be omitted; the app uses empty values. Durations are in milliseconds, and dates are ISO 8601 strings. IDs only need to be unique within your plugin.
 
 ```ts
 type Artist = { id: string; name: string; imageUrl?: string; following?: boolean };
 
 type Album = {
   id: string; name: string; imageUrl?: string; artists?: Artist[];
-  released?: string;          // "2024-03-01" 或 "2024"
+  released?: string;          // "2024-03-01" or "2024"
   kind?: "album" | "single" | "ep" | "compilation";
   trackCount?: number; saved?: boolean;
-  added?: string;             // 加进音乐库的时间
-  copyright?: string;         // 版权行，原样显示在专辑页底部，例如 "℗ 2024 XX Records"
+  added?: string;             // When added to the library
+  copyright?: string;         // Copyright line, shown as-is at the bottom of the album page, e.g. "℗ 2024 XX Records"
 };
 
 type Track = {
   id: string; name: string; artists?: Artist[]; album?: Album;
-  duration?: number;          // 毫秒
-  url?: string;               // 歌曲在服务上的网页，用于分享
-  unavailable?: boolean;      // 放不了（版权、VIP…）：显示成灰色、不能双击播放
+  duration?: number;          // Milliseconds
+  url?: string;               // Track URL on the service, for sharing
+  unavailable?: boolean;      // Unavailable (rights, subscription, etc.): grayed out and cannot be double-clicked to play
   added?: string;
 };
 
 type Playlist = {
   id: string; name: string; imageUrl?: string; description?: string;
   owner?: string; subtitle?: string; trackCount?: number; plays?: number;
-  mine?: boolean;             // 自己创建的
-  saved?: boolean;            // 收藏的别人的
-  fixed?: boolean;            // 自己的但不能改（比如「我喜欢的音乐」）
+  mine?: boolean;             // Created by the user
+  saved?: boolean;            // Saved from another user
+  fixed?: boolean;            // Owned but not editable (e.g. Liked Songs)
   tracks?: Track[];
 };
 
@@ -436,29 +443,29 @@ type SearchResult = {
 type TrackPage = { tracks: Track[]; more?: boolean };
 
 type AudioStream = {
-  url: string;                // http(s)://，或插件目录 / 数据目录里的 file://
-  type?: string;              // mp3、flac、m4a…
+  url: string;                // http(s)://, or a file:// in the plugin directory or its data directory
+  type?: string;              // mp3, flac, m4a, etc.
   quality?: string; bitRate?: number; size?: number;
-  headers?: Record<string, string>;  // 播放器请求音频时带的请求头
-  // ReplayGain，给「音量均衡」用。增益是 dB，峰值是线性值（1 = 0 dBFS）。
-  // 文件自己带 ReplayGain 标签时以标签为准；服务器转码会丢标签，这时用这几个。
-  // 没有就不填，应用不做调整。比如 OpenSubsonic 歌曲信息里的 replayGain。
-  gain?: number; peak?: number;           // 单曲
-  albumGain?: number; albumPeak?: number; // 专辑
+  headers?: Record<string, string>;  // Headers the player sends when requesting audio
+  // ReplayGain fields for Volume Normalization. Gain is in dB; peak is linear (1 = 0 dBFS).
+  // File tags take priority; these fields are useful when server transcoding strips tags.
+  // Leave these out if unknown; the app makes no adjustment. See OpenSubsonic track replayGain for an example.
+  gain?: number; peak?: number;           // Track
+  albumGain?: number; albumPeak?: number; // Album
 };
 
 type Lyrics = {
-  lrc?: string;               // LRC 文本
-  translation?: string;       // 翻译的 LRC 文本
+  lrc?: string;               // LRC text
+  translation?: string;       // Translated LRC text
   lines?: { start: number; end?: number; text?: string; translation?: string;
-            words?: { start: number; end: number; text: string }[] }[];  // 有 lines 时优先用它，可以逐字
+            words?: { start: number; end: number; text: string }[] }[];  // Takes precedence when present; can include word-level timing
 };
 
 type Browse = {
   title?: string; subtitle?: string; imageUrl?: string; description?: string;
   sections: Section[];
-  tabs?: Choice[];            // 顶部一排 tab，点了用它的 page 调 browse
-  filters?: Choice[][];       // tab 下面的标签行
+  tabs?: Choice[];            // Top tabs; clicking one calls browse with its page
+  filters?: Choice[][];       // Rows of labels under the tabs
 };
 
 type Choice = { title: string; page?: string; selected?: boolean;
@@ -470,26 +477,26 @@ type Section = {
   tracks?: Track[]; albums?: Album[]; artists?: Artist[]; playlists?: Playlist[];
   modes?: Mode[];
   links?: { title: string; page: string; subtitle?: string; imageUrl?: string }[];
-  morePage?: string;          // 「查看全部」打开的 browse 页
-  empty?: string;             // 没有内容时的提示
+  morePage?: string;          // The browse page opened by View All
+  empty?: string;             // Message when there is no content
 };
 
-type Mode = {                 // 首页顶部的特殊模式卡片（每日推荐、私人电台…）
+type Mode = {                 // Special-mode cards at the top of Home (daily recommendations, personal radio, etc.)
   title: string; subtitle?: string; note?: string; imageUrl?: string;
-  tracks?: Track[];           // 一组歌
-  playlist?: string;          // 或者一个歌单 id
-  station?: string;           // 或者一个电台 id，交给 station() 一批批取歌
+  tracks?: Track[];           // A set of tracks
+  playlist?: string;          // Or a playlist ID
+  station?: string;           // Or a station ID, passed to station() to fetch tracks in batches
 };
 
 type Profile = {
   name: string; imageUrl?: string; signature?: string;
-  badges?: string[];                          // 名字旁边的小标签，例如 "Lv.9"
-  facts?: { label: string; value: string }[]; // 例如 { label: "关注", value: "32" }
+  badges?: string[];                          // Labels next to the name, e.g. "Lv.9"
+  facts?: { label: string; value: string }[]; // Example: { label: "Following", value: "32" }
   stats?: { label: string; value: number; unit?: string;
-            link?: "songs" | "albums" | "playlists" | "artists" }[];  // 统计卡片，最多三张
+            link?: "songs" | "albums" | "playlists" | "artists" }[];  // Up to three stats cards
   topArtists?: { artist: Artist; plays: number }[];
   topTracks?: { title?: string; tracks: (Track & { plays?: number })[] };
-  playlists?: Playlist[];                     // 自己创建的歌单
+  playlists?: Playlist[];                     // Playlists created by this user
 };
 
 type Comment = { id: string; text: string; user?: { id?: string; name?: string; imageUrl?: string };
@@ -499,67 +506,67 @@ type CommentPage = { comments: Comment[]; total?: number; more?: boolean };
 
 type MenuEntry = { id: string; title: string; icon?: string; danger?: boolean };
 type MenuResult = {
-  toast?: string;                             // 提示一句话
-  copy?: string;                              // 复制到剪贴板
+  toast?: string;                             // Show a message
+  copy?: string;                              // Copy to the clipboard
   open?: { kind: "album" | "artist" | "playlist"; id: string };
-  tracks?: Track[]; name?: string;            // 播放这些歌
-  station?: { id: string; seed?: string };    // 放这个电台
+  tracks?: Track[]; name?: string;            // Play these tracks
+  station?: { id: string; seed?: string };    // Play this station
 };
 ```
 
-`Section.style` 决定首页怎么排：
+`Section.style` controls the Home layout:
 
-| style | 显示 |
+| Style | Display |
 | --- | --- |
-| `modes` | 特殊模式卡片，前两个是大卡片，其余是小行 |
-| `shelf` | 卡片（歌单、专辑、歌曲；歌手是圆头像），多了排两行、横向滚动 |
-| `songs` | 歌曲翻页网格（3 列 × 4 行） |
-| `charts` | 排行榜卡片，歌单的 `tracks` 是前几名 |
-| `grid` | 卡片铺满一行、往下排 |
-| 空 | 普通列表和卡片 |
+| `modes` | Special-mode cards: the first two are large cards, the rest are small rows. |
+| `shelf` | Cards for playlists, albums and songs; artists use round avatars. Overflow uses two rows with horizontal scrolling. |
+| `songs` | Paged song grids (3 columns × 4 rows). |
+| `charts` | Chart cards; the playlist's `tracks` are the top entries. |
+| `grid` | Rows of cards that fill the width and extend down the page. |
+| Omitted | Standard lists and cards. |
 
-## 错误
+## Errors
 
-抛出带 `code` 的对象或 `Error`，应用会按 `code` 处理，`message` 直接显示给用户：
+Throw an object or `Error` with a `code`. The app handles errors according to that code and shows `message` to the user:
 
 ```js
-const e = new Error("请先登录");
+const e = new Error("Please sign in first");
 e.code = "signIn";
 throw e;
 ```
 
-| code | 含义 | 应用的处理 |
+| Code | Meaning | App behavior |
 | --- | --- | --- |
-| `signIn` | 需要先登录 | 提示登录 |
-| `setup` | 缺少必要的设置（服务器地址、Token…） | 提示去设置 |
-| `unavailable` | 这首歌放不了 | 提示并跳过 |
-| `unsupported` | 不支持这个操作 | 当作没有这个功能 |
-| 其他 / 不写 | 其他失败 | 显示 `message`，可以重试 |
+| `signIn` | Sign-in required | Prompt to sign in |
+| `setup` | A required setting is missing (server address, token, etc.) | Prompt to open Settings |
+| `unavailable` | The track cannot play | Notify the user and skip it |
+| `unsupported` | The operation is not supported | Treat it as an unavailable feature |
+| Other or omitted | Other errors | Show `message` and allow retry |
 
-## 缓存
+## Caching
 
-应用会缓存插件返回的数据，下次打开先显示旧数据、后台再取新的：首页 5 分钟、专辑 1 天、歌手 1 小时、歌单 10 分钟、歌词很久、搜索 5 分钟（不存盘）；喜欢的歌、自己的歌单、音乐库和个人主页每次打开都重取。换账号后缓存会分开。插件自己不需要做页面级的缓存。
+The app caches plugin data and can show it on the next visit while refetching in the background. Home data stays fresh for 5 minutes, albums for 1 day, artists for 1 hour, playlists for 10 minutes, lyrics for much longer, and searches for 5 minutes (memory only). Liked songs, the user's own playlists, the library and profiles are refetched each time they open. Accounts have separate caches. Plugins don't need their own page-level caches.
 
-## 限制
+## Limits
 
-| 项 | 限制 |
+| Item | Limit |
 | --- | --- |
-| 一次调用 | 30 秒（`stream` 60 秒，`signIn` 10 分钟） |
-| 加载入口模块 | 有超时，请不要在模块顶层做网络请求 |
-| 内存 | 128 MB |
-| 连接超时 | 15 秒；读响应 60 秒没有数据就断开 |
-| 重定向 | 最多 10 次 |
-| 响应体 | 32 MB |
-| 同时存在的定时器 | 1000 个 |
-| 同时运行的程序 | 16 个 |
+| Function call | 30 seconds (`stream`: 60 seconds; `signIn`: 10 minutes) |
+| Loading the entry module | Has a timeout; don't make top-level network requests |
+| Memory | 128 MB |
+| Connection timeout | 15 seconds; the response is closed if no data arrives for 60 seconds |
+| Redirects | At most 10 |
+| Response body | 32 MB |
+| Simultaneous timers | 1,000 |
+| Simultaneous child processes | 16 |
 
-插件陷入死循环时会被停止，设置页会显示原因。
+Plugins stuck in an infinite loop are stopped. The reason is shown in Settings.
 
-## 调试
+## Debugging
 
-- `console.*` 的输出带着插件 id 打印在应用的标准输出里。从终端启动应用就能看到：
-  - macOS：`/Applications/YesPlayMusic.app/Contents/MacOS/YesPlayMusic`
-  - Windows：在 PowerShell 里运行 `YesPlayMusic.exe`
-  - Linux：在终端运行 `yesplaymusic`
-- 改了插件代码后，在 设置 → 插件 里点「重新加载」。
-- 插件加载失败（`plugin.json` 写错、入口模块语法错误、`minAppVersion` 不满足等）的原因会显示在设置页的插件卡片上。
+- The app prints `console.*` output to stdout with the plugin ID. Launch the app from a terminal to see it:
+  - macOS: `/Applications/YesPlayMusic.app/Contents/MacOS/YesPlayMusic`
+  - Windows: run `YesPlayMusic.exe` in PowerShell
+  - Linux: run `yesplaymusic` in a terminal
+- After changing plugin code, click Reload in Settings → Plugins.
+- Load failures (invalid `plugin.json`, syntax errors in the entry module, an unmet `minAppVersion`, etc.) are shown on the plugin card in Settings.

@@ -42,7 +42,10 @@ export async function fetchLatestRelease(request: typeof fetch = fetch): Promise
 export const links = {
   repo,
   latestRelease: `${repo}/releases/latest`,
-  plugins: `${repo}/blob/main/docs/plugins.md`,
+  plugins: {
+    zh: `${repo}/blob/main/docs/plugins.zh-CN.md`,
+    en: `${repo}/blob/main/docs/plugins.md`,
+  },
   pluginTopic: 'https://github.com/topics/yesplaymusic-plugin',
   changelog: `${repo}/blob/main/CHANGELOG.md`,
   issues: `${repo}/issues/new/choose`,

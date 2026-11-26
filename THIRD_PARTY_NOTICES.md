@@ -1,5 +1,7 @@
 # Third-Party Notices
 
+English | [简体中文](THIRD_PARTY_NOTICES.zh-CN.md)
+
 YesPlayMusic is licensed under the GNU General Public License v3.0 (see
 [LICENSE](LICENSE)). It includes or links against the third-party components
 listed below, which remain under their own licenses.
@@ -17,8 +19,8 @@ listed below, which remain under their own licenses.
 | --- | --- | --- |
 | [Flutter](https://flutter.dev) engine and framework | UI | BSD 3-Clause |
 | [media_kit](https://github.com/media-kit/media-kit) | Audio playback | MIT |
-| [libmpv](https://mpv.io) (shipped by `media_kit_libs_*`) | Audio decoding and output | LGPL-2.1-or-later |
-| [FFmpeg](https://ffmpeg.org) (shipped by `media_kit_libs_*`) | Audio decoding | LGPL-2.1-or-later |
+| [libmpv](https://mpv.io) (shipped by `media_kit_libs_*` on macOS and Windows; system library on Linux) | Audio decoding and output | LGPL-2.1-or-later |
+| [FFmpeg](https://ffmpeg.org) (used by libmpv) | Audio decoding | LGPL-2.1-or-later |
 | [pointycastle](https://pub.dev/packages/pointycastle) | Cryptography for plugins | MIT |
 | [flutter_svg](https://pub.dev/packages/flutter_svg) | Icons | MIT |
 | [qr_flutter](https://pub.dev/packages/qr_flutter) | Sign-in QR codes | BSD 3-Clause |

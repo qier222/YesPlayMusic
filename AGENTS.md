@@ -1,10 +1,12 @@
 # AGENTS.md
 
-- Verify: `flutter analyze` and `flutter test` (both must pass). Format touched files with `dart format <files>` (not every file in the repo is formatted, so don't format the whole tree).
-- Build: `flutter build macos|windows|linux --release`. Linux needs `clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`.
+English | [简体中文](AGENTS.zh-CN.md)
+
+- Verify: `flutter analyze` and `flutter test` (both must pass). Format touched Dart files with `dart format <files>` (not every file in the repo is formatted, so don't format the whole tree).
+- Build: use Flutter 3.50 or later; run `flutter build macos|windows|linux --release`. Linux needs `clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`. On Linux arm64, install Flutter from its Git tag as in `.github/workflows/ci.yml`.
 - Version lives in both `pubspec.yaml` and `lib/version.dart` (`test/version_test.dart` checks they match).
-- The app has no built-in online source: everything online comes from plugins (`docs/plugins.md`). New source ops go in `lib/music/source.dart` (`Op` + `Source`), `lib/plugin/plugin_source.dart` (`_known` + override), models in `lib/music/models.dart`, cached requests in `lib/cache/requests.dart`, and the docs.
-- Release process and required secrets: `docs/releasing.md`.
+- The app has no built-in online source: everything online comes from plugins ([plugin guide](docs/plugins.md)). New source ops go in `lib/music/source.dart` (`Op` + `Source`), `lib/plugin/plugin_source.dart` (`_known` + override), models in `lib/music/models.dart`, cached requests in `lib/cache/requests.dart`, and the docs.
+- Release process and required secrets: [release guide](docs/releasing.md).
 - Keep history linear: no merge commits. Update a branch with `git rebase main`, never `git merge main`; land it on `main` with `git merge --ff-only <branch>` (rebase first if that fails). Pull with `git pull --rebase`.
 - Write commit messages and code comments in English.
 - Commit messages follow Conventional Commits: `type(scope): summary`, e.g. `fix(plugin): handle timeout when source is offline`. Types: `feat` `fix` `docs` `refactor` `perf` `test` `chore` `build` `ci`. The scope is optional; prefer a module name (`player`, `plugin`, `music`, `cache`, `net`, `ui`, `l10n`, `mcp`, `landing`). Write the summary in the imperative mood, at most 72 characters, with no trailing period. Add a body after a blank line when the reason for the change isn't obvious, and put issue references last (`Fixes #123`). Mark breaking changes with `!` (`feat(plugin)!: ...`) plus a `BREAKING CHANGE:` footer.

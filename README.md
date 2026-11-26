@@ -10,7 +10,7 @@ macOS · Windows · Linux
 [![CI](https://img.shields.io/github/actions/workflow/status/qier222/YesPlayMusic/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/qier222/YesPlayMusic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0-8FE3C0?style=flat-square)](./LICENSE)
 
-[简体中文](README.zh-CN.md) · English
+English | [简体中文](README.zh-CN.md)
 
 [Download](#download) · [Features](#features) · [Screenshots](#screenshots) · [Installing plugins](#installing-plugins) · [Writing plugins](#writing-plugins) · [AI assistants (MCP)](#ai-assistants-mcp) · [Building from source](#building-from-source)
 
@@ -19,8 +19,9 @@ macOS · Windows · Linux
 ## What is this
 
 YesPlayMusic 3.0 is a desktop music player rewritten from scratch in Flutter.
+The old Electron version is on the [`1.x` branch](https://github.com/qier222/YesPlayMusic/tree/1.x).
 
-It **ships with no online music service**: it plays local music out of the box, and online catalogs, playlists, lyrics, comments and so on all come from third-party plugins. Plugins run in a sandbox built into the app, and each plugin's manifest must declare which websites it can access and whether it can launch programs on your computer.
+It **ships with no online music service**: it plays local music out of the box, and online catalogs, playlists, lyrics, comments and so on all come from plugins. Plugins run in a sandbox built into the app; their manifests declare which websites, local app channels and programs they can access.
 
 ## Download
 
@@ -33,7 +34,9 @@ Download the package for your system from [Releases](https://github.com/qier222/
 | Windows 10/11 x64 | `-windows-x64-setup.exe` or `-portable.zip`   | The installer is not code-signed; if SmartScreen warns, click "More info → Run anyway"     |
 | Linux x64 / arm64 | `-linux-x64.tar.gz` or `-linux-arm64.tar.gz`  | Requires libmpv: `sudo apt install libmpv2` (`libmpv1` on older distributions)             |
 
-The macOS and Windows builds check for updates automatically; on Linux, new versions are shown in Settings → About.
+The 3.0.0 release does not include Intel Mac or Linux arm64 packages. The release workflow on `main` now supports both.
+
+The official macOS and Windows builds use Sparkle and WinSparkle for updates. On Linux and in source builds without these updaters, new versions are shown in Settings → About.
 
 ## Features
 
@@ -42,9 +45,11 @@ The macOS and Windows builds check for updates automatically; on Linux, new vers
 - **Colors from cover art**: the album and Now Playing pages take their background from the cover's dominant color; choose from 6 accent colors (Lilac, Sky, Mint, Sun, Rose, Flame).
 - **Now Playing**: lyrics with translations, the play queue, similar songs and song comments, all on one page.
 - **Local music**: scans your music folders and reads tags, embedded cover art and `.lrc` lyrics; supports FLAC, MP3, M4A, WAV, AIFF, OGG, OPUS, APE and more.
-- **Multiple music sources**: local music and each plugin are separate music sources; right-click the avatar in the bottom-left corner to switch at any time. Home, Explore, Search, albums, artists and playlists all come from the current source.
+- **Multiple music sources**: local music and plugins that provide search or a library are separate music sources; click or right-click the avatar in the bottom-left corner to switch. Home, Explore, Search, albums, artists and playlists all come from the current source.
 - **System integration**: Now Playing in the macOS Control Center and lock screen, media keys and headphone buttons; follows the system proxy.
 - **Keyboard control**: common actions have shortcuts, which won't fire while you're typing.
+
+On `main` (not yet released): gapless playback, ReplayGain volume normalization, a 10-band equalizer, a sleep timer and a macOS Dynamic Island mini player. Coverflow is at the right end of the Library tab row, and local folder scans show progress and can be canceled.
 
 ### Screenshots
 
@@ -84,16 +89,20 @@ The macOS and Windows builds check for updates automatically; on Linux, new vers
 | Jellyfin | Jellyfin servers                                                     |
 | Plex     | Plex servers                                                         |
 | Subsonic | Navidrome, Gonic, Airsonic, Ampache and other Subsonic-compatible servers |
-| WebDAV   | WebDAV servers: a NAS, Nextcloud, OpenList / AList and more (3.1.0+) |
+| WebDAV   | WebDAV servers: a NAS, Nextcloud, OpenList / AList and more (unreleased) |
+| Last.fm | Scrobbling to Last.fm with your own API key (unreleased) |
+| ListenBrainz | Scrobbling to ListenBrainz and compatible servers (unreleased) |
+| Discord | Show what you're listening to on your Discord profile (unreleased) |
 
 **Third-party plugins**: search GitHub for the [`yesplaymusic-plugin`](https://github.com/topics/yesplaymusic-plugin) topic. Please add this topic to your repository when you publish a plugin.
 
-**How to install**: Settings → Plugins → Install Plugin. Official plugins install with one click; for third-party plugins, paste a GitHub repository, Release or .zip link, or install from a local folder. Once installed, right-click the avatar in the bottom-left corner to switch to the new music source.
+**How to install**: Settings → Plugins → Install Plugin. Official plugins install with one click; for third-party plugins, paste a GitHub repository, Release or .zip link, or install from a local folder. If the plugin provides a music source, click or right-click the avatar in the bottom-left corner to switch to it.
 
 **Security**: installing a plugin means running someone else's code on your computer, so only install plugins you trust. The restrictions the app places on plugins are described in [SECURITY.md](SECURITY.md); the main ones are:
 
 - each plugin runs in its own QuickJS sandbox, cannot read or write files or start processes directly, and has memory and time limits;
 - it can only access the websites declared in `permissions.network`;
+- it can only connect to local app channels declared in `permissions.ipc`;
 - launching a program on your computer (such as `yt-dlp`) must be declared in the manifest and separately allowed by you in Settings.
 
 ## Writing plugins
@@ -102,7 +111,7 @@ A plugin is a `plugin.json` plus a JavaScript module; the app shows whatever fea
 
 Plugins lay out their own Home and Explore pages: the app has several built-in components (special-mode cards, horizontal card shelves, paged song grids, charts, card grids) that plugins can combine freely. If you need a different kind of component, please [open an issue](https://github.com/qier222/YesPlayMusic/issues/new/choose).
 
-See the [plugin development guide](docs/plugins.md) (in Chinese) for the full API.
+See the [plugin development guide](docs/plugins.md) for the full API.
 
 ## AI assistants (MCP)
 
@@ -132,9 +141,11 @@ flutter test
 
 Additional requirements per platform:
 
-- **macOS**: Xcode and CocoaPods
+- **macOS**: Xcode and CocoaPods. See [Releasing](docs/releasing.md#build-packages-locally) to build a package for a specific architecture.
 - **Windows**: Visual Studio 2022 with the "Desktop development with C++" workload
 - **Linux**: `sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`
+
+On Linux arm64, install Flutter from its Git tag as [CI does](.github/workflows/ci.yml).
 
 ## Feedback
 
@@ -143,4 +154,4 @@ Additional requirements per platform:
 
 ## License
 
-[GPL-3.0](LICENSE). Third-party components and their licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); see [CHANGELOG.md](CHANGELOG.md) for version history.
+[GPL-3.0](LICENSE). Third-party components and their licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); see [CHANGELOG.md](CHANGELOG.md) for version history (in Chinese).

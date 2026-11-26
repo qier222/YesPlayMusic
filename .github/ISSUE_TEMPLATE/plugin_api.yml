@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        接口说明见 [docs/plugins.md](https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.md)。某个插件本身的问题请找插件作者。
+        接口说明见 [docs/plugins.zh-CN.md](https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.zh-CN.md)。某个插件本身的问题请找插件作者。
   - type: input
     id: version
     attributes:

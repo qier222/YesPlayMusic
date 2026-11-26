@@ -1,5 +1,7 @@
 # Contributing to YesPlayMusic
 
+English | [简体中文](CONTRIBUTING.zh-CN.md)
+
 Thanks for helping out. Pull requests are welcome, from small fixes and translations to new features.
 
 ## Before you start
@@ -22,8 +24,8 @@ flutter run -d macos   # or windows / linux
 
 ## Before opening a pull request
 
-- `flutter analyze` and `flutter test` must both pass. CI runs them on every pull request, then builds for macOS, Windows and Linux.
-- Format the files you changed with `dart format <files>`. Please don't reformat the whole tree; not every file is formatted yet, and unrelated changes make the diff hard to review.
+- `flutter analyze` and `flutter test` must both pass. CI runs them on every pull request, then builds for macOS arm64, macOS x64, Windows x64, Linux x64 and Linux arm64.
+- Format the Dart files you changed with `dart format <files>`. Please don't reformat the whole tree; not every file is formatted yet, and unrelated changes make the diff hard to review.
 - Keep each pull request focused on one change.
 - Add or update tests when you change behavior.
 
@@ -36,7 +38,7 @@ flutter run -d macos   # or windows / linux
 
 ## Landing page
 
-The website lives in `landing/` (Astro + React). Run `npm install` and `npm run dev` there. The copy is in `landing/src/i18n/zh.ts` and `en.ts`; change both together.
+The website lives in `landing/` (Astro + React). Use Node 24 and run `npm install` and `npm run dev` there. CI runs `npm test` and `npm run build`. The copy is in `landing/src/i18n/zh.ts` and `en.ts`; change both together.
 
 ## Commit messages
 

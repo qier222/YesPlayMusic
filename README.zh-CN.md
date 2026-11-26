@@ -10,7 +10,7 @@ macOS · Windows · Linux
 [![CI](https://img.shields.io/github/actions/workflow/status/qier222/YesPlayMusic/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/qier222/YesPlayMusic/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0-8FE3C0?style=flat-square)](./LICENSE)
 
-简体中文 · [English](README.md)
+[English](README.md) | 简体中文
 
 [下载](#下载) · [功能](#功能) · [截图](#截图) · [安装插件](#安装插件) · [开发插件](#开发插件) · [AI 助手（MCP）](#ai-助手mcp) · [从源码构建](#从源码构建)
 
@@ -19,8 +19,9 @@ macOS · Windows · Linux
 ## 这是什么
 
 YesPlayMusic 3.0 是用 Flutter 从头重写的桌面音乐播放器。
+旧版 Electron 的代码在 [`1.x` 分支](https://github.com/qier222/YesPlayMusic/tree/1.x)。
 
-它本身**不内置任何在线音乐服务**：开箱即可播放本地音乐，在线曲库、歌单、歌词、评论等都来自第三方插件。插件跑在应用内置的沙箱里，能访问哪些网站、能不能启动本机程序，都要在插件清单里声明。
+它本身**不内置任何在线音乐服务**：开箱即可播放本地音乐，在线曲库、歌单、歌词、评论等都由插件提供。插件跑在应用内置的沙箱里，能访问哪些网站、连接哪些本机应用通道、启动哪些程序，都要在插件清单里声明。
 
 ## 下载
 
@@ -33,7 +34,9 @@ YesPlayMusic 3.0 是用 Flutter 从头重写的桌面音乐播放器。
 | Windows 10/11 x64 | `-windows-x64-setup.exe` 或 `-portable.zip` | 安装包没有代码签名，SmartScreen 提示时点「更多信息 → 仍要运行」             |
 | Linux x64 / arm64 | `-linux-x64.tar.gz` 或 `-linux-arm64.tar.gz` | 需要系统装有 libmpv：`sudo apt install libmpv2`（较旧的发行版是 `libmpv1`） |
 
-macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关于 里提示新版本。
+3.0.0 没有 Intel Mac 或 Linux arm64 安装包；`main` 分支的发布工作流已支持这两种架构。
+
+macOS 和 Windows 正式版分别用 Sparkle 和 WinSparkle 更新；Linux 和未启用这两种更新器的自行构建版本会在 设置 → 关于 里提示新版本。
 
 ## 功能
 
@@ -42,9 +45,11 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 - **封面取色**：专辑页、正在播放页的背景跟随封面主色；6 种主题色可选（丁香紫、天蓝、薄荷、日光、玫瑰、橙焰）。
 - **正在播放**：歌词和翻译、播放队列、相似歌曲、歌曲评论，同一页里切换。
 - **本地音乐**：扫描本地音乐文件夹，读取标签、内嵌封面和 `.lrc` 歌词，支持 FLAC、MP3、M4A、WAV、AIFF、OGG、OPUS、APE 等格式。
-- **多个音乐源**：本地音乐和每个插件都是一个音乐源，右键左下角头像随时切换；首页、发现、搜索、专辑、歌手、歌单都由当前音乐源提供。
+- **多个音乐源**：本地音乐和提供搜索或曲库的插件都是独立的音乐源，点击或右键左下角头像即可切换；首页、发现、搜索、专辑、歌手、歌单都由当前音乐源提供。
 - **系统集成**：macOS 控制中心和锁屏的「正在播放」、媒体键和耳机按键；跟随系统代理。
 - **键盘操作**：常用操作都有快捷键，打字时不会误触。
+
+`main` 分支已有但尚未发布：无缝播放、ReplayGain 音量均衡、10 段均衡器、睡眠定时和 macOS 灵动岛迷你播放器。音乐库的 Coverflow 入口移到了标签栏最右侧，本地音乐扫描会显示进度，也可以取消。
 
 ### 截图
 
@@ -84,16 +89,20 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 | Jellyfin | Jellyfin 服务器                                              |
 | Plex     | Plex 服务器                                                  |
 | Subsonic | Navidrome、Gonic、Airsonic、Ampache 等兼容 Subsonic 的服务器 |
-| WebDAV   | NAS、Nextcloud、OpenList / AList 等 WebDAV 服务器（3.1.0 起） |
+| WebDAV   | NAS、Nextcloud、OpenList / AList 等 WebDAV 服务器（尚未发布） |
+| Last.fm | 用自己的 API key 把听歌记录上报到 Last.fm（尚未发布） |
+| ListenBrainz | 把听歌记录上报到 ListenBrainz 或兼容的自建服务（尚未发布） |
+| Discord | 在 Discord 个人资料上显示正在听的歌（尚未发布） |
 
 **第三方插件**：在 GitHub 上搜索 [`yesplaymusic-plugin`](https://github.com/topics/yesplaymusic-plugin) topic。发布插件时也请给仓库加上这个 topic。
 
-**安装方法**：设置 → 插件 → 安装插件。官方插件点一下就能装；第三方插件粘贴 GitHub 仓库、Release 或 .zip 链接，也可以从本地文件夹安装。装好后右键左下角头像切换到这个音乐源。
+**安装方法**：设置 → 插件 → 安装插件。官方插件点一下就能装；第三方插件粘贴 GitHub 仓库、Release 或 .zip 链接，也可以从本地文件夹安装。如果插件提供音乐源，装好后点击或右键左下角头像即可切换。
 
-**安全**：安装插件等于在本机运行别人写的代码，请只安装信任的插件。应用对插件做的限制见 [SECURITY.md](SECURITY.md)，主要有：
+**安全**：安装插件等于在本机运行别人写的代码，请只安装信任的插件。应用对插件做的限制见 [SECURITY.zh-CN.md](SECURITY.zh-CN.md)，主要有：
 
 - 每个插件跑在独立的 QuickJS 沙箱里，不能直接读写文件或启动进程，有内存和超时限制；
 - 只能访问 `permissions.network` 里声明的网站；
+- 只能连接 `permissions.ipc` 里声明的本机应用通道；
 - 启动本机程序（比如 `yt-dlp`）要在清单里声明，并由你在设置里单独允许。
 
 ## 开发插件
@@ -102,7 +111,7 @@ macOS 和 Windows 版本会自动检查更新；Linux 版本在 设置 → 关�
 
 首页和发现页由插件自己组织：应用内置了多种组件（特殊模式卡片、横向卡片架、歌曲翻页网格、排行榜、卡片网格），插件可以自由组合。需要其他形态的组件，请[提 Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
 
-完整接口见 [插件开发指南](docs/plugins.md)。
+完整接口见 [插件开发指南](docs/plugins.zh-CN.md)。
 
 ## AI 助手（MCP）
 
@@ -132,15 +141,17 @@ flutter test
 
 各平台额外需要：
 
-- **macOS**：Xcode 和 CocoaPods
+- **macOS**：Xcode 和 CocoaPods。按架构出包请参照[发布流程](docs/releasing.zh-CN.md#本地出包)。
 - **Windows**：Visual Studio 2022，勾选「使用 C++ 的桌面开发」
 - **Linux**：`sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libmpv-dev`
+
+Linux arm64 上请参照 [CI](.github/workflows/ci.yml) 从 Git 标签安装 Flutter。
 
 ## 反馈
 
 - 问题和建议请提 [Issue](https://github.com/qier222/YesPlayMusic/issues/new/choose)。
-- 安全问题请私下报告，见 [SECURITY.md](SECURITY.md)。
+- 安全问题请私下报告，见 [SECURITY.zh-CN.md](SECURITY.zh-CN.md)。
 
 ## 协议
 
-[GPL-3.0](LICENSE)。使用的第三方组件及其协议见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)，版本变化见 [CHANGELOG.md](CHANGELOG.md)。
+[GPL-3.0](LICENSE)。使用的第三方组件及其协议见 [THIRD_PARTY_NOTICES.zh-CN.md](THIRD_PARTY_NOTICES.zh-CN.md)，版本变化见 [CHANGELOG.md](CHANGELOG.md)。
