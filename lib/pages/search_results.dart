@@ -287,19 +287,27 @@ class _SearchResultsState extends State<SearchResults> {
                 _header(l.tabAlbums),
                 const SizedBox(height: 10),
                 LayoutBuilder(
-                  builder: (_, c) => _albums(
-                    albums,
-                    ((c.maxWidth + 16) / (124 + 16)).floor().clamp(1, 8),
-                  ),
+                  builder: (_, c) {
+                    final previewLimit = ((c.maxWidth + 16) / (124 + 16))
+                        .floor()
+                        .clamp(1, 8);
+                    final visibleCount = albums.length.clamp(0, previewLimit);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _albums(albums, visibleCount),
+                        if (nAlbums > visibleCount)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: _seeAll(
+                              l.searchViewAllAlbums(nAlbums),
+                              () => setState(() => _tab = 2),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
-                if (nAlbums > albums.length.clamp(0, 6))
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: _seeAll(
-                      l.searchViewAllAlbums(nAlbums),
-                      () => setState(() => _tab = 2),
-                    ),
-                  ),
               ],
             ],
           ),
