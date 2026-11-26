@@ -20,9 +20,13 @@ import 'package:yesplaymusic/ui/tap.dart';
 
 import '../music/local_source_test.dart' show wav;
 
-Widget appFor(AppState state, {Widget child = const Shell()}) => WidgetsApp(
+Widget appFor(
+  AppState state, {
+  Widget child = const Shell(),
+  Locale locale = const Locale('zh'),
+}) => WidgetsApp(
   color: const Color(0xFF0B0B0D),
-  locale: const Locale('zh'),
+  locale: locale,
   supportedLocales: AppLocalizations.supportedLocales,
   localizationsDelegates: const [
     AppLocalizations.delegate,

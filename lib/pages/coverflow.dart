@@ -145,9 +145,6 @@ class _Item {
       (from != null && app.queueFrom == from);
 }
 
-String _count(int n) =>
-    n < 1000 ? '$n' : '${n ~/ 1000},${(n % 1000).toString().padLeft(3, '0')}';
-
 class CoverflowPage extends StatefulWidget {
   const CoverflowPage({super.key, this.tab = 'albums'});
 
@@ -343,7 +340,8 @@ class _CoverflowPageState extends State<CoverflowPage>
     final app = context.app;
     final l = context.l10n;
     final lib = app.library;
-    final items = _itemsFor(app, l, Localizations.localeOf(context));
+    final locale = Localizations.localeOf(context);
+    final items = _itemsFor(app, l, locale);
     final n = items.length;
     final trackKey = app.hasQueue ? app.track.key : null;
     if (n == 0) {
@@ -388,7 +386,9 @@ class _CoverflowPageState extends State<CoverflowPage>
         lib.playlists.length,
         lib.artists.length,
       ][i];
-      return c == 0 && lib.loading.contains(_parts[i]) ? '…' : _count(c);
+      return c == 0 && lib.loading.contains(_parts[i])
+          ? '…'
+          : formatCount(c, locale);
     }
 
     return Focus(
