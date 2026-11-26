@@ -1674,7 +1674,7 @@ class _YearScrubberState extends State<_YearScrubber> {
         return (tick: tick, frac: p.mark.frac, mark: p.mark);
       }
     }
-    return (tick: tick, frac: YearTicksPainter.fracForY(local.dy), mark: null);
+    return (tick: tick, frac: YearTicksPainter.fracForTick(tick), mark: null);
   }
 
   @override

@@ -190,6 +190,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(railPainter(tester).hoverLabel, '2026.10');
 
+      // Near a tick boundary, tapping an unmarked tick must scroll to the
+      // same offset that hover previewed (the snapped tick center).
+      final boundaryPos =
+          railTopLeft + Offset(10, YearTicksPainter.yForTick(10) + 4);
+      await pointer.moveTo(boundaryPos);
+      await tester.pumpAndSettle();
+      expect(railPainter(tester).hover, 10);
+      await tester.tapAt(boundaryPos);
+      await tester.pumpAndSettle();
+      final listCtrl = tester
+          .widget<ListView>(find.byType(ListView))
+          .controller!;
+      final offsetFromEdge = listCtrl.offset;
+      expect(railPainter(tester).cur, 10);
+
+      await tester.tapAt(
+        railTopLeft + Offset(10, YearTicksPainter.yForTick(10)),
+      );
+      await tester.pumpAndSettle();
+      expect(listCtrl.offset, closeTo(offsetFromEdge, 0.01));
+
       // Tap the 2020 label -> must scroll 2020-3 and first 2020 song to the top.
       await tester.tapAt(label2020Center);
       await tester.pumpAndSettle();
