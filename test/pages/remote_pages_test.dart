@@ -121,6 +121,13 @@ class _Demo extends Source {
     ('Atlas', m.SearchKind.artists) => const m.SearchResult(
       artists: [m.Artist(id: 'a2', name: 'Atlas Artist')],
     ),
+    ('Paged', m.SearchKind.albums) => m.SearchResult(
+      albums: [
+        for (var i = 1; i <= 8; i++)
+          m.Album(id: 'paged$i', name: 'Paged Album $i'),
+      ],
+      more: true,
+    ),
     _ => const m.SearchResult(),
   };
 }
@@ -232,6 +239,19 @@ void main() {
     await _frames(t);
     expect(cards, findsNWidgets(5));
     expect(viewAll, findsNothing);
+  });
+
+  testWidgets('search All offers View all when more album pages exist', (
+    t,
+  ) async {
+    final app = await boot(t);
+    app.open('/search');
+    await _frames(t);
+    await t.enterText(find.byType(EditableText), 'Paged');
+    await _frames(t);
+
+    expect(find.textContaining('Paged Album '), findsNWidgets(8));
+    expect(find.text('查看全部 8 张专辑'), findsOneWidget);
   });
 
   testWidgets('专辑页底部：完整发行日期和版权', (t) async {

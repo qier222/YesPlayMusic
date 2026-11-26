@@ -210,7 +210,8 @@ class _SearchResultsState extends State<SearchResults> {
     final l = context.l10n;
     final r = _res;
     final songs = _tracks(r[m.SearchKind.tracks]?.tracks ?? const []);
-    final albums = r[m.SearchKind.albums]?.albums ?? const <m.Album>[];
+    final albumResult = r[m.SearchKind.albums];
+    final albums = albumResult?.albums ?? const <m.Album>[];
     final artists = r[m.SearchKind.artists]?.artists ?? const <m.Artist>[];
     final lists = r[m.SearchKind.playlists]?.playlists ?? const <m.Playlist>[];
     Widget more(m.SearchKind k) => r[k]?.more ?? false
@@ -296,7 +297,7 @@ class _SearchResultsState extends State<SearchResults> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _albums(albums, visibleCount),
-                        if (nAlbums > visibleCount)
+                        if (nAlbums > visibleCount || albumResult?.more == true)
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: _seeAll(
