@@ -210,7 +210,8 @@ class _SearchResultsState extends State<SearchResults> {
     final l = context.l10n;
     final r = _res;
     final songs = _tracks(r[m.SearchKind.tracks]?.tracks ?? const []);
-    final albums = r[m.SearchKind.albums]?.albums ?? const <m.Album>[];
+    final albumResult = r[m.SearchKind.albums];
+    final albums = albumResult?.albums ?? const <m.Album>[];
     final artists = r[m.SearchKind.artists]?.artists ?? const <m.Artist>[];
     final lists = r[m.SearchKind.playlists]?.playlists ?? const <m.Playlist>[];
     Widget more(m.SearchKind k) => r[k]?.more ?? false
@@ -287,19 +288,27 @@ class _SearchResultsState extends State<SearchResults> {
                 _header(l.tabAlbums),
                 const SizedBox(height: 10),
                 LayoutBuilder(
-                  builder: (_, c) => _albums(
-                    albums,
-                    ((c.maxWidth + 16) / (124 + 16)).floor().clamp(1, 8),
-                  ),
+                  builder: (_, c) {
+                    final previewLimit = ((c.maxWidth + 16) / (124 + 16))
+                        .floor()
+                        .clamp(1, 8);
+                    final visibleCount = albums.length.clamp(0, previewLimit);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _albums(albums, visibleCount),
+                        if (nAlbums > visibleCount || albumResult?.more == true)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: _seeAll(
+                              l.searchViewAllAlbums(nAlbums),
+                              () => setState(() => _tab = 2),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
-                if (nAlbums > albums.length.clamp(0, 6))
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: _seeAll(
-                      l.searchViewAllAlbums(nAlbums),
-                      () => setState(() => _tab = 2),
-                    ),
-                  ),
               ],
             ],
           ),

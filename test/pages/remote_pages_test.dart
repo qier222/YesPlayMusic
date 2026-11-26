@@ -111,6 +111,23 @@ class _Demo extends Source {
     ('夜晚', m.SearchKind.artists) => const m.SearchResult(
       artists: [m.Artist(id: 'a1', name: '测试歌手')],
     ),
+    ('Atlas', m.SearchKind.albums) => m.SearchResult(
+      albums: [
+        for (var i = 1; i <= 5; i++)
+          m.Album(id: 'atlas$i', name: 'Atlas Volume $i'),
+      ],
+      total: 5,
+    ),
+    ('Atlas', m.SearchKind.artists) => const m.SearchResult(
+      artists: [m.Artist(id: 'a2', name: 'Atlas Artist')],
+    ),
+    ('Paged', m.SearchKind.albums) => m.SearchResult(
+      albums: [
+        for (var i = 1; i <= 8; i++)
+          m.Album(id: 'paged$i', name: 'Paged Album $i'),
+      ],
+      more: true,
+    ),
     _ => const m.SearchResult(),
   };
 }
@@ -202,6 +219,39 @@ void main() {
     await search('无结果');
     expect(find.text('没有找到「无结果」'), findsOneWidget);
     expect(find.text('歌单'), findsNothing);
+  });
+
+  testWidgets('search All offers View all only when album matches are hidden', (
+    t,
+  ) async {
+    final app = await boot(t);
+    app.open('/search');
+    await _frames(t);
+    await t.enterText(find.byType(EditableText), 'Atlas');
+    await _frames(t);
+
+    final cards = find.textContaining('Atlas Volume ');
+    final viewAll = find.text('查看全部 5 张专辑');
+    expect(cards, findsNWidgets(4));
+    expect(viewAll, findsOneWidget);
+
+    t.view.physicalSize = const Size(1440, 800);
+    await _frames(t);
+    expect(cards, findsNWidgets(5));
+    expect(viewAll, findsNothing);
+  });
+
+  testWidgets('search All offers View all when more album pages exist', (
+    t,
+  ) async {
+    final app = await boot(t);
+    app.open('/search');
+    await _frames(t);
+    await t.enterText(find.byType(EditableText), 'Paged');
+    await _frames(t);
+
+    expect(find.textContaining('Paged Album '), findsNWidgets(8));
+    expect(find.text('查看全部 8 张专辑'), findsOneWidget);
   });
 
   testWidgets('专辑页底部：完整发行日期和版权', (t) async {
