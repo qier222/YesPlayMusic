@@ -121,6 +121,23 @@ void flacWithTags(String path, Map<String, String> tags) {
     ]);
 }
 
+void _taggedMp3(String path, Map<String, String> frames) {
+  final tag = BytesBuilder();
+  for (final MapEntry(:key, :value) in frames.entries) {
+    tag.add(key.codeUnits);
+    tag.add((ByteData(4)..setUint32(0, value.length + 1)).buffer.asUint8List());
+    tag.add([0, 0, 0, ...value.codeUnits]);
+  }
+  final size = tag.length;
+  File(path).writeAsBytesSync([
+    ...'ID3'.codeUnits, 3, 0, 0,
+    for (final shift in [21, 14, 7, 0]) (size >> shift) & 0x7f,
+    ...tag.takeBytes(),
+    // MPEG-1 Layer III frame headers with 128 kbps at 44.1 kHz.
+    for (var i = 0; i < 3; i++) ...[0xff, 0xfb, 0x90, 0x64, ...Uint8List(413)],
+  ]);
+}
+
 void main() {
   late Directory tmp;
   late LocalSource src;
@@ -389,6 +406,42 @@ void main() {
       'Kill Bill',
     );
   });
+
+  for (final (label, tpe1, tpe2, trackArtists, albumArtist) in [
+    (
+      'different TPE1 and TPE2',
+      'Track Artist / Guest',
+      'Album Artist',
+      ['Track Artist', 'Guest'],
+      'Album Artist',
+    ),
+    ('TPE1 only', 'Track Artist', null, ['Track Artist'], 'Track Artist'),
+    ('TPE2 only', null, 'Album Artist', <String>[], 'Album Artist'),
+  ]) {
+    test('MP3 credits with $label', () async {
+      _taggedMp3(p.join(music, 'Credit Sample.MP3'), {
+        'TIT2': 'Credit Sample',
+        'TALB': 'Credit Compilation',
+        'TPE1': ?tpe1,
+        'TPE2': ?tpe2,
+      });
+      await src.scan();
+
+      final libraryTrack = (await src.home()).sections.first.tracks.firstWhere(
+        (track) => track.name == 'Credit Sample',
+      );
+      expect(libraryTrack.artists.map((a) => a.name), trackArtists);
+      expect(libraryTrack.album.artists.single.name, albumArtist);
+
+      final found = await src.search('Credit Sample', SearchKind.tracks);
+      expect(found.tracks.single.artists.map((a) => a.name), trackArtists);
+      expect(
+        (await src.search('Track Artist', SearchKind.tracks)).total,
+        tpe1 == null ? 0 : 1,
+      );
+      expect((await src.search('Album Artist', SearchKind.tracks)).total, 0);
+    });
+  }
 
   // A .lrc with the same name is used as lyrics; a second line with the same timestamp is the translation.
   test('sidecar lrc lyrics', () async {
