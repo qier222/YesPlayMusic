@@ -1,5 +1,6 @@
 // 在真机（macOS）上跑真实的 libmpv：flutter test integration_test -d macos
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -185,5 +186,53 @@ void main() {
     await replayed.future.timeout(const Duration(seconds: 10));
     expect(await engine.mpvProperty('path'), b);
     expect(advanced, ['b']);
+  });
+
+  // mpv must not auto-load same-name .lrc sidecars as subtitles: whole-second
+  // timestamps fail to open in libmpv and emit an error toast, while ordinary
+  // .lrc files would otherwise be attached as external subtitle tracks.
+  test('does not auto-load sidecar .lrc subtitles', () async {
+    final tmp = Directory.systemTemp.createTempSync('ypm_sub_auto_');
+    addTearDown(() => tmp.deleteSync(recursive: true));
+    final wholeSec = p.join(tmp.path, 'whole.wav');
+    sineWav(wholeSec, 1500);
+    File(p.join(tmp.path, 'whole.lrc'))
+        .writeAsStringSync('[00:00]First line\n[00:01]Second line\n');
+    final fracSec = p.join(tmp.path, 'frac.wav');
+    sineWav(fracSec, 1500);
+    File(p.join(tmp.path, 'frac.lrc'))
+        .writeAsStringSync('[00:00.00]First line\n[00:01.00]Second line\n');
+    AudioStream wav(String path) =>
+        AudioStream(url: Uri.file(path).toString(), type: 'wav');
+
+    final engine = AudioEngine();
+    addTearDown(engine.dispose);
+    final errors = <String>[];
+    var done = Completer<void>();
+    engine.onError = errors.add;
+    engine.onCompleted = () {
+      if (!done.isCompleted) done.complete();
+    };
+
+    await engine.setVolume(0.2);
+
+    await engine.open(wav(wholeSec), key: 'whole');
+    await done.future.timeout(const Duration(seconds: 10));
+    expect(errors, isEmpty);
+
+    done = Completer<void>();
+    final playing = Completer<void>();
+    engine.onPosition = (d) {
+      if (d > Duration.zero && !playing.isCompleted) playing.complete();
+    };
+    await engine.open(wav(fracSec), key: 'frac');
+    await playing.future.timeout(const Duration(seconds: 10));
+    final tracks = (jsonDecode(
+      await engine.mpvProperty('track-list'),
+    ) as List<dynamic>).cast<Map<String, dynamic>>();
+    expect(tracks.where((t) => t['type'] == 'sub'), isEmpty);
+    await done.future.timeout(const Duration(seconds: 10));
+    expect(errors, isEmpty);
+    expect(await engine.mpvProperty('sub-auto'), 'no');
   });
 }

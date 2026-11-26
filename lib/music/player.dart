@@ -80,6 +80,8 @@ class AudioEngine implements PlaybackEngine {
       final proxy = systemProxy();
       if (proxy != null) n.setProperty('http-proxy', proxy.url);
       n.setProperty('prefetch-playlist', 'yes');
+      // Lyrics are loaded by the app; stop mpv auto-loading sidecar .lrc files as subtitles.
+      n.setProperty('sub-auto', 'no');
       n.onLoadHooks.add(_onLoad);
     }
   }
