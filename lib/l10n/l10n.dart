@@ -182,6 +182,9 @@ String formatHomeDate(DateTime d, Locale locale) {
   }
 }
 
+String formatCount(int count, Locale locale) =>
+    NumberFormat.decimalPattern(locale.toLanguageTag()).format(count);
+
 /// Abbreviated play / comment counts: CJK uses 万/亿, English K/M/B, other languages their CLDR short forms.
 String formatShortCount(int n, Locale locale) {
   String one(double v) => v >= 10

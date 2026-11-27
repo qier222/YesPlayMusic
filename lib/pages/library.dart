@@ -88,11 +88,12 @@ class _LibraryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = context.app;
     final lib = app.library;
+    final locale = Localizations.localeOf(context);
     // Still loading with nothing arrived yet: show an ellipsis
     String n(String part, int count) =>
         count == 0 && (lib?.loading.contains(part) ?? false)
         ? '…'
-        : _count(count);
+        : formatCount(count, locale);
     final l = context.l10n;
     final tabs = [
       (l.tabSongs, lib == null ? '0' : n('tracks', lib.tracks.length), 'songs'),
@@ -150,9 +151,6 @@ class _LibraryHeader extends StatelessWidget {
     );
   }
 }
-
-String _count(int n) =>
-    n < 1000 ? '$n' : '${n ~/ 1000},${(n % 1000).toString().padLeft(3, '0')}';
 
 /// Albums on the record shelf: the current source's library.
 List<Album> _shelf(AppState app) => app.library?.albums ?? const [];
