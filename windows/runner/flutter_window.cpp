@@ -6,6 +6,8 @@
 #include <shellapi.h>
 #include <windowsx.h>
 
+#include <algorithm>
+#include <cwchar>
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
@@ -34,6 +36,49 @@ const flutter::EncodableValue* Lookup(const flutter::EncodableMap& map,
                                       const char* key) {
   auto it = map.find(flutter::EncodableValue(key));
   return it == map.end() ? nullptr : &it->second;
+}
+
+void AssignString(const flutter::EncodableMap& map, const char* key,
+                  std::wstring& out) {
+  if (const auto* v = Lookup(map, key)) {
+    if (const auto* str = std::get_if<std::string>(v)) {
+      out = Utf16FromUtf8(*str);
+    }
+  }
+}
+
+std::wstring TruncateUtf16(std::wstring text, size_t max_chars) {
+  if (text.size() <= max_chars) return text;
+  if (max_chars <= 3) {
+    size_t len = max_chars;
+    if (len > 0 && IS_HIGH_SURROGATE(text[len - 1])) len--;
+    return text.substr(0, len);
+  }
+  size_t len = max_chars - 3;
+  if (len > 0 && IS_HIGH_SURROGATE(text[len - 1])) len--;
+  text.resize(len);
+  text.append(L"...");
+  return text;
+}
+
+std::wstring FormatTrackText(const MediaPlaybackState& state,
+                             size_t max_chars) {
+  if (!state.active || state.title.empty()) return L"YesPlayMusic";
+  std::wstring full = state.artist.empty()
+                          ? state.title
+                          : state.title + L" - " + state.artist;
+  return TruncateUtf16(std::move(full), max_chars);
+}
+
+// Win32 menu strings treat a single '&' as an accelerator prefix.
+std::wstring EscapeMenuText(const std::wstring& text) {
+  std::wstring out;
+  out.reserve(text.size());
+  for (wchar_t ch : text) {
+    if (ch == L'&') out.push_back(L'&');
+    out.push_back(ch);
+  }
+  return out;
 }
 
 // Thickness of the resize frame, in physical pixels. With the title bar
@@ -87,8 +132,10 @@ bool FlutterWindow::OnCreate() {
   HWND view = flutter_controller_->view()->GetNativeWindow();
   SetChildContent(view);
   SetWindowSubclass(view, ViewProc, 1, 0);
+  taskbar_controls_ = std::make_unique<TaskbarControls>(GetHandle());
   media_session_ = std::make_unique<WindowsMediaSession>(
-      GetHandle(), flutter_controller_->engine()->messenger());
+      GetHandle(), flutter_controller_->engine()->messenger(),
+      [this](const MediaPlaybackState& state) { OnPlaybackStateChanged(state); });
 
   window_channel_ =
       std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
@@ -114,15 +161,21 @@ bool FlutterWindow::OnCreate() {
         } else if (method == "prefs") {
           if (const auto* args =
                   std::get_if<flutter::EncodableMap>(call.arguments())) {
-            if (const auto* v = Lookup(*args, "show")) {
-              if (const auto* str = std::get_if<std::string>(v)) {
-                tray_show_label_ = Utf16FromUtf8(*str);
-              }
-            }
-            if (const auto* v = Lookup(*args, "quit")) {
-              if (const auto* str = std::get_if<std::string>(v)) {
-                tray_quit_label_ = Utf16FromUtf8(*str);
-              }
+            AssignString(*args, "show", tray_show_label_);
+            AssignString(*args, "quit", tray_quit_label_);
+            AssignString(*args, "play", tray_play_label_);
+            AssignString(*args, "pause", tray_pause_label_);
+            AssignString(*args, "prev", tray_prev_label_);
+            AssignString(*args, "next", tray_next_label_);
+            AssignString(*args, "like", tray_like_label_);
+            AssignString(*args, "unlike", tray_unlike_label_);
+            AssignString(*args, "shuffle", tray_shuffle_label_);
+            AssignString(*args, "repeat", tray_repeat_label_);
+            if (taskbar_controls_) {
+              taskbar_controls_->UpdateLabels(TaskbarLabels{
+                  tray_prev_label_, tray_play_label_, tray_pause_label_,
+                  tray_next_label_, tray_like_label_, tray_unlike_label_,
+              });
             }
             const auto* keep = Lookup(*args, "keepRunning");
             const auto* on = keep ? std::get_if<bool>(keep) : nullptr;
@@ -175,6 +228,14 @@ void FlutterWindow::SendWindowState(bool active) {
                }));
 }
 
+void FlutterWindow::OnPlaybackStateChanged(const MediaPlaybackState& state) {
+  playback_state_ = state;
+  UpdateTrayTooltip();
+  if (taskbar_controls_) {
+    taskbar_controls_->UpdateState(state);
+  }
+}
+
 void FlutterWindow::SetKeepRunning(bool keep_running) {
   const bool was = keep_running_;
   keep_running_ = keep_running;
@@ -191,6 +252,7 @@ void FlutterWindow::SetKeepRunning(bool keep_running) {
 void FlutterWindow::AddTrayIcon() {
   HWND hwnd = GetHandle();
   if (tray_added_ || !hwnd) return;
+  tray_tip_ = FormatTrackText(playback_state_, 127);
   NOTIFYICONDATA nid = {sizeof(nid)};
   nid.hWnd = hwnd;
   nid.uID = kTrayId;
@@ -200,7 +262,7 @@ void FlutterWindow::AddTrayIcon() {
       LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_APP_ICON),
                 IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
                 GetSystemMetrics(SM_CYSMICON), LR_SHARED));
-  wcscpy_s(nid.szTip, L"YesPlayMusic");
+  wcsncpy_s(nid.szTip, tray_tip_.c_str(), _TRUNCATE);
   if (!Shell_NotifyIcon(NIM_ADD, &nid)) return;
   nid.uVersion = NOTIFYICON_VERSION_4;
   Shell_NotifyIcon(NIM_SETVERSION, &nid);
@@ -217,6 +279,20 @@ void FlutterWindow::RemoveTrayIcon() {
   tray_added_ = false;
 }
 
+void FlutterWindow::UpdateTrayTooltip() {
+  const std::wstring next = FormatTrackText(playback_state_, 127);
+  if (next == tray_tip_) return;
+  tray_tip_ = next;
+  HWND hwnd = GetHandle();
+  if (!tray_added_ || !hwnd) return;
+  NOTIFYICONDATA nid = {sizeof(nid)};
+  nid.hWnd = hwnd;
+  nid.uID = kTrayId;
+  nid.uFlags = NIF_TIP | NIF_SHOWTIP;
+  wcsncpy_s(nid.szTip, tray_tip_.c_str(), _TRUNCATE);
+  Shell_NotifyIcon(NIM_MODIFY, &nid);
+}
+
 void FlutterWindow::RestoreWindow() {
   HWND hwnd = GetHandle();
   if (!hwnd) return;
@@ -229,7 +305,40 @@ void FlutterWindow::ShowTrayMenu(POINT at) {
   HWND hwnd = GetHandle();
   HMENU menu = CreatePopupMenu();
   if (!menu) return;
-  enum : UINT { kShow = 1, kQuit = 2 };
+  enum : UINT {
+    kPlayPause = 1,
+    kPrev = 2,
+    kNext = 3,
+    kLike = 4,
+    kShuffle = 5,
+    kRepeat = 6,
+    kShow = 7,
+    kQuit = 8,
+  };
+  if (playback_state_.active) {
+    if (!playback_state_.title.empty()) {
+      const std::wstring header =
+          EscapeMenuText(FormatTrackText(playback_state_, 64));
+      AppendMenu(menu, MF_STRING | MF_DISABLED | MF_GRAYED, 0, header.c_str());
+      AppendMenu(menu, MF_SEPARATOR, 0, nullptr);
+    }
+    AppendMenu(menu, MF_STRING, kPlayPause,
+               (playback_state_.playing ? tray_pause_label_ : tray_play_label_)
+                   .c_str());
+    AppendMenu(menu, MF_STRING, kPrev, tray_prev_label_.c_str());
+    AppendMenu(menu, MF_STRING, kNext, tray_next_label_.c_str());
+    AppendMenu(menu, MF_STRING, kLike,
+               (playback_state_.liked ? tray_unlike_label_ : tray_like_label_)
+                   .c_str());
+    AppendMenu(menu, MF_SEPARATOR, 0, nullptr);
+    AppendMenu(menu,
+               MF_STRING | (playback_state_.shuffle ? MF_CHECKED : MF_UNCHECKED),
+               kShuffle, tray_shuffle_label_.c_str());
+    AppendMenu(menu,
+               MF_STRING | (playback_state_.repeat ? MF_CHECKED : MF_UNCHECKED),
+               kRepeat, tray_repeat_label_.c_str());
+    AppendMenu(menu, MF_SEPARATOR, 0, nullptr);
+  }
   AppendMenu(menu, MF_STRING, kShow, tray_show_label_.c_str());
   AppendMenu(menu, MF_SEPARATOR, 0, nullptr);
   AppendMenu(menu, MF_STRING, kQuit, tray_quit_label_.c_str());
@@ -241,14 +350,36 @@ void FlutterWindow::ShowTrayMenu(POINT at) {
       hwnd, nullptr);
   DestroyMenu(menu);
   PostMessage(hwnd, WM_NULL, 0, 0);
-  if (cmd == kShow) {
-    RestoreWindow();
-  } else if (cmd == kQuit) {
-    DestroyWindow(hwnd);
+  switch (cmd) {
+    case kPlayPause:
+      if (media_session_) media_session_->SendCommand("toggle");
+      break;
+    case kPrev:
+      if (media_session_) media_session_->SendCommand("previous");
+      break;
+    case kNext:
+      if (media_session_) media_session_->SendCommand("next");
+      break;
+    case kLike:
+      if (media_session_) media_session_->SendCommand("like");
+      break;
+    case kShuffle:
+      if (media_session_) media_session_->SendCommand("shuffle");
+      break;
+    case kRepeat:
+      if (media_session_) media_session_->SendCommand("repeat");
+      break;
+    case kShow:
+      RestoreWindow();
+      break;
+    case kQuit:
+      DestroyWindow(hwnd);
+      break;
   }
 }
 
 void FlutterWindow::OnDestroy() {
+  taskbar_controls_.reset();
   media_session_.reset();
   window_channel_ = nullptr;
   if (flutter_controller_) {
@@ -263,8 +394,32 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
   if (message == WindowsMediaSession::kCommandMessage) {
-    if (media_session_) media_session_->DispatchCommand(wparam, lparam);
+    if (media_session_) media_session_->DispatchCommand();
     return 0;
+  }
+
+  if (taskbar_controls_ &&
+      message == taskbar_controls_->TaskbarButtonCreatedMessage()) {
+    taskbar_controls_->OnTaskbarButtonCreated();
+    return 0;
+  }
+
+  if (message == WM_COMMAND && taskbar_controls_) {
+    if (const char* cmd = taskbar_controls_->HandleCommand(wparam)) {
+      if (media_session_) media_session_->SendCommand(cmd);
+      return 0;
+    }
+  }
+
+  if (taskbar_controls_) {
+    if (message == WM_DPICHANGED) {
+      taskbar_controls_->OnThemeOrDpiChanged(HIWORD(wparam));
+    } else if (message == WM_THEMECHANGED ||
+               (message == WM_SETTINGCHANGE && lparam &&
+                std::wcscmp(reinterpret_cast<const wchar_t*>(lparam),
+                            L"ImmersiveColorSet") == 0)) {
+      taskbar_controls_->OnThemeOrDpiChanged();
+    }
   }
 
   // Flutter may request an application exit when its last window receives

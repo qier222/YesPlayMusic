@@ -34,6 +34,16 @@ void _syncWindowPrefs(bool keepRunning, AppLocalizations l) {
     'keepRunning': keepRunning,
     'show': l.trayShowWindow,
     'quit': l.trayQuit,
+    if (Platform.isWindows) ...{
+      'play': l.actionPlay,
+      'pause': l.actionPause,
+      'prev': l.actionPrev,
+      'next': l.actionNext,
+      'like': l.actionLike,
+      'unlike': l.actionUnlike,
+      'shuffle': l.actionShuffle,
+      'repeat': l.miniRepeatOn,
+    },
   };
   final key = '$args';
   if (key == _sentWindowPrefs) return;

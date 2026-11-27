@@ -1,10 +1,10 @@
 #include "media_session.h"
 
 #include <SystemMediaTransportControlsInterop.h>
-#include <shcore.h>
-#include <shlwapi.h>
 #include <flutter/method_channel.h>
 #include <flutter/standard_method_codec.h>
+#include <shcore.h>
+#include <shlwapi.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Media.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -12,7 +12,9 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <deque>
 #include <exception>
+#include <mutex>
 
 namespace {
 
@@ -20,12 +22,16 @@ using namespace winrt::Windows::Media;
 using Value = flutter::EncodableValue;
 using Map = flutter::EncodableMap;
 using TimeSpan = winrt::Windows::Foundation::TimeSpan;
-constexpr WPARAM kSeek = 0x100;
 
 template <typename T>
 const T* Read(const Map& args, const char* key) {
   const auto it = args.find(Value(key));
   return it == args.end() ? nullptr : std::get_if<T>(&it->second);
+}
+
+bool ReadBool(const Map& args, const char* key, bool fallback = false) {
+  const auto* value = Read<bool>(args, key);
+  return value ? *value : fallback;
 }
 
 winrt::hstring Text(const Map& args, const char* key) {
@@ -48,19 +54,48 @@ const char* ButtonMethod(SystemMediaTransportControlsButton button) {
   switch (button) {
     case SystemMediaTransportControlsButton::Play: return "play";
     case SystemMediaTransportControlsButton::Pause: return "pause";
+    case SystemMediaTransportControlsButton::Stop: return "stop";
     case SystemMediaTransportControlsButton::Next: return "next";
     case SystemMediaTransportControlsButton::Previous: return "previous";
     default: return nullptr;
   }
 }
 
+struct PendingCommand {
+  enum class Kind { kButton, kSeek, kShuffle, kRepeat };
+  Kind kind;
+  SystemMediaTransportControlsButton button =
+      SystemMediaTransportControlsButton::Play;
+  int64_t seek_ticks = 0;
+  bool shuffle = false;
+  MediaPlaybackAutoRepeatMode repeat_mode = MediaPlaybackAutoRepeatMode::None;
+};
+
+struct CommandQueue {
+  std::mutex mutex;
+  std::deque<PendingCommand> items;
+};
+
+void PostCommand(HWND window, const std::shared_ptr<CommandQueue>& queue,
+                 PendingCommand cmd) {
+  {
+    std::lock_guard<std::mutex> lock(queue->mutex);
+    queue->items.push_back(cmd);
+  }
+  PostMessage(window, WindowsMediaSession::kCommandMessage, 0, 0);
+}
+
 }  // namespace
 
 class WindowsMediaSession::Impl {
  public:
-  Impl(HWND window, flutter::BinaryMessenger* messenger)
-      : window_(window), channel_(messenger, "yesplaymusic/media",
-                                 &flutter::StandardMethodCodec::GetInstance()) {
+  Impl(HWND window, flutter::BinaryMessenger* messenger,
+       StateCallback on_state_changed)
+      : window_(window),
+        channel_(messenger, "yesplaymusic/media",
+                 &flutter::StandardMethodCodec::GetInstance()),
+        on_state_changed_(std::move(on_state_changed)),
+        queue_(std::make_shared<CommandQueue>()) {
     channel_.SetMethodCallHandler([this](const auto& call, auto result) {
       try {
         if (call.method_name() == "clear") {
@@ -95,10 +130,13 @@ class WindowsMediaSession::Impl {
   }
 
   ~Impl() {
+    on_state_changed_ = nullptr;
     channel_.SetMethodCallHandler(nullptr);
     if (controls_) {
       controls_.ButtonPressed(button_);
       controls_.PlaybackPositionChangeRequested(seek_);
+      controls_.ShuffleEnabledChangeRequested(shuffle_);
+      controls_.AutoRepeatModeChangeRequested(repeat_);
       try {
         Clear();
       } catch (const winrt::hresult_error& error) {
@@ -107,15 +145,48 @@ class WindowsMediaSession::Impl {
     }
   }
 
-  void DispatchCommand(WPARAM command, LPARAM position) {
-    if (!active_) return;
-    if (command == kSeek) {
-      const auto seconds = std::chrono::duration<double>(TimeSpan(position));
-      channel_.InvokeMethod("seek", std::make_unique<Value>(seconds.count()));
-    } else if (const char* method =
-                   ButtonMethod(static_cast<SystemMediaTransportControlsButton>(command))) {
-      channel_.InvokeMethod(method, nullptr);
+  void DispatchCommand() {
+    std::deque<PendingCommand> pending;
+    {
+      std::lock_guard<std::mutex> lock(queue_->mutex);
+      pending.swap(queue_->items);
     }
+    if (!active_) return;
+    for (const auto& cmd : pending) {
+      switch (cmd.kind) {
+        case PendingCommand::Kind::kButton:
+          if (const char* method = ButtonMethod(cmd.button)) {
+            channel_.InvokeMethod(method, nullptr);
+          }
+          break;
+        case PendingCommand::Kind::kSeek: {
+          const auto seconds =
+              std::chrono::duration<double>(TimeSpan(cmd.seek_ticks));
+          channel_.InvokeMethod("seek", std::make_unique<Value>(seconds.count()));
+          break;
+        }
+        case PendingCommand::Kind::kShuffle:
+          channel_.InvokeMethod("shuffle", std::make_unique<Value>(cmd.shuffle));
+          break;
+        case PendingCommand::Kind::kRepeat: {
+          // AppState supports list repeat on/off; map Track requests as a toggle
+          // so cycling through repeat modes never gets stuck.
+          const bool target =
+              cmd.repeat_mode == MediaPlaybackAutoRepeatMode::None
+                  ? false
+                  : (cmd.repeat_mode == MediaPlaybackAutoRepeatMode::List
+                         ? true
+                         : !state_.repeat);
+          channel_.InvokeMethod("repeat", std::make_unique<Value>(target));
+          break;
+        }
+      }
+    }
+  }
+
+  void SendCommand(const char* method) {
+    if (!active_ || !method) return;
+    channel_.InvokeMethod(method, nullptr);
   }
 
  private:
@@ -128,24 +199,55 @@ class WindowsMediaSession::Impl {
         winrt::put_abi(controls)));
     controls.IsPlayEnabled(true);
     controls.IsPauseEnabled(true);
+    controls.IsStopEnabled(true);
     controls.IsNextEnabled(true);
     controls.IsPreviousEnabled(true);
-    // WinRT handlers can run off the platform thread. Only the window thread
-    // may invoke the Flutter method channel.
-    const auto button = controls.ButtonPressed([window = window_](const auto&, const auto& args) {
-      PostMessage(window, kCommandMessage, static_cast<WPARAM>(args.Button()), 0);
-    });
+
+    // WinRT handlers can run off the platform thread. Capture only value handles
+    // and marshal commands back to the window thread before invoking Dart.
+    const HWND window = window_;
+    const auto queue = queue_;
+    const auto button = controls.ButtonPressed(
+        [window, queue](const auto&, const auto& args) {
+          PendingCommand cmd;
+          cmd.kind = PendingCommand::Kind::kButton;
+          cmd.button = args.Button();
+          PostCommand(window, queue, cmd);
+        });
+    winrt::event_token seek{}, shuffle{}, repeat{};
     try {
-      seek_ = controls.PlaybackPositionChangeRequested(
-          [window = window_](const auto&, const auto& args) {
-            PostMessage(window, kCommandMessage, kSeek,
-                        static_cast<LPARAM>(args.RequestedPlaybackPosition().count()));
+      seek = controls.PlaybackPositionChangeRequested(
+          [window, queue](const auto&, const auto& args) {
+            PendingCommand cmd;
+            cmd.kind = PendingCommand::Kind::kSeek;
+            cmd.seek_ticks = args.RequestedPlaybackPosition().count();
+            PostCommand(window, queue, cmd);
+          });
+      shuffle = controls.ShuffleEnabledChangeRequested(
+          [window, queue](const auto&, const auto& args) {
+            PendingCommand cmd;
+            cmd.kind = PendingCommand::Kind::kShuffle;
+            cmd.shuffle = args.RequestedShuffleEnabled();
+            PostCommand(window, queue, cmd);
+          });
+      repeat = controls.AutoRepeatModeChangeRequested(
+          [window, queue](const auto&, const auto& args) {
+            PendingCommand cmd;
+            cmd.kind = PendingCommand::Kind::kRepeat;
+            cmd.repeat_mode = args.RequestedAutoRepeatMode();
+            PostCommand(window, queue, cmd);
           });
     } catch (...) {
+      if (repeat.value) controls.AutoRepeatModeChangeRequested(repeat);
+      if (shuffle.value) controls.ShuffleEnabledChangeRequested(shuffle);
+      if (seek.value) controls.PlaybackPositionChangeRequested(seek);
       controls.ButtonPressed(button);
       throw;
     }
     button_ = button;
+    seek_ = seek;
+    shuffle_ = shuffle;
+    repeat_ = repeat;
     controls_ = controls;
   }
 
@@ -154,31 +256,59 @@ class WindowsMediaSession::Impl {
     if (!playing) throw winrt::hresult_invalid_argument(L"Missing playback state");
     const auto duration = ReadTime(args, "duration");
     const auto position = std::min(ReadTime(args, "position"), duration);
+    const bool shuffle = ReadBool(args, "shuffle");
+    const bool repeat = ReadBool(args, "repeat");
+    const bool liked = ReadBool(args, "liked");
+    const winrt::hstring title = Text(args, "title");
+    const winrt::hstring artist = Text(args, "artist");
+    const winrt::hstring album = Text(args, "album");
     if (!controls_) Initialize();
 
     const auto* artwork_changed = Read<bool>(args, "artworkChanged");
-    if (!active_ || (artwork_changed && *artwork_changed)) UpdateMetadata(args);
+    const bool reset_artwork = !active_ || (artwork_changed && *artwork_changed);
+    const bool text_changed =
+        title != state_.title || artist != state_.artist;
+    if (reset_artwork || text_changed) {
+      UpdateMetadata(title, artist, album, reset_artwork);
+    }
+
     SystemMediaTransportControlsTimelineProperties timeline;
+    timeline.StartTime(TimeSpan(0));
+    timeline.MinSeekTime(TimeSpan(0));
     timeline.EndTime(duration);
     timeline.MaxSeekTime(duration);
     timeline.Position(position);
     controls_.UpdateTimelineProperties(timeline);
     controls_.PlaybackStatus(*playing ? MediaPlaybackStatus::Playing
                                       : MediaPlaybackStatus::Paused);
+    controls_.PlaybackRate(*playing ? 1.0 : 0.0);
+    controls_.ShuffleEnabled(shuffle);
+    controls_.AutoRepeatMode(repeat ? MediaPlaybackAutoRepeatMode::List
+                                    : MediaPlaybackAutoRepeatMode::None);
     if (!active_) {
       controls_.IsEnabled(true);
       active_ = true;
     }
+
+    MediaPlaybackState next_state{
+        true, *playing, shuffle, repeat, liked,
+        std::wstring(title), std::wstring(artist),
+    };
+    if (next_state != state_) {
+      state_ = std::move(next_state);
+      if (on_state_changed_) on_state_changed_(state_);
+    }
   }
 
-  void UpdateMetadata(const Map& args) {
+  void UpdateMetadata(const winrt::hstring& title, const winrt::hstring& artist,
+                      const winrt::hstring& album, bool clear_thumbnail) {
     auto updater = controls_.DisplayUpdater();
     updater.Type(MediaPlaybackType::Music);
     const auto music = updater.MusicProperties();
-    music.Title(Text(args, "title"));
-    music.Artist(Text(args, "artist"));
-    music.AlbumTitle(Text(args, "album"));
-    updater.Thumbnail(nullptr);
+    music.Title(title);
+    music.Artist(artist);
+    music.AlbumTitle(album);
+    if (clear_thumbnail) updater.Thumbnail(nullptr);
     updater.Update();
   }
 
@@ -197,28 +327,43 @@ class WindowsMediaSession::Impl {
   }
 
   void Clear() {
-    if (!controls_) return;
-    controls_.IsEnabled(false);
+    if (controls_) {
+      controls_.IsEnabled(false);
+      controls_.PlaybackStatus(MediaPlaybackStatus::Closed);
+      const auto updater = controls_.DisplayUpdater();
+      updater.ClearAll();
+      updater.Update();
+    }
+    const bool was_active = active_ || state_.active;
     active_ = false;
-    controls_.PlaybackStatus(MediaPlaybackStatus::Closed);
-    const auto updater = controls_.DisplayUpdater();
-    updater.ClearAll();
-    updater.Update();
+    state_ = MediaPlaybackState{};
+    if (was_active && on_state_changed_) {
+      on_state_changed_(state_);
+    }
   }
 
   const HWND window_;
   flutter::MethodChannel<Value> channel_;
+  StateCallback on_state_changed_;
+  std::shared_ptr<CommandQueue> queue_;
   SystemMediaTransportControls controls_{nullptr};
-  winrt::event_token button_{}, seek_{};
+  winrt::event_token button_{}, seek_{}, shuffle_{}, repeat_{};
   bool active_ = false;
+  MediaPlaybackState state_;
 };
 
 WindowsMediaSession::WindowsMediaSession(HWND window,
-                                         flutter::BinaryMessenger* messenger)
-    : impl_(std::make_unique<Impl>(window, messenger)) {}
+                                         flutter::BinaryMessenger* messenger,
+                                         StateCallback on_state_changed)
+    : impl_(std::make_unique<Impl>(window, messenger,
+                                   std::move(on_state_changed))) {}
 
 WindowsMediaSession::~WindowsMediaSession() = default;
 
-void WindowsMediaSession::DispatchCommand(WPARAM command, LPARAM position) {
-  impl_->DispatchCommand(command, position);
+void WindowsMediaSession::DispatchCommand() {
+  impl_->DispatchCommand();
+}
+
+void WindowsMediaSession::SendCommand(const char* method) {
+  impl_->SendCommand(method);
 }
