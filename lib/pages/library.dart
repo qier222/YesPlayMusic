@@ -12,6 +12,7 @@ import '../menus.dart';
 import '../state.dart';
 import '../theme.dart';
 import '../ui.dart';
+import 'artist_cloud_layout.dart';
 import 'common.dart';
 import 'settings.dart' show openPluginSettings;
 import 'remote.dart' show Notice, errorText;
@@ -1929,9 +1930,6 @@ class _ArtistCloud extends StatelessWidget {
   const _ArtistCloud({required this.artists});
   final List<LibraryArtist> artists;
 
-  // Bubble diameter 96–184 in the design
-  static const minD = 96.0, maxD = 184.0, label = 28.0, gap = 18.0;
-
   @override
   Widget build(BuildContext context) {
     final app = context.app;
@@ -1974,48 +1972,13 @@ class _ArtistCloud extends StatelessWidget {
 final _clouds =
     Expando<(double, List<(LibraryArtist, Offset, double)>, double)>();
 
-/// Bubble layout: from the center along a spiral, each bubble goes in the first spot that doesn't overlap existing bubbles
-/// (names included); only width-constrained, height grows with the count. Cached by list and width.
 (List<(LibraryArtist, Offset, double)>, double) _cloud(
   List<LibraryArtist> artists,
   double width,
 ) {
   final hit = _clouds[artists];
   if (hit != null && hit.$1 == width) return (hit.$2, hit.$3);
-  const minD = _ArtistCloud.minD, maxD = _ArtistCloud.maxD;
-  const gap = _ArtistCloud.gap, label = _ArtistCloud.label;
-  final top = artists.isEmpty ? 1 : math.max(1, artists.first.weight);
-  final cx = width / 2;
-  final out = <(LibraryArtist, Offset, double)>[];
-  for (final a in artists) {
-    final d = (minD + (maxD - minD) * math.sqrt(a.weight / top))
-        .clamp(minD, maxD)
-        .roundToDouble();
-    final r = d / 2;
-    var p = const Offset(0, 0);
-    // Each step moves about 8 pixels along the spiral
-    for (var ang = 0.0, rad = 0.0; rad < 100000; ang += 8 / math.max(rad, 8)) {
-      rad = 4.0 * ang;
-      p = Offset(cx + rad * math.cos(ang), rad * 0.6 * math.sin(ang));
-      if (p.dx - r < 0 || p.dx + r > width) continue;
-      final free = out.every((q) {
-        final need = r + q.$3 / 2 + gap;
-        final dx = p.dx - q.$2.dx;
-        // The bubble below must also leave room for the name of the one above
-        final dy = (p.dy - q.$2.dy).abs() * need / (need + label);
-        return dx * dx + dy * dy >= need * need;
-      });
-      if (free) break;
-    }
-    out.add((a, p, d));
-  }
-  var lo = double.infinity, hi = 0.0;
-  for (final (_, c, d) in out) {
-    lo = math.min(lo, c.dy - d / 2);
-    hi = math.max(hi, c.dy + d / 2 + label);
-  }
-  final shifted = [for (final (a, c, d) in out) (a, c.translate(0, -lo), d)];
-  final height = out.isEmpty ? 0.0 : hi - lo;
+  final (shifted, height) = layoutArtistCloud(artists, width);
   _clouds[artists] = (width, shifted, height);
   return (shifted, height);
 }
