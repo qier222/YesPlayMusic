@@ -1,4 +1,5 @@
 // Plugin pages: render content when there's data; show the error without throwing when the source errors.
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
@@ -21,12 +22,13 @@ class _Demo extends Source {
   _Demo({
     this.fail = false,
     this.albumCount = 0,
+    this.albumArtistCount = 1,
     this.artistImage = '',
     this.profileImage = '',
     this.failArtist = false,
   });
   final bool fail;
-  final int albumCount;
+  final int albumCount, albumArtistCount;
   final String artistImage, profileImage;
   final bool failArtist;
   int artistCalls = 0;
@@ -74,7 +76,11 @@ class _Demo extends Source {
             id: 'al1',
             name: '测试专辑',
             imageUrl: 'test-album-cover',
-            artists: [m.Artist(id: 'a1', name: '测试歌手', imageUrl: artistImage)],
+            artists: [
+              m.Artist(id: 'a1', name: '测试歌手', imageUrl: artistImage),
+              for (var i = 2; i <= albumArtistCount; i++)
+                m.Artist(id: 'a$i', name: 'Guest Artist $i'),
+            ],
             released: '2022-12-09',
             copyright: '℗ 2022 Demo Records',
           ),
@@ -145,6 +151,7 @@ void main() {
     WidgetTester t, {
     bool fail = false,
     int albumCount = 0,
+    int albumArtistCount = 1,
     String artistImage = '',
     String profileImage = '',
     bool failArtist = false,
@@ -158,6 +165,7 @@ void main() {
       _Demo(
         fail: fail,
         albumCount: albumCount,
+        albumArtistCount: albumArtistCount,
         artistImage: artistImage,
         profileImage: profileImage,
         failArtist: failArtist,
@@ -262,6 +270,28 @@ void main() {
       find.text('发行于 2022 年 12 月 9 日\n℗ 2022 Demo Records'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('long album artist credits stay within the cover column', (
+    t,
+  ) async {
+    final app = await boot(t, albumArtistCount: 25);
+    app.open('/album/@demo/al1');
+    await _frames(t);
+
+    expect(t.takeException(), isNull);
+    final artist = find.text(app.albumOf('@demo/al1')!.artist);
+    final infoColumn = t
+        .element(artist)
+        .findAncestorWidgetOfExactType<Column>()!;
+    expect(
+      t.getTopRight(artist).dx,
+      lessThanOrEqualTo(t.getTopRight(find.byWidget(infoColumn)).dx),
+    );
+    final paragraph = t.renderObject<RenderParagraph>(artist);
+    expect(paragraph.maxLines, 2);
+    expect(paragraph.overflow, TextOverflow.ellipsis);
+    expect(paragraph.didExceedMaxLines, isTrue);
   });
 
   testWidgets(

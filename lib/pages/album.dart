@@ -115,15 +115,21 @@ class AlbumPage extends StatelessWidget {
                                 route: al.artistRoute,
                               ),
                               const SizedBox(width: 10),
-                              AnimatedDefaultTextStyle(
-                                duration: fast,
-                                style: ts(
-                                  15,
-                                  w: w700,
-                                  f: F.semi,
-                                  c: h ? accent : P.ink,
+                              Flexible(
+                                child: AnimatedDefaultTextStyle(
+                                  duration: fast,
+                                  style: ts(
+                                    15,
+                                    w: w700,
+                                    f: F.semi,
+                                    c: h ? accent : P.ink,
+                                  ),
+                                  child: CjkText(
+                                    al.artist,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                child: CjkText(al.artist),
                               ),
                             ],
                           ),
