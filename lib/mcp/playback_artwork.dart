@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import '../cache/image_cache.dart';
 
 const _maxArtworkEdge = 512;
+const _fallbackArtworkEdge = 256;
 const _pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
 
 typedef McpArtwork = ({Uint8List bytes, String mimeType});
@@ -16,20 +17,21 @@ Future<McpArtwork?> loadMcpArtwork(
   int maxBytes = 512 * 1024,
 }) async {
   final bytes = await _readArtwork(cover);
+  final mimeType = _originalMimeType(bytes);
+  if (mimeType != null && bytes.length <= maxBytes) {
+    return (bytes: bytes, mimeType: mimeType);
+  }
   final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
   try {
     final image = await ui.ImageDescriptor.encoded(buffer);
     try {
-      final mimeType = _originalMimeType(bytes);
-      if (mimeType != null &&
-          bytes.length <= maxBytes &&
-          math.max(image.width, image.height) <= _maxArtworkEdge) {
-        return (bytes: bytes, mimeType: mimeType);
+      for (final maxEdge in const [_maxArtworkEdge, _fallbackArtworkEdge]) {
+        final png = await _encodePng(image, maxEdge: maxEdge);
+        if (png.length <= maxBytes) {
+          return (bytes: png, mimeType: 'image/png');
+        }
       }
-      final png = await _encodePng(image);
-      return png.length <= maxBytes
-          ? (bytes: png, mimeType: 'image/png')
-          : null;
+      return null;
     } finally {
       image.dispose();
     }
@@ -62,11 +64,11 @@ String? _originalMimeType(Uint8List bytes) {
   return null;
 }
 
-Future<Uint8List> _encodePng(ui.ImageDescriptor image) async {
-  final scale = math.min(
-    1.0,
-    _maxArtworkEdge / math.max(image.width, image.height),
-  );
+Future<Uint8List> _encodePng(
+  ui.ImageDescriptor image, {
+  required int maxEdge,
+}) async {
+  final scale = math.min(1.0, maxEdge / math.max(image.width, image.height));
   final codec = await image.instantiateCodec(
     targetWidth: math.max(1, (image.width * scale).round()),
     targetHeight: math.max(1, (image.height * scale).round()),
