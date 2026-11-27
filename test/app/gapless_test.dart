@@ -404,6 +404,26 @@ void main() {
     expect(engine.queuedKey, _key('c'));
   });
 
+  test('Next on the paused last track rewinds with repeat off', () async {
+    app.toggleRepeat();
+    await start(['a']);
+    engine.at(20);
+    app.pause();
+    expect(app.playing, isFalse);
+    expect(app.position, 20);
+
+    app.next();
+
+    expect(app.index, 0);
+    expect(app.playing, isFalse);
+    expect(app.position, 0);
+    expect(engine.sought, Duration.zero);
+
+    app.play();
+    expect(app.playing, isTrue);
+    expect(engine.opened, [_key('a')]);
+  });
+
   test('最后一首、不循环：不排，放完就停', () async {
     app.toggleRepeat();
     await start(['a', 'b']);
@@ -415,6 +435,7 @@ void main() {
     engine.finish();
     await _tick();
     expect(app.playing, isFalse);
+    expect(engine.sought, isNull);
   });
 
   test('循环：最后一首接回第一首', () async {
