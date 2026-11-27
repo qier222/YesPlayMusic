@@ -7,6 +7,7 @@
 #ifndef SourceDir
   #define SourceDir "..\..\build\windows\x64\runner\Release"
 #endif
+#define AppUserModelId "0xTangerine.YesPlayMusic"
 
 [Setup]
 AppId={{6F2C3E2A-6E1B-4C55-9C2A-3D2B0E9A7B10}
@@ -42,8 +43,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\YesPlayMusic"; Filename: "{app}\YesPlayMusic.exe"
-Name: "{autodesktop}\YesPlayMusic"; Filename: "{app}\YesPlayMusic.exe"; Tasks: desktopicon
+Name: "{autoprograms}\YesPlayMusic"; Filename: "{app}\YesPlayMusic.exe"; AppUserModelID: "{#AppUserModelId}"
+Name: "{autodesktop}\YesPlayMusic"; Filename: "{app}\YesPlayMusic.exe"; AppUserModelID: "{#AppUserModelId}"; Tasks: desktopicon
+
+[Registry]
+Root: HKCU; Subkey: "Software\Classes\AppUserModelId\{#AppUserModelId}"; ValueType: string; ValueName: "DisplayName"; ValueData: "YesPlayMusic"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\AppUserModelId\{#AppUserModelId}"; ValueType: string; ValueName: "IconUri"; ValueData: "{app}\data\flutter_assets\assets\app_icon.png"; Flags: uninsdeletekey
 
 [Run]
 Filename: "{app}\YesPlayMusic.exe"; Description: "{cm:LaunchProgram,YesPlayMusic}"; Flags: nowait postinstall skipifsilent
