@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -483,6 +484,72 @@ void main() {
       )).isEmpty,
       isTrue,
     );
+  });
+
+  for (final (label, encoding) in [
+    ('UTF-8 BOM', null),
+    ('UTF-16 LE BOM', Endian.little),
+    ('UTF-16 BE BOM', Endian.big),
+  ]) {
+    test('reads sidecar lyrics and translation with a $label', () async {
+      final track = (await src.search(
+        'Snooze',
+        SearchKind.tracks,
+      )).tracks.single;
+      final base = p.withoutExtension(track.id);
+      List<int> encode(String text) {
+        if (encoding == null) return utf8.encode('\uFEFF$text');
+        final units = '\uFEFF$text'.codeUnits;
+        final bytes = ByteData(2 * units.length);
+        for (var i = 0; i < units.length; i++) {
+          bytes.setUint16(2 * i, units[i], encoding);
+        }
+        return bytes.buffer.asUint8List();
+      }
+
+      const lrc = '[00:00.50]晚风 🎵';
+      const translation = '[00:00.50]Evening wind';
+      File('$base.lrc').writeAsBytesSync(encode(lrc));
+      File('$base.trans.lrc').writeAsBytesSync(encode(translation));
+
+      final lyrics = await src.lyrics(track.id);
+      expect((lyrics.lrc, lyrics.translation), (lrc, translation));
+    });
+  }
+
+  test(
+    'replaces malformed BOM-marked sidecar bytes without dropping valid text',
+    () async {
+      final track = (await src.search(
+        'Snooze',
+        SearchKind.tracks,
+      )).tracks.single;
+      final base = p.withoutExtension(track.id);
+      File('$base.lrc')
+          .writeAsBytesSync([...utf8.encode('\uFEFF[00:00.50]Hi'), 0xff]);
+      File('$base.trans.lrc').writeAsBytesSync([
+        0xff, 0xfe, // UTF-16 LE BOM
+        0x00, 0xd8, // Unpaired high surrogate
+        0x41, 0x00, // A
+        0x00, 0xdc, // Unpaired low surrogate
+        0x42, // Incomplete code unit
+      ]);
+
+      final lyrics = await src.lyrics(track.id);
+      expect(lyrics.lrc, '[00:00.50]Hi\uFFFD');
+      expect(lyrics.translation, '\uFFFDA\uFFFD\uFFFD');
+    },
+  );
+
+  test('ignores an unmarked non-UTF-8 sidecar', () async {
+    final t = (await src.search('Snooze', SearchKind.tracks)).tracks.single;
+    final base = p.withoutExtension(t.id);
+    File('$base.lrc').writeAsBytesSync([
+      ...utf8.encode('[00:00.50]'),
+      0xcd, 0xed, 0xb7, 0xe7, // 晚风 in GBK
+    ]);
+
+    expect((await src.lyrics(t.id)).isEmpty, isTrue);
   });
 
   test('enhanced sidecar lyrics and translation keep their prefixes', () async {
