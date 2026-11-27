@@ -171,6 +171,7 @@ bool FlutterWindow::OnCreate() {
             AssignString(*args, "unlike", tray_unlike_label_);
             AssignString(*args, "shuffle", tray_shuffle_label_);
             AssignString(*args, "repeat", tray_repeat_label_);
+            AssignString(*args, "repeatOne", tray_repeat_one_label_);
             if (taskbar_controls_) {
               taskbar_controls_->UpdateLabels(TaskbarLabels{
                   tray_prev_label_, tray_play_label_, tray_pause_label_,
@@ -334,9 +335,13 @@ void FlutterWindow::ShowTrayMenu(POINT at) {
     AppendMenu(menu,
                MF_STRING | (playback_state_.shuffle ? MF_CHECKED : MF_UNCHECKED),
                kShuffle, tray_shuffle_label_.c_str());
+    const std::wstring& repeat_label =
+        playback_state_.repeat_one && !tray_repeat_one_label_.empty()
+            ? tray_repeat_one_label_
+            : tray_repeat_label_;
     AppendMenu(menu,
                MF_STRING | (playback_state_.repeat ? MF_CHECKED : MF_UNCHECKED),
-               kRepeat, tray_repeat_label_.c_str());
+               kRepeat, repeat_label.c_str());
     AppendMenu(menu, MF_SEPARATOR, 0, nullptr);
   }
   AppendMenu(menu, MF_STRING, kShow, tray_show_label_.c_str());

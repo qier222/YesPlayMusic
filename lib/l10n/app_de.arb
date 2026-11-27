@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "Zufallswiedergabe: Ein",
   "miniRepeatOn": "Alle wiederholen",
+  "miniRepeatOne": "Einzelnen Titel wiederholen",
   "miniRepeatOff": "Wiederholen aus",
   "miniQueue": "Warteschlange",
   "miniOpenNowPlaying": "Aktuelle Wiedergabe öffnen",

@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "シャッフル：オン",
   "miniRepeatOn": "リピート再生",
+  "miniRepeatOne": "1曲リピート",
   "miniRepeatOff": "リピートオフ",
   "miniQueue": "再生キュー",
   "miniOpenNowPlaying": "再生中画面を開く",

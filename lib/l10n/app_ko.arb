@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "셔플: 켜짐",
   "miniRepeatOn": "전체 반복",
+  "miniRepeatOne": "한 곡 반복",
   "miniRepeatOff": "반복 끄기",
   "miniQueue": "재생목록",
   "miniOpenNowPlaying": "지금 재생 중 열기",

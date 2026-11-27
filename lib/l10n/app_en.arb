@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "Shuffle: On",
   "miniRepeatOn": "Repeat All",
+  "miniRepeatOne": "Repeat One",
   "miniRepeatOff": "Repeat Off",
   "miniQueue": "Queue",
   "miniOpenNowPlaying": "Open Now Playing",

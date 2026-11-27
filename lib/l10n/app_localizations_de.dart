@@ -231,6 +231,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get miniRepeatOn => 'Alle wiederholen';
 
   @override
+  String get miniRepeatOne => 'Einzelnen Titel wiederholen';
+
+  @override
   String get miniRepeatOff => 'Wiederholen aus';
 
   @override

@@ -1169,12 +1169,16 @@ class _BottomBar extends StatelessWidget {
         const _WhiteControls(),
         const SizedBox(width: 8),
         _CoverSeg(
-          icon: 'repeat',
-          tip: app.repeat
-              ? context.l10n.miniRepeatOn
-              : context.l10n.miniRepeatOff,
-          color: app.repeat ? white : wa(0.5),
-          dot: app.repeat,
+          icon: app.repeatMode == PlaybackRepeatMode.one
+              ? 'repeat-one'
+              : 'repeat',
+          tip: switch (app.repeatMode) {
+            PlaybackRepeatMode.off => context.l10n.miniRepeatOff,
+            PlaybackRepeatMode.all => context.l10n.miniRepeatOn,
+            PlaybackRepeatMode.one => context.l10n.miniRepeatOne,
+          },
+          color: app.repeatMode == PlaybackRepeatMode.off ? wa(0.5) : white,
+          dot: app.repeatMode != PlaybackRepeatMode.off,
           onTap: app.toggleRepeat,
         ),
         const SizedBox(width: 8),

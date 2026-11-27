@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+- 新增单曲循环：播放结束后重播当前歌曲，手动「下一首」仍正常切歌。 / Add repeat-one mode: replay the current track at the end while manual Next still advances.
 - 支持 Intel Mac，提供独立安装包和自动更新。 / Support Intel Macs with a separate installer and automatic updates.
 - 听歌上报：插件可以导出 `nowPlaying` 和 `scrobble`，接入 ListenBrainz、Last.fm 这类听歌记录服务。不管歌来自本地还是哪个插件都会上报，规则沿用 Last.fm（听够一半或 4 分钟）。见 [插件开发指南](https://github.com/qier222/YesPlayMusic/blob/main/docs/plugins.md#听歌上报)。
 - 官方插件新增 Last.fm：用自己的 API key 登录后，把听过的歌记到 Last.fm。从 2026 年 12 月 1 日起 Last.fm 的 API key 需要订阅 Last.fm Pro。

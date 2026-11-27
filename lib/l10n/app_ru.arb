@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "Перемешивание: вкл.",
   "miniRepeatOn": "Повторять всё",
+  "miniRepeatOne": "Повторять трек",
   "miniRepeatOff": "Без повтора",
   "miniQueue": "Очередь",
   "miniOpenNowPlaying": "Открыть текущий трек",

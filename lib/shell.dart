@@ -43,6 +43,7 @@ void _syncWindowPrefs(bool keepRunning, AppLocalizations l) {
       'unlike': l.actionUnlike,
       'shuffle': l.actionShuffle,
       'repeat': l.miniRepeatOn,
+      'repeatOne': l.miniRepeatOne,
     },
   };
   final key = '$args';
@@ -710,12 +711,18 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     _ControlsSeg(onDark: onDark),
                     const SizedBox(width: 6),
                     _IconSeg(
-                      icon: 'repeat',
-                      tip: app.repeat
-                          ? context.l10n.miniRepeatOn
-                          : context.l10n.miniRepeatOff,
-                      color: app.repeat ? accent : pal.muted,
-                      dot: app.repeat,
+                      icon: app.repeatMode == PlaybackRepeatMode.one
+                          ? 'repeat-one'
+                          : 'repeat',
+                      tip: switch (app.repeatMode) {
+                        PlaybackRepeatMode.off => context.l10n.miniRepeatOff,
+                        PlaybackRepeatMode.all => context.l10n.miniRepeatOn,
+                        PlaybackRepeatMode.one => context.l10n.miniRepeatOne,
+                      },
+                      color: app.repeatMode == PlaybackRepeatMode.off
+                          ? pal.muted
+                          : accent,
+                      dot: app.repeatMode != PlaybackRepeatMode.off,
                       onDark: onDark,
                       onTap: app.toggleRepeat,
                     ),

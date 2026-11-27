@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "隨機播放：開",
   "miniRepeatOn": "重複播放全部",
+  "miniRepeatOne": "單曲循環",
   "miniRepeatOff": "不重複播放",
   "miniQueue": "播放佇列",
   "miniOpenNowPlaying": "開啟正在播放",
