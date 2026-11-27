@@ -1,5 +1,7 @@
 #include "my_application.h"
 
+#include <algorithm>
+
 #include <flutter_linux/flutter_linux.h>
 
 #include "flutter/generated_plugin_registrant.h"
@@ -45,6 +47,27 @@ static gboolean delete_event_cb(GtkWidget* window, GdkEvent* event,
   return TRUE;
 }
 
+static void set_window_size(GtkWindow* window) {
+  int height = 900;
+  GdkDisplay* display = gtk_widget_get_display(GTK_WIDGET(window));
+  GdkMonitor* monitor = gdk_display_get_primary_monitor(display);
+  if (monitor == nullptr) {
+    monitor = gdk_display_get_monitor(display, 0);
+  }
+  if (monitor != nullptr) {
+    GdkRectangle workarea;
+    gdk_monitor_get_workarea(monitor, &workarea);
+    // The hints constrain the client, so leave room for window manager
+    // decorations, whose exact size is not known before the window is mapped.
+    height = std::min(height, std::max(1, workarea.height - 64));
+  }
+  gtk_window_set_default_size(window, 1440, height);
+  GdkGeometry hints = {};
+  hints.min_width = 1280;
+  hints.min_height = std::min(800, height);
+  gtk_window_set_geometry_hints(window, nullptr, &hints, GDK_HINT_MIN_SIZE);
+}
+
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
@@ -56,12 +79,7 @@ static void my_application_activate(GApplication* application) {
 
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
-  // 界面按 1440 × 900 设计，至少要 1280 × 800
-  gtk_window_set_default_size(window, 1440, 900);
-  GdkGeometry hints = {};
-  hints.min_width = 1280;
-  hints.min_height = 800;
-  gtk_window_set_geometry_hints(window, nullptr, &hints, GDK_HINT_MIN_SIZE);
+  set_window_size(window);
 
   // If you want to use a header bar, uncomment the following lines.
   // Header bars are commonly used in GNOME based desktop environments and

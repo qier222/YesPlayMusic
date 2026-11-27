@@ -11,8 +11,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:path/path.dart' as p;
+import 'package:yesplaymusic/data.dart';
 import 'package:yesplaymusic/l10n/l10n.dart';
 import 'package:yesplaymusic/music/eq.dart';
+import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/pages/settings.dart';
 import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
@@ -103,15 +105,34 @@ void main() {
   Future<void> boot(
     WidgetTester t, {
     double width = 1280,
+    double height = 800,
     Widget child = const Shell(),
     Locale locale = const Locale('zh'),
   }) async {
-    t.view.physicalSize = Size(width, 800);
+    t.view.physicalSize = Size(width, height);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
     await t.pumpWidget(appFor(app, child: child, locale: locale));
     await _frames(t);
   }
+
+  testWidgets('library mini-player fits in a short Linux window', (t) async {
+    app.queue = [
+      Track.of(const m.Track(id: 'fixture', source: 'local', name: 'Track')),
+    ];
+    app.open('/library/albums');
+    await boot(t, height: 640);
+
+    final play = find.descendant(
+      of: find.byType(MiniPlayer),
+      matching: find.byWidgetPredicate(
+        (w) => w is Tap && w.tip == L.actionPlay,
+      ),
+    );
+    expect(t.takeException(), isNull);
+    expect(play.hitTestable(), findsOneWidget);
+    expect(t.getBottomRight(play).dy, lessThanOrEqualTo(640));
+  });
 
   for (final route in [
     'home',
