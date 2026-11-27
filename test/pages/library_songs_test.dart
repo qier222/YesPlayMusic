@@ -358,4 +358,44 @@ void main() {
       expect(find.text('Recent 0'), findsOneWidget);
     },
   );
+
+  testWidgets('year rail active tick starts at tick 0 with no top dead zone', (
+    tester,
+  ) async {
+    final app = _LibraryApp();
+    addTearDown(app.dispose);
+    app.library.tracks = [
+      for (var i = 0; i < 60; i++)
+        Track(
+          title: 'Song $i',
+          artist: '',
+          cover: '',
+          seconds: 180,
+          added: DateTime(2026 - (i ~/ 20), 6, 1),
+        ),
+    ];
+    await pumpSongs(tester, app);
+
+    final rail = findRail();
+    final topLeft = tester.getTopLeft(rail);
+    final painter = railPainter(tester);
+    expect(painter.cur, 0);
+    expect(painter.placedMarks.first.tick, 0);
+    expect(painter.placedMarks.first.top, 0.0);
+
+    final controller = tester
+        .widget<ListView>(find.byType(ListView))
+        .controller!;
+    // Tick 2 (y ~ 21) was inside the old 3-tick top dead zone; it must scroll down now.
+    await tester.tapAt(topLeft + Offset(10, YearTicksPainter.yForTick(2)));
+    await tester.pumpAndSettle();
+    expect(controller.offset, greaterThan(0));
+    expect(railPainter(tester).cur, 2);
+
+    // Tapping tick 0 returns to the top.
+    await tester.tapAt(topLeft + Offset(10, YearTicksPainter.yForTick(0)));
+    await tester.pumpAndSettle();
+    expect(controller.offset, 0.0);
+    expect(railPainter(tester).cur, 0);
+  });
 }
