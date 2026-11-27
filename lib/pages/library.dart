@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -1169,6 +1170,12 @@ class TicksPainter extends CustomPainter {
 
 // ═════════════ Songs ═════════════
 
+const _songsTopPad = 28.0;
+const _songsBottomPad = 200.0;
+const _songRowH = 52.0;
+const _firstMonthH = 36.0;
+const _monthH = 58.0;
+
 class _SongsBody extends StatefulWidget {
   const _SongsBody();
 
@@ -1179,12 +1186,15 @@ class _SongsBody extends StatefulWidget {
 class _SongsBodyState extends State<_SongsBody> {
   final _scroll = ScrollController();
   final _frac = ValueNotifier(0.0);
+  double _maxExtent = 0;
 
   @override
   void initState() {
     super.initState();
     _scroll.addListener(() {
-      final max = _scroll.position.maxScrollExtent;
+      final max = _maxExtent > 0
+          ? _maxExtent
+          : _scroll.position.maxScrollExtent;
       _frac.value = max <= 0 ? 0 : (_scroll.offset / max).clamp(0.0, 1.0);
     });
   }
@@ -1214,17 +1224,41 @@ class _SongsBodyState extends State<_SongsBody> {
     // One per row: a month header or a song. There may be thousands of songs, so build on demand.
     final rows =
         <(({SongMonth month, int? year, int? monthNum}), SongRow?, int)>[];
+    final rowStarts = <double>[];
+    final rowEnds = <double>[];
+    var y = 0.0;
     for (final m in months) {
-      rows.add((m, null, rows.isEmpty ? 0 : 1));
+      final gap = rows.isEmpty ? 0 : 1;
+      rows.add((m, null, gap));
+      rowStarts.add(y);
+      y += gap == 0 ? _firstMonthH : _monthH;
+      rowEnds.add(y);
       for (final r in m.month.rows) {
         rows.add((m, r, 0));
+        rowStarts.add(y);
+        y += _songRowH;
+        rowEnds.add(y);
       }
     }
+    final rowsTotalH = y;
     final seconds = tracks.fold<int>(0, (a, t) => a + t.seconds);
-    final years = <String>{
-      for (final m in months)
-        if (m.year != null) '${m.year}',
-    }.toList();
+    String monthLabel(({SongMonth month, int? year, int? monthNum}) m) =>
+        m.year == null || m.monthNum == null
+        ? m.month.label
+        : '${m.year}.${'${m.monthNum}'.padLeft(2, '0')}';
+    int rowAtOffset(double scrollY) {
+      var lo = 0, hi = rows.length - 1;
+      while (lo < hi) {
+        final mid = (lo + hi) >> 1;
+        if (_songsTopPad + rowEnds[mid] > scrollY) {
+          hi = mid;
+        } else {
+          lo = mid + 1;
+        }
+      }
+      return lo;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1253,65 +1287,108 @@ class _SongsBodyState extends State<_SongsBody> {
           ),
         ),
         Expanded(
-          child: Stack(
-            children: [
-              ListView.builder(
-                controller: _scroll,
-                padding: const EdgeInsets.fromLTRB(32, 28, 122, 200),
-                itemCount: rows.length,
-                itemBuilder: (_, i) {
-                  final (m, r, gap) = rows[i];
-                  if (r == null) {
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(8, gap == 0 ? 0 : 22, 8, 17),
-                      child: Row(
-                        children: [
-                          tx(m.month.label, 12, w: w500, c: P.faint),
-                          const Spacer(),
-                          tx(m.month.count, 12, w: w500, c: P.faint),
-                        ],
-                      ),
-                    );
-                  }
-                  return FadeIn(
-                    delay: math.min(i, 12) * 25,
-                    child: _SongRowView(
-                      row: r,
-                      track: tracks[r.n - 1],
-                      onPlay: () =>
-                          app.playList(tracks, start: r.n - 1, from: 'library'),
+          child: LayoutBuilder(
+            builder: (context, box) {
+              final totalExtent = _songsTopPad + rowsTotalH + _songsBottomPad;
+              final maxExtent = math.max(0.0, totalExtent - box.maxHeight);
+              _maxExtent = maxExtent;
+              final marks = <YearMark>[];
+              final seenYears = <int>{};
+              for (var i = 0; i < rows.length; i++) {
+                final (m, r, _) = rows[i];
+                if (r != null || m.year == null || !seenYears.add(m.year!)) {
+                  continue;
+                }
+                final target = i == 0 ? 0.0 : _songsTopPad + rowStarts[i];
+                final frac = maxExtent > 0
+                    ? (target / maxExtent).clamp(0.0, 1.0)
+                    : (rowsTotalH > 0
+                          ? (rowStarts[i] / rowsTotalH).clamp(0.0, 1.0)
+                          : 0.0);
+                marks.add((
+                  label: '${m.year}',
+                  frac: frac,
+                  hoverLabel: monthLabel(m),
+                ));
+              }
+              return Stack(
+                children: [
+                  ListView.builder(
+                    controller: _scroll,
+                    padding: const EdgeInsets.fromLTRB(
+                      32,
+                      _songsTopPad,
+                      122,
+                      _songsBottomPad,
                     ),
-                  );
-                },
-              ),
-              Positioned(
-                right: 24,
-                top: 24,
-                child: ValueListenableBuilder(
-                  valueListenable: _frac,
-                  builder: (_, frac, _) => _YearScrubber(
-                    frac: frac,
-                    years: years,
-                    labelAt: (f) {
-                      if (rows.isEmpty) return '';
-                      // Estimate the row at the scroll position from the row count and use its month
-                      final m = rows[(f * (rows.length - 1)).round()].$1;
-                      return m.year == null || m.monthNum == null
-                          ? m.month.label
-                          : '${m.year}.${'${m.monthNum}'.padLeft(2, '0')}';
+                    itemCount: rows.length,
+                    itemExtentBuilder: (i, _) {
+                      final (_, r, gap) = rows[i];
+                      if (r != null) return _songRowH;
+                      return gap == 0 ? _firstMonthH : _monthH;
                     },
-                    onPick: (f) {
-                      if (!_scroll.hasClients) return;
-                      _scroll.animateTo(
-                        f * _scroll.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 420),
-                        curve: Curves.easeOutCubic,
+                    itemBuilder: (_, i) {
+                      final (m, r, gap) = rows[i];
+                      if (r == null) {
+                        return Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            8,
+                            gap == 0 ? 0 : 22,
+                            8,
+                            17,
+                          ),
+                          child: Row(
+                            children: [
+                              tx(m.month.label, 12, w: w500, c: P.faint),
+                              const Spacer(),
+                              tx(m.month.count, 12, w: w500, c: P.faint),
+                            ],
+                          ),
+                        );
+                      }
+                      return FadeIn(
+                        delay: math.min(i, 12) * 25,
+                        child: _SongRowView(
+                          row: r,
+                          track: tracks[r.n - 1],
+                          onPlay: () => app.playList(
+                            tracks,
+                            start: r.n - 1,
+                            from: 'library',
+                          ),
+                        ),
                       );
                     },
                   ),
-                ),
-              ),
-            ],
+                  Positioned(
+                    right: 24,
+                    top: 24,
+                    child: ValueListenableBuilder(
+                      valueListenable: _frac,
+                      builder: (_, frac, _) => _YearScrubber(
+                        frac: frac,
+                        marks: marks,
+                        labelAt: (f) {
+                          if (rows.isEmpty) return '';
+                          final scrollY = maxExtent > 0
+                              ? f * maxExtent
+                              : _songsTopPad + f * rowsTotalH;
+                          return monthLabel(rows[rowAtOffset(scrollY)].$1);
+                        },
+                        onPick: (f) {
+                          if (!_scroll.hasClients || maxExtent <= 0) return;
+                          _scroll.animateTo(
+                            (f * maxExtent).clamp(0.0, maxExtent),
+                            duration: const Duration(milliseconds: 420),
+                            curve: Curves.easeOutCubic,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
@@ -1532,19 +1609,27 @@ class HeartSmall extends StatelessWidget {
   }
 }
 
+/// A year label on the Songs vertical scrubber rail, positioned at the
+/// scroll fraction [frac] where that year's songs begin.
+typedef YearMark = ({String label, double frac, String hoverLabel});
+
+/// A laid-out year label on the Songs vertical rail.
+typedef PlacedYearMark = ({YearMark mark, int tick, double top, double bottom});
+
 /// The vertical "water column" ticks to the right of the song list, the same as the one under the album shelf (hover style D):
 /// the bulge follows only the current position; the column under the cursor becomes a white 60% pointer, with its month on the left.
 class _YearScrubber extends StatefulWidget {
   const _YearScrubber({
     required this.frac,
     required this.onPick,
-    this.years,
+    this.marks = const [],
     this.labelAt,
   });
   final double frac;
 
-  /// Year labels from newest to oldest; when empty, the design's 2026–2021 are used.
-  final List<String>? years;
+  /// Year markers from newest to oldest, each carrying the scroll fraction
+  /// where that year's songs begin.
+  final List<YearMark> marks;
   final ValueChanged<double> onPick;
 
   /// Time at scroll position [0, 1], written next to the pointer.
@@ -1555,42 +1640,77 @@ class _YearScrubber extends StatefulWidget {
 }
 
 class _YearScrubberState extends State<_YearScrubber> {
-  double? _hy; // vertical position of the hover
+  Offset? _hoverPos;
   // Kept after leaving so the pointer is drawn in place while fading out
-  double _lastHy = 0;
-  static const n = 56;
-  static const step = 9.786;
+  Offset _lastPos = Offset.zero;
+  late List<PlacedYearMark> _placed;
 
-  static double _frac(double y) => ((y / step - 3) / (n - 4)).clamp(0.0, 1.0);
+  @override
+  void initState() {
+    super.initState();
+    _placed = YearTicksPainter.layoutMarks(widget.marks);
+  }
+
+  @override
+  void didUpdateWidget(_YearScrubber oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!listEquals(oldWidget.marks, widget.marks)) {
+      _placed = YearTicksPainter.layoutMarks(widget.marks);
+    }
+  }
+
+  ({int tick, double frac, YearMark? mark}) _resolve(Offset local) {
+    if (local.dx >= YearTicksPainter.right) {
+      for (final p in _placed) {
+        if (local.dy >= p.top - 2 && local.dy <= p.bottom + 2) {
+          return (tick: p.tick, frac: p.mark.frac, mark: p.mark);
+        }
+      }
+    }
+    final tick = ((local.dy - 1.5) / YearTicksPainter.step).round().clamp(
+      0,
+      YearTicksPainter.n - 1,
+    );
+    for (final p in _placed) {
+      if (p.tick == tick) {
+        return (tick: tick, frac: p.mark.frac, mark: p.mark);
+      }
+    }
+    return (tick: tick, frac: YearTicksPainter.fracForTick(tick), mark: null);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final cur = (3 + widget.frac * (n - 4)).round();
-    // Snap the pointer to the nearest tick
-    final hi = ((_lastHy - 1.5) / step).round().clamp(0, n - 1);
+    final cur = YearTicksPainter.tickForFrac(widget.frac);
+    final resolved = _resolve(_lastPos);
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      onHover: (e) => setState(() => _hy = _lastHy = e.localPosition.dy),
-      onExit: (_) => setState(() => _hy = null),
+      onHover: (e) => setState(() => _hoverPos = _lastPos = e.localPosition),
+      onExit: (_) => setState(() => _hoverPos = null),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTapUp: (d) => widget.onPick(_frac(d.localPosition.dy)),
-        onVerticalDragUpdate: (d) => widget.onPick(_frac(d.localPosition.dy)),
+        onTapUp: (d) => widget.onPick(_resolve(d.localPosition).frac),
+        onVerticalDragUpdate: (d) =>
+            widget.onPick(YearTicksPainter.fracForY(d.localPosition.dy)),
         child: TweenAnimationBuilder<double>(
-          tween: Tween(end: _hy != null ? 1 : 0),
+          tween: Tween(end: _hoverPos != null ? 1 : 0),
           duration: const Duration(milliseconds: 120),
           curve: Curves.easeOut,
           builder: (_, t, _) => CustomPaint(
-            size: const Size(44, n * step),
-            painter: _VTicks(
+            size: const Size(44, YearTicksPainter.railHeight),
+            painter: YearTicksPainter(
               cur: cur,
-              hover: hi,
+              hover: resolved.tick,
               hoverT: t,
-              hoverLabel: t > 0 && widget.labelAt != null
-                  ? widget.labelAt!(_frac(hi * step + 1.5))
+              hoverLabel: t > 0
+                  ? (resolved.mark?.hoverLabel ??
+                        widget.labelAt?.call(
+                          YearTicksPainter.fracForTick(resolved.tick),
+                        ) ??
+                        '')
                   : '',
               ink: P.dark ? white : darkInk,
-              years: widget.years,
+              placedMarks: _placed,
             ),
           ),
         ),
@@ -1599,28 +1719,66 @@ class _YearScrubberState extends State<_YearScrubber> {
   }
 }
 
-class _VTicks extends CustomPainter {
-  _VTicks({
+class YearTicksPainter extends CustomPainter {
+  YearTicksPainter({
     required this.cur,
     required this.ink,
     this.hover = -1,
     this.hoverT = 0,
     this.hoverLabel = '',
-    this.years,
+    this.placedMarks = const [],
   });
   final int cur, hover;
   final double hoverT;
   final String hoverLabel;
   final Color ink;
-  final List<String>? years;
+  final List<PlacedYearMark> placedMarks;
+
+  static const n = 56;
+  static const step = 9.786;
+  static const railHeight = n * step;
+  static const right = 20.0;
+  static const _labelGap = 6.0;
+
+  static int tickForFrac(double frac) =>
+      (3 + frac.clamp(0.0, 1.0) * (n - 4)).round().clamp(3, n - 1);
+
+  static double yForTick(int tick) => tick * step + 1.5;
+
+  static double fracForTick(int tick) => ((tick - 3) / (n - 4)).clamp(0.0, 1.0);
+
+  static double fracForY(double y) =>
+      (((y - 1.5) / step - 3) / (n - 4)).clamp(0.0, 1.0);
+
+  static List<PlacedYearMark> layoutMarks(List<YearMark> marks) {
+    final placed = <PlacedYearMark>[];
+    for (final m in marks) {
+      final tick = tickForFrac(m.frac);
+      final cy = yForTick(tick);
+      final tp = TextPainter(
+        text: cjkSpan(m.label, ts(10, w: w600, c: white)),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final len = tp.width;
+      final top = (cy - len / 2)
+          .clamp(0.0, math.max(0.0, railHeight - len))
+          .toDouble();
+      final bottom = top + len;
+      if (placed.any(
+        (p) => top < p.bottom + _labelGap && bottom > p.top - _labelGap,
+      )) {
+        continue;
+      }
+      placed.add((mark: m, tick: tick, top: top, bottom: bottom));
+    }
+    return placed;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
-    const step = _YearScrubberState.step;
-    const right = 20.0;
     final strong = Paint()..color = ink;
-    final peak = cur * step + 1.5;
-    for (var i = 0; i < _YearScrubberState.n; i++) {
+    final peak = yForTick(cur);
+    for (var i = 0; i < n; i++) {
       final y = i * step;
       final d = y + 1.5 - peak;
       var w = 5 + 12 * math.exp(-(d * d) / (2 * 26 * 26));
@@ -1662,21 +1820,19 @@ class _VTicks extends CustomPainter {
       )..layout();
       tp.paint(
         canvas,
-        Offset(right - 21 - tp.width, hover * step + 1.5 - tp.height / 2),
+        Offset(right - 21 - tp.width, yForTick(hover) - tp.height / 2),
       );
     }
-    const ys = [10.0, 103.6, 211.3, 318.9, 426.6, 520.2];
-    final labels = years ?? [for (var i = 0; i < ys.length; i++) '${2026 - i}'];
-    for (var i = 0; i < ys.length && i < labels.length; i++) {
+    for (final p in placedMarks) {
       final tp = TextPainter(
         text: cjkSpan(
-          labels[i],
+          p.mark.label,
           ts(10, w: w600, c: ink.withValues(alpha: 0.4)),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
       canvas.save();
-      canvas.translate(33 + tp.height, ys[i] - tp.width / 2 + 10);
+      canvas.translate(33 + tp.height, p.top);
       canvas.rotate(math.pi / 2);
       tp.paint(canvas, Offset.zero);
       canvas.restore();
@@ -1684,13 +1840,13 @@ class _VTicks extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_VTicks old) =>
+  bool shouldRepaint(YearTicksPainter old) =>
       old.cur != cur ||
       old.hover != hover ||
       old.hoverT != hoverT ||
       old.hoverLabel != hoverLabel ||
       old.ink != ink ||
-      old.years != years;
+      !listEquals(old.placedMarks, placedMarks);
 }
 
 // ═════════════ Playlists ═════════════
