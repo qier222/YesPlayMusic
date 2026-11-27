@@ -188,33 +188,37 @@ class _GeneralTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 512,
-          child: Column(
-            children: [
-              _Section(title: l.settingsAppearance, child: const _Appearance()),
-              const SizedBox(height: 28),
-              _Section(title: l.settingsLyrics, child: const _LyricsCard()),
-              const SizedBox(height: 28),
-              _Section(title: l.settingsStorage, child: const _Storage()),
-            ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 1048),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                _Section(
+                  title: l.settingsAppearance,
+                  child: const _Appearance(),
+                ),
+                const SizedBox(height: 28),
+                _Section(title: l.settingsLyrics, child: const _LyricsCard()),
+                const SizedBox(height: 28),
+                _Section(title: l.settingsStorage, child: const _Storage()),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 24),
-        SizedBox(
-          width: 512,
-          child: Column(
-            children: [
-              _Section(title: l.settingsPlayback, child: const _Playback()),
-              const SizedBox(height: 28),
-              _Section(title: l.settingsEqualizer, child: const _Equalizer()),
-            ],
+          const SizedBox(width: 24),
+          Expanded(
+            child: Column(
+              children: [
+                _Section(title: l.settingsPlayback, child: const _Playback()),
+                const SizedBox(height: 28),
+                _Section(title: l.settingsEqualizer, child: const _Equalizer()),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -372,7 +376,7 @@ Widget _row(
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  tx(label, 15, w: w700),
+                  Flexible(child: tx(label, 15, w: w700)),
                   const SizedBox(width: 6),
                   _InfoDot(onTap: onInfo),
                 ],
@@ -761,17 +765,19 @@ class _Equalizer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   for (var i = 0; i < eqBands.length; i++)
-                    _EqBand(
-                      freq: eqBands[i],
-                      db: eq.gains[i],
-                      onChanged: (v) {
-                        // A band changed: switch to custom, starting from the current preset
-                        final g = [...app.eq.gains];
-                        g[i] = v;
-                        app.setEq(
-                          app.eq.copyWith(preset: EqPreset.custom, custom: g),
-                        );
-                      },
+                    Flexible(
+                      child: _EqBand(
+                        freq: eqBands[i],
+                        db: eq.gains[i],
+                        onChanged: (v) {
+                          // A band changed: switch to custom, starting from the current preset
+                          final g = [...app.eq.gains];
+                          g[i] = v;
+                          app.setEq(
+                            app.eq.copyWith(preset: EqPreset.custom, custom: g),
+                          );
+                        },
+                      ),
                     ),
                 ],
               ),

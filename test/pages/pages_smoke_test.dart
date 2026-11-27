@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,12 +18,17 @@ import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
 import 'package:yesplaymusic/theme.dart';
 import 'package:yesplaymusic/ui/tap.dart';
+import 'package:yesplaymusic/ui/toggle.dart';
 
 import '../music/local_source_test.dart' show wav;
 
-Widget appFor(AppState state, {Widget child = const Shell()}) => WidgetsApp(
+Widget appFor(
+  AppState state, {
+  Widget child = const Shell(),
+  Locale locale = const Locale('zh'),
+}) => WidgetsApp(
   color: const Color(0xFF0B0B0D),
-  locale: const Locale('zh'),
+  locale: locale,
   supportedLocales: AppLocalizations.supportedLocales,
   localizationsDelegates: const [
     AppLocalizations.delegate,
@@ -98,11 +104,12 @@ void main() {
     WidgetTester t, {
     double width = 1280,
     Widget child = const Shell(),
+    Locale locale = const Locale('zh'),
   }) async {
     t.view.physicalSize = Size(width, 800);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
-    await t.pumpWidget(appFor(app, child: child));
+    await t.pumpWidget(appFor(app, child: child, locale: locale));
     await _frames(t);
   }
 
@@ -140,8 +147,7 @@ void main() {
   });
 
   // Every tab of the settings page.
-  // At the minimum window (1280), the two fixed 512-wide columns of "General", "Shortcuts" and "MCP" don't fit and overflow by 160px;
-  // the design for narrowing them needs deciding first. Tested at 1440 wide for now; for the minimum window see the skipped test below.
+  // Shortcuts and MCP still don't fit at the minimum window width (1280).
   Future<void> settingsTabs(WidgetTester t, double width) async {
     await boot(t, width: width);
     app.open('/settings');
@@ -204,6 +210,65 @@ void main() {
   });
 
   testWidgets('设置页各标签', (t) => settingsTabs(t, 1440));
+
+  testWidgets('General Settings switches fit the minimum window', (t) async {
+    await boot(t);
+    app.open('/settings');
+    await _frames(t);
+    await t.tap(find.text(L.settingsGeneral));
+    await _frames(t);
+    expect(t.takeException(), isNull);
+
+    final keepRunningRow = find
+        .ancestor(
+          of: find.text(L.settingsKeepRunning),
+          matching: find.byType(Row),
+        )
+        .first;
+    final equalizerSection = find
+        .ancestor(
+          of: find.text(L.settingsEqualizer),
+          matching: find.byType(Column),
+        )
+        .first;
+    for (final parent in [keepRunningRow, equalizerSection]) {
+      final toggle = find.descendant(of: parent, matching: find.byType(Toggle));
+      expect(toggle, findsOneWidget);
+      final scrollView = find
+          .ancestor(of: toggle, matching: find.byType(SingleChildScrollView))
+          .first;
+      final viewport = t.getRect(scrollView);
+      final bounds = t.getRect(toggle);
+      expect(bounds.size, const Size(44, 26));
+      expect(bounds.intersect(viewport), bounds);
+      expect(toggle.hitTestable(), findsOneWidget);
+    }
+  });
+
+  testWidgets('Russian volume normalization info is tappable at 1280', (
+    t,
+  ) async {
+    await boot(t, locale: const Locale('ru'));
+    app.open('/settings');
+    await _frames(t);
+    await t.tap(find.text(L.settingsGeneral));
+    await _frames(t);
+
+    final title = t.renderObject<RenderParagraph>(
+      find.text(L.settingsReplayGain),
+    );
+    final info = find.byWidgetPredicate(
+      (w) => w is Tap && w.semanticLabel == L.settingsReplayGain,
+    );
+    expect(L.localeName, 'ru');
+    expect(info.hitTestable(), findsOneWidget);
+    expect(title.didExceedMaxLines, isTrue);
+    expect(title.overflow, TextOverflow.ellipsis);
+    expect(t.takeException(), isNull);
+    await t.tap(info);
+    await _frames(t);
+    expect(find.text(L.settingsReplayGainHint), findsOneWidget);
+  });
 
   testWidgets('restores the selected accent color after restart', (t) async {
     Future<void> openSettings(AppState state) async {
@@ -401,7 +466,7 @@ void main() {
   testWidgets(
     '设置页各标签（最小窗口）',
     (t) => settingsTabs(t, 1280),
-    // Known issue: the two-column settings page overflows at the minimum window, waiting on design
+    // Known issue: Shortcuts and MCP overflow at the minimum window.
     skip: true,
   );
 }
