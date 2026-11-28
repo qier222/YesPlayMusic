@@ -549,6 +549,12 @@ abstract class AppLocalizations {
   /// **'列表循环'**
   String get miniRepeatOn;
 
+  /// Repeat mode tooltip when only the current track repeats
+  ///
+  /// In zh, this message translates to:
+  /// **'单曲循环'**
+  String get miniRepeatOne;
+
   /// No description provided for @miniRepeatOff.
   ///
   /// In zh, this message translates to:

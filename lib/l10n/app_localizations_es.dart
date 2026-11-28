@@ -231,6 +231,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get miniRepeatOn => 'Repetir todo';
 
   @override
+  String get miniRepeatOne => 'Repetir una';
+
+  @override
   String get miniRepeatOff => 'No repetir';
 
   @override

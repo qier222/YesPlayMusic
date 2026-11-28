@@ -209,7 +209,7 @@ const _icons = {
   'pause',
   'play',
   'plugin',
-  'plus-circle', 'plus', 'previous', 'queue', 'repeat', 'search',
+  'plus-circle', 'plus', 'previous', 'queue', 'repeat', 'repeat-one', 'search',
   'settings', 'shuffle', 'thumbs-down', 'trending', 'user', 'volume',
 };
 

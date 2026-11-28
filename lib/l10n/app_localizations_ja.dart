@@ -231,6 +231,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get miniRepeatOn => 'リピート再生';
 
   @override
+  String get miniRepeatOne => '1曲リピート';
+
+  @override
   String get miniRepeatOff => 'リピートオフ';
 
   @override

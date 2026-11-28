@@ -41,6 +41,8 @@ enum NpTab { lyrics, queue, similar, comments }
 
 enum LyricMode { original, both, trans }
 
+enum PlaybackRepeatMode { off, all, one }
+
 /// State for the whole UI: routing, music sources, player, settings.
 class AppState extends ChangeNotifier {
   AppState() {
@@ -1895,9 +1897,12 @@ class AppState extends ChangeNotifier {
   /// The current song; a blank song when the queue is empty (the UI hides the player).
   Track get track => queue.isEmpty ? Track.none : queue[index];
   @visibleForTesting
-  Track? get nextTrack => index + 1 < queue.length
-      ? queue[index + 1]
-      : (repeat && queue.isNotEmpty ? queue.first : null);
+  Track? get nextTrack {
+    if (queue.isEmpty) return null;
+    if (repeatMode == PlaybackRepeatMode.one) return track;
+    if (index + 1 < queue.length) return queue[index + 1];
+    return repeatMode == PlaybackRepeatMode.all ? queue.first : null;
+  }
 
   /// Songs coming up next.
   List<Track> get upNext => hasQueue ? queue.sublist(index + 1) : const [];
@@ -1933,7 +1938,13 @@ class AppState extends ChangeNotifier {
       _queueName = j['name'] as String? ?? '';
       shuffle = j['shuffle'] == true;
       if (shuffle) _unshuffled = _restoreUnshuffled(j['unshuffled'], ts);
-      repeat = j['repeat'] != false;
+      final savedRepeat = j['repeat'];
+      repeatMode = switch (savedRepeat) {
+        'off' => PlaybackRepeatMode.off,
+        'one' => PlaybackRepeatMode.one,
+        false => PlaybackRepeatMode.off,
+        _ => PlaybackRepeatMode.all,
+      };
       playing = false;
     } catch (e) {
       debugPrint('player: $e');
@@ -1975,7 +1986,7 @@ class AppState extends ChangeNotifier {
       'from': queueFrom,
       'name': _queueName,
       'shuffle': shuffle,
-      'repeat': repeat,
+      'repeat': repeatMode.name,
     });
     if (text == _playerSaved) return;
     _playerSaved = text;
@@ -2085,7 +2096,7 @@ class AppState extends ChangeNotifier {
   }
 
   bool shuffle = false;
-  bool repeat = true;
+  PlaybackRepeatMode repeatMode = PlaybackRepeatMode.all;
   final Set<String> liked = {};
 
   bool get isLiked => liked.contains(track.key);
@@ -2183,6 +2194,10 @@ class AppState extends ChangeNotifier {
         _next(play: false, completed: true);
         return;
       }
+      if (repeatMode == PlaybackRepeatMode.one) {
+        _repeatCurrent();
+        return;
+      }
       _next(play: true, completed: true);
     };
     e.onAdvanced = _onAdvanced;
@@ -2212,8 +2227,11 @@ class AppState extends ChangeNotifier {
 
   Track? get _nextTrack {
     if (queue.isEmpty) return null;
+    if (repeatMode == PlaybackRepeatMode.one) return track;
     if (index + 1 < queue.length) return queue[index + 1];
-    if (repeat && queue.length > 1) return queue[0];
+    if (repeatMode == PlaybackRepeatMode.all && queue.length > 1) {
+      return queue[0];
+    }
     return null;
   }
 
@@ -2738,7 +2756,9 @@ class AppState extends ChangeNotifier {
   void _next({required bool play, bool completed = false}) {
     if (queue.isEmpty) return;
     // A station reached its last song: wait for the next batch, then continue
-    if (index + 1 >= queue.length && station != null && !repeat) {
+    if (index + 1 >= queue.length &&
+        station != null &&
+        repeatMode == PlaybackRepeatMode.off) {
       _stationStalled = true;
       _topUpStation();
       return;
@@ -2748,7 +2768,7 @@ class AppState extends ChangeNotifier {
     if (index + 1 < queue.length) {
       index++;
       playing = play;
-    } else if (repeat) {
+    } else if (repeatMode != PlaybackRepeatMode.off) {
       index = 0;
       playing = play;
     } else {
@@ -2762,6 +2782,15 @@ class AppState extends ChangeNotifier {
     }
     position = 0;
     notifyListeners();
+    _sync();
+  }
+
+  void _repeatCurrent() {
+    position = 0;
+    playing = true;
+    _scrubbing = false;
+    notifyListeners();
+    if (_engineOnTrack) _seekEngine(Duration.zero);
     _sync();
   }
 
@@ -3327,10 +3356,21 @@ class AppState extends ChangeNotifier {
     return null;
   }
 
-  void toggleRepeat() {
-    repeat = !repeat;
+  void setRepeatMode(PlaybackRepeatMode mode) {
+    if (repeatMode == mode) return;
+    repeatMode = mode;
     notifyListeners();
+    _savePlayerSoon();
     if (playing) _schedulePreloadNext();
+    _reconcileNext();
+  }
+
+  void toggleRepeat() {
+    setRepeatMode(switch (repeatMode) {
+      PlaybackRepeatMode.off => PlaybackRepeatMode.all,
+      PlaybackRepeatMode.all => PlaybackRepeatMode.one,
+      PlaybackRepeatMode.one => PlaybackRepeatMode.off,
+    });
   }
 
   /// Likes / unlikes a song. Songs from plugins sync to the source (e.g. the platform's "Liked Songs" playlist);

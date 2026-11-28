@@ -37,7 +37,7 @@ class MediaSession {
   bool? _playing;
   bool? _island;
   bool? _shuffle;
-  bool? _repeat;
+  PlaybackRepeatMode? _repeatMode;
   bool? _liked;
   double? _duration;
   double _sentPos = 0;
@@ -68,7 +68,7 @@ class MediaSession {
     _cover = null;
     _playing = null;
     _shuffle = null;
-    _repeat = null;
+    _repeatMode = null;
     _liked = null;
     _duration = null;
     _artworkRevision++;
@@ -95,7 +95,7 @@ class MediaSession {
         app.playing == _playing &&
         app.island == _island &&
         app.shuffle == _shuffle &&
-        app.repeat == _repeat &&
+        app.repeatMode == _repeatMode &&
         (!_isWindows || liked == _liked) &&
         duration == _duration &&
         (pos - expected).abs() < 1.5) {
@@ -106,7 +106,7 @@ class MediaSession {
     _playing = app.playing;
     _island = app.island;
     _shuffle = app.shuffle;
-    _repeat = app.repeat;
+    _repeatMode = app.repeatMode;
     _liked = liked;
     _duration = duration;
     _sentPos = pos;
@@ -119,7 +119,8 @@ class MediaSession {
       'position': pos,
       'playing': app.playing,
       'shuffle': app.shuffle,
-      'repeat': app.repeat,
+      'repeat': app.repeatMode != PlaybackRepeatMode.off,
+      'repeatMode': app.repeatMode.name,
       // Dynamic Island toggle (native code in DynamicIsland.swift)
       'island': app.island,
       if (_isWindows) 'liked': liked,
@@ -180,9 +181,16 @@ class MediaSession {
           app.toggleShuffle();
         }
       case 'repeat':
-        final target = call.arguments;
-        if (target is bool) {
-          if (app.repeat != target) app.toggleRepeat();
+        final PlaybackRepeatMode? mode = switch (call.arguments) {
+          'off' => PlaybackRepeatMode.off,
+          'all' => PlaybackRepeatMode.all,
+          'one' => PlaybackRepeatMode.one,
+          true => PlaybackRepeatMode.all,
+          false => PlaybackRepeatMode.off,
+          _ => null,
+        };
+        if (mode != null) {
+          app.setRepeatMode(mode);
         } else {
           app.toggleRepeat();
         }

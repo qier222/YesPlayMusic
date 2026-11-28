@@ -13,6 +13,7 @@ struct MediaPlaybackState {
   bool playing = false;
   bool shuffle = false;
   bool repeat = false;
+  bool repeat_one = false;
   bool liked = false;
   std::wstring title;
   std::wstring artist;
@@ -20,6 +21,7 @@ struct MediaPlaybackState {
   bool operator==(const MediaPlaybackState& other) const {
     return active == other.active && playing == other.playing &&
            shuffle == other.shuffle && repeat == other.repeat &&
+           repeat_one == other.repeat_one &&
            liked == other.liked && title == other.title &&
            artist == other.artist;
   }

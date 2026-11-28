@@ -231,6 +231,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get miniRepeatOn => '列表循环';
 
   @override
+  String get miniRepeatOne => '单曲循环';
+
+  @override
   String get miniRepeatOff => '不循环';
 
   @override
@@ -2138,6 +2141,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get miniRepeatOn => '重複播放全部';
+
+  @override
+  String get miniRepeatOne => '單曲循環';
 
   @override
   String get miniRepeatOff => '不重複播放';

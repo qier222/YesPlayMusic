@@ -231,6 +231,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get miniRepeatOn => 'Повторять всё';
 
   @override
+  String get miniRepeatOne => 'Повторять трек';
+
+  @override
   String get miniRepeatOff => 'Без повтора';
 
   @override

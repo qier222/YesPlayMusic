@@ -240,6 +240,32 @@ void main() {
     },
   );
 
+  test('control_playback sets off, one, and all repeat modes', () async {
+    final init = await _rpc(client, port, {
+      'jsonrpc': '2.0',
+      'id': 1,
+      'method': 'initialize',
+    });
+
+    for (final (i, mode) in ['off', 'one', 'all'].indexed) {
+      final call = await _rpc(client, port, {
+        'jsonrpc': '2.0',
+        'id': i + 2,
+        'method': 'tools/call',
+        'params': {
+          'name': 'control_playback',
+          'arguments': {'action': 'repeat', 'value': mode},
+        },
+      }, sessionId: init.sessionId);
+      final content = (call.body!['result'] as Map)['content'] as List;
+      final snapshot =
+          jsonDecode((content.single as Map)['text'] as String) as Map;
+      expect(snapshot['repeat'], mode != 'off');
+      expect(snapshot['repeatMode'], mode);
+      expect(app.repeatMode.name, mode);
+    }
+  });
+
   test(
     'search_music reports more when the requested limit truncates results',
     () async {

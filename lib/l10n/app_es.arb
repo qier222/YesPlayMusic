@@ -76,6 +76,7 @@
 
   "miniShuffleOn": "Aleatorio: activado",
   "miniRepeatOn": "Repetir todo",
+  "miniRepeatOne": "Repetir una",
   "miniRepeatOff": "No repetir",
   "miniQueue": "Cola de reproducción",
   "miniOpenNowPlaying": "Abrir reproducción actual",

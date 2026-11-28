@@ -157,7 +157,7 @@ List<McpTool> buildCoreTools() => [
           'description': 'Playback action to execute.',
         },
         'value': {
-          'description': 'Optional parameter: seconds for seek/seek_by, 0..1 for volume, or boolean for mute/shuffle/repeat.',
+          'description': 'Optional parameter: seconds for seek/seek_by, 0..1 for volume, boolean for mute/shuffle, or off/all/one (boolean also accepted) for repeat.',
         },
       },
       'required': ['action'],
@@ -202,8 +202,24 @@ List<McpTool> buildCoreTools() => [
           final b = _bool(args, 'value');
           if (b == null || b != app.shuffle) app.toggleShuffle();
         case 'repeat':
-          final b = _bool(args, 'value');
-          if (b == null || b != app.repeat) app.toggleRepeat();
+          final value = args['value'];
+          final PlaybackRepeatMode? mode = switch (value) {
+            'off' => PlaybackRepeatMode.off,
+            'all' => PlaybackRepeatMode.all,
+            'one' => PlaybackRepeatMode.one,
+            true => PlaybackRepeatMode.all,
+            false => PlaybackRepeatMode.off,
+            _ => null,
+          };
+          if (value == null) {
+            app.toggleRepeat();
+          } else if (mode != null) {
+            app.setRepeatMode(mode);
+          } else {
+            throw ArgumentError(
+              'repeat requires "off", "all", "one", or a boolean.',
+            );
+          }
         default:
           throw ArgumentError('Unsupported playback action: "$action"');
       }

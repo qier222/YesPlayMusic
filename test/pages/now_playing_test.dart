@@ -7,11 +7,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:yesplaymusic/data.dart';
+import 'package:yesplaymusic/l10n/l10n.dart';
 import 'package:yesplaymusic/music/models.dart' as m;
 import 'package:yesplaymusic/music/source.dart';
 import 'package:yesplaymusic/pages/now_playing.dart';
+import 'package:yesplaymusic/shell.dart';
 import 'package:yesplaymusic/state.dart';
-import 'package:yesplaymusic/ui.dart' show Cover;
+import 'package:yesplaymusic/ui.dart' show Cover, Ico;
+import 'package:yesplaymusic/ui/tap.dart';
 
 import 'pages_smoke_test.dart' show appFor, prepareEnv;
 
@@ -256,6 +259,56 @@ void main() {
       app.seekTo(10);
       expect(app.lyricIndex, 1);
       await t.pump(const Duration(seconds: 2));
+    },
+  );
+
+  testWidgets(
+    'repeat controls cycle through single-track mode in both players',
+    (t) async {
+      app.queue = [
+        Track.of(const m.Track(id: 'repeat', source: 'test', name: 'Repeat')),
+      ];
+      app.setRepeatMode(PlaybackRepeatMode.all);
+      t.view.physicalSize = const Size(1280, 800);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      await t.pumpWidget(appFor(app));
+      for (var i = 0; i < 10; i++) {
+        await t.pump(const Duration(milliseconds: 100));
+      }
+
+      Finder control(Type surface, String tip) => find.descendant(
+        of: find.byType(surface),
+        matching: find.byWidgetPredicate((w) => w is Tap && w.tip == tip),
+      );
+      void expectIcon(Finder button, String icon) {
+        expect(button, findsOneWidget);
+        expect(
+          find.descendant(
+            of: button,
+            matching: find.byWidgetPredicate((w) => w is Ico && w.name == icon),
+          ),
+          findsOneWidget,
+        );
+      }
+
+      final miniAll = control(MiniPlayer, L.miniRepeatOn);
+      expectIcon(miniAll, 'repeat');
+      await t.tap(miniAll);
+      await t.pump();
+      expect(app.repeatMode, PlaybackRepeatMode.one);
+      expectIcon(control(MiniPlayer, L.miniRepeatOne), 'repeat-one');
+
+      app.openNowPlaying(NpTab.lyrics);
+      for (var i = 0; i < 10; i++) {
+        await t.pump(const Duration(milliseconds: 100));
+      }
+      final npOne = control(NowPlayingPage, L.miniRepeatOne);
+      expectIcon(npOne, 'repeat-one');
+      await t.tap(npOne);
+      await t.pump();
+      expect(app.repeatMode, PlaybackRepeatMode.off);
+      expectIcon(control(NowPlayingPage, L.miniRepeatOff), 'repeat');
     },
   );
 }

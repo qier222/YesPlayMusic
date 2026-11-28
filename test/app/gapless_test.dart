@@ -156,7 +156,7 @@ void main() {
     app = AppState();
     app.clearQueue();
     if (app.shuffle) app.toggleShuffle();
-    if (!app.repeat) app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.all);
     app.setGainMode(GainMode.off);
     app.setSleepTimer(null);
     app.sources.add(_Local());
@@ -441,7 +441,7 @@ void main() {
   });
 
   test('Next on the paused last track rewinds with repeat off', () async {
-    app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.off);
     await start(['a']);
     engine.at(20);
     app.pause();
@@ -461,7 +461,7 @@ void main() {
   });
 
   test('最后一首、不循环：不排，放完就停', () async {
-    app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.off);
     await start(['a', 'b']);
     app.playQueueAt(1);
     await _tick();
@@ -485,6 +485,45 @@ void main() {
     await _tick();
     expect(app.index, 0);
   });
+
+  test(
+    'repeat one restarts the current track at EOF; manual next advances',
+    () async {
+      app.setRepeatMode(PlaybackRepeatMode.one);
+      await start(['a', 'b']);
+      engine.at(170);
+      await _tick();
+      expect(engine.queuedKey, isNull);
+
+      engine.finish();
+      await _tick();
+      expect(app.track.key, _key('a'));
+      expect(app.index, 0);
+      expect(app.position, 0);
+      expect(app.playing, isTrue);
+      expect(engine.sought, Duration.zero);
+      expect(engine.opened, [_key('a')]);
+
+      app.next();
+      await _tick();
+      expect(app.track.key, _key('b'));
+      expect(app.index, 1);
+    },
+  );
+
+  test(
+    'switching to repeat one while paused drops the gapless next track',
+    () async {
+      await start(['a', 'b']);
+      engine.at(170);
+      await _tick();
+      expect(engine.queuedKey, _key('b'));
+
+      app.pause();
+      app.setRepeatMode(PlaybackRepeatMode.one);
+      expect(engine.queuedKey, isNull);
+    },
+  );
 
   test('睡眠定时「放完这首」：撤掉排好的，放完停在下一首开头', () async {
     await start(['a', 'b', 'c']);

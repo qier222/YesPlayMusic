@@ -63,6 +63,7 @@ class FlutterWindow : public Win32Window {
   std::wstring tray_unlike_label_ = L"Unlike";
   std::wstring tray_shuffle_label_ = L"Shuffle";
   std::wstring tray_repeat_label_ = L"Repeat All";
+  std::wstring tray_repeat_one_label_;
 
   void SetKeepRunning(bool keep_running);
   void AddTrayIcon();

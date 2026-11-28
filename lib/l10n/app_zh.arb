@@ -90,6 +90,10 @@
 
   "miniShuffleOn": "随机播放：开",
   "miniRepeatOn": "列表循环",
+  "miniRepeatOne": "单曲循环",
+  "@miniRepeatOne": {
+    "description": "Repeat mode tooltip when only the current track repeats"
+  },
   "miniRepeatOff": "不循环",
   "miniQueue": "播放队列",
   "miniOpenNowPlaying": "打开正在播放",

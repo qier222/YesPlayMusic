@@ -119,7 +119,7 @@ void main() {
     app.sources.add(_StubSource());
     app.clearQueue();
     if (app.shuffle) app.toggleShuffle();
-    if (!app.repeat) app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.all);
 
     outgoing = [];
     channel = const MethodChannel('yesplaymusic/media_test');
@@ -168,6 +168,7 @@ void main() {
     expect(initial['playing'], isTrue);
     expect(initial['shuffle'], isFalse);
     expect(initial['repeat'], isTrue);
+    expect(initial['repeatMode'], 'all');
     expect(initial['liked'], isFalse);
 
     outgoing.clear();
@@ -178,7 +179,8 @@ void main() {
     outgoing.clear();
     app.toggleRepeat();
     expect(outgoing.single.method, 'update');
-    expect((outgoing.single.arguments as Map)['repeat'], isFalse);
+    expect((outgoing.single.arguments as Map)['repeat'], isTrue);
+    expect((outgoing.single.arguments as Map)['repeatMode'], 'one');
 
     outgoing.clear();
     app.toggleLike();
@@ -214,10 +216,14 @@ void main() {
     await dispatch('shuffle');
     expect(app.shuffle, isFalse);
 
-    await dispatch('repeat', false);
-    expect(app.repeat, isFalse);
+    await dispatch('repeat', 'off');
+    expect(app.repeatMode, PlaybackRepeatMode.off);
+    await dispatch('repeat', 'one');
+    expect(app.repeatMode, PlaybackRepeatMode.one);
+    await dispatch('repeat', 'all');
+    expect(app.repeatMode, PlaybackRepeatMode.all);
     await dispatch('repeat');
-    expect(app.repeat, isTrue);
+    expect(app.repeatMode, PlaybackRepeatMode.one);
 
     await dispatch('like');
     expect(app.isLiked, isTrue);

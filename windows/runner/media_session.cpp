@@ -34,6 +34,16 @@ bool ReadBool(const Map& args, const char* key, bool fallback = false) {
   return value ? *value : fallback;
 }
 
+MediaPlaybackAutoRepeatMode ReadRepeatMode(const Map& args) {
+  if (const auto* mode = Read<std::string>(args, "repeatMode")) {
+    if (*mode == "one") return MediaPlaybackAutoRepeatMode::Track;
+    if (*mode == "all") return MediaPlaybackAutoRepeatMode::List;
+    return MediaPlaybackAutoRepeatMode::None;
+  }
+  return ReadBool(args, "repeat") ? MediaPlaybackAutoRepeatMode::List
+                                  : MediaPlaybackAutoRepeatMode::None;
+}
+
 winrt::hstring Text(const Map& args, const char* key) {
   const auto* text = Read<std::string>(args, key);
   return text ? winrt::to_hstring(*text) : winrt::hstring{};
@@ -169,15 +179,14 @@ class WindowsMediaSession::Impl {
           channel_.InvokeMethod("shuffle", std::make_unique<Value>(cmd.shuffle));
           break;
         case PendingCommand::Kind::kRepeat: {
-          // AppState supports list repeat on/off; map Track requests as a toggle
-          // so cycling through repeat modes never gets stuck.
-          const bool target =
+          const char* target =
               cmd.repeat_mode == MediaPlaybackAutoRepeatMode::None
-                  ? false
+                  ? "off"
                   : (cmd.repeat_mode == MediaPlaybackAutoRepeatMode::List
-                         ? true
-                         : !state_.repeat);
-          channel_.InvokeMethod("repeat", std::make_unique<Value>(target));
+                         ? "all"
+                         : "one");
+          channel_.InvokeMethod("repeat",
+                                std::make_unique<Value>(std::string(target)));
           break;
         }
       }
@@ -257,7 +266,9 @@ class WindowsMediaSession::Impl {
     const auto duration = ReadTime(args, "duration");
     const auto position = std::min(ReadTime(args, "position"), duration);
     const bool shuffle = ReadBool(args, "shuffle");
-    const bool repeat = ReadBool(args, "repeat");
+    const auto repeat_mode = ReadRepeatMode(args);
+    const bool repeat = repeat_mode != MediaPlaybackAutoRepeatMode::None;
+    const bool repeat_one = repeat_mode == MediaPlaybackAutoRepeatMode::Track;
     const bool liked = ReadBool(args, "liked");
     const winrt::hstring title = Text(args, "title");
     const winrt::hstring artist = Text(args, "artist");
@@ -283,15 +294,14 @@ class WindowsMediaSession::Impl {
                                       : MediaPlaybackStatus::Paused);
     controls_.PlaybackRate(*playing ? 1.0 : 0.0);
     controls_.ShuffleEnabled(shuffle);
-    controls_.AutoRepeatMode(repeat ? MediaPlaybackAutoRepeatMode::List
-                                    : MediaPlaybackAutoRepeatMode::None);
+    controls_.AutoRepeatMode(repeat_mode);
     if (!active_) {
       controls_.IsEnabled(true);
       active_ = true;
     }
 
     MediaPlaybackState next_state{
-        true, *playing, shuffle, repeat, liked,
+        true, *playing, shuffle, repeat, repeat_one, liked,
         std::wstring(title), std::wstring(artist),
     };
     if (next_state != state_) {

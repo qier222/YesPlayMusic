@@ -79,14 +79,14 @@ void main() {
   test('next / prev / repeat', () async {
     app.playList([for (final i in ids.take(3)) _t(i)]);
     await _settle();
-    if (!app.repeat) app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.all);
     app.next();
     app.next();
     expect(app.index, 2);
     app.next(); // repeat wraps back to the first song
     expect(app.index, 0);
     await _settle();
-    app.toggleRepeat(); // turn repeat off
+    app.setRepeatMode(PlaybackRepeatMode.off);
     app.playQueueAt(2);
     await _settle();
     app.next();
@@ -308,9 +308,31 @@ void main() {
     app.playList([for (final i in ids.take(3)) _t(i)], start: 1);
     expect([for (final t in app.upNext) t.ref!.id], ['2']);
     app.playQueueAt(2);
-    if (!app.repeat) app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.all);
     expect(app.nextTrack!.ref!.id, '0');
-    app.toggleRepeat();
+    app.setRepeatMode(PlaybackRepeatMode.off);
     expect(app.nextTrack, isNull);
   });
+
+  test(
+    'repeat cycles all, one, off and repeat-one keeps the current track next',
+    () {
+      app.playList([for (final i in ids.take(3)) _t(i)], start: 1);
+      app.setRepeatMode(PlaybackRepeatMode.all);
+      expect(app.repeatMode, PlaybackRepeatMode.all);
+      expect(app.nextTrack!.ref!.id, '2');
+
+      app.toggleRepeat();
+      expect(app.repeatMode, PlaybackRepeatMode.one);
+      expect(app.nextTrack!.ref!.id, '1');
+
+      app.toggleRepeat();
+      expect(app.repeatMode, PlaybackRepeatMode.off);
+      expect(app.nextTrack!.ref!.id, '2');
+
+      app.toggleRepeat();
+      expect(app.repeatMode, PlaybackRepeatMode.all);
+      expect(app.nextTrack!.ref!.id, '2');
+    },
+  );
 }
