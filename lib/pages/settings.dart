@@ -30,14 +30,20 @@ import 'plugin_install.dart';
 import 'plugin_settings.dart';
 import 'plugin_ui.dart';
 
-// Changing the theme rebuilds the whole tree, so the selected category lives outside
-int _nav = 0;
+/// Category tabs on the Settings page.
+enum SettingsTab { general, shortcuts, plugins, mcp, about }
 
-/// Opens the "Plugins" category of Settings (used by "Add music source" in the empty library).
-void openPluginSettings(AppState app) {
-  _nav = 2;
+// Changing the theme rebuilds the whole tree, so the selected category lives outside
+final _nav = ValueNotifier(SettingsTab.general);
+
+/// Opens Settings at [tab] (navigating to `/settings` if needed).
+void openSettings(AppState app, [SettingsTab tab = SettingsTab.general]) {
+  _nav.value = tab;
   app.go('/settings');
 }
+
+/// Opens the "Plugins" category of Settings (used by "Add music source" in the empty library).
+void openPluginSettings(AppState app) => openSettings(app, SettingsTab.plugins);
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key}) : _supportsMediaKeys = null;
@@ -55,14 +61,25 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final _scroll = ScrollController();
 
-  void _selectNav(int i) {
-    if (_nav == i) return;
-    setState(() => _nav = i);
+  @override
+  void initState() {
+    super.initState();
+    _nav.addListener(_onNav);
+  }
+
+  void _onNav() {
     if (_scroll.hasClients) _scroll.jumpTo(0);
+    setState(() {});
+  }
+
+  void _selectNav(SettingsTab tab) {
+    if (_nav.value == tab) return;
+    _nav.value = tab;
   }
 
   @override
   void dispose() {
+    _nav.removeListener(_onNav);
     _scroll.dispose();
     super.dispose();
   }
@@ -72,13 +89,13 @@ class _SettingsPageState extends State<SettingsPage> {
     final app = context.app;
     final l = context.l10n;
     final nav = [
-      ('gear', l.settingsGeneral),
-      ('keyboard', l.settingsShortcuts),
-      ('plugin', l.settingsPlugins),
-      ('mcp', 'MCP'),
-      ('info', l.settingsAbout),
+      (SettingsTab.general, 'gear', l.settingsGeneral),
+      (SettingsTab.shortcuts, 'keyboard', l.settingsShortcuts),
+      (SettingsTab.plugins, 'plugin', l.settingsPlugins),
+      (SettingsTab.mcp, 'mcp', 'MCP'),
+      (SettingsTab.about, 'info', l.settingsAbout),
     ];
-    final currentNav = _nav.clamp(0, nav.length - 1);
+    final currentNav = _nav.value;
     return Stack(
       children: [
         Positioned(left: 40, top: 20, child: BackBtn(onTap: app.back)),
@@ -104,13 +121,13 @@ class _SettingsPageState extends State<SettingsPage> {
           width: 200,
           child: Column(
             children: [
-              for (final (i, it) in nav.indexed)
+              for (final (tab, icon, label) in nav)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Tap(
-                    onTap: () => _selectNav(i),
+                    onTap: () => _selectNav(tab),
                     builder: (_, h, _) {
-                      final sel = currentNav == i;
+                      final sel = currentNav == tab;
                       final fg = sel || h ? P.ink : P.muted;
                       return AnimatedContainer(
                         duration: fast,
@@ -130,13 +147,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               width: 20,
                               height: 20,
                               child: Center(
-                                child: Ico(it.$1, size: 20, color: fg),
+                                child: Ico(icon, size: 20, color: fg),
                               ),
                             ),
                             const SizedBox(width: 10),
                             // Long labels (e.g. Russian) ellipsize instead of overflowing
                             Flexible(
-                              child: tx(it.$2, 15, w: w500, f: F.semi, c: fg),
+                              child: tx(label, 15, w: w500, f: F.semi, c: fg),
                             ),
                           ],
                         ),
@@ -163,16 +180,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: [...prev, ?cur],
               ),
               child: switch (currentNav) {
-                0 => const _GeneralTab(key: ValueKey('general')),
-                1 => _ShortcutsTab(
+                SettingsTab.general => const _GeneralTab(
+                  key: ValueKey('general'),
+                ),
+                SettingsTab.shortcuts => _ShortcutsTab(
                   key: const ValueKey('shortcuts'),
                   supportsMediaKeys:
                       widget._supportsMediaKeys ??
                       MediaSession.supportsMediaKeys,
                 ),
-                2 => const _PluginsTab(key: ValueKey('plugins')),
-                3 => const _McpTab(key: ValueKey('mcp')),
-                _ => const _AboutTab(key: ValueKey('about')),
+                SettingsTab.plugins => const _PluginsTab(
+                  key: ValueKey('plugins'),
+                ),
+                SettingsTab.mcp => const _McpTab(key: ValueKey('mcp')),
+                SettingsTab.about => const _AboutTab(key: ValueKey('about')),
               },
             ),
           ),
