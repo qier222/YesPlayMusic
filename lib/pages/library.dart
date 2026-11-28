@@ -1741,14 +1741,14 @@ class YearTicksPainter extends CustomPainter {
   static const _labelGap = 6.0;
 
   static int tickForFrac(double frac) =>
-      (3 + frac.clamp(0.0, 1.0) * (n - 4)).round().clamp(3, n - 1);
+      (frac.clamp(0.0, 1.0) * (n - 1)).round().clamp(0, n - 1);
 
   static double yForTick(int tick) => tick * step + 1.5;
 
-  static double fracForTick(int tick) => ((tick - 3) / (n - 4)).clamp(0.0, 1.0);
+  static double fracForTick(int tick) => (tick / (n - 1)).clamp(0.0, 1.0);
 
   static double fracForY(double y) =>
-      (((y - 1.5) / step - 3) / (n - 4)).clamp(0.0, 1.0);
+      ((y - step / 2) / ((n - 2) * step)).clamp(0.0, 1.0);
 
   static List<PlacedYearMark> layoutMarks(List<YearMark> marks) {
     final placed = <PlacedYearMark>[];
