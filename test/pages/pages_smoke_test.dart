@@ -490,4 +490,33 @@ void main() {
     // Known issue: Shortcuts and MCP overflow at the minimum window.
     skip: true,
   );
+
+  testWidgets(
+    'Manage plugins in source switcher opens Plugins even when already in Settings',
+    (t) async {
+      await boot(t, width: 1440);
+      app.open('/settings');
+      await _frames(t);
+      await t.tap(find.text(L.settingsGeneral));
+      await _frames(t);
+      expect(find.byKey(const ValueKey('general')), findsOneWidget);
+      expect(find.byKey(const ValueKey('plugins')), findsNothing);
+
+      await t.tap(
+        find.byWidgetPredicate((w) => w is Tap && w.tip == L.sourceMusicSource),
+      );
+      await _frames(t);
+      await t.tap(find.text(L.actionManagePlugins));
+      await _frames(t);
+
+      expect(app.path, '/settings');
+      expect(find.byKey(const ValueKey('plugins')), findsOneWidget);
+      expect(find.byKey(const ValueKey('general')), findsNothing);
+
+      openSettings(app, SettingsTab.mcp);
+      await _frames(t);
+      expect(find.byKey(const ValueKey('mcp')), findsOneWidget);
+      expect(find.byKey(const ValueKey('plugins')), findsNothing);
+    },
+  );
 }
